@@ -5,50 +5,225 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
     <title>Bolsa - BAEP Investimentos</title>
 
+    <!-- ========== FONTES ========== -->
+    <link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@400;600;700&family=Orbitron:wght@400;700;900&display=swap" rel="stylesheet">
+
     <!-- ========== ESTILOS ========== -->
     <style>
+        /* ---------- VARIÁVEIS ---------- */
+        :root {
+            --bg-dark: #0a0b10;
+            --card-bg: #121520;
+            --neon-blue: #00f0ff;
+            --neon-purple: #7000ff;
+            --neon-green: #00ff66;
+            --text-color: #f0f4f8;
+            --border-glow: rgba(0, 240, 255, 0.2);
+        }
+
         /* ---------- RESET & BASE ---------- */
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
-            font-family: 'Segoe UI', Roboto, system-ui, sans-serif;
+            font-family: 'Rajdhani', sans-serif;
         }
 
         body {
-            background: #eef2f7;
-            padding-bottom: 40px;
+            background-color: var(--bg-dark);
+            color: var(--text-color);
+            background-image: 
+                radial-gradient(circle at 15% 20%, rgba(112, 0, 255, 0.15) 0%, transparent 40%),
+                radial-gradient(circle at 85% 80%, rgba(0, 240, 255, 0.15) 0%, transparent 40%);
+            min-height: 100vh;
+            padding: 20px;
         }
 
-        /* ---------- HEADER ---------- */
-        header {
-            background: linear-gradient(135deg, #002e5d, #001a33);
-            color: white;
-            padding: 18px 24px;
-            font-size: 1.5rem;
+        /* ---------- BARRA DE NAVEGAÇÃO ---------- */
+        .nav-bar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: rgba(18, 21, 32, 0.8);
+            backdrop-filter: blur(10px);
+            border: 1px solid var(--border-glow);
+            padding: 12px 24px;
+            border-radius: 16px;
+            margin-bottom: 30px;
+            box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+
+        .nav-brand {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-family: 'Orbitron', sans-serif;
+            font-size: 1.2rem;
             font-weight: 700;
+            color: #fff;
+            letter-spacing: 1px;
+        }
+
+        .nav-brand span {
+            color: var(--neon-blue);
+            text-shadow: 0 0 10px var(--neon-blue);
+        }
+
+        .nav-links {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            flex-wrap: wrap;
+        }
+
+        .nav-links a {
+            color: #a0aec0;
+            text-decoration: none;
+            font-weight: 700;
+            font-size: 1.1rem;
+            padding: 8px 16px;
+            border-radius: 8px;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .nav-links a:hover, .nav-links a.active {
+            color: #fff;
+            background: rgba(0, 240, 255, 0.15);
+            border: 1px solid var(--neon-blue);
+            box-shadow: 0 0 10px rgba(0, 240, 255, 0.3);
+        }
+
+        .user-profile {
             display: flex;
             align-items: center;
             gap: 12px;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+            background: rgba(0, 240, 255, 0.08);
+            padding: 6px 16px 6px 12px;
+            border-radius: 40px;
+            border: 1px solid var(--border-glow);
+            color: #fff;
+            font-weight: 600;
+            font-size: 0.95rem;
+            transition: all 0.3s;
+            cursor: default;
+        }
+
+        .user-profile:hover {
+            background: rgba(0, 240, 255, 0.15);
+            border-color: var(--neon-blue);
+            box-shadow: 0 0 15px rgba(0, 240, 255, 0.2);
+        }
+
+        .user-avatar {
+            background: linear-gradient(135deg, var(--neon-blue), var(--neon-purple));
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.2rem;
+            font-weight: bold;
+            box-shadow: 0 0 10px rgba(0, 240, 255, 0.3);
+        }
+
+        .user-info {
+            display: flex;
+            flex-direction: column;
+            line-height: 1.2;
+        }
+
+        .user-nick {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 0.9rem;
+            letter-spacing: 0.5px;
+            color: #fff;
+        }
+
+        .user-balance {
+            font-size: 0.8rem;
+            color: var(--neon-green);
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+
+        .user-balance::before {
+            content: "💰";
+            font-size: 0.7rem;
+        }
+
+        .nav-buttons {
+            display: flex;
+            gap: 10px;
+            align-items: center;
             flex-wrap: wrap;
         }
-        header span { font-size: 1.9rem; }
 
-        .badge-tempo {
-            background: #334155;
+        /* ---------- BOTÕES ---------- */
+        .btn-bolsa {
+            background: linear-gradient(135deg, #00f0ff, #7000ff);
             color: white;
-            border-radius: 20px;
-            padding: 4px 12px;
-            font-size: 0.7rem;
-            display: inline-block;
-            margin-left: 12px;
+            border: none;
+            padding: 8px 18px;
+            border-radius: 40px;
+            font-weight: bold;
+            font-size: 0.9rem;
+            cursor: pointer;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            box-shadow: 0 0 12px rgba(0, 240, 255, 0.4);
+            text-decoration: none;
         }
 
+        .btn-bolsa:hover {
+            transform: translateY(-2px) scale(1.02);
+            box-shadow: 0 0 20px rgba(0, 240, 255, 0.8);
+        }
+
+        .btn-sair {
+            background: linear-gradient(135deg, #ef4444, #dc2626);
+            color: white;
+            border: none;
+            padding: 8px 18px;
+            border-radius: 40px;
+            font-weight: bold;
+            font-size: 0.9rem;
+            cursor: pointer;
+            transition: all 0.2s;
+            box-shadow: 0 0 10px rgba(239, 68, 68, 0.3);
+        }
+
+        .btn-sair:hover {
+            transform: scale(0.96);
+            background: linear-gradient(135deg, #dc2626, #b91c1c);
+            box-shadow: 0 0 15px rgba(220, 38, 38, 0.6);
+        }
+
+        /* ---------- BADGE TEMPO ---------- */
+        .badge-tempo {
+            background: rgba(0, 240, 255, 0.15);
+            color: var(--neon-blue);
+            border: 1px solid var(--border-glow);
+            border-radius: 20px;
+            padding: 4px 12px;
+            font-size: 0.65rem;
+            display: inline-block;
+            font-family: 'Orbitron', sans-serif;
+            letter-spacing: 0.5px;
+        }
+
+        /* ---------- STATUS ---------- */
         .status-container {
             display: flex;
             gap: 10px;
-            margin-left: auto;
             flex-wrap: wrap;
             align-items: center;
         }
@@ -59,14 +234,15 @@
             gap: 6px;
             padding: 4px 14px;
             border-radius: 20px;
-            font-size: 0.7rem;
+            font-size: 0.65rem;
             font-weight: 600;
             transition: all 0.3s ease;
             white-space: nowrap;
+            font-family: 'Orbitron', sans-serif;
         }
-        .status-online  { background: #10b981; color: white; box-shadow: 0 2px 8px rgba(16,185,129,0.3); }
-        .status-offline { background: #ef4444; color: white; box-shadow: 0 2px 8px rgba(239,68,68,0.3); }
-        .status-checking{ background: #f59e0b; color: white; box-shadow: 0 2px 8px rgba(245,158,11,0.3); animation: pulse-status 1s ease-in-out infinite; }
+        .status-online  { background: rgba(16, 185, 129, 0.25); color: #10b981; border: 1px solid rgba(16,185,129,0.3); }
+        .status-offline { background: rgba(239, 68, 68, 0.25); color: #ef4444; border: 1px solid rgba(239,68,68,0.3); }
+        .status-checking{ background: rgba(245, 158, 11, 0.25); color: #f59e0b; border: 1px solid rgba(245,158,11,0.3); animation: pulse-status 1s ease-in-out infinite; }
 
         @keyframes pulse-status {
             0%, 100% { opacity: 1; }
@@ -89,44 +265,8 @@
             50% { opacity: 0.5; transform: scale(0.8); }
         }
 
-        .usuario-info {
-            font-size: 0.8rem;
-            font-weight: 400;
-            color: #a0c4e8;
-            margin-left: 10px;
-        }
-
-        .btn-sair {
-            background: linear-gradient(135deg, #ef4444, #dc2626);
-            color: white;
-            border: none;
-            padding: 6px 16px;
-            border-radius: 40px;
-            font-weight: bold;
-            font-size: 0.7rem;
-            cursor: pointer;
-            transition: all 0.2s;
-        }
-        .btn-sair:hover { transform: scale(0.96); background: linear-gradient(135deg, #dc2626, #b91c1c); }
-
-        .btn-bolsa {
-            background: linear-gradient(135deg, #f59e0b, #d97706);
-            color: white;
-            border: none;
-            padding: 8px 20px;
-            border-radius: 40px;
-            font-weight: bold;
-            font-size: 0.8rem;
-            cursor: pointer;
-            transition: all 0.2s;
-            display: inline-flex;
-            align-items: center;
-            gap: 6px;
-        }
-        .btn-bolsa:hover { transform: scale(0.96); background: linear-gradient(135deg, #d97706, #b45309); }
-
         /* ---------- CONTAINER & BOXES ---------- */
-        .container { padding: 20px; max-width: 1400px; margin: 0 auto; }
+        .container { padding: 0; max-width: 1400px; margin: 0 auto; }
 
         .info {
             display: flex;
@@ -136,23 +276,44 @@
         }
 
         .box {
-            background: white;
+            background: var(--card-bg);
             padding: 18px 20px;
-            border-radius: 24px;
+            border-radius: 16px;
             flex: 1;
             min-width: 170px;
-            box-shadow: 0 6px 16px rgba(0,0,0,0.05);
-            border: 1px solid rgba(0,46,93,0.08);
-            transition: transform 0.2s;
+            border: 1px solid var(--border-glow);
+            transition: all 0.3s;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.3);
         }
-        .box:hover { transform: translateY(-2px); }
-        .box h3 { font-size: 0.8rem; text-transform: uppercase; letter-spacing: 1px; color: #2c5a7a; margin-bottom: 10px; }
-        .box h2 { font-size: 1.8rem; font-weight: 700; color: #0a2b44; word-break: break-word; }
+        .box:hover { 
+            transform: translateY(-2px);
+            border-color: var(--neon-blue);
+            box-shadow: 0 0 20px rgba(0, 240, 255, 0.1);
+        }
+        .box h3 { 
+            font-size: 0.75rem; 
+            text-transform: uppercase; 
+            letter-spacing: 1px; 
+            color: #8a99ad; 
+            margin-bottom: 10px;
+            font-weight: 600;
+        }
+        .box h2 { 
+            font-size: 1.8rem; 
+            font-weight: 700; 
+            color: #fff; 
+            word-break: break-word;
+            text-shadow: 0 0 20px rgba(0, 240, 255, 0.1);
+        }
 
-        .moeda-simbolo { font-size: 0.9rem; font-weight: 300; color: #6c86a3; }
+        .moeda-simbolo { 
+            font-size: 0.9rem; 
+            font-weight: 300; 
+            color: #8a99ad; 
+        }
 
         .btn-transferir {
-            background: linear-gradient(135deg, #f59e0b, #d97706);
+            background: linear-gradient(135deg, #00f0ff, #7000ff);
             color: white;
             border: none;
             padding: 8px 16px;
@@ -163,42 +324,54 @@
             cursor: pointer;
             transition: all 0.2s;
             width: 100%;
+            box-shadow: 0 0 12px rgba(0, 240, 255, 0.3);
         }
-        .btn-transferir:hover { background: linear-gradient(135deg, #d97706, #b45309); transform: scale(0.98); }
+        .btn-transferir:hover { 
+            transform: scale(0.98);
+            box-shadow: 0 0 20px rgba(0, 240, 255, 0.6);
+        }
 
         /* ---------- CARDS ---------- */
         .card {
-            background: white;
-            border-radius: 28px;
+            background: var(--card-bg);
+            border-radius: 16px;
             padding: 18px 20px;
             margin-bottom: 28px;
-            box-shadow: 0 8px 22px rgba(0,0,0,0.05);
+            border: 1px solid var(--border-glow);
+            box-shadow: 0 4px 20px rgba(0,0,0,0.3);
+            transition: all 0.3s;
+        }
+        .card:hover {
+            border-color: rgba(0, 240, 255, 0.4);
         }
         .card h2 {
             font-size: 1.35rem;
             margin-bottom: 18px;
-            border-left: 5px solid #00a859;
+            border-left: 5px solid var(--neon-blue);
             padding-left: 14px;
-            color: #1e3a5f;
+            color: #fff;
             display: flex;
             align-items: center;
             gap: 10px;
             flex-wrap: wrap;
+            font-family: 'Orbitron', sans-serif;
+            text-shadow: 0 0 20px rgba(0, 240, 255, 0.1);
         }
 
         .badge-categoria {
-            background: #e2e8f0;
-            color: #1e4663;
+            background: rgba(0, 240, 255, 0.15);
+            color: var(--neon-blue);
             font-size: 0.7rem;
             border-radius: 30px;
             padding: 4px 12px;
             font-weight: normal;
+            border: 1px solid var(--border-glow);
+            font-family: 'Rajdhani', sans-serif;
         }
 
         .poupanca-destaque {
-            background: #f0fdf4;
-            border-left: 4px solid #10b981;
-            margin-bottom: 24px;
+            background: rgba(16, 185, 129, 0.08);
+            border-left: 4px solid var(--neon-green);
         }
         .poupanca-flex {
             display: flex;
@@ -208,12 +381,13 @@
             gap: 20px;
         }
         .poupanca-saldo {
-            background: #e6f7ec;
+            background: rgba(0, 255, 102, 0.1);
             padding: 10px 18px;
             border-radius: 36px;
             font-weight: bold;
-            color: #0a5c3e;
+            color: var(--neon-green);
             font-size: 1.1rem;
+            border: 1px solid rgba(0, 255, 102, 0.2);
         }
         .poupanca-acoes {
             display: flex;
@@ -222,8 +396,8 @@
             flex-wrap: wrap;
         }
         .btn-poupanca {
-            background: linear-gradient(135deg, #0f766e, #0d6b63);
-            color: white;
+            background: linear-gradient(135deg, #00ff66, #00cc55);
+            color: #0a0b10;
             border: none;
             padding: 8px 20px;
             border-radius: 40px;
@@ -231,44 +405,73 @@
             font-size: 0.8rem;
             cursor: pointer;
             transition: all 0.2s;
+            box-shadow: 0 0 15px rgba(0, 255, 102, 0.3);
         }
-        .btn-poupanca:hover { background: linear-gradient(135deg, #0d6b63, #0a5c54); transform: scale(0.96); }
+        .btn-poupanca:hover { 
+            transform: scale(0.96);
+            box-shadow: 0 0 25px rgba(0, 255, 102, 0.6);
+        }
 
         .input-poupanca {
             padding: 8px 12px;
             border-radius: 40px;
-            border: 1px solid #cbd5e1;
+            border: 1px solid var(--border-glow);
             font-size: 0.85rem;
             width: 140px;
             text-align: center;
             font-weight: 600;
-            background: #f8fafc;
+            background: rgba(255,255,255,0.05);
+            color: #fff;
+        }
+        .input-poupanca:focus {
+            outline: none;
+            border-color: var(--neon-blue);
+            box-shadow: 0 0 15px rgba(0, 240, 255, 0.2);
         }
 
         .grupo-input {
             display: flex;
             align-items: center;
             gap: 8px;
-            background: white;
+            background: rgba(255,255,255,0.05);
             padding: 4px 12px;
             border-radius: 48px;
-            box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+            border: 1px solid var(--border-glow);
         }
-        .grupo-input label { font-weight: 600; color: #1e3a5f; font-size: 0.8rem; }
+        .grupo-input label { 
+            font-weight: 600; 
+            color: #8a99ad; 
+            font-size: 0.8rem; 
+        }
 
         .valor-rendimento {
             font-size: 0.9rem;
             font-weight: 600;
-            color: #0d9488;
+            color: var(--neon-green);
         }
 
         /* ---------- TABELAS ---------- */
         .table-wrapper { overflow-x: auto; width: 100%; margin-bottom: 5px; }
         table { width: 100%; border-collapse: collapse; min-width: 550px; }
-        th, td { padding: 12px 8px; text-align: center; border-bottom: 1px solid #e2e8f0; font-size: 0.9rem; vertical-align: middle; }
-        th { background-color: #f8fafd; color: #1e4663; font-weight: 600; }
+        th, td { 
+            padding: 12px 8px; 
+            text-align: center; 
+            border-bottom: 1px solid rgba(255,255,255,0.05); 
+            font-size: 0.9rem; 
+            vertical-align: middle; 
+        }
+        th { 
+            background: rgba(0, 240, 255, 0.05); 
+            color: var(--neon-blue); 
+            font-weight: 700;
+            font-family: 'Orbitron', sans-serif;
+            font-size: 0.7rem;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+        }
+        td { color: #e2e8f0; }
 
-        /* ---------- BOTÕES ---------- */
+        /* ---------- BOTÕES DAS TABELAS ---------- */
         button {
             padding: 6px 14px;
             margin: 3px;
@@ -279,16 +482,49 @@
             transition: all 0.2s ease;
             font-size: 0.75rem;
         }
-        .buy { background: #10b981; color: white; box-shadow: 0 1px 3px rgba(16,185,129,0.3); }
-        .buy:hover { background: #059669; transform: scale(0.96); }
-        .sell { background: #ef4444; color: white; }
-        .sell:hover { background: #dc2626; transform: scale(0.96); }
+        .buy { 
+            background: linear-gradient(135deg, #00ff66, #00cc55);
+            color: #0a0b10;
+            box-shadow: 0 0 10px rgba(0, 255, 102, 0.3);
+        }
+        .buy:hover { 
+            transform: scale(0.96);
+            box-shadow: 0 0 20px rgba(0, 255, 102, 0.5);
+        }
+        .sell { 
+            background: linear-gradient(135deg, #ef4444, #dc2626);
+            color: white;
+            box-shadow: 0 0 10px rgba(239, 68, 68, 0.3);
+        }
+        .sell:hover { 
+            transform: scale(0.96);
+            box-shadow: 0 0 20px rgba(239, 68, 68, 0.5);
+        }
 
-        .btn-carteira-comprar { background: #0f6b3a; color: white; padding: 5px 12px; font-size: 0.7rem; }
-        .btn-carteira-comprar:hover { background: #0a522c; }
-        .btn-carteira-vender { background: #b91c1c; color: white; padding: 5px 12px; font-size: 0.7rem; }
-        .btn-carteira-vender:hover { background: #991b1b; }
+        .btn-carteira-comprar { 
+            background: linear-gradient(135deg, #00ff66, #00cc55);
+            color: #0a0b10;
+            padding: 5px 12px;
+            font-size: 0.7rem;
+            box-shadow: 0 0 8px rgba(0, 255, 102, 0.2);
+        }
+        .btn-carteira-comprar:hover { 
+            box-shadow: 0 0 15px rgba(0, 255, 102, 0.4);
+            transform: scale(0.96);
+        }
+        .btn-carteira-vender { 
+            background: linear-gradient(135deg, #ef4444, #dc2626);
+            color: white;
+            padding: 5px 12px;
+            font-size: 0.7rem;
+            box-shadow: 0 0 8px rgba(239, 68, 68, 0.2);
+        }
+        .btn-carteira-vender:hover { 
+            box-shadow: 0 0 15px rgba(239, 68, 68, 0.4);
+            transform: scale(0.96);
+        }
 
+        /* ---------- BOTÕES SUPABASE ---------- */
         .btn-salvar {
             background: linear-gradient(135deg, #3b82f6, #2563eb);
             color: white;
@@ -299,8 +535,12 @@
             font-size: 0.7rem;
             cursor: pointer;
             transition: all 0.2s;
+            box-shadow: 0 0 10px rgba(59, 130, 246, 0.3);
         }
-        .btn-salvar:hover { transform: scale(0.96); background: linear-gradient(135deg, #2563eb, #1d4ed8); }
+        .btn-salvar:hover { 
+            transform: scale(0.96);
+            box-shadow: 0 0 20px rgba(59, 130, 246, 0.5);
+        }
 
         .btn-carregar {
             background: linear-gradient(135deg, #8b5cf6, #7c3aed);
@@ -312,8 +552,12 @@
             font-size: 0.7rem;
             cursor: pointer;
             transition: all 0.2s;
+            box-shadow: 0 0 10px rgba(139, 92, 246, 0.3);
         }
-        .btn-carregar:hover { transform: scale(0.96); background: linear-gradient(135deg, #7c3aed, #6d28d9); }
+        .btn-carregar:hover { 
+            transform: scale(0.96);
+            box-shadow: 0 0 20px rgba(139, 92, 246, 0.5);
+        }
 
         .btn-limpar {
             background: linear-gradient(135deg, #ef4444, #dc2626);
@@ -325,8 +569,12 @@
             font-size: 0.7rem;
             cursor: pointer;
             transition: all 0.2s;
+            box-shadow: 0 0 10px rgba(239, 68, 68, 0.3);
         }
-        .btn-limpar:hover { transform: scale(0.96); background: linear-gradient(135deg, #dc2626, #b91c1c); }
+        .btn-limpar:hover { 
+            transform: scale(0.96);
+            box-shadow: 0 0 20px rgba(239, 68, 68, 0.5);
+        }
 
         .botoes-supabase {
             display: flex;
@@ -337,88 +585,270 @@
         }
 
         /* ---------- SELIC ---------- */
-        .selic-indicador { display: inline-block; padding: 4px 16px; border-radius: 30px; font-weight: 700; font-size: 0.9rem; }
-        .selic-alta   { background: #ef4444; color: white; }
-        .selic-baixa  { background: #10b981; color: white; }
-        .selic-media  { background: #f59e0b; color: white; }
+        .selic-indicador { 
+            display: inline-block; 
+            padding: 4px 16px; 
+            border-radius: 30px; 
+            font-weight: 700; 
+            font-size: 0.9rem; 
+            font-family: 'Orbitron', sans-serif;
+        }
+        .selic-alta   { background: rgba(239, 68, 68, 0.2); color: #ef4444; border: 1px solid #ef4444; }
+        .selic-baixa  { background: rgba(16, 185, 129, 0.2); color: #10b981; border: 1px solid #10b981; }
+        .selic-media  { background: rgba(245, 158, 11, 0.2); color: #f59e0b; border: 1px solid #f59e0b; }
 
-        .selic-impacto { padding: 12px 16px; border-radius: 12px; font-weight: 600; }
-        .impacto-compra  { background: #dcfce7; color: #0a5c3e; border-left: 4px solid #10b981; }
-        .impacto-venda   { background: #fee2e2; color: #991b1b; border-left: 4px solid #ef4444; }
-        .impacto-neutral { background: #fef3c7; color: #92400e; border-left: 4px solid #f59e0b; }
+        .selic-impacto { 
+            padding: 12px 16px; 
+            border-radius: 12px; 
+            font-weight: 600; 
+            font-size: 0.95rem;
+        }
+        .impacto-compra  { 
+            background: rgba(0, 255, 102, 0.1); 
+            color: var(--neon-green); 
+            border-left: 4px solid var(--neon-green); 
+        }
+        .impacto-venda   { 
+            background: rgba(239, 68, 68, 0.1); 
+            color: #ef4444; 
+            border-left: 4px solid #ef4444; 
+        }
+        .impacto-neutral { 
+            background: rgba(245, 158, 11, 0.1); 
+            color: #f59e0b; 
+            border-left: 4px solid #f59e0b; 
+        }
 
         /* ---------- EXTRATO ---------- */
         #historico {
             list-style: none;
             max-height: 210px;
             overflow-y: auto;
-            background: #fbfef9;
-            border-radius: 20px;
+            background: rgba(255,255,255,0.02);
+            border-radius: 12px;
             padding: 8px 12px;
+            border: 1px solid var(--border-glow);
         }
         #historico li {
             padding: 8px 8px;
-            border-bottom: 1px solid #e9edf2;
+            border-bottom: 1px solid rgba(255,255,255,0.05);
             font-size: 0.8rem;
-            font-family: monospace;
+            font-family: 'Rajdhani', sans-serif;
             display: flex;
             gap: 8px;
             align-items: baseline;
+            color: #cbd5e1;
         }
-        .provento-item    { background: #fffbeb; border-left: 4px solid #f59e0b; }
-        .transferencia-item { background: #e0f2fe; border-left: 4px solid #0ea5e9; }
-        .poupanca-item    { background: #dcfce7; border-left: 4px solid #10b981; }
+        .provento-item    { border-left: 3px solid #f59e0b !important; background: rgba(245, 158, 11, 0.05); }
+        .transferencia-item { border-left: 3px solid #0ea5e9 !important; background: rgba(14, 165, 233, 0.05); }
+        .poupanca-item    { border-left: 3px solid #10b981 !important; background: rgba(16, 185, 129, 0.05); }
 
         /* ---------- MISC ---------- */
-        .empty-warning { text-align: center; color: #6c86a3; padding: 28px; font-style: italic; }
-        .indicator-green { color: #10b981; font-weight: 600; }
+        .empty-warning { 
+            text-align: center; 
+            color: #6c86a3; 
+            padding: 28px; 
+            font-style: italic; 
+        }
+        .indicator-green { color: var(--neon-green); font-weight: 600; }
         .indicator-red   { color: #ef4444; font-weight: 600; }
-        .metric-cell { font-size: 0.85rem; padding: 4px 8px; border-radius: 12px; background: #f1f5f9; display: inline-block; margin: 2px; }
+        .metric-cell { 
+            font-size: 0.85rem; 
+            padding: 4px 8px; 
+            border-radius: 12px; 
+            background: rgba(255,255,255,0.05); 
+            display: inline-block; 
+            margin: 2px;
+            border: 1px solid var(--border-glow);
+        }
 
-        footer { text-align: center; font-size: 0.7rem; color: #5d7f9e; margin-top: 15px; }
+        footer { 
+            text-align: center; 
+            font-size: 0.7rem; 
+            color: #5d7f9e; 
+            margin-top: 15px;
+            padding: 15px;
+            border-top: 1px solid var(--border-glow);
+        }
+
+        /* ========== TOAST / JANELA FLUTUANTE ========== */
+        .toast-container {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            z-index: 9999;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            max-width: 380px;
+            width: 100%;
+            pointer-events: none;
+        }
+
+        .toast {
+            pointer-events: auto;
+            background: rgba(18, 21, 32, 0.95);
+            backdrop-filter: blur(10px);
+            color: #f1f5f9;
+            padding: 16px 20px;
+            border-radius: 16px;
+            box-shadow: 0 12px 40px rgba(0,0,0,0.6);
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            animation: slideInRight 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+            border: 1px solid var(--border-glow);
+        }
+
+        .toast.erro {
+            border-left: 5px solid #ef4444;
+            box-shadow: 0 0 30px rgba(239, 68, 68, 0.15);
+        }
+
+        .toast.sucesso {
+            border-left: 5px solid var(--neon-green);
+            box-shadow: 0 0 30px rgba(0, 255, 102, 0.15);
+        }
+
+        .toast.atencao {
+            border-left: 5px solid #f59e0b;
+            box-shadow: 0 0 30px rgba(245, 158, 11, 0.15);
+        }
+
+        .toast-icon {
+            font-size: 1.8rem;
+            flex-shrink: 0;
+        }
+
+        .toast-content {
+            flex: 1;
+        }
+
+        .toast-title {
+            font-weight: 700;
+            font-size: 0.9rem;
+            color: #f1f5f9;
+            font-family: 'Orbitron', sans-serif;
+        }
+
+        .toast-message {
+            font-size: 0.8rem;
+            color: #cbd5e1;
+            margin-top: 2px;
+        }
+
+        .toast-close {
+            background: none;
+            border: none;
+            color: #94a3b8;
+            font-size: 1.2rem;
+            cursor: pointer;
+            padding: 0 4px;
+            transition: color 0.2s;
+            margin: 0;
+        }
+        .toast-close:hover {
+            color: #f1f5f9;
+        }
+
+        .toast-hide {
+            animation: slideOutRight 0.3s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+        }
+
+        @keyframes slideInRight {
+            from { opacity: 0; transform: translateX(60px) scale(0.95); }
+            to { opacity: 1; transform: translateX(0) scale(1); }
+        }
+
+        @keyframes slideOutRight {
+            from { opacity: 1; transform: translateX(0) scale(1); }
+            to { opacity: 0; transform: translateX(60px) scale(0.95); }
+        }
 
         /* ---------- RESPONSIVO ---------- */
         @media (max-width: 768px) {
-            header { font-size: 1.1rem; padding: 12px 16px; }
-            .status-container { width: 100%; justify-content: flex-start; margin-left: 0; margin-top: 8px; }
-            .status-item { font-size: 0.6rem; padding: 3px 10px; }
-            .badge-tempo { font-size: 0.6rem; padding: 3px 8px; }
-            .botoes-supabase { margin-top: 5px; }
-            .btn-salvar, .btn-carregar, .btn-limpar, .btn-sair, .btn-bolsa { font-size: 0.6rem; padding: 4px 12px; }
-            .usuario-info { font-size: 0.7rem; margin-left: 5px; }
+            body { padding: 10px; }
+            
+            .nav-bar {
+                flex-direction: column;
+                align-items: stretch;
+                padding: 12px 16px;
+            }
+            .nav-links {
+                justify-content: center;
+            }
+            .nav-buttons {
+                justify-content: center;
+            }
+            .user-profile {
+                padding: 4px 12px 4px 8px;
+            }
+            .user-info .user-nick {
+                font-size: 0.8rem;
+            }
+            .nav-brand { font-size: 1rem; }
+
+            .badge-tempo { font-size: 0.55rem; padding: 2px 8px; }
+            .status-container { justify-content: center; }
+            .status-item { font-size: 0.55rem; padding: 2px 10px; }
+
+            .toast-container {
+                top: 10px;
+                right: 10px;
+                left: 10px;
+                max-width: 100%;
+                width: auto;
+            }
+            .toast {
+                padding: 14px 16px;
+                border-radius: 12px;
+            }
+
+            .box h2 { font-size: 1.3rem; }
+            .dashboard-header h1 { font-size: 1.8rem; }
         }
     </style>
 </head>
 
 <body>
-    <!-- ========== HEADER ========== -->
-    <header>
-        <span class="badge-tempo" id="selicBadge" style="background: #f59e0b; color: #001a33;">📈 SELIC: 10,75%</span>
-        <span>🏦</span>BAEP Investimentos - Simulador
-        <span class="badge-tempo">⏱️ Ações: 60s | FIIs: 30s | ETFs: 90s | Tesouro: 120s | Poupança: 60s (0,6%)</span>
-
-        <div class="status-container">
-            <span id="statusInternet" class="status-item status-online">
-                <span class="status-dot online"></span>
-                <span class="status-label">🌐 Internet</span>
-                <span id="statusInternetTexto">Online</span>
-            </span>
-            <span id="statusAPI" class="status-item status-checking">
-                <span class="status-dot"></span>
-                <span class="status-label">📊 API</span>
-                <span id="statusAPITexto">Verificando...</span>
-            </span>
-            <span id="statusSupabase" class="status-item status-checking">
-                <span class="status-dot"></span>
-                <span class="status-label">☁️ Supabase</span>
-                <span id="statusSupabaseTexto">Verificando...</span>
-            </span>
-            <span id="usuarioLogado" class="usuario-info">👤 </span>
-            <button class="btn-sair" id="btnSair">🚪 Sair</button>
-            <button class="btn-bolsa" onclick="window.location.href='admin.html'" style="background: linear-gradient(135deg, #8b5cf6, #7c3aed);">👑 ADM</button>
-            <button class="btn-bolsa" onclick="window.location.href='dashboard.html'" style="background: linear-gradient(135deg, #10b981, #059669);">📊 Dashboard</button>
+    <!-- ========== BARRA DE NAVEGAÇÃO ========== -->
+    <nav class="nav-bar">
+        <div class="nav-brand">
+            🏦 <span>BAEP</span> Investimentos
+            <span class="badge-tempo">⏱️ Ações:60s | FIIs:30s | ETFs:90s | Tesouro:120s</span>
+            <span class="badge-tempo" id="selicBadge" style="border-color: #f59e0b; color: #f59e0b;">📈 SELIC: 10,75%</span>
         </div>
-    </header>
+
+        <div class="nav-links">
+            <div class="status-container">
+                <span id="statusInternet" class="status-item status-online">
+                    <span class="status-dot online"></span>
+                    <span id="statusInternetTexto">🌐 Net</span>
+                </span>
+                <span id="statusAPI" class="status-item status-checking">
+                    <span class="status-dot"></span>
+                    <span id="statusAPITexto">📊 API</span>
+                </span>
+                <span id="statusSupabase" class="status-item status-checking">
+                    <span class="status-dot"></span>
+                    <span id="statusSupabaseTexto">☁️ Supabase</span>
+                </span>
+            </div>
+        </div>
+
+        <div class="nav-buttons">
+            <div class="user-profile">
+                <div class="user-avatar" id="userAvatar">👤</div>
+                <div class="user-info">
+                    <span class="user-nick" id="usuarioLogado">Carregando...</span>
+                    <span class="user-balance" id="userSaldoDisplay">0,00 Mumu</span>
+                </div>
+            </div>
+            <button class="btn-sair" id="btnSair">🚪 Sair</button>
+            <a href="admin.html" class="btn-bolsa" style="background: linear-gradient(135deg, #7000ff, #8b5cf6);">👑 ADM</a>
+            <a href="dashboard.html" class="btn-bolsa" style="background: linear-gradient(135deg, #00ff66, #00cc55); color: #0a0b10;">📊 Dashboard</a>
+        </div>
+    </nav>
 
     <!-- ========== CONTEÚDO ========== -->
     <div class="container">
@@ -435,23 +865,23 @@
         </div>
 
         <!-- SELIC -->
-        <div class="card" style="background: linear-gradient(135deg, #fef3c7, #fde68a); border-left: 6px solid #d97706;">
-            <h2 style="border-left-color: #d97706;">📈 TAXA SELIC <span class="badge-categoria">Indicador de Mercado</span></h2>
+        <div class="card" style="background: rgba(245, 158, 11, 0.05); border-left: 6px solid #f59e0b;">
+            <h2 style="border-left-color: #f59e0b;">📈 TAXA SELIC <span class="badge-categoria">Indicador de Mercado</span></h2>
             <div style="display: flex; flex-wrap: wrap; gap: 20px; align-items: center; justify-content: space-between;">
                 <div>
-                    <p style="font-size: 2.5rem; font-weight: 800; color: #92400e;" id="selicDisplayBolsa">10,75%</p>
-                    <span class="selic-indicador" id="selicIndicadorBolsa" style="padding: 4px 16px; border-radius: 30px; font-weight: 700; font-size: 0.9rem; background: #f59e0b; color: white;">Média</span>
+                    <p style="font-size: 2.5rem; font-weight: 800; color: #f59e0b; text-shadow: 0 0 20px rgba(245, 158, 11, 0.2);" id="selicDisplayBolsa">10,75%</p>
+                    <span class="selic-indicador" id="selicIndicadorBolsa" style="padding: 4px 16px; border-radius: 30px; font-weight: 700; font-size: 0.9rem; background: rgba(245, 158, 11, 0.2); color: #f59e0b; border: 1px solid #f59e0b;">Média</span>
                 </div>
                 <div style="flex: 1; min-width: 200px;">
                     <div id="selicImpactoBolsa" class="selic-impacto impacto-neutral" style="padding: 12px 16px; border-radius: 12px; font-weight: 600; font-size: 0.95rem;">⚖️ Mercado estável</div>
-                    <p style="font-size: 0.8rem; color: #6c86a3; margin-top: 8px;">
-                        💡 <strong>SELIC alta</strong> → FIIs em queda (compre barato) |
-                        <strong>SELIC baixa</strong> → FIIs em alta (venda/colha)
+                    <p style="font-size: 0.8rem; color: #8a99ad; margin-top: 8px;">
+                        💡 <strong style="color: #f59e0b;">SELIC alta</strong> → FIIs em queda (compre barato) |
+                        <strong style="color: var(--neon-green);">SELIC baixa</strong> → FIIs em alta (venda/colha)
                     </p>
                 </div>
-                <div style="text-align: center; background: white; padding: 12px 20px; border-radius: 16px;">
-                    <p style="font-size: 0.7rem; color: #6c86a3;">Estratégia</p>
-                    <p style="font-size: 1.1rem; font-weight: 700;" id="selicEstrategiaBolsa">🔍 Aguardar</p>
+                <div style="text-align: center; background: rgba(255,255,255,0.03); padding: 12px 20px; border-radius: 16px; border: 1px solid var(--border-glow);">
+                    <p style="font-size: 0.7rem; color: #8a99ad;">Estratégia</p>
+                    <p style="font-size: 1.1rem; font-weight: 700; color: #f59e0b;" id="selicEstrategiaBolsa">🔍 Aguardar</p>
                 </div>
             </div>
         </div>
@@ -467,11 +897,11 @@
                         <input type="number" id="valorPoupanca" class="input-poupanca" placeholder="Valor" step="0.01" min="0.01" value="10.00">
                     </div>
                     <button class="btn-poupanca" id="btnAplicarPoupanca">📈 Aplicar</button>
-                    <button class="btn-poupanca" id="btnResgatarPoupanca">🏧 Resgatar</button>
+                    <button class="btn-poupanca" id="btnResgatarPoupanca" style="background: linear-gradient(135deg, #ef4444, #dc2626); color: white; box-shadow: 0 0 15px rgba(239, 68, 68, 0.3);">🏧 Resgatar</button>
                 </div>
                 <div class="valor-rendimento">
                     ⚡ Rendimento de 0,6% sobre o saldo a cada 60s<br>
-                    <span style="font-size:0.7rem;">Ex: 10,00 Mumu → 10,06 Mumu</span>
+                    <span style="font-size:0.7rem; color: #8a99ad;">Ex: 10,00 Mumu → 10,06 Mumu</span>
                 </div>
             </div>
         </div>
@@ -533,16 +963,19 @@
         <footer>💡 Saldo inicial: 0,00 Mumu • Ações: proventos 60s | FIIs: 30s | ETFs: 90s | Tesouro: marcação 120s | Poupança: 0,6%/60s</footer>
 
         <!-- SUPABASE -->
-        <div class="card" style="padding: 12px 20px; margin-bottom: 20px; background: #f8fafc;">
+        <div class="card" style="padding: 12px 20px; margin-bottom: 20px; background: rgba(255,255,255,0.02);">
             <div class="botoes-supabase">
-                <span style="font-weight: 600; color: #1e3a5f; font-size: 0.85rem;">☁️ Observacoes Nao Use: Supabase:</span>
+                <span style="font-weight: 600; color: #8a99ad; font-size: 0.85rem;">☁️ Supabase:</span>
                 <button class="btn-salvar" id="btnSalvarNoSupabase">💾 Salvar Jogo</button>
                 <button class="btn-carregar" id="btnCarregarDoSupabase">📂 Carregar Jogo</button>
                 <button class="btn-limpar" id="btnLimparJogo">🗑️ Limpar Jogo</button>
-                <span id="mensagemSupabase" style="font-size: 0.7rem; color: #4a6f8f; margin-left: 8px;"></span>
+                <span id="mensagemSupabase" style="font-size: 0.7rem; color: #5d7f9e; margin-left: 8px;"></span>
             </div>
         </div>
     </div>
+
+    <!-- ========== TOAST CONTAINER ========== -->
+    <div class="toast-container" id="toastContainer"></div>
 
     <!-- ========== SCRIPT ========== -->
     <script type="importmap">
@@ -569,6 +1002,46 @@
         const BRAPI_TOKEN   = 'uFgACspaiXowFi5JF9UhUZ';
         const BRAPI_BASE    = 'https://brapi.dev/api';
         const MOEDA         = 'Mumu';
+
+        // ====================================================================
+        //  TOAST / JANELA FLUTUANTE
+        // ====================================================================
+        function mostrarToast(mensagem, tipo = 'erro', titulo = '') {
+            const container = document.getElementById('toastContainer');
+            
+            const tipos = {
+                erro: { icon: '❌', title: titulo || 'Erro' },
+                sucesso: { icon: '✅', title: titulo || 'Sucesso' },
+                atencao: { icon: '⚠️', title: titulo || 'Atenção' }
+            };
+
+            const config = tipos[tipo] || tipos.erro;
+
+            const toast = document.createElement('div');
+            toast.className = `toast ${tipo}`;
+            toast.innerHTML = `
+                <span class="toast-icon">${config.icon}</span>
+                <div class="toast-content">
+                    <div class="toast-title">${config.title}</div>
+                    <div class="toast-message">${mensagem}</div>
+                </div>
+                <button class="toast-close">✕</button>
+            `;
+
+            toast.querySelector('.toast-close').addEventListener('click', () => {
+                toast.classList.add('toast-hide');
+                setTimeout(() => toast.remove(), 400);
+            });
+
+            container.appendChild(toast);
+
+            setTimeout(() => {
+                if (toast.parentNode) {
+                    toast.classList.add('toast-hide');
+                    setTimeout(() => toast.remove(), 400);
+                }
+            }, 4000);
+        }
 
         // ====================================================================
         //  ESTADO DO JOGO
@@ -640,21 +1113,15 @@
             const historicoUl = document.getElementById("historico");
             const li = document.createElement("li");
             const horario = new Date().toLocaleTimeString('pt-BR', { hour: '2-digit', minute:'2-digit', second:'2-digit' });
-            li.innerHTML = `<span style="font-weight:500; color:#1e4663;">[${horario}]</span> ${texto}`;
+            li.innerHTML = `<span style="font-weight:500; color: var(--neon-blue);">[${horario}]</span> ${texto}`;
             if (tipo === "provento") {
                 li.classList.add("provento-item");
-                li.style.background = "#fff7e6";
-                li.style.borderLeft = "3px solid #f59e0b";
             } else if (tipo === "transferencia") {
                 li.classList.add("transferencia-item");
-                li.style.background = "#e0f2fe";
-                li.style.borderLeft = "3px solid #0ea5e9";
             } else if (tipo === "poupanca") {
                 li.classList.add("poupanca-item");
-                li.style.background = "#dcfce7";
-                li.style.borderLeft = "3px solid #10b981";
             } else {
-                li.style.borderLeft = "3px solid #2c7da0";
+                li.style.borderLeft = "3px solid var(--neon-blue)";
                 li.style.paddingLeft = "12px";
             }
             historicoUl.prepend(li);
@@ -787,11 +1254,11 @@
             const dotEl    = statusEl.querySelector('.status-dot');
             if (online) {
                 statusEl.className = 'status-item status-online';
-                textoEl.textContent = 'Online';
+                textoEl.textContent = '🌐 Net';
                 dotEl.className = 'status-dot online';
             } else {
                 statusEl.className = 'status-item status-offline';
-                textoEl.textContent = 'Offline';
+                textoEl.textContent = '🌐 Net';
                 dotEl.className = 'status-dot offline';
             }
         }
@@ -802,17 +1269,17 @@
             const dotEl    = statusEl.querySelector('.status-dot');
             if (verificandoAPI) {
                 statusEl.className = 'status-item status-checking';
-                textoEl.textContent = mensagem || 'Verificando...';
+                textoEl.textContent = '📊 API';
                 dotEl.className = 'status-dot';
                 return;
             }
             if (online) {
                 statusEl.className = 'status-item status-online';
-                textoEl.textContent = mensagem || 'Online';
+                textoEl.textContent = '📊 API';
                 dotEl.className = 'status-dot online';
             } else {
                 statusEl.className = 'status-item status-offline';
-                textoEl.textContent = mensagem || 'Offline';
+                textoEl.textContent = '📊 API';
                 dotEl.className = 'status-dot offline';
             }
         }
@@ -823,11 +1290,11 @@
             const dotEl    = statusEl.querySelector('.status-dot');
             if (online) {
                 statusEl.className = 'status-item status-online';
-                textoEl.textContent = mensagem || 'Online';
+                textoEl.textContent = '☁️ Supabase';
                 dotEl.className = 'status-dot online';
             } else {
                 statusEl.className = 'status-item status-offline';
-                textoEl.textContent = mensagem || 'Erro';
+                textoEl.textContent = '☁️ Supabase';
                 dotEl.className = 'status-dot offline';
             }
         }
@@ -838,13 +1305,13 @@
         async function verificarSupabase() {
             try {
                 const { error } = await supabase.from(TABELA).select('id').limit(1);
-                if (error) { supabaseOnline = false; atualizarStatusSupabase(false, 'Erro'); return false; }
+                if (error) { supabaseOnline = false; atualizarStatusSupabase(false); return false; }
                 supabaseOnline = true;
-                atualizarStatusSupabase(true, 'Online');
+                atualizarStatusSupabase(true);
                 return true;
             } catch (error) {
                 supabaseOnline = false;
-                atualizarStatusSupabase(false, 'Erro');
+                atualizarStatusSupabase(false);
                 return false;
             }
         }
@@ -852,21 +1319,21 @@
         async function verificarAPI() {
             if (verificandoAPI) return false;
             verificandoAPI = true;
-            atualizarStatusAPI(false, 'Verificando...');
+            atualizarStatusAPI(false);
             try {
                 const response = await fetch(`${BRAPI_BASE}/available?token=${BRAPI_TOKEN}`);
                 if (response.ok) {
                     apiOnline = true;
-                    atualizarStatusAPI(true, 'Online');
+                    atualizarStatusAPI(true);
                     return true;
                 } else {
                     apiOnline = false;
-                    atualizarStatusAPI(false, `Erro ${response.status}`);
+                    atualizarStatusAPI(false);
                     return false;
                 }
             } catch (error) {
                 apiOnline = false;
-                atualizarStatusAPI(false, 'Falha');
+                atualizarStatusAPI(false);
                 return false;
             } finally {
                 verificandoAPI = false;
@@ -933,7 +1400,7 @@
         function variarPrecosTesouro()        { variarPrecosOffline(tesouros, 50, 1200, 1.3); renderTesouro(); }
 
         // ====================================================================
-        //  FUNÇÕES DE COMPRA / VENDA
+        //  FUNÇÕES DE COMPRA / VENDA (COM TOAST)
         // ====================================================================
         window.comprarAtivo = async function(ticker) {
             const ativo = todosAtivos.find(a => a.ticker === ticker);
@@ -947,9 +1414,12 @@
                 carteira[ticker] = qtdAtual + 1;
                 precoMedioCompra[ticker] = novoPrecoMedio;
                 registrar(`✅ Comprou 1 ${ticker} por ${formatarMoeda(custo)}.`);
+                mostrarToast(`Comprou 1 ${ticker} por ${formatarMoeda(custo)}`, 'sucesso', '✅ Compra Realizada');
                 await salvarDadosNoSupabase();
                 atualizarTudo();
             } else {
+                const falta = custo - saldo;
+                mostrarToast(`Saldo insuficiente! Faltam ${formatarMoeda(falta)} para comprar ${ticker}.`, 'erro', '❌ Saldo Insuficiente');
                 registrar(`❌ Saldo insuficiente para comprar ${ticker}.`);
             }
         };
@@ -965,9 +1435,11 @@
                 carteira[ticker] = qtdAtual - 1;
                 if (carteira[ticker] === 0) delete precoMedioCompra[ticker];
                 registrar(`📉 Vendeu 1 ${ticker} por ${formatarMoeda(valorVenda)}.`);
+                mostrarToast(`Vendeu 1 ${ticker} por ${formatarMoeda(valorVenda)}`, 'sucesso', '💰 Venda Realizada');
                 await salvarDadosNoSupabase();
                 atualizarTudo();
             } else {
+                mostrarToast(`Você não possui ${ticker} para vender.`, 'atencao', '⚠️ Sem Saldo do Ativo');
                 registrar(`⚠️ Você não possui ${ticker} para vender.`);
             }
         };
@@ -978,6 +1450,7 @@
         function aplicarPoupanca() {
             let valorAplicar = getValorInput();
             if (valorAplicar <= 0) {
+                mostrarToast('Digite um valor válido para aplicar (maior que zero).', 'atencao', '⚠️ Valor Inválido');
                 registrar(`⚠️ Digite um valor válido para aplicar (maior que zero).`, "operacao");
                 return;
             }
@@ -986,9 +1459,12 @@
                 saldoPoupanca += valorAplicar;
                 saldoPoupanca = parseFloat(saldoPoupanca.toFixed(2));
                 registrar(`🏦 APLICAÇÃO POUPANÇA: ${formatarMoeda(valorAplicar)} transferidos do Saldo para a Poupança.`, "poupanca");
+                mostrarToast(`${formatarMoeda(valorAplicar)} aplicado na Poupança!`, 'sucesso', '📈 Aplicação Realizada');
                 salvarDadosNoSupabase();
                 atualizarTudo();
             } else {
+                const falta = valorAplicar - saldo;
+                mostrarToast(`Saldo insuficiente! Faltam ${formatarMoeda(falta)} para aplicar.`, 'erro', '❌ Saldo Insuficiente');
                 registrar(`❌ Saldo insuficiente para aplicar ${formatarMoeda(valorAplicar)}.`, "operacao");
             }
         }
@@ -996,6 +1472,7 @@
         function resgatarPoupanca() {
             let valorResgate = getValorInput();
             if (valorResgate <= 0) {
+                mostrarToast('Digite um valor válido para resgatar (maior que zero).', 'atencao', '⚠️ Valor Inválido');
                 registrar(`⚠️ Digite um valor válido para resgatar (maior que zero).`, "operacao");
                 return;
             }
@@ -1005,9 +1482,12 @@
                 saldo = parseFloat(saldo.toFixed(2));
                 saldoPoupanca = parseFloat(saldoPoupanca.toFixed(2));
                 registrar(`🏦 RESGATE POUPANÇA: ${formatarMoeda(valorResgate)} transferidos da Poupança para o Saldo.`, "poupanca");
+                mostrarToast(`${formatarMoeda(valorResgate)} resgatado da Poupança!`, 'sucesso', '🏧 Resgate Realizado');
                 salvarDadosNoSupabase();
                 atualizarTudo();
             } else {
+                const falta = valorResgate - saldoPoupanca;
+                mostrarToast(`Saldo na poupança insuficiente! Faltam ${formatarMoeda(falta)}.`, 'erro', '❌ Saldo Insuficiente');
                 registrar(`❌ Saldo insuficiente na poupança para resgatar ${formatarMoeda(valorResgate)}.`, "operacao");
             }
         }
@@ -1016,11 +1496,13 @@
             if (saldoPoupanca > 0) {
                 const taxa = 0.006;
                 const rendimento = saldoPoupanca * taxa;
-                const antes = saldoPoupanca;
                 saldoPoupanca = parseFloat((saldoPoupanca + rendimento).toFixed(2));
                 rendimentosPoupancaAcumulados += rendimento;
                 rendimentosPoupancaAcumulados = parseFloat(rendimentosPoupancaAcumulados.toFixed(2));
                 registrar(`🏦 POUPANÇA RENDEU 0,6%! Rendimento de ${formatarMoeda(rendimento)}.`, "poupanca");
+                if (rendimento > 0.01) {
+                    mostrarToast(`Rendimento de ${formatarMoeda(rendimento)} na Poupança!`, 'sucesso', '💰 Rendimento Creditado');
+                }
                 salvarDadosNoSupabase();
                 atualizarTudo();
             }
@@ -1049,6 +1531,9 @@
             }
             if (total > 0) {
                 registrar(`${nomeCategoria}: ${detalhes.join(' · ')} | Total: ${formatarMoeda(total)}`, "provento");
+                if (total > 0.01) {
+                    mostrarToast(`${nomeCategoria}: ${formatarMoeda(total)} em proventos recebidos!`, 'sucesso', '🎁 Proventos Creditados');
+                }
                 salvarDadosNoSupabase();
             }
             atualizarCarteira();
@@ -1061,10 +1546,12 @@
                 saldo += valor;
                 saldo = parseFloat(saldo.toFixed(2));
                 registrar(`💸 TRANSFERÊNCIA: ${formatarMoeda(valor)} em proventos foi para o Saldo.`, "transferencia");
+                mostrarToast(`${formatarMoeda(valor)} transferido para o Saldo!`, 'sucesso', '💰 Proventos Transferidos');
                 proventosPendentes = 0;
                 salvarDadosNoSupabase();
                 atualizarTudo();
             } else {
+                mostrarToast('Nenhum provento acumulado para transferir.', 'atencao', '⚠️ Sem Proventos');
                 registrar(`⚠️ Nenhum provento acumulado.`, "operacao");
             }
         }
@@ -1086,10 +1573,10 @@
                 const { variacao, dyAnual, rentabilidade } = calcularMetricas(a);
                 const variacaoClass = variacao >= 0 ? 'indicator-green' : 'indicator-red';
                 html += `<tr>
-                    <td style="font-weight:600;">${a.ticker}</td>
-                    <td style="color:#0b5e42;">${a.preco.toFixed(2)}</td>
+                    <td style="font-weight:600; color: var(--neon-blue);">${a.ticker}</td>
+                    <td style="color: var(--neon-green);">${a.preco.toFixed(2)}</td>
                     <td><span class="metric-cell ${rentabilidade >= 0 ? 'indicator-green' : 'indicator-red'}">${rentabilidade.toFixed(2)}%</span></td>
-                    <td><span class="metric-cell">${dyAnual.toFixed(2)}%</span></td>
+                    <td><span class="metric-cell" style="color: #f59e0b;">${dyAnual.toFixed(2)}%</span></td>
                     <td><span class="metric-cell ${variacaoClass}">${variacao.toFixed(2)}%</span></td>
                     <td><button class="buy" onclick="comprarAtivo('${a.ticker}')">Comprar 1</button></td>
                     <td><button class="sell" onclick="venderAtivo('${a.ticker}')">Vender 1</button></td>
@@ -1104,10 +1591,10 @@
                 const { variacao, dyAnual, rentabilidade } = calcularMetricas(a);
                 const variacaoClass = variacao >= 0 ? 'indicator-green' : 'indicator-red';
                 html += `<tr>
-                    <td style="font-weight:600;">${a.ticker}</td>
-                    <td style="color:#0b5e42;">${a.preco.toFixed(2)}</td>
+                    <td style="font-weight:600; color: var(--neon-blue);">${a.ticker}</td>
+                    <td style="color: var(--neon-green);">${a.preco.toFixed(2)}</td>
                     <td><span class="metric-cell ${rentabilidade >= 0 ? 'indicator-green' : 'indicator-red'}">${rentabilidade.toFixed(2)}%</span></td>
-                    <td><span class="metric-cell">${dyAnual.toFixed(2)}%</span></td>
+                    <td><span class="metric-cell" style="color: #f59e0b;">${dyAnual.toFixed(2)}%</span></td>
                     <td><span class="metric-cell ${variacaoClass}">${variacao.toFixed(2)}%</span></td>
                     <td><button class="buy" onclick="comprarAtivo('${a.ticker}')">Comprar 1</button></td>
                     <td><button class="sell" onclick="venderAtivo('${a.ticker}')">Vender 1</button></td>
@@ -1122,10 +1609,10 @@
                 const { variacao, dyAnual, rentabilidade } = calcularMetricas(a);
                 const variacaoClass = variacao >= 0 ? 'indicator-green' : 'indicator-red';
                 html += `<tr>
-                    <td style="font-weight:600;">${a.ticker}</td>
-                    <td style="color:#0b5e42;">${a.preco.toFixed(2)}</td>
+                    <td style="font-weight:600; color: var(--neon-blue);">${a.ticker}</td>
+                    <td style="color: var(--neon-green);">${a.preco.toFixed(2)}</td>
                     <td><span class="metric-cell ${rentabilidade >= 0 ? 'indicator-green' : 'indicator-red'}">${rentabilidade.toFixed(2)}%</span></td>
-                    <td><span class="metric-cell">${dyAnual.toFixed(2)}%</span></td>
+                    <td><span class="metric-cell" style="color: #f59e0b;">${dyAnual.toFixed(2)}%</span></td>
                     <td><span class="metric-cell ${variacaoClass}">${variacao.toFixed(2)}%</span></td>
                     <td><button class="buy" onclick="comprarAtivo('${a.ticker}')">Comprar 1</button></td>
                     <td><button class="sell" onclick="venderAtivo('${a.ticker}')">Vender 1</button></td>
@@ -1140,9 +1627,9 @@
                 const { variacao, rentabilidade } = calcularMetricas(a);
                 const variacaoClass = variacao >= 0 ? 'indicator-green' : 'indicator-red';
                 html += `<tr>
-                    <td style="font-weight:600;">${a.ticker}</td>
-                    <td>${a.vencimento}</td>
-                    <td style="color:#b45309;">${a.preco.toFixed(2)}</td>
+                    <td style="font-weight:600; color: var(--neon-blue);">${a.ticker}</td>
+                    <td style="color: #8a99ad;">${a.vencimento}</td>
+                    <td style="color: #f59e0b;">${a.preco.toFixed(2)}</td>
                     <td><span class="metric-cell ${rentabilidade >= 0 ? 'indicator-green' : 'indicator-red'}">${rentabilidade.toFixed(2)}%</span></td>
                     <td><span class="metric-cell ${variacaoClass}">${variacao.toFixed(2)}%</span></td>
                     <td><button class="buy" onclick="comprarAtivo('${a.ticker}')">Comprar 1</button></td>
@@ -1160,12 +1647,12 @@
             if (saldoPoupanca > 0) {
                 const rendimentoPerc = (saldoPoupanca - rendimentosPoupancaAcumulados) > 0 ?
                     ((rendimentosPoupancaAcumulados / (saldoPoupanca - rendimentosPoupancaAcumulados)) * 100) : 0;
-                html += `<tr style="background:#f0fdf4;">
-                    <td style="font-weight:700; color:#0d6b63;">🏦 POUPANÇA</td>
+                html += `<tr style="background: rgba(0, 255, 102, 0.05);">
+                    <td style="font-weight:700; color: var(--neon-green);">🏦 POUPANÇA</td>
                     <td>${saldoPoupanca.toFixed(2)}</td>
                     <td>---</td>
-                    <td style="color:#0a5c3e;">${formatarMoeda(saldoPoupanca)}</td>
-                    <td style="color:#b45309;">${formatarMoeda(rendimentosPoupancaAcumulados)}</td>
+                    <td style="color: var(--neon-green);">${formatarMoeda(saldoPoupanca)}</td>
+                    <td style="color: #f59e0b;">${formatarMoeda(rendimentosPoupancaAcumulados)}</td>
                     <td><span class="indicator-green">${rendimentoPerc.toFixed(2)}%</span></td>
                     <td>---</td>
                 </tr>`;
@@ -1181,11 +1668,11 @@
                     const rentabilidadeAtivo = precoMed > 0 ? ((ativo.preco - precoMed) / precoMed) * 100 : 0;
                     const rentabilidadeClass = rentabilidadeAtivo >= 0 ? 'indicator-green' : 'indicator-red';
                     html += `<tr>
-                        <td style="font-weight:600;">${ticker}</td>
+                        <td style="font-weight:600; color: var(--neon-blue);">${ticker}</td>
                         <td>${qtd}</td>
                         <td>${formatarMoeda(precoMed)}</td>
-                        <td style="color:#2b7a4b;">${formatarMoeda(valorAtualTotal)}</td>
-                        <td style="color:#b45f06;">${formatarMoeda(dividendosAteAgora)}</td>
+                        <td style="color: var(--neon-green);">${formatarMoeda(valorAtualTotal)}</td>
+                        <td style="color: #f59e0b;">${formatarMoeda(dividendosAteAgora)}</td>
                         <td><span class="metric-cell ${rentabilidadeClass}">${rentabilidadeAtivo.toFixed(2)}%</span></td>
                         <td>
                             <button class="btn-carteira-comprar" onclick="comprarAtivo('${ticker}')">+1 Compra</button>
@@ -1220,6 +1707,9 @@
             document.getElementById("investido").innerHTML = `${totalCustoInvestido.toFixed(2)} <span class="moeda-simbolo">${MOEDA}</span>`;
             document.getElementById("proventosAcumulados").innerHTML = `${proventosPendentes.toFixed(2)} <span class="moeda-simbolo">${MOEDA}</span>`;
             document.getElementById("saldoPoupanca").innerHTML = `${saldoPoupanca.toFixed(2)} <span class="moeda-simbolo">${MOEDA}</span>`;
+            
+            // Atualiza o saldo no perfil do usuário
+            document.getElementById("userSaldoDisplay").textContent = `${saldo.toFixed(2)} ${MOEDA}`;
         }
 
         function atualizarTudo() {
@@ -1254,6 +1744,7 @@
 
             document.getElementById("historico").innerHTML = "";
             registrar('🔄 Jogo resetado!');
+            mostrarToast('Jogo resetado com sucesso!', 'sucesso', '🔄 Reset');
             salvarDadosNoSupabase();
             atualizarTudo();
         }
@@ -1322,7 +1813,6 @@
 
         async function carregarSelicDoSupabaseBolsa() {
             try {
-                // Tenta da tabela Geral
                 const { data, error } = await supabase
                     .from(TABELA)
                     .select('selic')
@@ -1330,7 +1820,6 @@
                     .single();
 
                 if (error) {
-                    // Tenta da tabela Configuracoes
                     const { data: data2, error: error2 } = await supabase
                         .from('Configuracoes')
                         .select('selic')
@@ -1350,7 +1839,6 @@
         // ====================================================================
         //  INICIALIZAÇÃO
         // ====================================================================
-        // Verifica login
         const usuarioLogado = localStorage.getItem('usuario_logado');
         if (!usuarioLogado) {
             window.location.href = 'login.html';
@@ -1358,18 +1846,17 @@
         let usuario = null;
         try {
             usuario = JSON.parse(usuarioLogado);
-            document.getElementById('usuarioLogado').textContent = `👤 ${usuario.nome || usuario.login}`;
+            const avatar = document.getElementById('userAvatar');
+            avatar.textContent = usuario.nome ? usuario.nome.charAt(0).toUpperCase() : '👤';
+            document.getElementById('usuarioLogado').textContent = usuario.nome || usuario.login;
         } catch (e) {
             window.location.href = 'login.html';
         }
 
-        // Inicializa estruturas
         initEstruturas();
 
-        // Carrega dados do Supabase
         await carregarDadosDoSupabase();
 
-        // Se não carregou, reseta preços
         if (!dadosCarregados) {
             const precosAcoes = [34.50, 58.90, 31.20];
             acoes.forEach((a, idx) => a.preco = precosAcoes[idx]);
@@ -1382,7 +1869,6 @@
             tesouros[2].preco = 850.00;
         }
 
-        // Prepara UI
         document.getElementById("valorPoupanca").value = "10.00";
         atualizarStatusInternet(navigator.onLine);
         await verificarSupabase();
@@ -1397,7 +1883,6 @@
         registrar("🏦 Poupança: rende 0,6% a cada 60s. Boa sorte!");
         if (supabaseOnline) registrar("☁️ Supabase disponível para salvar seu progresso!");
 
-        // Carrega SELIC
         const selicSalva = await carregarSelicDoSupabaseBolsa();
         if (selicSalva !== null && selicSalva !== undefined) {
             selicAtual = selicSalva;
@@ -1420,8 +1905,10 @@
             if (sucesso) {
                 mensagemEl.textContent = '✅ Salvo!';
                 registrar('💾 Dados salvos manualmente!', 'operacao');
+                mostrarToast('Jogo salvo com sucesso!', 'sucesso', '💾 Salvo');
             } else {
                 mensagemEl.textContent = '❌ Erro ao salvar!';
+                mostrarToast('Erro ao salvar o jogo.', 'erro', '❌ Erro');
             }
             setTimeout(() => { mensagemEl.textContent = ''; }, 3000);
         });
@@ -1433,9 +1920,11 @@
             if (sucesso) {
                 mensagemEl.textContent = '✅ Carregado!';
                 registrar('📂 Dados carregados manualmente!', 'operacao');
+                mostrarToast('Jogo carregado com sucesso!', 'sucesso', '📂 Carregado');
                 atualizarTudo();
             } else {
                 mensagemEl.textContent = '❌ Erro ao carregar!';
+                mostrarToast('Erro ao carregar o jogo.', 'erro', '❌ Erro');
             }
             setTimeout(() => { mensagemEl.textContent = ''; }, 3000);
         });
@@ -1451,7 +1940,7 @@
         window.addEventListener('offline', () => {
             atualizarStatusInternet(false);
             apiOnline = false;
-            atualizarStatusAPI(false, 'Offline');
+            atualizarStatusAPI(false);
             registrar('📡 Modo offline ativado.');
         });
 

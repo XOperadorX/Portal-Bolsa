@@ -1,57 +1,573 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="pt-BR">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Dashboard - BAEP Investimentos</title>
-</head>
+    <title>Dashboard Gamer - BAEP Investimentos</title>
+    <!-- Fonte Gamer Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500;700;900&family=Rajdhani:wght@600;700&display=swap" rel="stylesheet">
 
-
+    <!-- Biblioteca Supabase -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
     <style>
+        :root {
+            --bg-dark: #0a0b10;
+            --card-bg: #121520;
+            --neon-blue: #00f0ff;
+            --neon-purple: #7000ff;
+            --neon-green: #00ff66;
+            --text-color: #f0f4f8;
+        }
 
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Rajdhani', sans-serif;
+        }
+
+        body {
+            background-color: var(--bg-dark);
+            color: var(--text-color);
+            background-image: 
+                radial-gradient(circle at 15% 20%, rgba(112, 0, 255, 0.15) 0%, transparent 40%),
+                radial-gradient(circle at 85% 80%, rgba(0, 240, 255, 0.15) 0%, transparent 40%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        /* --- BARRA DE NAVEGAÇÃO SUPERIOR --- */
+        .nav-bar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: rgba(18, 21, 32, 0.8);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(0, 240, 255, 0.2);
+            padding: 12px 24px;
+            border-radius: 16px;
+            margin-bottom: 30px;
+            box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+
+        .nav-links {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            flex-wrap: wrap;
+        }
+
+        .nav-links a {
+            color: #a0aec0;
+            text-decoration: none;
+            font-weight: 700;
+            font-size: 1.1rem;
+            padding: 8px 16px;
+            border-radius: 8px;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .nav-links a:hover, .nav-links a.active {
+            color: #fff;
+            background: rgba(0, 240, 255, 0.15);
+            border: 1px solid var(--neon-blue);
+            box-shadow: 0 0 10px rgba(0, 240, 255, 0.3);
+        }
+
+        /* Estilo para o perfil com saldo e nick */
+        .user-profile {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            background: rgba(0, 240, 255, 0.08);
+            padding: 6px 16px 6px 12px;
+            border-radius: 40px;
+            border: 1px solid rgba(0, 240, 255, 0.2);
+            color: #fff;
+            font-weight: 600;
+            font-size: 0.95rem;
+            transition: all 0.3s;
+            cursor: default;
+        }
+
+        .user-profile:hover {
+            background: rgba(0, 240, 255, 0.15);
+            border-color: var(--neon-blue);
+            box-shadow: 0 0 15px rgba(0, 240, 255, 0.2);
+        }
+
+        .user-avatar {
+            background: linear-gradient(135deg, var(--neon-blue), var(--neon-purple));
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.2rem;
+            font-weight: bold;
+            box-shadow: 0 0 10px rgba(0, 240, 255, 0.3);
+        }
+
+        .user-info {
+            display: flex;
+            flex-direction: column;
+            line-height: 1.2;
+        }
+
+        .user-nick {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 0.9rem;
+            letter-spacing: 0.5px;
+            color: #fff;
+        }
+
+        .user-balance {
+            font-size: 0.8rem;
+            color: var(--neon-green);
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+
+        .user-balance::before {
+            content: "💰";
+            font-size: 0.7rem;
+        }
+
+        .nav-buttons {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+
+        /* --- BOTÕES ORIGINAIS ESTILIZADOS --- */
+        .btn-bolsa {
+            background: linear-gradient(135deg, #00f0ff, #7000ff);
+            color: white;
+            border: none;
+            padding: 8px 18px;
+            border-radius: 40px;
+            font-weight: bold;
+            font-size: 0.9rem;
+            cursor: pointer;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            box-shadow: 0 0 12px rgba(0, 240, 255, 0.4);
+        }
+
+        .btn-bolsa:hover {
+            transform: translateY(-2px) scale(1.02);
+            box-shadow: 0 0 20px rgba(0, 240, 255, 0.8);
+        }
 
         .btn-sair {
             background: linear-gradient(135deg, #ef4444, #dc2626);
             color: white;
             border: none;
-            padding: 6px 16px;
+            padding: 8px 18px;
             border-radius: 40px;
             font-weight: bold;
-            font-size: 0.7rem;
+            font-size: 0.9rem;
             cursor: pointer;
             transition: all 0.2s;
+            box-shadow: 0 0 10px rgba(239, 68, 68, 0.3);
         }
+
         .btn-sair:hover {
             transform: scale(0.96);
             background: linear-gradient(135deg, #dc2626, #b91c1c);
+            box-shadow: 0 0 15px rgba(220, 38, 38, 0.6);
         }
 
-                    .btn-salvar, .btn-carregar, .btn-limpar, .btn-sair {
-                font-size: 0.6rem;
-                padding: 4px 12px;
+        /* --- DASHBOARD & GAME GRID --- */
+        .dashboard-header {
+            text-align: center;
+            margin-bottom: 35px;
+        }
+
+        .dashboard-header h1 {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 2.5rem;
+            letter-spacing: 2px;
+            color: #fff;
+            text-transform: uppercase;
+            text-shadow: 0 0 10px var(--neon-blue), 0 0 20px var(--neon-purple);
+        }
+
+        .dashboard-header p {
+            color: #8a99ad;
+            font-size: 1.1rem;
+            margin-top: 5px;
+        }
+
+        .games-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: 20px;
+            max-width: 1300px;
+            margin: 0 auto;
+        }
+
+        /* --- CARDS/BOTÕES DOS JOGOS --- */
+        .game-card {
+            background: var(--card-bg);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            border-radius: 16px;
+            padding: 25px 20px;
+            text-decoration: none;
+            color: var(--text-color);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+            transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            cursor: pointer;
+        }
+
+        .game-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.1), transparent);
+            transition: 0.5s;
+        }
+
+        .game-card:hover::before {
+            left: 100%;
+        }
+
+        .game-card:hover {
+            transform: translateY(-8px) scale(1.03);
+            border-color: var(--neon-blue);
+            box-shadow: 0 10px 25px -5px rgba(0, 240, 255, 0.4);
+            background: #181d2e;
+        }
+
+        .game-icon {
+            font-size: 3rem;
+            margin-bottom: 12px;
+            filter: drop-shadow(0 0 8px rgba(255, 255, 255, 0.3));
+            transition: transform 0.3s;
+        }
+
+        .game-card:hover .game-icon {
+            transform: scale(1.2) rotate(5deg);
+        }
+
+        .game-title {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 1.1rem;
+            font-weight: 700;
+            letter-spacing: 1px;
+            color: #fff;
+        }
+
+        .game-badge {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            background: var(--neon-purple);
+            color: #fff;
+            font-size: 0.65rem;
+            font-weight: bold;
+            padding: 3px 8px;
+            border-radius: 20px;
+            text-transform: uppercase;
+            box-shadow: 0 0 8px var(--neon-purple);
+        }
+
+        .game-card.hot { border-color: rgba(255, 77, 77, 0.4); }
+        .game-card.hot:hover { border-color: #ff4d4d; box-shadow: 0 10px 25px -5px rgba(255, 77, 77, 0.5); }
+        .game-card.hot .game-badge { background: #ff4d4d; box-shadow: 0 0 8px #ff4d4d; }
+
+        /* Responsivo */
+        @media (max-width: 700px) {
+            .nav-bar {
+                flex-direction: column;
+                align-items: stretch;
             }
-
+            .nav-links {
+                justify-content: center;
+            }
+            .nav-buttons {
+                justify-content: center;
+            }
+            .user-profile {
+                padding: 4px 12px 4px 8px;
+            }
+            .user-info .user-nick {
+                font-size: 0.8rem;
+            }
+        }
     </style>
-
+</head>
 <body>
 
-
+    <!-- BARRA DE NAVEGAÇÃO -->
     <nav class="nav-bar">
-    <div class="nav-links">
-        <a href="dashboard.html">📊 Dashboard</a>
-        <a href="bolsa.html">📈 Bolsa</a>
-        <a href="planta.html" class="active">🌱 Milharal</a>
-        <a href="admin.html">👑 Admin</a>
+        <div class="nav-links">
+            <!-- Bloco com saldo e nick do usuário logado -->
+            <div class="user-profile" id="userProfile">
+                <div class="user-avatar" id="userAvatar">👤</div>
+                <div class="user-info">
+                    <span class="user-nick" id="nome">Carregando...</span>
+                    <span class="user-balance" id="saldo">R$ 0,00</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="nav-buttons"> 
+            <button class="btn-bolsa" onclick="window.location.href='admin.html'">
+                <span class="icone">👑</span> Admin
+            </button>
+            <button class="btn-sair" id="btnSair">🚪 Sair</button>
+        </div>
+    </nav>
+
+    <!-- CABEÇALHO DASHBOARD GAMER -->
+    <div class="dashboard-header">
+        <h1>Central de Jogos</h1>
+        <p>Escolha uma arena e comece a jogar agora mesmo!</p>
     </div>
-</nav>
-    <!-- ===== NOVA ÁREA DE NAVEGAÇÃO COM BOTÃO BOLSA ===== -->
-    <div class="nav-buttons">
-        <button class="btn-bolsa" onclick="window.location.href='bolsa.html'">
-            <span class="icone">📈</span> Bolsa
-        </button>
-        <button class="btn-sair" id="btnSair">🚪 Sair</button>
+
+    <!-- GRADE COM OS 10 BOTÕES DE LINK DE JOGOS -->
+    <main class="games-grid">
+        
+        <!-- JOGO 1 -->
+        <a href="planta.html" class="game-card hot">
+            <span class="game-badge">Milharal</span> 
+            <div class="game-icon">🌱</div>
+            <div class="game-title">Fazendinha</div>
+        </a>
+
+        <!-- JOGO 2 -->
+        <a href="bolsa.html" class="game-card">
+            <span class="game-badge">Bolsa</span> 
+            <div class="game-icon">📈</div>
+            <div class="game-title">Investimento Simulator</div>
+        </a>
+
+        <!-- JOGO 3 -->
+        <a href="jogo3.html" class="game-card">
+            <span class="game-badge">NOVO</span>
+            <div class="game-icon">🚀</div>
+            <div class="game-title">Space Miner</div>
+        </a>
+
+        <!-- JOGO 4 -->
+        <a href="jogo4.html" class="game-card">
+            <div class="game-icon">⚔️</div>
+            <div class="game-title">Arena RPG</div>
+        </a>
+
+        <!-- JOGO 5 -->
+        <a href="jogo5.html" class="game-card">
+            <div class="game-icon">🏎️</div>
+            <div class="game-title">Cyber Racing</div>
+        </a>
+
+        <!-- JOGO 6 -->
+        <a href="jogo6.html" class="game-card">
+            <div class="game-icon">🎯</div>
+            <div class="game-title">Target Master</div>
+        </a>
+
+        <!-- JOGO 7 -->
+        <a href="jogo7.html" class="game-card">
+            <div class="game-icon">🃏</div>
+            <div class="game-title">Poker Club</div>
+        </a>
+
+        <!-- JOGO 8 -->
+        <a href="jogo8.html" class="game-card">
+            <div class="game-icon">🏰</div>
+            <div class="game-title">Kingdom Defense</div>
+        </a>
+
+        <!-- JOGO 9 -->
+        <a href="jogo9.html" class="game-card">
+            <span class="game-badge">TOP</span>
+            <div class="game-icon">🏴‍☠️</div>
+            <div class="game-title">Pirate Bay</div>
+        </a>
+
+        <!-- JOGO 10 -->
+        <a href="jogo10.html" class="game-card">
+            <div class="game-icon">⚡</div>
+            <div class="game-title">Wheel of Fortune</div>
+        </a>
+
+    </main>
+
+    <script>
+        // ==================== CONFIGURAÇÕES SUPABASE ====================
+        const SUPABASE_URL = 'https://xrcxvizzdumcxbylmkvn.supabase.co';
+        const SUPABASE_KEY = 'sb_publishable_E-g3G3wW4EySbCsXLXp8KQ_FnmERMcD';
+        const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+        const TABELA = 'Geral';
+
+        // ============================================================
+        // REFERÊNCIAS DOS ELEMENTOS
+        // ============================================================
+        const nomeEl = document.getElementById('nome');
+        const saldoEl = document.getElementById('saldo');
+        const userAvatarEl = document.getElementById('userAvatar');
+
+        // ============================================================
+        // FUNÇÃO PARA CARREGAR DADOS DO USUÁRIO LOGADO
+        // ============================================================
+        async function loadUserData() {
+            try {
+                console.log('🔍 Carregando dados do usuário...');
+                
+                // 1. Obtém a sessão atual
+                const { data: { session }, error: sessionError } = await supabase.auth.getSession();
+                
+                if (sessionError) {
+                    console.error('❌ Erro ao obter sessão:', sessionError);
+                    setFallbackUser();
+                    return;
+                }
+
+                if (!session) {
+                    console.warn('⚠️ Nenhum usuário logado.');
+                    setFallbackUser();
+                    return;
+                }
+
+                // Pega o email do usuário logado
+                const userEmail = session.user.email;
+                console.log('✅ Usuário logado:', userEmail);
+                
+                if (!userEmail) {
+                    console.error('❌ Email não encontrado na sessão');
+                    setFallbackUser();
+                    return;
+                }
+
+                // 2. Busca os dados do perfil na tabela 'Geral' usando o campo 'login'
+                console.log('📊 Buscando dados na tabela:', TABELA, 'com login:', userEmail);
+                const { data: profile, error: profileError } = await supabase
+                    .from(TABELA)
+                    .select('*')
+                    .eq('login', userEmail)
+                    .single();
+
+                if (profileError) {
+                    console.error('❌ Erro ao buscar perfil:', profileError);
+                    console.log('💡 Usando fallback com dados do email...');
+                    
+                    // Fallback: usa dados do email
+                    const nick = userEmail.split('@')[0] || 'Usuário';
+                    nomeEl.textContent = nick;
+                    saldoEl.textContent = 'R$ 0,00';
+                    userAvatarEl.textContent = nick.charAt(0).toUpperCase();
+                    return;
+                }
+
+                // 3. Atualiza a interface com os dados do perfil
+                if (profile) {
+                    console.log('✅ Perfil encontrado:', profile);
+                    
+                    // NICK (usa o campo 'nome' ou 'login' ou parte do email)
+                    const nick = profile.nome || profile.login || userEmail.split('@')[0] || 'Gamer';
+                    nomeEl.textContent = nick;
+
+                    // SALDO (formatação em moeda brasileira)
+                    const balance = profile.saldo !== undefined && profile.saldo !== null ? profile.saldo : 0;
+                    saldoEl.textContent = new Intl.NumberFormat('pt-BR', {
+                        style: 'currency',
+                        currency: 'BRL'
+                    }).format(balance);
+
+                    // AVATAR (inicial do nick)
+                    userAvatarEl.textContent = nick.charAt(0).toUpperCase();
+                } else {
+                    console.warn('⚠️ Nenhum perfil encontrado para o usuário');
+                    setFallbackUser();
+                }
+
+            } catch (error) {
+                console.error('❌ Erro geral ao carregar perfil:', error);
+                setFallbackUser();
+            }
+        }
+
+        // ============================================================
+        // FUNÇÃO DE FALLBACK (CASO NÃO HAJA DADOS)
+        // ============================================================
+        function setFallbackUser() {
+            nomeEl.textContent = 'Visitante';
+            saldoEl.textContent = 'R$ 0,00';
+            userAvatarEl.textContent = '👤';
+        }
+
+        // ============================================================
+        // FUNÇÃO PARA VERIFICAR MUDANÇAS NA AUTENTICAÇÃO
+        // ============================================================
+        function setupAuthListener() {
+            supabase.auth.onAuthStateChange((event, session) => {
+                console.log('🔄 Evento de autenticação:', event);
+                if (event === 'SIGNED_IN' || event === 'TOKEN_REFRESHED') {
+                    console.log('✅ Usuário autenticado, recarregando dados...');
+                    loadUserData();
+                } else if (event === 'SIGNED_OUT') {
+                    console.log('🚪 Usuário deslogado');
+                    setFallbackUser();
+                }
+            });
+        }
+
+        // ============================================================
+        // BOTÃO SAIR
+        // ============================================================
+        document.getElementById('btnSair').addEventListener('click', async function() {
+            try {
+                const { error } = await supabase.auth.signOut();
+                if (error) {
+                    console.error('❌ Erro ao sair:', error);
+                    alert('Erro ao sair. Tente novamente.');
+                } else {
+                    console.log('✅ Usuário deslogado com sucesso');
+                    window.location.href = 'login.html';
+                }
+            } catch (e) {
+                console.error('❌ Erro ao sair:', e);
+                alert('Erro ao sair.');
+            }
+        });
+
+        // ============================================================
+        // INICIALIZAÇÃO
+        // ============================================================
+        document.addEventListener('DOMContentLoaded', function() {
+            console.log('🚀 Página carregada, inicializando...');
+            
+            // Configura listener para mudanças de autenticação
+            setupAuthListener();
+            
+            // Carrega os dados do usuário
+            setTimeout(() => {
+                loadUserData();
+            }, 500);
+        });
+    </script>
+
 </body>
 </html>
-
-
