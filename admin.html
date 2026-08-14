@@ -685,136 +685,147 @@
     }
 
     // ==================== FUNÇÕES SELIC ====================
-    function atualizarDisplaySelic(valor) {
-        const display = document.getElementById('selicDisplay');
-        const indicador = document.getElementById('selicIndicador');
-        const impactoTexto = document.getElementById('selicImpactoTexto');
-        const impactoDetalhe = document.getElementById('selicImpactoDetalhe');
-        const estrategia = document.getElementById('selicEstrategia');
-        const estrategiaDetalhe = document.getElementById('selicEstrategiaDetalhe');
+// ==================== FUNÇÕES SELIC ====================
+function atualizarDisplaySelic(valor) {
+    const display = document.getElementById('selicDisplay');
+    const indicador = document.getElementById('selicIndicador');
+    const impactoTexto = document.getElementById('selicImpactoTexto');
+    const impactoDetalhe = document.getElementById('selicImpactoDetalhe');
+    const estrategia = document.getElementById('selicEstrategia');
+    const estrategiaDetalhe = document.getElementById('selicEstrategiaDetalhe');
 
-        display.textContent = `${valor.toFixed(2)}%`;
+    display.textContent = `${valor.toFixed(2)}%`;
 
-        // Classifica SELIC
-        let classificacao = 'Média';
-        let classe = 'selic-media';
-        let impacto = '⚖️ Impacto Neutro';
-        let impactoClasse = 'impacto-neutral';
-        let detalhe = 'Mercado estável, sem grandes movimentos.';
-        let estrategiaTexto = '🔍 Aguardar';
-        let estrategiaDetalheTexto = 'Analise o mercado antes de agir.';
+    // Classifica SELIC
+    let classificacao = 'Média';
+    let classe = 'selic-media';
+    let impacto = '⚖️ Impacto Neutro';
+    let impactoClasse = 'impacto-neutral';
+    let detalhe = 'Mercado estável, sem grandes movimentos.';
+    let estrategiaTexto = '🔍 Aguardar';
+    let estrategiaDetalheTexto = 'Analise o mercado antes de agir.';
 
-        if (valor >= 13.0) {
-            classificacao = 'ALTA';
-            classe = 'selic-alta';
-            impacto = '📉 FIIs em QUEDA';
-            impactoClasse = 'impacto-compra';
-            detalhe = 'SELIC alta → FIIs caem. Ótimo momento para COMPRAR cotas baratas!';
-            estrategiaTexto = '🛒 COMPRAR FIIs';
-            estrategiaDetalheTexto = 'Aproveite as cotas descontadas para acumular posições.';
-        } else if (valor >= 10.5) {
-            classificacao = 'Média';
-            classe = 'selic-media';
-            impacto = '⚖️ Impacto Neutro';
-            impactoClasse = 'impacto-neutral';
-            detalhe = 'SELIC moderada. Mercado sem grandes oportunidades.';
-            estrategiaTexto = '🔍 Observar';
-            estrategiaDetalheTexto = 'Acompanhe os movimentos do mercado.';
-        } else if (valor >= 8.0) {
-            classificacao = 'Média-Baixa';
-            classe = 'selic-media';
-            impacto = '📈 FIIs em SUBIDA';
-            impactoClasse = 'impacto-venda';
-            detalhe = 'SELIC baixa → FIIs sobem. Momento de COLHER lucros!';
-            estrategiaTexto = '💰 VENDER FIIs';
-            estrategiaDetalheTexto = 'Aproveite a alta para realizar lucros e proteger o capital.';
+    if (valor >= 13.0) {
+        classificacao = 'ALTA';
+        classe = 'selic-alta';
+        impacto = '📉 FIIs em QUEDA';
+        impactoClasse = 'impacto-compra';
+        detalhe = 'SELIC alta → FIIs caem. Ótimo momento para COMPRAR cotas baratas!';
+        estrategiaTexto = '🛒 COMPRAR FIIs';
+        estrategiaDetalheTexto = 'Aproveite as cotas descontadas para acumular posições.';
+    } else if (valor >= 10.5) {
+        classificacao = 'Média';
+        classe = 'selic-media';
+        impacto = '⚖️ Impacto Neutro';
+        impactoClasse = 'impacto-neutral';
+        detalhe = 'SELIC moderada. Mercado sem grandes oportunidades.';
+        estrategiaTexto = '🔍 Observar';
+        estrategiaDetalheTexto = 'Acompanhe os movimentos do mercado.';
+    } else if (valor >= 8.0) {
+        classificacao = 'Média-Baixa';
+        classe = 'selic-media';
+        impacto = '📈 FIIs em SUBIDA';
+        impactoClasse = 'impacto-venda';
+        detalhe = 'SELIC baixa → FIIs sobem. Momento de COLHER lucros!';
+        estrategiaTexto = '💰 VENDER FIIs';
+        estrategiaDetalheTexto = 'Aproveite a alta para realizar lucros e proteger o capital.';
+    } else {
+        classificacao = 'BAIXA';
+        classe = 'selic-baixa';
+        impacto = '🚀 FIIs em ALTA';
+        impactoClasse = 'impacto-venda';
+        detalhe = 'SELIC muito baixa → FIIs valorizados. Hora de VENDER e colher!';
+        estrategiaTexto = '💸 COLHER LUCROS';
+        estrategiaDetalheTexto = 'Mercado aquecido, momento de vender posições.';
+    }
+
+    indicador.textContent = classificacao;
+    indicador.className = `selic-indicador ${classe}`;
+    impactoTexto.textContent = impacto;
+    impactoDetalhe.textContent = detalhe;
+    impactoDetalhe.className = `selic-impacto ${impactoClasse}`;
+    estrategia.textContent = estrategiaTexto;
+    estrategiaDetalhe.textContent = estrategiaDetalheTexto;
+}
+
+async function salvarSelicNoSupabase(valor) {
+    try {
+        // Primeiro tenta atualizar a tabela Geral (configuração global)
+        // Usamos ID = 1 como configuração global
+        const { data: existingData, error: checkError } = await supabase
+            .from(TABELA)
+            .select('id')
+            .eq('id', 1)
+            .single();
+
+        if (checkError && checkError.code === 'PGRST116') {
+            // Não existe registro com ID 1, criar
+            const { error: insertError } = await supabase
+                .from(TABELA)
+                .insert({ id: 1, selic: valor });
+
+            if (insertError) {
+                console.error('Erro ao criar registro SELIC:', insertError);
+                return false;
+            }
         } else {
-            classificacao = 'BAIXA';
-            classe = 'selic-baixa';
-            impacto = '🚀 FIIs em ALTA';
-            impactoClasse = 'impacto-venda';
-            detalhe = 'SELIC muito baixa → FIIs valorizados. Hora de VENDER e colher!';
-            estrategiaTexto = '💸 COLHER LUCROS';
-            estrategiaDetalheTexto = 'Mercado aquecido, momento de vender posições.';
+            // Atualizar registro existente
+            const { error: updateError } = await supabase
+                .from(TABELA)
+                .update({ selic: valor, updated_at: new Date().toISOString() })
+                .eq('id', 1);
+
+            if (updateError) {
+                console.error('Erro ao atualizar SELIC:', updateError);
+                return false;
+            }
         }
 
-        indicador.textContent = classificacao;
-        indicador.className = `selic-indicador ${classe}`;
-        impactoTexto.textContent = impacto;
-        impactoDetalhe.textContent = detalhe;
-        impactoDetalhe.className = `selic-impacto ${impactoClasse}`;
-        estrategia.textContent = estrategiaTexto;
-        estrategiaDetalhe.textContent = estrategiaDetalheTexto;
+        return true;
+    } catch (error) {
+        console.error('Erro ao salvar SELIC:', error);
+        return false;
     }
+}
 
-    async function salvarSelicNoSupabase(valor) {
-        try {
-            // Salva em uma tabela separada ou em uma coluna específica
-            // Vamos usar a tabela 'Configuracoes' ou criar uma coluna 'selic' na tabela 'Geral'
-            const { error } = await supabase
-                .from(TABELA)
-                .update({ selic: valor })
-                .eq('id', 1); // Usando ID 1 como configuração global
+async function carregarSelicDoSupabase() {
+    try {
+        const { data, error } = await supabase
+            .from(TABELA)
+            .select('selic')
+            .eq('id', 1)
+            .single();
 
-            if (error) {
-                // Se a tabela não tiver a coluna, tenta criar uma nova tabela
-                console.warn('Erro ao salvar SELIC na tabela Geral, tentando Configuracoes...', error);
-                const { error: error2 } = await supabase
-                    .from('Configuracoes')
-                    .upsert({ id: 1, selic: valor })
-                    .eq('id', 1);
-
-                if (error2) {
-                    console.error('Erro ao salvar SELIC:', error2);
-                    return false;
-                }
+        if (error) {
+            if (error.code === 'PGRST116') {
+                // Registro não existe, retorna null
+                return null;
             }
-            return true;
-        } catch (error) {
-            console.error('Erro ao salvar SELIC:', error);
-            return false;
-        }
-    }
-
-    async function carregarSelicDoSupabase() {
-        try {
-            // Tenta carregar da tabela Geral
-            const { data, error } = await supabase
-                .from(TABELA)
-                .select('selic')
-                .eq('id', 1)
-                .single();
-
-            if (error) {
-                // Tenta carregar da tabela Configuracoes
-                const { data: data2, error: error2 } = await supabase
-                    .from('Configuracoes')
-                    .select('selic')
-                    .eq('id', 1)
-                    .single();
-
-                if (error2) {
-                    console.warn('Nenhuma configuração SELIC encontrada, usando padrão.');
-                    return null;
-                }
-                return data2?.selic || null;
-            }
-            return data?.selic || null;
-        } catch (error) {
-            console.error('Erro ao carregar SELIC:', error);
+            console.warn('Erro ao carregar SELIC:', error);
             return null;
         }
-    }
 
-    async function atualizarSelic(valor) {
-        if (valor < 0) valor = 0;
-        if (valor > 25) valor = 25;
-        selicAtual = valor;
-        document.getElementById('selicInput').value = valor;
-        atualizarDisplaySelic(valor);
-        await salvarSelicNoSupabase(valor);
-        mostrarMensagem(`✅ SELIC atualizada para ${valor.toFixed(2)}%`, 'sucesso');
+        return data?.selic || null;
+    } catch (error) {
+        console.error('Erro ao carregar SELIC:', error);
+        return null;
     }
+}
+
+async function atualizarSelic(valor) {
+    if (valor < 0) valor = 0;
+    if (valor > 25) valor = 25;
+    selicAtual = valor;
+    document.getElementById('selicInput').value = valor;
+    atualizarDisplaySelic(valor);
+    
+    const sucesso = await salvarSelicNoSupabase(valor);
+    if (sucesso) {
+        mostrarMensagem(`✅ SELIC atualizada para ${valor.toFixed(2)}% e salva no Supabase!`, 'sucesso');
+    } else {
+        mostrarMensagem(`⚠️ SELIC atualizada localmente, mas falha ao salvar no Supabase.`, 'erro');
+    }
+}
 
     // ==================== SUPABASE ====================
     async function verificarSupabase() {
@@ -1319,21 +1330,28 @@
     });
 
     // ==================== INICIALIZAÇÃO ====================
-    async function inicializar() {
-        await verificarSupabase();
-        
-        // Carregar SELIC
-        const selicSalva = await carregarSelicDoSupabase();
-        if (selicSalva !== null && selicSalva !== undefined) {
-            selicAtual = selicSalva;
-            document.getElementById('selicInput').value = selicSalva;
-        }
-        atualizarDisplaySelic(selicAtual);
-        
-        await carregarDados();
+// ==================== INICIALIZAÇÃO ====================
+async function inicializar() {
+    await verificarSupabase();
+    
+    // Carregar SELIC
+    const selicSalva = await carregarSelicDoSupabase();
+    if (selicSalva !== null && selicSalva !== undefined) {
+        selicAtual = selicSalva;
+        document.getElementById('selicInput').value = selicSalva;
+        atualizarDisplaySelic(selicSalva);
+    } else {
+        // Se não tiver SELIC salva, criar padrão
+        await salvarSelicNoSupabase(10.75);
+        selicAtual = 10.75;
+        document.getElementById('selicInput').value = 10.75;
+        atualizarDisplaySelic(10.75);
     }
+    
+    await carregarDados();
+}
 
-    inicializar();
+inicializar();
 
 </script>
 </body>
