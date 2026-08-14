@@ -1,0 +1,23 @@
+create table public."Geral" (
+  id serial not null,
+  nome text null,
+  login text null,
+  senha text null,
+  saldo numeric(15, 2) null default 0,
+  saldo_poupanca numeric(15, 2) null default 0,
+  proventos_pendentes numeric(15, 2) null default 0,
+  carteira jsonb null default '{}'::jsonb,
+  preco_medio_compra jsonb null default '{}'::jsonb,
+  proventos_por_ativo jsonb null default '{}'::jsonb,
+  created_at timestamp with time zone null default now(),
+  updated_at timestamp with time zone null default now(),
+  seeds integer null default 0,
+  planted integer null default 0,
+  harvested integer null default 0,
+  buckets integer null default 0,
+  plot_data jsonb null default '[]'::jsonb,
+  constraint Geral_pkey primary key (id),
+  constraint Geral_login_key unique (login)
+) TABLESPACE pg_default;
+
+create index IF not exists idx_geral_login_milharal on public."Geral" using btree (login) TABLESPACE pg_default;
