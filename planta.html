@@ -817,7 +817,7 @@
         }
 
         .market-panel.open {
-            max-height: 600px;
+            max-height: 800px;
             padding: 0.8rem 1rem;
             opacity: 1;
             transform: scaleY(1);
@@ -1004,6 +1004,56 @@
             transform: translateX(-50%) translateY(0);
         }
 
+        /* ---------- ESTOQUE ---------- */
+        .stock-display {
+            display: flex;
+            align-items: center;
+            gap: 0.4rem;
+            background: rgba(255, 214, 0, 0.15);
+            border: 1px solid #ffd600;
+            padding: 0.2rem 1rem 0.2rem 0.6rem;
+            border-radius: 40px;
+            font-weight: 700;
+            font-size: 1rem;
+            color: #ffd600;
+            box-shadow: 0 0 20px rgba(255, 214, 0, 0.15);
+            cursor: help;
+            position: relative;
+        }
+
+        .stock-display i {
+            font-size: 1.2rem;
+            color: #ffd600;
+        }
+
+        .stock-display .num {
+            transition: all 0.2s;
+            color: #fff;
+        }
+
+        .stock-display .tooltip {
+            display: none;
+            position: absolute;
+            bottom: calc(100% + 8px);
+            right: 0;
+            background: rgba(10, 11, 16, 0.95);
+            color: #fff;
+            padding: 0.4rem 0.8rem;
+            border-radius: 12px;
+            font-size: 0.7rem;
+            font-weight: 400;
+            white-space: nowrap;
+            backdrop-filter: blur(4px);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.5);
+            pointer-events: none;
+            z-index: 10;
+            border: 1px solid rgba(255, 214, 0, 0.2);
+        }
+
+        .stock-display:hover .tooltip {
+            display: block;
+        }
+
         /* ---------- RESPONSIVO ---------- */
         @media (max-width: 680px) {
             .market-grid {
@@ -1057,6 +1107,10 @@
                 font-size: 0.8rem;
                 padding: 0.1rem 0.8rem 0.1rem 0.4rem;
             }
+            .stock-display {
+                font-size: 0.8rem;
+                padding: 0.1rem 0.8rem 0.1rem 0.4rem;
+            }
             .field {
                 gap: 6px;
             }
@@ -1090,6 +1144,7 @@
             }
             .stat-item .tooltip,
             .mumu-display .tooltip,
+            .stock-display .tooltip,
             .btn .tooltip,
             .market-item .qty-btns .btn-sm .tooltip {
                 display: none !important;
@@ -1194,7 +1249,7 @@
             </div>
         </div>
 
-        <!-- STATS + MUMU (SALDO) -->
+        <!-- STATS + MUMU + ESTOQUE -->
         <div class="stats-row">
             <div class="stats">
                 <div class="stat-item">
@@ -1213,7 +1268,7 @@
                     <i class="fas fa-corn"></i>
                     <span class="label">Colhidos</span>
                     <span class="num" id="harvestCount"><span class="icon-num">🌽</span> 0</span>
-                    <span class="tooltip">Total de milhos colhidos (manualmente ou vendidos).</span>
+                    <span class="tooltip">Total de milhos colhidos (vão para o estoque).</span>
                 </div>
                 <div class="stat-item">
                     <i class="fas fa-water" style="color:var(--neon-blue);"></i>
@@ -1222,10 +1277,17 @@
                     <span class="tooltip">Baldes de água. Compre ou venda no mercado.</span>
                 </div>
             </div>
-            <div class="mumu-display" id="mumuDisplay">
-                <i class="fas fa-gem"></i>
-                <span class="num" id="mumuDisplayValue"><span class="icon-num">💎</span> 0</span>
-                <span class="tooltip">Saldo em Mumu 💎 - Moeda do sistema (campo saldo da tabela Geral)</span>
+            <div style="display:flex;gap:0.5rem;flex-wrap:wrap;align-items:center;">
+                <div class="stock-display" id="stockDisplay">
+                    <i class="fas fa-warehouse"></i>
+                    <span class="num" id="stockDisplayValue"><span class="icon-num">🌽</span> 0</span>
+                    <span class="tooltip">Estoque de milho 🌽 - Milhos armazenados para vender depois.</span>
+                </div>
+                <div class="mumu-display" id="mumuDisplay">
+                    <i class="fas fa-gem"></i>
+                    <span class="num" id="mumuDisplayValue"><span class="icon-num">💎</span> 0</span>
+                    <span class="tooltip">Saldo em Mumu 💎 - Moeda do sistema (campo saldo da tabela Geral)</span>
+                </div>
             </div>
         </div>
 
@@ -1244,7 +1306,7 @@
             </button>
             <button class="btn btn-gold" id="btnHarvestAll">
                 <i class="fas fa-corn"></i> Colher tudo
-                <span class="tooltip">Colhe e vende automaticamente todos os milhos maduros para o mercado.</span>
+                <span class="tooltip">Colhe todos os milhos maduros e armazena no estoque.</span>
             </button>
             <button class="btn btn-market" id="btnToggleMarket">
                 <i class="fas fa-store"></i> Mercado
@@ -1273,15 +1335,15 @@
                 </span>
             </div>
             <div class="market-grid">
-                <!-- VENDER MILHO -->
+                <!-- VENDER MILHO DO ESTOQUE -->
                 <div class="market-item">
                     <div class="item-header">
-                        <i class="fas fa-corn" style="color:#ffd600;"></i> Vender milho
+                        <i class="fas fa-warehouse" style="color:#ffd600;"></i> Vender milho (estoque)
                         <span style="font-size:0.6rem;font-weight:400;color:var(--text-muted);margin-left:auto;">oferta</span>
                     </div>
                     <div class="price">Preço unitário: <span id="sellPrice">10</span> <i class="fas fa-gem" style="font-size:0.7rem;color:var(--neon-purple);"></i></div>
                     <div class="qty-btns">
-                        <button class="btn-sm sell" data-action="sell" data-qty="1">1 <span class="tooltip">Vende 1 milho</span></button>
+                        <button class="btn-sm sell" data-action="sell" data-qty="1">1 <span class="tooltip">Vende 1 milho do estoque</span></button>
                         <button class="btn-sm sell" data-action="sell" data-qty="5">5</button>
                         <button class="btn-sm sell" data-action="sell" data-qty="10">10</button>
                         <button class="btn-sm sell" data-action="sell" data-qty="all">todos</button>
@@ -1389,7 +1451,8 @@
                 BASE_GROWTH = 8;
             const INITIAL_SEEDS = 0,
                 INITIAL_MUMU = 50,
-                INITIAL_BUCKETS = 0;
+                INITIAL_BUCKETS = 0,
+                INITIAL_STOCK = 0;
             const BUCKET_PRICE = 8,
                 CLEAR_COST = 5;
             const BASE_SELL = 10,
@@ -1558,14 +1621,15 @@
             }
 
             // ============================================================
-            // ESTADO
+            // ESTADO - NOVA VARIÁVEL: STOCK
             // ============================================================
             let plots = [];
             let seeds = INITIAL_SEEDS,
                 harvested = 0,
                 planted = 0,
                 mumu = INITIAL_MUMU,
-                buckets = INITIAL_BUCKETS;
+                buckets = INITIAL_BUCKETS,
+                stock = INITIAL_STOCK; // <-- ESTOQUE DE MILHO
             let growthTimer = null,
                 toastTimeout = null,
                 marketOpen = false;
@@ -1578,6 +1642,7 @@
             const harvestCountEl = document.getElementById('harvestCount');
             const bucketCountEl = document.getElementById('bucketCount');
             const mumuDisplayEl = document.getElementById('mumuDisplayValue');
+            const stockDisplayEl = document.getElementById('stockDisplayValue');
             const bucketStatusEl = document.getElementById('bucketStatus');
             const messageEl = document.getElementById('message');
             const toastEl = document.getElementById('toast');
@@ -1602,8 +1667,8 @@
             // FUNÇÕES DE PREÇO
             // ============================================================
             function getSellPrice() {
-                const mature = plots.filter(p => p.stage === STAGES.MATURE).length;
-                let price = BASE_SELL / (1 + (mature / 10));
+                // Preço de venda do milho (baseado no estoque)
+                let price = BASE_SELL / (1 + (stock / 15));
                 return Math.max(2, Math.round(price));
             }
 
@@ -1662,6 +1727,7 @@
                         harvested: harvested,
                         saldo: mumu,
                         buckets: buckets,
+                        stock: stock, // <-- SALVA O ESTOQUE
                         plot_data: serializePlots(),
                         updated_at: new Date().toISOString()
                     };
@@ -1708,6 +1774,7 @@
                             harvested: harvested,
                             saldo: mumu,
                             buckets: buckets,
+                            stock: stock,
                             plot_data: serializePlots()
                         })
                     });
@@ -1768,6 +1835,7 @@
                     harvested = record.harvested || 0;
                     mumu = record.saldo || 50;
                     buckets = record.buckets || 0;
+                    stock = record.stock || 0; // <-- CARREGA O ESTOQUE
 
                     if (record.plot_data && Array.isArray(record.plot_data)) {
                         deserializePlots(record.plot_data);
@@ -1775,7 +1843,7 @@
                         initPlots();
                     }
 
-                    render(['seeds', 'planted', 'harvested', 'buckets', 'mumu']);
+                    render(['seeds', 'planted', 'harvested', 'buckets', 'mumu', 'stock']);
                     showToast(`📥 Dados de ${usuarioLogado.nome || usuarioLogado.login} carregados!`, 2000);
 
                 } catch (error) {
@@ -1798,6 +1866,7 @@
                 updateEl(harvestCountEl, harvested, '🌽');
                 updateEl(bucketCountEl, buckets, '🪣');
                 mumuDisplayEl.innerHTML = `<span class="icon-num">💎</span> ${mumu}`;
+                stockDisplayEl.innerHTML = `<span class="icon-num">🌽</span> ${stock}`;
                 bucketStatusEl.textContent = `🪣 ${buckets}`;
 
                 // Atualiza saldo no perfil
@@ -1815,7 +1884,8 @@
                     'planted': plantedCountEl,
                     'harvested': harvestCountEl,
                     'buckets': bucketCountEl,
-                    'mumu': mumuDisplayEl
+                    'mumu': mumuDisplayEl,
+                    'stock': stockDisplayEl
                 };
                 flashItems.forEach(key => {
                     const el = map[key];
@@ -1872,17 +1942,18 @@
             // MERCADO
             // ============================================================
             function updateMarketButtons() {
-                const mature = plots.filter(p => p.stage === STAGES.MATURE).length;
-                const buyPrice = getBuyPrice();
+                const sellPrice = getSellPrice();
 
+                // Botões de vender milho (do estoque)
                 document.querySelectorAll('.btn-sm[data-action="sell"]').forEach(btn => {
                     const qty = btn.dataset.qty;
-                    const avail = (qty === 'all') ? mature : parseInt(qty, 10);
-                    btn.disabled = (mature < avail);
+                    const avail = (qty === 'all') ? stock : parseInt(qty, 10);
+                    btn.disabled = (stock < avail);
                 });
 
                 document.querySelectorAll('.btn-sm[data-action="buy"]').forEach(btn => {
                     const qty = btn.dataset.qty;
+                    const buyPrice = getBuyPrice();
                     let max = Math.floor(mumu / buyPrice);
                     if (qty === 'all') btn.disabled = (max === 0);
                     else btn.disabled = (max < parseInt(qty, 10));
@@ -1925,7 +1996,7 @@
                 else if (seeds <= 0 && empty > 0)
                     msg = '😅 <span class="highlight">Sem sementes!</span> Compre no mercado ou colha milho.';
                 else if (mature > 0)
-                    msg = `🌽 <span class="highlight">${mature}</span> milho(s) maduro(s)! Clique para colher ou use "Colher tudo" para vender.`;
+                    msg = `🌽 <span class="highlight">${mature}</span> milho(s) maduro(s)! Clique para colher ou use "Colher tudo" para armazenar.`;
                 else if (growing)
                     msg = buckets > 0 ? '💧 <span class="highlight">Regue</span> as plantas (consome 1 balde).' :
                     '💧 Você não tem baldes! Compre no mercado.';
@@ -2040,21 +2111,19 @@
                 p.progress = 0;
                 harvested++;
                 seeds += 2;
-                showToast(`🌽 Colheu 1 milho! Ganhou 2 sementes.`, 1600);
-                render(['harvested', 'seeds']);
+                stock++; // <-- ADICIONA AO ESTOQUE
+                showToast(`🌽 Colheu 1 milho! +2 sementes, +1 estoque.`, 1600);
+                render(['harvested', 'seeds', 'stock']);
                 return true;
             }
 
-            function harvestAllAndSell() {
+            function harvestAllAndStock() {
                 const maturePlots = plots.filter(p => p.stage === STAGES.MATURE);
                 const count = maturePlots.length;
                 if (count === 0) {
-                    showToast('🌽 Nenhum milho maduro para colher e vender.', 1400);
+                    showToast('🌽 Nenhum milho maduro para colher.', 1400);
                     return 0;
                 }
-
-                const price = getSellPrice();
-                const total = count * price;
 
                 for (const p of maturePlots) {
                     p.stage = STAGES.HARVESTED;
@@ -2062,39 +2131,27 @@
                 }
 
                 harvested += count;
-                mumu += total;
+                seeds += count * 2;
+                stock += count; // <-- ADICIONA AO ESTOQUE
 
-                showToast(`💰 Colheu e vendeu ${count} milho(s) por ${total} 💎 Mumu!`, 2500);
-                render(['harvested', 'mumu']);
+                showToast(`🌽 Colheu ${count} milho(s)! +${count*2} sementes, +${count} estoque.`, 2500);
+                render(['harvested', 'seeds', 'stock']);
                 return count;
             }
 
-            const harvestAll = harvestAllAndSell;
-
             // ============================================================
-            // MERCADO
+            // MERCADO - VENDER DO ESTOQUE
             // ============================================================
             function sellCorn(qty) {
-                const mature = plots.filter(p => p.stage === STAGES.MATURE);
-                const avail = mature.length;
-                if (avail === 0) { showToast('🌽 Nenhum milho maduro.', 1400); return; }
-                let sellQty = (qty === 'all') ? avail : Math.min(qty, avail);
+                if (stock === 0) { showToast('🌽 Estoque vazio!', 1400); return; }
+                let sellQty = (qty === 'all') ? stock : Math.min(qty, stock);
                 if (sellQty <= 0) return;
                 const price = getSellPrice();
                 const total = sellQty * price;
-                let removed = 0;
-                for (const p of plots) {
-                    if (removed >= sellQty) break;
-                    if (p.stage === STAGES.MATURE) {
-                        p.stage = STAGES.HARVESTED;
-                        p.progress = 0;
-                        harvested++;
-                        removed++;
-                    }
-                }
+                stock -= sellQty;
                 mumu += total;
-                showToast(`💰 Vendeu ${sellQty} milho(s) por ${total} 💎 Mumu.`, 2000);
-                render(['mumu', 'harvested']);
+                showToast(`💰 Vendeu ${sellQty} milho(s) do estoque por ${total} 💎 Mumu.`, 2000);
+                render(['mumu', 'stock']);
             }
 
             function buySeeds(qty) {
@@ -2156,8 +2213,9 @@
                 planted = 0;
                 mumu = INITIAL_MUMU;
                 buckets = INITIAL_BUCKETS;
+                stock = INITIAL_STOCK;
                 initPlots();
-                render(['seeds', 'planted', 'harvested', 'buckets', 'mumu']);
+                render(['seeds', 'planted', 'harvested', 'buckets', 'mumu', 'stock']);
                 startSimulation();
                 showToast('🔄 Jogo reiniciado!', 2200);
             }
@@ -2207,7 +2265,7 @@
                 } else showToast('💧 Nada para regar.', 1200);
             });
 
-            btnHarvestAll.addEventListener('click', harvestAll);
+            btnHarvestAll.addEventListener('click', harvestAllAndStock);
 
             btnReset.addEventListener('click', function() {
                 if (confirm('Reiniciar?')) resetGame();
@@ -2302,7 +2360,7 @@
             atualizarInterfaceUsuario();
 
             initPlots();
-            render(['seeds', 'planted', 'harvested', 'buckets', 'mumu']);
+            render(['seeds', 'planted', 'harvested', 'buckets', 'mumu', 'stock']);
             startSimulation();
 
             if (usuarioLogado) {
