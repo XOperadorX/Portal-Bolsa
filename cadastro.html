@@ -1,0 +1,515 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cadastro - BAEP Investimentos</title>
+    <style>
+        /* ===== SEU CSS AQUI (mesmo do cadastro anterior) ===== */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Roboto, sans-serif;
+        }
+
+        body {
+            background: linear-gradient(135deg, #002e5d, #001a33);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+
+        .cadastro-container {
+            background: white;
+            padding: 40px;
+            border-radius: 28px;
+            max-width: 440px;
+            width: 100%;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+        }
+
+        .logo {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .logo h1 {
+            font-size: 2rem;
+            color: #002e5d;
+        }
+
+        .logo span {
+            font-size: 1.2rem;
+            color: #4a6f8f;
+        }
+
+        .form-group {
+            margin-bottom: 18px;
+        }
+
+        .form-group label {
+            display: block;
+            font-weight: 600;
+            color: #1e3a5f;
+            margin-bottom: 6px;
+            font-size: 0.9rem;
+        }
+
+        .form-group input {
+            width: 100%;
+            padding: 12px 16px;
+            border: 2px solid #e2e8f0;
+            border-radius: 12px;
+            font-size: 1rem;
+            transition: all 0.3s;
+            background: #f8fafc;
+        }
+
+        .form-group input:focus {
+            outline: none;
+            border-color: #002e5d;
+            background: white;
+            box-shadow: 0 0 0 4px rgba(0,46,93,0.1);
+        }
+
+        .btn-cadastrar {
+            width: 100%;
+            padding: 14px;
+            background: linear-gradient(135deg, #10b981, #059669);
+            color: white;
+            border: none;
+            border-radius: 12px;
+            font-size: 1.1rem;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.3s;
+            margin-top: 10px;
+        }
+
+        .btn-cadastrar:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(16,185,129,0.3);
+        }
+
+        .btn-cadastrar:disabled {
+            opacity: 0.7;
+            cursor: not-allowed;
+        }
+
+        .links {
+            text-align: center;
+            margin-top: 20px;
+            font-size: 0.9rem;
+        }
+
+        .links a {
+            color: #002e5d;
+            text-decoration: none;
+            font-weight: 500;
+            transition: color 0.2s;
+        }
+
+        .links a:hover {
+            color: #f59e0b;
+            text-decoration: underline;
+        }
+
+        .mensagem-erro {
+            background: #fee2e2;
+            color: #b91c1c;
+            padding: 12px 16px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            display: none;
+            font-size: 0.9rem;
+            border-left: 4px solid #b91c1c;
+        }
+
+        .mensagem-erro.show {
+            display: block;
+        }
+
+        .mensagem-sucesso {
+            background: #dcfce7;
+            color: #0a5c3e;
+            padding: 12px 16px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            display: none;
+            font-size: 0.9rem;
+            border-left: 4px solid #10b981;
+        }
+
+        .mensagem-sucesso.show {
+            display: block;
+        }
+
+        .status-supabase {
+            text-align: center;
+            font-size: 0.75rem;
+            color: #6c86a3;
+            margin-top: 20px;
+            padding: 8px;
+            border-radius: 8px;
+            background: #f1f5f9;
+        }
+
+        .status-supabase.online {
+            color: #10b981;
+        }
+
+        .status-supabase.offline {
+            color: #ef4444;
+        }
+
+        .loading {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border: 3px solid #f3f3f3;
+            border-top: 3px solid #10b981;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            vertical-align: middle;
+            margin-right: 10px;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .senha-requisitos {
+            font-size: 0.75rem;
+            color: #6c86a3;
+            margin-top: 4px;
+            padding: 8px;
+            background: #f8fafc;
+            border-radius: 8px;
+        }
+
+        .senha-requisitos .ok {
+            color: #10b981;
+        }
+
+        .senha-requisitos .bad {
+            color: #ef4444;
+        }
+
+        .helper-text {
+            font-size: 0.75rem;
+            color: #6c86a3;
+            margin-top: 4px;
+        }
+
+        @media (max-width: 480px) {
+            .cadastro-container {
+                padding: 24px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="cadastro-container">
+        <div class="logo">
+            <h1>🏦 BAEP</h1>
+            <span>Criar Conta</span>
+        </div>
+
+        <div id="mensagemErro" class="mensagem-erro"></div>
+        <div id="mensagemSucesso" class="mensagem-sucesso"></div>
+
+        <form id="formCadastro">
+            <div class="form-group">
+                <label for="nome">Nome Completo</label>
+                <input type="text" id="nome" placeholder="Digite seu nome completo" required>
+            </div>
+
+            <div class="form-group">
+                <label for="login">Login (Usuário) *</label>
+                <input type="text" id="login" placeholder="Digite seu email ou nome de usuário" required autocomplete="username">
+                <div class="helper-text">Pode ser email ou nome de usuário (mínimo 3 caracteres)</div>
+            </div>
+
+            <div class="form-group">
+                <label for="senha">Senha *</label>
+                <input type="password" id="senha" placeholder="Crie uma senha forte" required autocomplete="new-password">
+                <div class="senha-requisitos">
+                    <span id="req-length" class="bad">🔴 Mínimo 6 caracteres</span>
+                    <span id="req-maiuscula" class="bad">🔴 Pelo menos 1 letra maiúscula</span>
+                    <span id="req-minuscula" class="bad">🔴 Pelo menos 1 letra minúscula</span>
+                    <span id="req-numero" class="bad">🔴 Pelo menos 1 número</span>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label for="senha_confirm">Confirmar Senha</label>
+                <input type="password" id="senha_confirm" placeholder="Confirme sua senha" required autocomplete="new-password">
+            </div>
+
+            <button type="submit" class="btn-cadastrar" id="btnCadastrar">📝 Criar Conta</button>
+        </form>
+
+        <div class="links">
+            <a href="login.html">🔐 Já tenho uma conta</a>
+        </div>
+
+        <div id="statusSupabase" class="status-supabase">☁️ Verificando conexão...</div>
+    </div>
+
+    <script type="importmap">
+    {
+        "imports": {
+            "@supabase/supabase-js": "https://esm.sh/@supabase/supabase-js@2"
+        }
+    }
+    </script>
+
+    <script type="module">
+        import { createClient } from '@supabase/supabase-js';
+
+        // ==================== CONFIGURAÇÕES ====================
+        const SUPABASE_URL = 'https://xrcxvizzdumcxbylmkvn.supabase.co';
+        const SUPABASE_KEY = 'sb_publishable_E-g3G3wW4EySbCsXLXp8KQ_FnmERMcD'; // COLOQUE SUA CHAVE AQUI
+        const supabase = createClient(SUPABASE_URL, SUPABASE_KEY);
+        const TABELA = 'Geral';
+
+        // ==================== ELEMENTOS ====================
+        const formCadastro = document.getElementById('formCadastro');
+        const nomeInput = document.getElementById('nome');
+        const loginInput = document.getElementById('login');
+        const senhaInput = document.getElementById('senha');
+        const senhaConfirmInput = document.getElementById('senha_confirm');
+        const btnCadastrar = document.getElementById('btnCadastrar');
+        const mensagemErro = document.getElementById('mensagemErro');
+        const mensagemSucesso = document.getElementById('mensagemSucesso');
+        const statusSupabase = document.getElementById('statusSupabase');
+
+        const reqLength = document.getElementById('req-length');
+        const reqMaiuscula = document.getElementById('req-maiuscula');
+        const reqMinuscula = document.getElementById('req-minuscula');
+        const reqNumero = document.getElementById('req-numero');
+
+        // ==================== FUNÇÕES ====================
+        function mostrarErro(mensagem) {
+            mensagemErro.textContent = mensagem;
+            mensagemErro.className = 'mensagem-erro show';
+            mensagemSucesso.className = 'mensagem-sucesso';
+        }
+
+        function mostrarSucesso(mensagem) {
+            mensagemSucesso.textContent = mensagem;
+            mensagemSucesso.className = 'mensagem-sucesso show';
+            mensagemErro.className = 'mensagem-erro';
+        }
+
+        function ocultarMensagens() {
+            mensagemErro.className = 'mensagem-erro';
+            mensagemSucesso.className = 'mensagem-sucesso';
+        }
+
+        function validarSenha(senha) {
+            const temLength = senha.length >= 6;
+            const temMaiuscula = /[A-Z]/.test(senha);
+            const temMinuscula = /[a-z]/.test(senha);
+            const temNumero = /[0-9]/.test(senha);
+
+            reqLength.className = temLength ? 'ok' : 'bad';
+            reqLength.textContent = temLength ? '✅ Mínimo 6 caracteres' : '🔴 Mínimo 6 caracteres';
+
+            reqMaiuscula.className = temMaiuscula ? 'ok' : 'bad';
+            reqMaiuscula.textContent = temMaiuscula ? '✅ Pelo menos 1 letra maiúscula' : '🔴 Pelo menos 1 letra maiúscula';
+
+            reqMinuscula.className = temMinuscula ? 'ok' : 'bad';
+            reqMinuscula.textContent = temMinuscula ? '✅ Pelo menos 1 letra minúscula' : '🔴 Pelo menos 1 letra minúscula';
+
+            reqNumero.className = temNumero ? 'ok' : 'bad';
+            reqNumero.textContent = temNumero ? '✅ Pelo menos 1 número' : '🔴 Pelo menos 1 número';
+
+            return temLength && temMaiuscula && temMinuscula && temNumero;
+        }
+
+        function validarLogin(login) {
+            if (login.length < 3) return false;
+            return /^[a-zA-Z0-9@._\-]+$/.test(login);
+        }
+
+        async function verificarSupabase() {
+            try {
+                const { data, error } = await supabase
+                    .from(TABELA)
+                    .select('id')
+                    .limit(1);
+                
+                if (error) {
+                    statusSupabase.textContent = '⚠️ Erro ao conectar ao Supabase';
+                    statusSupabase.className = 'status-supabase offline';
+                    console.error('Erro ao verificar Supabase:', error);
+                    return false;
+                }
+                
+                statusSupabase.textContent = '✅ Conectado ao Supabase';
+                statusSupabase.className = 'status-supabase online';
+                return true;
+            } catch (error) {
+                statusSupabase.textContent = '❌ Erro ao conectar ao Supabase';
+                statusSupabase.className = 'status-supabase offline';
+                console.error('Erro ao verificar Supabase:', error);
+                return false;
+            }
+        }
+
+        async function cadastrarUsuario(nome, login, senha) {
+            try {
+                // 1. Verificar se login já existe
+                const { data: existe, error: checkError } = await supabase
+                    .from(TABELA)
+                    .select('id')
+                    .eq('login', login)
+                    .maybeSingle();
+
+                if (checkError) {
+                    console.error('Erro ao verificar login:', checkError);
+                    mostrarErro('❌ Erro ao verificar disponibilidade do login.');
+                    return false;
+                }
+
+                if (existe) {
+                    mostrarErro('⚠️ Este login já está em uso. Escolha outro.');
+                    return false;
+                }
+
+                // 2. Criar novo usuário
+                const novoUsuario = {
+                    nome: nome,
+                    login: login,
+                    senha: senha,
+                    saldo: 0,
+                    saldo_poupanca: 0,
+                    proventos_pendentes: 0,
+                    carteira: {},
+                    preco_medio_compra: {},
+                    proventos_por_ativo: {},
+                    created_at: new Date().toISOString(),
+                    updated_at: new Date().toISOString()
+                };
+
+                console.log('Tentando criar usuário:', { ...novoUsuario, senha: '***' });
+
+                const { data, error } = await supabase
+                    .from(TABELA)
+                    .insert([novoUsuario])
+                    .select();
+
+                if (error) {
+                    console.error('Erro detalhado ao cadastrar:', error);
+                    
+                    // Mensagem de erro mais específica
+                    if (error.code === '23505') {
+                        mostrarErro('⚠️ Este login já está em uso. Escolha outro.');
+                    } else if (error.code === '42P01') {
+                        mostrarErro('❌ Tabela "Geral" não encontrada. Execute o SQL de criação no Supabase.');
+                    } else {
+                        mostrarErro(`❌ Erro ao cadastrar: ${error.message || 'Tente novamente.'}`);
+                    }
+                    return false;
+                }
+
+                if (!data || data.length === 0) {
+                    mostrarErro('❌ Erro ao criar usuário. Nenhum dado retornado.');
+                    return false;
+                }
+
+                console.log('Usuário criado com sucesso:', data[0]);
+                mostrarSucesso('✅ Conta criada com sucesso! Redirecionando para o login...');
+                
+                setTimeout(() => {
+                    window.location.href = 'login.html';
+                }, 2000);
+
+                return true;
+
+            } catch (error) {
+                console.error('Erro inesperado no cadastro:', error);
+                mostrarErro(`❌ Erro inesperado: ${error.message || 'Tente novamente.'}`);
+                return false;
+            }
+        }
+
+        // ==================== EVENT LISTENERS ====================
+        senhaInput.addEventListener('input', () => {
+            validarSenha(senhaInput.value);
+        });
+
+        formCadastro.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            ocultarMensagens();
+
+            const nome = nomeInput.value.trim();
+            const login = loginInput.value.trim();
+            const senha = senhaInput.value;
+            const senhaConfirm = senhaConfirmInput.value;
+
+            // Validações
+            if (!nome || !login || !senha || !senhaConfirm) {
+                mostrarErro('⚠️ Preencha todos os campos!');
+                return;
+            }
+
+            if (nome.length < 3) {
+                mostrarErro('⚠️ Nome deve ter pelo menos 3 caracteres.');
+                return;
+            }
+
+            if (!validarLogin(login)) {
+                mostrarErro('⚠️ Login deve ter pelo menos 3 caracteres e pode conter letras, números, @, ., - e _');
+                return;
+            }
+
+            if (!validarSenha(senha)) {
+                mostrarErro('⚠️ A senha não atende aos requisitos de segurança.');
+                return;
+            }
+
+            if (senha !== senhaConfirm) {
+                mostrarErro('⚠️ As senhas não coincidem!');
+                return;
+            }
+
+            // Verificar Supabase
+            const online = await verificarSupabase();
+            if (!online) {
+                mostrarErro('❌ Sem conexão com o banco de dados. Tente novamente mais tarde.');
+                return;
+            }
+
+            btnCadastrar.disabled = true;
+            btnCadastrar.innerHTML = '<span class="loading"></span> Criando conta...';
+
+            await cadastrarUsuario(nome, login, senha);
+
+            btnCadastrar.disabled = false;
+            btnCadastrar.innerHTML = '📝 Criar Conta';
+        });
+
+        // Verificar conexão ao carregar
+        verificarSupabase();
+
+        // Verificar se já está logado
+        const usuarioLogado = localStorage.getItem('usuario_logado');
+        if (usuarioLogado) {
+            try {
+                const user = JSON.parse(usuarioLogado);
+                if (user && user.login) {
+                    window.location.href = 'dashboard.html';
+                }
+            } catch (e) {
+                localStorage.removeItem('usuario_logado');
+            }
+        }
+    </script>
+</body>
+</html>

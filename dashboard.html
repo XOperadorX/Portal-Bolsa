@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard - BAEP Investimentos</title>
+</head>
+
+
+
+    <style>
+
+
+        .btn-sair {
+            background: linear-gradient(135deg, #ef4444, #dc2626);
+            color: white;
+            border: none;
+            padding: 6px 16px;
+            border-radius: 40px;
+            font-weight: bold;
+            font-size: 0.7rem;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        .btn-sair:hover {
+            transform: scale(0.96);
+            background: linear-gradient(135deg, #dc2626, #b91c1c);
+        }
+
+                    .btn-salvar, .btn-carregar, .btn-limpar, .btn-sair {
+                font-size: 0.6rem;
+                padding: 4px 12px;
+            }
+
+    </style>
+
+<body>
+    <!-- ===== NOVA ÁREA DE NAVEGAÇÃO COM BOTÃO BOLSA ===== -->
+    <div class="nav-buttons">
+        <button class="btn-bolsa" onclick="window.location.href='bolsa.html'">
+            <span class="icone">📈</span> Bolsa
+        </button>
+        <button class="btn-sair" id="btnSair">🚪 Sair</button>
+</body>
+</html>
+
+

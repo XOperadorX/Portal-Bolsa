@@ -1,0 +1,388 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Recuperar Senha - BAEP Investimentos</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Roboto, sans-serif;
+        }
+
+        body {
+            background: linear-gradient(135deg, #002e5d, #001a33);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+
+        .container {
+            background: white;
+            padding: 40px;
+            border-radius: 28px;
+            max-width: 420px;
+            width: 100%;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+        }
+
+        .logo {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .logo h1 {
+            font-size: 2rem;
+            color: #002e5d;
+        }
+
+        .logo span {
+            font-size: 1.2rem;
+            color: #4a6f8f;
+        }
+
+        .descricao {
+            text-align: center;
+            color: #4a6f8f;
+            font-size: 0.95rem;
+            margin-bottom: 25px;
+            line-height: 1.5;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            font-weight: 600;
+            color: #1e3a5f;
+            margin-bottom: 6px;
+            font-size: 0.9rem;
+        }
+
+        .form-group input {
+            width: 100%;
+            padding: 12px 16px;
+            border: 2px solid #e2e8f0;
+            border-radius: 12px;
+            font-size: 1rem;
+            transition: all 0.3s;
+            background: #f8fafc;
+        }
+
+        .form-group input:focus {
+            outline: none;
+            border-color: #002e5d;
+            background: white;
+            box-shadow: 0 0 0 4px rgba(0,46,93,0.1);
+        }
+
+        .btn-submit {
+            width: 100%;
+            padding: 14px;
+            background: linear-gradient(135deg, #f59e0b, #d97706);
+            color: white;
+            border: none;
+            border-radius: 12px;
+            font-size: 1.1rem;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.3s;
+            margin-top: 10px;
+        }
+
+        .btn-submit:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(245,158,11,0.3);
+        }
+
+        .btn-submit:active {
+            transform: scale(0.98);
+        }
+
+        .btn-submit:disabled {
+            opacity: 0.7;
+            cursor: not-allowed;
+        }
+
+        .links {
+            text-align: center;
+            margin-top: 20px;
+            font-size: 0.9rem;
+        }
+
+        .links a {
+            color: #002e5d;
+            text-decoration: none;
+            font-weight: 500;
+            transition: color 0.2s;
+        }
+
+        .links a:hover {
+            color: #f59e0b;
+            text-decoration: underline;
+        }
+
+        .mensagem-erro {
+            background: #fee2e2;
+            color: #b91c1c;
+            padding: 12px 16px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            display: none;
+            font-size: 0.9rem;
+            border-left: 4px solid #b91c1c;
+        }
+
+        .mensagem-erro.show {
+            display: block;
+        }
+
+        .mensagem-sucesso {
+            background: #dcfce7;
+            color: #0a5c3e;
+            padding: 12px 16px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            display: none;
+            font-size: 0.9rem;
+            border-left: 4px solid #10b981;
+        }
+
+        .mensagem-sucesso.show {
+            display: block;
+        }
+
+        .loading {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border: 3px solid #f3f3f3;
+            border-top: 3px solid #f59e0b;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            vertical-align: middle;
+            margin-right: 10px;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .status-supabase {
+            text-align: center;
+            font-size: 0.75rem;
+            color: #6c86a3;
+            margin-top: 20px;
+            padding: 8px;
+            border-radius: 8px;
+            background: #f1f5f9;
+        }
+
+        .status-supabase.online {
+            color: #10b981;
+        }
+
+        .status-supabase.offline {
+            color: #ef4444;
+        }
+
+        @media (max-width: 480px) {
+            .container {
+                padding: 24px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="logo">
+            <h1>🏦 BAEP</h1>
+            <span>Recuperar Senha</span>
+        </div>
+
+        <div class="descricao">
+            Digite seu login e uma nova senha para redefinir sua senha.
+        </div>
+
+        <div id="mensagemErro" class="mensagem-erro"></div>
+        <div id="mensagemSucesso" class="mensagem-sucesso"></div>
+
+        <form id="formRecuperar">
+            <div class="form-group">
+                <label for="login">Login (Usuário)</label>
+                <input type="text" id="login" placeholder="Digite seu login" required>
+            </div>
+
+            <div class="form-group">
+                <label for="nova_senha">Nova Senha</label>
+                <input type="password" id="nova_senha" placeholder="Digite a nova senha" required>
+                <div style="font-size:0.75rem; color:#6c86a3; margin-top:4px;">Mínimo 6 caracteres, com letras e números</div>
+            </div>
+
+            <div class="form-group">
+                <label for="confirmar_senha">Confirmar Nova Senha</label>
+                <input type="password" id="confirmar_senha" placeholder="Confirme a nova senha" required>
+            </div>
+
+            <button type="submit" class="btn-submit" id="btnRecuperar">🔑 Redefinir Senha</button>
+        </form>
+
+        <div class="links">
+            <a href="login.html">🔐 Voltar para o login</a>
+        </div>
+
+        <div id="statusSupabase" class="status-supabase">☁️ Verificando conexão...</div>
+    </div>
+
+    <script type="importmap">
+    {
+        "imports": {
+            "@supabase/supabase-js": "https://esm.sh/@supabase/supabase-js@2"
+        }
+    }
+    </script>
+
+    <script type="module">
+        import { createClient } from '@supabase/supabase-js';
+
+        const SUPABASE_URL = 'https://xrcxvizzdumcxbylmkvn.supabase.co';
+        const SUPABASE_KEY = 'sb_publishable_E-g3G3wW4EySbCsXLXp8KQ_FnmERMcD';
+        const supabase = createClient(SUPABASE_URL, SUPABASE_KEY);
+        const TABELA = 'Geral';
+
+        const formRecuperar = document.getElementById('formRecuperar');
+        const loginInput = document.getElementById('login');
+        const novaSenhaInput = document.getElementById('nova_senha');
+        const confirmarSenhaInput = document.getElementById('confirmar_senha');
+        const btnRecuperar = document.getElementById('btnRecuperar');
+        const mensagemErro = document.getElementById('mensagemErro');
+        const mensagemSucesso = document.getElementById('mensagemSucesso');
+        const statusSupabase = document.getElementById('statusSupabase');
+
+        function mostrarErro(mensagem) {
+            mensagemErro.textContent = mensagem;
+            mensagemErro.className = 'mensagem-erro show';
+            mensagemSucesso.className = 'mensagem-sucesso';
+        }
+
+        function mostrarSucesso(mensagem) {
+            mensagemSucesso.textContent = mensagem;
+            mensagemSucesso.className = 'mensagem-sucesso show';
+            mensagemErro.className = 'mensagem-erro';
+        }
+
+        function ocultarMensagens() {
+            mensagemErro.className = 'mensagem-erro';
+            mensagemSucesso.className = 'mensagem-sucesso';
+        }
+
+        async function verificarSupabase() {
+            try {
+                const { data, error } = await supabase
+                    .from(TABELA)
+                    .select('id')
+                    .limit(1);
+                
+                if (error) {
+                    statusSupabase.textContent = '⚠️ Erro ao conectar';
+                    statusSupabase.className = 'status-supabase offline';
+                    return false;
+                }
+                
+                statusSupabase.textContent = '✅ Conectado ao Supabase';
+                statusSupabase.className = 'status-supabase online';
+                return true;
+            } catch (error) {
+                statusSupabase.textContent = '❌ Erro ao conectar';
+                statusSupabase.className = 'status-supabase offline';
+                return false;
+            }
+        }
+
+        async function redefinirSenha(login, novaSenha) {
+            try {
+                const { data, error } = await supabase
+                    .from(TABELA)
+                    .select('id')
+                    .eq('login', login)
+                    .single();
+
+                if (error || !data) {
+                    mostrarErro('❌ Usuário não encontrado!');
+                    return false;
+                }
+
+                const { error: updateError } = await supabase
+                    .from(TABELA)
+                    .update({ senha: novaSenha })
+                    .eq('id', data.id);
+
+                if (updateError) {
+                    mostrarErro('❌ Erro ao redefinir senha. Tente novamente.');
+                    return false;
+                }
+
+                mostrarSucesso('✅ Senha redefinida com sucesso! Redirecionando...');
+                
+                setTimeout(() => {
+                    window.location.href = 'login.html';
+                }, 2000);
+
+                return true;
+
+            } catch (error) {
+                console.error('Erro:', error);
+                mostrarErro('❌ Erro ao redefinir senha. Tente novamente.');
+                return false;
+            }
+        }
+
+        formRecuperar.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            ocultarMensagens();
+
+            const login = loginInput.value.trim();
+            const novaSenha = novaSenhaInput.value;
+            const confirmarSenha = confirmarSenhaInput.value;
+
+            if (!login) {
+                mostrarErro('⚠️ Digite seu login.');
+                return;
+            }
+
+            if (!novaSenha || novaSenha.length < 6) {
+                mostrarErro('⚠️ A nova senha deve ter pelo menos 6 caracteres.');
+                return;
+            }
+
+            if (novaSenha !== confirmarSenha) {
+                mostrarErro('⚠️ As senhas não coincidem!');
+                return;
+            }
+
+            const online = await verificarSupabase();
+            if (!online) {
+                mostrarErro('❌ Sem conexão com o banco de dados.');
+                return;
+            }
+
+            btnRecuperar.disabled = true;
+            btnRecuperar.innerHTML = '<span class="loading"></span> Redefinindo...';
+
+            await redefinirSenha(login, novaSenha);
+
+            btnRecuperar.disabled = false;
+            btnRecuperar.innerHTML = '🔑 Redefinir Senha';
+        });
+
+        verificarSupabase();
+    </script>
+</body>
+</html>
