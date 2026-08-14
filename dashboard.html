@@ -321,18 +321,16 @@
 
     <!-- BARRA DE NAVEGAÇÃO -->
     <nav class="nav-bar">
-        <div class="nav-links">
-            <!-- Bloco com saldo e nick do usuário logado -->
-            <div class="user-profile" id="userProfile">
-                <div class="user-avatar" id="userAvatar">👤</div>
-                <div class="user-info">
-                    <span class="user-nick" id="nome">Carregando...</span>
-                    <span class="user-balance" id="saldo">R$ 0,00</span>
-                </div>
+        <!-- PERFIL DO USUÁRIO (UNIFICADO AQUI) -->
+        <div class="user-profile" id="userProfile">
+            <div class="user-avatar" id="userAvatar">👤</div>
+            <div class="user-info">
+                <span class="user-nick" id="userNick">Carregando...</span>
+                <span class="user-balance" id="userBalance">R$ 0,00</span>
             </div>
         </div>
 
-        <div class="nav-buttons"> 
+        <div class="nav-buttons">
             <button class="btn-bolsa" onclick="window.location.href='admin.html'">
                 <span class="icone">👑</span> Admin
             </button>
@@ -423,10 +421,10 @@
         const TABELA = 'Geral';
 
         // ============================================================
-        // REFERÊNCIAS DOS ELEMENTOS
+        // REFERÊNCIAS DOS ELEMENTOS (IDs UNIFICADOS)
         // ============================================================
-        const nomeEl = document.getElementById('nome');
-        const saldoEl = document.getElementById('saldo');
+        const userNickEl = document.getElementById('userNick');
+        const userBalanceEl = document.getElementById('userBalance');
         const userAvatarEl = document.getElementById('userAvatar');
 
         // ============================================================
@@ -475,8 +473,8 @@
                     
                     // Fallback: usa dados do email
                     const nick = userEmail.split('@')[0] || 'Usuário';
-                    nomeEl.textContent = nick;
-                    saldoEl.textContent = 'R$ 0,00';
+                    userNickEl.textContent = nick;
+                    userBalanceEl.textContent = 'R$ 0,00';
                     userAvatarEl.textContent = nick.charAt(0).toUpperCase();
                     return;
                 }
@@ -487,11 +485,11 @@
                     
                     // NICK (usa o campo 'nome' ou 'login' ou parte do email)
                     const nick = profile.nome || profile.login || userEmail.split('@')[0] || 'Gamer';
-                    nomeEl.textContent = nick;
+                    userNickEl.textContent = nick;
 
                     // SALDO (formatação em moeda brasileira)
                     const balance = profile.saldo !== undefined && profile.saldo !== null ? profile.saldo : 0;
-                    saldoEl.textContent = new Intl.NumberFormat('pt-BR', {
+                    userBalanceEl.textContent = new Intl.NumberFormat('pt-BR', {
                         style: 'currency',
                         currency: 'BRL'
                     }).format(balance);
@@ -513,8 +511,8 @@
         // FUNÇÃO DE FALLBACK (CASO NÃO HAJA DADOS)
         // ============================================================
         function setFallbackUser() {
-            nomeEl.textContent = 'Visitante';
-            saldoEl.textContent = 'R$ 0,00';
+            userNickEl.textContent = 'Visitante';
+            userBalanceEl.textContent = 'R$ 0,00';
             userAvatarEl.textContent = '👤';
         }
 
