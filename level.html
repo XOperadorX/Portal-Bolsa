@@ -1,0 +1,738 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sistema de Nível - MM Quase Tudo</title>
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&family=Rajdhani:wght@400;600;700&display=swap" rel="stylesheet">
+    <style>
+        /* ============================================================
+           ESTILOS DO SISTEMA DE NÍVEL - COMPONENTE REUTILIZÁVEL
+           ============================================================ */
+        .level-system-container {
+            background: rgba(18, 21, 32, 0.8);
+            border-radius: 16px;
+            padding: 16px 20px;
+            border: 1px solid rgba(0, 240, 255, 0.15);
+            backdrop-filter: blur(8px);
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+            margin-bottom: 16px;
+        }
+
+        .level-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+
+        .level-badge {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            font-family: 'Orbitron', sans-serif;
+        }
+
+        .level-badge .level-number {
+            font-size: 2.2rem;
+            font-weight: 900;
+            color: #00f0ff;
+            text-shadow: 0 0 30px rgba(0, 240, 255, 0.3);
+            line-height: 1;
+        }
+
+        .level-badge .level-label {
+            font-size: 0.7rem;
+            color: #8a99ad;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+        }
+
+        .level-badge .level-title {
+            font-size: 0.85rem;
+            color: #f0f4f8;
+            font-weight: 600;
+            margin-top: 2px;
+        }
+
+        .exp-container {
+            flex: 1;
+            min-width: 150px;
+        }
+
+        .exp-bar {
+            background: rgba(255, 255, 255, 0.06);
+            border-radius: 20px;
+            height: 12px;
+            overflow: hidden;
+            position: relative;
+            border: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        .exp-bar .exp-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #7000ff, #00f0ff);
+            border-radius: 20px;
+            transition: width 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            box-shadow: 0 0 20px rgba(0, 240, 255, 0.2);
+            width: 0%;
+        }
+
+        .exp-bar .exp-fill.high {
+            background: linear-gradient(90deg, #00ff66, #00f0ff);
+            box-shadow: 0 0 25px rgba(0, 255, 102, 0.3);
+        }
+
+        .exp-text {
+            display: flex;
+            justify-content: space-between;
+            font-size: 0.7rem;
+            color: #8a99ad;
+            margin-top: 4px;
+            font-weight: 600;
+        }
+
+        .exp-text .exp-current {
+            color: #00f0ff;
+        }
+
+        .exp-text .exp-next {
+            color: #7000ff;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(80px, 1fr));
+            gap: 8px;
+            margin-top: 12px;
+            padding-top: 12px;
+            border-top: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        .stat-pill {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            background: rgba(255, 255, 255, 0.04);
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            color: #c8d0e0;
+            border: 1px solid rgba(255, 255, 255, 0.04);
+            white-space: nowrap;
+        }
+
+        .stat-pill .stat-icon {
+            font-size: 0.85rem;
+        }
+
+        .stat-pill .stat-value {
+            color: #fff;
+            font-weight: 700;
+            margin-left: auto;
+        }
+
+        .stat-pill .stat-value.hp {
+            color: #ef4444;
+        }
+        .stat-pill .stat-value.mp {
+            color: #3b82f6;
+        }
+        .stat-pill .stat-value.sm {
+            color: #f59e0b;
+        }
+        .stat-pill .stat-value.atk {
+            color: #ef4444;
+        }
+        .stat-pill .stat-value.def {
+            color: #8b5cf6;
+        }
+        .stat-pill .stat-value.mag {
+            color: #10b981;
+        }
+
+        .level-actions {
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+            margin-top: 12px;
+            padding-top: 12px;
+            border-top: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        .level-actions .btn-level {
+            padding: 6px 18px;
+            border: none;
+            border-radius: 30px;
+            font-weight: 700;
+            font-size: 0.75rem;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-family: 'Rajdhani', sans-serif;
+            letter-spacing: 0.5px;
+        }
+
+        .level-actions .btn-level:hover {
+            transform: translateY(-2px);
+        }
+
+        .level-actions .btn-level:active {
+            transform: scale(0.94);
+        }
+
+        .level-actions .btn-level.btn-treinar {
+            background: linear-gradient(135deg, #00f0ff, #7000ff);
+            color: #fff;
+            box-shadow: 0 0 20px rgba(0, 240, 255, 0.2);
+        }
+
+        .level-actions .btn-level.btn-treinar:hover {
+            box-shadow: 0 0 35px rgba(0, 240, 255, 0.4);
+        }
+
+        .level-actions .btn-level.btn-descansar {
+            background: rgba(255, 255, 255, 0.08);
+            color: #c8d0e0;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .level-actions .btn-level.btn-descansar:hover {
+            background: rgba(255, 255, 255, 0.15);
+        }
+
+        .level-actions .btn-level.btn-reset {
+            background: rgba(239, 68, 68, 0.15);
+            color: #ef4444;
+            border: 1px solid rgba(239, 68, 68, 0.2);
+        }
+
+        .level-actions .btn-level.btn-reset:hover {
+            background: rgba(239, 68, 68, 0.25);
+        }
+
+        /* Níveis e títulos */
+        .level-titles {
+            font-size: 0.65rem;
+            color: #6c86a3;
+        }
+
+        /* Responsivo */
+        @media (max-width: 600px) {
+            .level-header {
+                flex-direction: column;
+                align-items: stretch;
+            }
+            .level-badge .level-number {
+                font-size: 1.8rem;
+            }
+            .stats-grid {
+                grid-template-columns: repeat(3, 1fr);
+            }
+            .stat-pill {
+                font-size: 0.65rem;
+                padding: 3px 8px;
+            }
+        }
+
+        @media (max-width: 400px) {
+            .stats-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- ============================================================
+    COMPONENTE DE NÍVEL - EXEMPLO DE USO
+    ============================================================ -->
+    <div class="level-system-container" id="levelSystem">
+        <div class="level-header">
+            <div class="level-badge">
+                <span class="level-number" id="levelNumber">1</span>
+                <div>
+                    <div class="level-label">Nível</div>
+                    <div class="level-title" id="levelTitle">🌱 Iniciante</div>
+                </div>
+            </div>
+            <div class="exp-container">
+                <div class="exp-bar">
+                    <div class="exp-fill" id="expFill" style="width: 0%;"></div>
+                </div>
+                <div class="exp-text">
+                    <span class="exp-current" id="expCurrent">0</span>
+                    <span>/ <span class="exp-next" id="expNext">100</span> EXP</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="stats-grid" id="statsGrid">
+            <span class="stat-pill">
+                <span class="stat-icon">❤️</span>
+                HP <span class="stat-value hp" id="statHp">100/100</span>
+            </span>
+            <span class="stat-pill">
+                <span class="stat-icon">💧</span>
+                MP <span class="stat-value mp" id="statMp">50/50</span>
+            </span>
+            <span class="stat-pill">
+                <span class="stat-icon">⚡</span>
+                SM <span class="stat-value sm" id="statSm">40/40</span>
+            </span>
+            <span class="stat-pill">
+                <span class="stat-icon">⚔️</span>
+                ATK <span class="stat-value atk" id="statAtk">15</span>
+            </span>
+            <span class="stat-pill">
+                <span class="stat-icon">🛡️</span>
+                DEF <span class="stat-value def" id="statDef">10</span>
+            </span>
+            <span class="stat-pill">
+                <span class="stat-icon">🔮</span>
+                MAG <span class="stat-value mag" id="statMag">8</span>
+            </span>
+        </div>
+
+        <div class="level-actions">
+            <button class="btn-level btn-treinar" id="btnTreinar">🏋️ Treinar (+EXP)</button>
+            <button class="btn-level btn-descansar" id="btnDescansar">🛌 Descansar</button>
+            <button class="btn-level btn-reset" id="btnResetLevel">🔄 Resetar Nível</button>
+        </div>
+    </div>
+
+    <script type="importmap">
+    {
+        "imports": {
+            "@supabase/supabase-js": "https://esm.sh/@supabase/supabase-js@2"
+        }
+    }
+    </script>
+
+    <script type="module">
+        import { createClient } from '@supabase/supabase-js';
+
+        // ============================================================
+        // CONFIGURAÇÕES
+        // ============================================================
+        const SUPABASE_URL = 'https://xrcxvizzdumcxbylmkvn.supabase.co';
+        const SUPABASE_KEY = 'sb_publishable_E-g3G3wW4EySbCsXLXp8KQ_FnmERMcD';
+        const supabase = createClient(SUPABASE_URL, SUPABASE_KEY);
+        const TABELA = 'Geral';
+
+        // ============================================================
+        // SISTEMA DE NÍVEL - CLASSE PRINCIPAL
+        // ============================================================
+        class LevelSystem {
+            constructor() {
+                // Dados do jogador
+                this.nivel = 1;
+                this.experiencia = 0;
+                this.expProximo = 100;
+
+                // Atributos base
+                this.hpMax = 100;
+                this.mpMax = 50;
+                this.smMax = 40;
+                this.ataqueBase = 15;
+                this.defesaBase = 10;
+                this.magiaBase = 8;
+
+                // Atributos atuais (podem ser modificados por buffs)
+                this.hp = 100;
+                this.mp = 50;
+                this.sm = 40;
+
+                // Títulos por nível
+                this.titulos = [
+                    { min: 1, titulo: '🌱 Iniciante' },
+                    { min: 5, titulo: '🌿 Aprendiz' },
+                    { min: 10, titulo: '⚔️ Guerreiro' },
+                    { min: 20, titulo: '🛡️ Mestre' },
+                    { min: 35, titulo: '🏆 Lendário' },
+                    { min: 50, titulo: '👑 Herói' },
+                    { min: 75, titulo: '⚡ Deus da Guerra' },
+                    { min: 100, titulo: '🌟 Imortal' },
+                ];
+
+                // Usuário atual
+                this.usuario = null;
+                this.supabaseOnline = false;
+
+                // Bind dos métodos
+                this.treinar = this.treinar.bind(this);
+                this.descansar = this.descansar.bind(this);
+                this.resetar = this.resetar.bind(this);
+                this.salvar = this.salvar.bind(this);
+                this.carregar = this.carregar.bind(this);
+                this.atualizarUI = this.atualizarUI.bind(this);
+            }
+
+            // ============================================================
+            // CÁLCULOS DE ATRIBUTOS POR NÍVEL
+            // ============================================================
+            getAtaque() {
+                return this.ataqueBase + Math.floor(this.nivel * 1.5);
+            }
+
+            getDefesa() {
+                return this.defesaBase + Math.floor(this.nivel * 1.2);
+            }
+
+            getMagia() {
+                return this.magiaBase + Math.floor(this.nivel * 1.0);
+            }
+
+            getHpMax() {
+                return this.hpMax + Math.floor(this.nivel * 6);
+            }
+
+            getMpMax() {
+                return this.mpMax + Math.floor(this.nivel * 4);
+            }
+
+            getSmMax() {
+                return this.smMax + Math.floor(this.nivel * 3);
+            }
+
+            getTitulo() {
+                let titulo = this.titulos[0].titulo;
+                for (const t of this.titulos) {
+                    if (this.nivel >= t.min) titulo = t.titulo;
+                }
+                return titulo;
+            }
+
+            getExpProximo() {
+                return Math.floor(100 * Math.pow(1.2, this.nivel - 1));
+            }
+
+            // ============================================================
+            // AÇÕES
+            // ============================================================
+            treinar() {
+                if (this.sm < 10) {
+                    this.mostrarToast('⚡ Stamina insuficiente! Descanse.', 'erro');
+                    return false;
+                }
+
+                this.sm -= 10;
+
+                // Ganho de EXP baseado no nível
+                const ganhoBase = 15 + Math.floor(this.nivel * 2);
+                const variacao = Math.floor(Math.random() * 15);
+                const ganho = ganhoBase + variacao;
+
+                this.experiencia += ganho;
+
+                // Verificar se subiu de nível
+                let subiu = false;
+                while (this.experiencia >= this.getExpProximo()) {
+                    this.experiencia -= this.getExpProximo();
+                    this.nivel++;
+                    subiu = true;
+
+                    // Recupera atributos ao subir de nível
+                    this.hp = this.getHpMax();
+                    this.mp = this.getMpMax();
+                    this.sm = this.getSmMax();
+
+                    this.mostrarToast(`🎉 SUBIU PARA NÍVEL ${this.nivel}!`, 'sucesso');
+                }
+
+                this.atualizarUI();
+
+                if (!subiu) {
+                    this.mostrarToast(`💪 Treinou! +${ganho} EXP (${this.experiencia}/${this.getExpProximo()})`, 'info');
+                }
+
+                this.salvar();
+                return true;
+            }
+
+            descansar() {
+                const hpRestaurado = Math.floor(this.getHpMax() * 0.4);
+                const mpRestaurado = Math.floor(this.getMpMax() * 0.35);
+                const smRestaurado = Math.floor(this.getSmMax() * 0.5);
+
+                this.hp = Math.min(this.getHpMax(), this.hp + hpRestaurado);
+                this.mp = Math.min(this.getMpMax(), this.mp + mpRestaurado);
+                this.sm = Math.min(this.getSmMax(), this.sm + smRestaurado);
+
+                this.atualizarUI();
+                this.mostrarToast(`🛌 Descansou! +${hpRestaurado} HP, +${mpRestaurado} MP, +${smRestaurado} SM`, 'sucesso');
+                this.salvar();
+                return true;
+            }
+
+            resetar() {
+                if (!confirm('⚠️ Tem certeza que quer resetar seu nível e atributos?')) return false;
+
+                this.nivel = 1;
+                this.experiencia = 0;
+                this.hp = this.getHpMax();
+                this.mp = this.getMpMax();
+                this.sm = this.getSmMax();
+
+                this.atualizarUI();
+                this.mostrarToast('🔄 Nível resetado para 1!', 'info');
+                this.salvar();
+                return true;
+            }
+
+            // ============================================================
+            // SUPABASE - SALVAR E CARREGAR
+            // ============================================================
+            async salvar() {
+                if (!this.usuario) {
+                    console.warn('⚠️ Nenhum usuário logado para salvar.');
+                    return false;
+                }
+
+                if (!this.supabaseOnline) {
+                    console.warn('⚠️ Supabase offline. Dados não salvos.');
+                    return false;
+                }
+
+                try {
+                    const payload = {
+                        nivel: this.nivel,
+                        experiencia: this.experiencia,
+                        exp_proximo: this.getExpProximo(),
+                        hp_max: this.getHpMax(),
+                        mp_max: this.getMpMax(),
+                        sm_max: this.getSmMax(),
+                        ataque_base: this.ataqueBase,
+                        defesa_base: this.defesaBase,
+                        magia_base: this.magiaBase,
+                        hp_atual: this.hp,
+                        mp_atual: this.mp,
+                        sm_atual: this.sm,
+                        updated_at: new Date().toISOString()
+                    };
+
+                    const { error } = await supabase
+                        .from(TABELA)
+                        .update(payload)
+                        .eq('login', this.usuario.login);
+
+                    if (error) throw error;
+                    return true;
+
+                } catch (error) {
+                    console.error('❌ Erro ao salvar nível:', error);
+                    return false;
+                }
+            }
+
+            async carregar(usuario) {
+                this.usuario = usuario;
+
+                try {
+                    const { data, error } = await supabase
+                        .from(TABELA)
+                        .select('nivel, experiencia, exp_proximo, hp_max, mp_max, sm_max, ataque_base, defesa_base, magia_base, hp_atual, mp_atual, sm_atual')
+                        .eq('login', usuario.login)
+                        .single();
+
+                    if (error) {
+                        if (error.code === 'PGRST116') {
+                            // Usuário não tem dados de nível, criar padrão
+                            await this.criarRegistroNivel(usuario);
+                            return true;
+                        }
+                        throw error;
+                    }
+
+                    if (data) {
+                        this.nivel = data.nivel || 1;
+                        this.experiencia = data.experiencia || 0;
+                        this.hpMax = data.hp_max || 100;
+                        this.mpMax = data.mp_max || 50;
+                        this.smMax = data.sm_max || 40;
+                        this.ataqueBase = data.ataque_base || 15;
+                        this.defesaBase = data.defesa_base || 10;
+                        this.magiaBase = data.magia_base || 8;
+                        this.hp = data.hp_atual || this.getHpMax();
+                        this.mp = data.mp_atual || this.getMpMax();
+                        this.sm = data.sm_atual || this.getSmMax();
+
+                        this.atualizarUI();
+                        return true;
+                    }
+
+                    return false;
+
+                } catch (error) {
+                    console.error('❌ Erro ao carregar nível:', error);
+                    return false;
+                }
+            }
+
+            async criarRegistroNivel(usuario) {
+                try {
+                    const payload = {
+                        login: usuario.login,
+                        nivel: 1,
+                        experiencia: 0,
+                        exp_proximo: 100,
+                        hp_max: 100,
+                        mp_max: 50,
+                        sm_max: 40,
+                        ataque_base: 15,
+                        defesa_base: 10,
+                        magia_base: 8,
+                        hp_atual: 100,
+                        mp_atual: 50,
+                        sm_atual: 40
+                    };
+
+                    const { error } = await supabase
+                        .from(TABELA)
+                        .update(payload)
+                        .eq('login', usuario.login);
+
+                    if (error) throw error;
+
+                    this.nivel = 1;
+                    this.experiencia = 0;
+                    this.hp = 100;
+                    this.mp = 50;
+                    this.sm = 40;
+                    this.atualizarUI();
+
+                    return true;
+
+                } catch (error) {
+                    console.error('❌ Erro ao criar registro de nível:', error);
+                    return false;
+                }
+            }
+
+            // ============================================================
+            // UI
+            // ============================================================
+            atualizarUI() {
+                const expProx = this.getExpProximo();
+                const pct = this.experiencia / expProx * 100;
+
+                document.getElementById('levelNumber').textContent = this.nivel;
+                document.getElementById('levelTitle').textContent = this.getTitulo();
+                document.getElementById('expFill').style.width = Math.min(pct, 100) + '%';
+                document.getElementById('expFill').className = 'exp-fill' + (pct > 75 ? ' high' : '');
+                document.getElementById('expCurrent').textContent = this.experiencia;
+                document.getElementById('expNext').textContent = expProx;
+
+                document.getElementById('statHp').textContent = `${this.hp}/${this.getHpMax()}`;
+                document.getElementById('statMp').textContent = `${this.mp}/${this.getMpMax()}`;
+                document.getElementById('statSm').textContent = `${this.sm}/${this.getSmMax()}`;
+                document.getElementById('statAtk').textContent = this.getAtaque();
+                document.getElementById('statDef').textContent = this.getDefesa();
+                document.getElementById('statMag').textContent = this.getMagia();
+            }
+
+            // ============================================================
+            // TOAST
+            // ============================================================
+            mostrarToast(mensagem, tipo = 'info') {
+                const toast = document.getElementById('levelToast');
+                if (!toast) {
+                    console.log('[TOAST]', mensagem);
+                    return;
+                }
+
+                const cores = {
+                    sucesso: '#10b981',
+                    erro: '#ef4444',
+                    info: '#3b82f6',
+                    aviso: '#f59e0b'
+                };
+
+                toast.textContent = mensagem;
+                toast.style.borderLeftColor = cores[tipo] || '#3b82f6';
+                toast.style.display = 'block';
+                toast.style.opacity = '1';
+
+                clearTimeout(this.toastTimer);
+                this.toastTimer = setTimeout(() => {
+                    toast.style.opacity = '0';
+                    setTimeout(() => { toast.style.display = 'none'; }, 400);
+                }, 3000);
+            }
+
+            // ============================================================
+            // VERIFICAR SUPABASE
+            // ============================================================
+            async verificarConexao() {
+                try {
+                    const { error } = await supabase.from(TABELA).select('id').limit(1);
+                    this.supabaseOnline = !error;
+                    return this.supabaseOnline;
+                } catch {
+                    this.supabaseOnline = false;
+                    return false;
+                }
+            }
+        }
+
+        // ============================================================
+        // INICIALIZAÇÃO
+        // ============================================================
+        const levelSystem = new LevelSystem();
+
+        // Verificar conexão
+        await levelSystem.verificarConexao();
+
+        // Carregar usuário logado
+        const usuarioLogado = localStorage.getItem('usuario_logado');
+        if (usuarioLogado) {
+            try {
+                const usuario = JSON.parse(usuarioLogado);
+                await levelSystem.carregar(usuario);
+            } catch (e) {
+                console.error('Erro ao carregar usuário:', e);
+            }
+        }
+
+        // Event listeners
+        document.getElementById('btnTreinar')?.addEventListener('click', levelSystem.treinar);
+        document.getElementById('btnDescansar')?.addEventListener('click', levelSystem.descansar);
+        document.getElementById('btnResetLevel')?.addEventListener('click', levelSystem.resetar);
+
+        // Exportar para uso global
+        window.levelSystem = levelSystem;
+
+        // Criar toast se não existir
+        if (!document.getElementById('levelToast')) {
+            const toast = document.createElement('div');
+            toast.id = 'levelToast';
+            toast.style.cssText = `
+                position: fixed;
+                bottom: 20px;
+                left: 50%;
+                transform: translateX(-50%);
+                background: rgba(10, 11, 16, 0.95);
+                backdrop-filter: blur(8px);
+                color: #fff;
+                padding: 12px 24px;
+                border-radius: 12px;
+                font-weight: 600;
+                font-size: 0.9rem;
+                box-shadow: 0 8px 32px rgba(0,0,0,0.5);
+                border-left: 4px solid #3b82f6;
+                z-index: 9999;
+                display: none;
+                opacity: 0;
+                transition: opacity 0.4s ease;
+                max-width: 90%;
+                text-align: center;
+                font-family: 'Rajdhani', sans-serif;
+            `;
+            document.body.appendChild(toast);
+        }
+
+        console.log('📊 Sistema de Nível carregado!');
+        console.log(`👤 Nível: ${levelSystem.nivel} | EXP: ${levelSystem.experiencia}/${levelSystem.getExpProximo()}`);
+    </script>
+</body>
+</html>

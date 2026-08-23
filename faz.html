@@ -1,0 +1,451 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+    <title>🌾 Fazenda</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            user-select: none;
+            -webkit-tap-highlight-color: transparent;
+        }
+        body {
+            background: #0b0e14;
+            font-family: 'Segoe UI', system-ui, sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            padding: 16px;
+            touch-action: manipulation;
+        }
+        #app {
+            max-width: 520px;
+            width: 100%;
+            background: #1a1f2a;
+            border-radius: 24px;
+            padding: 20px 18px 28px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.8);
+            border: 1px solid #2a3344;
+        }
+        h1 {
+            font-size: 28px;
+            color: #f0e8d0;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 6px;
+        }
+        h1 small {
+            font-size: 14px;
+            font-weight: 400;
+            color: #8892a8;
+            margin-left: auto;
+        }
+        .saldo-box {
+            background: #0f141e;
+            border-radius: 16px;
+            padding: 10px 16px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            border: 1px solid #2a3344;
+            margin-bottom: 18px;
+        }
+        .saldo-box span {
+            font-size: 16px;
+            color: #b0baca;
+        }
+        .saldo-box .valor {
+            font-size: 26px;
+            font-weight: 800;
+            color: #f0c040;
+        }
+        .secao {
+            background: #0f141e;
+            border-radius: 16px;
+            padding: 14px 16px;
+            margin-bottom: 16px;
+            border: 1px solid #2a3344;
+        }
+        .secao h3 {
+            color: #c8d0e0;
+            font-size: 16px;
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .secao .grid {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+        .secao .grid button {
+            flex: 1 0 calc(50% - 10px);
+            min-width: 100px;
+            padding: 12px 0;
+            border: none;
+            border-radius: 40px;
+            font-weight: 700;
+            font-size: 14px;
+            color: #fff;
+            background: #2a3344;
+            cursor: pointer;
+            transition: transform 0.1s, box-shadow 0.2s;
+            touch-action: manipulation;
+            border: 1px solid #3a4458;
+        }
+        .secao .grid button:active {
+            transform: scale(0.94);
+        }
+        .secao .grid button.colher {
+            background: linear-gradient(135deg, #27ae60, #1e8449);
+            border-color: #27ae60;
+        }
+        .secao .grid button.vender {
+            background: linear-gradient(135deg, #f39c12, #d68910);
+            border-color: #f39c12;
+        }
+        .secao .grid button.comprar {
+            background: linear-gradient(135deg, #3498db, #2176ae);
+            border-color: #3498db;
+        }
+        .secao .grid button.danger {
+            background: linear-gradient(135deg, #e74c3c, #c0392b);
+            border-color: #e74c3c;
+        }
+        .log {
+            background: #0b0e14;
+            border-radius: 12px;
+            padding: 10px 14px;
+            color: #8892a8;
+            font-size: 13px;
+            min-height: 44px;
+            border: 1px solid #1e2635;
+            margin-top: 6px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .log .emoji {
+            font-size: 20px;
+        }
+        .log .msg {
+            flex: 1;
+        }
+        .nav-links {
+            display: flex;
+            gap: 12px;
+            margin-top: 18px;
+            flex-wrap: wrap;
+        }
+        .nav-links a {
+            flex: 1;
+            text-align: center;
+            padding: 12px 0;
+            border-radius: 40px;
+            background: #2a3344;
+            color: #c8d0e0;
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 15px;
+            transition: background 0.15s, transform 0.1s;
+            touch-action: manipulation;
+            border: 1px solid #3a4458;
+        }
+        .nav-links a:active {
+            transform: scale(0.94);
+        }
+        .nav-links a.mochila {
+            background: linear-gradient(135deg, #a855f7, #7c3aed);
+            border-color: #a855f7;
+            color: #fff;
+        }
+        .nav-links a.jogo {
+            background: linear-gradient(135deg, #4a90d9, #2a5a8a);
+            border-color: #4a90d9;
+            color: #fff;
+        }
+
+        @media (max-width: 420px) {
+            #app { padding: 14px 12px 20px; }
+            h1 { font-size: 22px; }
+            .saldo-box .valor { font-size: 22px; }
+            .secao .grid button { font-size: 12px; padding: 10px 0; }
+        }
+    </style>
+</head>
+<body>
+<div id="app">
+    <h1>
+        🌾 Fazenda
+        <small id="moeda-display">💰 0,00</small>
+    </h1>
+
+    <div class="saldo-box">
+        <span>💰 Saldo</span>
+        <span class="valor" id="saldo-display">0,00</span>
+    </div>
+
+    <!-- COLHER / PRODUZIR -->
+    <div class="secao">
+        <h3>🌱 Produção</h3>
+        <div class="grid">
+            <button class="colher" id="colher-madeira">🪵 Madeira (+2)</button>
+            <button class="colher" id="colher-pedra">🪨 Pedra (+2)</button>
+            <button class="colher" id="colher-ouro">💎 Ouro (+1)</button>
+            <button class="colher" id="colher-pocao">🧪 Poção (+1)</button>
+        </div>
+    </div>
+
+    <!-- COMPRAR / VENDER -->
+    <div class="secao">
+        <h3>🏪 Mercado</h3>
+        <div class="grid">
+            <button class="comprar" id="comprar-madeira">🪵 Comprar (10💰)</button>
+            <button class="vender" id="vender-madeira">🪵 Vender (5💰)</button>
+            <button class="comprar" id="comprar-pedra">🪨 Comprar (15💰)</button>
+            <button class="vender" id="vender-pedra">🪨 Vender (8💰)</button>
+            <button class="comprar" id="comprar-ouro">💎 Comprar (50💰)</button>
+            <button class="vender" id="vender-ouro">💎 Vender (25💰)</button>
+            <button class="comprar" id="comprar-pocao">🧪 Comprar (25💰)</button>
+            <button class="vender" id="vender-pocao">🧪 Vender (12💰)</button>
+        </div>
+    </div>
+
+    <!-- LOG -->
+    <div class="log" id="log-area">
+        <span class="emoji">📢</span>
+        <span class="msg">Bem-vindo à fazenda!</span>
+    </div>
+
+    <div class="nav-links">
+        <a href="mochila.html" class="mochila">🎒 Mochila</a>
+        <a href="gax.html" class="jogo">⚔️ Jogo</a>
+        <a href="dashboard.html" class="nav-link fazenda">🎮 Dashboard</a>
+
+    </div>
+</div>
+
+<script>
+    // ═══════════════════════════════════════════════════════════════
+    //  BANCO DE DADOS SIMULADO (localStorage)
+    //  Estrutura completa da tabela Geral
+    // ═══════════════════════════════════════════════════════════════
+
+    const DB_KEY = 'castle_clash_db';
+    const USUARIO_PADRAO = 'jogador';
+
+    function getEstruturaBase() {
+        return {
+            id: 1,
+            nome: 'Jogador',
+            login: USUARIO_PADRAO,
+            senha: '123456',
+            saldo: 0.00,
+            saldo_poupanca: 0.00,
+            proventos_pendentes: 0.00,
+            carteira: {},
+            preco_medio_compra: {},
+            proventos_por_ativo: {},
+            created_at: new Date().toISOString(),
+            updated_at: new Date().toISOString(),
+            seeds: 0,
+            planted: 0,
+            harvested: 0,
+            buckets: 0,
+            plot_data: [],
+            selic: 10.75,
+            fazendinha_dados: {},
+            nivel: 1,
+            experiencia: 0,
+            exp_proximo: 100,
+            hp_max: 100,
+            mp_max: 50,
+            sm_max: 40,
+            ataque_base: 15,
+            defesa_base: 10,
+            magia_base: 8,
+            hp_atual: 100,
+            mp_atual: 50,
+            sm_atual: 40
+        };
+    }
+
+    function getDB() {
+        let db = localStorage.getItem(DB_KEY);
+        if (db) {
+            try {
+                const parsed = JSON.parse(db);
+                const base = getEstruturaBase();
+                for (let key in base) {
+                    if (!(key in parsed)) {
+                        parsed[key] = base[key];
+                    }
+                }
+                return parsed;
+            } catch (e) {}
+        }
+        const novoDB = getEstruturaBase();
+        novoDB.carteira = {
+            'Madeira': 5,
+            'Pedra': 3,
+            'Ouro': 2,
+            'Poção': 1
+        };
+        localStorage.setItem(DB_KEY, JSON.stringify(novoDB));
+        return novoDB;
+    }
+
+    function saveDB(db) {
+        db.updated_at = new Date().toISOString();
+        localStorage.setItem(DB_KEY, JSON.stringify(db));
+    }
+
+    // ─── Funções de acesso ───
+
+    function getSaldo() {
+        const db = getDB();
+        return parseFloat(db.saldo) || 0;
+    }
+
+    function setSaldo(valor) {
+        const db = getDB();
+        db.saldo = parseFloat(valor.toFixed(2));
+        saveDB(db);
+        return db.saldo;
+    }
+
+    function adicionarSaldo(valor) {
+        const atual = getSaldo();
+        return setSaldo(atual + valor);
+    }
+
+    function getCarteira() {
+        const db = getDB();
+        return db.carteira || {};
+    }
+
+    function setCarteira(carteira) {
+        const db = getDB();
+        db.carteira = carteira;
+        saveDB(db);
+        return db.carteira;
+    }
+
+    function getItem(nome) {
+        const carteira = getCarteira();
+        return carteira[nome] || 0;
+    }
+
+    function setItem(nome, quantidade) {
+        const carteira = getCarteira();
+        if (quantidade <= 0) {
+            delete carteira[nome];
+        } else {
+            carteira[nome] = Math.floor(quantidade);
+        }
+        setCarteira(carteira);
+        return carteira[nome] || 0;
+    }
+
+    function adicionarItem(nome, quantidade = 1) {
+        const atual = getItem(nome);
+        return setItem(nome, atual + quantidade);
+    }
+
+    function removerItem(nome, quantidade = 1) {
+        const atual = getItem(nome);
+        if (atual < quantidade) return false;
+        return setItem(nome, atual - quantidade) >= 0;
+    }
+
+    // ──────────────────────────────────────────────
+    //  UI HELPERS
+    // ──────────────────────────────────────────────
+
+    function atualizarUI() {
+        const saldo = getSaldo();
+        document.getElementById('saldo-display').textContent = saldo.toFixed(2);
+        document.getElementById('moeda-display').textContent = `💰 ${saldo.toFixed(2)}`;
+    }
+
+    function log(emoji, mensagem) {
+        const area = document.getElementById('log-area');
+        area.innerHTML = `<span class="emoji">${emoji}</span><span class="msg">${mensagem}</span>`;
+        clearTimeout(window._logTimeout);
+        window._logTimeout = setTimeout(() => {
+            area.innerHTML = `<span class="emoji">📢</span><span class="msg">Pronto para mais ação!</span>`;
+        }, 3000);
+    }
+
+    // ──────────────────────────────────────────────
+    //  AÇÕES
+    // ──────────────────────────────────────────────
+
+    function colher(nome, qtd) {
+        adicionarItem(nome, qtd);
+        log('🌱', `Colheu ${qtd}x ${nome}!`);
+        atualizarUI();
+    }
+
+    function comprar(nome, preco, qtd = 1) {
+        const saldo = getSaldo();
+        if (saldo < preco) {
+            log('❌', `Saldo insuficiente para comprar ${nome}!`);
+            return;
+        }
+        setSaldo(saldo - preco);
+        adicionarItem(nome, qtd);
+        log('🛒', `Comprou ${qtd}x ${nome} por ${preco.toFixed(2)}💰`);
+        atualizarUI();
+    }
+
+    function vender(nome, preco, qtd = 1) {
+        if (!removerItem(nome, qtd)) {
+            log('❌', `Você não tem ${qtd}x ${nome} para vender!`);
+            return;
+        }
+        adicionarSaldo(preco);
+        log('💰', `Vendeu ${qtd}x ${nome} por ${preco.toFixed(2)}💰`);
+        atualizarUI();
+    }
+
+    // ──────────────────────────────────────────────
+    //  EVENTOS
+    // ──────────────────────────────────────────────
+
+    document.addEventListener('DOMContentLoaded', () => {
+        document.getElementById('colher-madeira').addEventListener('click', () => colher('Madeira', 2));
+        document.getElementById('colher-pedra').addEventListener('click', () => colher('Pedra', 2));
+        document.getElementById('colher-ouro').addEventListener('click', () => colher('Ouro', 1));
+        document.getElementById('colher-pocao').addEventListener('click', () => colher('Poção', 1));
+
+        document.getElementById('comprar-madeira').addEventListener('click', () => comprar('Madeira', 10));
+        document.getElementById('comprar-pedra').addEventListener('click', () => comprar('Pedra', 15));
+        document.getElementById('comprar-ouro').addEventListener('click', () => comprar('Ouro', 50));
+        document.getElementById('comprar-pocao').addEventListener('click', () => comprar('Poção', 25));
+
+        document.getElementById('vender-madeira').addEventListener('click', () => vender('Madeira', 5));
+        document.getElementById('vender-pedra').addEventListener('click', () => vender('Pedra', 8));
+        document.getElementById('vender-ouro').addEventListener('click', () => vender('Ouro', 25));
+        document.getElementById('vender-pocao').addEventListener('click', () => vender('Poção', 12));
+
+        atualizarUI();
+        log('📢', 'Bem-vindo à fazenda!');
+    });
+
+    window.addEventListener('storage', (e) => {
+        if (e.key === DB_KEY) {
+            atualizarUI();
+        }
+    });
+
+    console.log('🌾 Fazenda carregada!');
+</script>
+</body>
+</html>

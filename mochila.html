@@ -1,0 +1,733 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+    <title>🎒 Mochila</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            user-select: none;
+            -webkit-tap-highlight-color: transparent;
+        }
+        body {
+            background: #0b0e14;
+            font-family: 'Segoe UI', system-ui, sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            padding: 16px;
+            touch-action: manipulation;
+        }
+        #app {
+            max-width: 520px;
+            width: 100%;
+            background: #1a1f2a;
+            border-radius: 24px;
+            padding: 20px 18px 28px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.8);
+            border: 1px solid #2a3344;
+        }
+        h1 {
+            font-size: 28px;
+            color: #f0e8d0;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 8px;
+            flex-wrap: wrap;
+        }
+        h1 small {
+            font-size: 14px;
+            font-weight: 400;
+            color: #8892a8;
+            margin-left: auto;
+        }
+        .usuario-info {
+            background: #0f141e;
+            border-radius: 12px;
+            padding: 8px 14px;
+            margin-bottom: 12px;
+            border: 1px solid #2a3344;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 10px;
+        }
+        .usuario-info .user {
+            color: #b0baca;
+            font-size: 14px;
+        }
+        .usuario-info .user strong {
+            color: #f0e8d0;
+        }
+        .usuario-info .btn-voltar {
+            color: #fff;
+            background: #2a3344;
+            border: 1px solid #3a4458;
+            padding: 4px 14px;
+            border-radius: 20px;
+            font-size: 12px;
+            cursor: pointer;
+            transition: all 0.2s;
+            touch-action: manipulation;
+            text-decoration: none;
+            display: inline-block;
+        }
+        .usuario-info .btn-voltar:hover {
+            background: #3a4458;
+        }
+        .usuario-info .btn-voltar:active {
+            transform: scale(0.94);
+        }
+        .saldo-box {
+            background: #0f141e;
+            border-radius: 16px;
+            padding: 12px 18px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            border: 1px solid #2a3344;
+            margin-bottom: 20px;
+        }
+        .saldo-box span {
+            font-size: 18px;
+            color: #b0baca;
+        }
+        .saldo-box .valor {
+            font-size: 28px;
+            font-weight: 800;
+            color: #f0c040;
+            letter-spacing: 0.5px;
+        }
+        .saldo-box .moeda {
+            font-size: 22px;
+            margin-right: 6px;
+        }
+        .loading {
+            text-align: center;
+            color: #8892a8;
+            padding: 20px;
+            font-size: 14px;
+        }
+        .loading .spinner {
+            display: inline-block;
+            animation: spin 1s linear infinite;
+            font-size: 24px;
+        }
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .lista-itens {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            margin-top: 6px;
+            max-height: 380px;
+            overflow-y: auto;
+            padding-right: 4px;
+        }
+        .lista-itens::-webkit-scrollbar {
+            width: 4px;
+        }
+        .lista-itens::-webkit-scrollbar-thumb {
+            background: #3a4458;
+            border-radius: 10px;
+        }
+        .item {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            background: #0f141e;
+            padding: 10px 14px;
+            border-radius: 14px;
+            border: 1px solid #2a3344;
+            transition: background 0.15s;
+        }
+        .item .info {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            flex: 1;
+            flex-wrap: wrap;
+        }
+        .item .info .emoji {
+            font-size: 28px;
+            line-height: 1;
+        }
+        .item .info .nome {
+            font-weight: 600;
+            color: #e0e8f0;
+            font-size: 16px;
+        }
+        .item .info .qtd {
+            color: #8892a8;
+            font-size: 14px;
+            margin-left: 4px;
+        }
+        .item .info .valor-unit {
+            font-size: 12px;
+            color: #f0c040;
+            background: rgba(240, 192, 64, 0.1);
+            padding: 2px 10px;
+            border-radius: 20px;
+            border: 1px solid rgba(240, 192, 64, 0.2);
+        }
+        .item .info .origem {
+            font-size: 10px;
+            color: #5a6478;
+            background: #1a1f2a;
+            padding: 2px 8px;
+            border-radius: 10px;
+            border: 1px solid #2a3344;
+        }
+        .vazio {
+            text-align: center;
+            color: #5a6478;
+            padding: 30px 0;
+            font-size: 16px;
+        }
+        .nav-links {
+            display: flex;
+            gap: 12px;
+            margin-top: 20px;
+            flex-wrap: wrap;
+        }
+        .nav-links a {
+            flex: 1;
+            text-align: center;
+            padding: 12px 0;
+            border-radius: 40px;
+            background: #2a3344;
+            color: #c8d0e0;
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 15px;
+            transition: background 0.15s, transform 0.1s;
+            touch-action: manipulation;
+            border: 1px solid #3a4458;
+        }
+        .nav-links a:active {
+            transform: scale(0.94);
+        }
+        .nav-links a.fazenda {
+            background: linear-gradient(135deg, #27ae60, #1e8449);
+            border-color: #27ae60;
+            color: #fff;
+        }
+
+        /* SISTEMA DE NÍVEL - WIDGET (atualizado) */
+        .level-widget {
+            background: #0f141e;
+            border-radius: 16px;
+            padding: 16px 18px 18px;
+            border: 1px solid #2a3344;
+            margin-bottom: 18px;
+        }
+        .lw-header {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            flex-wrap: wrap;
+        }
+        .lw-badge {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            background: #1a1f2a;
+            padding: 6px 14px 6px 10px;
+            border-radius: 40px;
+            border: 1px solid #2a3344;
+        }
+        .lw-badge .lw-num {
+            font-size: 28px;
+            font-weight: 800;
+            color: #f0c040;
+            background: #0b0e14;
+            border-radius: 50%;
+            width: 44px;
+            height: 44px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border: 1px solid #f0c040;
+        }
+        .lw-badge .lw-label {
+            font-size: 10px;
+            color: #5a6478;
+            letter-spacing: 1px;
+        }
+        .lw-badge .lw-title {
+            font-size: 14px;
+            font-weight: 600;
+            color: #e0e8f0;
+        }
+        .lw-exp {
+            flex: 1;
+            min-width: 120px;
+        }
+        .lw-bar {
+            background: #1a1f2a;
+            border-radius: 20px;
+            height: 10px;
+            overflow: hidden;
+            border: 1px solid #2a3344;
+        }
+        .lw-fill {
+            height: 100%;
+            width: 0%;
+            background: linear-gradient(90deg, #f0c040, #f5a623);
+            border-radius: 20px;
+            transition: width 0.4s ease;
+        }
+        .lw-text {
+            display: flex;
+            justify-content: space-between;
+            font-size: 12px;
+            color: #8892a8;
+            margin-top: 4px;
+        }
+        .lw-text .lw-cur {
+            color: #f0e8d0;
+        }
+        .lw-text .lw-nxt {
+            color: #f0c040;
+        }
+
+        .lw-stats {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 6px 12px;
+            margin-top: 14px;
+            padding-top: 12px;
+            border-top: 1px solid #1a1f2a;
+            font-size: 12px;
+            color: #8892a8;
+        }
+        .lw-stats span {
+            display: flex;
+            align-items: center;
+            gap: 4px;
+            background: #1a1f2a;
+            padding: 2px 10px 2px 6px;
+            border-radius: 20px;
+            border: 1px solid #2a3344;
+        }
+        .lw-stats .hp-c { color: #e74c3c; font-weight: 600; }
+        .lw-stats .mp-c { color: #3498db; font-weight: 600; }
+        .lw-stats .sm-c { color: #2ecc71; font-weight: 600; }
+        .lw-stats .atk-c { color: #e67e22; font-weight: 600; }
+        .lw-stats .def-c { color: #5dade2; font-weight: 600; }
+        .lw-stats .mag-c { color: #9b59b6; font-weight: 600; }
+
+        @media (max-width: 420px) {
+            #app { padding: 14px 12px 20px; }
+            h1 { font-size: 22px; }
+            .saldo-box .valor { font-size: 22px; }
+            .item .info .emoji { font-size: 22px; }
+            .item .info .nome { font-size: 14px; }
+            .lw-badge .lw-num { width: 36px; height: 36px; font-size: 22px; }
+        }
+        @media (max-width: 360px) {
+            .item { flex-wrap: wrap; gap: 6px; }
+            .lw-header { flex-direction: column; align-items: stretch; }
+            .lw-badge { justify-content: center; }
+        }
+    </style>
+</head>
+<body>
+<div id="app">
+    <h1>
+        🎒 Mochila
+        <small id="itens-count">0 itens</small>
+    </h1>
+
+
+    
+    <!-- Info do Usuário Logado -->
+    <div class="usuario-info" id="usuarioInfo">
+        <span class="user">👤 <strong id="usuarioNome">Carregando...</strong></span>
+        <a href="dashboard.html" class="btn-voltar">🏠 Voltar</a>
+    </div>
+
+    <div class="saldo-box">
+        <span><span class="moeda">💰</span> Saldo</span>
+        <span class="valor" id="saldo-display">0,00</span>
+    </div>
+
+    <!-- SISTEMA DE NÍVEL - WIDGET (sem botões) -->
+    <div class="level-widget" id="levelWidget">
+        <div class="lw-header">
+            <div class="lw-badge">
+                <span class="lw-num" id="lwNivel">1</span>
+                <div>
+                    <div class="lw-label">NÍVEL</div>
+                    <div class="lw-title" id="lwTitulo">🌱 Iniciante</div>
+                </div>
+            </div>
+            <div class="lw-exp">
+                <div class="lw-bar">
+                    <div class="lw-fill" id="lwExpFill" style="width:0%"></div>
+                </div>
+                <div class="lw-text">
+                    <span class="lw-cur" id="lwExpAtual">0</span>
+                    <span>/ <span class="lw-nxt" id="lwExpProx">100</span> EXP</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="lw-stats">
+            <span>❤️ HP<span class="hp-c" id="lwHp">100/100</span></span>
+            <span>💧 MANA<span class="mp-c" id="lwMp">50/50</span></span>
+            <span>⚡ STAMINA<span class="sm-c" id="lwSm">100/100</span></span>
+            <span>⚔️ FORCA<span class="atk-c" id="lwAtk">15</span></span>
+            <span>🛡️ DEFESA<span class="def-c" id="lwDef">10</span></span>
+            <span>🔮 MAGIA<span class="mag-c" id="lwMag">8</span></span>
+        </div>
+    </div>
+
+    <div class="loading" id="loading-indicator">
+        <span class="spinner">🔄</span> Carregando dados...
+    </div>
+
+    <div class="lista-itens" id="lista-itens">
+        <!-- itens renderizados via JS -->
+    </div>
+
+</div>
+
+<!-- Supabase JS -->
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+<script>
+    (function() {
+        'use strict';
+
+        // ============================================================
+        // CONFIGURAÇÕES SUPABASE
+        // ============================================================
+        const SUPABASE_URL = 'https://xrcxvizzdumcxbylmkvn.supabase.co';
+        const SUPABASE_KEY = 'sb_publishable_E-g3G3wW4EySbCsXLXp8KQ_FnmERMcD';
+        const TABELA = 'Geral';
+
+        // Inicializa cliente Supabase
+        const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+
+        // ============================================================
+        // REFERÊNCIAS DOS ELEMENTOS
+        // ============================================================
+        const saldoDisplay = document.getElementById('saldo-display');
+        const itensCount = document.getElementById('itens-count');
+        const listaItens = document.getElementById('lista-itens');
+        const loadingIndicator = document.getElementById('loading-indicator');
+        const usuarioNome = document.getElementById('usuarioNome');
+
+        // ============================================================
+        // ESTADO
+        // ============================================================
+        const state = {
+            usuarioLogado: null,
+            dadosUsuario: null,
+            isLoading: false,
+            supabaseOnline: false
+        };
+
+        // ============================================================
+        // FUNÇÕES DE USUÁRIO
+        // ============================================================
+        function getUsuarioLogado() {
+            try {
+                const data = localStorage.getItem('usuario_logado');
+                if (data) {
+                    return JSON.parse(data);
+                }
+                return null;
+            } catch (e) {
+                return null;
+            }
+        }
+
+        function logout() {
+            localStorage.removeItem('usuario_logado');
+            window.location.href = 'login.html';
+        }
+
+        // ============================================================
+        // FUNÇÕES DE ACESSO AO SUPABASE
+        // ============================================================
+        async function buscarDadosUsuario(login) {
+            try {
+                const { data, error } = await supabase
+                    .from(TABELA)
+                    .select('*')
+                    .eq('login', login)
+                    .single();
+
+                if (error) {
+                    if (error.code === 'PGRST116') {
+                        console.warn('⚠️ Usuário não encontrado no Supabase:', login);
+                        return null;
+                    }
+                    throw error;
+                }
+
+                return data;
+            } catch (error) {
+                console.error('❌ Erro ao buscar dados:', error);
+                throw error;
+            }
+        }
+
+        // ============================================================
+        // FUNÇÕES DE NEGÓCIO
+        // ============================================================
+        function getEmoji(nome) {
+            const mapa = {
+                'Madeira': '🪵',
+                'Pedra': '🪨',
+                'Ouro': '💎',
+                'Poção': '🧪',
+                'Ferramenta': '🔧',
+                'Semente': '🌱',
+                'Planta': '🌿',
+                'Colheita': '🌾',
+                'Água': '💧',
+                'Fertilizante': '🧴'
+            };
+            return mapa[nome] || '📦';
+        }
+
+        function getValorItem(nome) {
+            const valores = {
+                'Madeira': 10,
+                'Pedra': 15,
+                'Ouro': 50,
+                'Poção': 25,
+                'Ferramenta': 30,
+                'Semente': 5,
+                'Planta': 20,
+                'Colheita': 40,
+                'Água': 3,
+                'Fertilizante': 8
+            };
+            return valores[nome] || 10;
+        }
+
+        function getOrigemItem(nome) {
+            const itensFazendinha = ['Semente', 'Planta', 'Colheita', 'Água', 'Fertilizante'];
+            return itensFazendinha.includes(nome) ? '🌾 Fazendinha' : '🎒 Carteira';
+        }
+
+        // ============================================================
+        // FUNÇÃO PARA EXTRAIR ITENS DE TODAS AS ORIGENS
+        // ============================================================
+        function extrairTodosItens(dadosUsuario) {
+            const todosItens = {};
+            
+            if (dadosUsuario.carteira && typeof dadosUsuario.carteira === 'object') {
+                Object.entries(dadosUsuario.carteira).forEach(([nome, qtd]) => {
+                    if (qtd > 0) {
+                        todosItens[nome] = (todosItens[nome] || 0) + qtd;
+                    }
+                });
+            }
+
+            if (dadosUsuario.fazendinha_dados && typeof dadosUsuario.fazendinha_dados === 'object') {
+                const fd = dadosUsuario.fazendinha_dados;
+                if (fd.seeds && fd.seeds > 0) {
+                    todosItens['Semente'] = (todosItens['Semente'] || 0) + fd.seeds;
+                }
+                if (fd.planted && fd.planted > 0) {
+                    todosItens['Planta'] = (todosItens['Planta'] || 0) + fd.planted;
+                }
+                if (fd.harvested && fd.harvested > 0) {
+                    todosItens['Colheita'] = (todosItens['Colheita'] || 0) + fd.harvested;
+                }
+                if (fd.buckets && fd.buckets > 0) {
+                    todosItens['Água'] = (todosItens['Água'] || 0) + fd.buckets;
+                }
+                if (fd.fertilizante && fd.fertilizante > 0) {
+                    todosItens['Fertilizante'] = (todosItens['Fertilizante'] || 0) + fd.fertilizante;
+                }
+            }
+
+            if (dadosUsuario.seeds && dadosUsuario.seeds > 0) {
+                todosItens['Semente'] = (todosItens['Semente'] || 0) + dadosUsuario.seeds;
+            }
+            if (dadosUsuario.planted && dadosUsuario.planted > 0) {
+                todosItens['Planta'] = (todosItens['Planta'] || 0) + dadosUsuario.planted;
+            }
+            if (dadosUsuario.harvested && dadosUsuario.harvested > 0) {
+                todosItens['Colheita'] = (todosItens['Colheita'] || 0) + dadosUsuario.harvested;
+            }
+            if (dadosUsuario.buckets && dadosUsuario.buckets > 0) {
+                todosItens['Água'] = (todosItens['Água'] || 0) + dadosUsuario.buckets;
+            }
+
+            return Object.entries(todosItens).map(([nome, quantidade]) => ({
+                nome,
+                quantidade
+            }));
+        }
+
+        // ============================================================
+        // RENDER
+        // ============================================================
+        function render() {
+            if (!state.dadosUsuario) {
+                loadingIndicator.style.display = 'block';
+                listaItens.innerHTML = '';
+                saldoDisplay.textContent = '0,00';
+                itensCount.textContent = '0 itens';
+                return;
+            }
+
+            loadingIndicator.style.display = 'none';
+
+            const saldo = parseFloat(state.dadosUsuario.saldo) || 0;
+            const itens = extrairTodosItens(state.dadosUsuario);
+
+            const nome = state.dadosUsuario.nome || state.dadosUsuario.login || 'Usuário';
+            usuarioNome.textContent = nome;
+
+            saldoDisplay.textContent = saldo.toFixed(2);
+            itensCount.textContent = `${itens.length} itens`;
+
+            if (itens.length === 0) {
+                listaItens.innerHTML = `<div class="vazio">👜 Mochila vazia<br><small>Vá à fazenda para ganhar itens!</small></div>`;
+                return;
+            }
+
+            listaItens.innerHTML = itens.map(item => `
+                <div class="item" data-nome="${item.nome}">
+                    <div class="info">
+                        <span class="emoji">${getEmoji(item.nome)}</span>
+                        <span class="nome">${item.nome}</span>
+                        <span class="qtd">×${item.quantidade}</span>
+                        <span class="valor-unit">${getValorItem(item.nome)}💰</span>
+                        <span class="origem">${getOrigemItem(item.nome)}</span>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        // ============================================================
+        // CARREGAR DADOS
+        // ============================================================
+        async function carregarDados() {
+            if (!state.usuarioLogado) {
+                console.warn('⚠️ Nenhum usuário logado');
+                return;
+            }
+
+            try {
+                state.isLoading = true;
+                loadingIndicator.style.display = 'block';
+                
+                state.dadosUsuario = await buscarDadosUsuario(state.usuarioLogado.login);
+                
+                if (!state.dadosUsuario) {
+                    const dadosPadrao = {
+                        carteira: {
+                            'Madeira': 5,
+                            'Pedra': 3,
+                            'Ouro': 2,
+                            'Poção': 1
+                        },
+                        saldo: 0,
+                        fazendinha_dados: {
+                            seeds: 10,
+                            planted: 0,
+                            harvested: 0,
+                            buckets: 5,
+                            fertilizante: 2
+                        },
+                        seeds: 10,
+                        planted: 0,
+                        harvested: 0,
+                        buckets: 5,
+                        historico: []
+                    };
+                    
+                    const { error } = await supabase
+                        .from(TABELA)
+                        .update(dadosPadrao)
+                        .eq('login', state.usuarioLogado.login);
+                    
+                    if (error) throw error;
+                    
+                    state.dadosUsuario = await buscarDadosUsuario(state.usuarioLogado.login);
+                }
+                
+                render();
+            } catch (error) {
+                console.error('❌ Erro ao carregar dados:', error);
+                alert('❌ Erro ao carregar dados: ' + error.message);
+            } finally {
+                state.isLoading = false;
+                loadingIndicator.style.display = 'none';
+            }
+        }
+
+        // ============================================================
+        // VERIFICAR CONEXÃO
+        // ============================================================
+        async function verificarConexao() {
+            try {
+                const { error } = await supabase.from(TABELA).select('id').limit(1);
+                state.supabaseOnline = !error;
+                console.log(state.supabaseOnline ? '✅ Supabase Online' : '❌ Supabase Offline');
+                return state.supabaseOnline;
+            } catch {
+                state.supabaseOnline = false;
+                console.log('❌ Supabase Offline');
+                return false;
+            }
+        }
+
+        // ============================================================
+        // INICIALIZAÇÃO
+        // ============================================================
+        async function init() {
+            await verificarConexao();
+
+            const usuario = getUsuarioLogado();
+            
+            if (!usuario || !usuario.login) {
+                console.warn('⚠️ Usuário não logado, redirecionando para login...');
+                window.location.href = 'login.html';
+                return;
+            }
+
+            state.usuarioLogado = usuario;
+            usuarioNome.textContent = usuario.nome || usuario.login;
+            
+            console.log('👤 Usuário logado:', usuario.login);
+            
+            await carregarDados();
+
+            console.log('🎒 Mochila carregada com Supabase!');
+            console.log('📋 Conectado à tabela public."Geral"');
+        }
+
+        // ============================================================
+        // INICIAR
+        // ============================================================
+        document.addEventListener('DOMContentLoaded', init);
+
+        document.addEventListener('visibilitychange', () => {
+            if (!document.hidden && state.usuarioLogado) {
+                carregarDados();
+            }
+        });
+
+        console.log('🎒 Mochila iniciada!');
+    })();
+</script>
+</body>
+</html>

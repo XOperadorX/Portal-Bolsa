@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Dashboard Gamer - BAEP Investimentos</title>
+    <title>Dashboard Central de Jogos MM</title>
     <!-- Fonte Gamer Google Fonts -->
     <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500;700;900&family=Rajdhani:wght@600;700&display=swap" rel="stylesheet">
 
@@ -47,7 +47,7 @@
             border: 1px solid rgba(0, 240, 255, 0.2);
             padding: 12px 24px;
             border-radius: 16px;
-            margin-bottom: 30px;
+            margin-bottom: 20px;
             box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
             flex-wrap: wrap;
             gap: 10px;
@@ -80,7 +80,6 @@
             box-shadow: 0 0 10px rgba(0, 240, 255, 0.3);
         }
 
-        /* Estilo para o perfil com saldo e nick */
         .user-profile {
             display: flex;
             align-items: center;
@@ -148,7 +147,6 @@
             flex-wrap: wrap;
         }
 
-        /* --- BOTÕES ORIGINAIS ESTILIZADOS --- */
         .btn-bolsa {
             background: linear-gradient(135deg, #00f0ff, #7000ff);
             color: white;
@@ -163,6 +161,7 @@
             align-items: center;
             gap: 5px;
             box-shadow: 0 0 12px rgba(0, 240, 255, 0.4);
+            text-decoration: none;
         }
 
         .btn-bolsa:hover {
@@ -192,12 +191,12 @@
         /* --- DASHBOARD & GAME GRID --- */
         .dashboard-header {
             text-align: center;
-            margin-bottom: 35px;
+            margin-bottom: 25px;
         }
 
         .dashboard-header h1 {
             font-family: 'Orbitron', sans-serif;
-            font-size: 2.5rem;
+            font-size: 2.2rem;
             letter-spacing: 2px;
             color: #fff;
             text-transform: uppercase;
@@ -206,24 +205,23 @@
 
         .dashboard-header p {
             color: #8a99ad;
-            font-size: 1.1rem;
+            font-size: 1rem;
             margin-top: 5px;
         }
 
         .games-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-            gap: 20px;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 16px;
             max-width: 1300px;
             margin: 0 auto;
         }
 
-        /* --- CARDS/BOTÕES DOS JOGOS --- */
         .game-card {
             background: var(--card-bg);
             border: 1px solid rgba(255, 255, 255, 0.08);
             border-radius: 16px;
-            padding: 25px 20px;
+            padding: 20px 16px;
             text-decoration: none;
             color: var(--text-color);
             display: flex;
@@ -253,26 +251,26 @@
         }
 
         .game-card:hover {
-            transform: translateY(-8px) scale(1.03);
+            transform: translateY(-6px) scale(1.03);
             border-color: var(--neon-blue);
             box-shadow: 0 10px 25px -5px rgba(0, 240, 255, 0.4);
             background: #181d2e;
         }
 
         .game-icon {
-            font-size: 3rem;
-            margin-bottom: 12px;
-            filter: drop-shadow(0 0 8px rgba(255, 255, 255, 0.3));
+            font-size: 2.8rem;
+            margin-bottom: 10px;
+            filter: drop-shadow(0 0 8px rgba(255, 255, 255, 0.2));
             transition: transform 0.3s;
         }
 
         .game-card:hover .game-icon {
-            transform: scale(1.2) rotate(5deg);
+            transform: scale(1.15) rotate(5deg);
         }
 
         .game-title {
             font-family: 'Orbitron', sans-serif;
-            font-size: 1.1rem;
+            font-size: 1rem;
             font-weight: 700;
             letter-spacing: 1px;
             color: #fff;
@@ -280,13 +278,13 @@
 
         .game-badge {
             position: absolute;
-            top: 10px;
-            right: 10px;
+            top: 8px;
+            right: 8px;
             background: var(--neon-purple);
             color: #fff;
-            font-size: 0.65rem;
+            font-size: 0.55rem;
             font-weight: bold;
-            padding: 3px 8px;
+            padding: 2px 8px;
             border-radius: 20px;
             text-transform: uppercase;
             box-shadow: 0 0 8px var(--neon-purple);
@@ -295,6 +293,336 @@
         .game-card.hot { border-color: rgba(255, 77, 77, 0.4); }
         .game-card.hot:hover { border-color: #ff4d4d; box-shadow: 0 10px 25px -5px rgba(255, 77, 77, 0.5); }
         .game-card.hot .game-badge { background: #ff4d4d; box-shadow: 0 0 8px #ff4d4d; }
+
+        /* ============================================================
+           SISTEMA DE NÍVEL - WIDGET
+           ============================================================ */
+        .level-widget {
+            background: rgba(18, 21, 32, 0.85);
+            border-radius: 16px;
+            padding: 14px 20px;
+            border: 1px solid rgba(0, 240, 255, 0.12);
+            backdrop-filter: blur(6px);
+            margin-bottom: 20px;
+            max-width: 1300px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+        .level-widget .lw-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 8px;
+        }
+        .level-widget .lw-badge {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-family: 'Orbitron', sans-serif;
+        }
+        .level-widget .lw-badge .lw-num {
+            font-size: 2rem;
+            font-weight: 900;
+            color: #00f0ff;
+            text-shadow: 0 0 25px rgba(0, 240, 255, 0.3);
+            line-height: 1;
+        }
+        .level-widget .lw-badge .lw-label {
+            font-size: 0.6rem;
+            color: #8a99ad;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+        .level-widget .lw-badge .lw-title {
+            font-size: 0.8rem;
+            color: #f0f4f8;
+            font-weight: 600;
+        }
+        .level-widget .lw-exp {
+            flex: 1;
+            min-width: 120px;
+        }
+        .level-widget .lw-exp .lw-bar {
+            background: rgba(255,255,255,0.06);
+            border-radius: 20px;
+            height: 10px;
+            overflow: hidden;
+            border: 1px solid rgba(255,255,255,0.04);
+        }
+        .level-widget .lw-exp .lw-bar .lw-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #7000ff, #00f0ff);
+            border-radius: 20px;
+            transition: width 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            width: 0%;
+            box-shadow: 0 0 20px rgba(0, 240, 255, 0.15);
+        }
+        .level-widget .lw-exp .lw-bar .lw-fill.high {
+            background: linear-gradient(90deg, #00ff66, #00f0ff);
+            box-shadow: 0 0 25px rgba(0, 255, 102, 0.2);
+        }
+        .level-widget .lw-exp .lw-text {
+            display: flex;
+            justify-content: space-between;
+            font-size: 0.65rem;
+            color: #8a99ad;
+            margin-top: 3px;
+            font-weight: 600;
+        }
+        .level-widget .lw-exp .lw-text .lw-cur { color: #00f0ff; }
+        .level-widget .lw-exp .lw-text .lw-nxt { color: #7000ff; }
+        .level-widget .lw-stats {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 4px 10px;
+            margin-top: 10px;
+            padding-top: 10px;
+            border-top: 1px solid rgba(255,255,255,0.04);
+        }
+        .level-widget .lw-stats span {
+            font-size: 0.7rem;
+            font-weight: 600;
+            color: #c8d0e0;
+            background: rgba(255,255,255,0.04);
+            padding: 2px 12px;
+            border-radius: 20px;
+            border: 1px solid rgba(255,255,255,0.04);
+        }
+        .level-widget .lw-stats .hp-c { color: #ef4444; }
+        .level-widget .lw-stats .mp-c { color: #3b82f6; }
+        .level-widget .lw-stats .sm-c { color: #f59e0b; }
+        .level-widget .lw-stats .atk-c { color: #ef4444; }
+        .level-widget .lw-stats .def-c { color: #8b5cf6; }
+        .level-widget .lw-stats .mag-c { color: #10b981; }
+
+        /* ============================================================
+           STATUS BAR
+           ============================================================ */
+        .status-bar {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            flex-wrap: wrap;
+            padding: 4px 12px;
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: 30px;
+            font-size: 0.7rem;
+            font-weight: 500;
+            border: 1px solid rgba(0, 240, 255, 0.06);
+            max-width: 1300px;
+            margin-left: auto;
+            margin-right: auto;
+            margin-bottom: 20px;
+        }
+        .status-item {
+            display: flex;
+            align-items: center;
+            gap: 4px;
+            color: #8a99ad;
+        }
+        .status-item .dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            display: inline-block;
+            transition: all 0.3s;
+        }
+        .status-item .dot.online {
+            background: var(--neon-green);
+            box-shadow: 0 0 8px rgba(0, 255, 102, 0.5);
+        }
+        .status-item .dot.offline {
+            background: #ef4444;
+            box-shadow: 0 0 8px rgba(239, 68, 68, 0.3);
+        }
+        .status-item .dot.checking {
+            background: #f59e0b;
+            animation: pulse-dot 1s ease-in-out infinite;
+        }
+        @keyframes pulse-dot {
+            0%, 100% { opacity: 1; transform: scale(1); }
+            50% { opacity: 0.4; transform: scale(0.7); }
+        }
+        .status-item .value.online { color: var(--neon-green); }
+        .status-item .value.offline { color: #ef4444; }
+        .status-item .value.checking { color: #f59e0b; }
+
+        .status-reconnect {
+            background: none;
+            border: none;
+            color: #8a99ad;
+            cursor: pointer;
+            padding: 2px 6px;
+            border-radius: 4px;
+            transition: all 0.2s;
+            font-size: 0.7rem;
+        }
+        .status-reconnect:hover {
+            color: #fff;
+            background: rgba(255,255,255,0.06);
+        }
+
+        /* ============================================================
+           HISTÓRICO DE ATIVIDADES - ESTILO MELHORADO
+           ============================================================ */
+        .activity-log {
+            max-width: 1300px;
+            margin: 20px auto 0;
+            background: rgba(18, 21, 32, 0.6);
+            border-radius: 16px;
+            padding: 16px 20px;
+            border: 1px solid rgba(255,255,255,0.04);
+        }
+        .activity-log h3 {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 0.8rem;
+            color: #8a99ad;
+            letter-spacing: 1px;
+            margin-bottom: 8px;
+            text-transform: uppercase;
+        }
+        .activity-log .log-list {
+            max-height: 120px;
+            overflow-y: auto;
+            font-size: 0.75rem;
+        }
+        .activity-log .log-list::-webkit-scrollbar {
+            width: 4px;
+        }
+        .activity-log .log-list::-webkit-scrollbar-track {
+            background: rgba(255,255,255,0.02);
+        }
+        .activity-log .log-list::-webkit-scrollbar-thumb {
+            background: rgba(0,240,255,0.3);
+            border-radius: 10px;
+        }
+        .activity-log .log-entry {
+            padding: 4px 0;
+            border-bottom: 1px solid rgba(255,255,255,0.03);
+            color: #c8d0e0;
+            display: flex;
+            justify-content: space-between;
+            gap: 10px;
+            align-items: center;
+        }
+        .activity-log .log-entry .log-time {
+            color: #6a7a8a;
+            font-size: 0.6rem;
+            white-space: nowrap;
+            min-width: 70px;
+        }
+        .activity-log .log-entry .log-msg {
+            flex: 1;
+            font-weight: 500;
+        }
+        .activity-log .log-entry .log-badge {
+            font-size: 0.55rem;
+            padding: 2px 10px;
+            border-radius: 12px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        .log-badge.info {
+            background: rgba(0, 240, 255, 0.15);
+            color: #00f0ff;
+        }
+        .log-badge.sucesso {
+            background: rgba(16, 185, 129, 0.15);
+            color: #10b981;
+        }
+        .log-badge.erro {
+            background: rgba(239, 68, 68, 0.15);
+            color: #ef4444;
+        }
+        .log-badge.aviso {
+            background: rgba(245, 158, 11, 0.15);
+            color: #f59e0b;
+        }
+
+        /* ============================================================
+           OVERLAY DE CARREGAMENTO PARA JOGOS
+           ============================================================ */
+        .game-loading-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(10, 11, 16, 0.92);
+            backdrop-filter: blur(10px);
+            display: none;
+            justify-content: center;
+            align-items: center;
+            z-index: 10000;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        .game-loading-overlay.active {
+            display: flex;
+        }
+
+        .game-loading-overlay .loading-icon {
+            font-size: 4rem;
+            animation: loadingPulse 1.2s ease-in-out infinite;
+        }
+
+        @keyframes loadingPulse {
+            0%, 100% { transform: scale(1); opacity: 1; }
+            50% { transform: scale(1.2); opacity: 0.6; }
+        }
+
+        .game-loading-overlay .loading-text {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 1.6rem;
+            color: #fff;
+            text-shadow: 0 0 20px var(--neon-blue), 0 0 40px var(--neon-purple);
+        }
+
+        .game-loading-overlay .loading-sub {
+            color: #8a99ad;
+            font-size: 1rem;
+        }
+
+        .game-loading-overlay .loading-stamina {
+            color: var(--neon-green);
+            font-size: 1.2rem;
+            font-weight: 700;
+            margin-top: 10px;
+        }
+
+        .game-loading-overlay .loading-spinner {
+            width: 60px;
+            height: 60px;
+            border: 4px solid rgba(0, 240, 255, 0.1);
+            border-top-color: var(--neon-blue);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        .loading-progress-bar {
+            width: 300px;
+            max-width: 80%;
+            height: 6px;
+            background: rgba(255,255,255,0.06);
+            border-radius: 10px;
+            overflow: hidden;
+            margin-top: 10px;
+        }
+
+        .loading-progress-bar .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, var(--neon-purple), var(--neon-blue));
+            border-radius: 10px;
+            width: 0%;
+            transition: width 0.3s ease;
+        }
 
         /* Responsivo */
         @media (max-width: 700px) {
@@ -314,14 +642,156 @@
             .user-info .user-nick {
                 font-size: 0.8rem;
             }
+            .level-widget .lw-header {
+                flex-direction: column;
+                align-items: stretch;
+            }
+            .level-widget .lw-badge .lw-num {
+                font-size: 1.6rem;
+            }
+            .level-widget .lw-stats span {
+                font-size: 0.6rem;
+                padding: 1px 8px;
+            }
+            .games-grid {
+                grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+                gap: 12px;
+            }
+            .game-card {
+                padding: 14px 12px;
+            }
+            .game-icon {
+                font-size: 2rem;
+            }
+            .game-title {
+                font-size: 0.8rem;
+            }
+            .game-loading-overlay .loading-text {
+                font-size: 1.2rem;
+            }
+        }
+
+        @media (max-width: 400px) {
+            .games-grid {
+                grid-template-columns: repeat(2, 1fr);
+                gap: 8px;
+            }
+            .game-card {
+                padding: 10px 8px;
+            }
+            .game-icon {
+                font-size: 1.6rem;
+            }
+            .game-title {
+                font-size: 0.65rem;
+            }
+            .game-badge {
+                font-size: 0.45rem;
+                padding: 1px 5px;
+                top: 4px;
+                right: 4px;
+            }
+            .loading-progress-bar {
+                width: 200px;
+            }
+        }
+
+        /* ============================================================
+           TOAST / NOTIFICAÇÃO
+           ============================================================ */
+        #levelToast {
+            position: fixed;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: rgba(10,11,16,0.95);
+            backdrop-filter: blur(8px);
+            color: #fff;
+            padding: 10px 22px;
+            border-radius: 12px;
+            font-weight: 600;
+            font-size: 0.85rem;
+            box-shadow: 0 8px 32px rgba(0,0,0,0.5);
+            border-left: 4px solid #3b82f6;
+            z-index: 9999;
+            display: none;
+            opacity: 0;
+            transition: opacity 0.4s ease;
+            max-width: 90%;
+            text-align: center;
+            font-family: 'Rajdhani', sans-serif;
+        }
+
+        /* ============================================================
+           ANIMAÇÃO PARA STAMINA BAIXA
+           ============================================================ */
+        .stamina-low {
+            color: #ef4444 !important;
+            animation: pulse-stamina 1s ease-in-out infinite;
+        }
+        @keyframes pulse-stamina {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
+
+        /* Botão para adicionar logs de teste */
+        .test-log-btn {
+            background: rgba(255,255,255,0.05);
+            border: 1px solid rgba(255,255,255,0.1);
+            color: #8a99ad;
+            padding: 4px 12px;
+            border-radius: 12px;
+            cursor: pointer;
+            font-size: 0.6rem;
+            transition: all 0.3s;
+            margin-left: 10px;
+        }
+        .test-log-btn:hover {
+            background: rgba(0, 240, 255, 0.1);
+            border-color: var(--neon-blue);
+            color: #fff;
         }
     </style>
 </head>
 <body>
 
+    <!-- OVERLAY DE CARREGAMENTO PARA JOGOS -->
+    <div class="game-loading-overlay" id="gameLoadingOverlay">
+        <div class="loading-spinner"></div>
+        <div class="loading-icon" id="loadingIcon">🎮</div>
+        <div class="loading-text" id="loadingTitle">Entrando no Jogo...</div>
+        <div class="loading-sub" id="loadingSub">Preparando sua aventura</div>
+        <div class="loading-stamina" id="loadingStamina">⚡ -10 STAMINA</div>
+        <div class="loading-progress-bar">
+            <div class="progress-fill" id="loadingProgressFill"></div>
+        </div>
+    </div>
+
+    <!-- STATUS BAR -->
+    <div class="status-bar">
+        <div class="status-item">
+            <span class="dot checking" id="supabaseDot"></span>
+            <span>Supabase:</span>
+            <span class="value checking" id="supabaseStatus">Verificando...</span>
+            <button class="status-reconnect" id="btnReconnectSupabase" title="Reconectar">🔄</button>
+        </div>
+        <div class="status-item" style="margin-left:auto;">
+            <span>👤 <span id="headerUser">Visitante</span></span>
+        </div>
+    </div>
+
+    <!-- CABEÇALHO DASHBOARD -->
+    <div class="dashboard-header">
+        <h1>🎮 Central de Jogos</h1>
+        <p>Escolha uma arena e comece a jogar agora mesmo!</p>
+    </div>
+
     <!-- BARRA DE NAVEGAÇÃO -->
     <nav class="nav-bar">
-        <!-- PERFIL DO USUÁRIO (UNIFICADO AQUI) -->
+        <div class="nav-links">
+            <a href="#" class="active">🏠 DASHBOARD</a>
+        </div>
+
         <div class="user-profile" id="userProfile">
             <div class="user-avatar" id="userAvatar">👤</div>
             <div class="user-info">
@@ -331,240 +801,877 @@
         </div>
 
         <div class="nav-buttons">
-            <button class="btn-bolsa" onclick="window.location.href='admin.html'">
-                <span class="icone">👑</span> Admin
-            </button>
+            <a href="mplanta.html" class="btn-bolsa" style="background: linear-gradient(135deg, #f59e0b, #d97706);">💰 Mercado</a>
+            <a href="mochila.html" class="btn-bolsa" style="background: linear-gradient(135deg, #8b5cf6, #7000ff);">🎒 Mochila</a>
             <button class="btn-sair" id="btnSair">🚪 Sair</button>
+            <a href="admin.html" class="btn-bolsa" style="background: linear-gradient(135deg, #7000ff, #8b5cf6);">👑 Admin</a>
         </div>
     </nav>
 
-    <!-- CABEÇALHO DASHBOARD GAMER -->
-    <div class="dashboard-header">
-        <h1>Central de Jogos</h1>
-        <p>Escolha uma arena e comece a jogar agora mesmo!</p>
+    <!-- SISTEMA DE NÍVEL - WIDGET -->
+    <div class="level-widget" id="levelWidget">
+        <div class="lw-header">
+            <div class="lw-badge">
+                <span class="lw-num" id="lwNivel">1</span>
+                <div>
+                    <div class="lw-label">NÍVEL</div>
+                    <div class="lw-title" id="lwTitulo">🌱 Iniciante</div>
+                </div>
+            </div>
+            <div class="lw-exp">
+                <div class="lw-bar">
+                    <div class="lw-fill" id="lwExpFill" style="width:0%"></div>
+                </div>
+                <div class="lw-text">
+                    <span class="lw-cur" id="lwExpAtual">0</span>
+                    <span>/ <span class="lw-nxt" id="lwExpProx">100</span> EXP</span>
+                </div>
+            </div>
+        </div>
+        <div class="lw-stats">
+            <span>❤️ HP<span class="hp-c" id="lwHp">100/100</span></span>
+            <span>💧 MANA<span class="mp-c" id="lwMp">50/50</span></span>
+            <span>⚡ STAMINA<span class="sm-c" id="lwSm">100/100</span></span>
+            <span>⚔️ FORCA<span class="atk-c" id="lwAtk">15</span></span>
+            <span>🛡️ DEFESA<span class="def-c" id="lwDef">10</span></span>
+            <span>🔮 MAGIA<span class="mag-c" id="lwMag">8</span></span>
+        </div>
     </div>
 
-    <!-- GRADE COM OS 10 BOTÕES DE LINK DE JOGOS -->
-    <main class="games-grid">
-        
-        <!-- JOGO 1 -->
-        <a href="planta.html" class="game-card hot">
-            <span class="game-badge">Milharal</span> 
+    <!-- GRADE COM OS BOTÕES DE LINK DE JOGOS -->
+    <main class="games-grid" id="gamesGrid">
+        <a href="planta.html" class="game-card hot" data-game="fazendinha" data-game-name="Fazendinha">
+            <span class="game-badge">🌱 Novo</span> 
             <div class="game-icon">🌱</div>
             <div class="game-title">Fazendinha</div>
         </a>
-
-        <!-- JOGO 2 -->
-        <a href="bolsa.html" class="game-card">
-            <span class="game-badge">Bolsa</span> 
+        <a href="bolsa.html" class="game-card" data-game="bolsa" data-game-name="Bolsa Simulator">
+            <span class="game-badge">📈</span> 
             <div class="game-icon">📈</div>
-            <div class="game-title">Investimento Simulator</div>
+            <div class="game-title">Bolsa Simulator</div>
         </a>
-
-        <!-- JOGO 3 -->
-        <a href="jogo3.html" class="game-card">
+        <a href="gax.html" class="game-card" data-game="torre" data-game-name="Torre de Arena">
             <span class="game-badge">NOVO</span>
-            <div class="game-icon">🚀</div>
-            <div class="game-title">Space Miner</div>
-        </a>
-
-        <!-- JOGO 4 -->
-        <a href="jogo4.html" class="game-card">
             <div class="game-icon">⚔️</div>
-            <div class="game-title">Arena RPG</div>
+            <div class="game-title">Torre de Arena</div>
         </a>
-
-        <!-- JOGO 5 -->
-        <a href="jogo5.html" class="game-card">
-            <div class="game-icon">🏎️</div>
-            <div class="game-title">Cyber Racing</div>
-        </a>
-
-        <!-- JOGO 6 -->
-        <a href="jogo6.html" class="game-card">
-            <div class="game-icon">🎯</div>
-            <div class="game-title">Target Master</div>
-        </a>
-
-        <!-- JOGO 7 -->
-        <a href="jogo7.html" class="game-card">
-            <div class="game-icon">🃏</div>
-            <div class="game-title">Poker Club</div>
-        </a>
-
-        <!-- JOGO 8 -->
-        <a href="jogo8.html" class="game-card">
-            <div class="game-icon">🏰</div>
-            <div class="game-title">Kingdom Defense</div>
-        </a>
-
-        <!-- JOGO 9 -->
-        <a href="jogo9.html" class="game-card">
-            <span class="game-badge">TOP</span>
-            <div class="game-icon">🏴‍☠️</div>
-            <div class="game-title">Pirate Bay</div>
-        </a>
-
-        <!-- JOGO 10 -->
-        <a href="jogo10.html" class="game-card">
-            <div class="game-icon">⚡</div>
-            <div class="game-title">Wheel of Fortune</div>
-        </a>
-
     </main>
 
+    <!-- HISTÓRICO DE ATIVIDADES - VERSÃO MELHORADA COM BOTÃO DE TESTE -->
+    <div class="activity-log">
+        <h3>
+            📋 Histórico de Atividades
+            <button class="test-log-btn" id="btnTestLog">+ Teste</button>
+        </h3>
+        <div class="log-list" id="logList">
+            <div class="log-entry">
+                <span class="log-time">--</span>
+                <span class="log-msg" style="color:#6a7a8a;">Aguardando atividades...</span>
+                <span class="log-badge info">INFO</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- TOAST PARA NOTIFICAÇÕES -->
+    <div id="levelToast"></div>
+
+    <!-- ============================================================
+    SCRIPTS
+    ============================================================ -->
     <script>
-        // ==================== CONFIGURAÇÕES SUPABASE ====================
-        const SUPABASE_URL = 'https://xrcxvizzdumcxbylmkvn.supabase.co';
-        const SUPABASE_KEY = 'sb_publishable_E-g3G3wW4EySbCsXLXp8KQ_FnmERMcD';
-        const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
-        const TABELA = 'Geral';
+        (function() {
+            'use strict';
 
-        // ============================================================
-        // REFERÊNCIAS DOS ELEMENTOS (IDs UNIFICADOS)
-        // ============================================================
-        const userNickEl = document.getElementById('userNick');
-        const userBalanceEl = document.getElementById('userBalance');
-        const userAvatarEl = document.getElementById('userAvatar');
+            // ============================================================
+            // CONFIGURAÇÕES SUPABASE
+            // ============================================================
+            const SUPABASE_URL = 'https://xrcxvizzdumcxbylmkvn.supabase.co';
+            const SUPABASE_KEY = 'sb_publishable_E-g3G3wW4EySbCsXLXp8KQ_FnmERMcD';
+            const TABELA = 'Geral';
 
-        // ============================================================
-        // FUNÇÃO PARA CARREGAR DADOS DO USUÁRIO LOGADO
-        // ============================================================
-        async function loadUserData() {
-            try {
-                console.log('🔍 Carregando dados do usuário...');
-                
-                // 1. Obtém a sessão atual
-                const { data: { session }, error: sessionError } = await supabase.auth.getSession();
-                
-                if (sessionError) {
-                    console.error('❌ Erro ao obter sessão:', sessionError);
-                    setFallbackUser();
-                    return;
-                }
+            const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
-                if (!session) {
-                    console.warn('⚠️ Nenhum usuário logado.');
-                    setFallbackUser();
-                    return;
-                }
+            // ============================================================
+            // REFERÊNCIAS DOS ELEMENTOS
+            // ============================================================
+            const userNickEl = document.getElementById('userNick');
+            const userBalanceEl = document.getElementById('userBalance');
+            const userAvatarEl = document.getElementById('userAvatar');
+            const headerUserEl = document.getElementById('headerUser');
+            const logList = document.getElementById('logList');
+            const loadingOverlay = document.getElementById('gameLoadingOverlay');
+            const loadingIcon = document.getElementById('loadingIcon');
+            const loadingTitle = document.getElementById('loadingTitle');
+            const loadingSub = document.getElementById('loadingSub');
+            const loadingStamina = document.getElementById('loadingStamina');
+            const loadingProgressFill = document.getElementById('loadingProgressFill');
 
-                // Pega o email do usuário logado
-                const userEmail = session.user.email;
-                console.log('✅ Usuário logado:', userEmail);
-                
-                if (!userEmail) {
-                    console.error('❌ Email não encontrado na sessão');
-                    setFallbackUser();
-                    return;
-                }
+            // ============================================================
+            // ESTADO DO NÍVEL
+            // ============================================================
+            const levelState = {
+                nivel: 1,
+                exp: 0,
+                hp: 100,
+                mp: 50,
+                sm: 40,
+                hpMax: 100,
+                mpMax: 50,
+                smMax: 40,
+                atkBase: 15,
+                defBase: 10,
+                magBase: 8,
+                usuario: null,
+                supabaseOnline: false,
+                supabase: supabase,
+                usuarioLogado: null,
+                ultimaAtividade: null,
+                atividades: [],
+                totalTreinos: 0,
+                totalDescansos: 0,
+                ultimoReset: null,
+                gameCards: null
+            };
 
-                // 2. Busca os dados do perfil na tabela 'Geral' usando o campo 'login'
-                console.log('📊 Buscando dados na tabela:', TABELA, 'com login:', userEmail);
-                const { data: profile, error: profileError } = await supabase
-                    .from(TABELA)
-                    .select('*')
-                    .eq('login', userEmail)
-                    .single();
-
-                if (profileError) {
-                    console.error('❌ Erro ao buscar perfil:', profileError);
-                    console.log('💡 Usando fallback com dados do email...');
-                    
-                    // Fallback: usa dados do email
-                    const nick = userEmail.split('@')[0] || 'Usuário';
-                    userNickEl.textContent = nick;
-                    userBalanceEl.textContent = 'R$ 0,00';
-                    userAvatarEl.textContent = nick.charAt(0).toUpperCase();
-                    return;
-                }
-
-                // 3. Atualiza a interface com os dados do perfil
-                if (profile) {
-                    console.log('✅ Perfil encontrado:', profile);
-                    
-                    // NICK (usa o campo 'nome' ou 'login' ou parte do email)
-                    const nick = profile.nome || profile.login || userEmail.split('@')[0] || 'Gamer';
-                    userNickEl.textContent = nick;
-
-                    // SALDO (formatação em moeda brasileira)
-                    const balance = profile.saldo !== undefined && profile.saldo !== null ? profile.saldo : 0;
-                    userBalanceEl.textContent = new Intl.NumberFormat('pt-BR', {
-                        style: 'currency',
-                        currency: 'BRL'
-                    }).format(balance);
-
-                    // AVATAR (inicial do nick)
-                    userAvatarEl.textContent = nick.charAt(0).toUpperCase();
-                } else {
-                    console.warn('⚠️ Nenhum perfil encontrado para o usuário');
-                    setFallbackUser();
-                }
-
-            } catch (error) {
-                console.error('❌ Erro geral ao carregar perfil:', error);
-                setFallbackUser();
+            // ============================================================
+            // FUNÇÕES DE CÁLCULO DO NÍVEL
+            // ============================================================
+            function getExpProx() {
+                return Math.floor(100 * Math.pow(1.2, levelState.nivel - 1));
             }
-        }
 
-        // ============================================================
-        // FUNÇÃO DE FALLBACK (CASO NÃO HAJA DADOS)
-        // ============================================================
-        function setFallbackUser() {
-            userNickEl.textContent = 'Visitante';
-            userBalanceEl.textContent = 'R$ 0,00';
-            userAvatarEl.textContent = '👤';
-        }
+            function getHpMax() {
+                return levelState.hpMax + Math.floor(levelState.nivel * 6);
+            }
 
-        // ============================================================
-        // FUNÇÃO PARA VERIFICAR MUDANÇAS NA AUTENTICAÇÃO
-        // ============================================================
-        function setupAuthListener() {
-            supabase.auth.onAuthStateChange((event, session) => {
-                console.log('🔄 Evento de autenticação:', event);
-                if (event === 'SIGNED_IN' || event === 'TOKEN_REFRESHED') {
-                    console.log('✅ Usuário autenticado, recarregando dados...');
-                    loadUserData();
-                } else if (event === 'SIGNED_OUT') {
-                    console.log('🚪 Usuário deslogado');
+            function getMpMax() {
+                return levelState.mpMax + Math.floor(levelState.nivel * 4);
+            }
+
+            function getSmMax() {
+                return levelState.smMax + Math.floor(levelState.nivel * 3);
+            }
+
+            function getAtk() {
+                return levelState.atkBase + Math.floor(levelState.nivel * 1.5);
+            }
+
+            function getDef() {
+                return levelState.defBase + Math.floor(levelState.nivel * 1.2);
+            }
+
+            function getMag() {
+                return levelState.magBase + Math.floor(levelState.nivel * 1.0);
+            }
+
+            function getTitulo() {
+                const titulos = [
+                    { min: 1, titulo: '🌱 Iniciante' },
+                    { min: 5, titulo: '🌿 Aprendiz' },
+                    { min: 10, titulo: '⚔️ Guerreiro' },
+                    { min: 20, titulo: '🛡️ Mestre' },
+                    { min: 35, titulo: '🏆 Lendário' },
+                    { min: 50, titulo: '👑 Herói' },
+                    { min: 75, titulo: '⚡ Deus da Guerra' },
+                    { min: 100, titulo: '🌟 Imortal' }
+                ];
+                let t = titulos[0].titulo;
+                for (const item of titulos) {
+                    if (levelState.nivel >= item.min) t = item.titulo;
+                }
+                return t;
+            }
+
+            // ============================================================
+            // 🔥 FUNÇÃO PRINCIPAL: ADD LOG (ATIVIDADES)
+            // ============================================================
+            function addLog(mensagem, tipo = 'info') {
+                const now = new Date();
+                const timeStr = now.toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit', second: '2-digit' });
+                
+                levelState.atividades.unshift({
+                    time: timeStr,
+                    msg: mensagem,
+                    type: tipo,
+                    timestamp: now.getTime()
+                });
+
+                // Mantém apenas os 50 logs mais recentes
+                if (levelState.atividades.length > 50) {
+                    levelState.atividades = levelState.atividades.slice(0, 50);
+                }
+
+                renderLog();
+                salvarLog(mensagem, tipo);
+            }
+
+            // ============================================================
+            // RENDERIZAR LOGS NA TELA
+            // ============================================================
+            function renderLog() {
+                if (levelState.atividades.length === 0) {
+                    logList.innerHTML = `
+                        <div class="log-entry">
+                            <span class="log-time">--</span>
+                            <span class="log-msg" style="color:#6a7a8a;">Aguardando atividades...</span>
+                            <span class="log-badge info">INFO</span>
+                        </div>
+                    `;
+                    return;
+                }
+
+                logList.innerHTML = levelState.atividades.map(log => `
+                    <div class="log-entry">
+                        <span class="log-time">${log.time}</span>
+                        <span class="log-msg">${log.msg}</span>
+                        <span class="log-badge ${log.type}">${log.type.toUpperCase()}</span>
+                    </div>
+                `).join('');
+            }
+
+            // ============================================================
+            // SALVAR LOG NO SUPABASE (TABELA "Atividades")
+            // ============================================================
+            async function salvarLog(mensagem, tipo) {
+                if (!levelState.usuarioLogado || !levelState.supabaseOnline) return;
+
+                try {
+                    const { error } = await supabase
+                        .from('Atividades')
+                        .insert({
+                            login: levelState.usuarioLogado.login,
+                            mensagem: mensagem,
+                            tipo: tipo,
+                            nivel: levelState.nivel,
+                            exp: levelState.exp,
+                            created_at: new Date().toISOString()
+                        });
+
+                    if (error) {
+                        console.warn('⚠️ Erro ao salvar log:', error);
+                    }
+                } catch (e) {
+                    console.warn('⚠️ Erro ao salvar log:', e);
+                }
+            }
+
+            // ============================================================
+            // CARREGAR LOGS DO SUPABASE
+            // ============================================================
+            async function carregarLogs(login) {
+                if (!login || !levelState.supabaseOnline) return;
+
+                try {
+                    const { data, error } = await supabase
+                        .from('Atividades')
+                        .select('*')
+                        .eq('login', login)
+                        .order('created_at', { ascending: false })
+                        .limit(30);
+
+                    if (error) throw error;
+
+                    if (data && data.length > 0) {
+                        levelState.atividades = data.map(item => ({
+                            time: new Date(item.created_at).toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit', second: '2-digit' }),
+                            msg: item.mensagem,
+                            type: item.tipo || 'info',
+                            timestamp: new Date(item.created_at).getTime()
+                        }));
+                        renderLog();
+                    }
+                } catch (e) {
+                    console.warn('⚠️ Erro ao carregar logs:', e);
+                }
+            }
+
+            // ============================================================
+            // UI DO NÍVEL
+            // ============================================================
+            function atualizarLevelUI() {
+                const expProx = getExpProx();
+                const pct = Math.min((levelState.exp / expProx) * 100, 100);
+
+                document.getElementById('lwNivel').textContent = levelState.nivel;
+                document.getElementById('lwTitulo').textContent = getTitulo();
+                
+                const fill = document.getElementById('lwExpFill');
+                fill.style.width = pct + '%';
+                fill.className = 'lw-fill' + (pct > 75 ? ' high' : '');
+                
+                document.getElementById('lwExpAtual').textContent = levelState.exp;
+                document.getElementById('lwExpProx').textContent = expProx;
+                document.getElementById('lwHp').textContent = `${levelState.hp}/${getHpMax()}`;
+                document.getElementById('lwMp').textContent = `${levelState.mp}/${getMpMax()}`;
+                
+                const smElement = document.getElementById('lwSm');
+                smElement.textContent = `${levelState.sm}/${getSmMax()}`;
+                if (levelState.sm < 20) {
+                    smElement.className = 'sm-c stamina-low';
+                } else {
+                    smElement.className = 'sm-c';
+                }
+                
+                document.getElementById('lwAtk').textContent = getAtk();
+                document.getElementById('lwDef').textContent = getDef();
+                document.getElementById('lwMag').textContent = getMag();
+            }
+
+            function mostrarToast(msg, tipo = 'info') {
+                const toast = document.getElementById('levelToast');
+                const cores = { sucesso: '#10b981', erro: '#ef4444', info: '#3b82f6', aviso: '#f59e0b' };
+                toast.textContent = msg;
+                toast.style.borderLeftColor = cores[tipo] || '#3b82f6';
+                toast.style.display = 'block';
+                toast.style.opacity = '1';
+                toast.style.cssText = `
+                    position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%);
+                    background: rgba(10,11,16,0.95); backdrop-filter: blur(8px);
+                    color: #fff; padding: 10px 22px; border-radius: 12px;
+                    font-weight: 600; font-size: 0.85rem; box-shadow: 0 8px 32px rgba(0,0,0,0.5);
+                    border-left: 4px solid ${cores[tipo] || '#3b82f6'};
+                    z-index: 9999; display: block; opacity: 1;
+                    transition: opacity 0.4s ease; max-width: 90%; text-align: center;
+                    font-family: 'Rajdhani', sans-serif;
+                `;
+
+                clearTimeout(toast._timer);
+                toast._timer = setTimeout(() => {
+                    toast.style.opacity = '0';
+                    setTimeout(() => { toast.style.display = 'none'; }, 400);
+                }, 3000);
+            }
+
+            // ============================================================
+            // FUNÇÃO PARA GASTAR STAMINA AO CLICAR NOS JOGOS
+            // ============================================================
+            function gastarStaminaParaJogar(event) {
+                event.preventDefault();
+                
+                const link = event.currentTarget;
+                const gameName = link.getAttribute('data-game-name') || link.getAttribute('data-game') || 'Jogo';
+                const gameIcon = link.querySelector('.game-icon')?.textContent || '🎮';
+                const href = link.getAttribute('href') || '#';
+
+                // Verifica stamina
+                const smMax = getSmMax();
+                if (levelState.sm < 10) {
+                    mostrarToast('⚠️ Stamina insuficiente! Descanse primeiro.', 'erro');
+                    addLog(`⚠️ Tentou entrar em ${gameName} mas stamina insuficiente (${levelState.sm}/${smMax})`, 'aviso');
+                    return;
+                }
+
+                // ============================================================
+                // MOSTRA OVERLAY DE CARREGAMENTO
+                // ============================================================
+                loadingIcon.textContent = gameIcon;
+                loadingTitle.textContent = `Entrando em ${gameName}...`;
+                loadingSub.textContent = 'Preparando sua aventura';
+                loadingStamina.textContent = `⚡ -10 STAMINA (${levelState.sm} → ${levelState.sm - 10})`;
+                loadingProgressFill.style.width = '0%';
+                loadingOverlay.classList.add('active');
+
+                // Anima a barra de progresso
+                let progress = 0;
+                const progressInterval = setInterval(() => {
+                    progress += Math.random() * 15 + 5;
+                    if (progress > 95) progress = 95;
+                    loadingProgressFill.style.width = Math.min(progress, 95) + '%';
+                    loadingSub.textContent = progress < 30 ? 'Conectando ao servidor...' :
+                                              progress < 60 ? 'Carregando dados do jogador...' :
+                                              progress < 80 ? 'Preparando a arena...' :
+                                              'Quase lá...';
+                }, 150);
+
+                // ============================================================
+                // GASTA STAMINA E SALVA
+                // ============================================================
+                const staminaAntes = levelState.sm;
+                levelState.sm -= 10;
+                atualizarLevelUI();
+
+                // 🔥 ADICIONA LOG DA ATIVIDADE
+                addLog(`🎮 Entrou em ${gameName} (-10 SM: ${staminaAntes} → ${levelState.sm})`, 'info');
+
+                // Salva no Supabase
+                salvarNivel()
+                    .then(() => salvarStats())
+                    .then(() => {
+                        clearInterval(progressInterval);
+                        loadingProgressFill.style.width = '100%';
+                        loadingSub.textContent = '✅ Pronto! Redirecionando...';
+                        
+                        setTimeout(() => {
+                            window.location.href = href;
+                        }, 600);
+                    })
+                    .catch((error) => {
+                        console.error('❌ Erro ao salvar:', error);
+                        clearInterval(progressInterval);
+                        loadingSub.textContent = '⚠️ Erro ao salvar, mas continuando...';
+                        setTimeout(() => {
+                            window.location.href = href;
+                        }, 800);
+                    });
+            }
+
+            // ============================================================
+            // CONFIGURAR EVENTOS DOS CARDS DE JOGOS
+            // ============================================================
+            function configurarEventosDosJogos() {
+                const gameCards = document.querySelectorAll('.game-card');
+                
+                gameCards.forEach(card => {
+                    card.removeEventListener('click', gastarStaminaParaJogar);
+                    card.addEventListener('click', gastarStaminaParaJogar);
+                });
+            }
+
+            // ============================================================
+            // SALVAR ESTATÍSTICAS NO SUPABASE
+            // ============================================================
+            async function salvarStats() {
+                if (!levelState.usuarioLogado || !levelState.supabaseOnline) return;
+
+                try {
+                    const login = levelState.usuarioLogado.login;
+                    const { error } = await supabase
+                        .from(TABELA)
+                        .update({
+                            total_treinos: levelState.totalTreinos,
+                            total_descansos: levelState.totalDescansos,
+                            ultima_atividade: levelState.ultimaAtividade,
+                            ultimo_reset: levelState.ultimoReset,
+                            updated_at: new Date().toISOString()
+                        })
+                        .eq('login', login);
+
+                    if (error) throw error;
+                } catch (e) {
+                    console.warn('⚠️ Erro ao salvar stats:', e);
+                }
+            }
+
+            // ============================================================
+            // SUPABASE - SALVAR E CARREGAR NÍVEL
+            // ============================================================
+            async function salvarNivel() {
+                if (!levelState.usuarioLogado || !levelState.supabaseOnline) {
+                    return;
+                }
+
+                try {
+                    const login = levelState.usuarioLogado.login;
+                    
+                    const payload = {
+                        nivel: levelState.nivel,
+                        experiencia: levelState.exp,
+                        exp_proximo: getExpProx(),
+                        hp_max: getHpMax(),
+                        mp_max: getMpMax(),
+                        sm_max: getSmMax(),
+                        ataque_base: levelState.atkBase,
+                        defesa_base: levelState.defBase,
+                        magia_base: levelState.magBase,
+                        hp_atual: levelState.hp,
+                        mp_atual: levelState.mp,
+                        sm_atual: levelState.sm,
+                        total_treinos: levelState.totalTreinos,
+                        total_descansos: levelState.totalDescansos,
+                        ultima_atividade: levelState.ultimaAtividade,
+                        updated_at: new Date().toISOString()
+                    };
+
+                    const { error } = await supabase
+                        .from(TABELA)
+                        .update(payload)
+                        .eq('login', login);
+
+                    if (error) throw error;
+                } catch (e) {
+                    console.error('❌ Erro ao salvar nível:', e);
+                }
+            }
+
+            async function carregarNivel(login) {
+                if (!login) return;
+
+                try {
+                    const { data, error } = await supabase
+                        .from(TABELA)
+                        .select('nivel, experiencia, hp_max, mp_max, sm_max, ataque_base, defesa_base, magia_base, hp_atual, mp_atual, sm_atual, total_treinos, total_descansos, ultima_atividade, ultimo_reset')
+                        .eq('login', login)
+                        .single();
+
+                    if (error) {
+                        if (error.code === 'PGRST116') {
+                            await criarRegistroNivel(login);
+                        }
+                        return;
+                    }
+
+                    if (data) {
+                        levelState.nivel = data.nivel || 1;
+                        levelState.exp = data.experiencia || 0;
+                        levelState.hpMax = data.hp_max || 100;
+                        levelState.mpMax = data.mp_max || 50;
+                        levelState.smMax = data.sm_max || 100;
+                        levelState.atkBase = data.ataque_base || 15;
+                        levelState.defBase = data.defesa_base || 10;
+                        levelState.magBase = data.magia_base || 8;
+                        levelState.hp = data.hp_atual || getHpMax();
+                        levelState.mp = data.mp_atual || getMpMax();
+                        levelState.sm = data.sm_atual || getSmMax();
+                        levelState.totalTreinos = data.total_treinos || 0;
+                        levelState.totalDescansos = data.total_descansos || 0;
+                        levelState.ultimaAtividade = data.ultima_atividade || null;
+                        levelState.ultimoReset = data.ultimo_reset || null;
+                    }
+
+                    atualizarLevelUI();
+                    await carregarLogs(login);
+
+                } catch (e) {
+                    console.error('❌ Erro ao carregar nível:', e);
+                }
+            }
+
+            async function criarRegistroNivel(login) {
+                try {
+                    const payload = {
+                        nivel: 1,
+                        experiencia: 0,
+                        exp_proximo: 100,
+                        hp_max: 100,
+                        mp_max: 50,
+                        sm_max: 100,
+                        ataque_base: 15,
+                        defesa_base: 10,
+                        magia_base: 8,
+                        hp_atual: 100,
+                        mp_atual: 50,
+                        sm_atual: 100,
+                        total_treinos: 0,
+                        total_descansos: 0
+                    };
+
+                    const { error } = await supabase
+                        .from(TABELA)
+                        .update(payload)
+                        .eq('login', login);
+
+                    if (error) throw error;
+
+                    levelState.nivel = 1;
+                    levelState.exp = 0;
+                    levelState.hp = 100;
+                    levelState.mp = 50;
+                    levelState.sm = 40;
+                    levelState.totalTreinos = 0;
+                    levelState.totalDescansos = 0;
+                    atualizarLevelUI();
+
+                    addLog('🌱 Registro de nível criado!', 'info');
+
+                } catch (e) {
+                    console.error('❌ Erro ao criar registro de nível:', e);
+                }
+            }
+
+            // ============================================================
+            // STATUS SUPABASE
+            // ============================================================
+            async function verificarConexao() {
+                const dot = document.getElementById('supabaseDot');
+                const status = document.getElementById('supabaseStatus');
+                
+                try {
+                    const { error } = await supabase.from(TABELA).select('id').limit(1);
+                    levelState.supabaseOnline = !error;
+                    
+                    if (levelState.supabaseOnline) {
+                        dot.className = 'dot online';
+                        status.className = 'value online';
+                        status.textContent = 'Online';
+                    } else {
+                        dot.className = 'dot offline';
+                        status.className = 'value offline';
+                        status.textContent = 'Erro';
+                    }
+                    return levelState.supabaseOnline;
+                } catch {
+                    levelState.supabaseOnline = false;
+                    dot.className = 'dot offline';
+                    status.className = 'value offline';
+                    status.textContent = 'Falha';
+                    return false;
+                }
+            }
+
+            // ============================================================
+            // CARREGAR DADOS DO USUÁRIO
+            // ============================================================
+            async function loadUserData() {
+                try {
+                    const usuarioData = localStorage.getItem('usuario_logado');
+                    
+                    if (!usuarioData) {
+                        setFallbackUser();
+                        return;
+                    }
+
+                    const usuario = JSON.parse(usuarioData);
+                    if (!usuario.login) {
+                        setFallbackUser();
+                        return;
+                    }
+
+                    levelState.usuarioLogado = usuario;
+
+                    const { data: profile, error: profileError } = await supabase
+                        .from(TABELA)
+                        .select('*')
+                        .eq('login', usuario.login)
+                        .single();
+
+                    if (profileError) {
+                        const nick = usuario.nome || usuario.login;
+                        userNickEl.textContent = nick;
+                        userBalanceEl.textContent = 'R$ 0,00';
+                        userAvatarEl.textContent = nick.charAt(0).toUpperCase();
+                        headerUserEl.textContent = nick;
+                        await carregarNivel(usuario.login);
+                        return;
+                    }
+
+                    if (profile) {
+                        const nick = profile.nome || profile.login || usuario.login;
+                        userNickEl.textContent = nick;
+                        headerUserEl.textContent = nick;
+
+                        const balance = profile.saldo !== undefined && profile.saldo !== null ? profile.saldo : 0;
+                        userBalanceEl.textContent = new Intl.NumberFormat('pt-BR', {
+                            style: 'currency',
+                            currency: 'BRL'
+                        }).format(balance);
+
+                        userAvatarEl.textContent = nick.charAt(0).toUpperCase();
+
+                        await carregarNivel(profile.login);
+                        addLog(`👋 Bem-vindo, ${nick}!`, 'info');
+                    } else {
+                        setFallbackUser();
+                    }
+
+                } catch (error) {
+                    console.error('❌ Erro ao carregar perfil:', error);
                     setFallbackUser();
                 }
-            });
-        }
+            }
 
-        // ============================================================
-        // BOTÃO SAIR
-        // ============================================================
-        document.getElementById('btnSair').addEventListener('click', async function() {
-            try {
-                const { error } = await supabase.auth.signOut();
-                if (error) {
-                    console.error('❌ Erro ao sair:', error);
-                    alert('Erro ao sair. Tente novamente.');
-                } else {
-                    console.log('✅ Usuário deslogado com sucesso');
+            function setFallbackUser() {
+                userNickEl.textContent = 'Visitante';
+                userBalanceEl.textContent = 'R$ 0,00';
+                userAvatarEl.textContent = '👤';
+                headerUserEl.textContent = 'Visitante';
+            }
+
+            // ============================================================
+            // SALVAR AUTOMATICAMENTE EM INTERVALOS
+            // ============================================================
+            let saveInterval = null;
+
+            function iniciarSalvamentoAutomatico() {
+                saveInterval = setInterval(async () => {
+                    if (levelState.usuarioLogado && levelState.supabaseOnline) {
+                        await salvarNivel();
+                    }
+                }, 15000);
+            }
+
+            // ============================================================
+            // 🔥 EXEMPLOS DE FUNÇÕES PARA ADICIONAR LOGS EM DIFERENTES SITUAÇÕES
+            // ============================================================
+            
+            // 1. Função para quando o jogador ganha experiência
+            function ganharExperiencia(quantidade) {
+                levelState.exp += quantidade;
+                addLog(`✨ Ganhou +${quantidade} EXP! (Total: ${levelState.exp})`, 'sucesso');
+                atualizarLevelUI();
+                
+                // Verifica se subiu de nível
+                const expProx = getExpProx();
+                if (levelState.exp >= expProx) {
+                    levelState.nivel++;
+                    levelState.exp -= expProx;
+                    addLog(`⬆️ SUBIU PARA O NÍVEL ${levelState.nivel}! 🎉`, 'sucesso');
+                    mostrarToast(`🎉 Parabéns! Você atingiu o Nível ${levelState.nivel}!`, 'sucesso');
+                    atualizarLevelUI();
+                }
+            }
+
+            // 2. Função para quando o jogador descansa (recupera stamina)
+            function descansar() {
+                const smMax = getSmMax();
+                const recuperado = Math.min(30, smMax - levelState.sm);
+                if (recuperado <= 0) {
+                    addLog(`💤 Stamina já está cheia (${levelState.sm}/${smMax})`, 'aviso');
+                    mostrarToast('💤 Stamina já está no máximo!', 'aviso');
+                    return;
+                }
+                levelState.sm += recuperado;
+                levelState.totalDescansos++;
+                addLog(`💤 Descansou! +${recuperado} STAMINA (${levelState.sm}/${smMax})`, 'sucesso');
+                atualizarLevelUI();
+                salvarNivel();
+                salvarStats();
+            }
+
+            // 3. Função para quando o jogador compra algo
+            function comprarItem(nome, preco, saldoAtual) {
+                if (saldoAtual < preco) {
+                    addLog(`❌ Tentou comprar ${nome} mas saldo insuficiente (R$ ${saldoAtual})`, 'erro');
+                    mostrarToast('❌ Saldo insuficiente!', 'erro');
+                    return false;
+                }
+                addLog(`🛒 Comprou ${nome} por R$ ${preco}`, 'info');
+                return true;
+            }
+
+            // 4. Função para quando o jogador coleta um item
+            function coletarItem(item, quantidade) {
+                addLog(`📦 Coletou ${quantidade}x ${item}`, 'sucesso');
+            }
+
+            // 5. Função para quando ocorre um erro no sistema
+            function logErro(erro, contexto) {
+                addLog(`❌ Erro em ${contexto}: ${erro}`, 'erro');
+            }
+
+            // 6. Função para quando o jogador entra no jogo
+            function logEntradaJogo(jogo) {
+                addLog(`🎮 Entrou em ${jogo}`, 'info');
+            }
+
+            // ============================================================
+            // EVENTOS
+            // ============================================================
+            document.getElementById('btnSair').addEventListener('click', function() {
+                if (confirm('Tem certeza que deseja sair?')) {
+                    addLog('🚪 Saiu do sistema', 'info');
+                    salvarNivel();
+                    localStorage.removeItem('usuario_logado');
                     window.location.href = 'login.html';
                 }
-            } catch (e) {
-                console.error('❌ Erro ao sair:', e);
-                alert('Erro ao sair.');
-            }
-        });
+            });
 
-        // ============================================================
-        // INICIALIZAÇÃO
-        // ============================================================
-        document.addEventListener('DOMContentLoaded', function() {
-            console.log('🚀 Página carregada, inicializando...');
-            
-            // Configura listener para mudanças de autenticação
-            setupAuthListener();
-            
-            // Carrega os dados do usuário
-            setTimeout(() => {
-                loadUserData();
-            }, 500);
-        });
+            document.getElementById('btnReconnectSupabase').addEventListener('click', function() {
+                verificarConexao();
+                addLog('🔄 Verificando conexão com o Supabase...', 'info');
+                mostrarToast('🔄 Verificando conexão...', 'info');
+            });
+
+            // ============================================================
+            // 🔥 BOTÃO DE TESTE PARA ADICIONAR LOGS
+            // ============================================================
+            document.getElementById('btnTestLog').addEventListener('click', function() {
+                const tipos = ['info', 'sucesso', 'erro', 'aviso'];
+                const mensagens = [
+                    '🧪 Teste de atividade INFO',
+                    '✅ Teste de atividade SUCESSO',
+                    '❌ Teste de atividade ERRO',
+                    '⚠️ Teste de atividade AVISO'
+                ];
+                const tipo = tipos[Math.floor(Math.random() * tipos.length)];
+                const msg = mensagens[Math.floor(Math.random() * mensagens.length)];
+                addLog(msg, tipo);
+                mostrarToast(`📝 Log adicionado: ${msg}`, tipo);
+            });
+
+            // ============================================================
+            // INICIALIZAÇÃO
+            // ============================================================
+            document.addEventListener('DOMContentLoaded', function() {
+                console.log('🚀 Dashboard carregado!');
+                console.log('📋 Sistema de logs ativo!');
+
+                verificarConexao();
+                
+                setTimeout(() => {
+                    loadUserData();
+                    setTimeout(() => {
+                        configurarEventosDosJogos();
+                    }, 500);
+                }, 300);
+
+                iniciarSalvamentoAutomatico();
+
+                // ============================================================
+                // 🔥 EXEMPLO: ADICIONAR LOGS AUTOMATICAMENTE
+                // ============================================================
+                
+                // Adiciona um log de boas-vindas após 2 segundos
+                setTimeout(() => {
+                    addLog('🌟 Dashboard pronto para uso!', 'info');
+                }, 2000);
+
+                // Adiciona um log de verificação de sistema após 5 segundos
+                setTimeout(() => {
+                    const status = levelState.supabaseOnline ? '✅ Online' : '❌ Offline';
+                    addLog(`📡 Status do servidor: ${status}`, levelState.supabaseOnline ? 'sucesso' : 'erro');
+                }, 5000);
+
+                // Simula uma atividade de teste após 10 segundos
+                setTimeout(() => {
+                    addLog('🎯 Sistema de níveis carregado com sucesso!', 'sucesso');
+                }, 10000);
+
+                window.addEventListener('beforeunload', () => {
+                    if (levelState.usuarioLogado && levelState.supabaseOnline) {
+                        salvarNivel();
+                    }
+                    if (saveInterval) {
+                        clearInterval(saveInterval);
+                    }
+                });
+            });
+
+            // ============================================================
+            // EXPOR PARA USO GLOBAL
+            // ============================================================
+            window.levelSystem = {
+                state: levelState,
+                salvar: salvarNivel,
+                carregar: carregarNivel,
+                atualizarUI: atualizarLevelUI,
+                addLog: addLog,  // 🔥 EXPORTANDO A FUNÇÃO ADD LOG
+                getHpMax,
+                getMpMax,
+                getSmMax,
+                getAtk,
+                getDef,
+                getMag,
+                getTitulo,
+                getExpProx,
+                salvarStats,
+                gastarStaminaParaJogar,
+                configurarEventosDosJogos,
+                // 🔥 FUNÇÕES AUXILIARES PARA LOGS
+                ganharExperiencia,
+                descansar,
+                comprarItem,
+                coletarItem,
+                logErro,
+                logEntradaJogo
+            };
+
+            console.log('📊 Sistema de Nível integrado ao Dashboard!');
+            console.log('💾 Salvamento automático a cada 15 segundos');
+            console.log('⚡ Cada jogo gasta 10 de STAMINA com overlay!');
+            console.log('📋 Para adicionar logs use: window.levelSystem.addLog("mensagem", "tipo")');
+            console.log('📋 Tipos disponíveis: info, sucesso, erro, aviso');
+
+        })();
     </script>
 
 </body>

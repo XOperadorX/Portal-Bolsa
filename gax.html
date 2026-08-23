@@ -1,0 +1,1523 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+    <title>⚔️ Castle Clash</title>
+    <style>
+        /* ─── CONFIGURAÇÕES GLOBAIS ─── */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            user-select: none;
+            -webkit-tap-highlight-color: transparent;
+        }
+        body {
+            background: #0b0e14;
+            font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            overflow: hidden;
+            touch-action: manipulation;
+        }
+        #game-container {
+            width: 100%;
+            max-width: 500px;
+            height: 100vh;
+            max-height: 900px;
+            background: #1a1f2a;
+            border-radius: 16px;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.8);
+            position: relative;
+        }
+        @media (min-width: 600px) {
+            #game-container {
+                height: 95vh;
+                border-radius: 24px;
+            }
+        }
+        @media (max-width: 480px) {
+            #game-container {
+                border-radius: 0;
+                max-height: 100vh;
+            }
+        }
+
+        /* ─── TOP BAR ─── */
+        #top-bar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 6px 14px;
+            background: linear-gradient(180deg, #0f141e, #1a1f2a);
+            border-bottom: 2px solid #2a3344;
+            flex-shrink: 0;
+            min-height: 44px;
+            z-index: 10;
+            flex-wrap: wrap;
+            gap: 4px;
+        }
+        #top-bar>div {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            flex-wrap: wrap;
+        }
+        .top-item {
+            font-size: 14px;
+            font-weight: 700;
+            color: #c8d0e0;
+            letter-spacing: 0.3px;
+            background: rgba(255, 255, 255, 0.06);
+            padding: 3px 12px;
+            border-radius: 20px;
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            backdrop-filter: blur(4px);
+            white-space: nowrap;
+        }
+        .top-item .icon {
+            margin-right: 4px;
+        }
+        #timer {
+            color: #f0c040;
+            font-variant-numeric: tabular-nums;
+        }
+        #score-display {
+            color: #7ec8f0;
+            font-weight: 800;
+            font-size: 16px;
+        }
+        #score-display span {
+            color: #e87060;
+        }
+        #elixir-top {
+            color: #d4a0ff;
+            font-size: 15px;
+        }
+        #elixir-top .num {
+            font-weight: 800;
+            color: #c88aff;
+        }
+        
+        /* Links de navegação na top bar */
+        .nav-link {
+            color: #c8d0e0;
+            text-decoration: none;
+            font-weight: 700;
+            font-size: 13px;
+            background: rgba(255, 255, 255, 0.06);
+            padding: 3px 12px;
+            border-radius: 20px;
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            transition: all 0.2s;
+            white-space: nowrap;
+            touch-action: manipulation;
+        }
+        .nav-link:active {
+            transform: scale(0.92);
+            background: rgba(255, 255, 255, 0.12);
+        }
+        .nav-link.mochila {
+            border-color: #a855f7;
+            color: #d4a0ff;
+        }
+        .nav-link.fazenda {
+            border-color: #2ecc71;
+            color: #7ecc9e;
+        }
+        .nav-link.saldo {
+            border-color: #f0c040;
+            color: #f0c040;
+        }
+
+        /* ─── CANVAS (campo de batalha) ─── */
+        #canvas-wrap {
+            flex: 1;
+            position: relative;
+            background: #1e2635;
+            overflow: hidden;
+            min-height: 200px;
+        }
+        #gameCanvas {
+            display: block;
+            width: 100%;
+            height: 100%;
+            background: #1e2635;
+            touch-action: none;
+            cursor: pointer;
+        }
+
+        /* ─── BOTTOM BAR (elixir + cartas) ─── */
+        #bottom-bar {
+            flex-shrink: 0;
+            background: linear-gradient(0deg, #0b0e14, #151b26);
+            border-top: 2px solid #2a3344;
+            padding: 6px 8px 10px 8px;
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+            z-index: 10;
+        }
+
+        /* Animação de pulso para cartas */
+        .card.pulse {
+            animation: pulse 0.3s ease-in-out;
+        }
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(0.9); }
+            100% { transform: scale(1); }
+        }
+
+        /* Barra de elixir */
+        #elixir-bar-wrap {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 0 4px;
+        }
+        #elixir-bar-bg {
+            flex: 1;
+            height: 14px;
+            background: #1e2635;
+            border-radius: 20px;
+            border: 1px solid #3a4458;
+            overflow: hidden;
+            position: relative;
+            box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.5);
+        }
+        #elixir-fill {
+            height: 100%;
+            width: 0%;
+            background: linear-gradient(90deg, #a855f7, #d48aff, #a855f7);
+            border-radius: 20px;
+            transition: width 0.15s ease-out;
+            box-shadow: 0 0 20px rgba(168, 85, 247, 0.4);
+        }
+        #elixir-label {
+            font-weight: 700;
+            font-size: 15px;
+            color: #c88aff;
+            min-width: 52px;
+            text-align: right;
+            letter-spacing: 0.5px;
+        }
+        #elixir-label .num {
+            font-size: 18px;
+            color: #e8d0ff;
+        }
+
+        /* Mão de cartas */
+        #card-hand {
+            display: flex;
+            gap: 6px;
+            justify-content: center;
+            padding: 2px 2px 0 2px;
+        }
+        .card {
+            flex: 1;
+            max-width: 90px;
+            min-width: 50px;
+            aspect-ratio: 5 / 7;
+            border-radius: 10px;
+            background: linear-gradient(145deg, #222b3a, #161d28);
+            border: 2px solid #3a4458;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            font-size: 11px;
+            font-weight: 700;
+            color: #e0e8f0;
+            transition: all 0.12s ease;
+            cursor: pointer;
+            position: relative;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
+            padding: 4px 2px;
+            touch-action: manipulation;
+        }
+        .card:active {
+            transform: scale(0.92);
+        }
+        .card .cost {
+            position: absolute;
+            top: -6px;
+            right: -6px;
+            background: #a855f7;
+            color: #fff;
+            border-radius: 50%;
+            width: 24px;
+            height: 24px;
+            font-size: 13px;
+            font-weight: 800;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 2px 8px rgba(168, 85, 247, 0.5);
+            border: 2px solid #1a1f2a;
+        }
+        .card .emoji {
+            font-size: 28px;
+            line-height: 1;
+            margin-bottom: 2px;
+        }
+        .card .name {
+            font-size: 10px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            color: #b0baca;
+            margin-top: 1px;
+        }
+        .card .stats-mini {
+            font-size: 8px;
+            color: #8892a8;
+            display: flex;
+            gap: 6px;
+            margin-top: 2px;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+        .card .stats-mini span {
+            background: rgba(255, 255, 255, 0.06);
+            padding: 0 5px;
+            border-radius: 8px;
+        }
+        .card.disabled {
+            opacity: 0.4;
+            filter: grayscale(0.6);
+            pointer-events: none;
+            transform: scale(0.94);
+        }
+        .card .cost.insufficient {
+            background: #e74c3c;
+            box-shadow: 0 0 16px rgba(231, 76, 60, 0.6);
+        }
+        /* Cores por tipo */
+        .card-tank {
+            border-color: #4a90d9;
+            background: linear-gradient(145deg, #1a2a4a, #0d1a2e);
+        }
+        .card-tank .cost {
+            background: #4a90d9;
+        }
+        .card-attacker {
+            border-color: #e87060;
+            background: linear-gradient(145deg, #4a1a1a, #2e0d0d);
+        }
+        .card-attacker .cost {
+            background: #e87060;
+        }
+        .card-archer {
+            border-color: #2ecc71;
+            background: linear-gradient(145deg, #0d3a1a, #06200e);
+        }
+        .card-archer .cost {
+            background: #2ecc71;
+        }
+
+        /* ─── OVERLAY DE FIM DE JOGO ─── */
+        #game-over-overlay {
+            position: absolute;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.75);
+            backdrop-filter: blur(6px);
+            display: none;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            z-index: 100;
+            padding: 20px;
+            border-radius: inherit;
+        }
+        #game-over-overlay.show {
+            display: flex;
+        }
+        #game-over-overlay h1 {
+            font-size: 36px;
+            color: #f0e8d0;
+            text-shadow: 0 4px 30px rgba(0, 0, 0, 0.6);
+            margin-bottom: 6px;
+        }
+        #game-over-overlay .sub {
+            font-size: 18px;
+            color: #b0baca;
+            margin-bottom: 12px;
+        }
+        #game-over-overlay .final-score {
+            font-size: 26px;
+            font-weight: 800;
+            color: #7ec8f0;
+            margin-bottom: 18px;
+        }
+        #game-over-overlay .final-score span {
+            color: #e87060;
+        }
+        #btn-restart {
+            background: linear-gradient(135deg, #a855f7, #7c3aed);
+            border: none;
+            padding: 14px 44px;
+            border-radius: 40px;
+            font-size: 20px;
+            font-weight: 700;
+            color: #fff;
+            cursor: pointer;
+            box-shadow: 0 8px 32px rgba(168, 85, 247, 0.4);
+            transition: transform 0.15s, box-shadow 0.2s;
+            touch-action: manipulation;
+        }
+        #btn-restart:active {
+            transform: scale(0.94);
+        }
+
+        /* ─── RESPONSIVO ─── */
+        @media (max-width: 420px) {
+            .card .emoji {
+                font-size: 22px;
+            }
+            .card .name {
+                font-size: 8px;
+            }
+            .card .stats-mini {
+                font-size: 7px;
+                gap: 3px;
+            }
+            .card .cost {
+                width: 20px;
+                height: 20px;
+                font-size: 11px;
+                top: -5px;
+                right: -5px;
+            }
+            .top-item {
+                font-size: 11px;
+                padding: 2px 8px;
+            }
+            .nav-link {
+                font-size: 11px;
+                padding: 2px 8px;
+            }
+            #elixir-label {
+                font-size: 13px;
+                min-width: 44px;
+            }
+            #elixir-bar-bg {
+                height: 12px;
+            }
+            #bottom-bar {
+                padding: 4px 4px 8px 4px;
+            }
+            #card-hand {
+                gap: 4px;
+            }
+        }
+        @media (max-width: 360px) {
+            .card .emoji {
+                font-size: 18px;
+            }
+            .card .stats-mini {
+                display: none;
+            }
+            .card .name {
+                font-size: 7px;
+            }
+            .top-item {
+                font-size: 10px;
+                padding: 2px 6px;
+            }
+            .nav-link {
+                font-size: 10px;
+                padding: 2px 6px;
+            }
+        }
+        @media (min-height: 800px) {
+            #bottom-bar {
+                padding: 10px 12px 14px 12px;
+            }
+            #card-hand {
+                gap: 10px;
+            }
+            .card {
+                border-radius: 14px;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <div id="game-container">
+        <!-- TOP BAR -->
+        <div id="top-bar">
+            <div>
+                <span class="top-item" id="timer">⏱ <span id="timer-text">3:00</span></span>
+                <span class="top-item" id="score-display">🏆 <span id="score-player">0</span> — <span id="score-ai">0</span></span>
+            </div>
+            <div>
+                <a href="mochila.html" class="nav-link mochila">🎒 Mochila</a>
+                <a href="faz.html" class="nav-link fazenda">🌾 Fazenda</a>
+                <a href="dashboard.html" class="nav-link fazenda">🎮 Dashboard</a>
+                <span class="top-item" id="elixir-top">⚡ <span class="num" id="elixir-top-num">0</span>/10</span>
+            </div>
+        </div>
+
+        <!-- CANVAS -->
+        <div id="canvas-wrap">
+            <canvas id="gameCanvas"></canvas>
+            <!-- Game Over overlay -->
+            <div id="game-over-overlay">
+                <h1 id="result-title">🏆 Vitória!</h1>
+                <div class="sub" id="result-sub">Você destruiu a torre inimiga!</div>
+                <div class="final-score" id="final-score">0 — 0</div>
+                <button id="btn-restart">🔄 Jogar Novamente</button>
+            </div>
+        </div>
+
+        <!-- BOTTOM BAR -->
+        <div id="bottom-bar">
+            <div id="elixir-bar-wrap">
+                <div id="elixir-bar-bg">
+                    <div id="elixir-fill" style="width:0%;"></div>
+                </div>
+                <div id="elixir-label"><span class="num" id="elixir-bot-num">0</span>/10</div>
+            </div>
+            <div id="card-hand">
+                <!-- cartas geradas por JS -->
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // ═══════════════════════════════════════════════════════════════
+        //  BANCO DE DADOS SIMULADO (localStorage) - Estrutura Geral
+        // ═══════════════════════════════════════════════════════════════
+        
+        const DB_KEY = 'castle_clash_db';
+        const USUARIO_PADRAO = 'jogador';
+
+        // Estrutura completa da tabela Geral
+        function getEstruturaBase() {
+            return {
+                id: 1,
+                nome: 'Jogador',
+                login: USUARIO_PADRAO,
+                senha: '123456',
+                saldo: 0.00,
+                saldo_poupanca: 0.00,
+                proventos_pendentes: 0.00,
+                carteira: {},
+                preco_medio_compra: {},
+                proventos_por_ativo: {},
+                created_at: new Date().toISOString(),
+                updated_at: new Date().toISOString(),
+                seeds: 0,
+                planted: 0,
+                harvested: 0,
+                buckets: 0,
+                plot_data: [],
+                selic: 10.75,
+                fazendinha_dados: {},
+                nivel: 1,
+                experiencia: 0,
+                exp_proximo: 100,
+                hp_max: 100,
+                mp_max: 50,
+                sm_max: 40,
+                ataque_base: 15,
+                defesa_base: 10,
+                magia_base: 8,
+                hp_atual: 100,
+                mp_atual: 50,
+                sm_atual: 40
+            };
+        }
+
+        function getDB() {
+            let db = localStorage.getItem(DB_KEY);
+            if (db) {
+                try {
+                    const parsed = JSON.parse(db);
+                    // Verifica se tem a estrutura completa, se não, mescla
+                    const base = getEstruturaBase();
+                    for (let key in base) {
+                        if (!(key in parsed)) {
+                            parsed[key] = base[key];
+                        }
+                    }
+                    return parsed;
+                } catch (e) {
+                    // Fallback
+                }
+            }
+            // Cria novo banco com estrutura completa
+            const novoDB = getEstruturaBase();
+            // Adiciona alguns itens iniciais na carteira
+            novoDB.carteira = {
+                '🪵 Madeira': 5,
+                '🪨 Pedra': 3,
+                '💎 Ouro': 2,
+                '🧪 Poção': 1
+            };
+            novoDB.fazendinha_dados = {
+                ultima_colheita: new Date().toISOString(),
+                plantas: []
+            };
+            localStorage.setItem(DB_KEY, JSON.stringify(novoDB));
+            return novoDB;
+        }
+
+        function saveDB(db) {
+            db.updated_at = new Date().toISOString();
+            localStorage.setItem(DB_KEY, JSON.stringify(db));
+        }
+
+        // ─── Funções de acesso aos dados ───
+
+        function getSaldo() {
+            const db = getDB();
+            return parseFloat(db.saldo) || 0;
+        }
+
+        function setSaldo(valor) {
+            const db = getDB();
+            db.saldo = parseFloat(valor.toFixed(2));
+            saveDB(db);
+            return db.saldo;
+        }
+
+        function adicionarSaldo(valor) {
+            const atual = getSaldo();
+            return setSaldo(atual + valor);
+        }
+
+        function getItem(nome) {
+            const db = getDB();
+            return db.carteira[nome] || 0;
+        }
+
+        function setItem(nome, quantidade) {
+            const db = getDB();
+            if (quantidade <= 0) {
+                delete db.carteira[nome];
+            } else {
+                db.carteira[nome] = Math.floor(quantidade);
+            }
+            saveDB(db);
+            return db.carteira[nome] || 0;
+        }
+
+        function adicionarItem(nome, quantidade = 1) {
+            const atual = getItem(nome);
+            return setItem(nome, atual + quantidade);
+        }
+
+        function removerItem(nome, quantidade = 1) {
+            const atual = getItem(nome);
+            if (atual < quantidade) return false;
+            const novo = atual - quantidade;
+            setItem(nome, novo);
+            return true;
+        }
+
+        function getCarteira() {
+            const db = getDB();
+            return db.carteira || {};
+        }
+
+        // ─── Configurações do Jogo ───
+
+        const CONFIG = {
+            ELIXIR_MAX: 10,
+            ELIXIR_RATE: 1 / 2.8,
+            TOWER_HP: 1500,
+            TOWER_DAMAGE: 55,
+            TOWER_RANGE: 200,
+            TOWER_COOLDOWN: 0.9,
+            TROOPS: {
+                tank: {
+                    id: 'tank',
+                    name: 'Tanque',
+                    emoji: '🛡️',
+                    cost: 3,
+                    hp: 1000,
+                    damage: 45,
+                    speed: 35,
+                    range: 35,
+                    cooldown: 1.4,
+                    color: '#4a90d9',
+                    cardClass: 'card-tank',
+                },
+                attacker: {
+                    id: 'attacker',
+                    name: 'Atacante',
+                    emoji: '⚔️',
+                    cost: 2,
+                    hp: 480,
+                    damage: 85,
+                    speed: 65,
+                    range: 35,
+                    cooldown: 0.9,
+                    color: '#e87060',
+                    cardClass: 'card-attacker',
+                },
+                archer: {
+                    id: 'archer',
+                    name: 'Arqueiro',
+                    emoji: '🏹',
+                    cost: 4,
+                    hp: 280,
+                    damage: 60,
+                    speed: 50,
+                    range: 200,
+                    cooldown: 1.1,
+                    color: '#2ecc71',
+                    cardClass: 'card-archer',
+                },
+            },
+            DECK: ['tank', 'tank', 'tank', 'attacker', 'attacker', 'attacker', 'attacker', 'archer', 'archer', 'archer'],
+            AI_SPAWN_INTERVAL: 3.0,
+            AI_MIN_ELIXIR: 2,
+            MATCH_DURATION: 180,
+            LANE_PADDING: 0.08,
+            TOWER_SIZE: 44,
+            TROOP_SIZE: 26,
+        };
+
+        // ═══════════════════════════════════════════════════════════════
+        //  ESTADO DO JOGO
+        // ═══════════════════════════════════════════════════════════════
+
+        const state = {
+            elixir: 5,
+            maxElixir: CONFIG.ELIXIR_MAX,
+            elixirTimer: 0,
+            playerTower: null,
+            aiTower: null,
+            troops: [],
+            projectiles: [],
+            hand: [],
+            selectedCard: -1,
+            scorePlayer: 0,
+            scoreAi: 0,
+            matchTime: CONFIG.MATCH_DURATION,
+            matchEnded: false,
+            matchPaused: false,
+            aiTimer: 0,
+            aiNextSpawn: 2.0,
+            frameId: null,
+            lastTime: 0,
+            canvas: null,
+            ctx: null,
+            canvasW: 0,
+            canvasH: 0,
+        };
+
+        // ═══════════════════════════════════════════════════════════════
+        //  CLASSES (Tower, Troop) - mesmas do original
+        // ═══════════════════════════════════════════════════════════════
+
+        class Tower {
+            constructor(x, y, team) {
+                this.x = x;
+                this.y = y;
+                this.team = team;
+                this.maxHp = CONFIG.TOWER_HP;
+                this.hp = CONFIG.TOWER_HP;
+                this.damage = CONFIG.TOWER_DAMAGE;
+                this.range = CONFIG.TOWER_RANGE;
+                this.cooldown = CONFIG.TOWER_COOLDOWN;
+                this.cooldownTimer = 0;
+                this.attackCount = 0;
+                this.size = CONFIG.TOWER_SIZE;
+                this.alive = true;
+            }
+
+            update(dt, troops) {
+                if (!this.alive) return;
+                this.cooldownTimer = Math.max(0, this.cooldownTimer - dt);
+                const enemies = troops.filter(t => t.team !== this.team && t.alive);
+                let target = null;
+                let minDist = Infinity;
+                for (const e of enemies) {
+                    const d = this.distTo(e);
+                    if (d < this.range && d < minDist) {
+                        minDist = d;
+                        target = e;
+                    }
+                }
+                if (target && this.cooldownTimer <= 0) {
+                    target.hp -= this.damage;
+                    this.attackCount++;
+                    this.cooldownTimer = this.cooldown;
+                    state.projectiles.push({
+                        x: this.x,
+                        y: this.y,
+                        target: target,
+                        speed: 400,
+                        damage: this.damage,
+                        alive: true,
+                        color: this.team === 'player' ? '#7ec8f0' : '#e87060',
+                        size: 6,
+                    });
+                    if (target.hp <= 0) {
+                        target.alive = false;
+                    }
+                }
+            }
+
+            distTo(other) {
+                return Math.hypot(this.x - other.x, this.y - other.y);
+            }
+        }
+
+        class Troop {
+            constructor(x, y, team, troopDef) {
+                this.x = x;
+                this.y = y;
+                this.team = team;
+                this.def = troopDef;
+                this.maxHp = troopDef.hp;
+                this.hp = troopDef.hp;
+                this.damage = troopDef.damage;
+                this.speed = troopDef.speed;
+                this.range = troopDef.range;
+                this.cooldown = troopDef.cooldown;
+                this.cooldownTimer = 0;
+                this.size = CONFIG.TROOP_SIZE;
+                this.alive = true;
+                this.target = null;
+                this.state = 'moving';
+                this.attackCooldown = 0;
+                this.type = troopDef.id;
+                this.color = troopDef.color;
+                const pad = CONFIG.LANE_PADDING * state.canvasW;
+                this.x = pad + Math.random() * (state.canvasW - pad * 2);
+            }
+
+            update(dt, troops) {
+                if (!this.alive) return;
+                this.attackCooldown = Math.max(0, this.attackCooldown - dt);
+                const enemies = troops.filter(t => t.team !== this.team && t.alive);
+                let targetTroop = null;
+                let minDist = Infinity;
+                for (const e of enemies) {
+                    const d = this.distTo(e);
+                    if (d < this.range && d < minDist) {
+                        minDist = d;
+                        targetTroop = e;
+                    }
+                }
+                const enemyTower = this.team === 'player' ? state.aiTower : state.playerTower;
+                let targetTower = null;
+                if (enemyTower && enemyTower.alive) {
+                    const d = this.distTo(enemyTower);
+                    if (d < this.range) {
+                        targetTower = enemyTower;
+                    }
+                }
+                if (targetTroop) {
+                    this.target = targetTroop;
+                    this.state = 'attacking';
+                } else if (targetTower) {
+                    this.target = targetTower;
+                    this.state = 'attacking';
+                } else {
+                    this.target = null;
+                    this.state = 'moving';
+                }
+                if (this.state === 'attacking' && this.target && this.target.alive !== false) {
+                    if (this.attackCooldown <= 0) {
+                        this.target.hp -= this.damage;
+                        this.attackCooldown = this.cooldown;
+                        state.projectiles.push({
+                            x: this.x,
+                            y: this.y,
+                            target: this.target,
+                            speed: 300,
+                            damage: this.damage,
+                            alive: true,
+                            color: this.team === 'player' ? '#f0c040' : '#ff6b6b',
+                            size: 5,
+                        });
+                        if (this.target.hp <= 0) {
+                            if (this.target.constructor === Tower) {
+                                this.target.alive = false;
+                                if (this.target.team === 'player') {
+                                    state.scoreAi = 1;
+                                } else {
+                                    state.scorePlayer = 1;
+                                }
+                                checkGameEnd();
+                            } else {
+                                this.target.alive = false;
+                            }
+                        }
+                    }
+                } else {
+                    const tower = this.team === 'player' ? state.aiTower : state.playerTower;
+                    if (tower && tower.alive) {
+                        const dy = tower.y - this.y;
+                        const dx = tower.x - this.x;
+                        const dist = Math.hypot(dx, dy);
+                        if (dist > 2) {
+                            const step = this.speed * dt;
+                            this.x += (dx / dist) * step;
+                            this.y += (dy / dist) * step;
+                        }
+                    } else {
+                        const dir = this.team === 'player' ? -1 : 1;
+                        this.y += dir * this.speed * dt;
+                    }
+                }
+                const pad = CONFIG.LANE_PADDING * state.canvasW;
+                this.x = Math.max(pad, Math.min(state.canvasW - pad, this.x));
+                this.y = Math.max(20, Math.min(state.canvasH - 20, this.y));
+                const tower = this.team === 'player' ? state.aiTower : state.playerTower;
+                if (tower && tower.alive && this.state !== 'attacking') {
+                    const d = this.distTo(tower);
+                    if (d < this.range + 10) {
+                        this.state = 'attacking';
+                        this.target = tower;
+                    }
+                }
+            }
+
+            distTo(other) {
+                return Math.hypot(this.x - other.x, this.y - other.y);
+            }
+        }
+
+        // ═══════════════════════════════════════════════════════════════
+        //  FUNÇÕES DO JOGO
+        // ═══════════════════════════════════════════════════════════════
+
+        function initGame() {
+            const canvas = document.getElementById('gameCanvas');
+            const wrap = document.getElementById('canvas-wrap');
+            state.canvas = canvas;
+            state.ctx = canvas.getContext('2d');
+            resizeCanvas();
+
+            const tw = state.canvasW;
+            const th = state.canvasH;
+            const pad = CONFIG.LANE_PADDING * tw;
+            const towerYPlayer = th - pad - CONFIG.TOWER_SIZE / 2;
+            const towerYAi = pad + CONFIG.TOWER_SIZE / 2;
+
+            state.playerTower = new Tower(tw / 2, towerYPlayer, 'player');
+            state.aiTower = new Tower(tw / 2, towerYAi, 'ai');
+
+            state.hand = [];
+            state.troops = [];
+            state.projectiles = [];
+            state.scorePlayer = 0;
+            state.scoreAi = 0;
+            state.matchTime = CONFIG.MATCH_DURATION;
+            state.matchEnded = false;
+            state.matchPaused = false;
+            state.elixir = 10;
+            state.elixirTimer = 0;
+            state.aiTimer = 0;
+            state.aiNextSpawn = 2.0;
+            state.selectedCard = -1;
+
+            drawHand();
+            document.getElementById('game-over-overlay').classList.remove('show');
+
+            if (state.frameId) cancelAnimationFrame(state.frameId);
+            state.lastTime = performance.now();
+            state.frameId = requestAnimationFrame(gameLoop);
+            updateUI();
+            atualizarSaldoUI();
+        }
+
+        function resizeCanvas() {
+            const wrap = document.getElementById('canvas-wrap');
+            const rect = wrap.getBoundingClientRect();
+            const dpr = window.devicePixelRatio || 1;
+            const w = rect.width;
+            const h = rect.height;
+            state.canvas.width = w * dpr;
+            state.canvas.height = h * dpr;
+            state.canvas.style.width = w + 'px';
+            state.canvas.style.height = h + 'px';
+            state.canvasW = w;
+            state.canvasH = h;
+            state.ctx.scale(dpr, dpr);
+        }
+
+        function drawHand() {
+            const container = document.getElementById('card-hand');
+            container.innerHTML = '';
+            const deck = CONFIG.DECK;
+            while (state.hand.length < 4) {
+                const idx = Math.floor(Math.random() * deck.length);
+                state.hand.push({ troopId: deck[idx], index: state.hand.length });
+            }
+            for (let i = 0; i < state.hand.length; i++) {
+                const card = state.hand[i];
+                const def = CONFIG.TROOPS[card.troopId];
+                if (!def) continue;
+                const div = document.createElement('div');
+                div.className = `card ${def.cardClass}`;
+                div.dataset.index = i;
+                const costOk = state.elixir >= def.cost && !state.matchEnded;
+                if (!costOk || state.matchEnded) {
+                    div.classList.add('disabled');
+                }
+                div.innerHTML = `
+                    <span class="cost ${costOk ? '' : 'insufficient'}">${def.cost}</span>
+                    <span class="emoji">${def.emoji}</span>
+                    <span class="name">${def.name}</span>
+                    <span class="stats-mini">
+                        <span>❤️${def.hp}</span>
+                        <span>⚔️${def.damage}</span>
+                    </span>
+                `;
+                div.addEventListener('click', (e) => {
+                    e.stopPropagation();
+                    const idx = parseInt(div.dataset.index);
+                    playCard(idx);
+                });
+                div.addEventListener('touchend', (e) => {
+                    e.preventDefault();
+                    const idx = parseInt(div.dataset.index);
+                    playCard(idx);
+                });
+                container.appendChild(div);
+            }
+        }
+
+        function updateCardStates() {
+            const cards = document.querySelectorAll('.card');
+            cards.forEach((div, index) => {
+                if (index >= state.hand.length) return;
+                const cardData = state.hand[index];
+                const def = CONFIG.TROOPS[cardData.troopId];
+                if (!def) return;
+                const costOk = state.elixir >= def.cost && !state.matchEnded;
+                div.classList.toggle('disabled', !costOk || state.matchEnded);
+                const costSpan = div.querySelector('.cost');
+                if (costSpan) {
+                    costSpan.classList.toggle('insufficient', !costOk);
+                }
+            });
+        }
+
+        function playCard(index) {
+            if (state.matchEnded) return;
+            const card = state.hand[index];
+            if (!card) return;
+            const def = CONFIG.TROOPS[card.troopId];
+            if (!def) return;
+
+            if (state.elixir < def.cost) {
+                const cardElement = document.querySelector(`.card[data-index="${index}"]`);
+                if (cardElement) {
+                    cardElement.classList.remove('pulse');
+                    void cardElement.offsetWidth;
+                    cardElement.classList.add('pulse');
+                    setTimeout(() => cardElement.classList.remove('pulse'), 300);
+                }
+                return;
+            }
+
+            state.elixir -= def.cost;
+
+            const pad = CONFIG.LANE_PADDING * state.canvasW;
+            const x = pad + Math.random() * (state.canvasW - pad * 2);
+            const y = state.canvasH - pad - CONFIG.TOWER_SIZE - 20 - Math.random() * 30;
+            const troop = new Troop(x, y, 'player', def);
+            state.troops.push(troop);
+
+            state.hand.splice(index, 1);
+            const deck = CONFIG.DECK;
+            const newIdx = Math.floor(Math.random() * deck.length);
+            state.hand.push({ troopId: deck[newIdx], index: state.hand.length });
+
+            drawHand();
+            updateUI();
+        }
+
+        function aiPlay() {
+            if (state.matchEnded) return;
+            const deck = CONFIG.DECK;
+            const available = [];
+            for (const id of deck) {
+                const def = CONFIG.TROOPS[id];
+                if (def && state.elixir >= def.cost) {
+                    available.push(id);
+                }
+            }
+            if (available.length === 0) return;
+
+            const choice = available[Math.floor(Math.random() * available.length)];
+            const def = CONFIG.TROOPS[choice];
+            if (!def) return;
+
+            state.elixir -= def.cost;
+
+            const pad = CONFIG.LANE_PADDING * state.canvasW;
+            const x = pad + Math.random() * (state.canvasW - pad * 2);
+            const y = pad + CONFIG.TOWER_SIZE + 20 + Math.random() * 30;
+            const troop = new Troop(x, y, 'ai', def);
+            state.troops.push(troop);
+
+            updateUI();
+        }
+
+        function checkGameEnd() {
+            if (state.matchEnded) return;
+            const playerAlive = state.playerTower.alive;
+            const aiAlive = state.aiTower.alive;
+
+            if (!playerAlive || !aiAlive || state.matchTime <= 0) {
+                state.matchEnded = true;
+                showGameOver();
+                // Recompensa por jogar
+                if (state.scorePlayer > state.scoreAi) {
+                    adicionarSaldo(10);
+                    atualizarSaldoUI();
+                } else if (state.scorePlayer === state.scoreAi && state.playerTower.alive) {
+                    adicionarSaldo(5);
+                    atualizarSaldoUI();
+                }
+                return true;
+            }
+            return false;
+        }
+
+        function showGameOver() {
+            const overlay = document.getElementById('game-over-overlay');
+            overlay.classList.add('show');
+
+            const title = document.getElementById('result-title');
+            const sub = document.getElementById('result-sub');
+            const score = document.getElementById('final-score');
+
+            const pScore = state.scorePlayer;
+            const aScore = state.scoreAi;
+
+            if (!state.playerTower.alive) {
+                title.textContent = '💀 Derrota!';
+                sub.textContent = 'Sua torre foi destruída!';
+            } else if (!state.aiTower.alive) {
+                title.textContent = '🏆 Vitória!';
+                sub.textContent = 'Você destruiu a torre inimiga! +10💰';
+            } else if (state.matchTime <= 0) {
+                const pHp = state.playerTower.hp / state.playerTower.maxHp;
+                const aHp = state.aiTower.hp / state.aiTower.maxHp;
+                if (pHp > aHp) {
+                    title.textContent = '🏆 Vitória!';
+                    sub.textContent = 'Sua torre tem mais vida! +10💰';
+                } else if (aHp > pHp) {
+                    title.textContent = '💀 Derrota!';
+                    sub.textContent = 'Torre inimiga tem mais vida!';
+                } else {
+                    title.textContent = '🤝 Empate!';
+                    sub.textContent = 'Ambas as torres estão iguais! +5💰';
+                }
+            }
+
+            score.textContent = `${pScore} — ${aScore}`;
+
+            if (state.frameId) {
+                cancelAnimationFrame(state.frameId);
+                state.frameId = null;
+            }
+        }
+
+        // ═══════════════════════════════════════════════════════════════
+        //  LOOP PRINCIPAL
+        // ═══════════════════════════════════════════════════════════════
+
+        function gameLoop(timestamp) {
+            if (state.matchEnded) return;
+
+            const dt = Math.min((timestamp - state.lastTime) / 1000, 0.05);
+            state.lastTime = timestamp;
+
+            update(dt);
+            render();
+
+            state.frameId = requestAnimationFrame(gameLoop);
+        }
+
+        function update(dt) {
+            if (state.matchEnded) return;
+
+            state.elixirTimer += dt;
+            const rate = CONFIG.ELIXIR_RATE;
+            while (state.elixirTimer >= 1 / rate) {
+                state.elixirTimer -= 1 / rate;
+                state.elixir = Math.min(state.elixir + 1, CONFIG.ELIXIR_MAX);
+            }
+
+            state.matchTime -= dt;
+            if (state.matchTime < 0) state.matchTime = 0;
+
+            state.aiTimer += dt;
+            if (state.aiTimer >= state.aiNextSpawn) {
+                state.aiTimer = 0;
+                state.aiNextSpawn = CONFIG.AI_SPAWN_INTERVAL * (0.7 + Math.random() * 0.6);
+                if (state.elixir >= CONFIG.AI_MIN_ELIXIR) {
+                    aiPlay();
+                }
+            }
+
+            if (state.playerTower.alive) {
+                state.playerTower.update(dt, state.troops);
+            }
+            if (state.aiTower.alive) {
+                state.aiTower.update(dt, state.troops);
+            }
+
+            for (const t of state.troops) {
+                if (t.alive) {
+                    t.update(dt, state.troops);
+                }
+            }
+            state.troops = state.troops.filter(t => t.alive);
+
+            for (const p of state.projectiles) {
+                if (!p.alive) continue;
+                if (!p.target || p.target.alive === false) {
+                    p.alive = false;
+                    continue;
+                }
+                const dx = p.target.x - p.x;
+                const dy = p.target.y - p.y;
+                const dist = Math.hypot(dx, dy);
+                if (dist < 6) {
+                    p.alive = false;
+                } else {
+                    const step = p.speed * dt;
+                    p.x += (dx / dist) * step;
+                    p.y += (dy / dist) * step;
+                }
+            }
+            state.projectiles = state.projectiles.filter(p => p.alive);
+
+            if (!state.playerTower.alive || !state.aiTower.alive || state.matchTime <= 0) {
+                checkGameEnd();
+            }
+
+            updateUI();
+            updateCardStates();
+        }
+
+        // ═══════════════════════════════════════════════════════════════
+        //  RENDERIZAÇÃO
+        // ═══════════════════════════════════════════════════════════════
+
+        function render() {
+            const ctx = state.ctx;
+            const w = state.canvasW;
+            const h = state.canvasH;
+            ctx.clearRect(0, 0, w, h);
+
+            const grad = ctx.createLinearGradient(0, 0, 0, h);
+            grad.addColorStop(0, '#1a2a3a');
+            grad.addColorStop(0.5, '#2a3a4a');
+            grad.addColorStop(1, '#1a2a3a');
+            ctx.fillStyle = grad;
+            ctx.fillRect(0, 0, w, h);
+
+            ctx.strokeStyle = 'rgba(255,255,255,0.08)';
+            ctx.lineWidth = 2;
+            ctx.setLineDash([12, 16]);
+            ctx.beginPath();
+            ctx.moveTo(0, h / 2);
+            ctx.lineTo(w, h / 2);
+            ctx.stroke();
+            ctx.setLineDash([]);
+
+            const pad = CONFIG.LANE_PADDING * w;
+            ctx.fillStyle = 'rgba(100, 200, 255, 0.05)';
+            ctx.beginPath();
+            ctx.arc(w / 2, h - pad, 60, 0, Math.PI * 2);
+            ctx.fill();
+            ctx.fillStyle = 'rgba(255, 100, 100, 0.05)';
+            ctx.beginPath();
+            ctx.arc(w / 2, pad, 60, 0, Math.PI * 2);
+            ctx.fill();
+
+            drawTower(ctx, state.playerTower, w / 2, h - pad);
+            drawTower(ctx, state.aiTower, w / 2, pad);
+
+            for (const t of state.troops) {
+                if (!t.alive) continue;
+                drawTroop(ctx, t);
+            }
+
+            for (const p of state.projectiles) {
+                if (!p.alive) continue;
+                ctx.beginPath();
+                ctx.arc(p.x, p.y, p.size, 0, Math.PI * 2);
+                ctx.fillStyle = p.color;
+                ctx.shadowColor = p.color;
+                ctx.shadowBlur = 16;
+                ctx.fill();
+                ctx.shadowBlur = 0;
+            }
+
+            ctx.fillStyle = 'rgba(255,255,255,0.5)';
+            ctx.font = '11px sans-serif';
+            ctx.textAlign = 'center';
+            const pHp = Math.max(0, state.playerTower.hp);
+            const aHp = Math.max(0, state.aiTower.hp);
+            ctx.fillText(`❤️ ${Math.round(pHp)}`, w / 2, h - pad + 36);
+            ctx.fillText(`❤️ ${Math.round(aHp)}`, w / 2, pad - 18);
+
+            ctx.fillStyle = 'rgba(255,255,200,0.5)';
+            ctx.font = '10px sans-serif';
+            ctx.fillText(`⚔️ ${state.playerTower.attackCount}`, w / 2 - 50, h - pad + 36);
+            ctx.fillText(`⚔️ ${state.aiTower.attackCount}`, w / 2 + 50, pad - 18);
+
+            if (state.matchTime > 0) {
+                const mins = Math.floor(state.matchTime / 60);
+                const secs = Math.floor(state.matchTime % 60);
+                ctx.fillStyle = 'rgba(255,255,200,0.2)';
+                ctx.font = 'bold 14px sans-serif';
+                ctx.textAlign = 'center';
+                ctx.fillText(`${mins}:${secs.toString().padStart(2, '0')}`, w / 2, 28);
+            }
+        }
+
+        function drawTower(ctx, tower, x, y) {
+            const size = tower.size;
+            const alive = tower.alive;
+
+            ctx.shadowColor = 'rgba(0,0,0,0.4)';
+            ctx.shadowBlur = 20;
+
+            const grad = ctx.createRadialGradient(x, y - 4, 4, x, y, size);
+            if (alive) {
+                const col = tower.team === 'player' ? '#4a8ac8' : '#c84a4a';
+                grad.addColorStop(0, col);
+                grad.addColorStop(0.6, tower.team === 'player' ? '#2a5a8a' : '#8a2a2a');
+                grad.addColorStop(1, tower.team === 'player' ? '#1a3a5a' : '#5a1a1a');
+            } else {
+                grad.addColorStop(0, '#444');
+                grad.addColorStop(1, '#222');
+            }
+            ctx.fillStyle = grad;
+            ctx.beginPath();
+            ctx.arc(x, y, size, 0, Math.PI * 2);
+            ctx.fill();
+
+            ctx.shadowBlur = 0;
+            ctx.strokeStyle = alive ? (tower.team === 'player' ? 'rgba(100,200,255,0.3)' : 'rgba(255,100,100,0.3)') :
+                'rgba(100,100,100,0.2)';
+            ctx.lineWidth = 2;
+            ctx.beginPath();
+            ctx.arc(x, y, size + 4, 0, Math.PI * 2);
+            ctx.stroke();
+
+            if (alive) {
+                const hpPct = tower.hp / tower.maxHp;
+                const barW = size * 1.8;
+                const barH = 6;
+                const bx = x - barW / 2;
+                const by = y - size - 10;
+                ctx.shadowBlur = 0;
+                ctx.fillStyle = 'rgba(0,0,0,0.6)';
+                if (ctx.roundRect) {
+                    ctx.beginPath();
+                    ctx.roundRect(bx, by, barW, barH, 4);
+                    ctx.fill();
+                } else {
+                    ctx.fillRect(bx, by, barW, barH);
+                }
+                const col = hpPct > 0.5 ? '#4ade80' : hpPct > 0.25 ? '#facc15' : '#ef4444';
+                ctx.fillStyle = col;
+                const fillW = Math.max(0, (barW - 4) * hpPct);
+                if (ctx.roundRect) {
+                    ctx.beginPath();
+                    ctx.roundRect(bx + 2, by + 2, fillW, barH - 4, 3);
+                    ctx.fill();
+                } else {
+                    ctx.fillRect(bx + 2, by + 2, fillW, barH - 4);
+                }
+            } else {
+                ctx.shadowBlur = 0;
+                ctx.strokeStyle = 'rgba(255,50,50,0.6)';
+                ctx.lineWidth = 4;
+                ctx.beginPath();
+                ctx.moveTo(x - 16, y - 16);
+                ctx.lineTo(x + 16, y + 16);
+                ctx.moveTo(x + 16, y - 16);
+                ctx.lineTo(x - 16, y + 16);
+                ctx.stroke();
+            }
+
+            ctx.shadowBlur = 0;
+            ctx.font = '22px sans-serif';
+            ctx.textAlign = 'center';
+            ctx.textBaseline = 'middle';
+            ctx.fillStyle = alive ? '#fff' : '#666';
+            ctx.fillText('🏰', x, y + 2);
+
+            if (alive) {
+                ctx.strokeStyle = tower.team === 'player' ?
+                    'rgba(100,200,255,0.06)' :
+                    'rgba(255,100,100,0.06)';
+                ctx.lineWidth = 1;
+                ctx.beginPath();
+                ctx.arc(x, y, tower.range, 0, Math.PI * 2);
+                ctx.stroke();
+            }
+        }
+
+        function drawTroop(ctx, troop) {
+            const size = troop.size;
+            const x = troop.x;
+            const y = troop.y;
+            const alive = troop.alive;
+
+            ctx.shadowColor = 'rgba(0,0,0,0.5)';
+            ctx.shadowBlur = 14;
+
+            const grad = ctx.createRadialGradient(x - 4, y - 6, 4, x, y, size);
+            const col = troop.color;
+            grad.addColorStop(0, col);
+            grad.addColorStop(0.7, col);
+            grad.addColorStop(1, '#1a1a2a');
+            ctx.fillStyle = grad;
+
+            const r = size;
+            ctx.beginPath();
+            if (troop.type === 'tank') {
+                ctx.arc(x, y, r, 0, Math.PI * 2);
+            } else if (troop.type === 'attacker') {
+                const s = r * 1.3;
+                const rx = x - s / 2;
+                const ry = y - s / 2;
+                if (ctx.roundRect) {
+                    ctx.roundRect(rx, ry, s, s, 6);
+                } else {
+                    ctx.rect(rx, ry, s, s);
+                }
+            } else {
+                ctx.moveTo(x, y - r * 1.2);
+                ctx.lineTo(x - r * 1.1, y + r * 0.8);
+                ctx.lineTo(x + r * 1.1, y + r * 0.8);
+                ctx.closePath();
+            }
+            ctx.fill();
+
+            ctx.shadowBlur = 0;
+            ctx.strokeStyle = 'rgba(255,255,255,0.25)';
+            ctx.lineWidth = 1.5;
+            ctx.stroke();
+
+            if (alive) {
+                const hpPct = troop.hp / troop.maxHp;
+                const barW = size * 1.6;
+                const barH = 4;
+                const bx = x - barW / 2;
+                const by = y - size - 6;
+                ctx.shadowBlur = 0;
+                ctx.fillStyle = 'rgba(0,0,0,0.7)';
+                ctx.fillRect(bx, by, barW, barH);
+                const col = hpPct > 0.5 ? '#4ade80' : hpPct > 0.25 ? '#facc15' : '#ef4444';
+                ctx.fillStyle = col;
+                ctx.fillRect(bx + 1, by + 1, Math.max(0, (barW - 2) * hpPct), barH - 2);
+            }
+
+            ctx.shadowBlur = 0;
+            ctx.font = `${size * 0.9}px sans-serif`;
+            ctx.textAlign = 'center';
+            ctx.textBaseline = 'middle';
+            ctx.fillStyle = '#fff';
+            ctx.fillText(troop.def.emoji, x, y + 1);
+
+            ctx.fillStyle = troop.team === 'player' ? 'rgba(100,200,255,0.5)' : 'rgba(255,100,100,0.5)';
+            ctx.beginPath();
+            ctx.arc(x, y + size + 6, 5, 0, Math.PI * 2);
+            ctx.fill();
+        }
+
+        // ═══════════════════════════════════════════════════════════════
+        //  UI UPDATES
+        // ═══════════════════════════════════════════════════════════════
+
+        function updateUI() {
+            const pct = (state.elixir / state.maxElixir) * 100;
+            document.getElementById('elixir-fill').style.width = Math.min(100, pct) + '%';
+            document.getElementById('elixir-bot-num').textContent = Math.floor(state.elixir);
+            document.getElementById('elixir-top-num').textContent = Math.floor(state.elixir);
+
+            const mins = Math.floor(Math.max(0, state.matchTime) / 60);
+            const secs = Math.floor(Math.max(0, state.matchTime) % 60);
+            document.getElementById('timer-text').textContent = `${mins}:${secs.toString().padStart(2, '0')}`;
+
+            document.getElementById('score-player').textContent = state.scorePlayer;
+            document.getElementById('score-ai').textContent = state.scoreAi;
+        }
+
+        function atualizarSaldoUI() {
+            const saldo = getSaldo();
+            // Atualiza qualquer elemento que mostre o saldo
+            const el = document.getElementById('saldo-display');
+            if (el) el.textContent = saldo.toFixed(2);
+        }
+
+        // ═══════════════════════════════════════════════════════════════
+        //  EVENTOS E INICIALIZAÇÃO
+        // ═══════════════════════════════════════════════════════════════
+
+        document.getElementById('btn-restart').addEventListener('click', () => {
+            initGame();
+        });
+        document.getElementById('btn-restart').addEventListener('touchend', (e) => {
+            e.preventDefault();
+            initGame();
+        });
+
+        window.addEventListener('resize', () => {
+            resizeCanvas();
+            if (state.playerTower) {
+                const pad = CONFIG.LANE_PADDING * state.canvasW;
+                state.playerTower.x = state.canvasW / 2;
+                state.playerTower.y = state.canvasH - pad - CONFIG.TOWER_SIZE / 2;
+                state.aiTower.x = state.canvasW / 2;
+                state.aiTower.y = pad + CONFIG.TOWER_SIZE / 2;
+            }
+        });
+
+        document.getElementById('gameCanvas').addEventListener('touchstart', (e) => {
+            e.preventDefault();
+        });
+
+        document.addEventListener('DOMContentLoaded', () => {
+            initGame();
+        });
+
+        // Polyfill para roundRect se não existir
+        if (!CanvasRenderingContext2D.prototype.roundRect) {
+            CanvasRenderingContext2D.prototype.roundRect = function(x, y, w, h, r) {
+                if (r > w / 2) r = w / 2;
+                if (r > h / 2) r = h / 2;
+                this.moveTo(x + r, y);
+                this.lineTo(x + w - r, y);
+                this.quadraticCurveTo(x + w, y, x + w, y + r);
+                this.lineTo(x + w, y + h - r);
+                this.quadraticCurveTo(x + w, y + h, x + w - r, y + h);
+                this.lineTo(x + r, y + h);
+                this.quadraticCurveTo(x, y + h, x, y + h - r);
+                this.lineTo(x, y + r);
+                this.quadraticCurveTo(x, y, x + r, y);
+                return this;
+            };
+        }
+
+        console.log('⚔️ Castle Clash carregado!');
+        console.log('📦 Dados do jogador:', getDB());
+    </script>
+</body>
+</html>

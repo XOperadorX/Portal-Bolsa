@@ -1,0 +1,524 @@
+<!-- ============================================================
+   SISTEMA DE NÍVEL - BLOCO PARA INSERIR EM QUALQUER PÁGINA
+   ============================================================ -->
+
+<!-- ESTILOS (colocar no <head> ou no <style> da página) -->
+<style>
+    .level-widget {
+        background: rgba(18, 21, 32, 0.85);
+        border-radius: 12px;
+        padding: 12px 16px;
+        border: 1px solid rgba(0, 240, 255, 0.12);
+        backdrop-filter: blur(6px);
+        margin-bottom: 12px;
+    }
+    .level-widget .lw-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        flex-wrap: wrap;
+        gap: 8px;
+    }
+    .level-widget .lw-badge {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        font-family: 'Orbitron', sans-serif;
+    }
+    .level-widget .lw-badge .lw-num {
+        font-size: 1.8rem;
+        font-weight: 900;
+        color: #00f0ff;
+        text-shadow: 0 0 20px rgba(0, 240, 255, 0.3);
+    }
+    .level-widget .lw-badge .lw-label {
+        font-size: 0.6rem;
+        color: #8a99ad;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+    }
+    .level-widget .lw-badge .lw-title {
+        font-size: 0.75rem;
+        color: #f0f4f8;
+        font-weight: 600;
+    }
+    .level-widget .lw-exp {
+        flex: 1;
+        min-width: 100px;
+    }
+    .level-widget .lw-exp .lw-bar {
+        background: rgba(255,255,255,0.06);
+        border-radius: 20px;
+        height: 8px;
+        overflow: hidden;
+        border: 1px solid rgba(255,255,255,0.04);
+    }
+    .level-widget .lw-exp .lw-bar .lw-fill {
+        height: 100%;
+        background: linear-gradient(90deg, #7000ff, #00f0ff);
+        border-radius: 20px;
+        transition: width 0.5s ease;
+        width: 0%;
+        box-shadow: 0 0 15px rgba(0,240,255,0.15);
+    }
+    .level-widget .lw-exp .lw-text {
+        display: flex;
+        justify-content: space-between;
+        font-size: 0.6rem;
+        color: #8a99ad;
+        margin-top: 2px;
+        font-weight: 600;
+    }
+    .level-widget .lw-stats {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 4px 8px;
+        margin-top: 8px;
+        padding-top: 8px;
+        border-top: 1px solid rgba(255,255,255,0.04);
+    }
+    .level-widget .lw-stats span {
+        font-size: 0.65rem;
+        font-weight: 600;
+        color: #c8d0e0;
+        background: rgba(255,255,255,0.04);
+        padding: 2px 10px;
+        border-radius: 20px;
+        border: 1px solid rgba(255,255,255,0.04);
+    }
+    .level-widget .lw-stats .hp-c { color: #ef4444; }
+    .level-widget .lw-stats .mp-c { color: #3b82f6; }
+    .level-widget .lw-stats .sm-c { color: #f59e0b; }
+    .level-widget .lw-stats .atk-c { color: #ef4444; }
+    .level-widget .lw-stats .def-c { color: #8b5cf6; }
+    .level-widget .lw-stats .mag-c { color: #10b981; }
+    .level-widget .lw-actions {
+        display: flex;
+        gap: 6px;
+        flex-wrap: wrap;
+        margin-top: 8px;
+        padding-top: 8px;
+        border-top: 1px solid rgba(255,255,255,0.04);
+    }
+    .level-widget .lw-actions button {
+        padding: 4px 14px;
+        border: none;
+        border-radius: 30px;
+        font-weight: 700;
+        font-size: 0.65rem;
+        cursor: pointer;
+        transition: all 0.2s;
+        font-family: 'Rajdhani', sans-serif;
+    }
+    .level-widget .lw-actions .btn-treinar {
+        background: linear-gradient(135deg, #00f0ff, #7000ff);
+        color: #fff;
+        box-shadow: 0 0 15px rgba(0,240,255,0.15);
+    }
+    .level-widget .lw-actions .btn-treinar:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 0 25px rgba(0,240,255,0.3);
+    }
+    .level-widget .lw-actions .btn-descansar {
+        background: rgba(255,255,255,0.06);
+        color: #c8d0e0;
+        border: 1px solid rgba(255,255,255,0.06);
+    }
+    .level-widget .lw-actions .btn-descansar:hover {
+        background: rgba(255,255,255,0.12);
+    }
+    .level-widget .lw-actions .btn-reset {
+        background: rgba(239,68,68,0.1);
+        color: #ef4444;
+        border: 1px solid rgba(239,68,68,0.15);
+    }
+    .level-widget .lw-actions .btn-reset:hover {
+        background: rgba(239,68,68,0.2);
+    }
+</style>
+
+<!-- HTML DO WIDGET -->
+<div class="level-widget" id="levelWidget">
+    <div class="lw-header">
+        <div class="lw-badge">
+            <span class="lw-num" id="lwNivel">1</span>
+            <div>
+                <div class="lw-label">NÍVEL</div>
+                <div class="lw-title" id="lwTitulo">🌱 Iniciante</div>
+            </div>
+        </div>
+        <div class="lw-exp">
+            <div class="lw-bar">
+                <div class="lw-fill" id="lwExpFill" style="width:0%"></div>
+            </div>
+            <div class="lw-text">
+                <span id="lwExpAtual">0</span>
+                <span>/ <span id="lwExpProx">100</span> EXP</span>
+            </div>
+        </div>
+    </div>
+    <div class="lw-stats">
+        <span>❤️ <span class="hp-c" id="lwHp">100/100</span></span>
+        <span>💧 <span class="mp-c" id="lwMp">50/50</span></span>
+        <span>⚡ <span class="sm-c" id="lwSm">40/40</span></span>
+        <span>⚔️ <span class="atk-c" id="lwAtk">15</span></span>
+        <span>🛡️ <span class="def-c" id="lwDef">10</span></span>
+        <span>🔮 <span class="mag-c" id="lwMag">8</span></span>
+    </div>
+    <div class="lw-actions">
+        <button class="btn-treinar" id="lwTreinar">🏋️ Treinar</button>
+        <button class="btn-descansar" id="lwDescansar">🛌 Descansar</button>
+        <button class="btn-reset" id="lwReset">↺ Reset</button>
+    </div>
+</div>
+
+<!-- ============================================================
+   SCRIPT DO SISTEMA DE NÍVEL - VERSÃO COMPACTA
+   ============================================================ -->
+<script>
+    (function() {
+        'use strict';
+
+        // ============================================================
+        // CONFIGURAÇÕES
+        // ============================================================
+        const SUPABASE_URL = 'https://xrcxvizzdumcxbylmkvn.supabase.co';
+        const SUPABASE_KEY = 'sb_publishable_E-g3G3wW4EySbCsXLXp8KQ_FnmERMcD';
+        const TABELA = 'Geral';
+
+        // ============================================================
+        // ESTADO DO NÍVEL
+        // ============================================================
+        const levelState = {
+            nivel: 1,
+            exp: 0,
+            hp: 100,
+            mp: 50,
+            sm: 40,
+            hpMax: 100,
+            mpMax: 50,
+            smMax: 40,
+            atkBase: 15,
+            defBase: 10,
+            magBase: 8,
+            usuario: null,
+            supabaseOnline: false
+        };
+
+        // ============================================================
+        // FUNÇÕES DE CÁLCULO
+        // ============================================================
+        function getExpProx() {
+            return Math.floor(100 * Math.pow(1.2, levelState.nivel - 1));
+        }
+
+        function getHpMax() {
+            return levelState.hpMax + Math.floor(levelState.nivel * 6);
+        }
+
+        function getMpMax() {
+            return levelState.mpMax + Math.floor(levelState.nivel * 4);
+        }
+
+        function getSmMax() {
+            return levelState.smMax + Math.floor(levelState.nivel * 3);
+        }
+
+        function getAtk() {
+            return levelState.atkBase + Math.floor(levelState.nivel * 1.5);
+        }
+
+        function getDef() {
+            return levelState.defBase + Math.floor(levelState.nivel * 1.2);
+        }
+
+        function getMag() {
+            return levelState.magBase + Math.floor(levelState.nivel * 1.0);
+        }
+
+        function getTitulo() {
+            const titulos = [
+                { min: 1, titulo: '🌱 Iniciante' },
+                { min: 5, titulo: '🌿 Aprendiz' },
+                { min: 10, titulo: '⚔️ Guerreiro' },
+                { min: 20, titulo: '🛡️ Mestre' },
+                { min: 35, titulo: '🏆 Lendário' },
+                { min: 50, titulo: '👑 Herói' },
+                { min: 75, titulo: '⚡ Deus da Guerra' },
+                { min: 100, titulo: '🌟 Imortal' }
+            ];
+            let t = titulos[0].titulo;
+            for (const item of titulos) {
+                if (levelState.nivel >= item.min) t = item.titulo;
+            }
+            return t;
+        }
+
+        // ============================================================
+        // UI
+        // ============================================================
+        function atualizarUI() {
+            const expProx = getExpProx();
+            const pct = Math.min((levelState.exp / expProx) * 100, 100);
+
+            document.getElementById('lwNivel').textContent = levelState.nivel;
+            document.getElementById('lwTitulo').textContent = getTitulo();
+            document.getElementById('lwExpFill').style.width = pct + '%';
+            document.getElementById('lwExpAtual').textContent = levelState.exp;
+            document.getElementById('lwExpProx').textContent = expProx;
+
+            document.getElementById('lwHp').textContent = `${levelState.hp}/${getHpMax()}`;
+            document.getElementById('lwMp').textContent = `${levelState.mp}/${getMpMax()}`;
+            document.getElementById('lwSm').textContent = `${levelState.sm}/${getSmMax()}`;
+            document.getElementById('lwAtk').textContent = getAtk();
+            document.getElementById('lwDef').textContent = getDef();
+            document.getElementById('lwMag').textContent = getMag();
+        }
+
+        function mostrarToast(msg, tipo = 'info') {
+            const toast = document.getElementById('lwToast') || (() => {
+                const t = document.createElement('div');
+                t.id = 'lwToast';
+                t.style.cssText = `
+                    position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%);
+                    background: rgba(10,11,16,0.95); backdrop-filter: blur(8px);
+                    color: #fff; padding: 10px 22px; border-radius: 12px;
+                    font-weight: 600; font-size: 0.85rem; box-shadow: 0 8px 32px rgba(0,0,0,0.5);
+                    border-left: 4px solid #3b82f6; z-index: 9999; display: none; opacity: 0;
+                    transition: opacity 0.4s ease; max-width: 90%; text-align: center;
+                    font-family: 'Rajdhani', sans-serif;
+                `;
+                document.body.appendChild(t);
+                return t;
+            })();
+
+            const cores = { sucesso: '#10b981', erro: '#ef4444', info: '#3b82f6', aviso: '#f59e0b' };
+            toast.textContent = msg;
+            toast.style.borderLeftColor = cores[tipo] || '#3b82f6';
+            toast.style.display = 'block';
+            toast.style.opacity = '1';
+
+            clearTimeout(toast._timer);
+            toast._timer = setTimeout(() => {
+                toast.style.opacity = '0';
+                setTimeout(() => { toast.style.display = 'none'; }, 400);
+            }, 2500);
+        }
+
+        // ============================================================
+        // AÇÕES
+        // ============================================================
+        function treinar() {
+            if (levelState.sm < 10) {
+                mostrarToast('⚡ Stamina insuficiente!', 'erro');
+                return;
+            }
+            levelState.sm -= 10;
+            const ganho = 15 + Math.floor(levelState.nivel * 2) + Math.floor(Math.random() * 15);
+            levelState.exp += ganho;
+
+            let subiu = false;
+            while (levelState.exp >= getExpProx()) {
+                levelState.exp -= getExpProx();
+                levelState.nivel++;
+                subiu = true;
+                levelState.hp = getHpMax();
+                levelState.mp = getMpMax();
+                levelState.sm = getSmMax();
+                mostrarToast(`🎉 SUBIU PARA NÍVEL ${levelState.nivel}!`, 'sucesso');
+            }
+
+            atualizarUI();
+            if (!subiu) mostrarToast(`💪 +${ganho} EXP (${levelState.exp}/${getExpProx()})`, 'info');
+            salvarNivel();
+        }
+
+        function descansar() {
+            levelState.hp = Math.min(getHpMax(), levelState.hp + Math.floor(getHpMax() * 0.4));
+            levelState.mp = Math.min(getMpMax(), levelState.mp + Math.floor(getMpMax() * 0.35));
+            levelState.sm = Math.min(getSmMax(), levelState.sm + Math.floor(getSmMax() * 0.5));
+            atualizarUI();
+            mostrarToast('🛌 Descansou!', 'sucesso');
+            salvarNivel();
+        }
+
+        function resetarNivel() {
+            if (!confirm('⚠️ Resetar nível e atributos?')) return;
+            levelState.nivel = 1;
+            levelState.exp = 0;
+            levelState.hp = getHpMax();
+            levelState.mp = getMpMax();
+            levelState.sm = getSmMax();
+            atualizarUI();
+            mostrarToast('🔄 Resetado para nível 1!', 'info');
+            salvarNivel();
+        }
+
+        // ============================================================
+        // SUPABASE
+        // ============================================================
+        async function salvarNivel() {
+            if (!levelState.usuario || !levelState.supabaseOnline) return;
+
+            try {
+                const payload = {
+                    nivel: levelState.nivel,
+                    experiencia: levelState.exp,
+                    exp_proximo: getExpProx(),
+                    hp_max: getHpMax(),
+                    mp_max: getMpMax(),
+                    sm_max: getSmMax(),
+                    ataque_base: levelState.atkBase,
+                    defesa_base: levelState.defBase,
+                    magia_base: levelState.magBase,
+                    hp_atual: levelState.hp,
+                    mp_atual: levelState.mp,
+                    sm_atual: levelState.sm,
+                    updated_at: new Date().toISOString()
+                };
+
+                const { error } = await supabase
+                    .from(TABELA)
+                    .update(payload)
+                    .eq('login', levelState.usuario.login);
+
+                if (error) throw error;
+            } catch (e) {
+                console.error('Erro ao salvar nível:', e);
+            }
+        }
+
+        async function carregarNivel(usuario) {
+            levelState.usuario = usuario;
+
+            try {
+                const { data, error } = await supabase
+                    .from(TABELA)
+                    .select('nivel, experiencia, hp_max, mp_max, sm_max, ataque_base, defesa_base, magia_base, hp_atual, mp_atual, sm_atual')
+                    .eq('login', usuario.login)
+                    .single();
+
+                if (error) {
+                    if (error.code === 'PGRST116') {
+                        // Criar registro inicial
+                        await supabase
+                            .from(TABELA)
+                            .update({
+                                nivel: 1,
+                                experiencia: 0,
+                                exp_proximo: 100,
+                                hp_max: 100,
+                                mp_max: 50,
+                                sm_max: 40,
+                                ataque_base: 15,
+                                defesa_base: 10,
+                                magia_base: 8,
+                                hp_atual: 100,
+                                mp_atual: 50,
+                                sm_atual: 40
+                            })
+                            .eq('login', usuario.login);
+                    }
+                    return;
+                }
+
+                if (data) {
+                    levelState.nivel = data.nivel || 1;
+                    levelState.exp = data.experiencia || 0;
+                    levelState.hpMax = data.hp_max || 100;
+                    levelState.mpMax = data.mp_max || 50;
+                    levelState.smMax = data.sm_max || 40;
+                    levelState.atkBase = data.ataque_base || 15;
+                    levelState.defBase = data.defesa_base || 10;
+                    levelState.magBase = data.magia_base || 8;
+                    levelState.hp = data.hp_atual || getHpMax();
+                    levelState.mp = data.mp_atual || getMpMax();
+                    levelState.sm = data.sm_atual || getSmMax();
+                }
+
+                atualizarUI();
+
+            } catch (e) {
+                console.error('Erro ao carregar nível:', e);
+            }
+        }
+
+        async function verificarConexao() {
+            try {
+                const { error } = await supabase.from(TABELA).select('id').limit(1);
+                levelState.supabaseOnline = !error;
+                return levelState.supabaseOnline;
+            } catch {
+                levelState.supabaseOnline = false;
+                return false;
+            }
+        }
+
+        // ============================================================
+        // INICIALIZAÇÃO
+        // ============================================================
+        async function init() {
+            // Verificar conexão
+            await verificarConexao();
+
+            // Carregar usuário
+            const usuarioData = localStorage.getItem('usuario_logado');
+            if (usuarioData) {
+                try {
+                    const usuario = JSON.parse(usuarioData);
+                    await carregarNivel(usuario);
+                } catch (e) {
+                    console.error('Erro ao carregar usuário:', e);
+                }
+            }
+
+            // Eventos
+            document.getElementById('lwTreinar').addEventListener('click', treinar);
+            document.getElementById('lwDescansar').addEventListener('click', descansar);
+            document.getElementById('lwReset').addEventListener('click', resetarNivel);
+
+            // Salvar automaticamente a cada 30 segundos
+            setInterval(() => {
+                if (levelState.usuario && levelState.supabaseOnline) {
+                    salvarNivel();
+                }
+            }, 30000);
+
+            // Salvar ao fechar a página
+            window.addEventListener('beforeunload', () => {
+                if (levelState.usuario && levelState.supabaseOnline) {
+                    salvarNivel();
+                }
+            });
+
+            console.log('📊 Sistema de Nível carregado!');
+        }
+
+        // Esperar DOM carregar
+        if (document.readyState === 'loading') {
+            document.addEventListener('DOMContentLoaded', init);
+        } else {
+            init();
+        }
+
+        // Expor para uso global
+        window.levelSystem = {
+            state: levelState,
+            treinar,
+            descansar,
+            resetar: resetarNivel,
+            salvar: salvarNivel,
+            carregar: carregarNivel,
+            atualizarUI,
+            getHpMax,
+            getMpMax,
+            getSmMax,
+            getAtk,
+            getDef,
+            getMag,
+            getTitulo,
+            getExpProx
+        };
+
+    })();
+</script>

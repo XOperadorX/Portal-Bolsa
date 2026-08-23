@@ -32,7 +32,6 @@
             padding: 20px;
         }
 
-        /* --- BARRA DE NAVEGAÇÃO SUPERIOR (ADAPTADA) --- */
         .nav-bar {
             display: flex;
             justify-content: space-between;
@@ -75,7 +74,6 @@
             box-shadow: 0 0 10px rgba(0, 240, 255, 0.3);
         }
 
-        /* Perfil do usuário */
         .user-profile {
             display: flex;
             align-items: center;
@@ -183,7 +181,6 @@
             box-shadow: 0 0 15px rgba(220, 38, 38, 0.6);
         }
 
-        /* --- CARDS (painel ADM) --- */
         .container {
             padding: 0;
             max-width: 1400px;
@@ -316,31 +313,22 @@
             box-shadow: 0 8px 25px rgba(107,114,128,0.3);
         }
 
-        .btn-back {
+        .btn-info {
+            background: linear-gradient(135deg, #3b82f6, #2563eb);
+            color: white;
+        }
+        .btn-info:hover {
+            box-shadow: 0 8px 25px rgba(59,130,246,0.3);
+        }
+
+        .btn-purple {
             background: linear-gradient(135deg, #8b5cf6, #7c3aed);
             color: white;
-            border: none;
-            padding: 8px 20px;
-            border-radius: 40px;
-            font-weight: bold;
-            font-size: 0.8rem;
-            cursor: pointer;
-            transition: all 0.2s;
-            margin-left: auto;
         }
-        .btn-back:hover {
-            transform: scale(0.96);
+        .btn-purple:hover {
             box-shadow: 0 8px 25px rgba(139,92,246,0.3);
         }
 
-        .header-actions {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            margin-left: auto;
-        }
-
-        /* Mensagens */
         .mensagem {
             padding: 12px 16px;
             border-radius: 10px;
@@ -379,7 +367,7 @@
         table {
             width: 100%;
             border-collapse: collapse;
-            min-width: 600px;
+            min-width: 700px;
         }
 
         th, td {
@@ -404,105 +392,10 @@
             background: rgba(0, 240, 255, 0.04);
         }
 
-        .usuario-info {
-            font-size: 0.8rem;
-            font-weight: 400;
-            color: #6bb8e8;
-            margin-left: 10px;
-        }
-
-        .status-container {
-            display: flex;
-            gap: 10px;
-            align-items: center;
-            flex-wrap: wrap;
-        }
-
-        .status-item {
-            display: inline-flex;
-            align-items: center;
-            gap: 6px;
-            padding: 4px 14px;
-            border-radius: 20px;
-            font-size: 0.7rem;
-            font-weight: 600;
-            transition: all 0.3s ease;
-            white-space: nowrap;
-        }
-
-        .status-online {
-            background: #10b981;
-            color: white;
-            box-shadow: 0 2px 8px rgba(16, 185, 129, 0.3);
-        }
-
-        .status-offline {
-            background: #ef4444;
-            color: white;
-            box-shadow: 0 2px 8px rgba(239, 68, 68, 0.3);
-        }
-
-        .status-checking {
-            background: #f59e0b;
-            color: white;
-            box-shadow: 0 2px 8px rgba(245, 158, 11, 0.3);
-            animation: pulse-status 1s ease-in-out infinite;
-        }
-
-        @keyframes pulse-status {
-            0%, 100% { opacity: 1; }
-            50% { opacity: 0.6; }
-        }
-
-        .status-dot {
-            display: inline-block;
-            width: 8px;
-            height: 8px;
-            border-radius: 50%;
-            background: currentColor;
-            flex-shrink: 0;
-        }
-
-        .status-dot.online {
-            animation: pulse-dot-online 1.5s ease-in-out infinite;
-        }
-
-        @keyframes pulse-dot-online {
-            0%, 100% { opacity: 1; transform: scale(1); }
-            50% { opacity: 0.5; transform: scale(0.8); }
-        }
-
-        .status-label {
-            font-size: 0.65rem;
-            opacity: 0.9;
-        }
-
         .moeda-simbolo {
             font-size: 0.9rem;
             font-weight: 300;
             color: #6c86a3;
-        }
-
-        .loading {
-            display: inline-block;
-            width: 20px;
-            height: 20px;
-            border: 3px solid #2a2f45;
-            border-top: 3px solid var(--neon-blue);
-            border-radius: 50%;
-            animation: spin 1s linear infinite;
-            vertical-align: middle;
-            margin-right: 10px;
-        }
-
-        @keyframes spin {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(360deg); }
-        }
-
-        .btn:disabled {
-            opacity: 0.7;
-            cursor: not-allowed;
         }
 
         .acao-botoes {
@@ -551,7 +444,6 @@
             color: #f0f4f8;
         }
 
-        /* SELIC CARD (custom) */
         .selic-card {
             background: #141a2a;
             border-left: 6px solid var(--neon-blue);
@@ -618,7 +510,6 @@
             border-left: 4px solid #f59e0b;
         }
 
-        /* Estatísticas */
         .stat-box {
             background: #1a1f2f;
             padding: 16px;
@@ -645,25 +536,121 @@
         .stat-box .stat-blue { color: var(--neon-blue); }
         .stat-box .stat-gold { color: #f59e0b; }
 
+        .nivel-input {
+            width: 100%;
+            padding: 8px 12px;
+            border: 2px solid #2a2f45;
+            border-radius: 8px;
+            font-size: 0.9rem;
+            background: #1a1f2f;
+            color: #f0f4f8;
+            transition: all 0.3s;
+        }
+
+        .nivel-input:focus {
+            outline: none;
+            border-color: var(--neon-blue);
+            box-shadow: 0 0 0 3px rgba(0, 240, 255, 0.15);
+        }
+
+        .nivel-input::-webkit-inner-spin-button {
+            opacity: 0.5;
+        }
+
+        #dadosNivel .form-group label {
+            font-size: 0.65rem;
+            color: #8a99ad;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 4px;
+        }
+
+        /* Histórico */
+        .historico-container {
+            max-height: 300px;
+            overflow-y: auto;
+            background: #0f121f;
+            border-radius: 12px;
+            padding: 12px;
+            border: 1px solid #2a2f45;
+        }
+
+        .historico-container::-webkit-scrollbar {
+            width: 6px;
+        }
+
+        .historico-container::-webkit-scrollbar-track {
+            background: #1a1f2f;
+            border-radius: 10px;
+        }
+
+        .historico-container::-webkit-scrollbar-thumb {
+            background: var(--neon-blue);
+            border-radius: 10px;
+        }
+
+        .historico-item {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 8px 12px;
+            border-bottom: 1px solid #1a1f2f;
+            font-size: 0.85rem;
+        }
+
+        .historico-item:last-child {
+            border-bottom: none;
+        }
+
+        .historico-item .hora {
+            color: #6c86a3;
+            font-size: 0.7rem;
+            min-width: 60px;
+            font-family: 'Orbitron', sans-serif;
+        }
+
+        .historico-item .icone {
+            font-size: 1.1rem;
+            min-width: 30px;
+        }
+
+        .historico-item .acao {
+            flex: 1;
+            color: #e0e8f0;
+        }
+
+        .historico-item .acao strong {
+            color: var(--neon-blue);
+        }
+
+        .historico-item .admin {
+            color: #8b5cf6;
+            font-size: 0.7rem;
+            background: rgba(139,92,246,0.15);
+            padding: 2px 10px;
+            border-radius: 12px;
+        }
+
+        .historico-vazio {
+            color: #6c86a3;
+            text-align: center;
+            padding: 20px;
+            font-style: italic;
+        }
+
+        .badge-nivel {
+            background: linear-gradient(135deg, var(--neon-blue), var(--neon-purple));
+            color: white;
+            padding: 2px 12px;
+            border-radius: 12px;
+            font-weight: 700;
+            font-size: 0.8rem;
+        }
+
         @media (max-width: 768px) {
             .form-row {
                 grid-template-columns: 1fr;
-            }
-            .header-actions {
-                width: 100%;
-                justify-content: flex-start;
-                margin-left: 0;
-                margin-top: 8px;
-            }
-            .status-container {
-                width: 100%;
-                justify-content: flex-start;
-            }
-            .btn-back {
-                margin-left: 0;
-            }
-            .selic-atual {
-                font-size: 1.8rem;
             }
             .nav-bar {
                 flex-direction: column;
@@ -685,11 +672,10 @@
     </style>
 </head>
 <body>
-    <!-- BARRA DE NAVEGAÇÃO ESTILIZADA (TEMA CYBERPUNK) -->
+    <!-- BARRA DE NAVEGAÇÃO -->
     <div class="nav-bar">
         <div class="nav-links">
             <a href="#" class="active">⚡ ADMIN</a>
-
         </div>
         <div class="user-profile">
             <div class="user-avatar">👑</div>
@@ -708,13 +694,11 @@
         <!-- Mensagens -->
         <div id="mensagem" class="mensagem"></div>
 
-        <!-- ==================== SELIC - CONTROLE ==================== -->
+        <!-- ==================== SELIC ==================== -->
         <div class="card selic-card">
             <h2>📈 TAXA SELIC - CONTROLE</h2>
             <p style="color: #8a99ad; margin-bottom: 16px; font-size: 0.9rem;">
-                Ajuste a taxa SELIC para influenciar o mercado de FIIs. 
-                <strong style="color:var(--neon-blue);">SELIC alta</strong> → FIIs caem (oportunidade de compra) | 
-                <strong style="color:var(--neon-green);">SELIC baixa</strong> → FIIs sobem (momento de vender/colher)
+                Ajuste a taxa SELIC para influenciar o mercado de FIIs.
             </p>
             
             <div class="form-row">
@@ -782,6 +766,8 @@
                             <th>Login</th>
                             <th>Saldo (Mumu)</th>
                             <th>Poupança (Mumu)</th>
+                            <th>🎮 Nível</th>
+                            <th>📊 EXP</th>
                             <th>Ações</th>
                         </tr>
                     </thead>
@@ -807,6 +793,135 @@
                 <button class="btn btn-success" id="btnAdicionarSaldo">➕ Adicionar Saldo</button>
                 <button class="btn btn-danger" id="btnRemoverSaldo">➖ Remover Saldo</button>
                 <button class="btn btn-warning" id="btnDefinirSaldo">🎯 Definir Saldo</button>
+            </div>
+        </div>
+
+        <!-- ==================== SISTEMA DE NÍVEL - ADMIN ==================== -->
+        <div class="card">
+            <h2>🎮 SISTEMA DE NÍVEL - ADMIN</h2>
+            <p style="color: #8a99ad; margin-bottom: 16px; font-size: 0.9rem;">
+                Gerencie o sistema de nível, atributos e progresso dos jogadores.
+            </p>
+            
+            <!-- Buscar jogador -->
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="buscaNivel">Login do Jogador</label>
+                    <input type="text" id="buscaNivel" placeholder="Digite o login do jogador">
+                </div>
+                <div class="form-group" style="display: flex; align-items: flex-end; gap: 10px; flex-wrap: wrap;">
+                    <button class="btn btn-primary" id="btnBuscarNivel">🔍 Buscar Nível</button>
+                    <button class="btn btn-secondary" id="btnLimparNivel">🗑️ Limpar</button>
+                </div>
+            </div>
+
+            <!-- Dados do Nível -->
+            <div id="dadosNivel" style="display: none; margin-top: 20px;">
+                <div style="background: #1a1f2f; padding: 20px; border-radius: 16px; border: 1px solid #2a2f45;">
+                    <!-- Info do jogador -->
+                    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 16px; margin-bottom: 20px; padding-bottom: 20px; border-bottom: 1px solid #2a2f45;">
+                        <div>
+                            <p style="font-size: 0.7rem; color: #8a99ad;">Jogador</p>
+                            <p style="font-size: 1.2rem; font-weight: 700; color: #fff;" id="nivelJogadorNome">—</p>
+                        </div>
+                        <div>
+                            <p style="font-size: 0.7rem; color: #8a99ad;">Nível</p>
+                            <p style="font-size: 1.8rem; font-weight: 900; color: var(--neon-blue);" id="nivelJogadorNivel">1</p>
+                        </div>
+                        <div>
+                            <p style="font-size: 0.7rem; color: #8a99ad;">EXP</p>
+                            <p style="font-size: 1.2rem; font-weight: 700; color: #f59e0b;" id="nivelJogadorExp">0 / 100</p>
+                        </div>
+                        <div>
+                            <p style="font-size: 0.7rem; color: #8a99ad;">Título</p>
+                            <p style="font-size: 1rem; font-weight: 700; color: #fff;" id="nivelJogadorTitulo">🌱 Iniciante</p>
+                        </div>
+                    </div>
+
+                    <!-- ATRIBUTOS - EDITÁVEIS -->
+                    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); gap: 12px;">
+                        <div class="form-group" style="margin-bottom: 0;">
+                            <label style="font-size: 0.7rem; color: #8a99ad;">❤️ HP Atual</label>
+                            <input type="number" id="editHp" class="nivel-input" step="1" min="0">
+                        </div>
+                        <div class="form-group" style="margin-bottom: 0;">
+                            <label style="font-size: 0.7rem; color: #8a99ad;">💧 MP Atual</label>
+                            <input type="number" id="editMp" class="nivel-input" step="1" min="0">
+                        </div>
+                        <div class="form-group" style="margin-bottom: 0;">
+                            <label style="font-size: 0.7rem; color: #8a99ad;">⚡ SM Atual</label>
+                            <input type="number" id="editSm" class="nivel-input" step="1" min="0">
+                        </div>
+                        <div class="form-group" style="margin-bottom: 0;">
+                            <label style="font-size: 0.7rem; color: #8a99ad;">❤️ HP Máximo</label>
+                            <input type="number" id="editHpMax" class="nivel-input" step="1" min="1">
+                        </div>
+                        <div class="form-group" style="margin-bottom: 0;">
+                            <label style="font-size: 0.7rem; color: #8a99ad;">💧 MP Máximo</label>
+                            <input type="number" id="editMpMax" class="nivel-input" step="1" min="1">
+                        </div>
+                        <div class="form-group" style="margin-bottom: 0;">
+                            <label style="font-size: 0.7rem; color: #8a99ad;">⚡ SM Máximo</label>
+                            <input type="number" id="editSmMax" class="nivel-input" step="1" min="1">
+                        </div>
+                        <div class="form-group" style="margin-bottom: 0;">
+                            <label style="font-size: 0.7rem; color: #8a99ad;">⚔️ Ataque Base</label>
+                            <input type="number" id="editAtk" class="nivel-input" step="1" min="0">
+                        </div>
+                        <div class="form-group" style="margin-bottom: 0;">
+                            <label style="font-size: 0.7rem; color: #8a99ad;">🛡️ Defesa Base</label>
+                            <input type="number" id="editDef" class="nivel-input" step="1" min="0">
+                        </div>
+                        <div class="form-group" style="margin-bottom: 0;">
+                            <label style="font-size: 0.7rem; color: #8a99ad;">🔮 Magia Base</label>
+                            <input type="number" id="editMag" class="nivel-input" step="1" min="0">
+                        </div>
+                        <div class="form-group" style="margin-bottom: 0;">
+                            <label style="font-size: 0.7rem; color: #8a99ad;">🎯 EXP Atual</label>
+                            <input type="number" id="editExp" class="nivel-input" step="1" min="0">
+                        </div>
+                        <div class="form-group" style="margin-bottom: 0;">
+                            <label style="font-size: 0.7rem; color: #8a99ad;">⬆️ Nível</label>
+                            <input type="number" id="editNivel" class="nivel-input" step="1" min="1">
+                        </div>
+                        <div class="form-group" style="margin-bottom: 0;">
+                            <label style="font-size: 0.7rem; color: #8a99ad;">📊 EXP p/ Próximo</label>
+                            <input type="number" id="editExpProx" class="nivel-input" step="1" min="1">
+                        </div>
+                    </div>
+
+                    <!-- Botões de Ação -->
+                    <div style="display: flex; gap: 10px; flex-wrap: wrap; margin-top: 20px; padding-top: 20px; border-top: 1px solid #2a2f45;">
+                        <button class="btn btn-success" id="btnSalvarNivel">💾 Salvar Alterações</button>
+                        <button class="btn btn-warning" id="btnResetarNivelAdmin">🔄 Resetar para Padrão</button>
+                        <button class="btn btn-primary" id="btnMaxAtributos">🌟 Max Atributos</button>
+                        <button class="btn btn-secondary" id="btnRecalcularExp">📊 Recalcular EXP Próximo</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ==================== HISTÓRICO ==================== -->
+        <div class="card">
+            <h2>📜 HISTÓRICO DE ADMINISTRAÇÃO</h2>
+            <p style="color: #8a99ad; margin-bottom: 16px; font-size: 0.9rem;">
+                Todas as ações realizadas pelos administradores são registradas aqui.
+            </p>
+            
+            <div style="display: flex; gap: 10px; flex-wrap: wrap; margin-bottom: 16px;">
+                <div class="form-group" style="flex: 1; min-width: 200px; margin-bottom: 0;">
+                    <label style="font-size: 0.7rem; color: #8a99ad;">Filtrar por Usuário</label>
+                    <input type="text" id="filtroHistorico" placeholder="Login do jogador..." style="padding: 8px 12px; border: 2px solid #2a2f45; border-radius: 8px; background: #1a1f2f; color: #f0f4f8; width: 100%;">
+                </div>
+                <div style="display: flex; align-items: flex-end; gap: 10px; flex-wrap: wrap;">
+                    <button class="btn btn-info" id="btnFiltrarHistorico">🔍 Filtrar</button>
+                    <button class="btn btn-secondary" id="btnLimparFiltro">🧹 Limpar</button>
+                    <button class="btn btn-danger" id="btnLimparHistorico" style="display: none;">🗑️ Limpar Tudo</button>
+                </div>
+            </div>
+
+            <div class="historico-container" id="historicoContainer">
+                <div class="historico-vazio">📭 Nenhum registro de histórico encontrado.</div>
             </div>
         </div>
 
@@ -848,9 +963,11 @@
         }
 
         let usuario = null;
+        let adminNome = 'ADM';
         try {
             usuario = JSON.parse(usuarioLogado);
-            document.getElementById('usuarioLogadoNav').textContent = usuario.nome || usuario.login || 'ADM';
+            adminNome = usuario.nome || usuario.login || 'ADM';
+            document.getElementById('usuarioLogadoNav').textContent = adminNome;
         } catch (e) {
             window.location.href = 'login.html';
         }
@@ -865,6 +982,7 @@
         let supabaseOnline = false;
         let usuariosCache = [];
         let selicAtual = 10.75;
+        let historicoCache = [];
 
         // ==================== FUNÇÕES ====================
         function mostrarMensagem(texto, tipo = 'info') {
@@ -878,6 +996,58 @@
 
         function formatarMoeda(valor) {
             return `${valor.toFixed(2)} ${MOEDA}`;
+        }
+
+        function calcularExpProximo(nivel) {
+            return Math.floor(100 * Math.pow(1.2, nivel - 1));
+        }
+
+        function obterTituloPorNivel(nivel) {
+            const titulos = [
+                { min: 1, titulo: '🌱 Iniciante' },
+                { min: 5, titulo: '🌿 Aprendiz' },
+                { min: 10, titulo: '⚔️ Guerreiro' },
+                { min: 20, titulo: '🛡️ Mestre' },
+                { min: 35, titulo: '🏆 Lendário' },
+                { min: 50, titulo: '👑 Herói' },
+                { min: 75, titulo: '⚡ Deus da Guerra' },
+                { min: 100, titulo: '🌟 Imortal' }
+            ];
+            let t = titulos[0].titulo;
+            for (const item of titulos) {
+                if (nivel >= item.min) t = item.titulo;
+            }
+            return t;
+        }
+
+        function getIconeAcao(tipo) {
+            const icones = {
+                'saldo_adicionado': '➕',
+                'saldo_removido': '➖',
+                'saldo_definido': '🎯',
+                'nivel_atualizado': '⬆️',
+                'nivel_resetado': '🔄',
+                'atributos_maximizados': '🌟',
+                'exp_recalculado': '📊',
+                'selic_atualizada': '📈',
+                'historico_limpo': '🗑️'
+            };
+            return icones[tipo] || '📝';
+        }
+
+        function getCorAcao(tipo) {
+            const cores = {
+                'saldo_adicionado': '#10b981',
+                'saldo_removido': '#ef4444',
+                'saldo_definido': '#f59e0b',
+                'nivel_atualizado': '#00f0ff',
+                'nivel_resetado': '#f59e0b',
+                'atributos_maximizados': '#8b5cf6',
+                'exp_recalculado': '#3b82f6',
+                'selic_atualizada': '#00f0ff',
+                'historico_limpo': '#ef4444'
+            };
+            return cores[tipo] || '#6c86a3';
         }
 
         function atualizarStatusSupabase(online, mensagem = null) {
@@ -955,29 +1125,16 @@
 
         async function salvarSelicNoSupabase(valor) {
             try {
-                const { data: existingData, error: checkError } = await supabase
+                const { error } = await supabase
                     .from(TABELA)
-                    .select('id')
-                    .eq('id', 1)
-                    .single();
-
-                if (checkError && checkError.code === 'PGRST116') {
+                    .update({ selic: valor, updated_at: new Date().toISOString() })
+                    .eq('id', 1);
+                
+                if (error) {
                     const { error: insertError } = await supabase
                         .from(TABELA)
                         .insert({ id: 1, selic: valor });
-                    if (insertError) {
-                        console.error('Erro ao criar registro SELIC:', insertError);
-                        return false;
-                    }
-                } else {
-                    const { error: updateError } = await supabase
-                        .from(TABELA)
-                        .update({ selic: valor, updated_at: new Date().toISOString() })
-                        .eq('id', 1);
-                    if (updateError) {
-                        console.error('Erro ao atualizar SELIC:', updateError);
-                        return false;
-                    }
+                    if (insertError) throw insertError;
                 }
                 return true;
             } catch (error) {
@@ -1014,10 +1171,211 @@
             
             const sucesso = await salvarSelicNoSupabase(valor);
             if (sucesso) {
+                await adicionarHistorico('selic_atualizada', 'SELIC', `Taxa SELIC alterada para ${valor.toFixed(2)}%`);
                 mostrarMensagem(`✅ SELIC atualizada para ${valor.toFixed(2)}% e salva no Supabase!`, 'sucesso');
             } else {
                 mostrarMensagem(`⚠️ SELIC atualizada localmente, mas falha ao salvar no Supabase.`, 'erro');
             }
+        }
+
+        // ==================== HISTÓRICO ====================
+        async function adicionarHistorico(tipo, alvo, descricao, detalhes = null) {
+            try {
+                const entrada = {
+                    data: new Date().toISOString(),
+                    admin: adminNome,
+                    tipo: tipo,
+                    alvo: alvo,
+                    descricao: descricao,
+                    detalhes: detalhes
+                };
+
+                // Buscar histórico atual do usuário
+                const { data, error } = await supabase
+                    .from(TABELA)
+                    .select('historico')
+                    .eq('login', alvo)
+                    .single();
+
+                if (error && error.code !== 'PGRST116') {
+                    console.error('Erro ao buscar histórico:', error);
+                    return false;
+                }
+
+                let historicoAtual = [];
+                if (data && data.historico) {
+                    historicoAtual = data.historico;
+                }
+
+                // Adicionar nova entrada (limitar a 1000 itens)
+                historicoAtual.unshift(entrada);
+                if (historicoAtual.length > 1000) {
+                    historicoAtual = historicoAtual.slice(0, 1000);
+                }
+
+                // Salvar no banco
+                const { error: updateError } = await supabase
+                    .from(TABELA)
+                    .update({ historico: historicoAtual, updated_at: new Date().toISOString() })
+                    .eq('login', alvo);
+
+                if (updateError) {
+                    console.error('Erro ao salvar histórico:', updateError);
+                    return false;
+                }
+
+                // Atualizar cache se estiver visualizando este usuário
+                if (alvo === jogadorLoginAtual) {
+                    historicoCache = historicoAtual;
+                    renderizarHistorico(historicoAtual);
+                }
+
+                return true;
+            } catch (error) {
+                console.error('Erro ao adicionar histórico:', error);
+                return false;
+            }
+        }
+
+        async function adicionarHistoricoGlobal(tipo, alvo, descricao, detalhes = null) {
+            // Para ações que não tem um usuário específico (ex: SELIC)
+            try {
+                const entrada = {
+                    data: new Date().toISOString(),
+                    admin: adminNome,
+                    tipo: tipo,
+                    alvo: alvo || 'SISTEMA',
+                    descricao: descricao,
+                    detalhes: detalhes
+                };
+
+                // Salvar em um registro separado para histórico global
+                // Usando o ID 9999 como registro de histórico global
+                const { data, error } = await supabase
+                    .from(TABELA)
+                    .select('historico')
+                    .eq('id', 9999)
+                    .single();
+
+                if (error && error.code !== 'PGRST116') {
+                    console.error('Erro ao buscar histórico global:', error);
+                    return false;
+                }
+
+                let historicoAtual = [];
+                if (data && data.historico) {
+                    historicoAtual = data.historico;
+                }
+
+                historicoAtual.unshift(entrada);
+                if (historicoAtual.length > 500) {
+                    historicoAtual = historicoAtual.slice(0, 500);
+                }
+
+                const { error: updateError } = await supabase
+                    .from(TABELA)
+                    .update({ historico: historicoAtual, updated_at: new Date().toISOString() })
+                    .eq('id', 9999);
+
+                if (updateError) {
+                    console.error('Erro ao salvar histórico global:', updateError);
+                    return false;
+                }
+
+                return true;
+            } catch (error) {
+                console.error('Erro ao adicionar histórico global:', error);
+                return false;
+            }
+        }
+
+        async function carregarHistorico(login) {
+            try {
+                const { data, error } = await supabase
+                    .from(TABELA)
+                    .select('historico')
+                    .eq('login', login)
+                    .single();
+
+                if (error) {
+                    if (error.code === 'PGRST116') {
+                        return [];
+                    }
+                    console.error('Erro ao carregar histórico:', error);
+                    return [];
+                }
+
+                return data?.historico || [];
+            } catch (error) {
+                console.error('Erro ao carregar histórico:', error);
+                return [];
+            }
+        }
+
+        async function carregarHistoricoGlobal() {
+            try {
+                const { data, error } = await supabase
+                    .from(TABELA)
+                    .select('historico')
+                    .eq('id', 9999)
+                    .single();
+
+                if (error) {
+                    if (error.code === 'PGRST116') {
+                        return [];
+                    }
+                    console.error('Erro ao carregar histórico global:', error);
+                    return [];
+                }
+
+                return data?.historico || [];
+            } catch (error) {
+                console.error('Erro ao carregar histórico global:', error);
+                return [];
+            }
+        }
+
+        function renderizarHistorico(historico, filtro = null) {
+            const container = document.getElementById('historicoContainer');
+            
+            let items = historico || [];
+            if (filtro) {
+                items = items.filter(item => 
+                    item.alvo?.toLowerCase().includes(filtro.toLowerCase()) ||
+                    item.descricao?.toLowerCase().includes(filtro.toLowerCase()) ||
+                    item.admin?.toLowerCase().includes(filtro.toLowerCase())
+                );
+            }
+
+            if (!items || items.length === 0) {
+                container.innerHTML = `<div class="historico-vazio">📭 Nenhum registro de histórico encontrado.</div>`;
+                return;
+            }
+
+            let html = '';
+            items.forEach(item => {
+                const data = new Date(item.data);
+                const hora = data.toLocaleTimeString('pt-BR');
+                const dataStr = data.toLocaleDateString('pt-BR');
+                const icone = getIconeAcao(item.tipo);
+                const cor = getCorAcao(item.tipo);
+
+                html += `
+                    <div class="historico-item">
+                        <span class="hora">${dataStr} ${hora}</span>
+                        <span class="icone">${icone}</span>
+                        <span class="acao">
+                            <strong style="color: ${cor};">${item.admin}</strong>
+                            ${item.descricao}
+                            ${item.alvo ? ` → <strong>${item.alvo}</strong>` : ''}
+                            ${item.detalhes ? ` <span style="color: #6c86a3; font-size: 0.75rem;">(${item.detalhes})</span>` : ''}
+                        </span>
+                        <span class="admin">👑 ADM</span>
+                    </div>
+                `;
+            });
+
+            container.innerHTML = html;
         }
 
         // ==================== SUPABASE ====================
@@ -1046,7 +1404,7 @@
             try {
                 let query = supabase
                     .from(TABELA)
-                    .select('id, nome, login, saldo, saldo_poupanca')
+                    .select('id, nome, login, saldo, saldo_poupanca, nivel, experiencia, hp_max, mp_max, sm_max, ataque_base, defesa_base, magia_base, hp_atual, mp_atual, sm_atual, exp_proximo')
                     .not('login', 'is', null);
 
                 if (filtro) {
@@ -1090,7 +1448,7 @@
             }
         }
 
-        async function atualizarSaldoUsuario(id, novoSaldo) {
+        async function atualizarSaldoUsuario(id, novoSaldo, login, nome) {
             try {
                 const { data, error } = await supabase
                     .from(TABELA)
@@ -1115,6 +1473,10 @@
                 return;
             }
 
+            const nivel = usuario.nivel || 1;
+            const exp = usuario.experiencia || 0;
+            const expProx = usuario.exp_proximo || calcularExpProximo(nivel);
+
             container.innerHTML = `
                 <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 16px; background: #1a1f2f; padding: 20px; border-radius: 16px; border: 1px solid #2a2f45;">
                     <div>
@@ -1138,6 +1500,14 @@
                         <p style="font-size: 1.4rem; font-weight: 700; color: #f59e0b;">${formatarMoeda(usuario.saldo_poupanca || 0)}</p>
                     </div>
                     <div>
+                        <p style="font-size: 0.8rem; color: #8a99ad;">🎮 Nível</p>
+                        <p style="font-size: 1.4rem; font-weight: 700; color: var(--neon-blue);">${nivel}</p>
+                    </div>
+                    <div>
+                        <p style="font-size: 0.8rem; color: #8a99ad;">📊 EXP</p>
+                        <p style="font-size: 1rem; font-weight: 700; color: #f59e0b;">${exp} / ${expProx}</p>
+                    </div>
+                    <div>
                         <p style="font-size: 0.8rem; color: #8a99ad;">Patrimônio Total</p>
                         <p style="font-size: 1.4rem; font-weight: 700; color: #fff;">${formatarMoeda((usuario.saldo || 0) + (usuario.saldo_poupanca || 0))}</p>
                     </div>
@@ -1146,6 +1516,7 @@
                     <button class="btn btn-success" onclick="window.adicionarSaldoEspecifico(${usuario.id})">➕ Adicionar</button>
                     <button class="btn btn-danger" onclick="window.removerSaldoEspecifico(${usuario.id})">➖ Remover</button>
                     <button class="btn btn-warning" onclick="window.definirSaldoEspecifico(${usuario.id})">🎯 Definir</button>
+                    <button class="btn btn-info" onclick="window.verHistoricoUsuario('${usuario.login}')">📜 Histórico</button>
                 </div>
             `;
 
@@ -1157,13 +1528,18 @@
             const card = document.getElementById('cardLista');
 
             if (!usuarios || usuarios.length === 0) {
-                tbody.innerHTML = `<tr><td colspan="6" style="padding: 20px; color: #8a99ad;">Nenhum usuário encontrado.</td></tr>`;
+                tbody.innerHTML = `<tr><td colspan="8" style="padding: 20px; color: #8a99ad;">Nenhum usuário encontrado.</td></tr>`;
                 card.style.display = 'block';
                 return;
             }
 
             let html = '';
             usuarios.forEach(u => {
+                const nivel = u.nivel || 1;
+                const exp = u.experiencia || 0;
+                const expProx = u.exp_proximo || calcularExpProximo(nivel);
+                const pctExp = Math.min((exp / expProx) * 100, 100);
+                
                 html += `
                     <tr>
                         <td style="color: var(--neon-blue);">#${u.id}</td>
@@ -1171,12 +1547,24 @@
                         <td>${u.login}</td>
                         <td style="color: var(--neon-green); font-weight: 600;">${formatarMoeda(u.saldo || 0)}</td>
                         <td style="color: #f59e0b; font-weight: 600;">${formatarMoeda(u.saldo_poupanca || 0)}</td>
+                        <td><span class="badge-nivel">${nivel}</span></td>
+                        <td style="font-size: 0.75rem;">
+                            <div style="display: flex; align-items: center; gap: 6px;">
+                                <span style="color: #f59e0b;">${exp}</span>
+                                <span style="color: #2a2f45;">/</span>
+                                <span style="color: #8a99ad;">${expProx}</span>
+                                <div style="flex:1; min-width:40px; height:4px; background:#2a2f45; border-radius:4px; overflow:hidden;">
+                                    <div style="width:${pctExp}%; height:100%; background:linear-gradient(90deg, #7000ff, #00f0ff); border-radius:4px;"></div>
+                                </div>
+                            </div>
+                        </td>
                         <td>
                             <div class="acao-botoes">
                                 <input type="number" id="valor_${u.id}" class="quantidade-input" placeholder="Valor" step="0.01" min="0.01" value="10">
                                 <button class="add" onclick="window.adicionarSaldoUsuario(${u.id})">+</button>
                                 <button class="remove" onclick="window.removerSaldoUsuario(${u.id})">-</button>
                                 <button class="set" onclick="window.definirSaldoUsuario(${u.id})">=</button>
+                                <button class="set" style="background: #8b5cf6;" onclick="window.verHistoricoUsuario('${u.login}')">📜</button>
                             </div>
                         </td>
                     </tr>
@@ -1219,7 +1607,9 @@
                 }
 
                 const novoSaldo = (usuario.saldo || 0) + valor;
-                await atualizarSaldoUsuario(id, novoSaldo);
+                await atualizarSaldoUsuario(id, novoSaldo, usuario.login, usuario.nome);
+                
+                await adicionarHistorico('saldo_adicionado', usuario.login, `Adicionou ${formatarMoeda(valor)} ao saldo`, `Novo saldo: ${formatarMoeda(novoSaldo)}`);
                 
                 mostrarMensagem(`✅ Adicionado ${formatarMoeda(valor)} para ${usuario.login}. Novo saldo: ${formatarMoeda(novoSaldo)}`, 'sucesso');
                 await carregarDados();
@@ -1244,7 +1634,9 @@
                 }
 
                 const novoSaldo = Math.max(0, (usuario.saldo || 0) - valor);
-                await atualizarSaldoUsuario(id, novoSaldo);
+                await atualizarSaldoUsuario(id, novoSaldo, usuario.login, usuario.nome);
+                
+                await adicionarHistorico('saldo_removido', usuario.login, `Removeu ${formatarMoeda(valor)} do saldo`, `Novo saldo: ${formatarMoeda(novoSaldo)}`);
                 
                 mostrarMensagem(`✅ Removido ${formatarMoeda(valor)} de ${usuario.login}. Novo saldo: ${formatarMoeda(novoSaldo)}`, 'sucesso');
                 await carregarDados();
@@ -1268,7 +1660,10 @@
                     return;
                 }
 
-                await atualizarSaldoUsuario(id, valor);
+                const saldoAntigo = usuario.saldo || 0;
+                await atualizarSaldoUsuario(id, valor, usuario.login, usuario.nome);
+                
+                await adicionarHistorico('saldo_definido', usuario.login, `Definiu saldo para ${formatarMoeda(valor)}`, `Saldo anterior: ${formatarMoeda(saldoAntigo)}`);
                 
                 mostrarMensagem(`✅ Saldo de ${usuario.login} definido para ${formatarMoeda(valor)}`, 'sucesso');
                 await carregarDados();
@@ -1293,7 +1688,9 @@
                 }
 
                 const novoSaldo = (usuario.saldo || 0) + valor;
-                await atualizarSaldoUsuario(id, novoSaldo);
+                await atualizarSaldoUsuario(id, novoSaldo, usuario.login, usuario.nome);
+                
+                await adicionarHistorico('saldo_adicionado', usuario.login, `Adicionou ${formatarMoeda(valor)} ao saldo`, `Novo saldo: ${formatarMoeda(novoSaldo)}`);
                 
                 mostrarMensagem(`✅ Adicionado ${formatarMoeda(valor)} para ${usuario.login}. Novo saldo: ${formatarMoeda(novoSaldo)}`, 'sucesso');
                 await carregarDados();
@@ -1318,7 +1715,9 @@
                 }
 
                 const novoSaldo = Math.max(0, (usuario.saldo || 0) - valor);
-                await atualizarSaldoUsuario(id, novoSaldo);
+                await atualizarSaldoUsuario(id, novoSaldo, usuario.login, usuario.nome);
+                
+                await adicionarHistorico('saldo_removido', usuario.login, `Removeu ${formatarMoeda(valor)} do saldo`, `Novo saldo: ${formatarMoeda(novoSaldo)}`);
                 
                 mostrarMensagem(`✅ Removido ${formatarMoeda(valor)} de ${usuario.login}. Novo saldo: ${formatarMoeda(novoSaldo)}`, 'sucesso');
                 await carregarDados();
@@ -1342,13 +1741,28 @@
                     return;
                 }
 
-                await atualizarSaldoUsuario(id, valor);
+                const saldoAntigo = usuario.saldo || 0;
+                await atualizarSaldoUsuario(id, valor, usuario.login, usuario.nome);
+                
+                await adicionarHistorico('saldo_definido', usuario.login, `Definiu saldo para ${formatarMoeda(valor)}`, `Saldo anterior: ${formatarMoeda(saldoAntigo)}`);
                 
                 mostrarMensagem(`✅ Saldo de ${usuario.login} definido para ${formatarMoeda(valor)}`, 'sucesso');
                 await carregarDados();
             } catch (error) {
                 mostrarMensagem('❌ Erro ao definir saldo.', 'erro');
             }
+        };
+
+        window.verHistoricoUsuario = async function(login) {
+            document.getElementById('buscaNivel').value = login;
+            const historico = await carregarHistorico(login);
+            historicoCache = historico;
+            renderizarHistorico(historico);
+            document.getElementById('filtroHistorico').value = login;
+            mostrarMensagem(`📜 Histórico de ${login} carregado (${historico.length} registros)`, 'info');
+            
+            // Rolar para o histórico
+            document.getElementById('historicoContainer').scrollIntoView({ behavior: 'smooth', block: 'start' });
         };
 
         // ==================== AÇÕES EM MASSA ====================
@@ -1375,7 +1789,9 @@
                 }
 
                 const novoSaldo = (usuario.saldo || 0) + valor;
-                await atualizarSaldoUsuario(id, novoSaldo);
+                await atualizarSaldoUsuario(id, novoSaldo, usuario.login, usuario.nome);
+                
+                await adicionarHistorico('saldo_adicionado', usuario.login, `Adicionou ${formatarMoeda(valor)} ao saldo`, `Novo saldo: ${formatarMoeda(novoSaldo)}`);
                 
                 mostrarMensagem(`✅ Adicionado ${formatarMoeda(valor)} para ${usuario.login}. Novo saldo: ${formatarMoeda(novoSaldo)}`, 'sucesso');
                 await carregarDados();
@@ -1407,7 +1823,9 @@
                 }
 
                 const novoSaldo = Math.max(0, (usuario.saldo || 0) - valor);
-                await atualizarSaldoUsuario(id, novoSaldo);
+                await atualizarSaldoUsuario(id, novoSaldo, usuario.login, usuario.nome);
+                
+                await adicionarHistorico('saldo_removido', usuario.login, `Removeu ${formatarMoeda(valor)} do saldo`, `Novo saldo: ${formatarMoeda(novoSaldo)}`);
                 
                 mostrarMensagem(`✅ Removido ${formatarMoeda(valor)} de ${usuario.login}. Novo saldo: ${formatarMoeda(novoSaldo)}`, 'sucesso');
                 await carregarDados();
@@ -1438,13 +1856,222 @@
                     return;
                 }
 
-                await atualizarSaldoUsuario(id, valor);
+                const saldoAntigo = usuario.saldo || 0;
+                await atualizarSaldoUsuario(id, valor, usuario.login, usuario.nome);
+                
+                await adicionarHistorico('saldo_definido', usuario.login, `Definiu saldo para ${formatarMoeda(valor)}`, `Saldo anterior: ${formatarMoeda(saldoAntigo)}`);
                 
                 mostrarMensagem(`✅ Saldo de ${usuario.login} definido para ${formatarMoeda(valor)}`, 'sucesso');
                 await carregarDados();
             } catch (error) {
                 mostrarMensagem('❌ Erro ao definir saldo.', 'erro');
             }
+        }
+
+        // ==================== SISTEMA DE NÍVEL - ADMIN ====================
+        let jogadorNivelAtual = null;
+        let jogadorLoginAtual = null;
+
+        async function buscarNivelJogador(login) {
+            try {
+                const { data, error } = await supabase
+                    .from(TABELA)
+                    .select('login, nome, nivel, experiencia, hp_max, mp_max, sm_max, ataque_base, defesa_base, magia_base, hp_atual, mp_atual, sm_atual, exp_proximo')
+                    .eq('login', login)
+                    .single();
+
+                if (error) {
+                    if (error.code === 'PGRST116') {
+                        mostrarMensagem('❌ Jogador não encontrado ou não possui dados de nível.', 'erro');
+                        return null;
+                    }
+                    throw error;
+                }
+
+                return data;
+            } catch (error) {
+                console.error('Erro ao buscar nível:', error);
+                mostrarMensagem('❌ Erro ao buscar dados do jogador.', 'erro');
+                return null;
+            }
+        }
+
+        function preencherDadosNivel(data) {
+            if (!data) return;
+
+            jogadorNivelAtual = data;
+            jogadorLoginAtual = data.login;
+
+            document.getElementById('nivelJogadorNome').textContent = data.nome || data.login;
+            document.getElementById('nivelJogadorNivel').textContent = data.nivel || 1;
+            document.getElementById('nivelJogadorExp').textContent = `${data.experiencia || 0} / ${data.exp_proximo || 100}`;
+            document.getElementById('nivelJogadorTitulo').textContent = obterTituloPorNivel(data.nivel || 1);
+
+            document.getElementById('editHp').value = data.hp_atual || 100;
+            document.getElementById('editMp').value = data.mp_atual || 50;
+            document.getElementById('editSm').value = data.sm_atual || 40;
+            document.getElementById('editHpMax').value = data.hp_max || 100;
+            document.getElementById('editMpMax').value = data.mp_max || 50;
+            document.getElementById('editSmMax').value = data.sm_max || 40;
+            document.getElementById('editAtk').value = data.ataque_base || 15;
+            document.getElementById('editDef').value = data.defesa_base || 10;
+            document.getElementById('editMag').value = data.magia_base || 8;
+            document.getElementById('editExp').value = data.experiencia || 0;
+            document.getElementById('editNivel').value = data.nivel || 1;
+            document.getElementById('editExpProx').value = data.exp_proximo || 100;
+
+            document.getElementById('dadosNivel').style.display = 'block';
+        }
+
+        async function salvarNivelAdmin() {
+            if (!jogadorLoginAtual) {
+                mostrarMensagem('⚠️ Nenhum jogador selecionado.', 'erro');
+                return;
+            }
+
+            const hp = parseInt(document.getElementById('editHp').value) || 0;
+            const mp = parseInt(document.getElementById('editMp').value) || 0;
+            const sm = parseInt(document.getElementById('editSm').value) || 0;
+            const hpMax = parseInt(document.getElementById('editHpMax').value) || 1;
+            const mpMax = parseInt(document.getElementById('editMpMax').value) || 1;
+            const smMax = parseInt(document.getElementById('editSmMax').value) || 1;
+            const atk = parseInt(document.getElementById('editAtk').value) || 0;
+            const def = parseInt(document.getElementById('editDef').value) || 0;
+            const mag = parseInt(document.getElementById('editMag').value) || 0;
+            const exp = parseInt(document.getElementById('editExp').value) || 0;
+            const nivel = parseInt(document.getElementById('editNivel').value) || 1;
+            const expProx = parseInt(document.getElementById('editExpProx').value) || calcularExpProximo(nivel);
+
+            if (hp > hpMax) {
+                mostrarMensagem('⚠️ HP atual não pode ser maior que HP máximo.', 'erro');
+                return;
+            }
+            if (mp > mpMax) {
+                mostrarMensagem('⚠️ MP atual não pode ser maior que MP máximo.', 'erro');
+                return;
+            }
+            if (sm > smMax) {
+                mostrarMensagem('⚠️ SM atual não pode ser maior que SM máximo.', 'erro');
+                return;
+            }
+
+            try {
+                const payload = {
+                    hp_atual: hp,
+                    mp_atual: mp,
+                    sm_atual: sm,
+                    hp_max: hpMax,
+                    mp_max: mpMax,
+                    sm_max: smMax,
+                    ataque_base: atk,
+                    defesa_base: def,
+                    magia_base: mag,
+                    experiencia: exp,
+                    nivel: nivel,
+                    exp_proximo: expProx,
+                    updated_at: new Date().toISOString()
+                };
+
+                const { error } = await supabase
+                    .from(TABELA)
+                    .update(payload)
+                    .eq('login', jogadorLoginAtual);
+
+                if (error) throw error;
+
+                document.getElementById('nivelJogadorNivel').textContent = nivel;
+                document.getElementById('nivelJogadorExp').textContent = `${exp} / ${expProx}`;
+                document.getElementById('nivelJogadorTitulo').textContent = obterTituloPorNivel(nivel);
+
+                await adicionarHistorico('nivel_atualizado', jogadorLoginAtual, `Atualizou nível para ${nivel}`, 
+                    `EXP: ${exp}/${expProx} | HP: ${hp}/${hpMax} | MP: ${mp}/${mpMax} | SM: ${sm}/${smMax} | ATK: ${atk} | DEF: ${def} | MAG: ${mag}`);
+
+                mostrarMensagem(`✅ Dados de ${jogadorLoginAtual} atualizados com sucesso!`, 'sucesso');
+            } catch (error) {
+                console.error('Erro ao salvar nível:', error);
+                mostrarMensagem('❌ Erro ao salvar alterações.', 'erro');
+            }
+        }
+
+        async function resetarNivelAdmin() {
+            if (!jogadorLoginAtual) {
+                mostrarMensagem('⚠️ Nenhum jogador selecionado.', 'erro');
+                return;
+            }
+
+            if (!confirm(`⚠️ Tem certeza que deseja resetar o nível de ${jogadorLoginAtual} para o padrão?`)) return;
+
+            try {
+                const payload = {
+                    nivel: 1,
+                    experiencia: 0,
+                    exp_proximo: 100,
+                    hp_max: 100,
+                    mp_max: 50,
+                    sm_max: 40,
+                    ataque_base: 15,
+                    defesa_base: 10,
+                    magia_base: 8,
+                    hp_atual: 100,
+                    mp_atual: 50,
+                    sm_atual: 40
+                };
+
+                const { error } = await supabase
+                    .from(TABELA)
+                    .update(payload)
+                    .eq('login', jogadorLoginAtual);
+
+                if (error) throw error;
+
+                preencherDadosNivel({
+                    ...payload,
+                    login: jogadorLoginAtual,
+                    nome: jogadorNivelAtual?.nome || jogadorLoginAtual
+                });
+
+                await adicionarHistorico('nivel_resetado', jogadorLoginAtual, 'Resetou nível para o padrão', 'Nível 1 com atributos base');
+
+                mostrarMensagem(`✅ ${jogadorLoginAtual} resetado para nível 1!`, 'sucesso');
+            } catch (error) {
+                console.error('Erro ao resetar nível:', error);
+                mostrarMensagem('❌ Erro ao resetar.', 'erro');
+            }
+        }
+
+        function maxAtributos() {
+            const nivel = parseInt(document.getElementById('editNivel').value) || 1;
+            const hpMax = 100 + Math.floor(nivel * 6);
+            const mpMax = 50 + Math.floor(nivel * 4);
+            const smMax = 40 + Math.floor(nivel * 3);
+            const atk = 15 + Math.floor(nivel * 1.5);
+            const def = 10 + Math.floor(nivel * 1.2);
+            const mag = 8 + Math.floor(nivel * 1.0);
+
+            document.getElementById('editHpMax').value = hpMax;
+            document.getElementById('editMpMax').value = mpMax;
+            document.getElementById('editSmMax').value = smMax;
+            document.getElementById('editHp').value = hpMax;
+            document.getElementById('editMp').value = mpMax;
+            document.getElementById('editSm').value = smMax;
+            document.getElementById('editAtk').value = Math.floor(atk);
+            document.getElementById('editDef').value = Math.floor(def);
+            document.getElementById('editMag').value = Math.floor(mag);
+
+            adicionarHistorico('atributos_maximizados', jogadorLoginAtual || 'SISTEMA', `Maximizou atributos para nível ${nivel}`, 
+                `HP: ${hpMax} | MP: ${mpMax} | SM: ${smMax} | ATK: ${Math.floor(atk)} | DEF: ${Math.floor(def)} | MAG: ${Math.floor(mag)}`);
+
+            mostrarMensagem('🌟 Atributos maximizados para o nível atual!', 'sucesso');
+        }
+
+        function recalcularExpProximo() {
+            const nivel = parseInt(document.getElementById('editNivel').value) || 1;
+            const novoExp = calcularExpProximo(nivel);
+            document.getElementById('editExpProx').value = novoExp;
+            
+            adicionarHistorico('exp_recalculado', jogadorLoginAtual || 'SISTEMA', `Recalculou EXP para próximo nível`, `Nível ${nivel} → ${novoExp} EXP`);
+
+            mostrarMensagem(`📊 EXP para próximo nível recalculado: ${novoExp}`, 'info');
         }
 
         // ==================== CARREGAR DADOS ====================
@@ -1513,6 +2140,87 @@
             }
         });
 
+        // ==================== EVENTOS SISTEMA DE NÍVEL ====================
+        document.getElementById('btnBuscarNivel').addEventListener('click', async () => {
+            const login = document.getElementById('buscaNivel').value.trim();
+            if (!login) {
+                mostrarMensagem('⚠️ Digite o login do jogador.', 'erro');
+                return;
+            }
+
+            const data = await buscarNivelJogador(login);
+            if (data) {
+                preencherDadosNivel(data);
+                // Carregar histórico do jogador também
+                const historico = await carregarHistorico(login);
+                historicoCache = historico;
+                renderizarHistorico(historico);
+                document.getElementById('filtroHistorico').value = login;
+                mostrarMensagem(`✅ Dados de ${login} carregados! (${historico.length} registros no histórico)`, 'sucesso');
+            }
+        });
+
+        document.getElementById('btnLimparNivel').addEventListener('click', () => {
+            document.getElementById('buscaNivel').value = '';
+            document.getElementById('dadosNivel').style.display = 'none';
+            jogadorNivelAtual = null;
+            jogadorLoginAtual = null;
+            mostrarMensagem('🧹 Dados limpos.', 'info');
+        });
+
+        document.getElementById('btnSalvarNivel').addEventListener('click', salvarNivelAdmin);
+        document.getElementById('btnResetarNivelAdmin').addEventListener('click', resetarNivelAdmin);
+        document.getElementById('btnMaxAtributos').addEventListener('click', maxAtributos);
+        document.getElementById('btnRecalcularExp').addEventListener('click', recalcularExpProximo);
+
+        document.getElementById('buscaNivel').addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') {
+                document.getElementById('btnBuscarNivel').click();
+            }
+        });
+
+        document.getElementById('editNivel').addEventListener('change', () => {
+            const nivel = parseInt(document.getElementById('editNivel').value) || 1;
+            document.getElementById('editExpProx').value = calcularExpProximo(nivel);
+        });
+
+        // ==================== EVENTOS HISTÓRICO ====================
+        document.getElementById('btnFiltrarHistorico').addEventListener('click', () => {
+            const filtro = document.getElementById('filtroHistorico').value.trim();
+            if (filtro) {
+                // Buscar histórico do usuário específico
+                carregarHistorico(filtro).then(historico => {
+                    historicoCache = historico;
+                    renderizarHistorico(historico);
+                    mostrarMensagem(`📜 ${historico.length} registros encontrados para ${filtro}`, 'info');
+                });
+            } else {
+                // Mostrar histórico global
+                carregarHistoricoGlobal().then(historico => {
+                    historicoCache = historico;
+                    renderizarHistorico(historico);
+                    mostrarMensagem(`📜 ${historico.length} registros globais`, 'info');
+                });
+            }
+        });
+
+        document.getElementById('btnLimparFiltro').addEventListener('click', () => {
+            document.getElementById('filtroHistorico').value = '';
+            // Recarregar histórico do jogador atual ou global
+            if (jogadorLoginAtual) {
+                carregarHistorico(jogadorLoginAtual).then(historico => {
+                    historicoCache = historico;
+                    renderizarHistorico(historico);
+                });
+            } else {
+                carregarHistoricoGlobal().then(historico => {
+                    historicoCache = historico;
+                    renderizarHistorico(historico);
+                });
+            }
+            mostrarMensagem('🧹 Filtro limpo', 'info');
+        });
+
         // ==================== INICIALIZAÇÃO ====================
         async function inicializar() {
             await verificarSupabase();
@@ -1528,6 +2236,11 @@
                 document.getElementById('selicInput').value = 10.75;
                 atualizarDisplaySelic(10.75);
             }
+            
+            // Carregar histórico global inicial
+            const historicoGlobal = await carregarHistoricoGlobal();
+            historicoCache = historicoGlobal;
+            renderizarHistorico(historicoGlobal);
             
             await carregarDados();
         }
