@@ -5,9 +5,12 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
     <title>Bolsa - BAEP Investimentos</title>
 
+    <!-- ========== FONTES ========== -->
     <link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@400;600;700&family=Orbitron:wght@400;700;900&display=swap" rel="stylesheet">
 
+    <!-- ========== ESTILOS ========== -->
     <style>
+        /* ---------- VARIÁVEIS ---------- */
         :root {
             --bg-dark: #0a0b10;
             --card-bg: #121520;
@@ -18,6 +21,7 @@
             --border-glow: rgba(0, 240, 255, 0.2);
         }
 
+        /* ---------- RESET & BASE ---------- */
         * {
             margin: 0;
             padding: 0;
@@ -35,6 +39,7 @@
             padding: 20px;
         }
 
+        /* ---------- BARRA DE NAVEGAÇÃO ---------- */
         .nav-bar {
             display: flex;
             justify-content: space-between;
@@ -160,6 +165,7 @@
             flex-wrap: wrap;
         }
 
+        /* ---------- BOTÕES ---------- */
         .btn-bolsa {
             background: linear-gradient(135deg, #00f0ff, #7000ff);
             color: white;
@@ -201,6 +207,7 @@
             box-shadow: 0 0 15px rgba(220, 38, 38, 0.6);
         }
 
+        /* ---------- BADGE TEMPO ---------- */
         .badge-tempo {
             background: rgba(0, 240, 255, 0.15);
             color: var(--neon-blue);
@@ -213,6 +220,7 @@
             letter-spacing: 0.5px;
         }
 
+        /* ---------- STATUS ---------- */
         .status-container {
             display: flex;
             gap: 10px;
@@ -257,80 +265,8 @@
             50% { opacity: 0.5; transform: scale(0.8); }
         }
 
+        /* ---------- CONTAINER & BOXES ---------- */
         .container { padding: 0; max-width: 1400px; margin: 0 auto; }
-
-        /* ESTATÍSTICAS DO JOGADOR */
-        .lw-stats-card {
-            background: rgba(112, 0, 255, 0.05);
-            border-left: 6px solid var(--neon-purple);
-            border-radius: 16px;
-            padding: 18px 20px;
-            margin-bottom: 28px;
-            border: 1px solid var(--border-glow);
-            box-shadow: 0 4px 20px rgba(0,0,0,0.3);
-            transition: all 0.3s;
-        }
-        .lw-stats-card:hover {
-            border-color: rgba(112, 0, 255, 0.4);
-        }
-        .lw-stats-card h2 {
-            font-size: 1.35rem;
-            margin-bottom: 18px;
-            border-left: 5px solid var(--neon-purple);
-            padding-left: 14px;
-            color: #fff;
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            flex-wrap: wrap;
-            font-family: 'Orbitron', sans-serif;
-            text-shadow: 0 0 20px rgba(112, 0, 255, 0.1);
-        }
-
-        .lw-stats {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 12px;
-            align-items: center;
-            justify-content: space-between;
-        }
-        .lw-stats span {
-            display: inline-flex;
-            align-items: center;
-            gap: 6px;
-            background: rgba(255,255,255,0.05);
-            padding: 6px 16px;
-            border-radius: 30px;
-            border: 1px solid var(--border-glow);
-            font-size: 0.85rem;
-        }
-        .lw-stats span .hp-c { font-weight: 700; color: #ef4444; }
-        .lw-stats span .mp-c { font-weight: 700; color: #3b82f6; }
-        .lw-stats span .sm-c { font-weight: 700; color: #f59e0b; }
-        .lw-stats span .atk-c { font-weight: 700; color: #ef4444; }
-        .lw-stats span .def-c { font-weight: 700; color: #10b981; }
-        .lw-stats span .mag-c { font-weight: 700; color: #8b5cf6; }
-
-        .lw-info {
-            margin-top: 12px;
-            display: flex;
-            flex-wrap: wrap;
-            gap: 12px;
-            align-items: center;
-            justify-content: space-between;
-        }
-        .lw-info .lw-label {
-            font-size: 0.8rem;
-            color: #8a99ad;
-        }
-        .lw-info .lw-value {
-            font-weight: 700;
-        }
-        .lw-info .lw-value.gold { color: #f59e0b; }
-        .lw-info .lw-value.green { color: #10b981; }
-        .lw-info .lw-value.blue { color: #3b82f6; }
-        .lw-info .lw-value.purple { color: #8b5cf6; }
-        .lw-info .lw-value.white { color: #fff; }
 
         .info {
             display: flex;
@@ -395,6 +331,7 @@
             box-shadow: 0 0 20px rgba(0, 240, 255, 0.6);
         }
 
+        /* ---------- CARDS ---------- */
         .card {
             background: var(--card-bg);
             border-radius: 16px;
@@ -513,6 +450,7 @@
             color: var(--neon-green);
         }
 
+        /* ---------- TABELAS ---------- */
         .table-wrapper { overflow-x: auto; width: 100%; margin-bottom: 5px; }
         table { width: 100%; border-collapse: collapse; min-width: 550px; }
         th, td { 
@@ -533,6 +471,7 @@
         }
         td { color: #e2e8f0; }
 
+        /* ---------- BOTÕES DAS TABELAS ---------- */
         button {
             padding: 6px 14px;
             margin: 3px;
@@ -585,6 +524,67 @@
             transform: scale(0.96);
         }
 
+        /* ---------- BOTÕES SUPABASE ---------- */
+        .btn-salvar {
+            background: linear-gradient(135deg, #3b82f6, #2563eb);
+            color: white;
+            border: none;
+            padding: 6px 16px;
+            border-radius: 40px;
+            font-weight: bold;
+            font-size: 0.7rem;
+            cursor: pointer;
+            transition: all 0.2s;
+            box-shadow: 0 0 10px rgba(59, 130, 246, 0.3);
+        }
+        .btn-salvar:hover { 
+            transform: scale(0.96);
+            box-shadow: 0 0 20px rgba(59, 130, 246, 0.5);
+        }
+
+        .btn-carregar {
+            background: linear-gradient(135deg, #8b5cf6, #7c3aed);
+            color: white;
+            border: none;
+            padding: 6px 16px;
+            border-radius: 40px;
+            font-weight: bold;
+            font-size: 0.7rem;
+            cursor: pointer;
+            transition: all 0.2s;
+            box-shadow: 0 0 10px rgba(139, 92, 246, 0.3);
+        }
+        .btn-carregar:hover { 
+            transform: scale(0.96);
+            box-shadow: 0 0 20px rgba(139, 92, 246, 0.5);
+        }
+
+        .btn-limpar {
+            background: linear-gradient(135deg, #ef4444, #dc2626);
+            color: white;
+            border: none;
+            padding: 6px 16px;
+            border-radius: 40px;
+            font-weight: bold;
+            font-size: 0.7rem;
+            cursor: pointer;
+            transition: all 0.2s;
+            box-shadow: 0 0 10px rgba(239, 68, 68, 0.3);
+        }
+        .btn-limpar:hover { 
+            transform: scale(0.96);
+            box-shadow: 0 0 20px rgba(239, 68, 68, 0.5);
+        }
+
+        .botoes-supabase {
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+            align-items: center;
+            margin-top: 10px;
+        }
+
+        /* ---------- SELIC ---------- */
         .selic-indicador { 
             display: inline-block; 
             padding: 4px 16px; 
@@ -619,6 +619,7 @@
             border-left: 4px solid #f59e0b; 
         }
 
+        /* ---------- EXTRATO ---------- */
         #historico {
             list-style: none;
             max-height: 210px;
@@ -642,6 +643,7 @@
         .transferencia-item { border-left: 3px solid #0ea5e9 !important; background: rgba(14, 165, 233, 0.05); }
         .poupanca-item    { border-left: 3px solid #10b981 !important; background: rgba(16, 185, 129, 0.05); }
 
+        /* ---------- MISC ---------- */
         .empty-warning { 
             text-align: center; 
             color: #6c86a3; 
@@ -669,6 +671,7 @@
             border-top: 1px solid var(--border-glow);
         }
 
+        /* ========== TOAST / JANELA FLUTUANTE ========== */
         .toast-container {
             position: fixed;
             top: 20px;
@@ -762,8 +765,10 @@
             to { opacity: 0; transform: translateX(60px) scale(0.95); }
         }
 
+        /* ---------- RESPONSIVO ---------- */
         @media (max-width: 768px) {
             body { padding: 10px; }
+            
             .nav-bar {
                 flex-direction: column;
                 align-items: stretch;
@@ -782,9 +787,11 @@
                 font-size: 0.8rem;
             }
             .nav-brand { font-size: 1rem; }
+
             .badge-tempo { font-size: 0.55rem; padding: 2px 8px; }
             .status-container { justify-content: center; }
             .status-item { font-size: 0.55rem; padding: 2px 10px; }
+
             .toast-container {
                 top: 10px;
                 right: 10px;
@@ -796,17 +803,18 @@
                 padding: 14px 16px;
                 border-radius: 12px;
             }
+
             .box h2 { font-size: 1.3rem; }
-            .lw-stats { justify-content: center; }
-            .lw-info { justify-content: center; }
+            .dashboard-header h1 { font-size: 1.8rem; }
         }
     </style>
 </head>
 
 <body>
+    <!-- ========== BARRA DE NAVEGAÇÃO ========== -->
     <nav class="nav-bar">
         <div class="nav-brand">
-            🏦 <span>BAEP</span> Investimentos MM
+            🏦 <span>BAEP</span> Investimentos
             <span class="badge-tempo">⏱️ Ações:60s | FIIs:30s | ETFs:90s | Tesouro:120s</span>
             <span class="badge-tempo" id="selicBadge" style="border-color: #f59e0b; color: #f59e0b;">📈 SELIC: 10,75%</span>
         </div>
@@ -828,6 +836,9 @@
             </div>
         </div>
 
+
+
+
         <div class="nav-buttons">
             <div class="user-profile">
                 <div class="user-avatar" id="userAvatar">👤</div>
@@ -836,42 +847,15 @@
                     <span class="user-balance" id="userSaldoDisplay">0,00 Mumu</span>
                 </div>
             </div>
-            <a href="dashboard.html" class="btn-bolsa" style="background: linear-gradient(135deg, #00ff66, #00cc55); color: #0a0b10;">📊 Voltar a Dashboard</a>
+            <button class="btn-sair" id="btnSair">🚪 Sair</button>
+            <a href="admin.html" class="btn-bolsa" style="background: linear-gradient(135deg, #7000ff, #8b5cf6);">👑 ADM</a>
+            <a href="dashboard.html" class="btn-bolsa" style="background: linear-gradient(135deg, #00ff66, #00cc55); color: #0a0b10;">📊 Dashboard</a>
         </div>
     </nav>
 
+    <!-- ========== CONTEÚDO ========== -->
     <div class="container">
-        <!-- ESTATÍSTICAS DO JOGADOR -->
-        <div class="lw-stats-card">
-            <h2 style="border-left-color: var(--neon-purple);">⚔️ ESTATÍSTICAS DO JOGADOR <span class="badge-categoria">Atributos</span></h2>
-            <div class="lw-stats">
-                <span>❤️ HP <span class="hp-c" id="lwHp">100/100</span></span>
-                <span>💧 MANA <span class="mp-c" id="lwMp">50/50</span></span>
-                <span>⚡ STAMINA <span class="sm-c" id="lwSm">100/100</span></span>
-                <span>⚔️ FORÇA <span class="atk-c" id="lwAtk">15</span></span>
-                <span>🛡️ DEFESA <span class="def-c" id="lwDef">10</span></span>
-                <span>🔮 MAGIA <span class="mag-c" id="lwMag">8</span></span>
-            </div>
-            <div class="lw-info">
-                <div>
-                    <span class="lw-label">📊 Experiência:</span>
-                    <span class="lw-value gold" id="lwExp">0 / 100</span>
-                    <span style="font-size: 0.7rem; color: #8a99ad; margin-left: 8px;">🏅 Nível <span class="lw-value white" id="lwNivel">1</span></span>
-                </div>
-                <div>
-                    <span class="lw-label">🌱 Sementes:</span>
-                    <span class="lw-value green" id="lwSeeds">0</span>
-                    <span class="lw-label" style="margin-left: 12px;">🌾 Plantadas:</span>
-                    <span class="lw-value gold" id="lwPlanted">0</span>
-                    <span class="lw-label" style="margin-left: 12px;">🧺 Colhidas:</span>
-                    <span class="lw-value blue" id="lwHarvested">0</span>
-                    <span class="lw-label" style="margin-left: 12px;">🪣 Baldes:</span>
-                    <span class="lw-value purple" id="lwBuckets">0</span>
-                </div>
-            </div>
-        </div>
-
-        <!-- INFORMAÇÕES FINANCEIRAS -->
+        <!-- INFO -->
         <div class="info">
             <div class="box"><h3>💵 Saldo Disponível</h3><h2 id="saldo">0,00 <span class="moeda-simbolo">Mumu</span></h2></div>
             <div class="box"><h3>🏆 Patrimônio Total</h3><h2 id="patrimonio">0,00 <span class="moeda-simbolo">Mumu</span></h2></div>
@@ -889,13 +873,13 @@
             <div style="display: flex; flex-wrap: wrap; gap: 20px; align-items: center; justify-content: space-between;">
                 <div>
                     <p style="font-size: 2.5rem; font-weight: 800; color: #f59e0b; text-shadow: 0 0 20px rgba(245, 158, 11, 0.2);" id="selicDisplayBolsa">10,75%</p>
-                    <span class="selic-indicador" id="selicIndicadorBolsa">Média</span>
+                    <span class="selic-indicador" id="selicIndicadorBolsa" style="padding: 4px 16px; border-radius: 30px; font-weight: 700; font-size: 0.9rem; background: rgba(245, 158, 11, 0.2); color: #f59e0b; border: 1px solid #f59e0b;">Média</span>
                 </div>
                 <div style="flex: 1; min-width: 200px;">
-                    <div id="selicImpactoBolsa" class="selic-impacto impacto-neutral">⚖️ Mercado estável</div>
+                    <div id="selicImpactoBolsa" class="selic-impacto impacto-neutral" style="padding: 12px 16px; border-radius: 12px; font-weight: 600; font-size: 0.95rem;">⚖️ Mercado estável</div>
                     <p style="font-size: 0.8rem; color: #8a99ad; margin-top: 8px;">
-                        💡 <strong style="color: #f59e0b;">SELIC alta</strong> → Ações e ETFs caem, Tesouro Prefixado/IPCA+ caem, CDB e Tesouro Selic rendem mais |
-                        <strong style="color: var(--neon-green);">SELIC baixa</strong> → Ações e ETFs sobem, Tesouro Prefixado/IPCA+ sobem, CDB e Tesouro Selic rendem menos
+                        💡 <strong style="color: #f59e0b;">SELIC alta</strong> → FIIs em queda (compre barato) |
+                        <strong style="color: var(--neon-green);">SELIC baixa</strong> → FIIs em alta (venda/colha)
                     </p>
                 </div>
                 <div style="text-align: center; background: rgba(255,255,255,0.03); padding: 12px 20px; border-radius: 16px; border: 1px solid var(--border-glow);">
@@ -907,11 +891,7 @@
 
         <!-- POUPANÇA -->
         <div class="card poupanca-destaque">
-            <h2>🏦 POUPANÇA BAEP <span class="badge-categoria">Rendimento varia conforme SELIC</span></h2>
-            <div style="background: rgba(245, 158, 11, 0.1); padding: 8px 16px; border-radius: 8px; margin-bottom: 12px; font-size: 0.85rem; border-left: 4px solid #f59e0b;">
-                <strong>🔴 SELIC ACIMA de 8,5%</strong> → Poupança <strong style="color: #ef4444;">TRAVADA</strong> em 0,5% ao mês (6,17% ao ano) &nbsp;|&nbsp;
-                <strong>🟢 SELIC ABAIXO de 8,5%</strong> → Poupança rende <strong style="color: var(--neon-green);">70% da SELIC</strong> + TR
-            </div>
+            <h2>🏦 POUPANÇA BAEP <span class="badge-categoria">Rendimento 0,6% a cada 60s</span></h2>
             <div class="poupanca-flex">
                 <div class="poupanca-saldo">💰 Saldo na Poupança: <strong id="saldoPoupanca">0,00 <span class="moeda-simbolo">Mumu</span></strong></div>
                 <div class="poupanca-acoes">
@@ -923,20 +903,15 @@
                     <button class="btn-poupanca" id="btnResgatarPoupanca" style="background: linear-gradient(135deg, #ef4444, #dc2626); color: white; box-shadow: 0 0 15px rgba(239, 68, 68, 0.3);">🏧 Resgatar</button>
                 </div>
                 <div class="valor-rendimento">
-                    ⚡ <span id="poupancaRendimentoLabel">Rendimento: 0,50% ao mês</span><br>
-                    <span style="font-size:0.7rem; color: #8a99ad;" id="poupancaRendimentoDetalhe">SELIC ≥ 8,5% → Travada em 0,5%</span>
+                    ⚡ Rendimento de 0,6% sobre o saldo a cada 60s<br>
+                    <span style="font-size:0.7rem; color: #8a99ad;">Ex: 10,00 Mumu → 10,06 Mumu</span>
                 </div>
             </div>
         </div>
 
         <!-- AÇÕES -->
         <div class="card">
-            <h2>📈 AÇÕES <span class="badge-categoria">Proventos a cada 60s | Afetadas pela SELIC</span></h2>
-            <div style="background: rgba(245, 158, 11, 0.1); padding: 8px 16px; border-radius: 8px; margin-bottom: 12px; font-size: 0.85rem; border-left: 4px solid #f59e0b;">
-                <strong>🔴 SELIC ALTA (≥ 13%)</strong> → Ações em <strong style="color: #ef4444;">QUEDA</strong> (-3% a -10%) &nbsp;|&nbsp;
-                <strong>🟢 SELIC BAIXA (&lt; 10.5%)</strong> → Ações em <strong style="color: var(--neon-green);">ALTA</strong> (+3% a +10%) &nbsp;|&nbsp;
-                <strong>🟡 SELIC MÉDIA</strong> → Ações estáveis
-            </div>
+            <h2>📈 AÇÕES <span class="badge-categoria">Proventos a cada 60s</span></h2>
             <div class="table-wrapper">
                 <table><thead><tr><th>Ativo</th><th>Preço (Mumu)</th><th>Rentab. %</th><th>DY Anual %</th><th>Variação %</th><th>Comprar</th><th>Vender</th></tr></thead>
                 <tbody id="tabelaAcoes"></tbody></table>
@@ -945,12 +920,7 @@
 
         <!-- FIIs -->
         <div class="card">
-            <h2>🏢 FUNDOS IMOBILIÁRIOS (FIIs) <span class="badge-categoria">Proventos a cada 30s | Afetados pela SELIC</span></h2>
-            <div style="background: rgba(245, 158, 11, 0.1); padding: 8px 16px; border-radius: 8px; margin-bottom: 12px; font-size: 0.85rem; border-left: 4px solid #f59e0b;">
-                <strong>🔴 SELIC ALTA (≥ 13%)</strong> → FIIs em <strong style="color: #ef4444;">QUEDA</strong> (COTAS BARATAS - Comprar) &nbsp;|&nbsp;
-                <strong>🟢 SELIC BAIXA (&lt; 10.5%)</strong> → FIIs em <strong style="color: var(--neon-green);">ALTA</strong> (COTAS CARAS - Colher) &nbsp;|&nbsp;
-                <strong>🟡 SELIC MÉDIA</strong> → FIIs estáveis
-            </div>
+            <h2>🏢 FUNDOS IMOBILIÁRIOS (FIIs) <span class="badge-categoria">Proventos a cada 30s</span></h2>
             <div class="table-wrapper">
                 <table><thead><tr><th>Ativo</th><th>Preço (Mumu)</th><th>Rentab. %</th><th>DY Anual %</th><th>Variação %</th><th>Comprar</th><th>Vender</th></tr></thead>
                 <tbody id="tabelaFIIs"></tbody></table>
@@ -959,12 +929,7 @@
 
         <!-- ETFs -->
         <div class="card">
-            <h2>📊 ETFs <span class="badge-categoria">Proventos a cada 90s | Afetados pela SELIC</span></h2>
-            <div style="background: rgba(245, 158, 11, 0.1); padding: 8px 16px; border-radius: 8px; margin-bottom: 12px; font-size: 0.85rem; border-left: 4px solid #f59e0b;">
-                <strong>🔴 SELIC ALTA (≥ 13%)</strong> → ETFs em <strong style="color: #ef4444;">QUEDA</strong> (-3% a -10%) &nbsp;|&nbsp;
-                <strong>🟢 SELIC BAIXA (&lt; 10.5%)</strong> → ETFs em <strong style="color: var(--neon-green);">ALTA</strong> (+3% a +10%) &nbsp;|&nbsp;
-                <strong>🟡 SELIC MÉDIA</strong> → ETFs estáveis
-            </div>
+            <h2>📊 ETFs <span class="badge-categoria">Proventos a cada 90s</span></h2>
             <div class="table-wrapper">
                 <table><thead><tr><th>Ativo</th><th>Preço (Mumu)</th><th>Rentab. %</th><th>DY Anual %</th><th>Variação %</th><th>Comprar</th><th>Vender</th></tr></thead>
                 <tbody id="tabelaETFs"></tbody></table>
@@ -973,11 +938,7 @@
 
         <!-- TESOURO -->
         <div class="card">
-            <h2>🇧🇷 TESOURO DIRETO <span class="badge-categoria">Marcação a mercado | Afetados pela SELIC</span></h2>
-            <div style="background: rgba(245, 158, 11, 0.1); padding: 8px 16px; border-radius: 8px; margin-bottom: 12px; font-size: 0.85rem; border-left: 4px solid #f59e0b;">
-                <strong>📉 Tesouro Prefixado/IPCA+</strong> → <strong style="color: #ef4444;">CAEM</strong> com SELIC ALTA, <strong style="color: var(--neon-green);">SOBEM</strong> com SELIC BAIXA &nbsp;|&nbsp;
-                <strong>📈 Tesouro Selic</strong> → <strong style="color: var(--neon-green);;">RENDE MAIS</strong> com SELIC ALTA, <strong style="color: #ef4444;">RENDE MENOS</strong> com SELIC BAIXA
-            </div>
+            <h2>🇧🇷 TESOURO DIRETO <span class="badge-categoria">Marcação a mercado a cada 120s | Sem proventos</span></h2>
             <div class="table-wrapper">
                 <table><thead><tr><th>Título</th><th>Vencimento</th><th>Preço (Mumu)</th><th>Rentab. %</th><th>Variação %</th><th>Comprar</th><th>Vender</th></tr></thead>
                 <tbody id="tabelaTesouro"></tbody></table>
@@ -1002,11 +963,24 @@
             <ul id="historico"></ul>
         </div>
 
-        <footer>💡 Todos os ativos são afetados pela SELIC • Ações: proventos 60s | FIIs: 30s | ETFs: 90s | Tesouro: marcação 120s | Poupança: varia com SELIC</footer>
+        <footer>💡 Saldo inicial: 0,00 Mumu • Ações: proventos 60s | FIIs: 30s | ETFs: 90s | Tesouro: marcação 120s | Poupança: 0,6%/60s</footer>
+
+        <!-- SUPABASE -->
+        <div class="card" style="padding: 12px 20px; margin-bottom: 20px; background: rgba(255,255,255,0.02);">
+            <div class="botoes-supabase">
+                <span style="font-weight: 600; color: #8a99ad; font-size: 0.85rem;">☁️ Supabase:</span>
+                <button class="btn-salvar" id="btnSalvarNoSupabase">💾 Salvar Jogo</button>
+                <button class="btn-carregar" id="btnCarregarDoSupabase">📂 Carregar Jogo</button>
+                <button class="btn-limpar" id="btnLimparJogo">🗑️ Limpar Jogo</button>
+                <span id="mensagemSupabase" style="font-size: 0.7rem; color: #5d7f9e; margin-left: 8px;"></span>
+            </div>
+        </div>
     </div>
 
+    <!-- ========== TOAST CONTAINER ========== -->
     <div class="toast-container" id="toastContainer"></div>
 
+    <!-- ========== SCRIPT ========== -->
     <script type="importmap">
     {
         "imports": {
@@ -1016,8 +990,14 @@
     </script>
 
     <script type="module">
+        // ====================================================================
+        //  IMPORTAÇÕES
+        // ====================================================================
         import { createClient } from '@supabase/supabase-js';
 
+        // ====================================================================
+        //  CONFIGURAÇÕES
+        // ====================================================================
         const SUPABASE_URL  = 'https://xrcxvizzdumcxbylmkvn.supabase.co';
         const SUPABASE_KEY  = 'sb_publishable_E-g3G3wW4EySbCsXLXp8KQ_FnmERMcD';
         const supabase      = createClient(SUPABASE_URL, SUPABASE_KEY);
@@ -1026,161 +1006,20 @@
         const BRAPI_BASE    = 'https://brapi.dev/api';
         const MOEDA         = 'Mumu';
 
-        let saldo                      = 0.00;
-        let proventosPendentes         = 0.0;
-        let saldoPoupanca              = 0.00;
-        let rendimentosPoupancaAcumulados = 0.0;
-        let apiOnline                  = false;
-        let verificandoAPI             = false;
-        let supabaseOnline             = false;
-        let dadosCarregados            = false;
-        let selicAtual                 = 10.75;
-        let taxaPoupancaMensal         = 0.005;
-
-        const PRECOS_BASE = {
-            'PETR4': 34.50,
-            'VALE3': 58.90,
-            'ITUB4': 31.20,
-            'MXRF11': 9.90,
-            'XPML11': 98.40,
-            'HGLG11': 156.00,
-            'BOVA11': 121.00,
-            'IVVB11': 330.00,
-            'TESOURO SELIC': 100.50,
-            'TESOURO IPCA+': 280.30,
-            'TESOURO PREFIXADO': 850.00
-        };
-
-        function calcularPrecoAcao(basePrice, selic) {
-            if (selic >= 13.0) {
-                const fatorQueda = 0.03 + (selic - 13.0) * 0.02;
-                const queda = Math.min(fatorQueda, 0.15);
-                return basePrice * (1 - queda);
-            } else if (selic < 10.5) {
-                const fatorAlta = 0.03 + (10.5 - selic) * 0.02;
-                const alta = Math.min(fatorAlta, 0.15);
-                return basePrice * (1 + alta);
-            } else {
-                const variacao = (Math.random() - 0.5) * 0.03;
-                return basePrice * (1 + variacao);
-            }
-        }
-
-        function calcularPrecoFII(basePrice, selic) {
-            if (selic >= 13.0) {
-                const fatorQueda = 0.05 + (selic - 13.0) * 0.025;
-                const queda = Math.min(fatorQueda, 0.25);
-                return basePrice * (1 - queda);
-            } else if (selic < 10.5) {
-                const fatorAlta = 0.05 + (10.5 - selic) * 0.025;
-                const alta = Math.min(fatorAlta, 0.25);
-                return basePrice * (1 + alta);
-            } else {
-                const variacao = (Math.random() - 0.5) * 0.04;
-                return basePrice * (1 + variacao);
-            }
-        }
-
-        function calcularPrecoETF(basePrice, selic) {
-            return calcularPrecoAcao(basePrice, selic);
-        }
-
-        function calcularPrecoTesouro(basePrice, selic, tipo) {
-            if (tipo === 'SELIC') {
-                if (selic >= 13.0) {
-                    const fatorAlta = 1 + (selic - 13.0) * 0.03;
-                    return basePrice * Math.min(fatorAlta, 1.3);
-                } else if (selic < 10.5) {
-                    const fatorBaixa = 1 - (10.5 - selic) * 0.02;
-                    return basePrice * Math.max(fatorBaixa, 0.85);
-                } else {
-                    const variacao = (Math.random() - 0.5) * 0.02;
-                    return basePrice * (1 + variacao);
-                }
-            } else {
-                if (selic >= 13.0) {
-                    const fatorQueda = 0.02 + (selic - 13.0) * 0.015;
-                    const queda = Math.min(fatorQueda, 0.15);
-                    return basePrice * (1 - queda);
-                } else if (selic < 10.5) {
-                    const fatorAlta = 0.02 + (10.5 - selic) * 0.015;
-                    const alta = Math.min(fatorAlta, 0.15);
-                    return basePrice * (1 + alta);
-                } else {
-                    const variacao = (Math.random() - 0.5) * 0.02;
-                    return basePrice * (1 + variacao);
-                }
-            }
-        }
-
-        function calcularTaxaPoupanca(selic) {
-            if (selic >= 8.5) {
-                return 0.005;
-            } else {
-                return (selic / 100) * 0.7 / 12;
-            }
-        }
-
-        function atualizarTodosPrecos(selic) {
-            acoes.forEach(acao => {
-                const basePrice = PRECOS_BASE[acao.ticker] || acao.preco;
-                const novoPreco = calcularPrecoAcao(basePrice, selic);
-                precoHistorico[acao.ticker] = acao.preco;
-                acao.preco = parseFloat(Math.max(novoPreco, 0.01).toFixed(2));
-            });
-
-            fiis.forEach(fii => {
-                const basePrice = PRECOS_BASE[fii.ticker] || fii.preco;
-                const novoPreco = calcularPrecoFII(basePrice, selic);
-                precoHistorico[fii.ticker] = fii.preco;
-                fii.preco = parseFloat(Math.max(novoPreco, 0.01).toFixed(2));
-            });
-
-            etfs.forEach(etf => {
-                const basePrice = PRECOS_BASE[etf.ticker] || etf.preco;
-                const novoPreco = calcularPrecoETF(basePrice, selic);
-                precoHistorico[etf.ticker] = etf.preco;
-                etf.preco = parseFloat(Math.max(novoPreco, 0.01).toFixed(2));
-            });
-
-            tesouros.forEach(tesouro => {
-                const basePrice = PRECOS_BASE[tesouro.ticker] || tesouro.preco;
-                let tipo = '';
-                if (tesouro.ticker === 'TESOURO SELIC') tipo = 'SELIC';
-                else if (tesouro.ticker === 'TESOURO IPCA+') tipo = 'IPCA';
-                else if (tesouro.ticker === 'TESOURO PREFIXADO') tipo = 'PREFIXADO';
-                const novoPreco = calcularPrecoTesouro(basePrice, selic, tipo);
-                precoHistorico[tesouro.ticker] = tesouro.preco;
-                tesouro.preco = parseFloat(Math.max(novoPreco, 0.01).toFixed(2));
-            });
-
-            taxaPoupancaMensal = calcularTaxaPoupanca(selic);
-            atualizarDisplayPoupanca(selic);
-        }
-
-        function atualizarDisplayPoupanca(selic) {
-            const label = document.getElementById('poupancaRendimentoLabel');
-            const detalhe = document.getElementById('poupancaRendimentoDetalhe');
-            
-            if (selic >= 8.5) {
-                const taxaAnual = 0.005 * 12;
-                label.textContent = `🔒 Rendimento: ${(taxaAnual * 100).toFixed(2)}% ao ano (TRAVADO)`;
-                detalhe.textContent = `SELIC ${selic.toFixed(2)}% ≥ 8,5% → Poupança travada em 0,5% ao mês`;
-            } else {
-                const taxaAnual = (selic / 100) * 0.7;
-                label.textContent = `📉 Rendimento: ${(taxaAnual * 100).toFixed(2)}% ao ano (70% da SELIC)`;
-                detalhe.textContent = `SELIC ${selic.toFixed(2)}% < 8,5% → Poupança rende 70% da SELIC`;
-            }
-        }
-
+        // ====================================================================
+        //  TOAST / JANELA FLUTUANTE
+        // ====================================================================
         function mostrarToast(mensagem, tipo = 'erro', titulo = '') {
             const container = document.getElementById('toastContainer');
+            
             const tipos = {
                 erro: { icon: '❌', title: titulo || 'Erro' },
                 sucesso: { icon: '✅', title: titulo || 'Sucesso' },
                 atencao: { icon: '⚠️', title: titulo || 'Atenção' }
             };
+
             const config = tipos[tipo] || tipos.erro;
+
             const toast = document.createElement('div');
             toast.className = `toast ${tipo}`;
             toast.innerHTML = `
@@ -1191,11 +1030,14 @@
                 </div>
                 <button class="toast-close">✕</button>
             `;
+
             toast.querySelector('.toast-close').addEventListener('click', () => {
                 toast.classList.add('toast-hide');
                 setTimeout(() => toast.remove(), 400);
             });
+
             container.appendChild(toast);
+
             setTimeout(() => {
                 if (toast.parentNode) {
                     toast.classList.add('toast-hide');
@@ -1204,34 +1046,50 @@
             }, 4000);
         }
 
+        // ====================================================================
+        //  ESTADO DO JOGO
+        // ====================================================================
+        let saldo                      = 0.00;
+        let proventosPendentes         = 0.0;
+        let saldoPoupanca              = 0.00;
+        let rendimentosPoupancaAcumulados = 0.0;
+        let apiOnline                  = false;
+        let verificandoAPI             = false;
+        let supabaseOnline             = false;
+        let dadosCarregados            = false;
+        let selicAtual                 = 10.75;
+
+        // ====================================================================
+        //  DADOS DOS ATIVOS
+        // ====================================================================
         const acoes = [
-            { ticker: "PETR4", nome: "Petrobras", tipo: "Ação", preco: 34.50, dividendoUnitario: 0.32, categoria: "Acao" },
-            { ticker: "VALE3", nome: "Vale", tipo: "Ação", preco: 58.90, dividendoUnitario: 0.45, categoria: "Acao" },
-            { ticker: "ITUB4", nome: "Itaú", tipo: "Ação", preco: 31.20, dividendoUnitario: 0.28, categoria: "Acao" }
+            { ticker: "PETR4", nome: "Petrobras",   tipo: "Ação", preco: 34.50, dividendoUnitario: 0.32, categoria: "Acao" },
+            { ticker: "VALE3", nome: "Vale",        tipo: "Ação", preco: 58.90, dividendoUnitario: 0.45, categoria: "Acao" },
+            { ticker: "ITUB4", nome: "Itaú",        tipo: "Ação", preco: 31.20, dividendoUnitario: 0.28, categoria: "Acao" }
         ];
 
         const fiis = [
-            { ticker: "MXRF11", nome: "Maxi Renda", tipo: "FII", preco: 9.90, dividendoUnitario: 0.11, categoria: "FII" },
-            { ticker: "XPML11", nome: "XP Malls", tipo: "FII", preco: 98.40, dividendoUnitario: 0.92, categoria: "FII" },
+            { ticker: "MXRF11", nome: "Maxi Renda",    tipo: "FII", preco: 9.90,  dividendoUnitario: 0.11, categoria: "FII" },
+            { ticker: "XPML11", nome: "XP Malls",      tipo: "FII", preco: 98.40, dividendoUnitario: 0.92, categoria: "FII" },
             { ticker: "HGLG11", nome: "Hedge Logística", tipo: "FII", preco: 156.00, dividendoUnitario: 1.35, categoria: "FII" }
         ];
 
         const etfs = [
-            { ticker: "BOVA11", nome: "Ibovespa", tipo: "ETF", preco: 121.00, dividendoUnitario: 0.52, categoria: "ETF" },
-            { ticker: "IVVB11", nome: "S&P 500", tipo: "ETF", preco: 330.00, dividendoUnitario: 2.10, categoria: "ETF" }
+            { ticker: "BOVA11", nome: "Ibovespa",   tipo: "ETF", preco: 121.00, dividendoUnitario: 0.52, categoria: "ETF" },
+            { ticker: "IVVB11", nome: "S&P 500",    tipo: "ETF", preco: 330.00, dividendoUnitario: 2.10, categoria: "ETF" }
         ];
 
         const tesouros = [
-            { ticker: "TESOURO SELIC", nome: "Tesouro Selic", tipo: "Tesouro Selic", preco: 100.50, vencimento: "2027", dividendoUnitario: 0, categoria: "Tesouro" },
-            { ticker: "TESOURO IPCA+", nome: "Tesouro IPCA+", tipo: "Tesouro IPCA+", preco: 280.30, vencimento: "2035", dividendoUnitario: 0, categoria: "Tesouro" },
-            { ticker: "TESOURO PREFIXADO", nome: "Prefixado", tipo: "Prefixado", preco: 850.00, vencimento: "2031", dividendoUnitario: 0, categoria: "Tesouro" }
+            { ticker: "TESOURO SELIC",   nome: "Tesouro Selic",   tipo: "Tesouro Selic", preco: 100.50, vencimento: "2027", dividendoUnitario: 0, categoria: "Tesouro" },
+            { ticker: "TESOURO IPCA+",   nome: "Tesouro IPCA+",   tipo: "Tesouro IPCA+", preco: 280.30, vencimento: "2035", dividendoUnitario: 0, categoria: "Tesouro" },
+            { ticker: "TESOURO PREFIXADO", nome: "Prefixado",     tipo: "Prefixado",   preco: 850.00, vencimento: "2031", dividendoUnitario: 0, categoria: "Tesouro" }
         ];
 
         let todosAtivos = [...acoes, ...fiis, ...etfs, ...tesouros];
-        let carteira = {};
-        let precoMedioCompra = {};
+        let carteira          = {};
+        let precoMedioCompra  = {};
         let proventosPorAtivo = {};
-        const precoHistorico = {};
+        const precoHistorico  = {};
 
         const tickersBrapi = {
             'PETR4': 'PETR4', 'VALE3': 'VALE3', 'ITUB4': 'ITUB4',
@@ -1239,6 +1097,9 @@
             'BOVA11': 'BOVA11', 'IVVB11': 'IVVB11'
         };
 
+        // ====================================================================
+        //  FUNÇÕES AUXILIARES
+        // ====================================================================
         function formatarMoeda(valor) {
             return `${valor.toFixed(2)} ${MOEDA}`;
         }
@@ -1248,63 +1109,49 @@
             return (isNaN(val) || val <= 0) ? 0 : val;
         }
 
+        // ====================================================================
+        //  FUNÇÕES DE REGISTRO (EXTRATO)
+        // ====================================================================
         function registrar(texto, tipo = "operacao") {
             const historicoUl = document.getElementById("historico");
             const li = document.createElement("li");
-            const horario = new Date().toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit', second: '2-digit' });
+            const horario = new Date().toLocaleTimeString('pt-BR', { hour: '2-digit', minute:'2-digit', second:'2-digit' });
             li.innerHTML = `<span style="font-weight:500; color: var(--neon-blue);">[${horario}]</span> ${texto}`;
-            if (tipo === "provento") li.classList.add("provento-item");
-            else if (tipo === "transferencia") li.classList.add("transferencia-item");
-            else if (tipo === "poupanca") li.classList.add("poupanca-item");
-            else { li.style.borderLeft = "3px solid var(--neon-blue)"; li.style.paddingLeft = "12px"; }
+            if (tipo === "provento") {
+                li.classList.add("provento-item");
+            } else if (tipo === "transferencia") {
+                li.classList.add("transferencia-item");
+            } else if (tipo === "poupanca") {
+                li.classList.add("poupanca-item");
+            } else {
+                li.style.borderLeft = "3px solid var(--neon-blue)";
+                li.style.paddingLeft = "12px";
+            }
             historicoUl.prepend(li);
             if (historicoUl.children.length > 70) historicoUl.removeChild(historicoUl.lastChild);
         }
 
+        // ====================================================================
+        //  INICIALIZAÇÃO DE ESTRUTURAS
+        // ====================================================================
         function initEstruturas() {
             todosAtivos.forEach(a => {
-                carteira[a.ticker] = 0;
+                carteira[a.ticker]          = 0;
                 proventosPorAtivo[a.ticker] = 0;
-                precoMedioCompra[a.ticker] = 0;
-                precoHistorico[a.ticker] = a.preco;
+                precoMedioCompra[a.ticker]  = 0;
+                precoHistorico[a.ticker]    = a.preco;
             });
         }
 
-        function atualizarEstatisticasLW(data) {
-            if (!data) return;
-            
-            const hpMax = data.hp_max || 100;
-            const hpAtual = data.hp_atual ?? hpMax;
-            const mpMax = data.mp_max || 50;
-            const mpAtual = data.mp_atual ?? mpMax;
-            const smMax = data.sm_max || 100;
-            const smAtual = data.sm_atual ?? smMax;
-            
-            document.getElementById('lwHp').textContent = `${hpAtual}/${hpMax}`;
-            document.getElementById('lwMp').textContent = `${mpAtual}/${mpMax}`;
-            document.getElementById('lwSm').textContent = `${smAtual}/${smMax}`;
-            document.getElementById('lwAtk').textContent = data.ataque_base || 15;
-            document.getElementById('lwDef').textContent = data.defesa_base || 10;
-            document.getElementById('lwMag').textContent = data.magia_base || 8;
-            
-            const nivel = data.nivel || 1;
-            const exp = data.experiencia || 0;
-            const expProximo = data.exp_proximo || 100;
-            document.getElementById('lwNivel').textContent = nivel;
-            document.getElementById('lwExp').textContent = `${exp} / ${expProximo}`;
-            
-            document.getElementById('lwSeeds').textContent = data.seeds || 0;
-            document.getElementById('lwPlanted').textContent = data.planted || 0;
-            document.getElementById('lwHarvested').textContent = data.harvested || 0;
-            document.getElementById('lwBuckets').textContent = data.buckets || 0;
-        }
-
+        // ====================================================================
+        //  SUPABASE – CRUD
+        // ====================================================================
         async function carregarDadosDoSupabase() {
             try {
                 const userId = usuario.id;
                 const { data, error } = await supabase
                     .from(TABELA)
-                    .select('saldo, saldo_poupanca, proventos_pendentes, carteira, preco_medio_compra, proventos_por_ativo, nivel, experiencia, exp_proximo, hp_max, mp_max, sm_max, ataque_base, defesa_base, magia_base, hp_atual, mp_atual, sm_atual, seeds, planted, harvested, buckets')
+                    .select('saldo, saldo_poupanca, proventos_pendentes, carteira, preco_medio_compra, proventos_por_ativo')
                     .eq('id', userId)
                     .single();
 
@@ -1317,8 +1164,8 @@
                 }
 
                 if (data) {
-                    saldo = data.saldo ?? 0.00;
-                    saldoPoupanca = data.saldo_poupanca ?? 0.00;
+                    saldo              = data.saldo              ?? 0.00;
+                    saldoPoupanca      = data.saldo_poupanca      ?? 0.00;
                     proventosPendentes = data.proventos_pendentes ?? 0.0;
 
                     if (data.carteira) {
@@ -1336,9 +1183,7 @@
                             if (proventosPorAtivo[key] !== undefined) proventosPorAtivo[key] = data.proventos_por_ativo[key] || 0;
                         });
                     }
-                    
-                    atualizarEstatisticasLW(data);
-                    
+
                     dadosCarregados = true;
                     registrar('📂 Dados carregados do Supabase!', 'operacao');
                     return true;
@@ -1358,33 +1203,19 @@
                     proventos_pendentes: 0.0,
                     carteira: {},
                     preco_medio_compra: {},
-                    proventos_por_ativo: {},
-                    nivel: 1,
-                    experiencia: 0,
-                    exp_proximo: 100,
-                    hp_max: 100,
-                    mp_max: 50,
-                    sm_max: 100,
-                    ataque_base: 15,
-                    defesa_base: 10,
-                    magia_base: 8,
-                    hp_atual: 100,
-                    mp_atual: 50,
-                    sm_atual: 100,
-                    seeds: 0,
-                    planted: 0,
-                    harvested: 0,
-                    buckets: 0,
-                    plot_data: [],
-                    fazendinha_dados: {}
+                    proventos_por_ativo: {}
                 };
-                const { error } = await supabase.from(TABELA).update(estadoInicial).eq('id', userId);
+
+                const { error } = await supabase
+                    .from(TABELA)
+                    .update(estadoInicial)
+                    .eq('id', userId);
+
                 if (error) throw error;
                 saldo = 0.00;
                 saldoPoupanca = 0.00;
                 proventosPendentes = 0.0;
                 dadosCarregados = true;
-                atualizarEstatisticasLW(estadoInicial);
                 registrar('📂 Registro inicial criado no Supabase!', 'operacao');
                 return true;
             } catch (error) {
@@ -1396,21 +1227,19 @@
         async function salvarDadosNoSupabase() {
             try {
                 const userId = usuario.id;
-                const dadosParaSalvar = {
-                    saldo,
-                    saldo_poupanca: saldoPoupanca,
-                    proventos_pendentes: proventosPendentes,
-                    carteira,
-                    preco_medio_compra: precoMedioCompra,
-                    proventos_por_ativo: proventosPorAtivo,
-                    updated_at: new Date().toISOString()
-                };
-                
                 const { error } = await supabase
                     .from(TABELA)
-                    .update(dadosParaSalvar)
+                    .update({
+                        saldo,
+                        saldo_poupanca: saldoPoupanca,
+                        proventos_pendentes: proventosPendentes,
+                        carteira,
+                        preco_medio_compra: precoMedioCompra,
+                        proventos_por_ativo: proventosPorAtivo,
+                        updated_at: new Date().toISOString()
+                    })
                     .eq('id', userId);
-                    
+
                 if (error) throw error;
                 return true;
             } catch (error) {
@@ -1419,10 +1248,13 @@
             }
         }
 
+        // ====================================================================
+        //  STATUS
+        // ====================================================================
         function atualizarStatusInternet(online) {
             const statusEl = document.getElementById('statusInternet');
-            const textoEl = document.getElementById('statusInternetTexto');
-            const dotEl = statusEl.querySelector('.status-dot');
+            const textoEl  = document.getElementById('statusInternetTexto');
+            const dotEl    = statusEl.querySelector('.status-dot');
             if (online) {
                 statusEl.className = 'status-item status-online';
                 textoEl.textContent = '🌐 Net';
@@ -1434,10 +1266,10 @@
             }
         }
 
-        function atualizarStatusAPI(online) {
+        function atualizarStatusAPI(online, mensagem = null) {
             const statusEl = document.getElementById('statusAPI');
-            const textoEl = document.getElementById('statusAPITexto');
-            const dotEl = statusEl.querySelector('.status-dot');
+            const textoEl  = document.getElementById('statusAPITexto');
+            const dotEl    = statusEl.querySelector('.status-dot');
             if (verificandoAPI) {
                 statusEl.className = 'status-item status-checking';
                 textoEl.textContent = '📊 API';
@@ -1455,10 +1287,10 @@
             }
         }
 
-        function atualizarStatusSupabase(online) {
+        function atualizarStatusSupabase(online, mensagem = null) {
             const statusEl = document.getElementById('statusSupabase');
-            const textoEl = document.getElementById('statusSupabaseTexto');
-            const dotEl = statusEl.querySelector('.status-dot');
+            const textoEl  = document.getElementById('statusSupabaseTexto');
+            const dotEl    = statusEl.querySelector('.status-dot');
             if (online) {
                 statusEl.className = 'status-item status-online';
                 textoEl.textContent = '☁️ Supabase';
@@ -1470,6 +1302,9 @@
             }
         }
 
+        // ====================================================================
+        //  VERIFICAÇÕES DE CONEXÃO
+        // ====================================================================
         async function verificarSupabase() {
             try {
                 const { error } = await supabase.from(TABELA).select('id').limit(1);
@@ -1508,6 +1343,9 @@
             }
         }
 
+        // ====================================================================
+        //  BUSCA DE PREÇOS NA API
+        // ====================================================================
         async function buscarPrecosAPI() {
             if (!navigator.onLine) {
                 atualizarStatusInternet(false);
@@ -1529,26 +1367,11 @@
                         const preco = item.regularMarketPrice || item.price || item.close;
                         if (preco && preco > 0) {
                             const ativoAcao = acoes.find(a => a.ticker === ticker);
-                            if (ativoAcao) {
-                                PRECOS_BASE[ticker] = preco;
-                                const novoPreco = calcularPrecoAcao(preco, selicAtual);
-                                precoHistorico[ativoAcao.ticker] = ativoAcao.preco;
-                                ativoAcao.preco = parseFloat(Math.max(novoPreco, 0.01).toFixed(2));
-                            }
+                            if (ativoAcao) { precoHistorico[ativoAcao.ticker] = ativoAcao.preco; ativoAcao.preco = parseFloat(preco.toFixed(2)); }
                             const ativoFII = fiis.find(a => a.ticker === ticker);
-                            if (ativoFII) {
-                                PRECOS_BASE[ticker] = preco;
-                                const novoPreco = calcularPrecoFII(preco, selicAtual);
-                                precoHistorico[ativoFII.ticker] = ativoFII.preco;
-                                ativoFII.preco = parseFloat(Math.max(novoPreco, 0.01).toFixed(2));
-                            }
+                            if (ativoFII) { precoHistorico[ativoFII.ticker] = ativoFII.preco; ativoFII.preco = parseFloat(preco.toFixed(2)); }
                             const ativoETF = etfs.find(a => a.ticker === ticker);
-                            if (ativoETF) {
-                                PRECOS_BASE[ticker] = preco;
-                                const novoPreco = calcularPrecoETF(preco, selicAtual);
-                                precoHistorico[ativoETF.ticker] = ativoETF.preco;
-                                ativoETF.preco = parseFloat(Math.max(novoPreco, 0.01).toFixed(2));
-                            }
+                            if (ativoETF) { precoHistorico[ativoETF.ticker] = ativoETF.preco; ativoETF.preco = parseFloat(preco.toFixed(2)); }
                         }
                     });
                     return true;
@@ -1560,9 +1383,12 @@
             }
         }
 
-        function variarPrecosOffline(ativos, min, max, fator = 2.0) {
+        // ====================================================================
+        //  VARIAÇÃO DE PREÇOS (OFFLINE)
+        // ====================================================================
+        function variarPrecosOffline(ativos, min, max, fator = 3.4) {
             ativos.forEach(ativo => {
-                const variacaoPerc = (Math.random() - 0.5) * fator;
+                let variacaoPerc = (Math.random() - 0.48) * fator;
                 let novoPreco = ativo.preco * (1 + variacaoPerc / 100);
                 if (novoPreco < min) novoPreco = min;
                 if (novoPreco > max) novoPreco = max;
@@ -1571,19 +1397,14 @@
             });
         }
 
-        function variarPrecosOfflineTodos() {
-            variarPrecosOffline(acoes, 1.0, 1500, 2.0);
-            variarPrecosOffline(fiis, 1.0, 500, 2.0);
-            variarPrecosOffline(etfs, 10, 1000, 1.8);
-            variarPrecosOffline(tesouros, 50, 1200, 1.0);
-            renderAcoes();
-            renderFIIs();
-            renderETFs();
-            renderTesouro();
-            atualizarCarteira();
-            atualizarPatrimonio();
-        }
+        function variarPrecosOfflineAcoes()   { variarPrecosOffline(acoes, 1.0, 1500, 3.4); renderAcoes(); }
+        function variarPrecosOfflineFIIs()    { variarPrecosOffline(fiis, 1.0, 500, 3.0); renderFIIs(); }
+        function variarPrecosOfflineETFs()    { variarPrecosOffline(etfs, 10, 1000, 2.5); renderETFs(); }
+        function variarPrecosTesouro()        { variarPrecosOffline(tesouros, 50, 1200, 1.3); renderTesouro(); }
 
+        // ====================================================================
+        //  FUNÇÕES DE COMPRA / VENDA (COM TOAST)
+        // ====================================================================
         window.comprarAtivo = async function(ticker) {
             const ativo = todosAtivos.find(a => a.ticker === ticker);
             if (!ativo) return;
@@ -1626,10 +1447,14 @@
             }
         };
 
+        // ====================================================================
+        //  FUNÇÕES DE POUPANÇA
+        // ====================================================================
         function aplicarPoupanca() {
             let valorAplicar = getValorInput();
             if (valorAplicar <= 0) {
                 mostrarToast('Digite um valor válido para aplicar (maior que zero).', 'atencao', '⚠️ Valor Inválido');
+                registrar(`⚠️ Digite um valor válido para aplicar (maior que zero).`, "operacao");
                 return;
             }
             if (saldo >= valorAplicar) {
@@ -1643,6 +1468,7 @@
             } else {
                 const falta = valorAplicar - saldo;
                 mostrarToast(`Saldo insuficiente! Faltam ${formatarMoeda(falta)} para aplicar.`, 'erro', '❌ Saldo Insuficiente');
+                registrar(`❌ Saldo insuficiente para aplicar ${formatarMoeda(valorAplicar)}.`, "operacao");
             }
         }
 
@@ -1650,6 +1476,7 @@
             let valorResgate = getValorInput();
             if (valorResgate <= 0) {
                 mostrarToast('Digite um valor válido para resgatar (maior que zero).', 'atencao', '⚠️ Valor Inválido');
+                registrar(`⚠️ Digite um valor válido para resgatar (maior que zero).`, "operacao");
                 return;
             }
             if (saldoPoupanca >= valorResgate) {
@@ -1664,23 +1491,29 @@
             } else {
                 const falta = valorResgate - saldoPoupanca;
                 mostrarToast(`Saldo na poupança insuficiente! Faltam ${formatarMoeda(falta)}.`, 'erro', '❌ Saldo Insuficiente');
+                registrar(`❌ Saldo insuficiente na poupança para resgatar ${formatarMoeda(valorResgate)}.`, "operacao");
             }
         }
 
         function renderPoupanca() {
             if (saldoPoupanca > 0) {
-                const rendimento = saldoPoupanca * taxaPoupancaMensal;
+                const taxa = 0.006;
+                const rendimento = saldoPoupanca * taxa;
                 saldoPoupanca = parseFloat((saldoPoupanca + rendimento).toFixed(2));
                 rendimentosPoupancaAcumulados += rendimento;
                 rendimentosPoupancaAcumulados = parseFloat(rendimentosPoupancaAcumulados.toFixed(2));
-                if (rendimento > 0.001) {
-                    registrar(`🏦 POUPANÇA RENDEU! Rendimento de ${formatarMoeda(rendimento)}.`, "poupanca");
+                registrar(`🏦 POUPANÇA RENDEU 0,6%! Rendimento de ${formatarMoeda(rendimento)}.`, "poupanca");
+                if (rendimento > 0.01) {
+                    mostrarToast(`Rendimento de ${formatarMoeda(rendimento)} na Poupança!`, 'sucesso', '💰 Rendimento Creditado');
                 }
                 salvarDadosNoSupabase();
                 atualizarTudo();
             }
         }
 
+        // ====================================================================
+        //  FUNÇÕES DE PROVENTOS
+        // ====================================================================
         function distribuirProventos(ativos, nomeCategoria) {
             let total = 0, detalhes = [];
             for (let ticker in carteira) {
@@ -1722,9 +1555,13 @@
                 atualizarTudo();
             } else {
                 mostrarToast('Nenhum provento acumulado para transferir.', 'atencao', '⚠️ Sem Proventos');
+                registrar(`⚠️ Nenhum provento acumulado.`, "operacao");
             }
         }
 
+        // ====================================================================
+        //  RENDERIZAÇÃO DAS TABELAS
+        // ====================================================================
         function calcularMetricas(ativo) {
             const precoAntigo = precoHistorico[ativo.ticker] || ativo.preco;
             const variacao = precoAntigo > 0 ? ((ativo.preco - precoAntigo) / precoAntigo) * 100 : 0;
@@ -1733,33 +1570,14 @@
             return { variacao, dyAnual, rentabilidade };
         }
 
-        function getSelicEmoji() {
-            if (selicAtual >= 13.0) return '🔴';
-            else if (selicAtual < 10.5) return '🟢';
-            else return '🟡';
-        }
-
-        function getPrecoColor(selic, tipo = 'normal') {
-            if (tipo === 'inverso') {
-                if (selic >= 13.0) return 'var(--neon-green)';
-                else if (selic < 10.5) return '#ef4444';
-                else return '#f59e0b';
-            }
-            if (selic >= 13.0) return '#ef4444';
-            else if (selic < 10.5) return 'var(--neon-green)';
-            else return '#f59e0b';
-        }
-
         function renderAcoes() {
             let html = "";
             acoes.forEach(a => {
                 const { variacao, dyAnual, rentabilidade } = calcularMetricas(a);
                 const variacaoClass = variacao >= 0 ? 'indicator-green' : 'indicator-red';
-                const emoji = getSelicEmoji();
-                const cor = getPrecoColor(selicAtual);
                 html += `<tr>
-                    <td style="font-weight:600; color: var(--neon-blue);">${emoji} ${a.ticker}</td>
-                    <td style="color: ${cor}; font-weight: 700;">${a.preco.toFixed(2)}</td>
+                    <td style="font-weight:600; color: var(--neon-blue);">${a.ticker}</td>
+                    <td style="color: var(--neon-green);">${a.preco.toFixed(2)}</td>
                     <td><span class="metric-cell ${rentabilidade >= 0 ? 'indicator-green' : 'indicator-red'}">${rentabilidade.toFixed(2)}%</span></td>
                     <td><span class="metric-cell" style="color: #f59e0b;">${dyAnual.toFixed(2)}%</span></td>
                     <td><span class="metric-cell ${variacaoClass}">${variacao.toFixed(2)}%</span></td>
@@ -1775,11 +1593,9 @@
             fiis.forEach(a => {
                 const { variacao, dyAnual, rentabilidade } = calcularMetricas(a);
                 const variacaoClass = variacao >= 0 ? 'indicator-green' : 'indicator-red';
-                const emoji = getSelicEmoji();
-                const cor = getPrecoColor(selicAtual);
                 html += `<tr>
-                    <td style="font-weight:600; color: var(--neon-blue);">${emoji} ${a.ticker}</td>
-                    <td style="color: ${cor}; font-weight: 700;">${a.preco.toFixed(2)}</td>
+                    <td style="font-weight:600; color: var(--neon-blue);">${a.ticker}</td>
+                    <td style="color: var(--neon-green);">${a.preco.toFixed(2)}</td>
                     <td><span class="metric-cell ${rentabilidade >= 0 ? 'indicator-green' : 'indicator-red'}">${rentabilidade.toFixed(2)}%</span></td>
                     <td><span class="metric-cell" style="color: #f59e0b;">${dyAnual.toFixed(2)}%</span></td>
                     <td><span class="metric-cell ${variacaoClass}">${variacao.toFixed(2)}%</span></td>
@@ -1795,11 +1611,9 @@
             etfs.forEach(a => {
                 const { variacao, dyAnual, rentabilidade } = calcularMetricas(a);
                 const variacaoClass = variacao >= 0 ? 'indicator-green' : 'indicator-red';
-                const emoji = getSelicEmoji();
-                const cor = getPrecoColor(selicAtual);
                 html += `<tr>
-                    <td style="font-weight:600; color: var(--neon-blue);">${emoji} ${a.ticker}</td>
-                    <td style="color: ${cor}; font-weight: 700;">${a.preco.toFixed(2)}</td>
+                    <td style="font-weight:600; color: var(--neon-blue);">${a.ticker}</td>
+                    <td style="color: var(--neon-green);">${a.preco.toFixed(2)}</td>
                     <td><span class="metric-cell ${rentabilidade >= 0 ? 'indicator-green' : 'indicator-red'}">${rentabilidade.toFixed(2)}%</span></td>
                     <td><span class="metric-cell" style="color: #f59e0b;">${dyAnual.toFixed(2)}%</span></td>
                     <td><span class="metric-cell ${variacaoClass}">${variacao.toFixed(2)}%</span></td>
@@ -1815,23 +1629,10 @@
             tesouros.forEach(a => {
                 const { variacao, rentabilidade } = calcularMetricas(a);
                 const variacaoClass = variacao >= 0 ? 'indicator-green' : 'indicator-red';
-                const emoji = getSelicEmoji();
-                let cor = getPrecoColor(selicAtual);
-                let tipoDisplay = '';
-                
-                if (a.ticker === 'TESOURO SELIC') {
-                    cor = getPrecoColor(selicAtual, 'inverso');
-                    tipoDisplay = '📈 Rende com SELIC';
-                } else if (a.ticker === 'TESOURO IPCA+') {
-                    tipoDisplay = '📉 Marcação';
-                } else if (a.ticker === 'TESOURO PREFIXADO') {
-                    tipoDisplay = '📉 Marcação';
-                }
-                
                 html += `<tr>
-                    <td style="font-weight:600; color: var(--neon-blue);">${emoji} ${a.ticker}</td>
-                    <td style="color: #8a99ad; font-size: 0.8rem;">${a.vencimento} ${tipoDisplay}</td>
-                    <td style="color: ${cor}; font-weight: 700;">${a.preco.toFixed(2)}</td>
+                    <td style="font-weight:600; color: var(--neon-blue);">${a.ticker}</td>
+                    <td style="color: #8a99ad;">${a.vencimento}</td>
+                    <td style="color: #f59e0b;">${a.preco.toFixed(2)}</td>
                     <td><span class="metric-cell ${rentabilidade >= 0 ? 'indicator-green' : 'indicator-red'}">${rentabilidade.toFixed(2)}%</span></td>
                     <td><span class="metric-cell ${variacaoClass}">${variacao.toFixed(2)}%</span></td>
                     <td><button class="buy" onclick="comprarAtivo('${a.ticker}')">Comprar 1</button></td>
@@ -1909,6 +1710,8 @@
             document.getElementById("investido").innerHTML = `${totalCustoInvestido.toFixed(2)} <span class="moeda-simbolo">${MOEDA}</span>`;
             document.getElementById("proventosAcumulados").innerHTML = `${proventosPendentes.toFixed(2)} <span class="moeda-simbolo">${MOEDA}</span>`;
             document.getElementById("saldoPoupanca").innerHTML = `${saldoPoupanca.toFixed(2)} <span class="moeda-simbolo">${MOEDA}</span>`;
+            
+            // Atualiza o saldo no perfil do usuário
             document.getElementById("userSaldoDisplay").textContent = `${saldo.toFixed(2)} ${MOEDA}`;
         }
 
@@ -1921,6 +1724,9 @@
             atualizarPatrimonio();
         }
 
+        // ====================================================================
+        //  LIMPAR JOGO
+        // ====================================================================
         function limparJogo() {
             if (!confirm('⚠️ Tem certeza que deseja limpar o jogo?')) return;
             initEstruturas();
@@ -1929,14 +1735,15 @@
             saldoPoupanca = 0.00;
             rendimentosPoupancaAcumulados = 0.0;
 
-            Object.keys(PRECOS_BASE).forEach(key => {
-                const ativo = todosAtivos.find(a => a.ticker === key);
-                if (ativo) {
-                    ativo.preco = PRECOS_BASE[key];
-                }
-            });
-
-            atualizarTodosPrecos(selicAtual);
+            const precosAcoes = [34.50, 58.90, 31.20];
+            acoes.forEach((a, idx) => a.preco = precosAcoes[idx]);
+            const precosFIIs = [9.90, 98.40, 156.00];
+            fiis.forEach((a, idx) => a.preco = precosFIIs[idx]);
+            const precosETFs = [121.00, 330.00];
+            etfs.forEach((a, idx) => a.preco = precosETFs[idx]);
+            tesouros[0].preco = 100.50;
+            tesouros[1].preco = 280.30;
+            tesouros[2].preco = 850.00;
 
             document.getElementById("historico").innerHTML = "";
             registrar('🔄 Jogo resetado!');
@@ -1945,6 +1752,9 @@
             atualizarTudo();
         }
 
+        // ====================================================================
+        //  SAIR
+        // ====================================================================
         function sair() {
             if (confirm('Tem certeza que deseja sair?')) {
                 localStorage.removeItem('usuario_logado');
@@ -1952,12 +1762,15 @@
             }
         }
 
+        // ====================================================================
+        //  SELIC
+        // ====================================================================
         function atualizarDisplaySelicBolsa(valor) {
-            const display = document.getElementById('selicDisplayBolsa');
-            const indicador = document.getElementById('selicIndicadorBolsa');
-            const impacto = document.getElementById('selicImpactoBolsa');
+            const display    = document.getElementById('selicDisplayBolsa');
+            const indicador  = document.getElementById('selicIndicadorBolsa');
+            const impacto    = document.getElementById('selicImpactoBolsa');
             const estrategia = document.getElementById('selicEstrategiaBolsa');
-            const badge = document.getElementById('selicBadge');
+            const badge      = document.getElementById('selicBadge');
 
             display.textContent = `${valor.toFixed(2)}%`;
             badge.textContent = `📈 SELIC: ${valor.toFixed(2)}%`;
@@ -1971,9 +1784,9 @@
             if (valor >= 13.0) {
                 classificacao = 'ALTA';
                 classe = 'selic-alta';
-                impactoTexto = '📉 Ações/ETFs/FIIs/Tesouro caem | CDB/Tesouro Selic sobem';
+                impactoTexto = '📉 FIIs em QUEDA - Oportunidade de COMPRA!';
                 impactoClasse = 'impacto-compra';
-                estrategiaTexto = '🛒 COMPRAR Ações/FIIs (baratos)';
+                estrategiaTexto = '🛒 COMPRAR FIIs';
             } else if (valor >= 10.5) {
                 classificacao = 'Média';
                 classe = 'selic-media';
@@ -1983,13 +1796,13 @@
             } else if (valor >= 8.0) {
                 classificacao = 'Média-Baixa';
                 classe = 'selic-media';
-                impactoTexto = '📈 Ações/ETFs/FIIs/Tesouro sobem | CDB/Tesouro Selic caem';
+                impactoTexto = '📈 FIIs em SUBIDA - Momento de COLHER!';
                 impactoClasse = 'impacto-venda';
-                estrategiaTexto = '💰 VENDER/COLHER lucros';
+                estrategiaTexto = '💰 VENDER/COLHER';
             } else {
                 classificacao = 'BAIXA';
                 classe = 'selic-baixa';
-                impactoTexto = '🚀 Ações/ETFs/FIIs/Tesouro em ALTA | CDB/Tesouro Selic em BAIXA';
+                impactoTexto = '🚀 FIIs em ALTA - Hora de VENDER!';
                 impactoClasse = 'impacto-venda';
                 estrategiaTexto = '💸 COLHER LUCROS';
             }
@@ -2015,6 +1828,7 @@
                         .select('selic')
                         .eq('id', 1)
                         .single();
+
                     if (error2) return null;
                     return data2?.selic ?? null;
                 }
@@ -2025,26 +1839,9 @@
             }
         }
 
-        async function atualizarComNovaSelic(novaSelic) {
-            if (novaSelic !== null && novaSelic !== undefined && novaSelic !== selicAtual) {
-                selicAtual = novaSelic;
-                atualizarTodosPrecos(selicAtual);
-                atualizarDisplaySelicBolsa(selicAtual);
-                atualizarTudo();
-                
-                let mensagem = `📊 SELIC alterada para ${selicAtual.toFixed(2)}% - Todos os ativos ajustados!`;
-                if (selicAtual >= 13.0) {
-                    mensagem = '🔴 SELIC ALTA! Ações e FIIs em QUEDA - Hora de COMPRAR!';
-                } else if (selicAtual < 10.5) {
-                    mensagem = '🟢 SELIC BAIXA! Ações e FIIs em ALTA - Hora de VENDER!';
-                } else {
-                    mensagem = '🟡 SELIC MÉDIA - Mercado estável';
-                }
-                registrar(`📊 SELIC alterada para ${selicAtual.toFixed(2)}% - Todos os preços ajustados!`, 'operacao');
-                mostrarToast(mensagem, 'atencao', '📊 SELIC Atualizada');
-            }
-        }
-
+        // ====================================================================
+        //  INICIALIZAÇÃO
+        // ====================================================================
         const usuarioLogado = localStorage.getItem('usuario_logado');
         if (!usuarioLogado) {
             window.location.href = 'login.html';
@@ -2052,48 +1849,52 @@
         let usuario = null;
         try {
             usuario = JSON.parse(usuarioLogado);
-            document.getElementById('userAvatar').textContent = usuario.nome ? usuario.nome.charAt(0).toUpperCase() : '👤';
+            const avatar = document.getElementById('userAvatar');
+            avatar.textContent = usuario.nome ? usuario.nome.charAt(0).toUpperCase() : '👤';
             document.getElementById('usuarioLogado').textContent = usuario.nome || usuario.login;
         } catch (e) {
             window.location.href = 'login.html';
         }
 
         initEstruturas();
+
         await carregarDadosDoSupabase();
 
         if (!dadosCarregados) {
-            Object.keys(PRECOS_BASE).forEach(key => {
-                const ativo = todosAtivos.find(a => a.ticker === key);
-                if (ativo) {
-                    ativo.preco = PRECOS_BASE[key];
-                }
-            });
+            const precosAcoes = [34.50, 58.90, 31.20];
+            acoes.forEach((a, idx) => a.preco = precosAcoes[idx]);
+            const precosFIIs = [9.90, 98.40, 156.00];
+            fiis.forEach((a, idx) => a.preco = precosFIIs[idx]);
+            const precosETFs = [121.00, 330.00];
+            etfs.forEach((a, idx) => a.preco = precosETFs[idx]);
+            tesouros[0].preco = 100.50;
+            tesouros[1].preco = 280.30;
+            tesouros[2].preco = 850.00;
         }
 
         document.getElementById("valorPoupanca").value = "10.00";
         atualizarStatusInternet(navigator.onLine);
         await verificarSupabase();
         await verificarAPI();
-
-        const selicSalva = await carregarSelicDoSupabaseBolsa();
-        if (selicSalva !== null && selicSalva !== undefined) {
-            selicAtual = selicSalva;
-        }
-
-        atualizarTodosPrecos(selicAtual);
-        atualizarDisplaySelicBolsa(selicAtual);
-
         if (navigator.onLine && apiOnline) await buscarPrecosAPI();
         atualizarTudo();
 
         document.getElementById("historico").innerHTML = "";
         registrar(`🚀 Jogo iniciado com SALDO DE ${formatarMoeda(saldo)}!`);
         registrar(`👤 Usuário: ${usuario.nome || usuario.login}`);
-        registrar(`📊 SELIC atual: ${selicAtual.toFixed(2)}% - Todos os ativos ajustados!`);
-        registrar("💰 Ações: proventos 60s | FIIs: 30s | ETFs: 90s | Tesouro: marcação 120s");
-        registrar(`🏦 Poupança: ${(taxaPoupancaMensal * 100).toFixed(2)}% ao mês`);
+        registrar("💰 Ações: proventos a cada 60s | FIIs: 30s | ETFs: 90s");
+        registrar("🏦 Poupança: rende 0,6% a cada 60s. Boa sorte!");
         if (supabaseOnline) registrar("☁️ Supabase disponível para salvar seu progresso!");
 
+        const selicSalva = await carregarSelicDoSupabaseBolsa();
+        if (selicSalva !== null && selicSalva !== undefined) {
+            selicAtual = selicSalva;
+        }
+        atualizarDisplaySelicBolsa(selicAtual);
+
+        // ====================================================================
+        //  EVENT LISTENERS
+        // ====================================================================
         document.getElementById("btnSair").addEventListener("click", sair);
         document.getElementById("btnLimparJogo").addEventListener("click", limparJogo);
         document.getElementById("btnTransferirProventos").addEventListener("click", transferirProventosParaSaldo);
@@ -2146,13 +1947,32 @@
             registrar('📡 Modo offline ativado.');
         });
 
+        // ====================================================================
+        //  INTERVALOS
+        // ====================================================================
         setInterval(() => {
             if (navigator.onLine && apiOnline) {
                 buscarPrecosAPI().then(() => atualizarTudo());
             } else {
-                variarPrecosOfflineTodos();
+                variarPrecosOfflineAcoes();
+                variarPrecosOfflineFIIs();
+                variarPrecosOfflineETFs();
+                variarPrecosTesouro();
+                atualizarCarteira();
+                atualizarPatrimonio();
             }
         }, 30000);
+
+        setInterval(() => {
+            if (!navigator.onLine || !apiOnline) {
+                variarPrecosOfflineAcoes();
+                variarPrecosOfflineFIIs();
+                variarPrecosOfflineETFs();
+                variarPrecosTesouro();
+                atualizarCarteira();
+                atualizarPatrimonio();
+            }
+        }, 10000);
 
         setInterval(() => {
             distribuirProventos(acoes, '📈 AÇÕES');
@@ -2172,7 +1992,10 @@
 
         setInterval(async () => {
             const selicSalva = await carregarSelicDoSupabaseBolsa();
-            await atualizarComNovaSelic(selicSalva);
+            if (selicSalva !== null && selicSalva !== undefined && selicSalva !== selicAtual) {
+                selicAtual = selicSalva;
+                atualizarDisplaySelicBolsa(selicAtual);
+            }
         }, 30000);
     </script>
 </body>
