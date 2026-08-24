@@ -832,7 +832,7 @@
     ============================================================ -->
     <div id="loginModal">
         <div class="modal-box">
-            <h2>🌽 Milharal</h2>
+            <h2>🌽 Fazenda MM</h2>
             <p class="sub"><i class="fas fa-seedling" style="color:#00ff66;"></i> Entre para salvar seu progresso</p>
             <div class="form-group">
                 <label>Usuário</label>
@@ -872,7 +872,7 @@
                 WATER_BOOST: 30,
                 BASE_GROWTH: 8,
                 INITIAL_SEEDS: 0,
-                INITIAL_SALDO: 50.00,
+                INITIAL_SALDO: 0.00,
                 INITIAL_BUCKETS: 0,
                 INITIAL_STOCK: 0,
                 CLEAR_COST: 5.00,
@@ -1011,9 +1011,8 @@
             function getSaldoTotal() {
                 return (milharal.saldo || 0) + (fazendinha.saldo || 0);
             }
-
             function atualizarSaldoGlobal() {
-                const total = getSaldoTotal();
+                const total = milharal.saldo || 0;  // Remove a soma com fazendinha
                 if (DOM.headerSaldo) DOM.headerSaldo.textContent = formatSaldo(total);
                 if (DOM.userBalance) DOM.userBalance.textContent = `💰 R$ ${formatSaldo(total)}`;
                 if (DOM.saldoDisplay) DOM.saldoDisplay.textContent = `R$ ${formatSaldo(milharal.saldo || 0)}`;
@@ -1789,7 +1788,7 @@
                     // Fazendinha
                     if (usuario.fazendinha_dados) {
                         const fd = usuario.fazendinha_dados;
-                        fazendinha.saldo = Number(fd.saldo ?? 50.00);
+                        fazendinha.saldo = Number(fd.saldo ?? 10.00);
                         if (fd.inventario) {
                             fazendinha.inventario = {
                                 sementes: fd.inventario.sementes || 0,

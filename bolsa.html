@@ -165,6 +165,35 @@
             flex-wrap: wrap;
         }
 
+        /* ---------- ESTATÍSTICAS RPG ---------- */
+        .lw-stats {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 12px 20px;
+            align-items: center;
+            background: rgba(18, 21, 32, 0.6);
+            padding: 6px 18px;
+            border-radius: 40px;
+            border: 1px solid var(--border-glow);
+            font-size: 0.75rem;
+            font-weight: 600;
+            color: #a0aec0;
+            font-family: 'Orbitron', sans-serif;
+        }
+
+        .lw-stats span {
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+
+        .lw-stats .hp-c { color: #ef4444; }
+        .lw-stats .mp-c { color: #3b82f6; }
+        .lw-stats .sm-c { color: #f59e0b; }
+        .lw-stats .atk-c { color: #f97316; }
+        .lw-stats .def-c { color: #22d3ee; }
+        .lw-stats .mag-c { color: #a855f7; }
+
         /* ---------- BOTÕES ---------- */
         .btn-bolsa {
             background: linear-gradient(135deg, #00f0ff, #7000ff);
@@ -524,66 +553,6 @@
             transform: scale(0.96);
         }
 
-        /* ---------- BOTÕES SUPABASE ---------- */
-        .btn-salvar {
-            background: linear-gradient(135deg, #3b82f6, #2563eb);
-            color: white;
-            border: none;
-            padding: 6px 16px;
-            border-radius: 40px;
-            font-weight: bold;
-            font-size: 0.7rem;
-            cursor: pointer;
-            transition: all 0.2s;
-            box-shadow: 0 0 10px rgba(59, 130, 246, 0.3);
-        }
-        .btn-salvar:hover { 
-            transform: scale(0.96);
-            box-shadow: 0 0 20px rgba(59, 130, 246, 0.5);
-        }
-
-        .btn-carregar {
-            background: linear-gradient(135deg, #8b5cf6, #7c3aed);
-            color: white;
-            border: none;
-            padding: 6px 16px;
-            border-radius: 40px;
-            font-weight: bold;
-            font-size: 0.7rem;
-            cursor: pointer;
-            transition: all 0.2s;
-            box-shadow: 0 0 10px rgba(139, 92, 246, 0.3);
-        }
-        .btn-carregar:hover { 
-            transform: scale(0.96);
-            box-shadow: 0 0 20px rgba(139, 92, 246, 0.5);
-        }
-
-        .btn-limpar {
-            background: linear-gradient(135deg, #ef4444, #dc2626);
-            color: white;
-            border: none;
-            padding: 6px 16px;
-            border-radius: 40px;
-            font-weight: bold;
-            font-size: 0.7rem;
-            cursor: pointer;
-            transition: all 0.2s;
-            box-shadow: 0 0 10px rgba(239, 68, 68, 0.3);
-        }
-        .btn-limpar:hover { 
-            transform: scale(0.96);
-            box-shadow: 0 0 20px rgba(239, 68, 68, 0.5);
-        }
-
-        .botoes-supabase {
-            display: flex;
-            gap: 8px;
-            flex-wrap: wrap;
-            align-items: center;
-            margin-top: 10px;
-        }
-
         /* ---------- SELIC ---------- */
         .selic-indicador { 
             display: inline-block; 
@@ -806,6 +775,12 @@
 
             .box h2 { font-size: 1.3rem; }
             .dashboard-header h1 { font-size: 1.8rem; }
+
+            .lw-stats {
+                font-size: 0.6rem;
+                padding: 4px 12px;
+                gap: 8px 14px;
+            }
         }
     </style>
 </head>
@@ -836,8 +811,15 @@
             </div>
         </div>
 
-
-
+        <!-- ========== ESTATÍSTICAS RPG ========== -->
+        <div class="lw-stats">
+            <span>❤️ HP<span class="hp-c" id="lwHp">100/100</span></span>
+            <span>💧 MANA<span class="mp-c" id="lwMp">50/50</span></span>
+            <span>⚡ STAMINA<span class="sm-c" id="lwSm">100/100</span></span>
+            <span>⚔️ FORCA<span class="atk-c" id="lwAtk">15</span></span>
+            <span>🛡️ DEFESA<span class="def-c" id="lwDef">10</span></span>
+            <span>🔮 MAGIA<span class="mag-c" id="lwMag">8</span></span>
+        </div>
 
         <div class="nav-buttons">
             <div class="user-profile">
@@ -964,17 +946,6 @@
         </div>
 
         <footer>💡 Saldo inicial: 0,00 Mumu • Ações: proventos 60s | FIIs: 30s | ETFs: 90s | Tesouro: marcação 120s | Poupança: 0,6%/60s</footer>
-
-        <!-- SUPABASE -->
-        <div class="card" style="padding: 12px 20px; margin-bottom: 20px; background: rgba(255,255,255,0.02);">
-            <div class="botoes-supabase">
-                <span style="font-weight: 600; color: #8a99ad; font-size: 0.85rem;">☁️ Supabase:</span>
-                <button class="btn-salvar" id="btnSalvarNoSupabase">💾 Salvar Jogo</button>
-                <button class="btn-carregar" id="btnCarregarDoSupabase">📂 Carregar Jogo</button>
-                <button class="btn-limpar" id="btnLimparJogo">🗑️ Limpar Jogo</button>
-                <span id="mensagemSupabase" style="font-size: 0.7rem; color: #5d7f9e; margin-left: 8px;"></span>
-            </div>
-        </div>
     </div>
 
     <!-- ========== TOAST CONTAINER ========== -->
@@ -996,7 +967,7 @@
         import { createClient } from '@supabase/supabase-js';
 
         // ====================================================================
-        //  CONFIGURAÇÕES
+        //  CONFIGURAÇÕES - USANDO APENAS A TABELA "Geral"
         // ====================================================================
         const SUPABASE_URL  = 'https://xrcxvizzdumcxbylmkvn.supabase.co';
         const SUPABASE_KEY  = 'sb_publishable_E-g3G3wW4EySbCsXLXp8KQ_FnmERMcD';
@@ -1005,6 +976,28 @@
         const BRAPI_TOKEN   = 'uFgACspaiXowFi5JF9UhUZ';
         const BRAPI_BASE    = 'https://brapi.dev/api';
         const MOEDA         = 'Mumu';
+
+        // ====================================================================
+        //  DADOS DO USUÁRIO (definido ANTES de ser usado)
+        // ====================================================================
+        const usuarioLogado = localStorage.getItem('usuario_logado');
+        if (!usuarioLogado) {
+            window.location.href = 'login.html';
+        }
+        
+        let usuario = null;
+        try {
+            usuario = JSON.parse(usuarioLogado);
+            if (!usuario || !usuario.id) {
+                throw new Error('Usuário inválido');
+            }
+            const avatar = document.getElementById('userAvatar');
+            avatar.textContent = usuario.nome ? usuario.nome.charAt(0).toUpperCase() : '👤';
+            document.getElementById('usuarioLogado').textContent = usuario.nome || usuario.login;
+        } catch (e) {
+            console.error('Erro ao parsear usuário:', e);
+            window.location.href = 'login.html';
+        }
 
         // ====================================================================
         //  TOAST / JANELA FLUTUANTE
@@ -1055,9 +1048,23 @@
         let rendimentosPoupancaAcumulados = 0.0;
         let apiOnline                  = false;
         let verificandoAPI             = false;
-        let supabaseOnline             = false;
+        let supabaseOnline             = true;
         let dadosCarregados            = false;
         let selicAtual                 = 10.75;
+
+        // RPG - Todos os atributos agora são salvos na tabela Geral
+        let nivel = 1;
+        let experiencia = 0;
+        let exp_proximo = 100;
+        let hp_max = 100;
+        let mp_max = 50;
+        let sm_max = 100;
+        let hp_atual = 100;
+        let mp_atual = 50;
+        let sm_atual = 100;
+        let ataque_base = 15;
+        let defesa_base = 10;
+        let magia_base = 8;
 
         // ====================================================================
         //  DADOS DOS ATIVOS
@@ -1144,14 +1151,14 @@
         }
 
         // ====================================================================
-        //  SUPABASE – CRUD
+        //  SUPABASE – CRUD (TUDO NA TABELA "Geral")
         // ====================================================================
         async function carregarDadosDoSupabase() {
             try {
                 const userId = usuario.id;
                 const { data, error } = await supabase
                     .from(TABELA)
-                    .select('saldo, saldo_poupanca, proventos_pendentes, carteira, preco_medio_compra, proventos_por_ativo')
+                    .select('*')
                     .eq('id', userId)
                     .single();
 
@@ -1164,10 +1171,12 @@
                 }
 
                 if (data) {
-                    saldo              = data.saldo              ?? 0.00;
-                    saldoPoupanca      = data.saldo_poupanca      ?? 0.00;
-                    proventosPendentes = data.proventos_pendentes ?? 0.0;
+                    // ===== FINANCEIRO =====
+                    saldo              = data.saldo !== null && data.saldo !== undefined ? parseFloat(data.saldo) : 0.00;
+                    saldoPoupanca      = data.saldo_poupanca !== null && data.saldo_poupanca !== undefined ? parseFloat(data.saldo_poupanca) : 0.00;
+                    proventosPendentes = data.proventos_pendentes !== null && data.proventos_pendentes !== undefined ? parseFloat(data.proventos_pendentes) : 0.0;
 
+                    // ===== CARTEIRA =====
                     if (data.carteira) {
                         Object.keys(data.carteira).forEach(key => {
                             if (carteira[key] !== undefined) carteira[key] = data.carteira[key] || 0;
@@ -1184,8 +1193,30 @@
                         });
                     }
 
+                    // ===== RPG =====
+                    nivel = data.nivel || 1;
+                    experiencia = data.experiencia || 0;
+                    exp_proximo = data.exp_proximo || 100;
+                    hp_max = data.hp_max || 100;
+                    mp_max = data.mp_max || 50;
+                    sm_max = data.sm_max || 40;
+                    hp_atual = data.hp_atual || 100;
+                    mp_atual = data.mp_atual || 50;
+                    sm_atual = data.sm_atual || 100;
+                    ataque_base = data.ataque_base || 15;
+                    defesa_base = data.defesa_base || 10;
+                    magia_base = data.magia_base || 8;
+
+                    // ===== SELIC =====
+                    if (data.selic) {
+                        selicAtual = parseFloat(data.selic);
+                    }
+
                     dadosCarregados = true;
                     registrar('📂 Dados carregados do Supabase!', 'operacao');
+                    
+                    atualizarDisplayRPG();
+                    
                     return true;
                 }
                 return false;
@@ -1198,24 +1229,39 @@
         async function criarRegistroInicial(userId) {
             try {
                 const estadoInicial = {
+                    id: userId,
                     saldo: 0.00,
                     saldo_poupanca: 0.00,
                     proventos_pendentes: 0.0,
                     carteira: {},
                     preco_medio_compra: {},
-                    proventos_por_ativo: {}
+                    proventos_por_ativo: {},
+                    nivel: 1,
+                    experiencia: 0,
+                    exp_proximo: 100,
+                    hp_max: 100,
+                    mp_max: 50,
+                    sm_max: 40,
+                    hp_atual: 100,
+                    mp_atual: 50,
+                    sm_atual: 100,
+                    ataque_base: 15,
+                    defesa_base: 10,
+                    magia_base: 8,
+                    selic: 10.75
                 };
 
                 const { error } = await supabase
                     .from(TABELA)
-                    .update(estadoInicial)
-                    .eq('id', userId);
+                    .insert(estadoInicial);
 
                 if (error) throw error;
+                
                 saldo = 0.00;
                 saldoPoupanca = 0.00;
                 proventosPendentes = 0.0;
                 dadosCarregados = true;
+                
                 registrar('📂 Registro inicial criado no Supabase!', 'operacao');
                 return true;
             } catch (error) {
@@ -1230,13 +1276,25 @@
                 const { error } = await supabase
                     .from(TABELA)
                     .update({
-                        saldo,
-                        saldo_poupanca: saldoPoupanca,
-                        proventos_pendentes: proventosPendentes,
-                        carteira,
+                        saldo: parseFloat(saldo.toFixed(2)),
+                        saldo_poupanca: parseFloat(saldoPoupanca.toFixed(2)),
+                        proventos_pendentes: parseFloat(proventosPendentes.toFixed(2)),
+                        carteira: carteira,
                         preco_medio_compra: precoMedioCompra,
                         proventos_por_ativo: proventosPorAtivo,
-                        updated_at: new Date().toISOString()
+                        nivel: nivel,
+                        experiencia: experiencia,
+                        exp_proximo: exp_proximo,
+                        hp_max: hp_max,
+                        mp_max: mp_max,
+                        sm_max: sm_max,
+                        hp_atual: hp_atual,
+                        mp_atual: mp_atual,
+                        sm_atual: sm_atual,
+                        ataque_base: ataque_base,
+                        defesa_base: defesa_base,
+                        magia_base: magia_base,
+                        selic: parseFloat(selicAtual.toFixed(2))
                     })
                     .eq('id', userId);
 
@@ -1246,6 +1304,18 @@
                 console.error('Erro ao salvar dados:', error);
                 return false;
             }
+        }
+
+        // ====================================================================
+        //  FUNÇÕES RPG
+        // ====================================================================
+        function atualizarDisplayRPG() {
+            document.getElementById('lwHp').textContent = `${hp_atual}/${hp_max}`;
+            document.getElementById('lwMp').textContent = `${mp_atual}/${mp_max}`;
+            document.getElementById('lwSm').textContent = `${sm_atual}/${sm_max}`;
+            document.getElementById('lwAtk').textContent = ataque_base;
+            document.getElementById('lwDef').textContent = defesa_base;
+            document.getElementById('lwMag').textContent = magia_base;
         }
 
         // ====================================================================
@@ -1411,6 +1481,7 @@
             const custo = ativo.preco;
             if (saldo >= custo) {
                 saldo -= custo;
+                saldo = parseFloat(saldo.toFixed(2));
                 const qtdAtual = carteira[ticker] || 0;
                 const precoMedAtual = precoMedioCompra[ticker] || 0;
                 let novoPrecoMedio = qtdAtual === 0 ? custo : ((precoMedAtual * qtdAtual) + custo) / (qtdAtual + 1);
@@ -1459,6 +1530,7 @@
             }
             if (saldo >= valorAplicar) {
                 saldo -= valorAplicar;
+                saldo = parseFloat(saldo.toFixed(2));
                 saldoPoupanca += valorAplicar;
                 saldoPoupanca = parseFloat(saldoPoupanca.toFixed(2));
                 registrar(`🏦 APLICAÇÃO POUPANÇA: ${formatarMoeda(valorAplicar)} transferidos do Saldo para a Poupança.`, "poupanca");
@@ -1711,7 +1783,6 @@
             document.getElementById("proventosAcumulados").innerHTML = `${proventosPendentes.toFixed(2)} <span class="moeda-simbolo">${MOEDA}</span>`;
             document.getElementById("saldoPoupanca").innerHTML = `${saldoPoupanca.toFixed(2)} <span class="moeda-simbolo">${MOEDA}</span>`;
             
-            // Atualiza o saldo no perfil do usuário
             document.getElementById("userSaldoDisplay").textContent = `${saldo.toFixed(2)} ${MOEDA}`;
         }
 
@@ -1722,34 +1793,7 @@
             renderTesouro();
             atualizarCarteira();
             atualizarPatrimonio();
-        }
-
-        // ====================================================================
-        //  LIMPAR JOGO
-        // ====================================================================
-        function limparJogo() {
-            if (!confirm('⚠️ Tem certeza que deseja limpar o jogo?')) return;
-            initEstruturas();
-            saldo = 0.00;
-            proventosPendentes = 0.0;
-            saldoPoupanca = 0.00;
-            rendimentosPoupancaAcumulados = 0.0;
-
-            const precosAcoes = [34.50, 58.90, 31.20];
-            acoes.forEach((a, idx) => a.preco = precosAcoes[idx]);
-            const precosFIIs = [9.90, 98.40, 156.00];
-            fiis.forEach((a, idx) => a.preco = precosFIIs[idx]);
-            const precosETFs = [121.00, 330.00];
-            etfs.forEach((a, idx) => a.preco = precosETFs[idx]);
-            tesouros[0].preco = 100.50;
-            tesouros[1].preco = 280.30;
-            tesouros[2].preco = 850.00;
-
-            document.getElementById("historico").innerHTML = "";
-            registrar('🔄 Jogo resetado!');
-            mostrarToast('Jogo resetado com sucesso!', 'sucesso', '🔄 Reset');
-            salvarDadosNoSupabase();
-            atualizarTudo();
+            atualizarDisplayRPG();
         }
 
         // ====================================================================
@@ -1814,48 +1858,35 @@
             estrategia.textContent = estrategiaTexto;
         }
 
-        async function carregarSelicDoSupabaseBolsa() {
+        async function carregarSelicDoSupabase() {
             try {
                 const { data, error } = await supabase
                     .from(TABELA)
                     .select('selic')
-                    .eq('id', 1)
+                    .eq('id', usuario.id)
                     .single();
 
                 if (error) {
-                    const { data: data2, error: error2 } = await supabase
-                        .from('Configuracoes')
+                    const { data: dataAdmin, error: errorAdmin } = await supabase
+                        .from(TABELA)
                         .select('selic')
-                        .eq('id', 1)
+                        .limit(1)
                         .single();
-
-                    if (error2) return null;
-                    return data2?.selic ?? null;
+                    
+                    if (errorAdmin) return 10.75;
+                    return dataAdmin?.selic ?? 10.75;
                 }
-                return data?.selic ?? null;
+                
+                return data?.selic ?? 10.75;
             } catch (error) {
                 console.error('Erro ao carregar SELIC:', error);
-                return null;
+                return 10.75;
             }
         }
 
         // ====================================================================
         //  INICIALIZAÇÃO
         // ====================================================================
-        const usuarioLogado = localStorage.getItem('usuario_logado');
-        if (!usuarioLogado) {
-            window.location.href = 'login.html';
-        }
-        let usuario = null;
-        try {
-            usuario = JSON.parse(usuarioLogado);
-            const avatar = document.getElementById('userAvatar');
-            avatar.textContent = usuario.nome ? usuario.nome.charAt(0).toUpperCase() : '👤';
-            document.getElementById('usuarioLogado').textContent = usuario.nome || usuario.login;
-        } catch (e) {
-            window.location.href = 'login.html';
-        }
-
         initEstruturas();
 
         await carregarDadosDoSupabase();
@@ -1877,6 +1908,7 @@
         await verificarSupabase();
         await verificarAPI();
         if (navigator.onLine && apiOnline) await buscarPrecosAPI();
+        
         atualizarTudo();
 
         document.getElementById("historico").innerHTML = "";
@@ -1886,7 +1918,7 @@
         registrar("🏦 Poupança: rende 0,6% a cada 60s. Boa sorte!");
         if (supabaseOnline) registrar("☁️ Supabase disponível para salvar seu progresso!");
 
-        const selicSalva = await carregarSelicDoSupabaseBolsa();
+        const selicSalva = await carregarSelicDoSupabase();
         if (selicSalva !== null && selicSalva !== undefined) {
             selicAtual = selicSalva;
         }
@@ -1896,41 +1928,9 @@
         //  EVENT LISTENERS
         // ====================================================================
         document.getElementById("btnSair").addEventListener("click", sair);
-        document.getElementById("btnLimparJogo").addEventListener("click", limparJogo);
         document.getElementById("btnTransferirProventos").addEventListener("click", transferirProventosParaSaldo);
         document.getElementById("btnAplicarPoupanca").addEventListener("click", aplicarPoupanca);
         document.getElementById("btnResgatarPoupanca").addEventListener("click", resgatarPoupanca);
-
-        document.getElementById("btnSalvarNoSupabase").addEventListener("click", async () => {
-            const mensagemEl = document.getElementById('mensagemSupabase');
-            mensagemEl.textContent = '⏳ Salvando...';
-            const sucesso = await salvarDadosNoSupabase();
-            if (sucesso) {
-                mensagemEl.textContent = '✅ Salvo!';
-                registrar('💾 Dados salvos manualmente!', 'operacao');
-                mostrarToast('Jogo salvo com sucesso!', 'sucesso', '💾 Salvo');
-            } else {
-                mensagemEl.textContent = '❌ Erro ao salvar!';
-                mostrarToast('Erro ao salvar o jogo.', 'erro', '❌ Erro');
-            }
-            setTimeout(() => { mensagemEl.textContent = ''; }, 3000);
-        });
-
-        document.getElementById("btnCarregarDoSupabase").addEventListener("click", async () => {
-            const mensagemEl = document.getElementById('mensagemSupabase');
-            mensagemEl.textContent = '⏳ Carregando...';
-            const sucesso = await carregarDadosDoSupabase();
-            if (sucesso) {
-                mensagemEl.textContent = '✅ Carregado!';
-                registrar('📂 Dados carregados manualmente!', 'operacao');
-                mostrarToast('Jogo carregado com sucesso!', 'sucesso', '📂 Carregado');
-                atualizarTudo();
-            } else {
-                mensagemEl.textContent = '❌ Erro ao carregar!';
-                mostrarToast('Erro ao carregar o jogo.', 'erro', '❌ Erro');
-            }
-            setTimeout(() => { mensagemEl.textContent = ''; }, 3000);
-        });
 
         window.addEventListener('online', async () => {
             atualizarStatusInternet(true);
@@ -1991,7 +1991,7 @@
         setInterval(async () => { await verificarSupabase(); }, 60000);
 
         setInterval(async () => {
-            const selicSalva = await carregarSelicDoSupabaseBolsa();
+            const selicSalva = await carregarSelicDoSupabase();
             if (selicSalva !== null && selicSalva !== undefined && selicSalva !== selicAtual) {
                 selicAtual = selicSalva;
                 atualizarDisplaySelicBolsa(selicAtual);
