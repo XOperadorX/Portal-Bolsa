@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
+    <title>Bolsa - BAEP Investimentos</title>
+
+    <!-- ========== FONTES ========== -->
+    <link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@400;600;700&family=Orbitron:wght@400;700;900&display=swap" rel="stylesheet">
+
+    <!-- ========== ESTILOS ========== -->
+    <link rel="stylesheet" href="style/bolsa.css">
+</head>
+
+<body>
+    <!-- ========== BARRA DE NAVEGAÇÃO ========== -->
+    <nav class="nav-bar">
+        <div class="nav-brand">
+            🏦 <span>BAEP</span> Investimentos
+            <span class="badge-tempo">⏱️ Ações:60s | FIIs:30s | ETFs:90s | Tesouro:120s</span>
+            <span class="badge-tempo" id="selicBadge" style="border-color: #f59e0b; color: #f59e0b;">📈 SELIC: 10,75%</span>
+        </div>
+
+        <div class="nav-links">
+            <div class="status-container">
+                <span id="statusInternet" class="status-item status-online">
+                    <span class="status-dot online"></span>
+                    <span id="statusInternetTexto">🌐 Net</span>
+                </span>
+                <span id="statusAPI" class="status-item status-checking">
+                    <span class="status-dot"></span>
+                    <span id="statusAPITexto">📊 API</span>
+                </span>
+                <span id="statusSupabase" class="status-item status-checking">
+                    <span class="status-dot"></span>
+                    <span id="statusSupabaseTexto">☁️ Supabase</span>
+                </span>
+            </div>
+        </div>
+
+        <!-- ========== ESTATÍSTICAS RPG ========== -->
+        <div class="lw-stats">
+            <span>❤️ HP<span class="hp-c" id="lwHp">100/100</span></span>
+            <span>💧 MANA<span class="mp-c" id="lwMp">50/50</span></span>
+            <span>⚡ STAMINA<span class="sm-c" id="lwSm">100/100</span></span>
+            <span>⚔️ FORCA<span class="atk-c" id="lwAtk">15</span></span>
+            <span>🛡️ DEFESA<span class="def-c" id="lwDef">10</span></span>
+            <span>🔮 MAGIA<span class="mag-c" id="lwMag">8</span></span>
+        </div>
+
+        <div class="nav-buttons">
+            <div class="user-profile">
+                <div class="user-avatar" id="userAvatar">👤</div>
+                <div class="user-info">
+                    <span class="user-nick" id="usuarioLogado">Carregando...</span>
+                    <span class="user-balance" id="userSaldoDisplay">0,00 Mumu</span>
+                </div>
+            </div>
+            <button class="btn-sair" id="btnSair">🚪 Sair</button>
+            <a href="admin.html" class="btn-bolsa" style="background: linear-gradient(135deg, #7000ff, #8b5cf6);">👑 ADM</a>
+            <a href="../../dashboard.html" class="btn-bolsa" style="background: linear-gradient(135deg, #00ff66, #00cc55); color: #0a0b10;">📊 Dashboard</a>
+        </div>
+    </nav>
+
+    <!-- ========== CONTEÚDO ========== -->
+    <div class="container">
+        <!-- INFO -->
+        <div class="info">
+            <div class="box"><h3>💵 Saldo Disponível</h3><h2 id="saldo">0,00 <span class="moeda-simbolo">Mumu</span></h2></div>
+            <div class="box"><h3>🏆 Patrimônio Total</h3><h2 id="patrimonio">0,00 <span class="moeda-simbolo">Mumu</span></h2></div>
+            <div class="box"><h3>📊 Total Investido</h3><h2 id="investido">0,00 <span class="moeda-simbolo">Mumu</span></h2></div>
+            <div class="box">
+                <h3>🎁 Proventos Recebidos</h3>
+                <h2 id="proventosAcumulados">0,00 <span class="moeda-simbolo">Mumu</span></h2>
+                <button class="btn-transferir" id="btnTransferirProventos">💰 Transferir para Saldo</button>
+            </div>
+        </div>
+
+        <!-- SELIC -->
+        <div class="card" style="background: rgba(245, 158, 11, 0.05); border-left: 6px solid #f59e0b;">
+            <h2 style="border-left-color: #f59e0b;">📈 TAXA SELIC <span class="badge-categoria">Indicador de Mercado</span></h2>
+            <div style="display: flex; flex-wrap: wrap; gap: 20px; align-items: center; justify-content: space-between;">
+                <div>
+                    <p style="font-size: 2.5rem; font-weight: 800; color: #f59e0b; text-shadow: 0 0 20px rgba(245, 158, 11, 0.2);" id="selicDisplayBolsa">10,75%</p>
+                    <span class="selic-indicador" id="selicIndicadorBolsa" style="padding: 4px 16px; border-radius: 30px; font-weight: 700; font-size: 0.9rem; background: rgba(245, 158, 11, 0.2); color: #f59e0b; border: 1px solid #f59e0b;">Média</span>
+                </div>
+                <div style="flex: 1; min-width: 200px;">
+                    <div id="selicImpactoBolsa" class="selic-impacto impacto-neutral" style="padding: 12px 16px; border-radius: 12px; font-weight: 600; font-size: 0.95rem;">⚖️ Mercado estável</div>
+                    <p style="font-size: 0.8rem; color: #8a99ad; margin-top: 8px;">
+                        💡 <strong style="color: #f59e0b;">SELIC alta</strong> → FIIs em queda (compre barato) |
+                        <strong style="color: var(--neon-green);">SELIC baixa</strong> → FIIs em alta (venda/colha)
+                    </p>
+                </div>
+                <div style="text-align: center; background: rgba(255,255,255,0.03); padding: 12px 20px; border-radius: 16px; border: 1px solid var(--border-glow);">
+                    <p style="font-size: 0.7rem; color: #8a99ad;">Estratégia</p>
+                    <p style="font-size: 1.1rem; font-weight: 700; color: #f59e0b;" id="selicEstrategiaBolsa">🔍 Aguardar</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- POUPANÇA -->
+        <div class="card poupanca-destaque">
+            <h2>🏦 POUPANÇA BAEP <span class="badge-categoria">Rendimento 0,6% a cada 60s</span></h2>
+            <div class="poupanca-flex">
+                <div class="poupanca-saldo">💰 Saldo na Poupança: <strong id="saldoPoupanca">0,00 <span class="moeda-simbolo">Mumu</span></strong></div>
+                <div class="poupanca-acoes">
+                    <div class="grupo-input">
+                        <label>Mumu</label>
+                        <input type="number" id="valorPoupanca" class="input-poupanca" placeholder="Valor" step="0.01" min="0.01" value="10.00">
+                    </div>
+                    <button class="btn-poupanca" id="btnAplicarPoupanca">📈 Aplicar</button>
+                    <button class="btn-poupanca" id="btnResgatarPoupanca" style="background: linear-gradient(135deg, #ef4444, #dc2626); color: white; box-shadow: 0 0 15px rgba(239, 68, 68, 0.3);">🏧 Resgatar</button>
+                </div>
+                <div class="valor-rendimento">
+                    ⚡ Rendimento de 0,6% sobre o saldo a cada 60s<br>
+                    <span style="font-size:0.7rem; color: #8a99ad;">Ex: 10,00 Mumu → 10,06 Mumu</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- AÇÕES -->
+        <div class="card">
+            <h2>📈 AÇÕES <span class="badge-categoria">Proventos a cada 60s</span></h2>
+            <div class="table-wrapper">
+                <table><thead><tr><th>Ativo</th><th>Preço (Mumu)</th><th>Rentab. %</th><th>DY Anual %</th><th>Variação %</th><th>Comprar</th><th>Vender</th></tr></thead>
+                <tbody id="tabelaAcoes"></tbody></table>
+            </div>
+        </div>
+
+        <!-- FIIs -->
+        <div class="card">
+            <h2>🏢 FUNDOS IMOBILIÁRIOS (FIIs) <span class="badge-categoria">Proventos a cada 30s</span></h2>
+            <div class="table-wrapper">
+                <table><thead><tr><th>Ativo</th><th>Preço (Mumu)</th><th>Rentab. %</th><th>DY Anual %</th><th>Variação %</th><th>Comprar</th><th>Vender</th></tr></thead>
+                <tbody id="tabelaFIIs"></tbody></table>
+            </div>
+        </div>
+
+        <!-- ETFs -->
+        <div class="card">
+            <h2>📊 ETFs <span class="badge-categoria">Proventos a cada 90s</span></h2>
+            <div class="table-wrapper">
+                <table><thead><tr><th>Ativo</th><th>Preço (Mumu)</th><th>Rentab. %</th><th>DY Anual %</th><th>Variação %</th><th>Comprar</th><th>Vender</th></tr></thead>
+                <tbody id="tabelaETFs"></tbody></table>
+            </div>
+        </div>
+
+        <!-- TESOURO -->
+        <div class="card">
+            <h2>🇧🇷 TESOURO DIRETO <span class="badge-categoria">Marcação a mercado a cada 120s | Sem proventos</span></h2>
+            <div class="table-wrapper">
+                <table><thead><tr><th>Título</th><th>Vencimento</th><th>Preço (Mumu)</th><th>Rentab. %</th><th>Variação %</th><th>Comprar</th><th>Vender</th></tr></thead>
+                <tbody id="tabelaTesouro"></tbody></table>
+            </div>
+        </div>
+
+        <!-- CARTEIRA -->
+        <div class="card">
+            <h2>📋 MINHA CARTEIRA (Todos os ativos)</h2>
+            <div class="table-wrapper">
+                <table>
+                    <thead><tr><th>Ativo</th><th>Quantidade</th><th>Preço Médio (Mumu)</th><th>Valor Atual (Mumu)</th><th>Rendimentos Recebidos (Mumu)</th><th>Rentab. %</th><th>Ações</th></tr></thead>
+                    <tbody id="carteira"></tbody>
+                </table>
+            </div>
+            <div id="carteiraVaziaMsg" class="empty-warning" style="display: none;">📭 Nenhum ativo na carteira. Compre nas seções acima ou aplique na poupança!</div>
+        </div>
+
+        <!-- EXTRATO -->
+        <div class="card">
+            <h2>📜 EXTRATO</h2>
+            <ul id="historico"></ul>
+        </div>
+
+        <footer>💡 Saldo inicial: 0,00 Mumu • Ações: proventos 60s | FIIs: 30s | ETFs: 90s | Tesouro: marcação 120s | Poupança: 0,6%/60s</footer>
+    </div>
+
+    <!-- ========== TOAST CONTAINER ========== -->
+    <div class="toast-container" id="toastContainer"></div>
+
+    <!-- ========== SCRIPT ========== -->
+    <script type="importmap">
+    {
+        "imports": {
+            "@supabase/supabase-js": "https://esm.sh/@supabase/supabase-js@2"
+        }
+    }
+    </script>
+
+    <script type="module" src="script/bolsa.js"></script>
+</body>
+</html>

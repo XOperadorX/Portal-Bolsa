@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sistema de Nível - MM Quase Tudo</title>
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&family=Rajdhani:wght@400;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style/level.css">
+</head>
+<body>
+    <!-- ============================================================
+    COMPONENTE DE NÍVEL - EXEMPLO DE USO
+    ============================================================ -->
+    <div class="level-system-container" id="levelSystem">
+        <div class="level-header">
+            <div class="level-badge">
+                <span class="level-number" id="levelNumber">1</span>
+                <div>
+                    <div class="level-label">Nível</div>
+                    <div class="level-title" id="levelTitle">🌱 Iniciante</div>
+                </div>
+            </div>
+            <div class="exp-container">
+                <div class="exp-bar">
+                    <div class="exp-fill" id="expFill" style="width: 0%;"></div>
+                </div>
+                <div class="exp-text">
+                    <span class="exp-current" id="expCurrent">0</span>
+                    <span>/ <span class="exp-next" id="expNext">100</span> EXP</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="stats-grid" id="statsGrid">
+            <span class="stat-pill">
+                <span class="stat-icon">❤️</span>
+                HP <span class="stat-value hp" id="statHp">100/100</span>
+            </span>
+            <span class="stat-pill">
+                <span class="stat-icon">💧</span>
+                MP <span class="stat-value mp" id="statMp">50/50</span>
+            </span>
+            <span class="stat-pill">
+                <span class="stat-icon">⚡</span>
+                SM <span class="stat-value sm" id="statSm">40/40</span>
+            </span>
+            <span class="stat-pill">
+                <span class="stat-icon">⚔️</span>
+                ATK <span class="stat-value atk" id="statAtk">15</span>
+            </span>
+            <span class="stat-pill">
+                <span class="stat-icon">🛡️</span>
+                DEF <span class="stat-value def" id="statDef">10</span>
+            </span>
+            <span class="stat-pill">
+                <span class="stat-icon">🔮</span>
+                MAG <span class="stat-value mag" id="statMag">8</span>
+            </span>
+        </div>
+        
+        <!-- ============================================================
+        CONTROLES DE EXP (Treinar)
+        ============================================================ -->
+        <div class="level-actions">
+            <button class="btn-level btn-treinar" id="btnTreinar">🏋️ Treinar (+EXP)</button>
+            <button class="btn-level btn-descansar" id="btnDescansar">🛌 Descansar</button>
+            <button class="btn-level btn-reset" id="btnResetLevel">🔄 Resetar Nível</button>
+        </div>
+
+        <!-- ============================================================
+        CONTROLES DE SM (STAMINA)
+        ============================================================ -->
+        <div class="sm-actions">
+            <button class="btn-sm btn-sm-ganhar" id="btnSmGanhar">➕ Ganhar 50 SM</button>
+            <button class="btn-sm btn-sm-gastar" id="btnSmGastar">➖ Gastar 30 SM</button>
+            <button class="btn-sm btn-sm-resetar" id="btnSmResetar">🔄 Resetar SM</button>
+        </div>
+    </div>
+
+    <script type="importmap">
+    {
+        "imports": {
+            "@supabase/supabase-js": "https://esm.sh/@supabase/supabase-js@2"
+        }
+    }
+    </script>
+
+    <script type="module" src="script/level.js"></script>
+</body>
+</html>

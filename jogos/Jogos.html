@@ -1,0 +1,562 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>⚔️ MM WORLD · RPG + Mineração</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+    }
+    body {
+      background: #0d1b0f;
+      color: #d4e6d4;
+      padding: 20px;
+      min-height: 100vh;
+      display: flex;
+      justify-content: center;
+    }
+    .game-container {
+      max-width: 1000px;
+      width: 100%;
+      background: #142216;
+      border-radius: 40px;
+      padding: 24px;
+      box-shadow: 0 20px 40px rgba(0,0,0,0.7);
+      border: 1px solid #2d4a2a;
+    }
+    /* top menu */
+    .top-menu {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-bottom: 24px;
+      border-bottom: 2px solid #2d4a2a;
+      padding-bottom: 12px;
+    }
+    .top-menu button {
+      background: #1e3320;
+      border: none;
+      color: #8fb08c;
+      padding: 10px 22px;
+      border-radius: 40px;
+      font-weight: 600;
+      font-size: 1rem;
+      cursor: pointer;
+      transition: 0.2s;
+      border: 1px solid transparent;
+    }
+    .top-menu button.active {
+      background: #2b4f2b;
+      color: #e6f7e6;
+      border-color: #7bbf7b;
+      box-shadow: 0 0 12px #2f6b2f;
+    }
+    .top-menu button:hover { background: #2b472b; color: #d4f0d4; }
+    .tab-content { display: none; animation: fade 0.3s; }
+    .tab-content.active { display: block; }
+    @keyframes fade { from { opacity: 0.3; } to { opacity: 1; } }
+
+    .card {
+      background: #1b2a1d;
+      border-radius: 32px;
+      padding: 20px 22px;
+      margin-bottom: 24px;
+      border: 1px solid #2f4a2c;
+      box-shadow: inset 0 2px 6px #0b160b;
+    }
+    .card-title {
+      font-size: 1.5rem;
+      font-weight: 700;
+      margin-bottom: 16px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      color: #c6e6c0;
+      border-bottom: 1px solid #2f4a2c;
+      padding-bottom: 10px;
+    }
+
+    .grid-2 {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+      gap: 14px 10px;
+    }
+    .stat-box {
+      background: #0f1e12;
+      border-radius: 20px;
+      padding: 12px 14px;
+      border: 1px solid #2b4228;
+    }
+    .stat-box label {
+      font-size: 0.75rem;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      color: #8aaa86;
+      display: block;
+      margin-bottom: 4px;
+    }
+    .stat-box .value {
+      font-size: 1.4rem;
+      font-weight: 700;
+      color: #e5f7e0;
+      word-break: break-all;
+    }
+
+    .flex {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+      align-items: center;
+    }
+    .mt-2 { margin-top: 18px; }
+    .mb-2 { margin-bottom: 18px; }
+    .btn {
+      background: #2b4f2b;
+      border: none;
+      color: white;
+      padding: 10px 24px;
+      border-radius: 40px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: 0.15s;
+      border: 1px solid #4f7a4a;
+      font-size: 0.95rem;
+      box-shadow: 0 4px 0 #1a2f1a;
+    }
+    .btn:active { transform: translateY(3px); box-shadow: 0 1px 0 #1a2f1a; }
+    .btn-secondary {
+      background: #2d3d2a;
+      border-color: #3d5a3a;
+      box-shadow: 0 4px 0 #1a2a18;
+    }
+    .btn-secondary:hover { background: #3b5537; }
+
+    .market-item {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: space-between;
+      background: #132016;
+      padding: 10px 16px;
+      border-radius: 40px;
+      margin-bottom: 8px;
+      border-left: 4px solid #3d6b3a;
+      gap: 8px;
+    }
+    .market-item .name { font-weight: 600; min-width: 80px; }
+    .market-item .price { color: #b8d9b0; }
+    .market-item .qty { color: #8aaa86; font-size: 0.9rem; }
+    .btn-sm {
+      padding: 4px 14px;
+      font-size: 0.8rem;
+      background: #1f3a1f;
+      border: 1px solid #3d6b3a;
+      border-radius: 30px;
+      color: white;
+      cursor: pointer;
+    }
+    .btn-sm:hover { background: #2a512a; }
+
+    #logMineracao {
+      background: #0d1a0f;
+      padding: 10px 14px;
+      border-radius: 20px;
+      border: 1px solid #2f4a2c;
+      font-family: monospace;
+      max-height: 120px;
+      overflow-y: auto;
+      font-size: 0.9rem;
+      color: #b0d4a8;
+    }
+    #logMineracao div { padding: 2px 0; border-bottom: 1px solid #1d301d; }
+
+    .cambio-box {
+      background: #132016;
+      border-radius: 24px;
+      padding: 16px;
+      margin: 10px 0;
+      border: 1px solid #2f4a2c;
+    }
+
+    input[type="number"] {
+      background: #0d1a0f;
+      border: 1px solid #2f4a2c;
+      color: #d4f0d4;
+      padding: 8px 12px;
+      border-radius: 30px;
+      width: 80px;
+      font-weight: 600;
+    }
+    input[type="number"]:focus { outline: 2px solid #4f8a4a; }
+
+    @media (max-width: 600px) {
+      .game-container { padding: 14px; }
+      .top-menu button { padding: 8px 14px; font-size: 0.8rem; }
+    }
+  </style>
+</head>
+<body>
+<div class="game-container">
+
+  <!-- MENU SUPERIOR -->
+  <nav class="top-menu" id="mainMenu">
+    <button class="active" data-tab="tabPersonagem">🧙 Personagem</button>
+    <button data-tab="tabMercado">🏛️ Mercado</button>
+    <button data-tab="tabMineracao">⛏️ Mineração</button>
+  </nav>
+
+  <!-- TAB PERSONAGEM -->
+  <div id="tabPersonagem" class="tab-content active">
+    <div class="card">
+      <div class="card-title">🧙 Ficha do Herói</div>
+      <div class="grid-2">
+        <div class="stat-box"><label>❤️ HP</label><div class="value" id="hpValue">100</div></div>
+        <div class="stat-box"><label>💧 MP</label><div class="value" id="mpValue">50</div></div>
+        <div class="stat-box"><label>⚡ SM (Stamina)</label><div class="value" id="smValue">40</div></div>
+        <div class="stat-box"><label>⚔️ Ataque</label><div class="value" id="atkValue">15</div></div>
+        <div class="stat-box"><label>🛡️ Defesa</label><div class="value" id="defValue">10</div></div>
+        <div class="stat-box"><label>🔮 Magia</label><div class="value" id="magValue">8</div></div>
+        <div class="stat-box"><label>⭐ Nível</label><div class="value" id="lvlValue">1</div></div>
+        <div class="stat-box"><label>📈 Experiência</label><div class="value" id="expValue">0 / 100</div></div>
+      </div>
+      <div class="flex mt-2">
+        <div class="stat-box" style="flex:1;"><label>🪙 Mumu</label><div class="value" id="saldoMercado">0.00</div></div>
+        <div class="stat-box" style="flex:1;"><label>₿ BTC</label><div class="value" id="btcSaldo">0.00000000</div></div>
+        <div class="stat-box" style="flex:1;"><label>⚡ SM / Max</label><div class="value" id="smAtualMercado">40 / 40</div></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- TAB MERCADO -->
+  <div id="tabMercado" class="tab-content">
+    <div class="card">
+      <div class="card-title">🏛️ Mercado · Itens</div>
+      <div id="listaMercado"></div>
+      <div class="flex mt-2">
+        <div class="stat-box"><label>💰 Saldo Mumu</label><div class="value" id="saldoMercadoBottom">0.00</div></div>
+        <div class="stat-box"><label>₿ BTC</label><div class="value" id="btcSaldoBottom">0.00000000</div></div>
+        <div class="stat-box"><label>⚡ SM</label><div class="value" id="smAtualMercadoBottom">40 / 40</div></div>
+      </div>
+    </div>
+
+    <!-- CÂMBIO BTC -->
+    <div class="card">
+      <div class="card-title">₿ Câmbio BTC</div>
+      <div class="flex">
+        <div class="stat-box"><label>Compra (1 BTC)</label><div class="value" id="btcCompra">10000</div></div>
+        <div class="stat-box"><label>Venda (1 BTC)</label><div class="value" id="btcVenda">999</div></div>
+      </div>
+      <div class="flex mt-2">
+        <button class="btn" onclick="comprarBTC()">🟢 Comprar BTC</button>
+        <button class="btn btn-secondary" onclick="venderBTC()">🔴 Vender BTC</button>
+        <button class="btn btn-secondary" onclick="adicionarMoeda()">➕ +1000 Mumu</button>
+      </div>
+    </div>
+
+    <!-- COMPRA / VENDA STAMINA -->
+    <div class="card">
+      <div class="card-title">⚡ Stamina (SM)</div>
+      <div class="flex">
+        <div class="stat-box"><label>Preço compra</label><div class="value">12 Mumu</div></div>
+        <div class="stat-box"><label>Preço venda</label><div class="value">8 Mumu</div></div>
+      </div>
+      <div class="flex mt-2">
+        <input type="number" id="qtdStamina" value="1" min="1" step="1">
+        <button class="btn" onclick="comprarStamina()">⬆️ Comprar SM</button>
+        <button class="btn btn-secondary" onclick="venderStamina()">⬇️ Vender SM</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- TAB MINERAÇÃO -->
+  <div id="tabMineracao" class="tab-content">
+    <div class="card">
+      <div class="card-title">⛏️ Mineração de BTC</div>
+      <p style="margin-bottom:8px;">Clique para minerar ou deixe a mineração passiva rodar!</p>
+      <div class="grid-2">
+        <div class="stat-box"><label>⛏️ BTC acumulado</label><div class="value" id="btcTotal">0.00000000</div></div>
+        <div class="stat-box"><label>⚡ Poder de mineração</label><div class="value" id="poderMineracao">1.0 MH/s</div></div>
+        <div class="stat-box"><label>⏱️ Mineração passiva</label><div class="value" id="mineracaoPassiva">0.00000000 BTC/s</div></div>
+      </div>
+      <div class="flex mt-2">
+        <button class="btn" onclick="minerar()">⛏️ Minerar (clique)</button>
+        <button class="btn btn-secondary" onclick="upgradeMineracao()">⬆️ Upgrade (+0.5 MH/s) - 10 BTC</button>
+      </div>
+      <div id="logMineracao" class="mt-2">⛏️ Pronto para minerar!</div>
+    </div>
+  </div>
+</div>
+
+<script>
+// ============================================================
+//  ESTADO GLOBAL
+// ============================================================
+const estado = {
+  hp: 100, maxHp: 100,
+  mp: 50, maxMp: 50,
+  sm: 40, maxSm: 40,
+  atk: 15, def: 10, mag: 8,
+  lvl: 1, exp: 0, expNext: 100,
+  mumu: 500,        // saldo inicial
+  btc: 0.00000000,
+  poderHash: 1.0,
+  itens: [
+    { nome: 'Poção de Vida', preco: 15.00, qtd: 3 },
+    { nome: 'Éter Mágico', preco: 22.50, qtd: 2 },
+    { nome: 'Elmo de Ferro', preco: 45.00, qtd: 1 },
+    { nome: 'Espada Longa', preco: 67.30, qtd: 1 },
+  ]
+};
+
+const TAXA_COMPRA_BTC = 10000;
+const TAXA_VENDA_BTC = 999;
+const PRECO_COMPRA_SM = 12;
+const PRECO_VENDA_SM = 8;
+
+// ============================================================
+//  RENDERIZAÇÃO
+// ============================================================
+function atualizarPersonagem() {
+  document.getElementById('hpValue').textContent = `${estado.hp}/${estado.maxHp}`;
+  document.getElementById('mpValue').textContent = `${estado.mp}/${estado.maxMp}`;
+  document.getElementById('smValue').textContent = `${estado.sm}/${estado.maxSm}`;
+  document.getElementById('atkValue').textContent = estado.atk;
+  document.getElementById('defValue').textContent = estado.def;
+  document.getElementById('magValue').textContent = estado.mag;
+  document.getElementById('lvlValue').textContent = estado.lvl;
+  document.getElementById('expValue').textContent = `${estado.exp} / ${estado.expNext}`;
+  // atualiza também os campos de saldo em todas as abas
+  const smDisplay = `${estado.sm}/${estado.maxSm}`;
+  document.getElementById('smAtualMercado').textContent = smDisplay;
+  document.getElementById('smAtualMercadoBottom').textContent = smDisplay;
+  document.getElementById('saldoMercado').textContent = estado.mumu.toFixed(2);
+  document.getElementById('saldoMercadoBottom').textContent = estado.mumu.toFixed(2);
+  document.getElementById('btcSaldo').textContent = estado.btc.toFixed(8);
+  document.getElementById('btcSaldoBottom').textContent = estado.btc.toFixed(8);
+}
+
+function atualizarMercadoUI() {
+  const container = document.getElementById('listaMercado');
+  container.innerHTML = '';
+  estado.itens.forEach((item, idx) => {
+    const div = document.createElement('div');
+    div.className = 'market-item';
+    div.innerHTML = `
+      <span class="name">${item.nome}</span>
+      <span class="price">${item.preco.toFixed(2)} Mumu</span>
+      <span class="qty">Qtd: ${item.qtd}</span>
+      <div>
+        <button class="btn-sm" onclick="comprarItem(${idx})">Comprar</button>
+        <button class="btn-sm" onclick="venderItem(${idx})">Vender</button>
+      </div>
+    `;
+    container.appendChild(div);
+  });
+  // sincroniza saldos
+  document.getElementById('saldoMercado').textContent = estado.mumu.toFixed(2);
+  document.getElementById('saldoMercadoBottom').textContent = estado.mumu.toFixed(2);
+  document.getElementById('btcCompra').textContent = TAXA_COMPRA_BTC;
+  document.getElementById('btcVenda').textContent = TAXA_VENDA_BTC;
+  document.getElementById('btcSaldo').textContent = estado.btc.toFixed(8);
+  document.getElementById('btcSaldoBottom').textContent = estado.btc.toFixed(8);
+  const smDisplay = `${estado.sm}/${estado.maxSm}`;
+  document.getElementById('smAtualMercado').textContent = smDisplay;
+  document.getElementById('smAtualMercadoBottom').textContent = smDisplay;
+}
+
+function atualizarMineracaoUI() {
+  document.getElementById('btcTotal').textContent = estado.btc.toFixed(8);
+  document.getElementById('poderMineracao').textContent = `${estado.poderHash.toFixed(1)} MH/s`;
+  const passiva = estado.poderHash * 0.00000001;
+  document.getElementById('mineracaoPassiva').textContent = passiva.toFixed(8) + ' BTC/s';
+  // também atualiza btc nos outros lugares
+  document.getElementById('btcSaldo').textContent = estado.btc.toFixed(8);
+  document.getElementById('btcSaldoBottom').textContent = estado.btc.toFixed(8);
+}
+
+function adicionarLog(sistema, msg) {
+  // log simples no console (pode ser expandido)
+  console.log(`[${sistema}] ${msg}`);
+}
+
+// ============================================================
+//  MERCADO (COMPRA / VENDA ITENS)
+// ============================================================
+function comprarItem(idx) {
+  const item = estado.itens[idx];
+  if (estado.mumu < item.preco) { alert('Mumu insuficiente!'); return; }
+  if (item.qtd <= 0) { alert('Item esgotado!'); return; }
+  estado.mumu -= item.preco;
+  item.qtd -= 1;
+  atualizarMercadoUI();
+  atualizarPersonagem();
+  adicionarLog('Mercado', `Comprou ${item.nome}`);
+}
+
+function venderItem(idx) {
+  const item = estado.itens[idx];
+  const precoVenda = item.preco * 0.6; // 60% do valor
+  estado.mumu += precoVenda;
+  item.qtd += 1;
+  atualizarMercadoUI();
+  atualizarPersonagem();
+  adicionarLog('Mercado', `Vendeu ${item.nome} por ${precoVenda.toFixed(2)}`);
+}
+
+// ============================================================
+//  CÂMBIO E STAMINA
+// ============================================================
+function comprarBTC() {
+  if (estado.mumu < TAXA_COMPRA_BTC) {
+    alert(`Saldo insuficiente! Precisa de ${TAXA_COMPRA_BTC} Mumu.`);
+    return;
+  }
+  estado.mumu -= TAXA_COMPRA_BTC;
+  estado.btc += 1;
+  atualizarMercadoUI();
+  atualizarMineracaoUI();
+  atualizarPersonagem();
+  adicionarLog('Mercado', '🔄 Comprou 1 BTC.');
+}
+
+function venderBTC() {
+  if (estado.btc < 1) {
+    alert('Você não tem BTC.');
+    return;
+  }
+  estado.btc -= 1;
+  estado.mumu += TAXA_VENDA_BTC;
+  atualizarMercadoUI();
+  atualizarMineracaoUI();
+  atualizarPersonagem();
+  adicionarLog('Mercado', '🔄 Vendeu 1 BTC.');
+}
+
+function comprarStamina() {
+  const qtdInput = document.getElementById('qtdStamina');
+  let qtd = parseInt(qtdInput.value) || 1;
+  if (qtd < 1) qtd = 1;
+  const custo = qtd * PRECO_COMPRA_SM;
+  if (estado.mumu < custo) { alert('Saldo insuficiente.'); return; }
+  if (estado.sm + qtd > estado.maxSm) {
+    alert(`Máximo ${estado.maxSm} SM. Pode comprar no máximo ${estado.maxSm - estado.sm}.`);
+    return;
+  }
+  estado.mumu -= custo;
+  estado.sm += qtd;
+  atualizarPersonagem();
+  atualizarMercadoUI();
+  adicionarLog('Mercado', `⚡ Comprou ${qtd} SM.`);
+}
+
+function venderStamina() {
+  const qtdInput = document.getElementById('qtdStamina');
+  let qtd = parseInt(qtdInput.value) || 1;
+  if (qtd < 1) qtd = 1;
+  if (estado.sm < qtd) { alert(`Você só tem ${estado.sm} SM.`); return; }
+  estado.sm -= qtd;
+  estado.mumu += qtd * PRECO_VENDA_SM;
+  atualizarPersonagem();
+  atualizarMercadoUI();
+  adicionarLog('Mercado', `⚡ Vendeu ${qtd} SM.`);
+}
+
+// ============================================================
+//  MINERAÇÃO
+// ============================================================
+function minerar() {
+  const ganho = (0.0000001 + Math.random() * 0.000001) * estado.poderHash;
+  estado.btc += ganho;
+  atualizarMineracaoUI();
+  atualizarMercadoUI();
+  atualizarPersonagem();
+  const log = document.getElementById('logMineracao');
+  if (log) {
+    log.innerHTML += `<div>⛏️ +${ganho.toFixed(8)} BTC</div>`;
+    log.scrollTop = log.scrollHeight;
+  }
+}
+
+function upgradeMineracao() {
+  if (estado.btc < 10) { alert('Precisa de 10 BTC.'); return; }
+  estado.btc -= 10;
+  estado.poderHash += 0.5;
+  atualizarMineracaoUI();
+  atualizarMercadoUI();
+  atualizarPersonagem();
+  const log = document.getElementById('logMineracao');
+  if (log) log.innerHTML += `<div>⬆️ Upgrade! Poder ${estado.poderHash.toFixed(1)} MH/s</div>`;
+}
+
+// mineração passiva (a cada 3s)
+function mineracaoPassiva() {
+  if (estado.poderHash > 0) {
+    const ganho = estado.poderHash * 0.00000001 * 3;
+    if (ganho > 0) {
+      estado.btc += ganho;
+      atualizarMineracaoUI();
+      atualizarMercadoUI();
+      atualizarPersonagem();
+    }
+  }
+}
+
+// ============================================================
+//  MERCADO FLUTUAÇÃO (a cada 8s)
+// ============================================================
+function atualizarMercado() {
+  estado.itens.forEach(item => {
+    const variacao = (Math.random() - 0.5) * 2.5;
+    item.preco = Math.max(0.5, item.preco + variacao);
+    item.preco = Math.round(item.preco * 100) / 100;
+  });
+  atualizarMercadoUI();
+}
+
+// ============================================================
+//  INICIALIZAÇÃO E NAVEGAÇÃO POR TABS
+// ============================================================
+function init() {
+  atualizarPersonagem();
+  atualizarMercadoUI();
+  atualizarMineracaoUI();
+
+  // flutuação
+  setInterval(() => { atualizarMercado(); }, 8000);
+  // mineração passiva
+  setInterval(() => { mineracaoPassiva(); }, 3000);
+
+  // navegação tabs
+  const tabs = document.querySelectorAll('[data-tab]');
+  tabs.forEach(btn => {
+    btn.addEventListener('click', function() {
+      tabs.forEach(b => b.classList.remove('active'));
+      this.classList.add('active');
+      const target = document.getElementById(this.dataset.tab);
+      document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
+      if (target) target.classList.add('active');
+    });
+  });
+
+  adicionarLog('Sistema', 'Bem-vindo ao MM World!');
+}
+
+// ============================================================
+//  FUNÇÃO ADICIONAL (ADICIONAR MOEDA PARA TESTE)
+// ============================================================
+function adicionarMoeda() {
+  estado.mumu += 1000;
+  atualizarMercadoUI();
+  atualizarPersonagem();
+  adicionarLog('Sistema', '➕ Adicionou 1000 Mumu.');
+}
+
+// inicia tudo
+init();
+</script>
+</body>
+</html>

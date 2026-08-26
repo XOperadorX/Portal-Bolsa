@@ -1,0 +1,205 @@
+/* ===== ESTILOS DA PÁGINA DE CADASTRO ===== */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Segoe UI', Roboto, sans-serif;
+}
+
+body {
+    background: linear-gradient(135deg, #002e5d, #001a33);
+    min-height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 20px;
+}
+
+.cadastro-container {
+    background: white;
+    padding: 40px;
+    border-radius: 28px;
+    max-width: 440px;
+    width: 100%;
+    box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+}
+
+.logo {
+    text-align: center;
+    margin-bottom: 30px;
+}
+
+.logo h1 {
+    font-size: 2rem;
+    color: #002e5d;
+}
+
+.logo span {
+    font-size: 1.2rem;
+    color: #4a6f8f;
+}
+
+.form-group {
+    margin-bottom: 18px;
+}
+
+.form-group label {
+    display: block;
+    font-weight: 600;
+    color: #1e3a5f;
+    margin-bottom: 6px;
+    font-size: 0.9rem;
+}
+
+.form-group input {
+    width: 100%;
+    padding: 12px 16px;
+    border: 2px solid #e2e8f0;
+    border-radius: 12px;
+    font-size: 1rem;
+    transition: all 0.3s;
+    background: #f8fafc;
+}
+
+.form-group input:focus {
+    outline: none;
+    border-color: #002e5d;
+    background: white;
+    box-shadow: 0 0 0 4px rgba(0,46,93,0.1);
+}
+
+.btn-cadastrar {
+    width: 100%;
+    padding: 14px;
+    background: linear-gradient(135deg, #10b981, #059669);
+    color: white;
+    border: none;
+    border-radius: 12px;
+    font-size: 1.1rem;
+    font-weight: 700;
+    cursor: pointer;
+    transition: all 0.3s;
+    margin-top: 10px;
+}
+
+.btn-cadastrar:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 25px rgba(16,185,129,0.3);
+}
+
+.btn-cadastrar:disabled {
+    opacity: 0.7;
+    cursor: not-allowed;
+}
+
+.links {
+    text-align: center;
+    margin-top: 20px;
+    font-size: 0.9rem;
+}
+
+.links a {
+    color: #002e5d;
+    text-decoration: none;
+    font-weight: 500;
+    transition: color 0.2s;
+}
+
+.links a:hover {
+    color: #f59e0b;
+    text-decoration: underline;
+}
+
+.mensagem-erro {
+    background: #fee2e2;
+    color: #b91c1c;
+    padding: 12px 16px;
+    border-radius: 10px;
+    margin-bottom: 20px;
+    display: none;
+    font-size: 0.9rem;
+    border-left: 4px solid #b91c1c;
+}
+
+.mensagem-erro.show {
+    display: block;
+}
+
+.mensagem-sucesso {
+    background: #dcfce7;
+    color: #0a5c3e;
+    padding: 12px 16px;
+    border-radius: 10px;
+    margin-bottom: 20px;
+    display: none;
+    font-size: 0.9rem;
+    border-left: 4px solid #10b981;
+}
+
+.mensagem-sucesso.show {
+    display: block;
+}
+
+.status-supabase {
+    text-align: center;
+    font-size: 0.75rem;
+    color: #6c86a3;
+    margin-top: 20px;
+    padding: 8px;
+    border-radius: 8px;
+    background: #f1f5f9;
+}
+
+.status-supabase.online {
+    color: #10b981;
+}
+
+.status-supabase.offline {
+    color: #ef4444;
+}
+
+.loading {
+    display: inline-block;
+    width: 20px;
+    height: 20px;
+    border: 3px solid #f3f3f3;
+    border-top: 3px solid #10b981;
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+    vertical-align: middle;
+    margin-right: 10px;
+}
+
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+.senha-requisitos {
+    font-size: 0.75rem;
+    color: #6c86a3;
+    margin-top: 4px;
+    padding: 8px;
+    background: #f8fafc;
+    border-radius: 8px;
+}
+
+.senha-requisitos .ok {
+    color: #10b981;
+}
+
+.senha-requisitos .bad {
+    color: #ef4444;
+}
+
+.helper-text {
+    font-size: 0.75rem;
+    color: #6c86a3;
+    margin-top: 4px;
+}
+
+@media (max-width: 480px) {
+    .cadastro-container {
+        padding: 24px;
+    }
+}

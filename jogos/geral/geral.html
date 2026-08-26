@@ -1,0 +1,210 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🐣 Mundo MM - Mercado & Aventura</title>
+    <link rel="stylesheet" href="style/geral.css">
+</head>
+<body>
+
+    <!-- MENU SUPERIOR -->
+    <nav class="top-menu" id="mainMenu">
+        <button class="active" data-tab="tabPersonagem">🧙 Personagem</button>
+        <button data-tab="tabAtaque">⚔️ Ataque</button>
+        <button data-tab="tabMercado">🏛️ Mercado</button>
+        <button data-tab="tabMineracao">⛏️ Mineração</button>
+        <button data-tab="tabFazendinha">🌱 Fazendinha</button>
+        <button data-tab="tabInvestimentos">💰 Investimentos</button>
+    </nav>
+
+    <!-- CONTEÚDO -->
+    <div class="container">
+
+        <!-- PERSONAGEM -->
+        <div id="tabPersonagem" class="tab-content active">
+            <div class="card">
+                <div class="card-title">🧙 Ficha do Herói</div>
+                <div class="grid-2">
+                    <div class="stat-box"><label>❤️ HP</label><div class="value" id="hpValue">100</div></div>
+                    <div class="stat-box"><label>💧 MP</label><div class="value" id="mpValue">50</div></div>
+                    <div class="stat-box"><label>⚡ SM (Stamina)</label><div class="value" id="smValue">40</div></div>
+                    <div class="stat-box"><label>⚔️ Ataque</label><div class="value" id="atkValue">15</div></div>
+                    <div class="stat-box"><label>🛡️ Defesa</label><div class="value" id="defValue">10</div></div>
+                    <div class="stat-box"><label>🔮 Magia</label><div class="value" id="magValue">8</div></div>
+                    <div class="stat-box"><label>⭐ Nível</label><div class="value" id="lvlValue">1</div></div>
+                    <div class="stat-box"><label>📈 Experiência</label><div class="value" id="expValue">0 / 100</div></div>
+                </div>
+                <div class="flex mt-2">
+                    <button class="btn" onclick="treinar()">🏋️ Treinar (ganha EXP)</button>
+                    <button class="btn btn-secondary" onclick="descansar()">🛌 Descansar (recupera)</button>
+                </div>
+                <p class="mt-2" style="color:#b8d9a2;">💡 Clique em "Treinar" para evoluir seu personagem!</p>
+            </div>
+        </div>
+
+        <!-- ATAQUE -->
+        <div id="tabAtaque" class="tab-content">
+            <div class="card">
+                <div class="card-title">⚔️ Sala de Treino</div>
+                <p>Enfrente inimigos para ganhar EXP e itens!</p>
+                <div class="grid-2 mt-2">
+                    <div class="stat-box"><label>🐺 Inimigo</label><div class="value" id="inimigoNome">Slime</div><div class="sub" id="inimigoHp">HP: 20</div></div>
+                    <div class="stat-box"><label>💥 Dano causado</label><div class="value" id="danoCausado">0</div></div>
+                </div>
+                <div class="flex mt-2">
+                    <button class="btn btn-danger" onclick="atacar()">⚡ Atacar</button>
+                    <button class="btn btn-secondary" onclick="novoInimigo()">🔄 Novo Inimigo</button>
+                </div>
+                <div id="logBatalha" class="mt-2" style="background:#1a2a1f;padding:12px 18px;border-radius:20px;min-height:60px;border:1px solid #3d5a3a;font-family:monospace;max-height:150px;overflow-y:auto;"></div>
+            </div>
+        </div>
+
+        <!-- MERCADO -->
+        <div id="tabMercado" class="tab-content">
+            <div class="card">
+                <div class="card-title">🏛️ Mercado Mundial - B3 Style</div>
+                <p class="mb-2">Preços flutuam em tempo real. Compre, venda ou troque.</p>
+                <div class="cambio-box">
+                    <div><span class="label">💰 1 BTC = </span><span class="text-gold" id="btcCompra">10000</span> Mumu (compra)</div>
+                    <div><span class="label">💰 1 BTC = </span><span class="text-gold" id="btcVenda">999</span> Mumu (venda)</div>
+                    <div>
+                        <button class="btn btn-btc" onclick="comprarBTC()">⬆️ Comprar BTC</button>
+                        <button class="btn btn-btc" onclick="venderBTC()">⬇️ Vender BTC</button>
+                    </div>
+                    <div style="font-size:0.9rem;color:#b8d9a2;">Seu BTC: <span id="btcSaldo" class="text-gold">0.00000000</span></div>
+                </div>
+                <div class="stamina-box">
+                    <div style="font-weight:600;">⚡ Stamina (SM)</div>
+                    <div>Comprar: <span class="text-gold">12</span> Mumu / SM</div>
+                    <div>Vender: <span class="text-gold">8</span> Mumu / SM</div>
+                    <div class="flex" style="flex:1; justify-content:center;">
+                        <input type="number" id="qtdStamina" value="1" min="1" step="1">
+                        <button class="btn" onclick="comprarStamina()">Comprar SM</button>
+                        <button class="btn btn-secondary" onclick="venderStamina()">Vender SM</button>
+                    </div>
+                    <div>SM atual: <span id="smAtualMercado" class="text-gold">40</span></div>
+                </div>
+                <div id="listaMercado"></div>
+                <div class="flex mt-2">
+                    <button class="btn btn-success" onclick="atualizarMercado()">🔄 Atualizar preços</button>
+                    <span style="margin-left:auto;font-size:0.9rem;color:#b8d9a2;">💰 Seu saldo: <span id="saldoMercado" class="text-gold">0</span> Mumu</span>
+                    <button class="btn btn-add" onclick="adicionarMoeda()">➕ Adicionar 1000 Mumu</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- MINERAÇÃO -->
+        <div id="tabMineracao" class="tab-content">
+            <div class="card">
+                <div class="card-title">⛏️ Mineração de BTC</div>
+                <p>Clique para minerar e ganhar satoshis! Mineração passiva gera BTC automaticamente.</p>
+                <div class="grid-2 mt-2">
+                    <div class="stat-box"><label>⛏️ BTC acumulado</label><div class="value" id="btcTotal">0.00000000</div></div>
+                    <div class="stat-box"><label>⚡ Poder de mineração</label><div class="value" id="poderMineracao">1.0 MH/s</div></div>
+                    <div class="stat-box"><label>⏱️ Mineração passiva</label><div class="value" id="mineracaoPassiva">0.00000000 BTC/s</div></div>
+                </div>
+                <div class="flex mt-2">
+                    <button class="btn" onclick="minerar()">⛏️ Minerar (clique)</button>
+                    <button class="btn btn-secondary" onclick="upgradeMineracao()">⬆️ Upgrade (+0.5 MH/s) - Custa 10 BTC</button>
+                </div>
+                <div id="logMineracao" class="mt-2" style="background:#1a2a1f;padding:10px 16px;border-radius:20px;border:1px solid #3d5a3a;font-family:monospace;max-height:120px;overflow-y:auto;"></div>
+            </div>
+        </div>
+
+        <!-- FAZENDINHA -->
+        <div id="tabFazendinha" class="tab-content">
+            <div class="card">
+                <div class="card-title">🌱 Fazendinha MM</div>
+                <p>Plante milho, incube ovos e crie galinhas. Use o mercado para comprar sementes e ovos, e vender sua produção.</p>
+                <div class="farm-stock">
+                    <span>🌱 Sementes: <span id="invSementes">0</span></span>
+                    <span>🌽 Milho: <span id="invMilho">0</span></span>
+                    <span>🥚 Ovos: <span id="invOvos">0</span></span>
+                    <span>🐣 Pintinhos: <span id="invPintinhos">0</span></span>
+                    <span>🐔 Galinhas: <span id="invGalinhas">0</span></span>
+                </div>
+                <div class="grid-2 mt-2">
+                    <div class="farm-plot" id="plotMilho">
+                        <div class="emoji-big" id="milhoEmoji">🌾</div>
+                        <div class="stage-label" id="milhoStatus">Vazio</div>
+                        <div class="progress-bar"><div class="fill" id="milhoProgress" style="width:0%"></div></div>
+                        <div class="info" id="milhoInfo">Clique em Plantar</div>
+                        <div class="flex" style="justify-content:center;margin-top:6px;">
+                            <button class="btn btn-secondary" onclick="plantarMilho()">🌱 Plantar</button>
+                            <button class="btn btn-secondary" onclick="colherMilho()">🧺 Colher</button>
+                        </div>
+                    </div>
+                    <div class="farm-plot" id="plotGalinha">
+                        <div class="emoji-big" id="galinhaEmoji">🥚</div>
+                        <div class="stage-label" id="galinhaStatus">Chocadeira vazia</div>
+                        <div class="progress-bar"><div class="fill" id="galinhaProgress" style="width:0%"></div></div>
+                        <div class="info" id="galinhaInfo">Incube um ovo</div>
+                        <div class="flex" style="justify-content:center;margin-top:6px;">
+                            <button class="btn btn-secondary" onclick="incubarOvo()">🐣 Incubar</button>
+                            <button class="btn btn-secondary" onclick="alimentarGalinha()">🌽 Alimentar</button>
+                        </div>
+                    </div>
+                </div>
+                <div class="flex mt-2">
+                    <button class="btn btn-success" onclick="venderProducao()">💰 Vender produção (milho + ovos + semente + galinha)</button>
+                    <span style="margin-left:auto;font-size:0.9rem;color:#b8d9a2;">Produção: <span id="venderMilhoQtd">0</span> milho | <span id="venderOvoQtd">0</span> ovos | <span id="venderSementeQtd">0</span> sementes | <span id="venderGalinhaQtd">0</span> galinhas</span>
+                </div>
+                <p style="margin-top:12px;color:#b8d9a2;font-size:0.9rem;">💡 Galinhas produzem ovos automaticamente a cada 30 segundos.</p>
+            </div>
+        </div>
+
+        <!-- INVESTIMENTOS -->
+        <div id="tabInvestimentos" class="tab-content">
+            <div class="card">
+                <div class="card-title">💰 Carteira de Investimentos</div>
+                <p>Compre, venda e troque ativos. Proventos só são gerados se você tiver saldo no ativo.</p>
+                <div class="flex mt-2" style="justify-content:space-around; flex-wrap:wrap; gap:12px;">
+                    <div class="stat-box" style="flex:1; min-width:150px;">
+                        <label>💰 Saldo em Mumu</label>
+                        <div class="value" id="investSaldo">0.00</div>
+                    </div>
+                    <div class="stat-box" style="flex:1; min-width:150px;">
+                        <label>📊 Patrimônio total</label>
+                        <div class="value" id="investPatrimonio">0.00</div>
+                    </div>
+                    <div class="stat-box" style="flex:1; min-width:150px;">
+                        <label>🪙 BTC</label>
+                        <div class="value" id="investBtc">0.00000000</div>
+                    </div>
+                </div>
+                <div id="listaInvestimentos" class="grid-3 mt-2"></div>
+                <div class="troca-box mt-2">
+                    <span style="font-weight:600;">🔄 Trocar ativos</span>
+                    <select id="trocaOrigem">
+                        <option value="selic">SELIC</option>
+                        <option value="acoes">Ações</option>
+                        <option value="fiis">FIIs</option>
+                        <option value="cdb">CDB</option>
+                        <option value="poupanca">Poupança</option>
+                    </select>
+                    <span>→</span>
+                    <select id="trocaDestino">
+                        <option value="selic">SELIC</option>
+                        <option value="acoes">Ações</option>
+                        <option value="fiis">FIIs</option>
+                        <option value="cdb">CDB</option>
+                        <option value="poupanca">Poupança</option>
+                    </select>
+                    <input type="number" id="trocaQuantidade" value="1" min="0.01" step="0.01" style="background:#1a2a1f;border:1px solid #5f7a4a;color:#f0f7e6;padding:6px 10px;border-radius:20px;width:80px;text-align:center;">
+                    <button class="btn btn-invest" onclick="trocarAtivos()">Trocar</button>
+                </div>
+                <p style="margin-top:8px;font-size:0.85rem;color:#b8d9a2;">💡 Proventos são creditados a cada 10 segundos apenas para ativos com quantidade > 0.</p>
+            </div>
+        </div>
+
+    </div>
+
+    <!-- RODAPÉ -->
+    <footer>
+        <span>mm quase tudo 2026</span> • Mercado & Aventura • v1.0
+    </footer>
+
+    <script src="script/geral.js"></script>
+</body>
+</html>

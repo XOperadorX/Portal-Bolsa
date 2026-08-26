@@ -1,0 +1,256 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sistema - Configurações</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            background: #0a0b10;
+            color: #f0f4f8;
+            font-family: 'Courier New', monospace;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            padding: 20px;
+        }
+        .config-container {
+            background: #121520;
+            border: 1px solid #2a2f45;
+            border-radius: 16px;
+            padding: 30px;
+            max-width: 800px;
+            width: 100%;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.5);
+        }
+        h1 {
+            color: #00f0ff;
+            font-family: 'Orbitron', sans-serif;
+            font-size: 1.5rem;
+            margin-bottom: 20px;
+            text-align: center;
+            border-bottom: 1px solid #2a2f45;
+            padding-bottom: 15px;
+        }
+        .config-item {
+            background: #1a1f2f;
+            padding: 12px 16px;
+            border-radius: 8px;
+            margin-bottom: 10px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-left: 3px solid #00f0ff;
+        }
+        .config-item .label {
+            color: #8a99ad;
+            font-size: 0.85rem;
+        }
+        .config-item .value {
+            color: #00ff66;
+            font-weight: bold;
+            font-size: 0.95rem;
+            word-break: break-all;
+            text-align: right;
+            max-width: 60%;
+        }
+        .config-item .value.danger {
+            color: #ef4444;
+        }
+        .config-item .value.warning {
+            color: #f59e0b;
+        }
+        .status {
+            margin-top: 20px;
+            padding: 15px;
+            border-radius: 8px;
+            text-align: center;
+            font-weight: bold;
+        }
+        .status.online {
+            background: #0f2a1a;
+            color: #6bff9e;
+            border: 1px solid #10b981;
+        }
+        .status.offline {
+            background: #2a0f1a;
+            color: #ff6b6b;
+            border: 1px solid #ef4444;
+        }
+        .status.checking {
+            background: #1f1f0f;
+            color: #ffd66b;
+            border: 1px solid #f59e0b;
+        }
+        .btn-test {
+            background: linear-gradient(135deg, #002e5d, #001a33);
+            color: white;
+            border: none;
+            padding: 10px 24px;
+            border-radius: 8px;
+            font-weight: bold;
+            cursor: pointer;
+            margin-top: 15px;
+            width: 100%;
+            transition: all 0.3s;
+        }
+        .btn-test:hover {
+            box-shadow: 0 0 20px rgba(0, 240, 255, 0.3);
+            transform: translateY(-2px);
+        }
+        .footer {
+            margin-top: 15px;
+            text-align: center;
+            color: #5a6a7a;
+            font-size: 0.8rem;
+        }
+        .emoji {
+            font-size: 1.2rem;
+        }
+    </style>
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div class="config-container">
+        <h1>⚙️ SISTEMA - CONFIGURAÇÕES</h1>
+        
+        <div class="config-item">
+            <span class="label">📡 Supabase URL</span>
+            <span class="value" id="sysSupabaseUrl">https://xrcxvizzdumcxbylmkvn.supabase.co</span>
+        </div>
+        
+        <div class="config-item">
+            <span class="label">🔑 Supabase Key</span>
+            <span class="value warning" id="sysSupabaseKey">sb_publishable_E-g3G3wW4EySbCsXLXp8KQ_FnmERMcD</span>
+        </div>
+        
+        <div class="config-item">
+            <span class="label">📊 Tabela Principal</span>
+            <span class="value" id="sysTabela">Geral</span>
+        </div>
+        
+        <div class="config-item">
+            <span class="label">💰 Moeda</span>
+            <span class="value" id="sysMoeda">Mumu</span>
+        </div>
+        
+        <div class="config-item">
+            <span class="label">📈 SELIC Atual</span>
+            <span class="value" id="sysSelic">14.75%</span>
+        </div>
+        
+        <div class="config-item">
+            <span class="label">👤 Usuário Logado</span>
+            <span class="value" id="sysUsuario">Nenhum</span>
+        </div>
+
+        <div id="sysStatus" class="status checking">🔍 Verificando conexão...</div>
+        
+        <button class="btn-test" id="btnTestConexao">🔌 Testar Conexão</button>
+        
+        <div class="footer">
+            <span class="emoji">🛡️</span> Sistema seguro - Dados centralizados
+        </div>
+    </div>
+
+    <script type="importmap">
+    {
+        "imports": {
+            "@supabase/supabase-js": "https://esm.sh/@supabase/supabase-js@2"
+        }
+    }
+    </script>
+
+    <script type="module">
+        import { createClient } from '@supabase/supabase-js';
+
+        // ==================== CONFIGURAÇÕES CENTRALIZADAS ====================
+        export const CONFIG = {
+            SUPABASE_URL: 'https://xrcxvizzdumcxbylmkvn.supabase.co',
+            SUPABASE_KEY: 'sb_publishable_E-g3G3wW4EySbCsXLXp8KQ_FnmERMcD',
+            TABELA: 'Geral',
+            MOEDA: 'Mumu',
+            SELIC_PADRAO: 14.75
+        };
+
+        // Criar cliente Supabase
+        export const supabase = createClient(CONFIG.SUPABASE_URL, CONFIG.SUPABASE_KEY);
+
+        // ==================== FUNÇÕES DO SISTEMA ====================
+        export async function verificarConexao() {
+            try {
+                const { data, error } = await supabase
+                    .from(CONFIG.TABELA)
+                    .select('id')
+                    .limit(1);
+                
+                if (error) throw error;
+                return { online: true, message: '✅ Conexão estabelecida com sucesso!' };
+            } catch (error) {
+                return { online: false, message: '❌ Erro ao conectar: ' + error.message };
+            }
+        }
+
+        export function getUsuarioLogado() {
+            try {
+                const usuario = localStorage.getItem('usuario_logado');
+                if (!usuario) return null;
+                return JSON.parse(usuario);
+            } catch {
+                return null;
+            }
+        }
+
+        // ==================== INICIALIZAÇÃO DA PÁGINA ====================
+        async function initPagina() {
+            // Preencher informações
+            document.getElementById('sysSupabaseUrl').textContent = CONFIG.SUPABASE_URL;
+            document.getElementById('sysSupabaseKey').textContent = CONFIG.SUPABASE_KEY;
+            document.getElementById('sysTabela').textContent = CONFIG.TABELA;
+            document.getElementById('sysMoeda').textContent = CONFIG.MOEDA;
+            document.getElementById('sysSelic').textContent = CONFIG.SELIC_PADRAO + '%';
+
+            // Usuário logado
+            const usuario = getUsuarioLogado();
+            if (usuario) {
+                document.getElementById('sysUsuario').textContent = usuario.nome || usuario.login || 'ADM';
+            }
+
+            // Testar conexão
+            await testarConexao();
+        }
+
+        async function testarConexao() {
+            const statusEl = document.getElementById('sysStatus');
+            statusEl.className = 'status checking';
+            statusEl.textContent = '🔍 Verificando conexão...';
+
+            const resultado = await verificarConexao();
+            
+            if (resultado.online) {
+                statusEl.className = 'status online';
+                statusEl.textContent = '✅ ' + resultado.message;
+            } else {
+                statusEl.className = 'status offline';
+                statusEl.textContent = '❌ ' + resultado.message;
+            }
+        }
+
+        document.getElementById('btnTestConexao').addEventListener('click', testarConexao);
+
+        // Inicializar
+        initPagina();
+
+        // Exportar para uso global
+        window.__SYS_CONFIG = CONFIG;
+        window.__SYS_SUPABASE = supabase;
+        window.__SYS_VERIFICAR = verificarConexao;
+    </script>
+</body>
+</html>

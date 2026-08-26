@@ -569,56 +569,245 @@
         @keyframes fadeIn { from { opacity: 0; transform: scale(0.95); } to { opacity: 1; transform: scale(1); } }
 
         /* ============================================================
-           SISTEMA DE NÍVEL - WIDGET
+           SISTEMA DE NÍVEL - ESTILOS COMPLETOS (integrado)
            ============================================================ */
-        .level-widget {
+        .level-system-container {
             background: rgba(0, 0, 0, 0.4);
             border-radius: 12px;
-            padding: 0.5rem 0.8rem;
+            padding: 12px 16px;
             border: 1px solid rgba(0, 240, 255, 0.1);
-            margin: 0.5rem 0;
-            width: 100%;
-        }
-        .lw-header { display: flex; flex-wrap: wrap; gap: 0.5rem; align-items: center; }
-        .lw-badge { display: flex; align-items: center; gap: 0.5rem; }
-        .lw-badge .lw-num {
-            font-family: 'Orbitron', sans-serif;
-            font-size: 1.5rem;
-            font-weight: 900;
-            color: var(--neon-blue);
-            text-shadow: 0 0 20px rgba(0, 240, 255, 0.3);
-            background: rgba(0, 0, 0, 0.3);
-            padding: 0 0.5rem;
-            border-radius: 8px;
-        }
-        .lw-badge .lw-label { font-size: 0.5rem; color: var(--text-muted); letter-spacing: 1px; }
-        .lw-badge .lw-title { font-size: 0.7rem; font-weight: 700; color: #fff; }
-        .lw-exp { flex: 1; min-width: 100px; }
-        .lw-bar { background: rgba(255,255,255,0.05); border-radius: 20px; height: 6px; overflow: hidden; }
-        .lw-fill { height: 100%; background: linear-gradient(90deg, var(--neon-blue), var(--neon-purple)); border-radius: 20px; transition: width 0.5s ease; width: 0%; }
-        .lw-text { display: flex; justify-content: space-between; font-size: 0.55rem; color: var(--text-muted); margin-top: 0.1rem; }
-        .lw-text .lw-cur { color: #fff; }
-        .lw-text .lw-nxt { color: #fff; }
-        .lw-stats {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 0.3rem 0.8rem;
-            margin-top: 0.3rem;
-            font-size: 0.6rem;
-            color: var(--text-muted);
-        }
-        .lw-stats span { display: flex; align-items: center; gap: 0.2rem; }
-        .lw-stats .hp-c, .lw-stats .mp-c, .lw-stats .sm-c,
-        .lw-stats .atk-c, .lw-stats .def-c, .lw-stats .mag-c {
-            color: #fff;
-            font-weight: 600;
-            background: rgba(0,0,0,0.3);
-            padding: 0 0.3rem;
-            border-radius: 10px;
+            margin: 0 0 12px 0;
         }
 
+        .level-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+
+        .level-badge {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            font-family: 'Orbitron', sans-serif;
+        }
+
+        .level-badge .level-number {
+            font-size: 2rem;
+            font-weight: 900;
+            color: #00f0ff;
+            text-shadow: 0 0 30px rgba(0, 240, 255, 0.3);
+            line-height: 1;
+            background: rgba(0,0,0,0.3);
+            padding: 0 6px;
+            border-radius: 8px;
+        }
+
+        .level-badge .level-label {
+            font-size: 0.6rem;
+            color: #8a99ad;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+        }
+
+        .level-badge .level-title {
+            font-size: 0.8rem;
+            color: #f0f4f8;
+            font-weight: 600;
+            margin-top: 2px;
+        }
+
+        .exp-container {
+            flex: 1;
+            min-width: 120px;
+        }
+
+        .exp-bar {
+            background: rgba(255, 255, 255, 0.06);
+            border-radius: 20px;
+            height: 10px;
+            overflow: hidden;
+            border: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        .exp-bar .exp-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #7000ff, #00f0ff);
+            border-radius: 20px;
+            transition: width 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            box-shadow: 0 0 20px rgba(0, 240, 255, 0.2);
+            width: 0%;
+        }
+
+        .exp-bar .exp-fill.high {
+            background: linear-gradient(90deg, #00ff66, #00f0ff);
+            box-shadow: 0 0 25px rgba(0, 255, 102, 0.3);
+        }
+
+        .exp-text {
+            display: flex;
+            justify-content: space-between;
+            font-size: 0.65rem;
+            color: #8a99ad;
+            margin-top: 2px;
+            font-weight: 600;
+        }
+
+        .exp-text .exp-current { color: #00f0ff; }
+        .exp-text .exp-next { color: #7000ff; }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(6, 1fr);
+            gap: 6px;
+            margin-top: 10px;
+            padding-top: 10px;
+            border-top: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        .stat-pill {
+            display: flex;
+            align-items: center;
+            gap: 4px;
+            background: rgba(255, 255, 255, 0.04);
+            padding: 2px 10px;
+            border-radius: 20px;
+            font-size: 0.7rem;
+            font-weight: 600;
+            color: #c8d0e0;
+            border: 1px solid rgba(255, 255, 255, 0.04);
+            white-space: nowrap;
+            justify-content: center;
+        }
+
+        .stat-pill .stat-icon { font-size: 0.75rem; }
+        .stat-pill .stat-value { color: #fff; font-weight: 700; margin-left: 2px; }
+        .stat-pill .stat-value.hp { color: #ef4444; }
+        .stat-pill .stat-value.mp { color: #3b82f6; }
+        .stat-pill .stat-value.sm { color: #f59e0b; }
+        .stat-pill .stat-value.atk { color: #ef4444; }
+        .stat-pill .stat-value.def { color: #8b5cf6; }
+        .stat-pill .stat-value.mag { color: #10b981; }
+
+        .level-actions {
+            display: flex;
+            gap: 6px;
+            flex-wrap: wrap;
+            margin-top: 10px;
+            padding-top: 10px;
+            border-top: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        .level-actions .btn-level {
+            padding: 4px 14px;
+            border: none;
+            border-radius: 30px;
+            font-weight: 700;
+            font-size: 0.7rem;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-family: 'Rajdhani', sans-serif;
+            letter-spacing: 0.5px;
+        }
+
+        .level-actions .btn-level:hover { transform: translateY(-2px); }
+        .level-actions .btn-level:active { transform: scale(0.94); }
+
+        .level-actions .btn-level.btn-treinar {
+            background: linear-gradient(135deg, #00f0ff, #7000ff);
+            color: #fff;
+            box-shadow: 0 0 20px rgba(0, 240, 255, 0.2);
+        }
+        .level-actions .btn-level.btn-treinar:hover { box-shadow: 0 0 35px rgba(0, 240, 255, 0.4); }
+
+        .level-actions .btn-level.btn-descansar {
+            background: rgba(255, 255, 255, 0.08);
+            color: #c8d0e0;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        .level-actions .btn-level.btn-descansar:hover { background: rgba(255, 255, 255, 0.15); }
+
+        .level-actions .btn-level.btn-reset {
+            background: rgba(239, 68, 68, 0.15);
+            color: #ef4444;
+            border: 1px solid rgba(239, 68, 68, 0.2);
+        }
+        .level-actions .btn-level.btn-reset:hover { background: rgba(239, 68, 68, 0.25); }
+
+        .sm-actions {
+            display: flex;
+            gap: 6px;
+            flex-wrap: wrap;
+            margin-top: 6px;
+        }
+
+        .sm-actions .btn-sm {
+            padding: 4px 14px;
+            border: none;
+            border-radius: 30px;
+            font-weight: 700;
+            font-size: 0.7rem;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-family: 'Rajdhani', sans-serif;
+            letter-spacing: 0.5px;
+        }
+
+        .sm-actions .btn-sm:hover { transform: translateY(-2px); }
+        .sm-actions .btn-sm:active { transform: scale(0.94); }
+
+        .sm-actions .btn-sm.btn-sm-ganhar {
+            background: linear-gradient(135deg, #10b981, #34d399);
+            color: #fff;
+            box-shadow: 0 0 20px rgba(16, 185, 129, 0.2);
+        }
+        .sm-actions .btn-sm.btn-sm-ganhar:hover { box-shadow: 0 0 35px rgba(16, 185, 129, 0.4); }
+
+        .sm-actions .btn-sm.btn-sm-gastar {
+            background: linear-gradient(135deg, #ef4444, #f87171);
+            color: #fff;
+            box-shadow: 0 0 20px rgba(239, 68, 68, 0.2);
+        }
+        .sm-actions .btn-sm.btn-sm-gastar:hover { box-shadow: 0 0 35px rgba(239, 68, 68, 0.4); }
+
+        .sm-actions .btn-sm.btn-sm-resetar {
+            background: rgba(255, 255, 255, 0.08);
+            color: #c8d0e0;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        .sm-actions .btn-sm.btn-sm-resetar:hover { background: rgba(255, 255, 255, 0.15); }
+
+        #levelToast {
+            position: fixed;
+            bottom: 80px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: rgba(10, 11, 16, 0.95);
+            backdrop-filter: blur(8px);
+            color: #fff;
+            padding: 10px 20px;
+            border-radius: 12px;
+            font-weight: 600;
+            font-size: 0.85rem;
+            box-shadow: 0 8px 32px rgba(0,0,0,0.5);
+            border-left: 4px solid #3b82f6;
+            z-index: 9999;
+            display: none;
+            opacity: 0;
+            transition: opacity 0.4s ease;
+            max-width: 90%;
+            text-align: center;
+            font-family: 'Rajdhani', sans-serif;
+        }
+        #levelToast.show { display: block; opacity: 1; }
+
         /* ---------- RESPONSIVIDADE ---------- */
-        @media (max-width: 820px) { .game-container { grid-template-columns: 1fr; gap: 1rem; } }
+        @media (max-width: 820px) { 
+            .game-container { grid-template-columns: 1fr; gap: 1rem; }
+            .stats-grid { grid-template-columns: repeat(3, 1fr); }
+        }
         @media (max-width: 520px) {
             .card { padding: 0.8rem 0.6rem; }
             .nav-bar { flex-direction: column; align-items: stretch; gap: 0.3rem; padding: 8px 12px; }
@@ -635,12 +824,18 @@
             .user-nick { font-size: 0.65rem; }
             .user-balance { font-size: 0.55rem; }
             .logout-btn { font-size: 0.55rem; padding: 2px 6px; }
+            .stats-grid { grid-template-columns: repeat(2, 1fr); }
+            .level-badge .level-number { font-size: 1.5rem; }
+            .level-actions .btn-level { font-size: 0.6rem; padding: 3px 10px; }
+            .sm-actions .btn-sm { font-size: 0.6rem; padding: 3px 10px; }
         }
         @media (max-width: 400px) {
             .plot { font-size: 1.1rem; min-height: 36px; }
             .plot .stage-label { display: none; }
             .game-section-title { font-size: 0.9rem; }
             .milharal-message { font-size: 0.55rem; min-height: 1.4rem; }
+            .stats-grid { grid-template-columns: repeat(2, 1fr); }
+            .stat-pill { font-size: 0.6rem; padding: 2px 6px; }
         }
     </style>
 </head>
@@ -662,7 +857,7 @@
                 </div>
             </div>
             <div style="display:flex; gap:8px; flex-wrap:wrap; align-items:center;">
-                <a href="dashboard.html" class="logout-btn" style="background:linear-gradient(135deg,#7000ff,#8b5cf6);">🏠 Voltar Para Dashboard</a>
+                <a href="../../dashboard.html" class="logout-btn" style="background:linear-gradient(135deg,#7000ff,#8b5cf6);">🏠 Voltar Para Dashboard</a>
             </div>
 
             <div class="status-bar" id="statusBar">
@@ -678,31 +873,66 @@
             </div>
         </nav>
 
-        <!-- SISTEMA DE NÍVEL - WIDGET -->
-        <div class="level-widget" id="levelWidget">
-            <div class="lw-header">
-                <div class="lw-badge">
-                    <span class="lw-num" id="lwNivel">1</span>
+        <!-- ============================================================
+        SISTEMA DE NÍVEL - COMPONENTE INTEGRADO
+        ============================================================ -->
+        <div class="level-system-container" id="levelSystem">
+            <div class="level-header">
+                <div class="level-badge">
+                    <span class="level-number" id="levelNumber">1</span>
                     <div>
-                        <div class="lw-label">NÍVEL</div>
-                        <div class="lw-title" id="lwTitulo">🌱 Iniciante</div>
+                        <div class="level-label">NÍVEL</div>
+                        <div class="level-title" id="levelTitle">🌱 Iniciante</div>
                     </div>
                 </div>
-                <div class="lw-exp">
-                    <div class="lw-bar"><div class="lw-fill" id="lwExpFill" style="width:0%"></div></div>
-                    <div class="lw-text">
-                        <span class="lw-cur" id="lwExpAtual">0</span>
-                        <span>/ <span class="lw-nxt" id="lwExpProx">100</span> EXP</span>
+                <div class="exp-container">
+                    <div class="exp-bar">
+                        <div class="exp-fill" id="expFill" style="width: 0%;"></div>
+                    </div>
+                    <div class="exp-text">
+                        <span class="exp-current" id="expCurrent">0</span>
+                        <span>/ <span class="exp-next" id="expNext">100</span> EXP</span>
                     </div>
                 </div>
             </div>
-            <div class="lw-stats">
-                <span>❤️ HP<span class="hp-c" id="lwHp">100/100</span></span>
-                <span>💧 MANA<span class="mp-c" id="lwMp">50/50</span></span>
-                <span>⚡ STAMINA<span class="sm-c" id="lwSm">100/100</span></span>
-                <span>⚔️ FORCA<span class="atk-c" id="lwAtk">15</span></span>
-                <span>🛡️ DEFESA<span class="def-c" id="lwDef">10</span></span>
-                <span>🔮 MAGIA<span class="mag-c" id="lwMag">8</span></span>
+
+            <div class="stats-grid" id="statsGrid">
+                <span class="stat-pill">
+                    <span class="stat-icon">❤️</span>
+                    HP <span class="stat-value hp" id="statHp">100/100</span>
+                </span>
+                <span class="stat-pill">
+                    <span class="stat-icon">💧</span>
+                    MP <span class="stat-value mp" id="statMp">50/50</span>
+                </span>
+                <span class="stat-pill">
+                    <span class="stat-icon">⚡</span>
+                    SM <span class="stat-value sm" id="statSm">40/40</span>
+                </span>
+                <span class="stat-pill">
+                    <span class="stat-icon">⚔️</span>
+                    ATK <span class="stat-value atk" id="statAtk">15</span>
+                </span>
+                <span class="stat-pill">
+                    <span class="stat-icon">🛡️</span>
+                    DEF <span class="stat-value def" id="statDef">10</span>
+                </span>
+                <span class="stat-pill">
+                    <span class="stat-icon">🔮</span>
+                    MAG <span class="stat-value mag" id="statMag">8</span>
+                </span>
+            </div>
+
+            <div class="level-actions">
+                <button class="btn-level btn-treinar" id="btnTreinar">🏋️ Treinar (+EXP)</button>
+                <button class="btn-level btn-descansar" id="btnDescansar">🛌 Descansar</button>
+                <button class="btn-level btn-reset" id="btnResetLevel">🔄 Resetar Nível</button>
+            </div>
+
+            <div class="sm-actions">
+                <button class="btn-sm btn-sm-ganhar" id="btnSmGanhar">➕ Ganhar 50 SM</button>
+                <button class="btn-sm btn-sm-gastar" id="btnSmGastar">➖ Gastar 30 SM</button>
+                <button class="btn-sm btn-sm-resetar" id="btnSmResetar">🔄 Resetar SM</button>
             </div>
         </div>
 
@@ -723,10 +953,14 @@
 
                 <div class="milharal-header">
                     <div class="milharal-stats">
-                        <span class="stat-item"><i class="fas fa-seedling"></i><span class="num" id="seedCount">🌰 0</span></span>
-                        <span class="stat-item"><i class="fas fa-trowel"></i><span class="num" id="plantedCount">🌱 0</span></span>
-                        <span class="stat-item"><i class="fas fa-corn"></i><span class="num" id="harvestCount">🌽 0</span></span>
-                        <span class="stat-item"><i class="fas fa-water" style="color:var(--neon-blue);"></i><span class="num" id="bucketCount">🪣 0</span></span>
+                        <span class="stat-item"><i class="fas fa-seedling"></i><span class="num" id="seedCount">🌰 0</span>Semente</span>
+                        <span class="stat-item"><i class="fas fa-trowel"></i><span class="num" id="plantedCount">🌱 0</span>Broto</span>
+                        <span class="stat-item"><i class="fas fa-trowel"></i><span class="num" id="plantedCount">🌿 0</span>muda</span>
+                        <span class="stat-item"><i class="fas fa-trowel"></i><span class="num" id="plantedCount">🌾 0</span>crescendo</span>
+                        <span class="stat-item"><i class="fas fa-corn"></i><span class="num" id="harvestCount">🌽 0</span>Milho</span>
+                        <span class="stat-item"><i class="fas fa-egg"></i><span class="num" id="harvestCount">🥚 0</span>Ovo</span>
+                        <span class="stat-item"><i class="fas fa-egg"></i><span class="num" id="harvestCount">🐔 0</span>Frango</span>
+                        <span class="stat-item"><i class="fas fa-water" style="color:var(--neon-blue);"></i><span class="num" id="bucketCount">🪣 0</span>Baude de Agua</span>
                     </div>
                     <div style="display:flex;gap:0.3rem;flex-wrap:wrap;align-items:center;">
                         <span class="stock-display" id="stockDisplay">
@@ -826,6 +1060,9 @@
 
     <!-- TOAST -->
     <div class="toast" id="toast"></div>
+    
+    <!-- LEVEL TOAST -->
+    <div id="levelToast"></div>
 
     <!-- ============================================================
     LOGIN MODAL
@@ -951,10 +1188,252 @@
             };
 
             // ============================================================
-            // 5. REFERÊNCIAS DOM
+            // 5. SISTEMA DE NÍVEL - INTEGRADO
+            // ============================================================
+            const levelSystem = {
+                nivel: 1,
+                experiencia: 0,
+                hpMax: 100,
+                mpMax: 50,
+                smMax: 40,
+                hp: 100,
+                mp: 50,
+                sm: 40,
+                ataqueBase: 15,
+                defesaBase: 10,
+                magiaBase: 8,
+                titulos: [
+                    { min: 1, titulo: '🌱 Iniciante' },
+                    { min: 5, titulo: '🌿 Aprendiz' },
+                    { min: 10, titulo: '⚔️ Guerreiro' },
+                    { min: 20, titulo: '🛡️ Mestre' },
+                    { min: 35, titulo: '🏆 Lendário' },
+                    { min: 50, titulo: '👑 Herói' },
+                    { min: 75, titulo: '⚡ Deus da Guerra' },
+                    { min: 100, titulo: '🌟 Imortal' },
+                ],
+                toastTimer: null,
+
+                getAtaque() { return this.ataqueBase + Math.floor(this.nivel * 1.5); },
+                getDefesa() { return this.defesaBase + Math.floor(this.nivel * 1.2); },
+                getMagia() { return this.magiaBase + Math.floor(this.nivel * 1.0); },
+                getHpMax() { return this.hpMax + Math.floor(this.nivel * 6); },
+                getMpMax() { return this.mpMax + Math.floor(this.nivel * 4); },
+                getSmMax() { return this.smMax + Math.floor(this.nivel * 3); },
+                getTitulo() {
+                    let titulo = this.titulos[0].titulo;
+                    for (const t of this.titulos) {
+                        if (this.nivel >= t.min) titulo = t.titulo;
+                    }
+                    return titulo;
+                },
+                getExpProximo() { return Math.floor(100 * Math.pow(1.2, this.nivel - 1)); },
+
+                treinar() {
+                    if (this.sm < 10) {
+                        this.mostrarToast('⚡ Stamina insuficiente! Descanse.', 'erro');
+                        return false;
+                    }
+                    this.sm -= 10;
+                    const ganhoBase = 15 + Math.floor(this.nivel * 2);
+                    const variacao = Math.floor(Math.random() * 15);
+                    const ganho = ganhoBase + variacao;
+                    this.experiencia += ganho;
+                    let subiu = false;
+                    while (this.experiencia >= this.getExpProximo()) {
+                        this.experiencia -= this.getExpProximo();
+                        this.nivel++;
+                        subiu = true;
+                        this.hp = this.getHpMax();
+                        this.mp = this.getMpMax();
+                        this.sm = this.getSmMax();
+                        this.mostrarToast(`🎉 SUBIU PARA NÍVEL ${this.nivel}!`, 'sucesso');
+                    }
+                    this.atualizarUI();
+                    if (!subiu) {
+                        this.mostrarToast(`💪 Treinou! +${ganho} EXP (${this.experiencia}/${this.getExpProximo()})`, 'info');
+                    }
+                    this.salvar();
+                    return true;
+                },
+
+                descansar() {
+                    const hpRestaurado = Math.floor(this.getHpMax() * 0.4);
+                    const mpRestaurado = Math.floor(this.getMpMax() * 0.35);
+                    const smRestaurado = Math.floor(this.getSmMax() * 0.5);
+                    this.hp = Math.min(this.getHpMax(), this.hp + hpRestaurado);
+                    this.mp = Math.min(this.getMpMax(), this.mp + mpRestaurado);
+                    this.sm = Math.min(this.getSmMax(), this.sm + smRestaurado);
+                    this.atualizarUI();
+                    this.mostrarToast(`🛌 Descansou! +${hpRestaurado} HP, +${mpRestaurado} MP, +${smRestaurado} SM`, 'sucesso');
+                    this.salvar();
+                    return true;
+                },
+
+                resetar() {
+                    if (!confirm('⚠️ Tem certeza que quer resetar seu nível e atributos?')) return false;
+                    this.nivel = 1;
+                    this.experiencia = 0;
+                    this.hp = this.getHpMax();
+                    this.mp = this.getMpMax();
+                    this.sm = this.getSmMax();
+                    this.atualizarUI();
+                    this.mostrarToast('🔄 Nível resetado para 1!', 'info');
+                    this.salvar();
+                    return true;
+                },
+
+                ganharSm() {
+                    const smMax = this.getSmMax();
+                    const ganho = 50;
+                    const novoSm = Math.min(smMax, this.sm + ganho);
+                    const ganhoReal = novoSm - this.sm;
+                    if (ganhoReal <= 0) {
+                        this.mostrarToast('⚡ SM já está no máximo!', 'aviso');
+                        return false;
+                    }
+                    this.sm = novoSm;
+                    this.atualizarUI();
+                    this.mostrarToast(`➕ +${ganhoReal} SM (${this.sm}/${smMax})`, 'sucesso');
+                    this.salvar();
+                    return true;
+                },
+
+                gastarSm() {
+                    const gasto = 30;
+                    if (this.sm < gasto) {
+                        this.mostrarToast('⚡ SM insuficiente!', 'erro');
+                        return false;
+                    }
+                    this.sm -= gasto;
+                    this.atualizarUI();
+                    this.mostrarToast(`➖ -${gasto} SM (${this.sm}/${this.getSmMax()})`, 'info');
+                    this.salvar();
+                    return true;
+                },
+
+                resetarSm() {
+                    if (!confirm('⚠️ Tem certeza que quer resetar o SM para o máximo?')) return false;
+                    this.sm = this.getSmMax();
+                    this.atualizarUI();
+                    this.mostrarToast(`🔄 SM resetado para ${this.sm}/${this.getSmMax()}`, 'info');
+                    this.salvar();
+                    return true;
+                },
+
+                atualizarUI() {
+                    const expProx = this.getExpProximo();
+                    const pct = this.experiencia / expProx * 100;
+                    document.getElementById('levelNumber').textContent = this.nivel;
+                    document.getElementById('levelTitle').textContent = this.getTitulo();
+                    const fill = document.getElementById('expFill');
+                    fill.style.width = Math.min(pct, 100) + '%';
+                    fill.className = 'exp-fill' + (pct > 75 ? ' high' : '');
+                    document.getElementById('expCurrent').textContent = this.experiencia;
+                    document.getElementById('expNext').textContent = expProx;
+                    document.getElementById('statHp').textContent = `${this.hp}/${this.getHpMax()}`;
+                    document.getElementById('statMp').textContent = `${this.mp}/${this.getMpMax()}`;
+                    document.getElementById('statSm').textContent = `${this.sm}/${this.getSmMax()}`;
+                    document.getElementById('statAtk').textContent = this.getAtaque();
+                    document.getElementById('statDef').textContent = this.getDefesa();
+                    document.getElementById('statMag').textContent = this.getMagia();
+                },
+
+                mostrarToast(mensagem, tipo = 'info') {
+                    const toast = document.getElementById('levelToast');
+                    if (!toast) { console.log('[LEVEL]', mensagem); return; }
+                    const cores = {
+                        sucesso: '#10b981',
+                        erro: '#ef4444',
+                        info: '#3b82f6',
+                        aviso: '#f59e0b'
+                    };
+                    toast.textContent = mensagem;
+                    toast.style.borderLeftColor = cores[tipo] || '#3b82f6';
+                    toast.className = 'show';
+                    clearTimeout(this.toastTimer);
+                    this.toastTimer = setTimeout(() => { toast.className = ''; }, 3000);
+                },
+
+                async salvar() {
+                    if (!usuarioLogado || !supabaseOnline) return false;
+                    try {
+                        const payload = {
+                            nivel: this.nivel,
+                            experiencia: this.experiencia,
+                            hp_max: this.getHpMax(),
+                            mp_max: this.getMpMax(),
+                            sm_max: this.getSmMax(),
+                            ataque_base: this.ataqueBase,
+                            defesa_base: this.defesaBase,
+                            magia_base: this.magiaBase,
+                            hp_atual: this.hp,
+                            mp_atual: this.mp,
+                            sm_atual: this.sm,
+                            updated_at: new Date().toISOString()
+                        };
+                        const response = await fetch(
+                            `${CONFIG.SUPABASE_URL}/rest/v1/${CONFIG.TABELA}?login=eq.${encodeURIComponent(usuarioLogado.login)}`,
+                            {
+                                method: 'PATCH',
+                                headers: {
+                                    'Content-Type': 'application/json',
+                                    'apikey': CONFIG.SUPABASE_KEY,
+                                    'Authorization': `Bearer ${CONFIG.SUPABASE_KEY}`
+                                },
+                                body: JSON.stringify(payload)
+                            }
+                        );
+                        if (!response.ok) throw new Error(`Erro ao salvar nível: ${response.status}`);
+                        return true;
+                    } catch (error) {
+                        console.error('❌ Erro ao salvar nível:', error);
+                        return false;
+                    }
+                },
+
+                async carregar() {
+                    if (!usuarioLogado || !supabaseOnline) return false;
+                    try {
+                        const response = await fetch(
+                            `${CONFIG.SUPABASE_URL}/rest/v1/${CONFIG.TABELA}?login=eq.${encodeURIComponent(usuarioLogado.login)}`,
+                            {
+                                headers: {
+                                    'apikey': CONFIG.SUPABASE_KEY,
+                                    'Authorization': `Bearer ${CONFIG.SUPABASE_KEY}`
+                                }
+                            }
+                        );
+                        if (!response.ok) throw new Error(`Erro ao carregar nível: ${response.status}`);
+                        const data = await response.json();
+                        if (data && data.length > 0) {
+                            const d = data[0];
+                            this.nivel = d.nivel || 1;
+                            this.experiencia = d.experiencia || 0;
+                            this.hpMax = d.hp_max || 100;
+                            this.mpMax = d.mp_max || 50;
+                            this.smMax = d.sm_max || 40;
+                            this.ataqueBase = d.ataque_base || 15;
+                            this.defesaBase = d.defesa_base || 10;
+                            this.magiaBase = d.magia_base || 8;
+                            this.hp = d.hp_atual || this.getHpMax();
+                            this.mp = d.mp_atual || this.getMpMax();
+                            this.sm = d.sm_atual || this.getSmMax();
+                            this.atualizarUI();
+                            return true;
+                        }
+                        return false;
+                    } catch (error) {
+                        console.error('❌ Erro ao carregar nível:', error);
+                        return false;
+                    }
+                }
+            };
+
+            // ============================================================
+            // 6. REFERÊNCIAS DOM
             // ============================================================
             const DOM = {
-                // Milharal
                 field: document.getElementById('field'),
                 seedCount: document.getElementById('seedCount'),
                 plantedCount: document.getElementById('plantedCount'),
@@ -965,11 +1444,9 @@
                 bucketStatus: document.getElementById('bucketStatus'),
                 message: document.getElementById('message'),
                 headerSaldo: document.getElementById('headerSaldo'),
-                // User
                 userAvatar: document.getElementById('userAvatar'),
                 userName: document.getElementById('userName'),
                 userBalance: document.getElementById('userBalanceDisplay'),
-                // Fazendinha
                 invSementes: document.getElementById('invSementes'),
                 invMilho: document.getElementById('invMilho'),
                 invOvos: document.getElementById('invOvos'),
@@ -991,7 +1468,6 @@
                 venderOvo: document.getElementById('venderOvoQtd'),
                 venderSemente: document.getElementById('venderSementeQtd'),
                 venderGalinha: document.getElementById('venderGalinhaQtd'),
-                // Status
                 supabaseDot: document.getElementById('supabaseDot'),
                 supabaseStatus: document.getElementById('supabaseStatus'),
                 toast: document.getElementById('toast'),
@@ -1002,7 +1478,7 @@
             };
 
             // ============================================================
-            // 6. FUNÇÕES AUXILIARES
+            // 7. FUNÇÕES AUXILIARES
             // ============================================================
             function formatSaldo(valor) {
                 return Number(valor).toFixed(2).replace('.', ',');
@@ -1011,8 +1487,9 @@
             function getSaldoTotal() {
                 return (milharal.saldo || 0) + (fazendinha.saldo || 0);
             }
+
             function atualizarSaldoGlobal() {
-                const total = milharal.saldo || 0;  // Remove a soma com fazendinha
+                const total = milharal.saldo || 0;
                 if (DOM.headerSaldo) DOM.headerSaldo.textContent = formatSaldo(total);
                 if (DOM.userBalance) DOM.userBalance.textContent = `💰 R$ ${formatSaldo(total)}`;
                 if (DOM.saldoDisplay) DOM.saldoDisplay.textContent = `R$ ${formatSaldo(milharal.saldo || 0)}`;
@@ -1026,7 +1503,7 @@
             }
 
             // ============================================================
-            // 7. STATUS UI
+            // 8. STATUS UI
             // ============================================================
             function atualizarStatusSupabase(online, texto) {
                 DOM.supabaseDot.className = 'dot ' + (online ? 'online' : 'offline');
@@ -1036,7 +1513,7 @@
             }
 
             // ============================================================
-            // 8. AUTENTICAÇÃO
+            // 9. AUTENTICAÇÃO
             // ============================================================
             function carregarUsuario() {
                 try {
@@ -1082,7 +1559,7 @@
             function esconderLogin() { if (DOM.loginModal) DOM.loginModal.classList.remove('show'); }
 
             // ============================================================
-            // 9. SUPABASE - VERIFICAÇÃO E AUTENTICAÇÃO
+            // 10. SUPABASE - VERIFICAÇÃO E AUTENTICAÇÃO
             // ============================================================
             async function verificarSupabase() {
                 try {
@@ -1158,7 +1635,18 @@
                             plantio: { active: false, stage: 0, progress: 0 },
                             incubacao: { active: false, stage: 0, progress: 0 },
                             saldo: 50.00
-                        }
+                        },
+                        nivel: 1,
+                        experiencia: 0,
+                        hp_max: 100,
+                        mp_max: 50,
+                        sm_max: 40,
+                        ataque_base: 15,
+                        defesa_base: 10,
+                        magia_base: 8,
+                        hp_atual: 100,
+                        mp_atual: 50,
+                        sm_atual: 40
                     });
                 }
 
@@ -1196,6 +1684,7 @@
                     esconderLogin();
                     atualizarInterfaceUsuario();
                     await loadFromSupabase();
+                    await levelSystem.carregar();
                     showToast(`👋 Bem-vindo, ${usuario.nome || usuario.login}!`, 2500);
                     return true;
 
@@ -1207,7 +1696,7 @@
             }
 
             // ============================================================
-            // 10. FUNÇÕES DO MILHARAL
+            // 11. FUNÇÕES DO MILHARAL
             // ============================================================
             function initPlots() {
                 milharal.plots = [];
@@ -1441,7 +1930,7 @@
             }
 
             // ============================================================
-            // 11. FUNÇÕES DA FAZENDINHA
+            // 12. FUNÇÕES DA FAZENDINHA
             // ============================================================
             function adicionarItemCarteira(nome, quantidade) {
                 if (!usuarioLogado) return;
@@ -1660,7 +2149,7 @@
             }
 
             // ============================================================
-            // 12. SUPABASE - SALVAR E CARREGAR
+            // 13. SUPABASE - SALVAR E CARREGAR
             // ============================================================
             async function saveToSupabase() {
                 if (!usuarioLogado) { showToast('⚠️ Faça login para salvar!', 2000); return; }
@@ -1709,6 +2198,17 @@
                         plot_data: plotData,
                         carteira: carteira,
                         fazendinha_dados: fazendinhaDados,
+                        nivel: levelSystem.nivel,
+                        experiencia: levelSystem.experiencia,
+                        hp_max: levelSystem.getHpMax(),
+                        mp_max: levelSystem.getMpMax(),
+                        sm_max: levelSystem.getSmMax(),
+                        ataque_base: levelSystem.ataqueBase,
+                        defesa_base: levelSystem.defesaBase,
+                        magia_base: levelSystem.magiaBase,
+                        hp_atual: levelSystem.hp,
+                        mp_atual: levelSystem.mp,
+                        sm_atual: levelSystem.sm,
                         updated_at: new Date().toISOString()
                     };
 
@@ -1877,6 +2377,22 @@
                         fazendinha.intervalos.push(interval);
                     }
 
+                    // Nível
+                    if (usuario.nivel !== undefined) {
+                        levelSystem.nivel = usuario.nivel || 1;
+                        levelSystem.experiencia = usuario.experiencia || 0;
+                        levelSystem.hpMax = usuario.hp_max || 100;
+                        levelSystem.mpMax = usuario.mp_max || 50;
+                        levelSystem.smMax = usuario.sm_max || 40;
+                        levelSystem.ataqueBase = usuario.ataque_base || 15;
+                        levelSystem.defesaBase = usuario.defesa_base || 10;
+                        levelSystem.magiaBase = usuario.magia_base || 8;
+                        levelSystem.hp = usuario.hp_atual || levelSystem.getHpMax();
+                        levelSystem.mp = usuario.mp_atual || levelSystem.getMpMax();
+                        levelSystem.sm = usuario.sm_atual || levelSystem.getSmMax();
+                        levelSystem.atualizarUI();
+                    }
+
                     showToast(`📥 Dados de ${usuarioLogado.nome || usuarioLogado.login} carregados!`, 2000);
 
                 } catch (error) {
@@ -1886,7 +2402,7 @@
             }
 
             // ============================================================
-            // 13. AUTO SAVE
+            // 14. AUTO SAVE
             // ============================================================
             function autoSave() {
                 if (usuarioLogado && supabaseOnline && !salvando && Date.now() - ultimoSalvamento > CONFIG.AUTO_SAVE_INTERVAL) {
@@ -1895,7 +2411,7 @@
             }
 
             // ============================================================
-            // 14. EVENTOS
+            // 15. EVENTOS
             // ============================================================
 
             // Milharal - Clique no campo
@@ -1954,6 +2470,14 @@
             document.getElementById('btnAlimentarGalinha')?.addEventListener('click', alimentarGalinha);
             document.getElementById('btnVenderProducao')?.addEventListener('click', venderProducao);
 
+            // Nível - Eventos
+            document.getElementById('btnTreinar')?.addEventListener('click', () => levelSystem.treinar());
+            document.getElementById('btnDescansar')?.addEventListener('click', () => levelSystem.descansar());
+            document.getElementById('btnResetLevel')?.addEventListener('click', () => levelSystem.resetar());
+            document.getElementById('btnSmGanhar')?.addEventListener('click', () => levelSystem.ganharSm());
+            document.getElementById('btnSmGastar')?.addEventListener('click', () => levelSystem.gastarSm());
+            document.getElementById('btnSmResetar')?.addEventListener('click', () => levelSystem.resetarSm());
+
             // Logout
             document.getElementById('btnLogout')?.addEventListener('click', function() {
                 if (confirm('Deseja realmente sair?')) fazerLogout();
@@ -1966,7 +2490,7 @@
             });
 
             // ============================================================
-            // 15. LOGIN MODAL - EVENTOS
+            // 16. LOGIN MODAL - EVENTOS
             // ============================================================
             document.addEventListener('DOMContentLoaded', function() {
                 const loginBtn = document.getElementById('btnLogin');
@@ -2017,6 +2541,7 @@
                         renderMilharal();
                         atualizarFazendinhaUI();
                         atualizarInterfaceUsuario();
+                        levelSystem.atualizarUI();
                     });
                 }
 
@@ -2037,13 +2562,14 @@
             });
 
             // ============================================================
-            // 16. INICIALIZAÇÃO
+            // 17. INICIALIZAÇÃO
             // ============================================================
             verificarSupabase();
             carregarUsuario();
             initPlots();
             renderMilharal();
             atualizarFazendinhaUI();
+            levelSystem.atualizarUI();
             startMilharal();
 
             // Produção automática de ovos
@@ -2054,7 +2580,7 @@
                 atualizarInterfaceUsuario();
                 setTimeout(() => {
                     if (supabaseOnline) {
-                        loadFromSupabase();
+                        loadFromSupabase().then(() => levelSystem.carregar());
                     } else {
                         showToast('⚠️ Sem conexão com o banco. Dados locais carregados.', 3000);
                     }
@@ -2074,8 +2600,8 @@
                 if (usuarioLogado && supabaseOnline && !salvando) saveToSupabase();
             });
 
-            console.log('🌽 Milharal + Fazendinha carregados - sincronizado com a Mochila!');
-            console.log('📦 Todos os itens vão para a carteira (mochila)');
+            console.log('🌽 Milharal + Fazendinha + Sistema de Nível carregados!');
+            console.log(`📊 Nível: ${levelSystem.nivel} | EXP: ${levelSystem.experiencia}/${levelSystem.getExpProximo()}`);
 
         })();
     </script>
