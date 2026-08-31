@@ -1,15 +1,21 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
-
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>🌽 Fazendinha MM</title>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
-    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Rajdhani:wght@400;600;700&display=swap" rel="stylesheet">
-    
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>🌽 Milharal – Sistema Completo</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" />
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Rajdhani:wght@400;600;700&display=swap" rel="stylesheet" />
     <style>
-        /* ---------- VARIÁVEIS E RESET ---------- */
+        /* ============================================================
+               RESET + VARIÁVEIS
+               ============================================================ */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
         :root {
             --bg-dark: #0a0b10;
             --card-bg: #121520;
@@ -22,12 +28,15 @@
             --shadow-glow: 0 0 30px rgba(0, 240, 255, 0.15);
             --radius: 16px;
             --transition: 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            --gold: #f9a825;
+            --gold-dark: #f57f17;
+            --soil: #8d6e63;
+            --soil-light: #a1887f;
+            --water-blue: #42a5f5;
         }
 
-        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Rajdhani', sans-serif; }
-
         body {
-            background-color: var(--bg-dark);
+            background: var(--bg-dark);
             color: var(--text-color);
             background-image:
                 radial-gradient(circle at 15% 20%, rgba(112, 0, 255, 0.15) 0%, transparent 40%),
@@ -37,11 +46,12 @@
             display: flex;
             align-items: center;
             justify-content: center;
+            font-family: 'Rajdhani', sans-serif;
         }
 
         .card {
             background: var(--card-bg);
-            max-width: 960px;
+            max-width: 900px;
             width: 100%;
             padding: 1.6rem 1.4rem 1.4rem;
             border-radius: var(--radius);
@@ -55,7 +65,9 @@
             box-shadow: 0 0 40px rgba(0, 240, 255, 0.2), 0 8px 32px rgba(0, 0, 0, 0.5);
         }
 
-        /* ---------- NAVEGAÇÃO ---------- */
+        /* ============================================================
+               NAVEGAÇÃO
+               ============================================================ */
         .nav-bar {
             display: flex;
             justify-content: space-between;
@@ -102,10 +114,28 @@
             font-weight: bold;
             box-shadow: 0 0 10px rgba(0, 240, 255, 0.3);
         }
-        .user-info { display: flex; flex-direction: column; line-height: 1.2; }
-        .user-nick { font-family: 'Orbitron', sans-serif; font-size: 0.8rem; letter-spacing: 0.5px; color: #fff; }
-        .user-balance { font-size: 0.7rem; color: var(--neon-green); display: flex; align-items: center; gap: 4px; }
-        .user-balance::before { content: "💰"; font-size: 0.6rem; }
+        .user-info {
+            display: flex;
+            flex-direction: column;
+            line-height: 1.2;
+        }
+        .user-nick {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 0.8rem;
+            letter-spacing: 0.5px;
+            color: #fff;
+        }
+        .user-balance {
+            font-size: 0.7rem;
+            color: var(--neon-green);
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+        .user-balance::before {
+            content: "💰";
+            font-size: 0.6rem;
+        }
 
         .btn-voltar {
             background: linear-gradient(135deg, var(--neon-purple), #8b5cf6);
@@ -127,26 +157,6 @@
             box-shadow: 0 0 20px rgba(112, 0, 255, 0.4);
         }
 
-        .logout-btn {
-            background: linear-gradient(135deg, #ef4444, #dc2626);
-            color: white;
-            border: none;
-            padding: 4px 12px;
-            border-radius: 40px;
-            font-weight: bold;
-            font-size: 0.7rem;
-            cursor: pointer;
-            transition: all 0.2s;
-            box-shadow: 0 0 10px rgba(239, 68, 68, 0.3);
-            text-decoration: none;
-        }
-        .logout-btn:hover {
-            transform: scale(0.95);
-            background: linear-gradient(135deg, #dc2626, #b91c1c);
-            box-shadow: 0 0 15px rgba(220, 38, 38, 0.6);
-        }
-
-        /* ---------- STATUS BAR ---------- */
         .status-bar {
             display: flex;
             align-items: center;
@@ -160,7 +170,12 @@
             border: 1px solid rgba(0, 240, 255, 0.08);
             margin-bottom: 16px;
         }
-        .status-item { display: flex; align-items: center; gap: 0.3rem; color: var(--text-muted); }
+        .status-item {
+            display: flex;
+            align-items: center;
+            gap: 0.3rem;
+            color: var(--text-muted);
+        }
         .status-item .dot {
             width: 8px;
             height: 8px;
@@ -168,17 +183,42 @@
             display: inline-block;
             transition: all 0.3s;
         }
-        .status-item .dot.online { background: var(--neon-green); box-shadow: 0 0 8px rgba(0, 255, 102, 0.5); }
-        .status-item .dot.offline { background: #ef4444; box-shadow: 0 0 8px rgba(239, 68, 68, 0.3); }
-        .status-item .dot.checking { background: #f59e0b; animation: pulse-dot 1s ease-in-out infinite; }
-        @keyframes pulse-dot {
-            0%, 100% { opacity: 1; transform: scale(1); }
-            50% { opacity: 0.4; transform: scale(0.7); }
+        .status-item .dot.online {
+            background: var(--neon-green);
+            box-shadow: 0 0 8px rgba(0, 255, 102, 0.5);
         }
-        .status-item .value { font-weight: 600; color: var(--text-color); }
-        .status-item .value.online { color: var(--neon-green); }
-        .status-item .value.offline { color: #ef4444; }
-        .status-item .value.checking { color: #f59e0b; }
+        .status-item .dot.offline {
+            background: #ef4444;
+            box-shadow: 0 0 8px rgba(239, 68, 68, 0.3);
+        }
+        .status-item .dot.checking {
+            background: #f59e0b;
+            animation: pulse-dot 1s ease-in-out infinite;
+        }
+        @keyframes pulse-dot {
+            0%,
+            100% {
+                opacity: 1;
+                transform: scale(1);
+            }
+            50% {
+                opacity: 0.4;
+                transform: scale(0.7);
+            }
+        }
+        .status-item .value {
+            font-weight: 600;
+            color: var(--text-color);
+        }
+        .status-item .value.online {
+            color: var(--neon-green);
+        }
+        .status-item .value.offline {
+            color: #ef4444;
+        }
+        .status-item .value.checking {
+            color: #f59e0b;
+        }
 
         .status-reconnect {
             background: none;
@@ -190,403 +230,14 @@
             transition: all 0.2s;
             font-size: 0.7rem;
         }
-        .status-reconnect:hover { color: #fff; background: rgba(255,255,255,0.06); }
-
-        /* ---------- LAYOUT DOS JOGOS ---------- */
-        .game-container { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
-        .game-section {
-            background: rgba(0, 0, 0, 0.25);
-            border-radius: var(--radius);
-            padding: 0.8rem;
-            border: 1px solid rgba(0, 240, 255, 0.05);
-        }
-        .game-section-title {
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-            font-weight: 700;
-            font-size: 1rem;
+        .status-reconnect:hover {
             color: #fff;
-            margin-bottom: 0.5rem;
-            padding: 0 0.2rem;
+            background: rgba(255, 255, 255, 0.06);
         }
 
         /* ============================================================
-           ESTILOS DO MILHARAL
-           ============================================================ */
-        .field {
-            display: grid;
-            grid-template-columns: repeat(4, 1fr);
-            gap: 8px;
-            margin-bottom: 0.8rem;
-            aspect-ratio: 1 / 1;
-        }
-
-        .plot {
-            background: #1a1a2e;
-            border-radius: 12px;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            font-size: 2rem;
-            cursor: pointer;
-            transition: all var(--transition);
-            box-shadow: inset 0 -4px 0 rgba(0, 0, 0, 0.3), 0 2px 6px rgba(0, 0, 0, 0.3);
-            position: relative;
-            min-height: 60px;
-            user-select: none;
-            border: 2px solid rgba(0, 240, 255, 0.1);
-        }
-        .plot:hover { transform: scale(1.03); box-shadow: 0 0 20px rgba(0, 240, 255, 0.15), inset 0 -4px 0 rgba(0, 0, 0, 0.3); z-index: 2; border-color: var(--neon-blue); }
-        .plot:active { transform: scale(0.94); }
-        .plot.empty { background: #1a1a2e; border-color: rgba(0, 240, 255, 0.05); }
-        .plot.harvested { background: #2a1a1a; border-color: rgba(255, 77, 77, 0.2); }
-        .plot.harvested:hover { background: #3a1a1a; border-color: #ff4d4d; }
-        .plot:not(.empty):not(.harvested) { background: #0d2a0d; border-color: rgba(0, 255, 102, 0.2); }
-
-        .plot .stage-label {
-            position: absolute;
-            bottom: 2px;
-            font-size: 0.45rem;
-            background: rgba(0, 0, 0, 0.7);
-            color: var(--text-muted);
-            padding: 0 4px;
-            border-radius: 8px;
-            letter-spacing: 0.3px;
-            backdrop-filter: blur(4px);
-            white-space: nowrap;
-            opacity: 0.7;
-            pointer-events: none;
-            font-weight: 600;
-        }
-        .plot .progress-bar {
-            position: absolute;
-            bottom: 0;
-            left: 0;
-            height: 3px;
-            background: var(--neon-blue);
-            border-radius: 0 0 12px 12px;
-            transition: width 0.4s ease;
-            width: 0%;
-            pointer-events: none;
-            box-shadow: 0 0 10px rgba(0, 240, 255, 0.4);
-        }
-        .plot .progress-bar.done { background: var(--neon-green); box-shadow: 0 0 15px rgba(0, 255, 102, 0.6); }
-        .plot .plant-emoji { line-height: 1; transition: transform 0.5s ease; filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.3)); }
-        .plot.growing .plant-emoji { animation: sway 2.5s ease-in-out infinite; }
-        .plot.mature .plant-emoji { animation: glow-neon 1.2s ease-in-out infinite alternate; }
-        .plot.sprout .plant-emoji { animation: pop 1s ease-out; }
-        .plot.seed .plant-emoji { animation: pulse 1.6s ease-in-out infinite; }
-
-        @keyframes sway {
-            0%, 100% { transform: rotate(-3deg) scale(1); }
-            50% { transform: rotate(3deg) scale(1.02); }
-        }
-        @keyframes glow-neon {
-            0% { filter: drop-shadow(0 0 2px var(--neon-green)); transform: scale(1); }
-            100% { filter: drop-shadow(0 0 20px var(--neon-green)); transform: scale(1.06); }
-        }
-        @keyframes pop {
-            0% { transform: scale(0); opacity: 0; }
-            60% { transform: scale(1.2); opacity: 1; }
-            100% { transform: scale(1); }
-        }
-        @keyframes pulse {
-            0%, 100% { transform: scale(1); }
-            50% { transform: scale(0.92); }
-        }
-
-        .milharal-stats {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 0.2rem;
-            margin-bottom: 0.6rem;
-        }
-        .milharal-stats .stat-item {
-            display: flex;
-            align-items: center;
-            gap: 0.2rem;
-            font-size: 0.7rem;
-            font-weight: 600;
-            color: var(--text-color);
-            padding: 0.05rem 0.4rem;
-            border-radius: 20px;
-            background: rgba(0, 0, 0, 0.3);
-        }
-        .milharal-stats .stat-item i { font-size: 0.8rem; color: var(--neon-blue); }
-        .milharal-stats .stat-item .num {
-            background: rgba(0, 0, 0, 0.4);
-            padding: 0 0.3rem;
-            border-radius: 20px;
-            font-size: 0.7rem;
-            color: #fff;
-        }
-
-        .milharal-header {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            flex-wrap: wrap;
-            gap: 0.3rem;
-            margin-bottom: 0.5rem;
-        }
-
-        .saldo-display {
-            display: inline-flex;
-            align-items: center;
-            gap: 0.3rem;
-            background: rgba(112, 0, 255, 0.15);
-            border: 1px solid var(--neon-purple);
-            padding: 0.1rem 0.6rem 0.1rem 0.4rem;
-            border-radius: 30px;
-            font-weight: 700;
-            font-size: 0.8rem;
-            color: var(--neon-purple);
-            box-shadow: 0 0 20px rgba(112, 0, 255, 0.2);
-        }
-        .saldo-display i { font-size: 0.9rem; color: var(--neon-purple); }
-        .saldo-display .num { color: #fff; }
-
-        .stock-display {
-            display: inline-flex;
-            align-items: center;
-            gap: 0.3rem;
-            background: rgba(255, 214, 0, 0.15);
-            border: 1px solid #ffd600;
-            padding: 0.1rem 0.6rem 0.1rem 0.4rem;
-            border-radius: 30px;
-            font-weight: 700;
-            font-size: 0.8rem;
-            color: #ffd600;
-            box-shadow: 0 0 20px rgba(255, 214, 0, 0.15);
-        }
-        .stock-display i { font-size: 0.9rem; color: #ffd600; }
-        .stock-display .num { color: #fff; }
-
-        .milharal-actions {
-            display: flex;
-            gap: 0.3rem;
-            flex-wrap: wrap;
-            margin-bottom: 0.6rem;
-        }
-        .milharal-actions .btn {
-            padding: 0.25rem 0.6rem;
-            font-size: 0.65rem;
-            border-radius: 40px;
-            font-weight: 700;
-            border: 1px solid transparent;
-            cursor: pointer;
-            transition: all var(--transition);
-            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
-            display: inline-flex;
-            align-items: center;
-            gap: 0.3rem;
-            color: #fff;
-        }
-        .milharal-actions .btn:disabled { opacity: 0.4; cursor: not-allowed; transform: none !important; box-shadow: none !important; }
-        .milharal-actions .btn:active:not(:disabled) { transform: scale(0.94) !important; }
-        .milharal-actions .btn-primary { background: linear-gradient(135deg, #00c853, #00e676); color: #000; }
-        .milharal-actions .btn-secondary { background: linear-gradient(135deg, #0288d1, #03a9f4); color: #fff; }
-        .milharal-actions .btn-gold { background: linear-gradient(135deg, #f9a825, #ffd600); color: #000; }
-        .milharal-actions .btn-danger { background: linear-gradient(135deg, #e53935, #d32f2f); color: #fff; }
-
-        .milharal-message {
-            background: rgba(0, 0, 0, 0.3);
-            border-radius: 20px;
-            padding: 0.3rem 0.6rem;
-            font-size: 0.65rem;
-            color: var(--text-muted);
-            text-align: center;
-            min-height: 1.8rem;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 0.3rem;
-            border: 1px solid rgba(0, 240, 255, 0.05);
-            flex-wrap: wrap;
-        }
-        .milharal-message .highlight { color: var(--neon-green); font-weight: 700; }
-
-        /* ============================================================
-           ESTILOS DA FAZENDINHA
-           ============================================================ */
-        .farm-stock {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 0.3rem 0.6rem;
-            background: rgba(0, 0, 0, 0.3);
-            padding: 0.3rem 0.6rem;
-            border-radius: 10px;
-            margin-bottom: 0.6rem;
-            border: 1px solid rgba(0, 240, 255, 0.05);
-        }
-        .farm-stock span { font-size: 0.7rem; font-weight: 600; color: var(--text-color); }
-        .farm-stock span i { margin-right: 3px; }
-
-        .farm-grid-2 {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 0.6rem;
-            margin-bottom: 0.6rem;
-        }
-        .farm-plot {
-            background: rgba(0, 0, 0, 0.3);
-            border-radius: 12px;
-            padding: 0.6rem;
-            text-align: center;
-            border: 1px solid rgba(0, 240, 255, 0.08);
-            transition: all 0.3s;
-        }
-        .farm-plot:hover { border-color: rgba(0, 240, 255, 0.2); }
-        .farm-plot .emoji-big { font-size: 2.5rem; margin-bottom: 0.1rem; transition: transform 0.3s; }
-        .farm-plot .stage-label { font-size: 0.7rem; font-weight: 700; color: var(--text-color); margin-bottom: 0.2rem; }
-        .farm-plot .progress-bar { background: rgba(255, 255, 255, 0.05); border-radius: 20px; height: 4px; overflow: hidden; margin: 0.2rem 0; }
-        .farm-plot .progress-bar .fill {
-            height: 100%;
-            background: linear-gradient(90deg, var(--neon-blue), var(--neon-purple));
-            border-radius: 20px;
-            transition: width 0.3s ease;
-            width: 0%;
-        }
-        .farm-plot .info { font-size: 0.6rem; color: var(--text-muted); margin: 0.2rem 0; }
-        .farm-plot .flex-btns { display: flex; gap: 0.3rem; justify-content: center; flex-wrap: wrap; margin-top: 4px; }
-        .farm-plot .flex-btns .btn {
-            padding: 0.15rem 0.5rem;
-            font-size: 0.6rem;
-            border-radius: 30px;
-            font-weight: 700;
-            border: 1px solid transparent;
-            cursor: pointer;
-            transition: all var(--transition);
-            background: linear-gradient(135deg, #0288d1, #03a9f4);
-            color: #fff;
-            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
-        }
-        .farm-plot .flex-btns .btn:disabled { opacity: 0.4; cursor: not-allowed; transform: none !important; }
-        .farm-plot .flex-btns .btn-success { background: linear-gradient(135deg, #00c853, #00e676); color: #000; }
-
-        .farm-actions {
-            display: flex;
-            gap: 0.3rem;
-            flex-wrap: wrap;
-            align-items: center;
-        }
-        .farm-actions .btn {
-            padding: 0.2rem 0.6rem;
-            font-size: 0.65rem;
-            border-radius: 30px;
-            font-weight: 700;
-            border: 1px solid transparent;
-            cursor: pointer;
-            transition: all var(--transition);
-            background: linear-gradient(135deg, #00c853, #00e676);
-            color: #000;
-            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
-            display: inline-flex;
-            align-items: center;
-            gap: 0.3rem;
-        }
-        .farm-actions .btn:disabled { opacity: 0.4; cursor: not-allowed; transform: none !important; }
-        .farm-actions .btn:active:not(:disabled) { transform: scale(0.94) !important; }
-        .farm-info { font-size: 0.6rem; color: var(--text-muted); margin-top: 0.3rem; }
-
-        /* ---------- TOAST ---------- */
-        .toast {
-            position: fixed;
-            bottom: 2rem;
-            left: 50%;
-            transform: translateX(-50%) translateY(80px);
-            background: rgba(10, 11, 16, 0.95);
-            backdrop-filter: blur(8px);
-            color: #fff;
-            padding: 0.5rem 1.4rem;
-            border-radius: 60px;
-            font-weight: 600;
-            font-size: 0.8rem;
-            box-shadow: 0 12px 32px rgba(0, 0, 0, 0.5), 0 0 30px rgba(0, 240, 255, 0.1);
-            opacity: 0;
-            transition: all 0.45s ease;
-            pointer-events: none;
-            z-index: 999;
-            border: 1px solid rgba(0, 240, 255, 0.15);
-            text-align: center;
-        }
-        .toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
-
-        /* ---------- LOGIN MODAL ---------- */
-        #loginModal {
-            display: none;
-            position: fixed;
-            top: 0; left: 0; right: 0; bottom: 0;
-            background: rgba(0, 0, 0, 0.85);
-            backdrop-filter: blur(8px);
-            align-items: center;
-            justify-content: center;
-            z-index: 1000;
-            padding: 20px;
-            animation: fadeIn 0.4s ease;
-        }
-        #loginModal.show { display: flex; }
-        #loginModal .modal-box {
-            background: #121520;
-            border-radius: 16px;
-            padding: 2rem 2.2rem;
-            max-width: 420px;
-            width: 100%;
-            border: 1px solid rgba(0, 240, 255, 0.2);
-            box-shadow: 0 0 60px rgba(0, 240, 255, 0.1);
-        }
-        #loginModal .modal-box h2 { font-family: 'Orbitron', sans-serif; font-size: 1.6rem; text-align: center; margin-bottom: 0.3rem; color: #fff; text-shadow: 0 0 20px #00f0ff; }
-        #loginModal .modal-box p.sub { text-align: center; color: #8a99ad; font-size: 0.85rem; margin-bottom: 1.5rem; }
-        #loginModal .modal-box .form-group { margin-bottom: 1rem; }
-        #loginModal .modal-box .form-group label { display: block; font-weight: 600; font-size: 0.8rem; color: #8a99ad; margin-bottom: 0.2rem; }
-        #loginModal .modal-box .form-group input {
-            width: 100%;
-            padding: 0.6rem 1rem;
-            border-radius: 12px;
-            border: 1px solid rgba(0, 240, 255, 0.15);
-            background: rgba(0, 0, 0, 0.4);
-            color: #fff;
-            font-size: 0.95rem;
-            outline: none;
-            transition: all 0.3s;
-        }
-        #loginModal .modal-box .form-group input:focus { border-color: #00f0ff; box-shadow: 0 0 20px rgba(0, 240, 255, 0.15); }
-        #loginModal .modal-box .login-error { color: #ef4444; font-size: 0.8rem; text-align: center; min-height: 1.2rem; }
-        #loginModal .modal-box .btn-login-modal {
-            width: 100%;
-            padding: 0.7rem;
-            border: none;
-            border-radius: 12px;
-            font-weight: 700;
-            font-size: 1rem;
-            background: linear-gradient(135deg, #00f0ff, #7000ff);
-            color: #fff;
-            cursor: pointer;
-            transition: all 0.3s;
-        }
-        #loginModal .modal-box .btn-login-modal:hover { transform: translateY(-2px); box-shadow: 0 8px 30px rgba(0, 240, 255, 0.3); }
-        #loginModal .modal-box .btn-login-modal:disabled { opacity: 0.5; cursor: not-allowed; transform: none !important; }
-        #loginModal .modal-box .modal-actions { display: flex; gap: 0.5rem; margin-top: 0.8rem; }
-        #loginModal .modal-box .modal-actions button {
-            flex: 1;
-            padding: 0.4rem;
-            border: 1px solid rgba(0, 240, 255, 0.1);
-            border-radius: 8px;
-            background: transparent;
-            color: #8a99ad;
-            cursor: pointer;
-            font-size: 0.7rem;
-            transition: all 0.3s;
-        }
-        #loginModal .modal-box .modal-actions button:hover { background: rgba(0, 240, 255, 0.1); color: #fff; }
-
-        @keyframes fadeIn { from { opacity: 0; transform: scale(0.95); } to { opacity: 1; transform: scale(1); } }
-
-        /* ============================================================
-           SISTEMA DE NÍVEL - ESTILOS COMPLETOS
-           ============================================================ */
+               SISTEMA DE NÍVEL
+               ============================================================ */
         .level-system-container {
             background: rgba(0, 0, 0, 0.4);
             border-radius: 12px;
@@ -616,7 +267,7 @@
             color: #00f0ff;
             text-shadow: 0 0 30px rgba(0, 240, 255, 0.3);
             line-height: 1;
-            background: rgba(0,0,0,0.3);
+            background: rgba(0, 0, 0, 0.3);
             padding: 0 6px;
             border-radius: 8px;
         }
@@ -627,7 +278,6 @@
             text-transform: uppercase;
             letter-spacing: 2px;
         }
-
         .level-badge .level-title {
             font-size: 0.8rem;
             color: #f0f4f8;
@@ -639,7 +289,6 @@
             flex: 1;
             min-width: 120px;
         }
-
         .exp-bar {
             background: rgba(255, 255, 255, 0.06);
             border-radius: 20px;
@@ -647,7 +296,6 @@
             overflow: hidden;
             border: 1px solid rgba(255, 255, 255, 0.05);
         }
-
         .exp-bar .exp-fill {
             height: 100%;
             background: linear-gradient(90deg, #7000ff, #00f0ff);
@@ -656,12 +304,6 @@
             box-shadow: 0 0 20px rgba(0, 240, 255, 0.2);
             width: 0%;
         }
-
-        .exp-bar .exp-fill.high {
-            background: linear-gradient(90deg, #00ff66, #00f0ff);
-            box-shadow: 0 0 25px rgba(0, 255, 102, 0.3);
-        }
-
         .exp-text {
             display: flex;
             justify-content: space-between;
@@ -671,9 +313,6 @@
             font-weight: 600;
         }
 
-        .exp-text .exp-current { color: #00f0ff; }
-        .exp-text .exp-next { color: #7000ff; }
-
         .stats-grid {
             display: grid;
             grid-template-columns: repeat(6, 1fr);
@@ -682,7 +321,6 @@
             padding-top: 10px;
             border-top: 1px solid rgba(255, 255, 255, 0.05);
         }
-
         .stat-pill {
             display: flex;
             align-items: center;
@@ -697,173 +335,671 @@
             white-space: nowrap;
             justify-content: center;
         }
-
-        .stat-pill .stat-icon { font-size: 0.75rem; }
-        .stat-pill .stat-value { color: #fff; font-weight: 700; margin-left: 2px; }
-        .stat-pill .stat-value.hp { color: #ef4444; }
-        .stat-pill .stat-value.mp { color: #3b82f6; }
-        .stat-pill .stat-value.sm { color: #f59e0b; }
-        .stat-pill .stat-value.atk { color: #ef4444; }
-        .stat-pill .stat-value.def { color: #8b5cf6; }
-        .stat-pill .stat-value.mag { color: #10b981; }
-
-        .level-actions {
-            display: flex;
-            gap: 6px;
-            flex-wrap: wrap;
-            margin-top: 10px;
-            padding-top: 10px;
-            border-top: 1px solid rgba(255, 255, 255, 0.05);
-        }
-
-        .level-actions .btn-level {
-            padding: 4px 14px;
-            border: none;
-            border-radius: 30px;
-            font-weight: 700;
-            font-size: 0.7rem;
-            cursor: pointer;
-            transition: all 0.3s;
-            font-family: 'Rajdhani', sans-serif;
-            letter-spacing: 0.5px;
-        }
-
-        .level-actions .btn-level:hover { transform: translateY(-2px); }
-        .level-actions .btn-level:active { transform: scale(0.94); }
-
-        .level-actions .btn-level.btn-treinar {
-            background: linear-gradient(135deg, #00f0ff, #7000ff);
+        .stat-pill .stat-value {
             color: #fff;
-            box-shadow: 0 0 20px rgba(0, 240, 255, 0.2);
+            font-weight: 700;
+            margin-left: 2px;
         }
-        .level-actions .btn-level.btn-treinar:hover { box-shadow: 0 0 35px rgba(0, 240, 255, 0.4); }
-
-        .level-actions .btn-level.btn-descansar {
-            background: rgba(255, 255, 255, 0.08);
-            color: #c8d0e0;
-            border: 1px solid rgba(255, 255, 255, 0.1);
-        }
-        .level-actions .btn-level.btn-descansar:hover { background: rgba(255, 255, 255, 0.15); }
-
-        .level-actions .btn-level.btn-reset {
-            background: rgba(239, 68, 68, 0.15);
+        .stat-pill .stat-value.hp {
             color: #ef4444;
-            border: 1px solid rgba(239, 68, 68, 0.2);
         }
-        .level-actions .btn-level.btn-reset:hover { background: rgba(239, 68, 68, 0.25); }
+        .stat-pill .stat-value.mp {
+            color: #3b82f6;
+        }
+        .stat-pill .stat-value.sm {
+            color: #f59e0b;
+        }
 
-        .sm-actions {
+        /* ============================================================
+               GAME CONTAINER – MILHARAL
+               ============================================================ */
+        .game-container {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 1rem;
+        }
+        .game-section {
+            background: rgba(0, 0, 0, 0.25);
+            border-radius: var(--radius);
+            padding: 0.8rem;
+            border: 1px solid rgba(0, 240, 255, 0.05);
+        }
+        .game-section-title {
             display: flex;
-            gap: 6px;
-            flex-wrap: wrap;
-            margin-top: 6px;
+            align-items: center;
+            gap: 0.5rem;
+            font-weight: 700;
+            font-size: 1rem;
+            color: #fff;
+            margin-bottom: 0.5rem;
+            padding: 0 0.2rem;
         }
 
-        .sm-actions .btn-sm {
-            padding: 4px 14px;
-            border: none;
+        .field {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 8px;
+            margin-bottom: 0.8rem;
+            aspect-ratio: 1 / 1;
+        }
+
+        .plot {
+            background: var(--soil);
+            border-radius: 12px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            font-size: 2rem;
+            cursor: pointer;
+            transition: all var(--transition);
+            box-shadow: inset 0 -4px 0 rgba(0, 0, 0, 0.3), 0 2px 6px rgba(0, 0, 0, 0.3);
+            position: relative;
+            min-height: 60px;
+            user-select: none;
+            border: 2px solid rgba(0, 240, 255, 0.1);
+        }
+        .plot:hover {
+            transform: scale(1.03);
+            box-shadow: 0 0 20px rgba(0, 240, 255, 0.15), inset 0 -4px 0 rgba(0, 0, 0, 0.3);
+            z-index: 2;
+            border-color: var(--neon-blue);
+        }
+        .plot:active {
+            transform: scale(0.94);
+        }
+        .plot.empty {
+            background: var(--soil);
+            border-color: rgba(0, 240, 255, 0.05);
+        }
+        .plot.harvested {
+            background: var(--soil-light);
+            border-color: rgba(255, 77, 77, 0.2);
+        }
+        .plot.harvested:hover {
+            background: #bcaaa4;
+            border-color: #ff4d4d;
+        }
+        .plot:not(.empty):not(.harvested) {
+            background: #6d8f6d;
+            border-color: rgba(0, 255, 102, 0.2);
+        }
+
+        .plot .stage-label {
+            position: absolute;
+            bottom: 2px;
+            font-size: 0.45rem;
+            background: rgba(0, 0, 0, 0.7);
+            color: var(--text-muted);
+            padding: 0 4px;
+            border-radius: 8px;
+            letter-spacing: 0.3px;
+            backdrop-filter: blur(4px);
+            white-space: nowrap;
+            opacity: 0.7;
+            pointer-events: none;
+            font-weight: 600;
+        }
+        .plot .progress-bar {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            height: 3px;
+            background: var(--neon-blue);
+            border-radius: 0 0 12px 12px;
+            transition: width 0.4s ease;
+            width: 0%;
+            pointer-events: none;
+            box-shadow: 0 0 10px rgba(0, 240, 255, 0.4);
+        }
+        .plot .progress-bar.done {
+            background: var(--neon-green);
+            box-shadow: 0 0 15px rgba(0, 255, 102, 0.6);
+        }
+        .plot .plant-emoji {
+            line-height: 1;
+            transition: transform 0.5s ease;
+            filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.3));
+        }
+        .plot.growing .plant-emoji {
+            animation: sway 2.5s ease-in-out infinite;
+        }
+        .plot.mature .plant-emoji {
+            animation: glow-neon 1.2s ease-in-out infinite alternate;
+        }
+        .plot.sprout .plant-emoji {
+            animation: pop 1s ease-out;
+        }
+        .plot.seed .plant-emoji {
+            animation: pulse 1.6s ease-in-out infinite;
+        }
+
+        @keyframes sway {
+            0%,
+            100% {
+                transform: rotate(-3deg) scale(1);
+            }
+            50% {
+                transform: rotate(3deg) scale(1.02);
+            }
+        }
+        @keyframes glow-neon {
+            0% {
+                filter: drop-shadow(0 0 2px var(--neon-green));
+                transform: scale(1);
+            }
+            100% {
+                filter: drop-shadow(0 0 20px var(--neon-green));
+                transform: scale(1.06);
+            }
+        }
+        @keyframes pop {
+            0% {
+                transform: scale(0);
+                opacity: 0;
+            }
+            60% {
+                transform: scale(1.2);
+                opacity: 1;
+            }
+            100% {
+                transform: scale(1);
+            }
+        }
+        @keyframes pulse {
+            0%,
+            100% {
+                transform: scale(1);
+            }
+            50% {
+                transform: scale(0.92);
+            }
+        }
+
+        .milharal-stats {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.2rem;
+            margin-bottom: 0.6rem;
+        }
+        .milharal-stats .stat-item {
+            display: flex;
+            align-items: center;
+            gap: 0.2rem;
+            font-size: 0.7rem;
+            font-weight: 600;
+            color: var(--text-color);
+            padding: 0.05rem 0.4rem;
+            border-radius: 20px;
+            background: rgba(0, 0, 0, 0.3);
+        }
+        .milharal-stats .stat-item i {
+            font-size: 0.8rem;
+            color: var(--neon-blue);
+        }
+        .milharal-stats .stat-item .num {
+            background: rgba(0, 0, 0, 0.4);
+            padding: 0 0.3rem;
+            border-radius: 20px;
+            font-size: 0.7rem;
+            color: #fff;
+        }
+
+        .milharal-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            gap: 0.3rem;
+            margin-bottom: 0.5rem;
+        }
+        .saldo-display {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.3rem;
+            background: rgba(112, 0, 255, 0.15);
+            border: 1px solid var(--neon-purple);
+            padding: 0.1rem 0.6rem 0.1rem 0.4rem;
             border-radius: 30px;
             font-weight: 700;
-            font-size: 0.7rem;
-            cursor: pointer;
-            transition: all 0.3s;
-            font-family: 'Rajdhani', sans-serif;
-            letter-spacing: 0.5px;
+            font-size: 0.8rem;
+            color: var(--neon-purple);
+            box-shadow: 0 0 20px rgba(112, 0, 255, 0.2);
+        }
+        .saldo-display i {
+            font-size: 0.9rem;
+            color: var(--neon-purple);
+        }
+        .saldo-display .num {
+            color: #fff;
+        }
+        .stock-display {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.3rem;
+            background: rgba(255, 214, 0, 0.15);
+            border: 1px solid #ffd600;
+            padding: 0.1rem 0.6rem 0.1rem 0.4rem;
+            border-radius: 30px;
+            font-weight: 700;
+            font-size: 0.8rem;
+            color: #ffd600;
+            box-shadow: 0 0 20px rgba(255, 214, 0, 0.15);
+        }
+        .stock-display i {
+            font-size: 0.9rem;
+            color: #ffd600;
+        }
+        .stock-display .num {
+            color: #fff;
         }
 
-        .sm-actions .btn-sm:hover { transform: translateY(-2px); }
-        .sm-actions .btn-sm:active { transform: scale(0.94); }
-
-        .sm-actions .btn-sm.btn-sm-ganhar {
+        .milharal-actions {
+            display: flex;
+            gap: 0.4rem;
+            flex-wrap: wrap;
+            margin-bottom: 0.6rem;
+        }
+        .milharal-actions .btn {
+            padding: 0.3rem 0.8rem;
+            font-size: 0.7rem;
+            border-radius: 40px;
+            font-weight: 700;
+            border: 1px solid transparent;
+            cursor: pointer;
+            transition: all var(--transition);
+            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
+            display: inline-flex;
+            align-items: center;
+            gap: 0.3rem;
+            color: #fff;
+            flex: 1 1 auto;
+            justify-content: center;
+        }
+        .milharal-actions .btn:disabled {
+            opacity: 0.4;
+            cursor: not-allowed;
+            transform: none !important;
+            box-shadow: none !important;
+        }
+        .milharal-actions .btn:active:not(:disabled) {
+            transform: scale(0.94) !important;
+        }
+        .milharal-actions .btn-primary {
+            background: linear-gradient(135deg, #00c853, #00e676);
+            color: #000;
+        }
+        .milharal-actions .btn-secondary {
+            background: linear-gradient(135deg, #0288d1, #03a9f4);
+            color: #fff;
+        }
+        .milharal-actions .btn-gold {
+            background: linear-gradient(135deg, #f9a825, #ffd600);
+            color: #000;
+        }
+        .milharal-actions .btn-market {
+            background: linear-gradient(135deg, #7e57c2, #5c3a9e);
+            color: #fff;
+        }
+        .milharal-actions .btn-success {
             background: linear-gradient(135deg, #10b981, #34d399);
             color: #fff;
-            box-shadow: 0 0 20px rgba(16, 185, 129, 0.2);
         }
-        .sm-actions .btn-sm.btn-sm-ganhar:hover { box-shadow: 0 0 35px rgba(16, 185, 129, 0.4); }
-
-        .sm-actions .btn-sm.btn-sm-gastar {
-            background: linear-gradient(135deg, #ef4444, #f87171);
+        .milharal-actions .btn-danger {
+            background: linear-gradient(135deg, #ef4444, #dc2626);
             color: #fff;
-            box-shadow: 0 0 20px rgba(239, 68, 68, 0.2);
         }
-        .sm-actions .btn-sm.btn-sm-gastar:hover { box-shadow: 0 0 35px rgba(239, 68, 68, 0.4); }
-
-        .sm-actions .btn-sm.btn-sm-resetar {
-            background: rgba(255, 255, 255, 0.08);
-            color: #c8d0e0;
-            border: 1px solid rgba(255, 255, 255, 0.1);
+        .milharal-actions .btn-add {
+            background: linear-gradient(135deg, #f59e0b, #f97316);
+            color: #000;
         }
-        .sm-actions .btn-sm.btn-sm-resetar:hover { background: rgba(255, 255, 255, 0.15); }
+        .milharal-actions .btn-clear {
+            background: linear-gradient(135deg, #e53935, #b71c1c);
+            color: #fff;
+        }
 
-        #levelToast {
+        .milharal-message {
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: 20px;
+            padding: 0.3rem 0.6rem;
+            font-size: 0.65rem;
+            color: var(--text-muted);
+            text-align: center;
+            min-height: 1.8rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.3rem;
+            border: 1px solid rgba(0, 240, 255, 0.05);
+            flex-wrap: wrap;
+        }
+        .milharal-message .highlight {
+            color: var(--neon-green);
+            font-weight: 700;
+        }
+        .milharal-message .exp-highlight {
+            color: #8b5cf6;
+            font-weight: 700;
+        }
+
+        /* ============================================================
+               MERCADO
+               ============================================================ */
+        .market-panel {
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: 12px;
+            padding: 0.6rem;
+            margin-bottom: 0.6rem;
+            border: 1px solid rgba(0, 240, 255, 0.05);
+            transition: all 0.3s ease;
+            overflow: hidden;
+            max-height: 0;
+            padding: 0 0.6rem;
+            opacity: 0;
+            transform: scaleY(0.9);
+            transform-origin: top;
+        }
+        .market-panel.open {
+            max-height: 600px;
+            padding: 0.6rem;
+            opacity: 1;
+            transform: scaleY(1);
+        }
+        .market-title {
+            font-weight: 600;
+            color: var(--text-color);
+            margin-bottom: 0.4rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-size: 0.9rem;
+        }
+        .market-title i {
+            color: var(--gold);
+        }
+        .market-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 0.5rem;
+        }
+        .market-item {
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: 12px;
+            padding: 0.4rem 0.6rem;
+            border: 1px solid rgba(255, 255, 255, 0.05);
+        }
+        .market-item .item-header {
+            display: flex;
+            align-items: center;
+            gap: 0.3rem;
+            font-weight: 600;
+            font-size: 0.8rem;
+            color: var(--text-color);
+            margin-bottom: 0.2rem;
+        }
+        .market-item .price {
+            font-size: 0.7rem;
+            color: var(--text-muted);
+            margin-bottom: 0.3rem;
+        }
+        .market-item .price span {
+            font-weight: 700;
+            color: var(--gold);
+        }
+        .market-item .qty-btns {
+            display: flex;
+            gap: 0.2rem;
+            flex-wrap: wrap;
+        }
+        .market-item .qty-btns .btn-sm {
+            padding: 0.1rem 0.5rem;
+            font-size: 0.6rem;
+            border-radius: 20px;
+            border: none;
+            background: rgba(255, 255, 255, 0.05);
+            color: var(--text-color);
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.2s;
+        }
+        .market-item .qty-btns .btn-sm:hover:not(:disabled) {
+            transform: translateY(-1px);
+        }
+        .market-item .qty-btns .btn-sm.sell:hover:not(:disabled) {
+            background: #e53935;
+            color: #fff;
+        }
+        .market-item .qty-btns .btn-sm.buy:hover:not(:disabled) {
+            background: var(--neon-green);
+            color: #000;
+        }
+        .market-item .qty-btns .btn-sm:disabled {
+            opacity: 0.3;
+            cursor: not-allowed;
+            transform: none !important;
+        }
+
+        /* ============================================================
+               TOAST + MODAL
+               ============================================================ */
+        .toast {
             position: fixed;
-            bottom: 80px;
+            bottom: 2rem;
             left: 50%;
-            transform: translateX(-50%);
+            transform: translateX(-50%) translateY(80px);
             background: rgba(10, 11, 16, 0.95);
             backdrop-filter: blur(8px);
             color: #fff;
-            padding: 10px 20px;
-            border-radius: 12px;
+            padding: 0.5rem 1.4rem;
+            border-radius: 60px;
             font-weight: 600;
-            font-size: 0.85rem;
-            box-shadow: 0 8px 32px rgba(0,0,0,0.5);
-            border-left: 4px solid #3b82f6;
-            z-index: 9999;
-            display: none;
+            font-size: 0.8rem;
+            box-shadow: 0 12px 32px rgba(0, 0, 0, 0.5), 0 0 30px rgba(0, 240, 255, 0.1);
             opacity: 0;
-            transition: opacity 0.4s ease;
-            max-width: 90%;
+            transition: all 0.45s ease;
+            pointer-events: none;
+            z-index: 999;
+            border: 1px solid rgba(0, 240, 255, 0.15);
             text-align: center;
-            font-family: 'Rajdhani', sans-serif;
         }
-        #levelToast.show { display: block; opacity: 1; }
+        .toast.show {
+            opacity: 1;
+            transform: translateX(-50%) translateY(0);
+        }
 
-        /* ---------- RESPONSIVIDADE ---------- */
-        @media (max-width: 820px) { 
-            .game-container { grid-template-columns: 1fr; gap: 1rem; }
-            .stats-grid { grid-template-columns: repeat(3, 1fr); }
+        #loginModal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.85);
+            backdrop-filter: blur(8px);
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+            padding: 20px;
+            animation: fadeIn 0.4s ease;
+        }
+        #loginModal.show {
+            display: flex;
+        }
+        #loginModal .modal-box {
+            background: #121520;
+            border-radius: 16px;
+            padding: 2rem 2.2rem;
+            max-width: 420px;
+            width: 100%;
+            border: 1px solid rgba(0, 240, 255, 0.2);
+            box-shadow: 0 0 60px rgba(0, 240, 255, 0.1);
+        }
+        #loginModal .modal-box h2 {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 1.6rem;
+            text-align: center;
+            margin-bottom: 0.3rem;
+            color: #fff;
+            text-shadow: 0 0 20px #00f0ff;
+        }
+        #loginModal .modal-box p.sub {
+            text-align: center;
+            color: #8a99ad;
+            font-size: 0.85rem;
+            margin-bottom: 1.5rem;
+        }
+        #loginModal .modal-box .form-group {
+            margin-bottom: 1rem;
+        }
+        #loginModal .modal-box .form-group label {
+            display: block;
+            font-weight: 600;
+            font-size: 0.8rem;
+            color: #8a99ad;
+            margin-bottom: 0.2rem;
+        }
+        #loginModal .modal-box .form-group input {
+            width: 100%;
+            padding: 0.6rem 1rem;
+            border-radius: 12px;
+            border: 1px solid rgba(0, 240, 255, 0.15);
+            background: rgba(0, 0, 0, 0.4);
+            color: #fff;
+            font-size: 0.95rem;
+            outline: none;
+            transition: all 0.3s;
+        }
+        #loginModal .modal-box .form-group input:focus {
+            border-color: #00f0ff;
+            box-shadow: 0 0 20px rgba(0, 240, 255, 0.15);
+        }
+        #loginModal .modal-box .login-error {
+            color: #ef4444;
+            font-size: 0.8rem;
+            text-align: center;
+            min-height: 1.2rem;
+        }
+        #loginModal .modal-box .btn-login-modal {
+            width: 100%;
+            padding: 0.7rem;
+            border: none;
+            border-radius: 12px;
+            font-weight: 700;
+            font-size: 1rem;
+            background: linear-gradient(135deg, #00f0ff, #7000ff);
+            color: #fff;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        #loginModal .modal-box .btn-login-modal:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 30px rgba(0, 240, 255, 0.3);
+        }
+        #loginModal .modal-box .btn-login-modal:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            transform: none !important;
+        }
+        #loginModal .modal-box .modal-actions {
+            display: flex;
+            gap: 0.5rem;
+            margin-top: 0.8rem;
+        }
+        #loginModal .modal-box .modal-actions button {
+            flex: 1;
+            padding: 0.4rem;
+            border: 1px solid rgba(0, 240, 255, 0.1);
+            border-radius: 8px;
+            background: transparent;
+            color: #8a99ad;
+            cursor: pointer;
+            font-size: 0.7rem;
+            transition: all 0.3s;
+        }
+        #loginModal .modal-box .modal-actions button:hover {
+            background: rgba(0, 240, 255, 0.1);
+            color: #fff;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: scale(0.95);
+            }
+            to {
+                opacity: 1;
+                transform: scale(1);
+            }
+        }
+
+        /* ============================================================
+               RESPONSIVO
+               ============================================================ */
+        @media (max-width: 820px) {
+            .stats-grid {
+                grid-template-columns: repeat(3, 1fr);
+            }
+            .market-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+            .milharal-actions .btn {
+                flex: 1 1 45%;
+                font-size: 0.65rem;
+                padding: 0.25rem 0.5rem;
+            }
         }
         @media (max-width: 520px) {
-            .card { padding: 0.8rem 0.6rem; }
-            .nav-bar { flex-direction: column; align-items: stretch; gap: 0.3rem; padding: 8px 12px; }
-            .field { gap: 4px; }
-            .plot { font-size: 1.4rem; min-height: 44px; border-radius: 8px; }
-            .plot .stage-label { font-size: 0.35rem; bottom: 1px; }
-            .farm-grid-2 { grid-template-columns: 1fr; }
-            .milharal-actions .btn, .farm-actions .btn, .farm-plot .flex-btns .btn { font-size: 0.55rem; padding: 0.15rem 0.4rem; }
-            .milharal-stats .stat-item { font-size: 0.6rem; }
-            .farm-stock span { font-size: 0.6rem; }
-            .saldo-display, .stock-display { font-size: 0.65rem; padding: 0.05rem 0.4rem; }
-            .user-profile { padding: 2px 8px 2px 4px; }
-            .user-avatar { width: 24px; height: 24px; font-size: 0.7rem; }
-            .user-nick { font-size: 0.65rem; }
-            .user-balance { font-size: 0.55rem; }
-            .logout-btn { font-size: 0.55rem; padding: 2px 6px; }
-            .stats-grid { grid-template-columns: repeat(2, 1fr); }
-            .level-badge .level-number { font-size: 1.5rem; }
-            .level-actions .btn-level { font-size: 0.6rem; padding: 3px 10px; }
-            .sm-actions .btn-sm { font-size: 0.6rem; padding: 3px 10px; }
+            .card {
+                padding: 0.8rem 0.6rem;
+            }
+            .nav-bar {
+                flex-direction: column;
+                align-items: stretch;
+                gap: 0.3rem;
+                padding: 8px 12px;
+            }
+            .field {
+                gap: 4px;
+            }
+            .plot {
+                font-size: 1.4rem;
+                min-height: 44px;
+                border-radius: 8px;
+            }
+            .plot .stage-label {
+                font-size: 0.35rem;
+                bottom: 1px;
+            }
+            .stats-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+            .level-badge .level-number {
+                font-size: 1.5rem;
+            }
+            .market-grid {
+                grid-template-columns: 1fr 1fr;
+            }
+            .milharal-actions .btn {
+                flex: 1 1 100%;
+                font-size: 0.6rem;
+                padding: 0.2rem 0.4rem;
+            }
         }
         @media (max-width: 400px) {
-            .plot { font-size: 1.1rem; min-height: 36px; }
-            .plot .stage-label { display: none; }
-            .game-section-title { font-size: 0.9rem; }
-            .milharal-message { font-size: 0.55rem; min-height: 1.4rem; }
-            .stats-grid { grid-template-columns: repeat(2, 1fr); }
-            .stat-pill { font-size: 0.6rem; padding: 2px 6px; }
+            .market-grid {
+                grid-template-columns: 1fr;
+            }
         }
     </style>
 </head>
 
 <body>
 
-    <!-- ============================================================
-    CARD PRINCIPAL
-    ============================================================ -->
     <div class="card">
 
-        <!-- NAVEGAÇÃO -->
+        <!-- ============================================================
+        NAVEGAÇÃO
+        ============================================================ -->
         <nav class="nav-bar">
             <div class="user-profile" id="userInfo">
                 <div class="user-avatar" id="userAvatar">?</div>
@@ -890,7 +1026,7 @@
         </nav>
 
         <!-- ============================================================
-        SISTEMA DE NÍVEL - COMPONENTE INTEGRADO
+        SISTEMA DE NÍVEL
         ============================================================ -->
         <div class="level-system-container" id="levelSystem">
             <div class="level-header">
@@ -913,48 +1049,23 @@
             </div>
 
             <div class="stats-grid" id="statsGrid">
-                <span class="stat-pill">
-                    <span class="stat-icon">❤️</span>
-                    HP <span class="stat-value hp" id="statHp">100/100</span>
-                </span>
-                <span class="stat-pill">
-                    <span class="stat-icon">💧</span>
-                    MP <span class="stat-value mp" id="statMp">50/50</span>
-                </span>
-                <span class="stat-pill">
-                    <span class="stat-icon">⚡</span>
-                    SM <span class="stat-value sm" id="statSm">40/40</span>
-                </span>
-                <span class="stat-pill">
-                    <span class="stat-icon">⚔️</span>
-                    ATK <span class="stat-value atk" id="statAtk">15</span>
-                </span>
-                <span class="stat-pill">
-                    <span class="stat-icon">🛡️</span>
-                    DEF <span class="stat-value def" id="statDef">10</span>
-                </span>
-                <span class="stat-pill">
-                    <span class="stat-icon">🔮</span>
-                    MAG <span class="stat-value mag" id="statMag">8</span>
-                </span>
+                <span class="stat-pill">❤️ HP <span class="stat-value hp" id="statHp">100/100</span></span>
+                <span class="stat-pill">💧 MP <span class="stat-value mp" id="statMp">50/50</span></span>
+                <span class="stat-pill">⚡ SM <span class="stat-value sm" id="statSm">100/100</span></span>
+                <span class="stat-pill">⚔️ ATK <span class="stat-value" id="statAtk">15</span></span>
+                <span class="stat-pill">🛡️ DEF <span class="stat-value" id="statDef">10</span></span>
+                <span class="stat-pill">🔮 MAG <span class="stat-value" id="statMag">8</span></span>
             </div>
-
-
         </div>
 
         <!-- ============================================================
-        CONTEÚDO PRINCIPAL - AMBOS OS JOGOS
+        GAME CONTAINER – MILHARAL
         ============================================================ -->
         <div class="game-container">
-
-            <!-- COLUNA 1: MILHARAL -->
             <div class="game-section">
                 <div class="game-section-title">
                     <i class="fas fa-seedling" style="color:var(--neon-green);"></i>
                     Milharal
-                    <span style="font-size:0.55rem;font-weight:400;color:var(--text-muted);margin-left:auto;">
-                        <i class="far fa-clock"></i> simulação
-                    </span>
                 </div>
 
                 <div class="milharal-header">
@@ -962,7 +1073,8 @@
                         <span class="stat-item"><i class="fas fa-seedling"></i><span class="num" id="seedCount">🌰 0</span></span>
                         <span class="stat-item"><i class="fas fa-trowel"></i><span class="num" id="plantedCount">🌱 0</span></span>
                         <span class="stat-item"><i class="fas fa-corn"></i><span class="num" id="harvestCount">🌽 0</span></span>
-                        <span class="stat-item"><i class="fas fa-water" style="color:var(--neon-blue);"></i><span class="num" id="bucketCount">🪣 0</span></span>
+                        <span class="stat-item"><i class="fas fa-water" style="color:var(--water-blue);"></i><span class="num" id="bucketCount">🪣 0</span></span>
+                        <span class="stat-item"><i class="fas fa-star" style="color:#8b5cf6;"></i><span class="num" id="expDisplay">✨ 0</span></span>
                     </div>
                     <div style="display:flex;gap:0.3rem;flex-wrap:wrap;align-items:center;">
                         <span class="stock-display" id="stockDisplay">
@@ -979,99 +1091,92 @@
                 <div class="field" id="field"></div>
 
                 <div class="milharal-actions">
-                    <button class="btn btn-primary" id="btnPlant">🌱 Plantar</button>
-                    <button class="btn btn-secondary" id="btnWater">💧 Regar <span id="bucketStatus">🪣 0</span></button>
+                    <button class="btn btn-primary" id="btnPlantAll">🌱 Plantar tudo</button>
+                    <button class="btn btn-secondary" id="btnWaterAll">💧 Regar tudo <span class="bucket-icon" id="bucketStatus">🪣 0</span></button>
                     <button class="btn btn-gold" id="btnHarvestAll">🌽 Colher tudo</button>
+                    <button class="btn btn-success" id="btnSellAll">💰 Vender estoque</button>
+                    <button class="btn btn-add" id="btnAddSaldo">➕ Adicionar Saldo</button>
+                    <button class="btn btn-market" id="btnToggleMarket">🏪 Mercado</button>
+                    <button class="btn btn-clear" id="btnClearAll">🧹 Limpar tudo</button>
+                </div>
+
+                <!-- MERCADO -->
+                <div class="market-panel" id="marketPanel">
+                    <div class="market-title">
+                        <i class="fas fa-store-alt"></i> Mercado
+                        <span style="font-size:0.6rem;font-weight:400;color:var(--text-muted);margin-left:auto;">preços dinâmicos</span>
+                    </div>
+                    <div class="market-grid">
+                        <div class="market-item">
+                            <div class="item-header"><i class="fas fa-corn" style="color:var(--gold);"></i> Vender milho</div>
+                            <div class="price">Preço: <span id="sellPrice">10</span> moedas</div>
+                            <div class="qty-btns">
+                                <button class="btn-sm sell" data-action="sellCorn" data-qty="1">1</button>
+                                <button class="btn-sm sell" data-action="sellCorn" data-qty="5">5</button>
+                                <button class="btn-sm sell" data-action="sellCorn" data-qty="10">10</button>
+                                <button class="btn-sm sell" data-action="sellCorn" data-qty="all">todos</button>
+                            </div>
+                        </div>
+                        <div class="market-item">
+                            <div class="item-header"><i class="fas fa-seedling" style="color:var(--neon-green);"></i> Comprar sementes</div>
+                            <div class="price">Preço: <span id="buyPrice">5</span> moedas</div>
+                            <div class="qty-btns">
+                                <button class="btn-sm buy" data-action="buySeeds" data-qty="1">1</button>
+                                <button class="btn-sm buy" data-action="buySeeds" data-qty="5">5</button>
+                                <button class="btn-sm buy" data-action="buySeeds" data-qty="10">10</button>
+                                <button class="btn-sm buy" data-action="buySeeds" data-qty="all">máximo</button>
+                            </div>
+                        </div>
+                        <div class="market-item">
+                            <div class="item-header"><i class="fas fa-water" style="color:var(--water-blue);"></i> Comprar baldes</div>
+                            <div class="price">Preço: <span id="bucketPrice">8</span> moedas</div>
+                            <div class="qty-btns">
+                                <button class="btn-sm buy" data-action="buyBuckets" data-qty="1">1</button>
+                                <button class="btn-sm buy" data-action="buyBuckets" data-qty="3">3</button>
+                                <button class="btn-sm buy" data-action="buyBuckets" data-qty="5">5</button>
+                                <button class="btn-sm buy" data-action="buyBuckets" data-qty="all">máximo</button>
+                            </div>
+                        </div>
+                        <div class="market-item">
+                            <div class="item-header"><i class="fas fa-seedling" style="color:#e53935;"></i> Vender sementes</div>
+                            <div class="price">Preço: <span id="sellSeedPrice">2</span> moedas</div>
+                            <div class="qty-btns">
+                                <button class="btn-sm sell" data-action="sellSeeds" data-qty="1">1</button>
+                                <button class="btn-sm sell" data-action="sellSeeds" data-qty="5">5</button>
+                                <button class="btn-sm sell" data-action="sellSeeds" data-qty="10">10</button>
+                                <button class="btn-sm sell" data-action="sellSeeds" data-qty="all">todas</button>
+                            </div>
+                        </div>
+                        <div class="market-item">
+                            <div class="item-header"><i class="fas fa-water" style="color:#e53935;"></i> Vender baldes</div>
+                            <div class="price">Preço: <span id="sellBucketPrice">4</span> moedas</div>
+                            <div class="qty-btns">
+                                <button class="btn-sm sell" data-action="sellBuckets" data-qty="1">1</button>
+                                <button class="btn-sm sell" data-action="sellBuckets" data-qty="3">3</button>
+                                <button class="btn-sm sell" data-action="sellBuckets" data-qty="5">5</button>
+                                <button class="btn-sm sell" data-action="sellBuckets" data-qty="all">todos</button>
+                            </div>
+                        </div>
+                    </div>
                 </div>
 
                 <div class="milharal-message" id="message">
                     <i class="fas fa-hand-pointer"></i>
                     Clique em um <span class="highlight">canteiro vazio</span> para plantar.
-                    <span style="background:rgba(0,240,255,0.08);padding:0.05rem 0.4rem;border-radius:20px;font-size:0.55rem;border:1px solid rgba(0,240,255,0.1);">
-                        Clique em colhido para limpar (R$ 5,00)
-                    </span>
+                    <span class="exp-highlight">✨ Colher dá EXP!</span>
                 </div>
             </div>
-
-            <!-- COLUNA 2: FAZENDINHA MM -->
-            <div class="game-section">
-                <div class="game-section-title">
-                    <i class="fas fa-kiwi-bird" style="color:var(--neon-pink);"></i>
-                    Fazendinha MM
-                    <span style="font-size:0.55rem;font-weight:400;color:var(--text-muted);margin-left:auto;">
-                        <i class="far fa-clock"></i> automação
-                    </span>
-                </div>
-
-                <div class="farm-stock">
-                    <span><i class="fas fa-seedling"></i> Sementes: <strong id="invSementes">0</strong></span>
-                    <span><i class="fas fa-corn"></i> Milho: <strong id="invMilho">0</strong></span>
-                    <span><i class="fas fa-egg"></i> Ovos: <strong id="invOvos">0</strong></span>
-                    <span><i class="fas fa-kiwi-bird"></i> Pintinhos: <strong id="invPintinhos">0</strong></span>
-                    <span><i class="fas fa-🐔"></i> Galinhas: <strong id="invGalinhas">0</strong></span>
-                    <span><i class="fas fa-🪵"></i> Madeira: <strong id="invMadeira">0</strong></span>
-                    <span><i class="fas fa-🪨"></i> Pedra: <strong id="invPedra">0</strong></span>
-                    <span><i class="fas fa-💎"></i> Ouro: <strong id="invOuro">0</strong></span>
-                    <span><i class="fas fa-🧪"></i> Poção: <strong id="invPocao">0</strong></span>
-                    <span><i class="fas fa-🪣"></i> Balde: <strong id="invBalde">0</strong></span>
-                </div>
-
-                <div class="farm-grid-2">
-                    <!-- Plantação de Milho -->
-                    <div class="farm-plot" id="plotMilho">
-                        <div class="emoji-big" id="milhoEmoji">🌾</div>
-                        <div class="stage-label" id="milhoStatus">Vazio</div>
-                        <div class="progress-bar"><div class="fill" id="milhoProgress" style="width:0%"></div></div>
-                        <div class="info" id="milhoInfo">Clique em Plantar</div>
-                        <div class="flex-btns">
-                            <button class="btn" id="btnPlantarMilho">🌱 Plantar</button>
-                            <button class="btn" id="btnColherMilho">🧺 Colher</button>
-                        </div>
-                    </div>
-                    <!-- Chocadeira -->
-                    <div class="farm-plot" id="plotGalinha">
-                        <div class="emoji-big" id="galinhaEmoji">🥚</div>
-                        <div class="stage-label" id="galinhaStatus">Chocadeira vazia</div>
-                        <div class="progress-bar"><div class="fill" id="galinhaProgress" style="width:0%"></div></div>
-                        <div class="info" id="galinhaInfo">Incube um ovo</div>
-                        <div class="flex-btns">
-                            <button class="btn" id="btnIncubarOvo">🐣 Incubar</button>
-                            <button class="btn btn-success" id="btnAlimentarGalinha">🌽 Alimentar</button>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="farm-actions">
-                    <button class="btn" id="btnVenderProducao">💰 Vender produção</button>
-                    <span style="margin-left:auto;font-size:0.6rem;color:var(--text-muted);">
-                        <span id="venderMilhoQtd">0</span>🌽 |
-                        <span id="venderOvoQtd">0</span>🥚 |
-                        <span id="venderSementeQtd">0</span>🌰 |
-                        <span id="venderGalinhaQtd">0</span>🐔
-                    </span>
-                </div>
-
-                <div class="farm-info">
-                    💡 Galinhas produzem ovos automaticamente a cada 30s.
-                </div>
-            </div>
-
         </div>
 
     </div>
 
     <!-- TOAST -->
     <div class="toast" id="toast"></div>
-    
-    <!-- LEVEL TOAST -->
-    <div id="levelToast"></div>
 
-    <!-- ============================================================
-    LOGIN MODAL
-    ============================================================ -->
+    <!-- LOGIN MODAL -->
     <div id="loginModal">
         <div class="modal-box">
-            <h2>🌽 Fazenda MM</h2>
+            <h2>🌽 Milharal</h2>
             <p class="sub"><i class="fas fa-seedling" style="color:#00ff66;"></i> Entre para salvar seu progresso</p>
             <div class="form-group">
                 <label>Usuário</label>
@@ -1095,7 +1200,7 @@
             'use strict';
 
             // ============================================================
-            // 1. CONFIGURAÇÕES
+            // CONFIGURAÇÕES
             // ============================================================
             const CONFIG = {
                 SUPABASE_URL: 'https://xrcxvizzdumcxbylmkvn.supabase.co',
@@ -1107,29 +1212,29 @@
                 GROWTH_INTERVAL: 1200,
                 WATER_BOOST: 30,
                 BASE_GROWTH: 8,
-                INITIAL_SEEDS: 0,
-                INITIAL_SALDO: 0.00,
+                INITIAL_SEEDS: 5,
+                INITIAL_SALDO: 10.00,
                 INITIAL_BUCKETS: 0,
                 INITIAL_STOCK: 0,
                 CLEAR_COST: 5.00,
+                BUCKET_PRICE: 8,
+                BASE_SELL: 10,
+                BASE_BUY: 5,
                 AUTO_SAVE_INTERVAL: 30000,
-                OVOS_INTERVAL: 30000,
-                PLANTIO_INTERVAL: 800,
-                INCUBACAO_INTERVAL: 1000,
+                EXP_PER_HARVEST: 15,
+                INITIAL_HP: 100,
+                INITIAL_MP: 50,
+                INITIAL_SM: 100,
+                INITIAL_ATK: 15,
+                INITIAL_DEF: 10,
+                INITIAL_MAG: 8,
+                MAX_HP: 100,
+                MAX_MP: 50,
+                MAX_SM: 100,
             };
 
             // ============================================================
-            // 2. ESTADOS GLOBAIS
-            // ============================================================
-            let supabaseOnline = false;
-            let usuarioLogado = null;
-            let toastTimeout = null;
-            let ultimoSalvamento = 0;
-            let salvando = false;
-            let dadosCompletos = null;
-
-            // ============================================================
-            // 3. ESTADO DO MILHARAL
+            // ESTÁGIOS DO MILHO
             // ============================================================
             const STAGES = {
                 EMPTY: 'empty',
@@ -1154,55 +1259,168 @@
                 STAGES.SEEDLING, STAGES.GROWING, STAGES.MATURE, STAGES.HARVESTED
             ];
 
-            let milharal = {
-                plots: [],
-                seeds: CONFIG.INITIAL_SEEDS,
-                harvested: 0,
-                planted: 0,
-                saldo: CONFIG.INITIAL_SALDO,
-                buckets: CONFIG.INITIAL_BUCKETS,
-                stock: CONFIG.INITIAL_STOCK,
-                growthTimer: null
+            // ============================================================
+            // ESTADO GLOBAL
+            // ============================================================
+            const state = {
+                online: false,
+                usuario: null,
+                salvando: false,
+                marketOpen: false,
+                toastTimer: null,
+                growthTimer: null,
+
+                jogo: {
+                    seeds: CONFIG.INITIAL_SEEDS,
+                    planted: 0,
+                    harvested: 0,
+                    saldo: CONFIG.INITIAL_SALDO,
+                    buckets: CONFIG.INITIAL_BUCKETS,
+                    stock: CONFIG.INITIAL_STOCK,
+                    plots: [],
+
+                    nivel: 1,
+                    experiencia: 0,
+                    hpMax: CONFIG.MAX_HP,
+                    mpMax: CONFIG.MAX_MP,
+                    smMax: CONFIG.MAX_SM,
+                    hp: CONFIG.INITIAL_HP,
+                    mp: CONFIG.INITIAL_MP,
+                    sm: CONFIG.INITIAL_SM,
+                    ataqueBase: CONFIG.INITIAL_ATK,
+                    defesaBase: CONFIG.INITIAL_DEF,
+                    magiaBase: CONFIG.INITIAL_MAG,
+                }
             };
 
-            // ============================================================
-            // 4. ESTADO DA FAZENDINHA
-            // ============================================================
-            let fazendinha = {
-                saldo: 50.00,
-                inventario: {
-                    sementes: 0,
-                    milho: 0,
-                    ovos: 0,
-                    pintinhos: 0,
-                    galinhas: 0,
-                    madeira: 0,
-                    pedra: 0,
-                    ouro: 0,
-                    pocao: 0,
-                    balde: 0
-                },
-                plantio: { active: false, stage: 0, progress: 0 },
-                incubacao: { active: false, stage: 0, progress: 0 },
-                intervalos: [],
-                ovosInterval: null
-            };
+            function getJogo() { return state.jogo; }
+
+            function getPlots() { return state.jogo.plots; }
 
             // ============================================================
-            // 5. SISTEMA DE NÍVEL
+            // DOM REFS
+            // ============================================================
+            const DOM = {};
+
+            function initDOM() {
+                DOM.field = document.getElementById('field');
+                DOM.seedCount = document.getElementById('seedCount');
+                DOM.plantedCount = document.getElementById('plantedCount');
+                DOM.harvestCount = document.getElementById('harvestCount');
+                DOM.bucketCount = document.getElementById('bucketCount');
+                DOM.expDisplay = document.getElementById('expDisplay');
+                DOM.saldoDisplay = document.getElementById('saldoDisplayValue');
+                DOM.stockDisplay = document.getElementById('stockDisplayValue');
+                DOM.bucketStatus = document.getElementById('bucketStatus');
+                DOM.message = document.getElementById('message');
+                DOM.headerSaldo = document.getElementById('headerSaldo');
+                DOM.userAvatar = document.getElementById('userAvatar');
+                DOM.userName = document.getElementById('userName');
+                DOM.userBalance = document.getElementById('userBalanceDisplay');
+
+                DOM.supabaseDot = document.getElementById('supabaseDot');
+                DOM.supabaseStatus = document.getElementById('supabaseStatus');
+                DOM.toast = document.getElementById('toast');
+
+                DOM.loginModal = document.getElementById('loginModal');
+                DOM.loginError = document.getElementById('loginError');
+                DOM.loginUser = document.getElementById('loginUser');
+                DOM.loginPass = document.getElementById('loginPass');
+
+                DOM.expFill = document.getElementById('expFill');
+                DOM.expCurrent = document.getElementById('expCurrent');
+                DOM.expNext = document.getElementById('expNext');
+                DOM.levelNumber = document.getElementById('levelNumber');
+                DOM.levelTitle = document.getElementById('levelTitle');
+                DOM.statHp = document.getElementById('statHp');
+                DOM.statMp = document.getElementById('statMp');
+                DOM.statSm = document.getElementById('statSm');
+                DOM.statAtk = document.getElementById('statAtk');
+                DOM.statDef = document.getElementById('statDef');
+                DOM.statMag = document.getElementById('statMag');
+
+                DOM.marketPanel = document.getElementById('marketPanel');
+                DOM.sellPrice = document.getElementById('sellPrice');
+                DOM.buyPrice = document.getElementById('buyPrice');
+                DOM.bucketPrice = document.getElementById('bucketPrice');
+                DOM.sellSeedPrice = document.getElementById('sellSeedPrice');
+                DOM.sellBucketPrice = document.getElementById('sellBucketPrice');
+
+                DOM.btnPlantAll = document.getElementById('btnPlantAll');
+                DOM.btnWaterAll = document.getElementById('btnWaterAll');
+                DOM.btnHarvestAll = document.getElementById('btnHarvestAll');
+                DOM.btnSellAll = document.getElementById('btnSellAll');
+                DOM.btnAddSaldo = document.getElementById('btnAddSaldo');
+                DOM.btnToggleMarket = document.getElementById('btnToggleMarket');
+                DOM.btnClearAll = document.getElementById('btnClearAll');
+                DOM.btnReconnectSupabase = document.getElementById('btnReconnectSupabase');
+                DOM.btnLogin = document.getElementById('btnLogin');
+                DOM.btnRegister = document.getElementById('btnRegister');
+                DOM.btnGuest = document.getElementById('btnGuest');
+            }
+
+            // ============================================================
+            // AUXILIARES
+            // ============================================================
+            function formatSaldo(valor) {
+                return Number(valor).toFixed(2).replace('.', ',');
+            }
+
+            function showToast(text, duration = 2200) {
+                if (state.toastTimer) { clearTimeout(state.toastTimer);
+                    DOM.toast.classList.remove('show'); }
+                DOM.toast.textContent = text;
+                DOM.toast.classList.add('show');
+                state.toastTimer = setTimeout(() => { DOM.toast.classList.remove('show');
+                    state.toastTimer = null; }, duration);
+            }
+
+            function atualizarStatusSupabase(online, texto) {
+                DOM.supabaseDot.className = 'dot ' + (online ? 'online' : 'offline');
+                DOM.supabaseStatus.className = 'value ' + (online ? 'online' : 'offline');
+                DOM.supabaseStatus.textContent = texto;
+                state.online = online;
+            }
+
+            function atualizarSaldoGlobal() {
+                const total = getJogo().saldo || 0;
+                if (DOM.headerSaldo) DOM.headerSaldo.textContent = formatSaldo(total);
+                if (DOM.userBalance) DOM.userBalance.textContent = `💰 R$ ${formatSaldo(total)}`;
+                if (DOM.saldoDisplay) DOM.saldoDisplay.textContent = `R$ ${formatSaldo(getJogo().saldo || 0)}`;
+            }
+
+            function limparTimers() {
+                if (state.growthTimer) { clearInterval(state.growthTimer);
+                    state.growthTimer = null; }
+            }
+
+            // ============================================================
+            // PREÇOS DO MERCADO
+            // ============================================================
+            function getSellPrice() {
+                const mature = getPlots().filter(p => p.stage === STAGES.MATURE).length;
+                let price = CONFIG.BASE_SELL / (1 + (mature / 10));
+                return Math.max(2, Math.round(price));
+            }
+
+            function getBuyPrice() {
+                const j = getJogo();
+                let price = CONFIG.BASE_BUY * (1 + (j.seeds / 10));
+                return Math.min(15, Math.round(price));
+            }
+
+            function getSellSeedPrice() {
+                return Math.max(1, Math.floor(getBuyPrice() / 2));
+            }
+
+            function getSellBucketPrice() {
+                return Math.floor(CONFIG.BUCKET_PRICE / 2);
+            }
+
+            // ============================================================
+            // LEVEL SYSTEM
             // ============================================================
             const levelSystem = {
-                nivel: 1,
-                experiencia: 0,
-                hpMax: 100,
-                mpMax: 50,
-                smMax: 40,
-                hp: 100,
-                mp: 50,
-                sm: 40,
-                ataqueBase: 15,
-                defesaBase: 10,
-                magiaBase: 8,
                 titulos: [
                     { min: 1, titulo: '🌱 Iniciante' },
                     { min: 5, titulo: '🌿 Aprendiz' },
@@ -1213,636 +1431,124 @@
                     { min: 75, titulo: '⚡ Deus da Guerra' },
                     { min: 100, titulo: '🌟 Imortal' },
                 ],
-                toastTimer: null,
 
-                getAtaque() { return this.ataqueBase + Math.floor(this.nivel * 1.5); },
-                getDefesa() { return this.defesaBase + Math.floor(this.nivel * 1.2); },
-                getMagia() { return this.magiaBase + Math.floor(this.nivel * 1.0); },
-                getHpMax() { return this.hpMax + Math.floor(this.nivel * 6); },
-                getMpMax() { return this.mpMax + Math.floor(this.nivel * 4); },
-                getSmMax() { return this.smMax + Math.floor(this.nivel * 3); },
+                getAtaque() {
+                    const j = getJogo();
+                    return j.ataqueBase + Math.floor(j.nivel * 1.5);
+                },
+                getDefesa() {
+                    const j = getJogo();
+                    return j.defesaBase + Math.floor(j.nivel * 1.2);
+                },
+                getMagia() {
+                    const j = getJogo();
+                    return j.magiaBase + Math.floor(j.nivel * 1.0);
+                },
+                getHpMax() {
+                    const j = getJogo();
+                    return j.hpMax + Math.floor(j.nivel * 6);
+                },
+                getMpMax() {
+                    const j = getJogo();
+                    return j.mpMax + Math.floor(j.nivel * 4);
+                },
+                getSmMax() {
+                    const j = getJogo();
+                    return j.smMax + Math.floor(j.nivel * 3);
+                },
                 getTitulo() {
+                    const j = getJogo();
                     let titulo = this.titulos[0].titulo;
                     for (const t of this.titulos) {
-                        if (this.nivel >= t.min) titulo = t.titulo;
+                        if (j.nivel >= t.min) titulo = t.titulo;
                     }
                     return titulo;
                 },
-                getExpProximo() { return Math.floor(100 * Math.pow(1.2, this.nivel - 1)); },
+                getExpProximo() {
+                    const j = getJogo();
+                    return Math.floor(100 * Math.pow(1.2, j.nivel - 1));
+                },
 
-                treinar() {
-                    if (this.sm < 10) {
-                        this.mostrarToast('⚡ Stamina insuficiente! Descanse.', 'erro');
-                        return false;
-                    }
-                    this.sm -= 10;
-                    const ganhoBase = 15 + Math.floor(this.nivel * 2);
-                    const variacao = Math.floor(Math.random() * 15);
-                    const ganho = ganhoBase + variacao;
-                    this.experiencia += ganho;
+                adicionarExp(quantidade) {
+                    const j = getJogo();
+                    j.experiencia += quantidade;
                     let subiu = false;
-                    while (this.experiencia >= this.getExpProximo()) {
-                        this.experiencia -= this.getExpProximo();
-                        this.nivel++;
+                    while (j.experiencia >= this.getExpProximo()) {
+                        j.experiencia -= this.getExpProximo();
+                        j.nivel++;
                         subiu = true;
-                        this.hp = this.getHpMax();
-                        this.mp = this.getMpMax();
-                        this.sm = this.getSmMax();
-                        this.mostrarToast(`🎉 SUBIU PARA NÍVEL ${this.nivel}!`, 'sucesso');
+                        j.hp = this.getHpMax();
+                        j.mp = this.getMpMax();
+                        j.sm = this.getSmMax();
+                        showToast(`🎉 SUBIU PARA NÍVEL ${j.nivel}!`, 3000);
                     }
                     this.atualizarUI();
-                    if (!subiu) {
-                        this.mostrarToast(`💪 Treinou! +${ganho} EXP (${this.experiencia}/${this.getExpProximo()})`, 'info');
+                    if (!subiu && quantidade > 0) {
+                        showToast(`✨ +${quantidade} EXP!`, 1500);
                     }
                     salvarDadosCompletos();
-                    return true;
-                },
-
-                descansar() {
-                    const hpRestaurado = Math.floor(this.getHpMax() * 0.4);
-                    const mpRestaurado = Math.floor(this.getMpMax() * 0.35);
-                    const smRestaurado = Math.floor(this.getSmMax() * 0.5);
-                    this.hp = Math.min(this.getHpMax(), this.hp + hpRestaurado);
-                    this.mp = Math.min(this.getMpMax(), this.mp + mpRestaurado);
-                    this.sm = Math.min(this.getSmMax(), this.sm + smRestaurado);
-                    this.atualizarUI();
-                    this.mostrarToast(`🛌 Descansou! +${hpRestaurado} HP, +${mpRestaurado} MP, +${smRestaurado} SM`, 'sucesso');
-                    salvarDadosCompletos();
-                    return true;
-                },
-
-                resetar() {
-                    if (!confirm('⚠️ Tem certeza que quer resetar seu nível e atributos?')) return false;
-                    this.nivel = 1;
-                    this.experiencia = 0;
-                    this.hp = this.getHpMax();
-                    this.mp = this.getMpMax();
-                    this.sm = this.getSmMax();
-                    this.atualizarUI();
-                    this.mostrarToast('🔄 Nível resetado para 1!', 'info');
-                    salvarDadosCompletos();
-                    return true;
-                },
-
-                ganharSm() {
-                    const smMax = this.getSmMax();
-                    const ganho = 50;
-                    const novoSm = Math.min(smMax, this.sm + ganho);
-                    const ganhoReal = novoSm - this.sm;
-                    if (ganhoReal <= 0) {
-                        this.mostrarToast('⚡ SM já está no máximo!', 'aviso');
-                        return false;
-                    }
-                    this.sm = novoSm;
-                    this.atualizarUI();
-                    this.mostrarToast(`➕ +${ganhoReal} SM (${this.sm}/${smMax})`, 'sucesso');
-                    salvarDadosCompletos();
-                    return true;
-                },
-
-                gastarSm() {
-                    const gasto = 30;
-                    if (this.sm < gasto) {
-                        this.mostrarToast('⚡ SM insuficiente!', 'erro');
-                        return false;
-                    }
-                    this.sm -= gasto;
-                    this.atualizarUI();
-                    this.mostrarToast(`➖ -${gasto} SM (${this.sm}/${this.getSmMax()})`, 'info');
-                    salvarDadosCompletos();
-                    return true;
-                },
-
-                resetarSm() {
-                    if (!confirm('⚠️ Tem certeza que quer resetar o SM para o máximo?')) return false;
-                    this.sm = this.getSmMax();
-                    this.atualizarUI();
-                    this.mostrarToast(`🔄 SM resetado para ${this.sm}/${this.getSmMax()}`, 'info');
-                    salvarDadosCompletos();
-                    return true;
                 },
 
                 atualizarUI() {
+                    const j = getJogo();
                     const expProx = this.getExpProximo();
-                    const pct = this.experiencia / expProx * 100;
-                    document.getElementById('levelNumber').textContent = this.nivel;
-                    document.getElementById('levelTitle').textContent = this.getTitulo();
-                    const fill = document.getElementById('expFill');
-                    fill.style.width = Math.min(pct, 100) + '%';
-                    fill.className = 'exp-fill' + (pct > 75 ? ' high' : '');
-                    document.getElementById('expCurrent').textContent = this.experiencia;
-                    document.getElementById('expNext').textContent = expProx;
-                    document.getElementById('statHp').textContent = `${this.hp}/${this.getHpMax()}`;
-                    document.getElementById('statMp').textContent = `${this.mp}/${this.getMpMax()}`;
-                    document.getElementById('statSm').textContent = `${this.sm}/${this.getSmMax()}`;
-                    document.getElementById('statAtk').textContent = this.getAtaque();
-                    document.getElementById('statDef').textContent = this.getDefesa();
-                    document.getElementById('statMag').textContent = this.getMagia();
-                },
+                    const pct = j.experiencia / expProx * 100;
 
-                mostrarToast(mensagem, tipo = 'info') {
-                    const toast = document.getElementById('levelToast');
-                    if (!toast) { console.log('[LEVEL]', mensagem); return; }
-                    const cores = {
-                        sucesso: '#10b981',
-                        erro: '#ef4444',
-                        info: '#3b82f6',
-                        aviso: '#f59e0b'
-                    };
-                    toast.textContent = mensagem;
-                    toast.style.borderLeftColor = cores[tipo] || '#3b82f6';
-                    toast.className = 'show';
-                    clearTimeout(this.toastTimer);
-                    this.toastTimer = setTimeout(() => { toast.className = ''; }, 3000);
+                    DOM.levelNumber.textContent = j.nivel;
+                    DOM.levelTitle.textContent = this.getTitulo();
+                    DOM.expFill.style.width = Math.min(pct, 100) + '%';
+                    DOM.expCurrent.textContent = j.experiencia;
+                    DOM.expNext.textContent = expProx;
+
+                    DOM.statHp.textContent = `${j.hp}/${this.getHpMax()}`;
+                    DOM.statMp.textContent = `${j.mp}/${this.getMpMax()}`;
+                    DOM.statSm.textContent = `${j.sm}/${this.getSmMax()}`;
+                    DOM.statAtk.textContent = this.getAtaque();
+                    DOM.statDef.textContent = this.getDefesa();
+                    DOM.statMag.textContent = this.getMagia();
+
+                    DOM.expDisplay.textContent = `✨ ${j.experiencia}`;
                 }
             };
 
             // ============================================================
-            // 6. REFERÊNCIAS DOM
-            // ============================================================
-            const DOM = {
-                field: document.getElementById('field'),
-                seedCount: document.getElementById('seedCount'),
-                plantedCount: document.getElementById('plantedCount'),
-                harvestCount: document.getElementById('harvestCount'),
-                bucketCount: document.getElementById('bucketCount'),
-                saldoDisplay: document.getElementById('saldoDisplayValue'),
-                stockDisplay: document.getElementById('stockDisplayValue'),
-                bucketStatus: document.getElementById('bucketStatus'),
-                message: document.getElementById('message'),
-                headerSaldo: document.getElementById('headerSaldo'),
-                userAvatar: document.getElementById('userAvatar'),
-                userName: document.getElementById('userName'),
-                userBalance: document.getElementById('userBalanceDisplay'),
-                invSementes: document.getElementById('invSementes'),
-                invMilho: document.getElementById('invMilho'),
-                invOvos: document.getElementById('invOvos'),
-                invPintinhos: document.getElementById('invPintinhos'),
-                invGalinhas: document.getElementById('invGalinhas'),
-                invMadeira: document.getElementById('invMadeira'),
-                invPedra: document.getElementById('invPedra'),
-                invOuro: document.getElementById('invOuro'),
-                invPocao: document.getElementById('invPocao'),
-                invBalde: document.getElementById('invBalde'),
-                milhoEmoji: document.getElementById('milhoEmoji'),
-                milhoStatus: document.getElementById('milhoStatus'),
-                milhoProgress: document.getElementById('milhoProgress'),
-                milhoInfo: document.getElementById('milhoInfo'),
-                galinhaEmoji: document.getElementById('galinhaEmoji'),
-                galinhaStatus: document.getElementById('galinhaStatus'),
-                galinhaProgress: document.getElementById('galinhaProgress'),
-                galinhaInfo: document.getElementById('galinhaInfo'),
-                venderMilho: document.getElementById('venderMilhoQtd'),
-                venderOvo: document.getElementById('venderOvoQtd'),
-                venderSemente: document.getElementById('venderSementeQtd'),
-                venderGalinha: document.getElementById('venderGalinhaQtd'),
-                supabaseDot: document.getElementById('supabaseDot'),
-                supabaseStatus: document.getElementById('supabaseStatus'),
-                toast: document.getElementById('toast'),
-                loginModal: document.getElementById('loginModal'),
-                loginError: document.getElementById('loginError'),
-                loginUser: document.getElementById('loginUser'),
-                loginPass: document.getElementById('loginPass'),
-            };
-
-            // ============================================================
-            // 7. FUNÇÕES AUXILIARES
-            // ============================================================
-            function formatSaldo(valor) {
-                return Number(valor).toFixed(2).replace('.', ',');
-            }
-
-            function getSaldoTotal() {
-                return (milharal.saldo || 0) + (fazendinha.saldo || 0);
-            }
-
-            function atualizarSaldoGlobal() {
-                const total = getSaldoTotal();
-                if (DOM.headerSaldo) DOM.headerSaldo.textContent = formatSaldo(total);
-                if (DOM.userBalance) DOM.userBalance.textContent = `💰 R$ ${formatSaldo(total)}`;
-                if (DOM.saldoDisplay) DOM.saldoDisplay.textContent = `R$ ${formatSaldo(milharal.saldo || 0)}`;
-            }
-
-            function showToast(text, duration = 2200) {
-                if (toastTimeout) { clearTimeout(toastTimeout); DOM.toast.classList.remove('show'); }
-                DOM.toast.textContent = text;
-                DOM.toast.classList.add('show');
-                toastTimeout = setTimeout(() => { DOM.toast.classList.remove('show'); toastTimeout = null; }, duration);
-            }
-
-            // ============================================================
-            // 8. STATUS UI
-            // ============================================================
-            function atualizarStatusSupabase(online, texto) {
-                DOM.supabaseDot.className = 'dot ' + (online ? 'online' : 'offline');
-                DOM.supabaseStatus.className = 'value ' + (online ? 'online' : 'offline');
-                DOM.supabaseStatus.textContent = texto;
-                supabaseOnline = online;
-            }
-
-            // ============================================================
-            // 9. AUTENTICAÇÃO
-            // ============================================================
-            function carregarUsuario() {
-                try {
-                    const data = localStorage.getItem('usuario_logado');
-                    if (data) {
-                        usuarioLogado = JSON.parse(data);
-                        return true;
-                    }
-                } catch (e) { console.error(e); }
-                return false;
-            }
-
-            function salvarUsuarioLocal(usuario) {
-                try {
-                    localStorage.setItem('usuario_logado', JSON.stringify(usuario));
-                    usuarioLogado = usuario;
-                } catch (e) { console.error(e); }
-            }
-
-            function atualizarInterfaceUsuario() {
-                if (usuarioLogado && usuarioLogado.login) {
-                    const nome = usuarioLogado.nome || usuarioLogado.login;
-                    if (DOM.userAvatar) DOM.userAvatar.textContent = nome.charAt(0).toUpperCase();
-                    if (DOM.userName) DOM.userName.textContent = nome;
-                } else {
-                    if (DOM.userAvatar) DOM.userAvatar.textContent = '?';
-                    if (DOM.userName) DOM.userName.textContent = 'Visitante';
-                }
-                atualizarSaldoGlobal();
-            }
-
-            function mostrarLogin() { if (DOM.loginModal) DOM.loginModal.classList.add('show'); }
-            function esconderLogin() { if (DOM.loginModal) DOM.loginModal.classList.remove('show'); }
-
-            // ============================================================
-            // 10. SUPABASE - OPERAÇÕES
-            // ============================================================
-            async function verificarSupabase() {
-                try {
-                    const response = await fetch(`${CONFIG.SUPABASE_URL}/rest/v1/${CONFIG.TABELA}?select=id&limit=1`, {
-                        headers: {
-                            'apikey': CONFIG.SUPABASE_KEY,
-                            'Authorization': `Bearer ${CONFIG.SUPABASE_KEY}`
-                        }
-                    });
-                    if (response.ok) {
-                        supabaseOnline = true;
-                        atualizarStatusSupabase(true, 'Online');
-                        return true;
-                    } else {
-                        supabaseOnline = false;
-                        atualizarStatusSupabase(false, `Erro ${response.status}`);
-                        return false;
-                    }
-                } catch (error) {
-                    supabaseOnline = false;
-                    atualizarStatusSupabase(false, 'Falha');
-                    return false;
-                }
-            }
-
-            async function autenticarUsuario(login, senha, criar = false) {
-                const url = criar ?
-                    `${CONFIG.SUPABASE_URL}/rest/v1/${CONFIG.TABELA}` :
-                    `${CONFIG.SUPABASE_URL}/rest/v1/${CONFIG.TABELA}?login=eq.${encodeURIComponent(login)}`;
-
-                const options = {
-                    headers: {
-                        'apikey': CONFIG.SUPABASE_KEY,
-                        'Authorization': `Bearer ${CONFIG.SUPABASE_KEY}`
-                    }
-                };
-
-                if (criar) {
-                    options.method = 'POST';
-                    options.headers['Content-Type'] = 'application/json';
-                    
-                    const invInicial = {
-                        sementes: 0,
-                        milho: 0,
-                        ovos: 0,
-                        pintinhos: 0,
-                        galinhas: 0,
-                        madeira: 0,
-                        pedra: 0,
-                        ouro: 0,
-                        pocao: 0,
-                        balde: 0
-                    };
-
-                    options.body = JSON.stringify({
-                        login: login,
-                        nome: login,
-                        senha: senha,
-                        saldo: CONFIG.INITIAL_SALDO,
-                        seeds: CONFIG.INITIAL_SEEDS,
-                        planted: 0,
-                        harvested: 0,
-                        buckets: CONFIG.INITIAL_BUCKETS,
-                        carteira: {
-                            'Madeira': 0,
-                            'Pedra': 0,
-                            'Ouro': 0,
-                            'Poção': 0,
-                            'Balde': 0
-                        },
-                        plot_data: milharal.plots.map(p => ({ stage: p.stage, progress: p.progress })),
-                        fazendinha_dados: {
-                            inventario: invInicial,
-                            plantio: { active: false, stage: 0, progress: 0 },
-                            incubacao: { active: false, stage: 0, progress: 0 },
-                            saldo: 50.00
-                        },
-                        nivel: 1,
-                        experiencia: 0,
-                        hp_max: 100,
-                        mp_max: 50,
-                        sm_max: 40,
-                        ataque_base: 15,
-                        defesa_base: 10,
-                        magia_base: 8,
-                        hp_atual: 100,
-                        mp_atual: 50,
-                        sm_atual: 40
-                    });
-                }
-
-                try {
-                    const response = await fetch(url, options);
-
-                    if (!response.ok) {
-                        if (criar && response.status === 409) {
-                            DOM.loginError.textContent = '❌ Usuário já existe!';
-                            return false;
-                        }
-                        DOM.loginError.textContent = `❌ Erro ${response.status}`;
-                        return false;
-                    }
-
-                    if (criar) {
-                        DOM.loginError.textContent = '✅ Conta criada! Faça login.';
-                        return false;
-                    }
-
-                    const data = await response.json();
-                    if (!data || data.length === 0) {
-                        DOM.loginError.textContent = '❌ Usuário não encontrado';
-                        return false;
-                    }
-
-                    const usuario = data[0];
-                    if (usuario.senha !== senha) {
-                        DOM.loginError.textContent = '❌ Senha incorreta';
-                        return false;
-                    }
-
-                    salvarUsuarioLocal({ login: usuario.login, nome: usuario.nome || usuario.login });
-                    DOM.loginError.textContent = '';
-                    esconderLogin();
-                    atualizarInterfaceUsuario();
-                    await carregarDadosCompletos();
-                    showToast(`👋 Bem-vindo, ${usuario.nome || usuario.login}!`, 2500);
-                    return true;
-
-                } catch (error) {
-                    DOM.loginError.textContent = '❌ Erro de conexão';
-                    console.error('Erro autenticação:', error);
-                    return false;
-                }
-            }
-
-            // ============================================================
-            // 11. CARREGAR E SALVAR DADOS COMPLETOS
-            // ============================================================
-            async function carregarDadosCompletos() {
-                if (!usuarioLogado || !supabaseOnline) return;
-
-                try {
-                    const response = await fetch(
-                        `${CONFIG.SUPABASE_URL}/rest/v1/${CONFIG.TABELA}?login=eq.${encodeURIComponent(usuarioLogado.login)}`, {
-                            headers: {
-                                'apikey': CONFIG.SUPABASE_KEY,
-                                'Authorization': `Bearer ${CONFIG.SUPABASE_KEY}`
-                            }
-                        }
-                    );
-
-                    if (!response.ok) throw new Error(`Erro ao carregar: ${response.status}`);
-
-                    const data = await response.json();
-                    if (!data || data.length === 0) return;
-
-                    dadosCompletos = data[0];
-                    const d = dadosCompletos;
-
-                    // ============================================================
-                    // CARREGAR MILHARAL
-                    // ============================================================
-                    milharal.seeds = d.seeds ?? CONFIG.INITIAL_SEEDS;
-                    milharal.planted = d.planted ?? 0;
-                    milharal.harvested = d.harvested ?? 0;
-                    milharal.saldo = Number(d.saldo ?? CONFIG.INITIAL_SALDO);
-                    milharal.buckets = d.buckets ?? CONFIG.INITIAL_BUCKETS;
-
-                    if (d.plot_data && Array.isArray(d.plot_data) && d.plot_data.length > 0) {
-                        milharal.plots = d.plot_data.map((p, index) => ({
-                            id: index,
-                            stage: p.stage || STAGES.EMPTY,
-                            progress: p.progress || 0,
-                            row: Math.floor(index / CONFIG.COLS),
-                            col: index % CONFIG.COLS
-                        }));
-                    } else {
-                        initPlots();
-                    }
-
-                    // ============================================================
-                    // CARREGAR FAZENDINHA
-                    // ============================================================
-                    if (d.fazendinha_dados && typeof d.fazendinha_dados === 'object') {
-                        const fd = d.fazendinha_dados;
-                        
-                        fazendinha.saldo = Number(fd.saldo ?? 50.00);
-                        
-                        if (fd.inventario) {
-                            fazendinha.inventario = {
-                                sementes: fd.inventario.sementes || 0,
-                                milho: fd.inventario.milho || 0,
-                                ovos: fd.inventario.ovos || 0,
-                                pintinhos: fd.inventario.pintinhos || 0,
-                                galinhas: fd.inventario.galinhas || 0,
-                                madeira: fd.inventario.madeira || 0,
-                                pedra: fd.inventario.pedra || 0,
-                                ouro: fd.inventario.ouro || 0,
-                                pocao: fd.inventario.pocao || 0,
-                                balde: fd.inventario.balde || 0
-                            };
-                        }
-                        
-                        if (fd.plantio) {
-                            fazendinha.plantio = {
-                                active: fd.plantio.active || false,
-                                stage: fd.plantio.stage || 0,
-                                progress: fd.plantio.progress || 0
-                            };
-                        }
-                        
-                        if (fd.incubacao) {
-                            fazendinha.incubacao = {
-                                active: fd.incubacao.active || false,
-                                stage: fd.incubacao.stage || 0,
-                                progress: fd.incubacao.progress || 0
-                            };
-                        }
-                    }
-
-                    // ============================================================
-                    // CARREGAR CARTEIRA
-                    // ============================================================
-                    if (d.carteira) {
-                        const c = d.carteira;
-                        fazendinha.inventario.madeira = c.Madeira || 0;
-                        fazendinha.inventario.pedra = c.Pedra || 0;
-                        fazendinha.inventario.ouro = c.Ouro || 0;
-                        fazendinha.inventario.pocao = c.Poção || 0;
-                        fazendinha.inventario.balde = c.Balde || 0;
-                    }
-
-                    // ============================================================
-                    // CARREGAR NÍVEL
-                    // ============================================================
-                    if (d.nivel !== undefined) {
-                        levelSystem.nivel = d.nivel || 1;
-                        levelSystem.experiencia = d.experiencia || 0;
-                        levelSystem.hpMax = d.hp_max || 100;
-                        levelSystem.mpMax = d.mp_max || 50;
-                        levelSystem.smMax = d.sm_max || 40;
-                        levelSystem.ataqueBase = d.ataque_base || 15;
-                        levelSystem.defesaBase = d.defesa_base || 10;
-                        levelSystem.magiaBase = d.magia_base || 8;
-                        levelSystem.hp = d.hp_atual || levelSystem.getHpMax();
-                        levelSystem.mp = d.mp_atual || levelSystem.getMpMax();
-                        levelSystem.sm = d.sm_atual || levelSystem.getSmMax();
-                        levelSystem.atualizarUI();
-                    }
-
-                    renderMilharal();
-                    atualizarFazendinhaUI();
-                    startMilharal();
-                    reiniciarTimersFazenda();
-
-                    showToast(`📥 Dados de ${usuarioLogado.nome || usuarioLogado.login} carregados!`, 2000);
-
-                } catch (error) {
-                    console.error('Erro ao carregar:', error);
-                    showToast('❌ Erro ao carregar: ' + error.message, 3000);
-                }
-            }
-
-            async function salvarDadosCompletos() {
-                if (!usuarioLogado || !supabaseOnline || salvando) return;
-                salvando = true;
-
-                try {
-                    const plotData = milharal.plots.map(p => ({ stage: p.stage, progress: p.progress || 0 }));
-
-                    const fazendinhaDados = {
-                        inventario: fazendinha.inventario,
-                        plantio: fazendinha.plantio,
-                        incubacao: fazendinha.incubacao,
-                        saldo: fazendinha.saldo
-                    };
-
-                    const payload = {
-                        saldo: Number(milharal.saldo || 0).toFixed(2),
-                        seeds: milharal.seeds || 0,
-                        planted: milharal.planted || 0,
-                        harvested: milharal.harvested || 0,
-                        buckets: milharal.buckets || 0,
-                        plot_data: plotData,
-                        carteira: {
-                            'Madeira': fazendinha.inventario.madeira || 0,
-                            'Pedra': fazendinha.inventario.pedra || 0,
-                            'Ouro': fazendinha.inventario.ouro || 0,
-                            'Poção': fazendinha.inventario.pocao || 0,
-                            'Balde': fazendinha.inventario.balde || 0
-                        },
-                        fazendinha_dados: fazendinhaDados,
-                        nivel: levelSystem.nivel,
-                        experiencia: levelSystem.experiencia,
-                        hp_max: levelSystem.getHpMax(),
-                        mp_max: levelSystem.getMpMax(),
-                        sm_max: levelSystem.getSmMax(),
-                        ataque_base: levelSystem.ataqueBase,
-                        defesa_base: levelSystem.defesaBase,
-                        magia_base: levelSystem.magiaBase,
-                        hp_atual: levelSystem.hp,
-                        mp_atual: levelSystem.mp,
-                        sm_atual: levelSystem.sm,
-                        updated_at: new Date().toISOString()
-                    };
-
-                    const response = await fetch(
-                        `${CONFIG.SUPABASE_URL}/rest/v1/${CONFIG.TABELA}?login=eq.${encodeURIComponent(usuarioLogado.login)}`, {
-                            method: 'PATCH',
-                            headers: {
-                                'Content-Type': 'application/json',
-                                'apikey': CONFIG.SUPABASE_KEY,
-                                'Authorization': `Bearer ${CONFIG.SUPABASE_KEY}`
-                            },
-                            body: JSON.stringify(payload)
-                        }
-                    );
-
-                    if (!response.ok) {
-                        const errorText = await response.text();
-                        console.error('Erro ao salvar:', response.status, errorText);
-                        throw new Error(`Erro ao salvar: ${response.status}`);
-                    }
-
-                    ultimoSalvamento = Date.now();
-                    console.log('💾 Dados salvos com sucesso!');
-
-                } catch (error) {
-                    console.error('Erro ao salvar:', error);
-                    showToast('❌ Erro ao salvar: ' + error.message, 3000);
-                } finally {
-                    salvando = false;
-                }
-            }
-
-            // ============================================================
-            // 12. FUNÇÕES DO MILHARAL
+            // MILHARAL - FUNÇÕES PRINCIPAIS
             // ============================================================
             function initPlots() {
-                milharal.plots = [];
+                const j = getJogo();
+                j.plots = [];
                 for (let i = 0; i < CONFIG.TOTAL; i++) {
-                    milharal.plots.push({
+                    j.plots.push({
                         id: i,
                         stage: STAGES.EMPTY,
                         progress: 0,
                         row: Math.floor(i / CONFIG.COLS),
-                        col: i % CONFIG.COLS
+                        col: i % CONFIG.COLS,
                     });
                 }
             }
 
             function renderMilharal() {
-                if (DOM.seedCount) DOM.seedCount.textContent = `🌰 ${milharal.seeds || 0}`;
-                if (DOM.plantedCount) DOM.plantedCount.textContent = `🌱 ${milharal.planted || 0}`;
-                if (DOM.harvestCount) DOM.harvestCount.textContent = `🌽 ${milharal.harvested || 0}`;
-                if (DOM.bucketCount) DOM.bucketCount.textContent = `🪣 ${milharal.buckets || 0}`;
-                if (DOM.saldoDisplay) DOM.saldoDisplay.textContent = `R$ ${formatSaldo(milharal.saldo || 0)}`;
-                if (DOM.stockDisplay) DOM.stockDisplay.innerHTML = `<i class="fas fa-warehouse"></i> <span class="num">🌽 ${milharal.stock || 0}</span>`;
-                if (DOM.bucketStatus) DOM.bucketStatus.textContent = `🪣 ${milharal.buckets || 0}`;
-
+                const j = getJogo();
+                DOM.seedCount.textContent = `🌰 ${j.seeds || 0}`;
+                DOM.plantedCount.textContent = `🌱 ${j.planted || 0}`;
+                DOM.harvestCount.textContent = `🌽 ${j.harvested || 0}`;
+                DOM.bucketCount.textContent = `🪣 ${j.buckets || 0}`;
+                DOM.expDisplay.textContent = `✨ ${j.experiencia || 0}`;
+                DOM.saldoDisplay.textContent = `R$ ${formatSaldo(j.saldo || 0)}`;
+                DOM.stockDisplay.innerHTML = `<i class="fas fa-warehouse"></i> <span class="num">🌽 ${j.stock || 0}</span>`;
+                DOM.bucketStatus.textContent = `🪣 ${j.buckets || 0}`;
                 atualizarSaldoGlobal();
 
+                DOM.sellPrice.textContent = getSellPrice();
+                DOM.buyPrice.textContent = getBuyPrice();
+                DOM.bucketPrice.textContent = CONFIG.BUCKET_PRICE;
+                DOM.sellSeedPrice.textContent = getSellSeedPrice();
+                DOM.sellBucketPrice.textContent = getSellBucketPrice();
+
                 let html = '';
-                for (let i = 0; i < milharal.plots.length; i++) {
-                    const p = milharal.plots[i];
+                for (let i = 0; i < j.plots.length; i++) {
+                    const p = j.plots[i];
                     const meta = STAGE_META[p.stage] || { emoji: '❓', label: '?' };
                     const isHarvested = p.stage === STAGES.HARVESTED;
                     const isEmpty = p.stage === STAGES.EMPTY;
@@ -1859,7 +1565,8 @@
                     let progressBar = '';
                     if (!isEmpty && !isHarvested) {
                         const w = Math.min(p.progress || 0, 100);
-                        progressBar = `<div class="progress-bar ${w>=100?'done':''}" style="width:${w}%"></div>`;
+                        progressBar =
+                            `<div class="progress-bar ${w >= 100 ? 'done' : ''}" style="width:${w}%"></div>`;
                     }
 
                     let emoji = meta.emoji;
@@ -1874,50 +1581,104 @@
                         </div>
                     `;
                 }
-                if (DOM.field) DOM.field.innerHTML = html;
+                DOM.field.innerHTML = html;
 
-                const btnPlant = document.getElementById('btnPlant');
-                const btnWater = document.getElementById('btnWater');
-                if (btnPlant) btnPlant.disabled = (milharal.seeds <= 0);
-                if (btnWater) btnWater.disabled = (milharal.buckets <= 0);
+                // Atualiza estado dos botões
+                const emptyPlots = j.plots.filter(p => p.stage === STAGES.EMPTY).length;
+                DOM.btnPlantAll.disabled = (j.seeds <= 0 || emptyPlots === 0);
+                DOM.btnWaterAll.disabled = (j.buckets <= 0);
+                const hasMature = j.plots.some(p => p.stage === STAGES.MATURE);
+                DOM.btnHarvestAll.disabled = !hasMature;
+                DOM.btnSellAll.disabled = (j.stock <= 0);
                 updateMessage();
+                updateMarketButtons();
             }
 
             function updateMessage() {
-                const empty = milharal.plots.filter(p => p.stage === STAGES.EMPTY).length;
-                const mature = milharal.plots.filter(p => p.stage === STAGES.MATURE).length;
-                const harvestedCount = milharal.plots.filter(p => p.stage === STAGES.HARVESTED).length;
-                const growing = milharal.plots.some(p =>
-                    p.stage !== STAGES.EMPTY && p.stage !== STAGES.HARVESTED && p.stage !== STAGES.MATURE
+                const j = getJogo();
+                const plots = getPlots();
+                const empty = plots.filter(p => p.stage === STAGES.EMPTY).length;
+                const mature = plots.filter(p => p.stage === STAGES.MATURE).length;
+                const harvested = plots.filter(p => p.stage === STAGES.HARVESTED).length;
+                const growing = plots.some(p =>
+                    p.stage !== STAGES.EMPTY &&
+                    p.stage !== STAGES.HARVESTED &&
+                    p.stage !== STAGES.MATURE
                 );
 
                 let msg = '';
-                if (harvestedCount > 0)
-                    msg = `🟫 <span class="highlight">${harvestedCount}</span> canteiro(s) colhido(s). Clique para limpar (R$ ${CONFIG.CLEAR_COST.toFixed(2)})`;
-                else if (milharal.seeds <= 0 && empty > 0)
-                    msg = '😅 <span class="highlight">Sem sementes!</span> Colha milho para ganhar sementes.';
-                else if (mature > 0)
-                    msg = `🌽 <span class="highlight">${mature}</span> milho(s) maduro(s)! Clique para colher ou use "Colher tudo"`;
-                else if (growing)
-                    msg = milharal.buckets > 0 ? '💧 <span class="highlight">Regue</span> as plantas (consome 1 balde)' : '💧 Você não tem baldes!';
-                else if (empty > 0 && milharal.seeds > 0)
-                    msg = '🌱 Clique em um <span class="highlight">canteiro vazio</span> para plantar.';
-                else if (empty === 0 && milharal.seeds > 0)
+                if (harvested > 0) {
+                    msg = `🟫 ${harvested} colhido(s). Clique para limpar (R$ ${CONFIG.CLEAR_COST.toFixed(2)})`;
+                } else if (j.seeds <= 0 && empty > 0) {
+                    msg = '😅 <span class="highlight">Sem sementes!</span> Compre no mercado ou colha milho.';
+                } else if (mature > 0) {
+                    msg = `🌽 <span class="highlight">${mature}</span> maduro(s)! Clique ou use "Colher tudo" para ganhar <span class="exp-highlight">✨ EXP</span>`;
+                } else if (growing) {
+                    msg = j.buckets > 0 ?
+                        '💧 <span class="highlight">Regue tudo</span> para acelerar o crescimento' :
+                        '💧 Sem baldes! Compre no mercado.';
+                } else if (empty > 0 && j.seeds > 0) {
+                    msg = '🌱 Use o botão <span class="highlight">Plantar tudo</span> ou clique em um canteiro vazio para plantar.';
+                } else if (empty === 0 && j.seeds > 0) {
                     msg = '🧑‍🌾 Terreno cheio! Espere crescer ou colha.';
-                else
+                } else {
                     msg = '🌾 Acompanhe o crescimento do seu milharal!';
-                if (DOM.message) DOM.message.innerHTML = msg;
+                }
+                DOM.message.innerHTML = msg;
             }
 
+            function updateMarketButtons() {
+                const j = getJogo();
+                const plots = getPlots();
+                const mature = plots.filter(p => p.stage === STAGES.MATURE).length;
+                const buyPrice = getBuyPrice();
+
+                document.querySelectorAll('.btn-sm[data-action="sellCorn"]').forEach(btn => {
+                    const qty = btn.dataset.qty;
+                    const avail = (qty === 'all') ? mature : parseInt(qty, 10);
+                    btn.disabled = (mature < avail);
+                });
+
+                document.querySelectorAll('.btn-sm[data-action="buySeeds"]').forEach(btn => {
+                    const qty = btn.dataset.qty;
+                    let max = Math.floor(j.saldo / buyPrice);
+                    if (qty === 'all') btn.disabled = (max === 0);
+                    else btn.disabled = (max < parseInt(qty, 10));
+                });
+
+                document.querySelectorAll('.btn-sm[data-action="buyBuckets"]').forEach(btn => {
+                    const qty = btn.dataset.qty;
+                    let max = Math.floor(j.saldo / CONFIG.BUCKET_PRICE);
+                    if (qty === 'all') btn.disabled = (max === 0);
+                    else btn.disabled = (max < parseInt(qty, 10));
+                });
+
+                document.querySelectorAll('.btn-sm[data-action="sellSeeds"]').forEach(btn => {
+                    const qty = btn.dataset.qty;
+                    const avail = (qty === 'all') ? j.seeds : parseInt(qty, 10);
+                    btn.disabled = (j.seeds < avail);
+                });
+
+                document.querySelectorAll('.btn-sm[data-action="sellBuckets"]').forEach(btn => {
+                    const qty = btn.dataset.qty;
+                    const avail = (qty === 'all') ? j.buckets : parseInt(qty, 10);
+                    btn.disabled = (j.buckets < avail);
+                });
+            }
+
+            // ============================================================
+            // CRESCIMENTO
+            // ============================================================
             function growPlot(plot) {
-                if (plot.stage === STAGES.EMPTY || plot.stage === STAGES.HARVESTED || plot.stage === STAGES.MATURE) return false;
+                if (plot.stage === STAGES.EMPTY || plot.stage === STAGES.HARVESTED || plot.stage === STAGES.MATURE)
+                    return false;
                 plot.progress = Math.min((plot.progress || 0) + CONFIG.BASE_GROWTH, 100);
                 if (plot.progress >= 100) {
                     const idx = STAGE_ORDER.indexOf(plot.stage);
                     if (idx + 1 < STAGE_ORDER.length) {
                         plot.stage = STAGE_ORDER[idx + 1];
                         plot.progress = 0;
-                        if (plot.stage === STAGES.MATURE) showToast(`🌽 Milho maduro na parcela ${plot.id+1}!`, 1800);
+                        if (plot.stage === STAGES.MATURE) showToast(`🌽 Milho maduro na parcela ${plot.id + 1}!`, 1800);
                         return true;
                     }
                 }
@@ -1926,7 +1687,8 @@
 
             function autoGrow() {
                 let any = false;
-                for (const p of milharal.plots) {
+                const plots = getPlots();
+                for (const p of plots) {
                     if (p.stage !== STAGES.EMPTY && p.stage !== STAGES.HARVESTED && p.stage !== STAGES.MATURE) {
                         if (growPlot(p)) any = true;
                     }
@@ -1935,48 +1697,96 @@
                 salvarDadosCompletos();
             }
 
+            function startMilharal() {
+                if (state.growthTimer) clearInterval(state.growthTimer);
+                state.growthTimer = setInterval(autoGrow, CONFIG.GROWTH_INTERVAL);
+            }
+
+            // ============================================================
+            // AÇÕES DO MILHARAL
+            // ============================================================
             function plantAt(id) {
-                const p = milharal.plots[id];
+                const j = getJogo();
+                const p = j.plots[id];
                 if (!p || p.stage !== STAGES.EMPTY) return false;
-                if (milharal.seeds <= 0) { showToast('😅 Sem sementes!', 1400); return false; }
-                milharal.seeds--;
+                if (j.seeds <= 0) { showToast('😅 Sem sementes!', 1400); return false; }
+                j.seeds--;
                 p.stage = STAGES.SEED;
                 p.progress = 0;
-                milharal.planted++;
-                showToast(`🌱 Plantou na parcela ${id+1}!`, 1400);
+                j.planted++;
+                showToast(`🌱 Plantou na parcela ${id + 1}!`, 1400);
                 renderMilharal();
                 salvarDadosCompletos();
                 return true;
             }
 
+            function plantAll() {
+                const j = getJogo();
+                const emptyPlots = j.plots.filter(p => p.stage === STAGES.EMPTY);
+
+                if (emptyPlots.length === 0) {
+                    showToast('⚠️ Todos os canteiros estão ocupados!', 1400);
+                    return 0;
+                }
+
+                if (j.seeds <= 0) {
+                    showToast('😅 Sem sementes para plantar!', 1400);
+                    return 0;
+                }
+
+                let planted = 0;
+                const toPlant = Math.min(j.seeds, emptyPlots.length);
+
+                for (let i = 0; i < toPlant && planted < toPlant; i++) {
+                    const p = emptyPlots[i];
+                    if (p.stage === STAGES.EMPTY) {
+                        j.seeds--;
+                        p.stage = STAGES.SEED;
+                        p.progress = 0;
+                        j.planted++;
+                        planted++;
+                    }
+                }
+
+                showToast(`🌱 Plantou ${planted} canteiro(s)!`, 2000);
+                renderMilharal();
+                salvarDadosCompletos();
+                return planted;
+            }
+
             function clearPlot(id) {
-                const p = milharal.plots[id];
+                const j = getJogo();
+                const p = j.plots[id];
                 if (!p || p.stage !== STAGES.HARVESTED) return false;
-                if (milharal.saldo < CONFIG.CLEAR_COST) { showToast(`😅 Precisa de R$ ${CONFIG.CLEAR_COST.toFixed(2)}`, 1600); return false; }
-                milharal.saldo = (milharal.saldo || 0) - CONFIG.CLEAR_COST;
+                if (j.saldo < CONFIG.CLEAR_COST) {
+                    showToast(`😅 Precisa de R$ ${CONFIG.CLEAR_COST.toFixed(2)}`, 1600);
+                    return false;
+                }
+                j.saldo = (j.saldo || 0) - CONFIG.CLEAR_COST;
                 p.stage = STAGES.EMPTY;
                 p.progress = 0;
-                showToast(`🟫 Canteiro ${id+1} limpo! (-R$ ${CONFIG.CLEAR_COST.toFixed(2)})`, 1600);
+                showToast(`🟫 Canteiro ${id + 1} limpo! (-R$ ${CONFIG.CLEAR_COST.toFixed(2)})`, 1600);
                 renderMilharal();
                 salvarDadosCompletos();
                 return true;
             }
 
             function waterAt(id) {
-                const p = milharal.plots[id];
+                const j = getJogo();
+                const p = j.plots[id];
                 if (!p || p.stage === STAGES.EMPTY || p.stage === STAGES.HARVESTED || p.stage === STAGES.MATURE) {
                     showToast('💧 Não há o que regar aqui.', 1200);
                     return false;
                 }
-                if (milharal.buckets <= 0) { showToast('😅 Sem baldes!', 1400); return false; }
-                milharal.buckets--;
+                if (j.buckets <= 0) { showToast('😅 Sem baldes!', 1400); return false; }
+                j.buckets--;
                 p.progress = Math.min((p.progress || 0) + CONFIG.WATER_BOOST, 100);
                 if (p.progress >= 100) {
                     const idx = STAGE_ORDER.indexOf(p.stage);
                     if (idx + 1 < STAGE_ORDER.length) {
                         p.stage = STAGE_ORDER[idx + 1];
                         p.progress = 0;
-                        if (p.stage === STAGES.MATURE) showToast(`🌽 Amadureceu na parcela ${id+1}!`, 1800);
+                        if (p.stage === STAGES.MATURE) showToast(`🌽 Amadureceu na parcela ${id + 1}!`, 1800);
                         else showToast(`💧 Avançou para ${STAGE_META[p.stage].label}!`, 1400);
                     } else p.progress = 100;
                 } else {
@@ -1988,478 +1798,663 @@
             }
 
             function harvestAt(id) {
-                const p = milharal.plots[id];
+                const j = getJogo();
+                const p = j.plots[id];
                 if (!p || p.stage !== STAGES.MATURE) { showToast('🌽 Só colhe maduro!', 1200); return false; }
                 p.stage = STAGES.HARVESTED;
                 p.progress = 0;
-                milharal.harvested++;
-                milharal.seeds += 2;
-                milharal.stock++;
-                fazendinha.inventario.milho = (fazendinha.inventario.milho || 0) + 1;
-                showToast(`🌽 Colheu 1 milho! +2 sementes, +1 estoque.`, 1600);
+                j.harvested++;
+                j.stock++;
+
+                // Ganha EXP
+                levelSystem.adicionarExp(CONFIG.EXP_PER_HARVEST);
+
+                showToast(`🌽 Colheu 1 milho! ✨ +${CONFIG.EXP_PER_HARVEST} EXP`, 2000);
                 renderMilharal();
-                atualizarFazendinhaUI();
                 salvarDadosCompletos();
                 return true;
             }
 
-            function harvestAllAndStock() {
-                const maturePlots = milharal.plots.filter(p => p.stage === STAGES.MATURE);
+            function harvestAll() {
+                const j = getJogo();
+                const maturePlots = j.plots.filter(p => p.stage === STAGES.MATURE);
                 const count = maturePlots.length;
-                if (count === 0) {
-                    showToast('🌽 Nenhum milho maduro para colher.', 1400);
-                    return 0;
-                }
+                if (count === 0) { showToast('🌽 Nenhum milho maduro para colher.', 1400); return 0; }
                 for (const p of maturePlots) {
                     p.stage = STAGES.HARVESTED;
                     p.progress = 0;
                 }
-                milharal.harvested += count;
-                milharal.seeds += count * 2;
-                milharal.stock += count;
-                fazendinha.inventario.milho = (fazendinha.inventario.milho || 0) + count;
-                showToast(`🌽 Colheu ${count} milho(s)! +${count*2} sementes, +${count} estoque.`, 2500);
+                j.harvested += count;
+                j.stock += count;
+
+                const expGanho = count * CONFIG.EXP_PER_HARVEST;
+                levelSystem.adicionarExp(expGanho);
+
+                showToast(`🌽 Colheu ${count} milho(s)! ✨ +${expGanho} EXP`, 2500);
                 renderMilharal();
-                atualizarFazendinhaUI();
                 salvarDadosCompletos();
                 return count;
             }
 
-            function resetMilharal() {
-                if (!confirm('Reiniciar todo o progresso do Milharal?')) return;
-                if (milharal.growthTimer) clearInterval(milharal.growthTimer);
-                milharal.seeds = CONFIG.INITIAL_SEEDS;
-                milharal.harvested = 0;
-                milharal.planted = 0;
-                milharal.saldo = CONFIG.INITIAL_SALDO;
-                milharal.buckets = CONFIG.INITIAL_BUCKETS;
-                milharal.stock = CONFIG.INITIAL_STOCK;
-                initPlots();
-                renderMilharal();
-                startMilharal();
-                showToast('🔄 Milharal reiniciado!', 2200);
-                salvarDadosCompletos();
-            }
+            function waterAll() {
+                const j = getJogo();
+                if (j.buckets <= 0) { showToast('😅 Sem baldes!', 1400); return; }
 
-            function startMilharal() {
-                if (milharal.growthTimer) clearInterval(milharal.growthTimer);
-                milharal.growthTimer = setInterval(autoGrow, CONFIG.GROWTH_INTERVAL);
-            }
+                const toWater = j.plots.filter(p =>
+                    p.stage !== STAGES.EMPTY &&
+                    p.stage !== STAGES.HARVESTED &&
+                    p.stage !== STAGES.MATURE
+                );
 
-            // ============================================================
-            // 13. FUNÇÕES DA FAZENDINHA
-            // ============================================================
-            function atualizarFazendinhaUI() {
-                const inv = fazendinha.inventario;
-                DOM.invSementes.textContent = inv.sementes || 0;
-                DOM.invMilho.textContent = inv.milho || 0;
-                DOM.invOvos.textContent = inv.ovos || 0;
-                DOM.invPintinhos.textContent = inv.pintinhos || 0;
-                DOM.invGalinhas.textContent = inv.galinhas || 0;
-                DOM.invMadeira.textContent = inv.madeira || 0;
-                DOM.invPedra.textContent = inv.pedra || 0;
-                DOM.invOuro.textContent = inv.ouro || 0;
-                DOM.invPocao.textContent = inv.pocao || 0;
-                DOM.invBalde.textContent = inv.balde || 0;
-
-                const plantio = fazendinha.plantio;
-                if (plantio.active) {
-                    const etapas = ['🌱 Semente', '🌿 Crescendo', '🌽 Pronto'];
-                    DOM.milhoEmoji.textContent = plantio.stage === 2 ? '🌽' : '🌱';
-                    DOM.milhoStatus.textContent = etapas[plantio.stage] || 'Crescendo';
-                    DOM.milhoProgress.style.width = (plantio.progress || 0) + '%';
-                    DOM.milhoInfo.textContent = plantio.stage === 2 ? 'Pronto para colher!' : `Progresso: ${Math.round(plantio.progress || 0)}%`;
-                } else {
-                    DOM.milhoEmoji.textContent = '🌾';
-                    DOM.milhoStatus.textContent = 'Vazio';
-                    DOM.milhoProgress.style.width = '0%';
-                    DOM.milhoInfo.textContent = 'Clique em Plantar';
-                }
-
-                const incub = fazendinha.incubacao;
-                if (incub.active) {
-                    const etapas = ['🥚 Incubando', '🐣 Pintinho', '🐔 Galinha'];
-                    DOM.galinhaEmoji.textContent = incub.stage === 0 ? '🥚' : (incub.stage === 1 ? '🐣' : '🐔');
-                    DOM.galinhaStatus.textContent = etapas[incub.stage] || 'Incubando';
-                    DOM.galinhaProgress.style.width = (incub.progress || 0) + '%';
-                    DOM.galinhaInfo.textContent = incub.stage === 2 ? 'Galinha pronta!' : `Progresso: ${Math.round(incub.progress || 0)}%`;
-                } else {
-                    DOM.galinhaEmoji.textContent = '🥚';
-                    DOM.galinhaStatus.textContent = 'Chocadeira vazia';
-                    DOM.galinhaProgress.style.width = '0%';
-                    DOM.galinhaInfo.textContent = 'Incube um ovo';
-                }
-
-                DOM.venderMilho.textContent = inv.milho || 0;
-                DOM.venderOvo.textContent = inv.ovos || 0;
-                DOM.venderSemente.textContent = inv.sementes || 0;
-                DOM.venderGalinha.textContent = inv.galinhas || 0;
-
-                atualizarSaldoGlobal();
-
-                document.getElementById('btnPlantarMilho').disabled = (fazendinha.plantio.active || fazendinha.inventario.sementes <= 0);
-                document.getElementById('btnColherMilho').disabled = (!fazendinha.plantio.active || fazendinha.plantio.stage < 2);
-                document.getElementById('btnIncubarOvo').disabled = (fazendinha.incubacao.active || fazendinha.inventario.ovos <= 0);
-                document.getElementById('btnAlimentarGalinha').disabled = (fazendinha.inventario.pintinhos <= 0 || fazendinha.inventario.milho <= 0);
-                document.getElementById('btnVenderProducao').disabled = (fazendinha.inventario.milho + fazendinha.inventario.ovos + fazendinha.inventario.sementes + fazendinha.inventario.galinhas === 0);
-            }
-
-            function plantarMilhoFazenda() {
-                if (fazendinha.plantio.active) { showToast('⚠️ Já há plantação.', 1500); return; }
-                if (fazendinha.inventario.sementes <= 0) { showToast('😅 Sem sementes!', 1500); return; }
-                fazendinha.inventario.sementes--;
-                fazendinha.plantio.active = true;
-                fazendinha.plantio.stage = 0;
-                fazendinha.plantio.progress = 0;
-                atualizarFazendinhaUI();
-                showToast('🌱 Semente plantada!', 1500);
-                salvarDadosCompletos();
-
-                const interval = setInterval(() => {
-                    if (!fazendinha.plantio.active) { clearInterval(interval); return; }
-                    fazendinha.plantio.progress = (fazendinha.plantio.progress || 0) + 1 + Math.random() * 2;
-                    if (fazendinha.plantio.progress >= 100) {
-                        fazendinha.plantio.progress = 100;
-                        fazendinha.plantio.stage = 2;
-                        clearInterval(interval);
-                        showToast('🌽 Milho pronto para colher!', 2000);
-                        salvarDadosCompletos();
-                    } else if (fazendinha.plantio.progress >= 50 && fazendinha.plantio.stage < 1) {
-                        fazendinha.plantio.stage = 1;
-                    }
-                    atualizarFazendinhaUI();
-                }, CONFIG.PLANTIO_INTERVAL);
-                fazendinha.intervalos.push(interval);
-            }
-
-            function colherMilhoFazenda() {
-                if (!fazendinha.plantio.active || fazendinha.plantio.stage < 2) {
-                    showToast('🌽 Não está pronto para colher.', 1500);
+                if (toWater.length === 0) {
+                    showToast('💧 Nada para regar.', 1200);
                     return;
                 }
-                const colhido = 1 + Math.floor(Math.random() * 2);
-                fazendinha.inventario.milho = (fazendinha.inventario.milho || 0) + colhido;
-                fazendinha.plantio.active = false;
-                fazendinha.plantio.stage = 0;
-                fazendinha.plantio.progress = 0;
-                atualizarFazendinhaUI();
-                showToast(`🧺 Colheu ${colhido} milho (na mochila)!`, 2000);
-                salvarDadosCompletos();
-            }
 
-            function incubarOvo() {
-                if (fazendinha.incubacao.active) { showToast('⚠️ Já há ovo incubando.', 1500); return; }
-                if (fazendinha.inventario.ovos <= 0) { showToast('😅 Sem ovos!', 1500); return; }
-                fazendinha.inventario.ovos--;
-                fazendinha.incubacao.active = true;
-                fazendinha.incubacao.stage = 0;
-                fazendinha.incubacao.progress = 0;
-                atualizarFazendinhaUI();
-                showToast('🥚 Ovo incubando...', 1500);
-                salvarDadosCompletos();
-
-                const interval = setInterval(() => {
-                    if (!fazendinha.incubacao.active) { clearInterval(interval); return; }
-                    fazendinha.incubacao.progress = (fazendinha.incubacao.progress || 0) + 1 + Math.random() * 1.5;
-                    if (fazendinha.incubacao.progress >= 100) {
-                        fazendinha.incubacao.progress = 100;
-                        fazendinha.incubacao.stage = 1;
-                        clearInterval(interval);
-                        fazendinha.inventario.pintinhos = (fazendinha.inventario.pintinhos || 0) + 1;
-                        fazendinha.incubacao.active = false;
-                        showToast('🐣 Nasceu um pintinho!', 2000);
-                        salvarDadosCompletos();
-                        atualizarFazendinhaUI();
-                    } else {
-                        atualizarFazendinhaUI();
-                    }
-                }, CONFIG.INCUBACAO_INTERVAL);
-                fazendinha.intervalos.push(interval);
-            }
-
-            function alimentarGalinha() {
-                if (fazendinha.inventario.pintinhos <= 0) { showToast('😅 Sem pintinhos!', 1500); return; }
-                if (fazendinha.inventario.milho <= 0) { showToast('😅 Sem milho!', 1500); return; }
-                fazendinha.inventario.milho--;
-                fazendinha.inventario.pintinhos--;
-                fazendinha.inventario.galinhas = (fazendinha.inventario.galinhas || 0) + 1;
-                atualizarFazendinhaUI();
-                showToast('🐔 Pintinho virou galinha (na mochila)!', 2000);
-                salvarDadosCompletos();
-            }
-
-            function producaoOvos() {
-                if (fazendinha.inventario.galinhas > 0) {
-                    const ovos = Math.floor(fazendinha.inventario.galinhas * (0.5 + Math.random() * 0.5));
-                    if (ovos > 0) {
-                        fazendinha.inventario.ovos = (fazendinha.inventario.ovos || 0) + ovos;
-                        showToast(`🐔 Galinhas produziram ${ovos} ovos (na mochila)!`, 2000);
-                        salvarDadosCompletos();
-                        atualizarFazendinhaUI();
-                    }
-                }
-            }
-
-            function venderProducao() {
-                const inv = fazendinha.inventario;
-                const total = (inv.milho || 0) + (inv.ovos || 0) + (inv.sementes || 0) + (inv.galinhas || 0);
-                if (total === 0) { showToast('😅 Nada para vender!', 1500); return; }
-
-                let valorTotal = 0;
-                const precos = { milho: 8 * 0.7, ovos: 3 * 0.7, sementes: 5 * 0.7, galinha: 25 * 0.7 };
-
-                if (inv.milho > 0) { valorTotal += inv.milho * precos.milho; inv.milho = 0; }
-                if (inv.ovos > 0) { valorTotal += inv.ovos * precos.ovos; inv.ovos = 0; }
-                if (inv.sementes > 0) { valorTotal += inv.sementes * precos.sementes; inv.sementes = 0; }
-                if (inv.galinhas > 0) { valorTotal += inv.galinhas * precos.galinha; inv.galinhas = 0; }
-
-                const valorArredondado = Math.round(valorTotal * 100) / 100;
-                milharal.saldo = (milharal.saldo || 0) + valorArredondado;
-                atualizarFazendinhaUI();
-                renderMilharal();
-                showToast(`💰 Vendeu por R$ ${valorArredondado.toFixed(2)}!`, 2500);
-                salvarDadosCompletos();
-            }
-
-            function reiniciarTimersFazenda() {
-                limparIntervalosFazenda();
-                
-                if (fazendinha.plantio.active) {
-                    const interval = setInterval(() => {
-                        if (!fazendinha.plantio.active) { clearInterval(interval); return; }
-                        fazendinha.plantio.progress = (fazendinha.plantio.progress || 0) + 1 + Math.random() * 2;
-                        if (fazendinha.plantio.progress >= 100) {
-                            fazendinha.plantio.progress = 100;
-                            fazendinha.plantio.stage = 2;
-                            clearInterval(interval);
-                            showToast('🌽 Milho pronto para colher!', 2000);
-                            salvarDadosCompletos();
-                        } else if (fazendinha.plantio.progress >= 50 && fazendinha.plantio.stage < 1) {
-                            fazendinha.plantio.stage = 1;
-                        }
-                        atualizarFazendinhaUI();
-                    }, CONFIG.PLANTIO_INTERVAL);
-                    fazendinha.intervalos.push(interval);
-                }
-
-                if (fazendinha.incubacao.active) {
-                    const interval = setInterval(() => {
-                        if (!fazendinha.incubacao.active) { clearInterval(interval); return; }
-                        fazendinha.incubacao.progress = (fazendinha.incubacao.progress || 0) + 1 + Math.random() * 1.5;
-                        if (fazendinha.incubacao.progress >= 100) {
-                            fazendinha.incubacao.progress = 100;
-                            fazendinha.incubacao.stage = 1;
-                            clearInterval(interval);
-                            fazendinha.inventario.pintinhos = (fazendinha.inventario.pintinhos || 0) + 1;
-                            fazendinha.incubacao.active = false;
-                            showToast('🐣 Nasceu um pintinho!', 2000);
-                            salvarDadosCompletos();
-                            atualizarFazendinhaUI();
-                        } else {
-                            atualizarFazendinhaUI();
-                        }
-                    }, CONFIG.INCUBACAO_INTERVAL);
-                    fazendinha.intervalos.push(interval);
-                }
-
-                if (fazendinha.ovosInterval) clearInterval(fazendinha.ovosInterval);
-                fazendinha.ovosInterval = setInterval(producaoOvos, CONFIG.OVOS_INTERVAL);
-            }
-
-            function limparIntervalosFazenda() {
-                fazendinha.intervalos.forEach(i => clearInterval(i));
-                fazendinha.intervalos = [];
-                if (fazendinha.ovosInterval) clearInterval(fazendinha.ovosInterval);
-            }
-
-            // ============================================================
-            // 14. EVENTOS
-            // ============================================================
-
-            // Milharal - Clique no campo
-            if (DOM.field) {
-                DOM.field.addEventListener('click', function(e) {
-                    const div = e.target.closest('.plot');
-                    if (!div) return;
-                    const id = parseInt(div.dataset.id, 10);
-                    if (isNaN(id)) return;
-                    const p = milharal.plots[id];
-                    if (!p) return;
-                    if (p.stage === STAGES.EMPTY) plantAt(id);
-                    else if (p.stage === STAGES.MATURE) harvestAt(id);
-                    else if (p.stage === STAGES.HARVESTED) clearPlot(id);
-                    else waterAt(id);
-                });
-            }
-
-            document.getElementById('btnPlant')?.addEventListener('click', function() {
-                const idx = milharal.plots.findIndex(p => p.stage === STAGES.EMPTY);
-                if (idx === -1) { showToast('⚠️ Todos ocupados!', 1400); return; }
-                plantAt(idx);
-            });
-
-            document.getElementById('btnWater')?.addEventListener('click', function() {
-                if (milharal.buckets <= 0) { showToast('😅 Sem baldes!', 1400); return; }
                 let watered = 0;
-                for (const p of milharal.plots) {
-                    if (p.stage !== STAGES.EMPTY && p.stage !== STAGES.HARVESTED && p.stage !== STAGES.MATURE) {
-                        p.progress = Math.min((p.progress || 0) + CONFIG.WATER_BOOST, 100);
-                        if (p.progress >= 100) {
-                            const idx = STAGE_ORDER.indexOf(p.stage);
-                            if (idx + 1 < STAGE_ORDER.length) { p.stage = STAGE_ORDER[idx + 1]; p.progress = 0; }
-                            else p.progress = 100;
-                        }
-                        watered++;
+                let advanced = 0;
+                for (const p of toWater) {
+                    p.progress = Math.min((p.progress || 0) + CONFIG.WATER_BOOST, 100);
+                    if (p.progress >= 100) {
+                        const idx = STAGE_ORDER.indexOf(p.stage);
+                        if (idx + 1 < STAGE_ORDER.length) {
+                            p.stage = STAGE_ORDER[idx + 1];
+                            p.progress = 0;
+                            advanced++;
+                            if (p.stage === STAGES.MATURE) showToast(`🌽 Amadureceu na parcela ${p.id + 1}!`, 1800);
+                        } else p.progress = 100;
                     }
-                }
-                if (watered > 0) {
-                    milharal.buckets--;
-                    showToast(`💧 Regou ${watered} canteiro(s)!`, 1500);
-                    renderMilharal();
-                    const mature = milharal.plots.filter(p => p.stage === STAGES.MATURE).length;
-                    if (mature > 0) setTimeout(() => showToast(`🌽 ${mature} amadureceu(ram)!`, 1600), 400);
-                    salvarDadosCompletos();
-                } else showToast('💧 Nada para regar.', 1200);
-            });
-
-            document.getElementById('btnHarvestAll')?.addEventListener('click', harvestAllAndStock);
-            document.getElementById('btnResetMilharal')?.addEventListener('click', resetMilharal);
-
-            // Fazendinha
-            document.getElementById('btnPlantarMilho')?.addEventListener('click', plantarMilhoFazenda);
-            document.getElementById('btnColherMilho')?.addEventListener('click', colherMilhoFazenda);
-            document.getElementById('btnIncubarOvo')?.addEventListener('click', incubarOvo);
-            document.getElementById('btnAlimentarGalinha')?.addEventListener('click', alimentarGalinha);
-            document.getElementById('btnVenderProducao')?.addEventListener('click', venderProducao);
-
-            // Nível
-            document.getElementById('btnTreinar')?.addEventListener('click', () => levelSystem.treinar());
-            document.getElementById('btnDescansar')?.addEventListener('click', () => levelSystem.descansar());
-            document.getElementById('btnResetLevel')?.addEventListener('click', () => levelSystem.resetar());
-            document.getElementById('btnSmGanhar')?.addEventListener('click', () => levelSystem.ganharSm());
-            document.getElementById('btnSmGastar')?.addEventListener('click', () => levelSystem.gastarSm());
-            document.getElementById('btnSmResetar')?.addEventListener('click', () => levelSystem.resetarSm());
-
-            // Reconectar
-            document.getElementById('btnReconnectSupabase')?.addEventListener('click', function() {
-                verificarSupabase();
-                showToast('🔄 Verificando conexão com Supabase...', 1500);
-            });
-
-            // ============================================================
-            // 15. LOGIN MODAL - EVENTOS
-            // ============================================================
-            document.addEventListener('DOMContentLoaded', function() {
-                const loginBtn = document.getElementById('btnLogin');
-                const registerBtn = document.getElementById('btnRegister');
-                const guestBtn = document.getElementById('btnGuest');
-
-                if (loginBtn) {
-                    loginBtn.addEventListener('click', async function() {
-                        const user = DOM.loginUser.value.trim();
-                        const pass = DOM.loginPass.value.trim();
-                        if (!user || !pass) {
-                            DOM.loginError.textContent = '⚠️ Preencha usuário e senha';
-                            return;
-                        }
-                        loginBtn.disabled = true;
-                        loginBtn.textContent = '⏳ Entrando...';
-                        await autenticarUsuario(user, pass, false);
-                        loginBtn.disabled = false;
-                        loginBtn.textContent = 'Entrar';
-                    });
+                    watered++;
                 }
 
-                if (registerBtn) {
-                    registerBtn.addEventListener('click', async function() {
-                        const user = DOM.loginUser.value.trim();
-                        const pass = DOM.loginPass.value.trim();
-                        if (!user || !pass) {
-                            DOM.loginError.textContent = '⚠️ Preencha usuário e senha';
-                            return;
-                        }
-                        if (pass.length < 4) {
-                            DOM.loginError.textContent = '⚠️ Senha deve ter pelo menos 4 caracteres';
-                            return;
-                        }
-                        registerBtn.disabled = true;
-                        registerBtn.textContent = '⏳ Criando...';
-                        await autenticarUsuario(user, pass, true);
-                        registerBtn.disabled = false;
-                        registerBtn.textContent = 'Criar conta';
-                    });
-                }
-
-                if (guestBtn) {
-                    guestBtn.addEventListener('click', function() {
-                        esconderLogin();
-                        showToast('👤 Modo visitante - dados não serão salvos.', 3000);
-                        initPlots();
-                        renderMilharal();
-                        atualizarFazendinhaUI();
-                        atualizarInterfaceUsuario();
-                        levelSystem.atualizarUI();
-                    });
-                }
-
-                if (DOM.loginUser) {
-                    DOM.loginUser.addEventListener('keydown', function(e) {
-                        if (e.key === 'Enter') DOM.loginPass.focus();
-                    });
-                }
-                if (DOM.loginPass) {
-                    DOM.loginPass.addEventListener('keydown', function(e) {
-                        if (e.key === 'Enter') loginBtn.click();
-                    });
-                }
-
-                if (!usuarioLogado && DOM.loginUser) {
-                    setTimeout(() => DOM.loginUser.focus(), 500);
-                }
-            });
-
-            // ============================================================
-            // 16. INICIALIZAÇÃO
-            // ============================================================
-            verificarSupabase();
-            carregarUsuario();
-            initPlots();
-            renderMilharal();
-            atualizarFazendinhaUI();
-            levelSystem.atualizarUI();
-            startMilharal();
-
-            if (usuarioLogado) {
-                esconderLogin();
-                atualizarInterfaceUsuario();
-                setTimeout(() => {
-                    if (supabaseOnline) {
-                        carregarDadosCompletos();
-                    } else {
-                        showToast('⚠️ Sem conexão com o banco. Dados locais carregados.', 3000);
-                    }
-                }, 600);
-                showToast(`👋 Olá, ${usuarioLogado.nome || usuarioLogado.login}!`, 2500);
-            } else {
-                mostrarLogin();
-                setTimeout(() => showToast('👤 Faça login para salvar seu progresso.', 3000), 800);
+                j.buckets--;
+                showToast(`💧 Regou ${watered} canteiro(s)! ${advanced > 0 ? '(' + advanced + ' avançaram)' : ''}`, 2000);
+                renderMilharal();
+                salvarDadosCompletos();
             }
 
-            setInterval(() => verificarSupabase(), 30000);
-            setInterval(() => {
-                if (usuarioLogado && supabaseOnline && !salvando) {
-                    salvarDadosCompletos();
+            function sellAllStock() {
+                const j = getJogo();
+                if (j.stock <= 0) { showToast('📦 Nenhum milho no estoque para vender.', 1400); return; }
+
+                const price = getSellPrice();
+                const total = j.stock * price;
+                j.saldo = (j.saldo || 0) + total;
+                const sold = j.stock;
+                j.stock = 0;
+
+                showToast(`💰 Vendeu ${sold} milho(s) do estoque por R$ ${total.toFixed(2)}!`, 2500);
+                renderMilharal();
+                salvarDadosCompletos();
+            }
+
+            function addSaldo() {
+                const j = getJogo();
+                const valor = 100.00;
+                j.saldo = (j.saldo || 0) + valor;
+                showToast(`💰 +R$ ${valor.toFixed(2)} adicionado ao saldo!`, 2000);
+                renderMilharal();
+                salvarDadosCompletos();
+            }
+
+            // ============================================================
+            // LIMPAR TODOS OS CANTEIROS
+            // ============================================================
+            function clearAllPlots() {
+                const j = getJogo();
+                const plots = getPlots();
+                const toClear = plots.filter(p => p.stage !== STAGES.EMPTY);
+
+                if (toClear.length === 0) {
+                    showToast('🧹 Todos os canteiros já estão vazios!', 1800);
+                    return;
                 }
-            }, CONFIG.AUTO_SAVE_INTERVAL);
 
-            window.addEventListener('beforeunload', function() {
-                if (milharal.growthTimer) clearInterval(milharal.growthTimer);
-                limparIntervalosFazenda();
-                if (usuarioLogado && supabaseOnline && !salvando) salvarDadosCompletos();
-            });
+                let custoTotal = 0;
+                const harvestedPlots = plots.filter(p => p.stage === STAGES.HARVESTED);
+                const nonHarvested = plots.filter(p => p.stage !== STAGES.EMPTY && p.stage !== STAGES.HARVESTED);
 
-            console.log('🌽 Milharal + Fazendinha + Sistema de Nível carregados!');
-            console.log(`📊 Nível: ${levelSystem.nivel} | EXP: ${levelSystem.experiencia}/${levelSystem.getExpProximo()}`);
+                if (nonHarvested.length > 0) {
+                    showToast(`🧹 Apenas canteiros colhidos (🟫) podem ser limpos!`, 2500);
+                    return;
+                }
+
+                if (harvestedPlots.length === 0) {
+                    showToast('🧹 Nenhum canteiro colhido para limpar!', 1800);
+                    return;
+                }
+
+                custoTotal = harvestedPlots.length * CONFIG.CLEAR_COST;
+
+                if (j.saldo < custoTotal) {
+                    showToast(`😅 Precisa de R$ ${custoTotal.toFixed(2)} para limpar ${harvestedPlots.length} canteiro(s).`, 2500);
+                    return;
+                }
+
+                if (!confirm(`🧹 Limpar ${harvestedPlots.length} canteiro(s) colhido(s) por R$ ${custoTotal.toFixed(2)}?`)) {
+                    return;
+                }
+
+                j.saldo -= custoTotal;
+                for (const p of harvestedPlots) {
+                    p.stage = STAGES.EMPTY;
+                    p.progress = 0;
+                }
+
+                showToast(`🧹 ${harvestedPlots.length} canteiro(s) limpo(s)! (-R$ ${custoTotal.toFixed(2)})`, 2500);
+                renderMilharal();
+                salvarDadosCompletos();
+            }
+
+            // ============================================================
+            // MERCADO - COMPRAR/VENDER
+            // ============================================================
+            function sellCorn(qty) {
+                const j = getJogo();
+                const plots = getPlots();
+                const mature = plots.filter(p => p.stage === STAGES.MATURE);
+                const avail = mature.length;
+                if (avail === 0) { showToast('🌽 Nenhum milho maduro.', 1400); return; }
+                let sellQty = (qty === 'all') ? avail : Math.min(qty, avail);
+                if (sellQty <= 0) return;
+                const price = getSellPrice();
+                const total = sellQty * price;
+                let removed = 0;
+                for (const p of plots) {
+                    if (removed >= sellQty) break;
+                    if (p.stage === STAGES.MATURE) {
+                        p.stage = STAGES.HARVESTED;
+                        p.progress = 0;
+                        j.harvested++;
+                        removed++;
+                    }
+                }
+                j.saldo = (j.saldo || 0) + total;
+                showToast(`💰 Vendeu ${sellQty} milho(s) por R$ ${total.toFixed(2)}.`, 2000);
+                renderMilharal();
+                salvarDadosCompletos();
+            }
+
+            function buySeeds(qty) {
+                const j = getJogo();
+                const price = getBuyPrice();
+                let max = Math.floor(j.saldo / price);
+                if (max === 0) { showToast('😅 Moedas insuficientes.', 1400); return; }
+                let buyQty = (qty === 'all') ? max : Math.min(qty, max);
+                if (buyQty <= 0) return;
+                const total = buyQty * price;
+                j.saldo -= total;
+                j.seeds = (j.seeds || 0) + buyQty;
+                showToast(`🌱 Comprou ${buyQty} semente(s) por R$ ${total.toFixed(2)}.`, 2000);
+                renderMilharal();
+                salvarDadosCompletos();
+            }
+
+            function buyBuckets(qty) {
+                const j = getJogo();
+                let max = Math.floor(j.saldo / CONFIG.BUCKET_PRICE);
+                if (max === 0) { showToast('😅 Moedas insuficientes.', 1400); return; }
+                let buyQty = (qty === 'all') ? max : Math.min(qty, max);
+                if (buyQty <= 0) return;
+                const total = buyQty * CONFIG.BUCKET_PRICE;
+                j.saldo -= total;
+                j.buckets = (j.buckets || 0) + buyQty;
+                showToast(`🪣 Comprou ${buyQty} balde(s) por R$ ${total.toFixed(2)}.`, 2000);
+                renderMilharal();
+                salvarDadosCompletos();
+            }
+
+            function sellSeeds(qty) {
+                const j = getJogo();
+                if (j.seeds === 0) { showToast('🌰 Nenhuma semente para vender.', 1400); return; }
+                let sellQty = (qty === 'all') ? j.seeds : Math.min(qty, j.seeds);
+                if (sellQty <= 0) return;
+                const price = getSellSeedPrice();
+                const total = sellQty * price;
+                j.seeds -= sellQty;
+                j.saldo = (j.saldo || 0) + total;
+                showToast(`💰 Vendeu ${sellQty} semente(s) por R$ ${total.toFixed(2)}.`, 2000);
+                renderMilharal();
+                salvarDadosCompletos();
+            }
+
+            function sellBuckets(qty) {
+                const j = getJogo();
+                if (j.buckets === 0) { showToast('🪣 Nenhum balde para vender.', 1400); return; }
+                let sellQty = (qty === 'all') ? j.buckets : Math.min(qty, j.buckets);
+                if (sellQty <= 0) return;
+                const price = getSellBucketPrice();
+                const total = sellQty * price;
+                j.buckets -= sellQty;
+                j.saldo = (j.saldo || 0) + total;
+                showToast(`💰 Vendeu ${sellQty} balde(s) por R$ ${total.toFixed(2)}.`, 2000);
+                renderMilharal();
+                salvarDadosCompletos();
+            }
+
+            // ============================================================
+            // SUPABASE - SALVAR/CARREGAR
+            // ============================================================
+            function prepararDadosParaSalvar() {
+                const j = getJogo();
+                return {
+                    saldo: Number(j.saldo || 0).toFixed(2),
+                    sementes: j.seeds || 0,
+                    planted: j.planted || 0,
+                    harvested: j.harvested || 0,
+                    buckets: j.buckets || 0,
+                    stock: j.stock || 0,
+                    plot_data: j.plots.map(p => ({ stage: p.stage, progress: p.progress || 0 })),
+                    nivel: j.nivel || 1,
+                    experiencia: j.experiencia || 0,
+                    hp_max: j.hpMax || 100,
+                    mp_max: j.mpMax || 50,
+                    sm_max: j.smMax || 100,
+                    ataque_base: j.ataqueBase || 15,
+                    defesa_base: j.defesaBase || 10,
+                    magia_base: j.magiaBase || 8,
+                    hp_atual: j.hp || 100,
+                    mp_atual: j.mp || 50,
+                    sm_atual: j.sm || 100,
+                    updated_at: new Date().toISOString(),
+                };
+            }
+
+            function carregarDadosDoDB(data) {
+                if (!data) return;
+                const j = getJogo();
+
+                j.seeds = data.sementes ?? CONFIG.INITIAL_SEEDS;
+                j.planted = data.planted ?? 0;
+                j.harvested = data.harvested ?? 0;
+                j.saldo = Number(data.saldo ?? CONFIG.INITIAL_SALDO);
+                j.buckets = data.buckets ?? CONFIG.INITIAL_BUCKETS;
+                j.stock = data.stock ?? CONFIG.INITIAL_STOCK;
+
+                if (data.plot_data && Array.isArray(data.plot_data) && data.plot_data.length > 0) {
+                    j.plots = data.plot_data.map((p, index) => ({
+                        id: index,
+                        stage: p.stage || STAGES.EMPTY,
+                        progress: p.progress || 0,
+                        row: Math.floor(index / CONFIG.COLS),
+                        col: index % CONFIG.COLS,
+                    }));
+                } else {
+                    initPlots();
+                }
+
+                j.nivel = data.nivel || 1;
+                j.experiencia = data.experiencia || 0;
+                j.hpMax = data.hp_max || 100;
+                j.mpMax = data.mp_max || 50;
+                j.smMax = data.sm_max || 100;
+                j.ataqueBase = data.ataque_base || 15;
+                j.defesaBase = data.defesa_base || 10;
+                j.magiaBase = data.magia_base || 8;
+                j.hp = data.hp_atual || j.hpMax;
+                j.mp = data.mp_atual || j.mpMax;
+                j.sm = data.sm_atual || j.smMax;
+            }
+
+            async function verificarSupabase() {
+                try {
+                    const response = await fetch(
+                        `${CONFIG.SUPABASE_URL}/rest/v1/${CONFIG.TABELA}?select=id&limit=1`, {
+                            headers: {
+                                'apikey': CONFIG.SUPABASE_KEY,
+                                'Authorization': `Bearer ${CONFIG.SUPABASE_KEY}`,
+                            }
+                        }
+                    );
+                    if (response.ok) {
+                        state.online = true;
+                        atualizarStatusSupabase(true, 'Online');
+                        return true;
+                    } else {
+                        state.online = false;
+                        atualizarStatusSupabase(false, `Erro ${response.status}`);
+                        return false;
+                    }
+                } catch (error) {
+                    state.online = false;
+                    atualizarStatusSupabase(false, 'Falha');
+                    console.error('Erro ao verificar Supabase:', error);
+                    return false;
+                }
+            }
+
+            async function carregarDadosCompletos() {
+                if (!state.usuario || !state.online) return;
+                try {
+                    const response = await fetch(
+                        `${CONFIG.SUPABASE_URL}/rest/v1/${CONFIG.TABELA}?login=eq.${encodeURIComponent(state.usuario.login)}`, {
+                            headers: {
+                                'apikey': CONFIG.SUPABASE_KEY,
+                                'Authorization': `Bearer ${CONFIG.SUPABASE_KEY}`,
+                            }
+                        }
+                    );
+                    if (!response.ok) throw new Error(`Erro ao carregar: ${response.status}`);
+                    const data = await response.json();
+                    if (!data || data.length === 0) return;
+                    carregarDadosDoDB(data[0]);
+                    renderMilharal();
+                    levelSystem.atualizarUI();
+                    startMilharal();
+                    showToast(`📥 Dados carregados!`, 2000);
+                } catch (error) {
+                    console.error('Erro ao carregar:', error);
+                    showToast('❌ Erro ao carregar: ' + error.message, 3000);
+                }
+            }
+
+            async function salvarDadosCompletos() {
+                if (!state.usuario || !state.online || state.salvando) return;
+                state.salvando = true;
+                try {
+                    const payload = prepararDadosParaSalvar();
+                    const response = await fetch(
+                        `${CONFIG.SUPABASE_URL}/rest/v1/${CONFIG.TABELA}?login=eq.${encodeURIComponent(state.usuario.login)}`, {
+                            method: 'PATCH',
+                            headers: {
+                                'Content-Type': 'application/json',
+                                'apikey': CONFIG.SUPABASE_KEY,
+                                'Authorization': `Bearer ${CONFIG.SUPABASE_KEY}`,
+                            },
+                            body: JSON.stringify(payload),
+                        }
+                    );
+                    if (!response.ok) throw new Error(`Erro ao salvar: ${response.status}`);
+                    console.log('💾 Dados salvos!');
+                } catch (error) {
+                    console.error('Erro ao salvar:', error);
+                } finally {
+                    state.salvando = false;
+                }
+            }
+
+            // ============================================================
+            // AUTH
+            // ============================================================
+            function carregarUsuario() {
+                try {
+                    const data = localStorage.getItem('usuario_logado');
+                    if (data) { state.usuario = JSON.parse(data); return true; }
+                } catch (e) {}
+                return false;
+            }
+
+            function salvarUsuarioLocal(usuario) {
+                try { localStorage.setItem('usuario_logado', JSON.stringify(usuario));
+                    state.usuario = usuario; } catch (e) {}
+            }
+
+            function atualizarInterfaceUsuario() {
+                if (state.usuario && state.usuario.login) {
+                    const nome = state.usuario.nome || state.usuario.login;
+                    DOM.userAvatar.textContent = nome.charAt(0).toUpperCase();
+                    DOM.userName.textContent = nome;
+                } else {
+                    DOM.userAvatar.textContent = '?';
+                    DOM.userName.textContent = 'Visitante';
+                }
+                atualizarSaldoGlobal();
+            }
+
+            function mostrarLogin() { if (DOM.loginModal) DOM.loginModal.classList.add('show'); }
+
+            function esconderLogin() { if (DOM.loginModal) DOM.loginModal.classList.remove('show'); }
+
+            async function autenticarUsuario(login, senha, criar = false) {
+                const url = criar ?
+                    `${CONFIG.SUPABASE_URL}/rest/v1/${CONFIG.TABELA}` :
+                    `${CONFIG.SUPABASE_URL}/rest/v1/${CONFIG.TABELA}?login=eq.${encodeURIComponent(login)}`;
+
+                const options = {
+                    headers: {
+                        'apikey': CONFIG.SUPABASE_KEY,
+                        'Authorization': `Bearer ${CONFIG.SUPABASE_KEY}`,
+                    }
+                };
+
+                if (criar) {
+                    options.method = 'POST';
+                    options.headers['Content-Type'] = 'application/json';
+                    const j = getJogo();
+                    initPlots();
+                    options.body = JSON.stringify({
+                        login: login,
+                        nome: login,
+                        senha: senha,
+                        saldo: CONFIG.INITIAL_SALDO,
+                        sementes: CONFIG.INITIAL_SEEDS,
+                        planted: 0,
+                        harvested: 0,
+                        buckets: CONFIG.INITIAL_BUCKETS,
+                        stock: CONFIG.INITIAL_STOCK,
+                        plot_data: j.plots.map(p => ({ stage: p.stage, progress: p.progress })),
+                        nivel: 1,
+                        experiencia: 0,
+                        hp_max: CONFIG.MAX_HP,
+                        mp_max: CONFIG.MAX_MP,
+                        sm_max: CONFIG.MAX_SM,
+                        ataque_base: CONFIG.INITIAL_ATK,
+                        defesa_base: CONFIG.INITIAL_DEF,
+                        magia_base: CONFIG.INITIAL_MAG,
+                        hp_atual: CONFIG.INITIAL_HP,
+                        mp_atual: CONFIG.INITIAL_MP,
+                        sm_atual: CONFIG.INITIAL_SM,
+                    });
+                }
+
+                try {
+                    const response = await fetch(url, options);
+                    if (!response.ok) {
+                        if (criar && response.status === 409) {
+                            DOM.loginError.textContent = '❌ Usuário já existe!';
+                            return false;
+                        }
+                        DOM.loginError.textContent = `❌ Erro ${response.status}`;
+                        return false;
+                    }
+                    if (criar) { DOM.loginError.textContent = '✅ Conta criada! Faça login.';
+                        return false; }
+                    const data = await response.json();
+                    if (!data || data.length === 0) { DOM.loginError.textContent = '❌ Usuário não encontrado'; return false; }
+                    const usuario = data[0];
+                    if (usuario.senha !== senha) { DOM.loginError.textContent = '❌ Senha incorreta'; return false; }
+                    salvarUsuarioLocal({ login: usuario.login, nome: usuario.nome || usuario.login });
+                    DOM.loginError.textContent = '';
+                    esconderLogin();
+                    atualizarInterfaceUsuario();
+                    await carregarDadosCompletos();
+                    showToast(`👋 Bem-vindo, ${usuario.nome || usuario.login}!`, 2500);
+                    return true;
+                } catch (error) {
+                    DOM.loginError.textContent = '❌ Erro de conexão';
+                    console.error('Erro autenticação:', error);
+                    return false;
+                }
+            }
+
+            // ============================================================
+            // EVENTOS
+            // ============================================================
+            function setupEvents() {
+                // Clique no campo
+                if (DOM.field) {
+                    DOM.field.addEventListener('click', function(e) {
+                        const div = e.target.closest('.plot');
+                        if (!div) return;
+                        const id = parseInt(div.dataset.id, 10);
+                        if (isNaN(id)) return;
+                        const j = getJogo();
+                        const p = j.plots[id];
+                        if (!p) return;
+                        if (p.stage === STAGES.EMPTY) plantAt(id);
+                        else if (p.stage === STAGES.MATURE) harvestAt(id);
+                        else if (p.stage === STAGES.HARVESTED) clearPlot(id);
+                        else waterAt(id);
+                    });
+                }
+
+                // Botão Plantar tudo
+                DOM.btnPlantAll?.addEventListener('click', function() {
+                    plantAll();
+                });
+
+                DOM.btnWaterAll?.addEventListener('click', waterAll);
+                DOM.btnHarvestAll?.addEventListener('click', harvestAll);
+                DOM.btnSellAll?.addEventListener('click', sellAllStock);
+                DOM.btnAddSaldo?.addEventListener('click', addSaldo);
+                DOM.btnClearAll?.addEventListener('click', clearAllPlots);
+
+                // Mercado - toggle
+                DOM.btnToggleMarket?.addEventListener('click', function() {
+                    state.marketOpen = !state.marketOpen;
+                    DOM.marketPanel.classList.toggle('open', state.marketOpen);
+                    this.innerHTML = state.marketOpen ?
+                        '<i class="fas fa-times"></i> Fechar' :
+                        '<i class="fas fa-store"></i> Mercado';
+                    if (state.marketOpen) updateMarketButtons();
+                });
+
+                // Mercado - ações
+                document.querySelector('.market-grid')?.addEventListener('click', function(e) {
+                    const btn = e.target.closest('.btn-sm');
+                    if (!btn) return;
+                    const action = btn.dataset.action;
+                    const qty = btn.dataset.qty;
+                    switch (action) {
+                        case 'sellCorn':
+                            sellCorn(qty);
+                            break;
+                        case 'buySeeds':
+                            buySeeds(qty);
+                            break;
+                        case 'buyBuckets':
+                            buyBuckets(qty);
+                            break;
+                        case 'sellSeeds':
+                            sellSeeds(qty);
+                            break;
+                        case 'sellBuckets':
+                            sellBuckets(qty);
+                            break;
+                    }
+                    setTimeout(updateMarketButtons, 100);
+                });
+
+                // Supabase
+                DOM.btnReconnectSupabase?.addEventListener('click', function() {
+                    verificarSupabase();
+                    showToast('🔄 Verificando conexão...', 1500);
+                });
+
+                // Login
+                DOM.btnLogin?.addEventListener('click', async function() {
+                    const user = DOM.loginUser.value.trim();
+                    const pass = DOM.loginPass.value.trim();
+                    if (!user || !pass) { DOM.loginError.textContent = '⚠️ Preencha usuário e senha'; return; }
+                    DOM.btnLogin.disabled = true;
+                    DOM.btnLogin.textContent = '⏳ Entrando...';
+                    await autenticarUsuario(user, pass, false);
+                    DOM.btnLogin.disabled = false;
+                    DOM.btnLogin.textContent = 'Entrar';
+                });
+
+                DOM.btnRegister?.addEventListener('click', async function() {
+                    const user = DOM.loginUser.value.trim();
+                    const pass = DOM.loginPass.value.trim();
+                    if (!user || !pass) { DOM.loginError.textContent = '⚠️ Preencha usuário e senha'; return; }
+                    if (pass.length < 4) { DOM.loginError.textContent = '⚠️ Senha deve ter pelo menos 4 caracteres'; return; }
+                    DOM.btnRegister.disabled = true;
+                    DOM.btnRegister.textContent = '⏳ Criando...';
+                    await autenticarUsuario(user, pass, true);
+                    DOM.btnRegister.disabled = false;
+                    DOM.btnRegister.textContent = 'Criar conta';
+                });
+
+                DOM.btnGuest?.addEventListener('click', function() {
+                    esconderLogin();
+                    showToast('👤 Modo visitante', 3000);
+                    const j = getJogo();
+                    initPlots();
+                    j.nivel = 1;
+                    j.experiencia = 0;
+                    j.hpMax = CONFIG.MAX_HP;
+                    j.mpMax = CONFIG.MAX_MP;
+                    j.smMax = CONFIG.MAX_SM;
+                    j.hp = CONFIG.INITIAL_HP;
+                    j.mp = CONFIG.INITIAL_MP;
+                    j.sm = CONFIG.INITIAL_SM;
+                    j.ataqueBase = CONFIG.INITIAL_ATK;
+                    j.defesaBase = CONFIG.INITIAL_DEF;
+                    j.magiaBase = CONFIG.INITIAL_MAG;
+                    j.seeds = CONFIG.INITIAL_SEEDS;
+                    j.saldo = CONFIG.INITIAL_SALDO;
+                    j.buckets = CONFIG.INITIAL_BUCKETS;
+                    j.planted = 0;
+                    j.harvested = 0;
+                    j.stock = 0;
+                    renderMilharal();
+                    atualizarInterfaceUsuario();
+                    levelSystem.atualizarUI();
+                    startMilharal();
+                });
+
+                // Enter para login
+                DOM.loginUser?.addEventListener('keydown', function(e) { if (e.key === 'Enter') DOM.btnLogin?.click(); });
+                DOM.loginPass?.addEventListener('keydown', function(e) { if (e.key === 'Enter') DOM.btnLogin?.click(); });
+            }
+
+            // ============================================================
+            // INICIALIZAÇÃO
+            // ============================================================
+            function init() {
+                initDOM();
+                setupEvents();
+
+                verificarSupabase();
+                carregarUsuario();
+                initPlots();
+
+                renderMilharal();
+                levelSystem.atualizarUI();
+                startMilharal();
+
+                if (state.usuario) {
+                    esconderLogin();
+                    atualizarInterfaceUsuario();
+                    setTimeout(() => {
+                        if (state.online) carregarDadosCompletos();
+                        else showToast('⚠️ Sem conexão com o banco.', 3000);
+                    }, 600);
+                    showToast(`👋 Olá, ${state.usuario.nome || state.usuario.login}!`, 2500);
+                } else {
+                    mostrarLogin();
+                    setTimeout(() => showToast('👤 Faça login para salvar seu progresso.', 3000), 800);
+                }
+
+                // Auto-save e verificação
+                setInterval(() => verificarSupabase(), 30000);
+                setInterval(() => {
+                    if (state.usuario && state.online && !state.salvando) salvarDadosCompletos();
+                }, CONFIG.AUTO_SAVE_INTERVAL);
+
+                window.addEventListener('beforeunload', function() {
+                    limparTimers();
+                    if (state.usuario && state.online && !state.salvando) salvarDadosCompletos();
+                });
+
+                console.log('🌽 Milharal carregado!');
+            }
+
+            if (document.readyState === 'loading') {
+                document.addEventListener('DOMContentLoaded', init);
+            } else {
+                init();
+            }
 
         })();
     </script>
