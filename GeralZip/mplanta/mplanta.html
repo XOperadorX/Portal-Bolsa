@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🌾 Mercado de Plantas - MM</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Rajdhani:wght@400;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="mplanta.css">
+</head>
+
+<body>
+    <!-- CARD PRINCIPAL -->
+    <div class="card">
+
+        <!-- NAVEGAÇÃO -->
+        <nav class="nav-bar">
+            <div class="user-profile" id="userInfo">
+                <div class="user-avatar" id="userAvatar">?</div>
+                <div class="user-info">
+                    <span class="user-nick" id="userName">Visitante</span>
+                    <span class="user-balance" id="userBalanceDisplay">💰 R$ 0,00</span>
+                </div>
+            </div>
+
+            <div style="display:flex; gap:8px; flex-wrap:wrap; align-items:center;">
+                <a href="../../dashboard.html" class="btn-voltar">🏠 Voltar à Dashboard</a>
+                <a href="personagem.html" class="btn-voltar" style="background:linear-gradient(135deg,#f59e0b,#f97316);">🧙 Personagem</a>
+            </div>
+
+            <div class="status-bar" id="statusBar">
+                <div class="status-item">
+                    <span class="dot checking" id="supabaseDot"></span>
+                    <span class="label">Supabase:</span>
+                    <span class="value checking" id="supabaseStatus">Verificando...</span>
+                    <button class="status-reconnect" id="btnReconnectSupabase" title="Reconectar">🔄</button>
+                </div>
+                <div class="status-item" style="margin-left:auto;">
+                    <span>💰 R$ <span id="headerSaldo">0,00</span></span>
+                </div>
+            </div>
+        </nav>
+
+        <!-- LEVEL WIDGET - SISTEMA DE NÍVEL INTEGRADO -->
+        <div class="level-widget" id="levelWidget">
+            <div class="lw-header">
+                <div class="lw-badge">
+                    <span class="lw-num" id="lwNivel">1</span>
+                    <div>
+                        <div class="lw-label">NÍVEL</div>
+                        <div class="lw-title" id="lwTitulo">🌱 Iniciante</div>
+                    </div>
+                </div>
+                <div class="lw-exp">
+                    <div class="lw-bar">
+                        <div class="lw-fill" id="lwExpFill" style="width:0%"></div>
+                    </div>
+                    <div class="lw-text">
+                        <span class="lw-cur" id="lwExpAtual">0</span>
+                        <span>/ <span class="lw-nxt" id="lwExpProx">100</span> EXP</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="lw-stats">
+                <span>❤️ HP<span class="hp-c" id="lwHp">100/100</span></span>
+                <span>💧 MANA<span class="mp-c" id="lwMp">50/50</span></span>
+                <span>⚡ STAMINA<span class="sm-c" id="lwSm">100/100</span></span>
+                <span>⚔️ FORCA<span class="atk-c" id="lwAtk">15</span></span>
+                <span>🛡️ DEFESA<span class="def-c" id="lwDef">10</span></span>
+                <span>🔮 MAGIA<span class="mag-c" id="lwMag">8</span></span>
+            </div>
+            
+            <!-- Ações rápidas do personagem -->
+            <div class="lw-actions" style="display:flex; gap:8px; margin-top:10px; flex-wrap:wrap;">
+                <button class="btn-level-quick btn-treinar" id="btnTreinarQuick">🏋️ Treinar (+EXP)</button>
+                <button class="btn-level-quick btn-descansar" id="btnDescansarQuick">🛌 Descansar</button>
+            </div>
+        </div>
+
+        <!-- MERCADO HEADER -->
+        <div class="market-header">
+            <h2><i class="fas fa-store"></i> Mercado</h2>
+            <div class="saldo-box">
+                <span class="label">💰 Saldo:</span>
+                <span class="value" id="marketSaldo">R$ 0,00</span>
+            </div>
+        </div>
+
+        <!-- GRADE DO MERCADO -->
+        <div class="market-grid" id="marketGrid">
+            <!-- Os itens serão gerados pelo JavaScript -->
+        </div>
+
+        <!-- INVENTÁRIO DO JOGADOR -->
+        <div class="player-inventory">
+            <h3><i class="fas fa-box"></i> Seu Estoque</h3>
+            <div class="inv-grid" id="inventoryGrid">
+                <span style="color:var(--text-muted); font-size:0.8rem;">Carregando...</span>
+            </div>
+        </div>
+
+    </div>
+
+    <!-- TOAST -->
+    <div class="toast" id="toast"></div>
+
+    <!-- LOGIN MODAL -->
+    <div id="loginModal">
+        <div class="modal-box">
+            <h2>🌾 Mercado</h2>
+            <p class="sub"><i class="fas fa-store" style="color:#f59e0b;"></i> Entre para comprar e vender</p>
+            <div class="form-group">
+                <label>Usuário</label>
+                <input type="text" id="loginUser" placeholder="Digite seu usuário">
+            </div>
+            <div class="form-group">
+                <label>Senha</label>
+                <input type="password" id="loginPass" placeholder="Digite sua senha">
+            </div>
+            <div class="login-error" id="loginError"></div>
+            <button class="btn-login-modal" id="btnLogin">Entrar</button>
+            <div class="modal-actions">
+                <button id="btnRegister">Criar conta</button>
+                <button id="btnGuest">Visitante</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="mplanta.js"></script>
+</body>
+
+</html>

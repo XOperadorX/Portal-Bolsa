@@ -3,11 +3,10 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>🏛️ Mercado - MM World</title>
+    <title>🏰 MM World - Dashboard</title>
     <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500;700;900&family=Rajdhani:wght@600;700&display=swap" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.39.0/dist/umd/supabase.min.js"></script>
     <style>
-        /* ===== MESMO ESTILO DO PERSONAGEM ===== */
         :root {
             --bg-dark: #0a0b10;
             --card-bg: #121520;
@@ -34,6 +33,7 @@
             padding: 20px;
             display: flex;
             justify-content: center;
+            align-items: center;
         }
 
         .game-container {
@@ -244,8 +244,11 @@
             font-family: 'Orbitron', sans-serif;
         }
 
-        .stat-box .value.btc { color: var(--neon-green); }
+        .stat-box .value.hp { color: #ef4444; }
+        .stat-box .value.mp { color: #3b82f6; }
         .stat-box .value.sm { color: #f59e0b; }
+        .stat-box .value.btc { color: var(--neon-green); }
+        .stat-box .value.hash { color: var(--neon-blue); }
 
         .flex {
             display: flex;
@@ -273,6 +276,7 @@
             display: inline-flex;
             align-items: center;
             gap: 6px;
+            text-decoration: none;
         }
 
         .btn:hover {
@@ -313,87 +317,47 @@
             box-shadow: 0 0 20px rgba(255, 255, 255, 0.05);
         }
 
-        .btn-sm {
-            padding: 4px 14px;
-            font-size: 0.7rem;
-            background: rgba(0, 240, 255, 0.1);
-            border: 1px solid rgba(0, 240, 255, 0.2);
-            border-radius: 30px;
-            color: #fff;
-            cursor: pointer;
-            transition: all 0.3s;
-            font-family: 'Rajdhani', sans-serif;
-            font-weight: 700;
-        }
-
-        .btn-sm:hover {
-            background: rgba(0, 240, 255, 0.2);
-            transform: scale(1.05);
-        }
-
-        input[type="number"] {
-            background: rgba(255, 255, 255, 0.06);
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            color: #f0f4f8;
-            padding: 8px 12px;
-            border-radius: 30px;
-            width: 90px;
-            font-weight: 600;
-            font-size: 0.9rem;
-            font-family: 'Rajdhani', sans-serif;
-            transition: all 0.3s;
-        }
-
-        input[type="number"]:focus {
-            outline: none;
-            border-color: var(--neon-blue);
-            box-shadow: 0 0 15px rgba(0, 240, 255, 0.2);
-        }
-
-        .market-item {
-            display: flex;
-            flex-wrap: wrap;
-            align-items: center;
-            justify-content: space-between;
-            background: rgba(255, 255, 255, 0.03);
-            padding: 10px 16px;
-            border-radius: 12px;
-            margin-bottom: 6px;
-            border-left: 3px solid var(--neon-blue);
-            gap: 8px;
-            transition: all 0.3s;
-        }
-
-        .market-item:hover {
-            background: rgba(255, 255, 255, 0.06);
-            border-left-color: var(--neon-purple);
-        }
-
-        .market-item .name {
-            font-weight: 700;
-            min-width: 80px;
-            color: #f0f4f8;
-        }
-
-        .market-item .price {
-            color: var(--neon-green);
-            font-weight: 600;
-        }
-
-        .market-item .qty {
-            color: #8a99ad;
-            font-size: 0.85rem;
-        }
-
-        .menu-notice {
-            text-align: center;
-            padding: 12px;
-            background: rgba(0, 240, 255, 0.05);
-            border-radius: 12px;
-            border: 1px dashed rgba(0, 240, 255, 0.15);
-            color: #8a99ad;
-            font-size: 0.85rem;
+        .menu-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 16px;
             margin-top: 10px;
+        }
+
+        .menu-card {
+            background: rgba(255, 255, 255, 0.03);
+            border-radius: 12px;
+            padding: 20px;
+            text-align: center;
+            border: 1px solid rgba(255, 255, 255, 0.06);
+            transition: all 0.3s;
+            cursor: pointer;
+            text-decoration: none;
+            color: #f0f4f8;
+        }
+
+        .menu-card:hover {
+            border-color: var(--neon-blue);
+            background: rgba(0, 240, 255, 0.05);
+            transform: translateY(-4px);
+            box-shadow: 0 8px 25px rgba(0, 240, 255, 0.1);
+        }
+
+        .menu-card .icon {
+            font-size: 2.5rem;
+            margin-bottom: 8px;
+        }
+
+        .menu-card .title {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 0.9rem;
+            font-weight: 700;
+        }
+
+        .menu-card .desc {
+            font-size: 0.75rem;
+            color: #8a99ad;
+            margin-top: 4px;
         }
 
         .toast {
@@ -453,9 +417,8 @@
             .card-title {
                 font-size: 1rem;
             }
-            .market-item {
-                flex-direction: column;
-                align-items: flex-start;
+            .menu-grid {
+                grid-template-columns: 1fr 1fr;
             }
         }
 
@@ -467,8 +430,8 @@
                 font-size: 0.6rem;
                 padding: 4px 8px;
             }
-            input[type="number"] {
-                width: 70px;
+            .menu-grid {
+                grid-template-columns: 1fr;
             }
         }
     </style>
@@ -477,19 +440,11 @@
     <div class="game-container">
         <nav class="nav-bar">
             <div class="nav-links">
+                <a href="index.html" class="active">🏠 Dashboard</a>
                 <a href="personagem.html">🧙 Personagem</a>
-                <a href="mercado.html" class="active">🏛️ Mercado</a>
+                <a href="mercado.html">🏛️ Mercado</a>
                 <a href="minerar.html">⛏️ Mineração</a>
             </div>
-
-
-            <div class="nav-links">
-    <a href="index.html">🏠 Dashboard</a>
-    <a href="personagem.html">🧙 Personagem</a>
-    <a href="mercado.html" class="active">🏛️ Mercado</a>
-    <a href="minerar.html">⛏️ Mineração</a>
-</div>
-
 
             <div class="user-profile" id="userProfile">
                 <div class="user-avatar" id="userAvatar">👤</div>
@@ -503,42 +458,46 @@
         </nav>
 
         <div class="card">
-            <div class="card-title">🏛️ Mercado · Itens <span class="badge">FLUTUA</span></div>
-            <div id="listaMercado"></div>
+            <div class="card-title">🏰 Bem-vindo ao MM World <span class="badge">DASHBOARD</span></div>
+            <p style="color: #8a99ad; margin-bottom: 16px;">Escolha uma das opções abaixo para começar sua aventura!</p>
+            
+            <div class="menu-grid">
+                <a href="personagem.html" class="menu-card">
+                    <div class="icon">🧙</div>
+                    <div class="title">Personagem</div>
+                    <div class="desc">Gerencie seu herói</div>
+                </a>
+                <a href="mercado.html" class="menu-card">
+                    <div class="icon">🏛️</div>
+                    <div class="title">Mercado</div>
+                    <div class="desc">Compre e venda itens</div>
+                </a>
+                <a href="minerar.html" class="menu-card">
+                    <div class="icon">⛏️</div>
+                    <div class="title">Mineração</div>
+                    <div class="desc">Mine BTC passivamente</div>
+                </a>
+            </div>
         </div>
 
         <div class="card">
-            <div class="card-title">₿ Câmbio BTC <span class="badge">LIVE</span></div>
+            <div class="card-title">📊 Resumo do Jogador</div>
             <div class="grid-2">
-                <div class="stat-box"><label>📈 Compra (1 BTC)</label><div class="value" id="btcCompra">10,000</div></div>
-                <div class="stat-box"><label>📉 Venda (1 BTC)</label><div class="value" id="btcVenda">999</div></div>
-                <div class="stat-box"><label>📊 Spread</label><div class="value" id="spread">90.01%</div></div>
-            </div>
-            <div class="flex mt-2">
-                <input type="number" id="qtdBTC" value="1" min="0.00000001" step="0.00000001">
-                <button class="btn btn-success" onclick="comprarBTC()">⬆️ Comprar BTC</button>
-                <button class="btn btn-danger" onclick="venderBTC()">⬇️ Vender BTC</button>
-            </div>
-            <div style="margin-top: 8px; font-size: 0.75rem; color: #8a99ad;">
-                💡 Compra: 1 BTC = 10,000 saldo | Venda: 1 BTC = 999 saldo
+                <div class="stat-box"><label>❤️ HP</label><div class="value hp" id="hpValue">0/0</div></div>
+                <div class="stat-box"><label>⚡ SM</label><div class="value sm" id="smValue">0/0</div></div>
+                <div class="stat-box"><label>₿ BTC</label><div class="value btc" id="btcValue">0.00000000</div></div>
+                <div class="stat-box"><label>⭐ Nível</label><div class="value" id="lvlValue">1</div></div>
             </div>
         </div>
 
         <div class="card">
-            <div class="card-title">⚡ Stamina (SM) <span class="badge">ENERGIA</span></div>
-            <div class="grid-2">
-                <div class="stat-box"><label>📈 Compra</label><div class="value">12 saldo</div></div>
-                <div class="stat-box"><label>📉 Venda</label><div class="value">8 saldo</div></div>
-            </div>
-            <div class="flex mt-2">
-                <input type="number" id="qtdStamina" value="1" min="1" step="1">
-                <button class="btn btn-success" onclick="comprarStamina()">⬆️ Comprar SM</button>
-                <button class="btn btn-danger" onclick="venderStamina()">⬇️ Vender SM</button>
-                <button class="btn btn-secondary" onclick="adicionarMoeda()">➕ +1000 saldo</button>
+            <div class="card-title">⚡ Atalhos Rápidos</div>
+            <div class="flex">
+                <a href="personagem.html" class="btn btn-secondary">🧙 Ver Personagem</a>
+                <a href="mercado.html" class="btn btn-success">🏛️ Ir ao Mercado</a>
+                <a href="minerar.html" class="btn btn-danger">⛏️ Minerar</a>
             </div>
         </div>
-
-        <div class="menu-notice">🧭 Use o menu acima para navegar entre as seções</div>
     </div>
 
     <div id="toast" class="toast"></div>
@@ -553,20 +512,17 @@
 
         const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
-        const PRECO_COMPRA_BTC = 10000;
-        const PRECO_VENDA_BTC = 999;
-        const PRECO_COMPRA_SM = 12;
-        const PRECO_VENDA_SM = 8;
-
         let usuarioAtual = null;
         let estado = {
             id: null,
             login: '',
             saldo: 0,
             btc: 0,
+            hp: 100,
+            maxHp: 100,
             sm: 100,
             maxSm: 100,
-            itens: []
+            lvl: 1
         };
 
         // ============================================================
@@ -652,34 +608,12 @@
             estado.login = data.login;
             estado.saldo = parseFloat(data.saldo) || 0;
             estado.btc = parseFloat(data.btc) || 0;
+            estado.hp = parseFloat(data.hp) || 100;
+            estado.maxHp = parseFloat(data.max_hp) || 100;
             estado.sm = parseFloat(data.sm) || 100;
             estado.maxSm = parseFloat(data.max_sm) || 100;
-            estado.itens = data.itens || [];
+            estado.lvl = data.nivel || 1;
             atualizarUI();
-        }
-
-        // ============================================================
-        // SALVAR
-        // ============================================================
-        async function salvarNoBanco() {
-            if (!usuarioAtual) return;
-            try {
-                const { error } = await supabase
-                    .from(TABELA)
-                    .update({
-                        saldo: estado.saldo,
-                        btc: estado.btc,
-                        sm: estado.sm,
-                        max_sm: estado.maxSm,
-                        itens: estado.itens,
-                        updated_at: new Date().toISOString()
-                    })
-                    .eq('id', estado.id);
-
-                if (error) throw error;
-            } catch (err) {
-                console.error('Erro ao salvar:', err);
-            }
         }
 
         // ============================================================
@@ -697,162 +631,21 @@
                 currency: 'BRL'
             }).format(estado.saldo);
 
-            document.getElementById('btcCompra').textContent = PRECO_COMPRA_BTC.toFixed(0);
-            document.getElementById('btcVenda').textContent = PRECO_VENDA_BTC.toFixed(0);
-            const spread = ((PRECO_COMPRA_BTC - PRECO_VENDA_BTC) / PRECO_COMPRA_BTC * 100);
-            document.getElementById('spread').textContent = spread.toFixed(2) + '%';
-            renderizarItens();
-            salvarNoBanco();
-        }
-
-        function renderizarItens() {
-            const container = document.getElementById('listaMercado');
-            container.innerHTML = '';
-            estado.itens.forEach((item, idx) => {
-                const div = document.createElement('div');
-                div.className = 'market-item';
-                div.innerHTML = `
-                    <span class="name">${item.nome}</span>
-                    <span class="price">${item.preco.toFixed(2)} saldo</span>
-                    <span class="qty">Qtd: ${item.qtd}</span>
-                    <div>
-                        <button class="btn-sm" onclick="comprarItem(${idx})">🟢 Comprar</button>
-                        <button class="btn-sm" onclick="venderItem(${idx})">🔴 Vender</button>
-                    </div>
-                `;
-                container.appendChild(div);
-            });
+            document.getElementById('hpValue').textContent = `${estado.hp}/${estado.maxHp}`;
+            document.getElementById('smValue').textContent = `${estado.sm}/${estado.maxSm}`;
+            document.getElementById('btcValue').textContent = estado.btc.toFixed(8);
+            document.getElementById('lvlValue').textContent = estado.lvl;
         }
 
         // ============================================================
-        // FUNÇÕES DO MERCADO
+        // CARREGAR DADOS ATUALIZADOS
         // ============================================================
-        function comprarItem(idx) {
-            const item = estado.itens[idx];
-            if (estado.saldo < item.preco) { showToast('❌ saldo insuficiente!', true); return; }
-            if (item.qtd <= 0) { showToast('❌ Item esgotado!', true); return; }
-            estado.saldo -= item.preco;
-            item.qtd -= 1;
-            atualizarUI();
-            showToast(`✅ Comprou ${item.nome} por ${item.preco.toFixed(2)} saldo`);
-        }
-
-        function venderItem(idx) {
-            const item = estado.itens[idx];
-            const precoVenda = item.preco * 0.6;
-            estado.saldo += precoVenda;
-            item.qtd += 1;
-            atualizarUI();
-            showToast(`✅ Vendeu ${item.nome} por ${precoVenda.toFixed(2)} saldo`);
-        }
-
-        function getQtdBTC() {
-            const input = document.getElementById('qtdBTC');
-            let val = parseFloat(input.value);
-            if (isNaN(val) || val <= 0) val = 0.00000001;
-            if (val < 0.00000001) val = 0.00000001;
-            input.value = val;
-            return val;
-        }
-
-        async function comprarBTC() {
-            if (!usuarioAtual) { showToast('❌ Faça login primeiro!', true); return; }
-            const qtd = getQtdBTC();
-            const custo = qtd * PRECO_COMPRA_BTC;
-
-            if (estado.saldo < custo) {
-                showToast(`❌ Saldo insuficiente! Precisa de ${custo.toFixed(2)} saldo`, true);
-                return;
-            }
-
-            estado.saldo -= custo;
-            estado.btc += qtd;
-            atualizarUI();
-            showToast(`✅ Comprou ${qtd.toFixed(8)} BTC por ${custo.toFixed(2)} saldo`);
-        }
-
-        async function venderBTC() {
-            if (!usuarioAtual) { showToast('❌ Faça login primeiro!', true); return; }
-            const qtd = getQtdBTC();
-
-            if (estado.btc < qtd) {
-                showToast(`❌ BTC insuficiente! Tem ${estado.btc.toFixed(8)} BTC`, true);
-                return;
-            }
-
-            const valor = qtd * PRECO_VENDA_BTC;
-            estado.btc -= qtd;
-            estado.saldo += valor;
-            atualizarUI();
-            showToast(`✅ Vendeu ${qtd.toFixed(8)} BTC por ${valor.toFixed(2)} saldo`);
-        }
-
-        function getQtdStamina() {
-            const input = document.getElementById('qtdStamina');
-            let val = parseInt(input.value);
-            if (isNaN(val) || val < 1) val = 1;
-            input.value = val;
-            return val;
-        }
-
-        function comprarStamina() {
-            if (!usuarioAtual) { showToast('❌ Faça login primeiro!', true); return; }
-            const qtd = getQtdStamina();
-            const custo = qtd * PRECO_COMPRA_SM;
-
-            if (estado.saldo < custo) {
-                showToast(`❌ Saldo insuficiente! Precisa de ${custo} saldo`, true);
-                return;
-            }
-            if (estado.sm + qtd > estado.maxSm) {
-                showToast(`❌ Máximo ${estado.maxSm} SM. Pode comprar no máximo ${estado.maxSm - estado.sm}`, true);
-                return;
-            }
-
-            estado.saldo -= custo;
-            estado.sm += qtd;
-            atualizarUI();
-            showToast(`✅ Comprou ${qtd} SM por ${custo} saldo`);
-        }
-
-        function venderStamina() {
-            if (!usuarioAtual) { showToast('❌ Faça login primeiro!', true); return; }
-            const qtd = getQtdStamina();
-
-            if (estado.sm < qtd) {
-                showToast(`❌ Você só tem ${estado.sm} SM`, true);
-                return;
-            }
-
-            estado.sm -= qtd;
-            estado.saldo += qtd * PRECO_VENDA_SM;
-            atualizarUI();
-            showToast(`✅ Vendeu ${qtd} SM por ${qtd * PRECO_VENDA_SM} saldo`);
-        }
-
-        function adicionarMoeda() {
-            if (!usuarioAtual) { showToast('❌ Faça login primeiro!', true); return; }
-            estado.saldo += 1000;
-            atualizarUI();
-            showToast('✅ +1000 saldo adicionados!');
-        }
-
-        function atualizarMercado() {
-            if (!usuarioAtual) return;
-            estado.itens.forEach(item => {
-                const variacao = (Math.random() - 0.5) * 2.5;
-                item.preco = Math.max(0.5, Math.round((item.preco + variacao) * 100) / 100);
-            });
-            renderizarItens();
-            salvarNoBanco();
-        }
-
         async function carregarDadosAtualizados() {
             if (!usuarioAtual) return;
             try {
                 const { data, error } = await supabase
                     .from(TABELA)
-                    .select('saldo, btc, sm, max_sm, itens')
+                    .select('saldo, btc, hp, max_hp, sm, max_sm, nivel')
                     .eq('id', estado.id)
                     .single();
 
@@ -860,9 +653,11 @@
 
                 estado.saldo = parseFloat(data.saldo) || 0;
                 estado.btc = parseFloat(data.btc) || 0;
+                estado.hp = parseFloat(data.hp) || 100;
+                estado.maxHp = parseFloat(data.max_hp) || 100;
                 estado.sm = parseFloat(data.sm) || 100;
                 estado.maxSm = parseFloat(data.max_sm) || 100;
-                estado.itens = data.itens || [];
+                estado.lvl = data.nivel || 1;
 
                 atualizarUI();
             } catch (err) {
@@ -883,39 +678,21 @@
                 return;
             }
 
-            // 3. Atualiza botão para Dashboard
             const btnLogin = document.getElementById('btnLogin');
-            btnLogin.textContent = '🏠 Voltar';
+            btnLogin.textContent = '🚪 Sair';
             btnLogin.onclick = function() {
-                window.location.href = '../../dashboard.html';
+                localStorage.removeItem('usuario_logado');
+                window.location.href = 'login.html';
             };
 
             setInterval(() => {
                 if (usuarioAtual) carregarDadosAtualizados();
             }, 15000);
 
-            setInterval(() => {
-                if (usuarioAtual) atualizarMercado();
-            }, 8000);
-
             showToast(`✅ Bem-vindo, ${estado.login}!`);
         }
 
         document.addEventListener('DOMContentLoaded', init);
-
-        // Substitua a função redirecionarLogin() por:
-        function redirecionarLogin() {
-            window.location.href = 'login.html';
-        }
-
-        // E no init, mude o btnLogin:
-        const btnLogin = document.getElementById('btnLogin');
-        btnLogin.textContent = '🏠 Voltar';
-        btnLogin.onclick = function() {
-            window.location.href = 'index.html';
-        };
-
-        
     </script>
 </body>
 </html>

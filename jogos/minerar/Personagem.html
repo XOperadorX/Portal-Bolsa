@@ -4,351 +4,17 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>🧙 Personagem - MM World</title>
-    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500;700;900&family=Rajdhani:wght@600;700&display=swap" rel="stylesheet">
-    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.39.0/dist/umd/supabase.min.js"></script>
-    <style>
-        :root {
-            --bg-dark: #0a0b10;
-            --card-bg: #121520;
-            --neon-blue: #00f0ff;
-            --neon-purple: #7000ff;
-            --neon-green: #00ff66;
-            --text-color: #f0f4f8;
-        }
-
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-            font-family: 'Rajdhani', sans-serif;
-        }
-
-        body {
-            background-color: var(--bg-dark);
-            color: var(--text-color);
-            background-image:
-                radial-gradient(circle at 15% 20%, rgba(112, 0, 255, 0.15) 0%, transparent 40%),
-                radial-gradient(circle at 85% 80%, rgba(0, 240, 255, 0.15) 0%, transparent 40%);
-            min-height: 100vh;
-            padding: 20px;
-            display: flex;
-            justify-content: center;
-        }
-
-        .game-container {
-            max-width: 900px;
-            width: 100%;
-            margin: 0 auto;
-        }
-
-        .nav-bar {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            background: rgba(18, 21, 32, 0.8);
-            backdrop-filter: blur(10px);
-            border: 1px solid rgba(0, 240, 255, 0.2);
-            padding: 12px 24px;
-            border-radius: 16px;
-            margin-bottom: 20px;
-            box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
-            flex-wrap: wrap;
-            gap: 10px;
-        }
-
-        .nav-links {
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            flex-wrap: wrap;
-        }
-
-        .nav-links a {
-            color: #a0aec0;
-            text-decoration: none;
-            font-weight: 700;
-            font-size: 1rem;
-            padding: 8px 18px;
-            border-radius: 8px;
-            transition: all 0.3s ease;
-            display: flex;
-            align-items: center;
-            gap: 6px;
-            font-family: 'Orbitron', sans-serif;
-            font-size: 0.8rem;
-            letter-spacing: 0.5px;
-        }
-
-        .nav-links a:hover,
-        .nav-links a.active {
-            color: #fff;
-            background: rgba(0, 240, 255, 0.15);
-            border: 1px solid var(--neon-blue);
-            box-shadow: 0 0 10px rgba(0, 240, 255, 0.3);
-        }
-
-        .nav-links a.active {
-            background: rgba(0, 240, 255, 0.2);
-            border-color: var(--neon-blue);
-        }
-
-        .user-profile {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            background: rgba(0, 240, 255, 0.08);
-            padding: 6px 16px 6px 12px;
-            border-radius: 40px;
-            border: 1px solid rgba(0, 240, 255, 0.2);
-            color: #fff;
-            font-weight: 600;
-            font-size: 0.95rem;
-            transition: all 0.3s;
-            cursor: default;
-        }
-
-        .user-profile:hover {
-            background: rgba(0, 240, 255, 0.15);
-            border-color: var(--neon-blue);
-            box-shadow: 0 0 15px rgba(0, 240, 255, 0.2);
-        }
-
-        .user-avatar {
-            background: linear-gradient(135deg, var(--neon-blue), var(--neon-purple));
-            width: 36px;
-            height: 36px;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 1.2rem;
-            font-weight: bold;
-            box-shadow: 0 0 10px rgba(0, 240, 255, 0.3);
-        }
-
-        .user-info {
-            display: flex;
-            flex-direction: column;
-            line-height: 1.2;
-        }
-
-        .user-nick {
-            font-family: 'Orbitron', sans-serif;
-            font-size: 0.9rem;
-            letter-spacing: 0.5px;
-            color: #fff;
-        }
-
-        .user-balance {
-            font-size: 0.8rem;
-            color: var(--neon-green);
-            display: flex;
-            align-items: center;
-            gap: 4px;
-        }
-
-        .user-balance::before {
-            content: "💰";
-            font-size: 0.7rem;
-        }
-
-        .btn-login {
-            background: linear-gradient(135deg, #00f0ff, #7000ff);
-            color: white;
-            border: none;
-            padding: 8px 18px;
-            border-radius: 40px;
-            font-weight: bold;
-            font-size: 0.85rem;
-            cursor: pointer;
-            transition: all 0.3s;
-            display: flex;
-            align-items: center;
-            gap: 5px;
-            box-shadow: 0 0 12px rgba(0, 240, 255, 0.4);
-            font-family: 'Rajdhani', sans-serif;
-        }
-
-        .btn-login:hover {
-            transform: translateY(-2px) scale(1.02);
-            box-shadow: 0 0 20px rgba(0, 240, 255, 0.8);
-        }
-
-        .card {
-            background: rgba(18, 21, 32, 0.85);
-            backdrop-filter: blur(6px);
-            border-radius: 16px;
-            padding: 20px 22px;
-            margin-bottom: 20px;
-            border: 1px solid rgba(0, 240, 255, 0.12);
-            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
-        }
-
-        .card-title {
-            font-family: 'Orbitron', sans-serif;
-            font-size: 1.2rem;
-            font-weight: 700;
-            margin-bottom: 16px;
-            color: #fff;
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            border-bottom: 1px solid rgba(0, 240, 255, 0.1);
-            padding-bottom: 10px;
-            letter-spacing: 0.5px;
-        }
-
-        .card-title .badge {
-            font-size: 0.6rem;
-            background: var(--neon-purple);
-            padding: 2px 10px;
-            border-radius: 20px;
-            color: #fff;
-            text-transform: uppercase;
-        }
-
-        .grid-2 {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
-            gap: 12px;
-        }
-
-        .stat-box {
-            background: rgba(255, 255, 255, 0.04);
-            border-radius: 12px;
-            padding: 12px 14px;
-            border: 1px solid rgba(255, 255, 255, 0.06);
-            transition: all 0.3s;
-        }
-
-        .stat-box:hover {
-            border-color: rgba(0, 240, 255, 0.2);
-            background: rgba(255, 255, 255, 0.06);
-        }
-
-        .stat-box label {
-            font-size: 0.6rem;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-            color: #8a99ad;
-            display: block;
-            margin-bottom: 2px;
-            font-weight: 700;
-        }
-
-        .stat-box .value {
-            font-size: 1.3rem;
-            font-weight: 700;
-            color: #f0f4f8;
-            word-break: break-all;
-            font-family: 'Orbitron', sans-serif;
-        }
-
-        .stat-box .value.hp { color: #ef4444; }
-        .stat-box .value.mp { color: #3b82f6; }
-        .stat-box .value.sm { color: #f59e0b; }
-        .stat-box .value.atk { color: #ef4444; }
-        .stat-box .value.def { color: #8b5cf6; }
-        .stat-box .value.mag { color: #10b981; }
-        .stat-box .value.lvl { color: var(--neon-blue); }
-        .stat-box .value.exp { color: var(--neon-purple); }
-
-        .flex {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 12px;
-            align-items: center;
-        }
-
-        .mt-2 {
-            margin-top: 16px;
-        }
-
-        .menu-notice {
-            text-align: center;
-            padding: 12px;
-            background: rgba(0, 240, 255, 0.05);
-            border-radius: 12px;
-            border: 1px dashed rgba(0, 240, 255, 0.15);
-            color: #8a99ad;
-            font-size: 0.85rem;
-            margin-top: 10px;
-        }
-
-        .toast {
-            position: fixed;
-            bottom: 20px;
-            left: 50%;
-            transform: translateX(-50%);
-            background: rgba(10, 11, 16, 0.95);
-            backdrop-filter: blur(8px);
-            color: #fff;
-            padding: 10px 22px;
-            border-radius: 12px;
-            font-weight: 600;
-            font-size: 0.85rem;
-            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.5);
-            border-left: 4px solid #3b82f6;
-            z-index: 9999;
-            display: none;
-            opacity: 0;
-            transition: opacity 0.4s ease;
-            max-width: 90%;
-            text-align: center;
-            font-family: 'Rajdhani', sans-serif;
-        }
-
-        .toast.show {
-            display: block;
-            opacity: 1;
-        }
-
-        @media (max-width: 700px) {
-            .nav-bar {
-                flex-direction: column;
-                align-items: stretch;
-                padding: 12px 16px;
-            }
-            .nav-links {
-                justify-content: center;
-            }
-            .nav-links a {
-                font-size: 0.7rem;
-                padding: 6px 12px;
-            }
-            .user-profile {
-                justify-content: center;
-            }
-            .grid-2 {
-                grid-template-columns: repeat(auto-fit, minmax(110px, 1fr));
-                gap: 8px;
-            }
-            .stat-box {
-                padding: 8px 10px;
-            }
-            .stat-box .value {
-                font-size: 1rem;
-            }
-            .card-title {
-                font-size: 1rem;
-            }
-        }
-
-        @media (max-width: 400px) {
-            .grid-2 {
-                grid-template-columns: repeat(2, 1fr);
-            }
-            .nav-links a {
-                font-size: 0.6rem;
-                padding: 4px 8px;
-            }
-        }
-    </style>
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;700;900&family=Rajdhani:wght@400;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style/personagem.css">
 </head>
 <body>
     <div class="game-container">
+        <!-- ============================================================
+        NAVBAR
+        ============================================================ -->
         <nav class="nav-bar">
             <div class="nav-links">
+                <a href="index.html">🏠 Dashboard</a>
                 <a href="personagem.html" class="active">🧙 Personagem</a>
                 <a href="mercado.html">🏛️ Mercado</a>
                 <a href="minerar.html">⛏️ Mineração</a>
@@ -362,297 +28,117 @@
                 </div>
             </div>
 
-            <button class="btn-login" id="btnLogin" onclick="redirecionarLogin()">🔑 Login</button>
+            <button class="btn-login" id="btnLogin">🔑 Login</button>
         </nav>
 
+        <!-- ============================================================
+        SISTEMA DE NÍVEL + ATRIBUTOS
+        ============================================================ -->
         <div class="card">
-            <div class="card-title">🧙 Ficha do Herói <span class="badge">NOVO</span></div>
-            <div class="grid-2">
-                <div class="stat-box"><label>❤️ HP</label><div class="value hp" id="hpValue">100/100</div></div>
-                <div class="stat-box"><label>💧 MP</label><div class="value mp" id="mpValue">50/50</div></div>
-                <div class="stat-box"><label>⚡ SM</label><div class="value sm" id="smValue">40/40</div></div>
-                <div class="stat-box"><label>⚔️ Ataque</label><div class="value atk" id="atkValue">15</div></div>
-                <div class="stat-box"><label>🛡️ Defesa</label><div class="value def" id="defValue">10</div></div>
-                <div class="stat-box"><label>🔮 Magia</label><div class="value mag" id="magValue">8</div></div>
-                <div class="stat-box"><label>⭐ Nível</label><div class="value lvl" id="lvlValue">1</div></div>
-                <div class="stat-box"><label>📈 Experiência</label><div class="value exp" id="expValue">0 / 100</div></div>
+            <div class="card-title">🧙 Ficha do Herói <span class="badge">NÍVEL</span></div>
+
+            <!-- BADGE DE NÍVEL -->
+            <div class="level-badge-container">
+                <div class="level-badge">
+                    <span class="level-number" id="levelNumber">1</span>
+                    <div>
+                        <div class="level-label">Nível</div>
+                        <div class="level-title" id="levelTitle">🌱 Iniciante</div>
+                    </div>
+                </div>
             </div>
-            <div class="flex mt-2">
-                <div class="stat-box" style="flex:1;"><label>⚡ Poder Hash</label><div class="value" id="poderHash">1.0 MH/s</div></div>
-                <div class="stat-box" style="flex:1;"><label>🛒 Itens</label><div class="value" id="qtdItens">0</div></div>
+
+            <!-- BARRA DE EXP -->
+            <div class="exp-container">
+                <div class="exp-bar">
+                    <div class="exp-fill" id="expFill" style="width: 0%;"></div>
+                </div>
+                <div class="exp-text">
+                    <span class="exp-current" id="expCurrent">0</span>
+                    <span>/ <span class="exp-next" id="expNext">100</span> EXP</span>
+                </div>
+            </div>
+
+            <!-- STATS GRID -->
+            <div class="stats-grid" id="statsGrid">
+                <div class="stat-box">
+                    <label>❤️ HP</label>
+                    <div class="value hp" id="statHp">100/100</div>
+                </div>
+                <div class="stat-box">
+                    <label>💧 MP</label>
+                    <div class="value mp" id="statMp">50/50</div>
+                </div>
+                <div class="stat-box">
+                    <label>⚡ SM</label>
+                    <div class="value sm" id="statSm">40/40</div>
+                </div>
+                <div class="stat-box">
+                    <label>⚔️ ATK</label>
+                    <div class="value atk" id="statAtk">15</div>
+                </div>
+                <div class="stat-box">
+                    <label>🛡️ DEF</label>
+                    <div class="value def" id="statDef">10</div>
+                </div>
+                <div class="stat-box">
+                    <label>🔮 MAG</label>
+                    <div class="value mag" id="statMag">8</div>
+                </div>
+            </div>
+
+            <!-- RECURSOS EXTRAS -->
+            <div class="extra-stats">
+                <div class="stat-box">
+                    <label>⚡ Poder Hash</label>
+                    <div class="value hash" id="poderHash">1.0 MH/s</div>
+                </div>
+                <div class="stat-box">
+                    <label>🛒 Itens</label>
+                    <div class="value" id="qtdItens">0</div>
+                </div>
+                <div class="stat-box">
+                    <label>₿ BTC</label>
+                    <div class="value btc" id="btcValue">0.00000000</div>
+                </div>
             </div>
         </div>
 
+        <!-- ============================================================
+        AÇÕES DO SISTEMA DE NÍVEL
+        ============================================================ -->
+        <div class="card">
+            <div class="card-title">🎮 Ações <span class="badge">TREINAR</span></div>
+
+            <div class="level-actions">
+                <button class="btn-level btn-treinar" id="btnTreinar">🏋️ Treinar (+EXP)</button>
+                <button class="btn-level btn-descansar" id="btnDescansar">🛌 Descansar</button>
+                <button class="btn-level btn-reset" id="btnResetLevel">🔄 Resetar Nível</button>
+            </div>
+
+            <div class="sm-actions">
+                <button class="btn-sm btn-sm-ganhar" id="btnSmGanhar">➕ Ganhar 50 SM</button>
+                <button class="btn-sm btn-sm-gastar" id="btnSmGastar">➖ Gastar 30 SM</button>
+                <button class="btn-sm btn-sm-resetar" id="btnSmResetar">🔄 Resetar SM</button>
+            </div>
+        </div>
+
+        <!-- ============================================================
+        MENU NOTICE
+        ============================================================ -->
         <div class="menu-notice">🧭 Use o menu acima para navegar entre as seções</div>
     </div>
 
-    <div id="toast" class="toast"></div>
+    <!-- ============================================================
+    TOAST
+    ============================================================ -->
+    <div id="levelToast" class="toast"></div>
 
-    <script>
-        // ============================================================
-        // CONFIGURAÇÕES SUPABASE
-        // ============================================================
-        const SUPABASE_URL = 'https://xrcxvizzdumcxbylmkvn.supabase.co';
-        const SUPABASE_KEY = 'sb_publishable_E-g3G3wW4EySbCsXLXp8KQ_FnmERMcD';
-        const TABELA = 'Geral';
-
-        const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
-
-        // ============================================================
-        // ESTADO
-        // ============================================================
-        let usuarioAtual = null;
-        let estado = {
-            id: null,
-            login: '',
-            saldo: 500,
-            btc: 0,
-            poderHash: 1.0,
-            hp: 100,
-            maxHp: 100,
-            mp: 50,
-            maxMp: 50,
-            sm: 40,
-            maxSm: 40,
-            atk: 15,
-            def: 10,
-            mag: 8,
-            lvl: 1,
-            exp: 0,
-            expNext: 100,
-            itens: []
-        };
-
-        // ============================================================
-        // FUNÇÕES
-        // ============================================================
-        function showToast(msg, isError = false) {
-            const toast = document.getElementById('toast');
-            toast.textContent = msg;
-            toast.style.borderLeftColor = isError ? '#ef4444' : '#00f0ff';
-            toast.classList.add('show');
-            clearTimeout(toast._timeout);
-            toast._timeout = setTimeout(() => toast.classList.remove('show'), 3000);
-        }
-
-        function redirecionarLogin() {
-            window.location.href = 'login.html';
-        }
-
-        // ============================================================
-        // VERIFICAR LOGIN VIA localStorage
-        // ============================================================
-        function verificarLogin() {
-            const usuarioLogado = localStorage.getItem('usuario_logado');
-            
-            if (!usuarioLogado) {
-                // Não está logado, redireciona para login
-                showToast('❌ Faça login primeiro!', true);
-                setTimeout(() => {
-                    window.location.href = 'login.html';
-                }, 1500);
-                return false;
-            }
-
-            try {
-                const user = JSON.parse(usuarioLogado);
-                if (!user || !user.login) {
-                    localStorage.removeItem('usuario_logado');
-                    showToast('❌ Sessão inválida! Faça login novamente.', true);
-                    setTimeout(() => {
-                        window.location.href = 'login.html';
-                    }, 1500);
-                    return false;
-                }
-                return user;
-            } catch (e) {
-                localStorage.removeItem('usuario_logado');
-                showToast('❌ Sessão inválida! Faça login novamente.', true);
-                setTimeout(() => {
-                    window.location.href = 'login.html';
-                }, 1500);
-                return false;
-            }
-        }
-
-        // ============================================================
-        // CARREGAR DADOS DO USUÁRIO VIA SUPABASE
-        // ============================================================
-        async function carregarDadosDoUsuario(login) {
-            try {
-                const { data, error } = await supabase
-                    .from(TABELA)
-                    .select('*')
-                    .eq('login', login)
-                    .single();
-
-                if (error) throw error;
-
-                if (data) {
-                    usuarioAtual = data;
-                    carregarEstadoDoUsuario(data);
-                    return true;
-                }
-                return false;
-
-            } catch (err) {
-                console.error('Erro ao carregar dados:', err);
-                showToast('❌ Erro ao carregar dados do usuário', true);
-                return false;
-            }
-        }
-
-        function carregarEstadoDoUsuario(data) {
-            estado.id = data.id;
-            estado.login = data.login;
-            estado.saldo = parseFloat(data.saldo) || 500;
-            estado.btc = parseFloat(data.btc) || 0;
-            estado.poderHash = parseFloat(data.poder_hash) || 1.0;
-            estado.hp = parseFloat(data.hp) || 100;
-            estado.maxHp = parseFloat(data.max_hp) || 100;
-            estado.mp = parseFloat(data.mp) || 50;
-            estado.maxMp = parseFloat(data.max_mp) || 50;
-            estado.sm = parseFloat(data.sm) || 40;
-            estado.maxSm = parseFloat(data.max_sm) || 40;
-            estado.atk = parseFloat(data.atk) || 15;
-            estado.def = parseFloat(data.def) || 10;
-            estado.mag = parseFloat(data.mag) || 8;
-            estado.lvl = data.nivel || 1;
-            estado.exp = parseFloat(data.experiencia) || 0;
-            estado.expNext = parseFloat(data.exp_next) || 100;
-            estado.itens = data.itens || [];
-            atualizarUI();
-        }
-
-        // ============================================================
-        // SALVAR NO BANCO
-        // ============================================================
-        async function salvarNoBanco() {
-            if (!usuarioAtual) return;
-            try {
-                const { error } = await supabase
-                    .from(TABELA)
-                    .update({
-                        saldo: estado.saldo,
-                        btc: estado.btc,
-                        poder_hash: estado.poderHash,
-                        hp: estado.hp,
-                        max_hp: estado.maxHp,
-                        mp: estado.mp,
-                        max_mp: estado.maxMp,
-                        sm: estado.sm,
-                        max_sm: estado.maxSm,
-                        atk: estado.atk,
-                        def: estado.def,
-                        mag: estado.mag,
-                        nivel: estado.lvl,
-                        experiencia: estado.exp,
-                        exp_next: estado.expNext,
-                        itens: estado.itens,
-                        updated_at: new Date().toISOString()
-                    })
-                    .eq('id', estado.id);
-
-                if (error) throw error;
-            } catch (err) {
-                console.error('Erro ao salvar:', err);
-            }
-        }
-
-        // ============================================================
-        // ATUALIZAR UI
-        // ============================================================
-        function atualizarUI() {
-            const avatar = document.getElementById('userAvatar');
-            const nick = document.getElementById('nomeJogador');
-            const saldo = document.getElementById('saldosaldo');
-
-            nick.textContent = estado.login || 'Desconectado';
-            avatar.textContent = estado.login ? estado.login.charAt(0).toUpperCase() : '👤';
-            saldo.textContent = new Intl.NumberFormat('pt-BR', {
-                style: 'currency',
-                currency: 'BRL'
-            }).format(estado.saldo);
-
-            document.getElementById('hpValue').textContent = `${estado.hp}/${estado.maxHp}`;
-            document.getElementById('mpValue').textContent = `${estado.mp}/${estado.maxMp}`;
-            document.getElementById('smValue').textContent = `${estado.sm}/${estado.maxSm}`;
-            document.getElementById('atkValue').textContent = estado.atk;
-            document.getElementById('defValue').textContent = estado.def;
-            document.getElementById('magValue').textContent = estado.mag;
-            document.getElementById('lvlValue').textContent = estado.lvl;
-            document.getElementById('expValue').textContent = `${estado.exp} / ${estado.expNext}`;
-            document.getElementById('poderHash').textContent = `${estado.poderHash.toFixed(1)} MH/s`;
-            document.getElementById('qtdItens').textContent = estado.itens.reduce((sum, item) => sum + item.qtd, 0);
-
-            salvarNoBanco();
-        }
-
-        // ============================================================
-        // CARREGAR DADOS ATUALIZADOS
-        // ============================================================
-        async function carregarDadosAtualizados() {
-            if (!usuarioAtual) return;
-            try {
-                const { data, error } = await supabase
-                    .from(TABELA)
-                    .select('saldo, btc, poder_hash, hp, mp, sm, atk, def, mag, nivel, experiencia, exp_next, itens')
-                    .eq('id', estado.id)
-                    .single();
-
-                if (error) throw error;
-
-                estado.saldo = parseFloat(data.saldo) || 500;
-                estado.btc = parseFloat(data.btc) || 0;
-                estado.poderHash = parseFloat(data.poder_hash) || 1.0;
-                estado.hp = parseFloat(data.hp) || 100;
-                estado.mp = parseFloat(data.mp) || 50;
-                estado.sm = parseFloat(data.sm) || 40;
-                estado.atk = parseFloat(data.atk) || 15;
-                estado.def = parseFloat(data.def) || 10;
-                estado.mag = parseFloat(data.mag) || 8;
-                estado.lvl = data.nivel || 1;
-                estado.exp = parseFloat(data.experiencia) || 0;
-                estado.expNext = parseFloat(data.exp_next) || 100;
-                estado.itens = data.itens || [];
-
-                atualizarUI();
-            } catch (err) {
-                console.error('Erro ao atualizar dados:', err);
-            }
-        }
-
-        // ============================================================
-        // INICIALIZAÇÃO
-        // ============================================================
-        async function init() {
-            // 1. Verifica se está logado
-            const user = verificarLogin();
-            if (!user) return;
-
-            // 2. Carrega dados do Supabase
-            const carregado = await carregarDadosDoUsuario(user.login);
-            if (!carregado) {
-                showToast('❌ Erro ao carregar dados do usuário', true);
-                return;
-            }
-
-            // 3. Atualiza botão para Dashboard
-            const btnLogin = document.getElementById('btnLogin');
-            btnLogin.textContent = '🏠 DASHBOARD';
-            btnLogin.onclick = function() {
-                window.location.href = '../../dashboard.html';
-            };
-
-            // 4. Inicia atualização automática
-            setInterval(() => {
-                if (usuarioAtual) carregarDadosAtualizados();
-            }, 15000);
-
-            showToast(`✅ Bem-vindo, ${estado.login}!`);
-        }
-
-        document.addEventListener('DOMContentLoaded', init);
+    <!-- ============================================================
+    SCRIPT
+    ============================================================ -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.39.0/dist/umd/supabase.min.js">
     </script>
+    <script type="module" src="script/personagem.js"></script>
 </body>
 </html>

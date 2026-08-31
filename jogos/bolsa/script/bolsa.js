@@ -4,7 +4,7 @@
 import { createClient } from '@supabase/supabase-js';
 
 // ====================================================================
-//  CONFIGURAÇÕES - USANDO APENAS A TABELA "Geral"
+//  CONFIGURAÇÕES
 // ====================================================================
 const SUPABASE_URL  = 'https://xrcxvizzdumcxbylmkvn.supabase.co';
 const SUPABASE_KEY  = 'sb_publishable_E-g3G3wW4EySbCsXLXp8KQ_FnmERMcD';
@@ -15,7 +15,7 @@ const BRAPI_BASE    = 'https://brapi.dev/api';
 const MOEDA         = 'Mumu';
 
 // ====================================================================
-//  DADOS DO USUÁRIO (definido ANTES de ser usado)
+//  DADOS DO USUÁRIO
 // ====================================================================
 const usuarioLogado = localStorage.getItem('usuario_logado');
 if (!usuarioLogado) {
@@ -29,8 +29,13 @@ try {
         throw new Error('Usuário inválido');
     }
     const avatar = document.getElementById('userAvatar');
-    avatar.textContent = usuario.nome ? usuario.nome.charAt(0).toUpperCase() : '👤';
-    document.getElementById('usuarioLogado').textContent = usuario.nome || usuario.login;
+    if (avatar) {
+        avatar.textContent = usuario.nome ? usuario.nome.charAt(0).toUpperCase() : '👤';
+    }
+    const usuarioLogadoEl = document.getElementById('usuarioLogado');
+    if (usuarioLogadoEl) {
+        usuarioLogadoEl.textContent = usuario.nome || usuario.login || 'Usuário';
+    }
 } catch (e) {
     console.error('Erro ao parsear usuário:', e);
     window.location.href = 'login.html';
@@ -41,6 +46,7 @@ try {
 // ====================================================================
 function mostrarToast(mensagem, tipo = 'erro', titulo = '') {
     const container = document.getElementById('toastContainer');
+    if (!container) return;
     
     const tipos = {
         erro: { icon: '❌', title: titulo || 'Erro' },
@@ -89,7 +95,7 @@ let supabaseOnline             = true;
 let dadosCarregados            = false;
 let selicAtual                 = 10.75;
 
-// RPG - Todos os atributos agora são salvos na tabela Geral
+// RPG
 let nivel = 1;
 let experiencia = 0;
 let exp_proximo = 100;
@@ -158,6 +164,7 @@ function getValorInput() {
 // ====================================================================
 function registrar(texto, tipo = "operacao") {
     const historicoUl = document.getElementById("historico");
+    if (!historicoUl) return;
     const li = document.createElement("li");
     const horario = new Date().toLocaleTimeString('pt-BR', { hour: '2-digit', minute:'2-digit', second:'2-digit' });
     li.innerHTML = `<span style="font-weight:500; color: var(--neon-blue);">[${horario}]</span> ${texto}`;
@@ -180,18 +187,23 @@ function registrar(texto, tipo = "operacao") {
 // ====================================================================
 function initEstruturas() {
     todosAtivos.forEach(a => {
-        carteira[a.ticker]          = 0;
-        proventosPorAtivo[a.ticker] = 0;
-        precoMedioCompra[a.ticker]  = 0;
-        precoHistorico[a.ticker]    = a.preco;
+        if (carteira[a.ticker] === undefined) carteira[a.ticker] = 0;
+        if (proventosPorAtivo[a.ticker] === undefined) proventosPorAtivo[a.ticker] = 0;
+        if (precoMedioCompra[a.ticker] === undefined) precoMedioCompra[a.ticker] = 0;
+        precoHistorico[a.ticker] = a.preco;
     });
 }
 
 // ====================================================================
-//  SUPABASE – CRUD (TUDO NA TABELA "Geral")
+//  SUPABASE – CRUD
 // ====================================================================
 async function carregarDadosDoSupabase() {
     try {
+        if (!usuario || !usuario.id) {
+            console.error('Usuário não definido');
+            return false;
+        }
+
         const userId = usuario.id;
         const { data, error } = await supabase
             .from(TABELA)
@@ -202,18 +214,19 @@ async function carregarDadosDoSupabase() {
         if (error) {
             if (error.code === 'PGRST116') {
                 await criarRegistroInicial(userId);
-                return;
+                return true;
             }
-            throw error;
+            console.error('Erro ao buscar dados:', error);
+            return false;
         }
 
         if (data) {
-            // ===== FINANCEIRO =====
+            // Financeiro
             saldo              = data.saldo !== null && data.saldo !== undefined ? parseFloat(data.saldo) : 0.00;
             saldoPoupanca      = data.saldo_poupanca !== null && data.saldo_poupanca !== undefined ? parseFloat(data.saldo_poupanca) : 0.00;
             proventosPendentes = data.proventos_pendentes !== null && data.proventos_pendentes !== undefined ? parseFloat(data.proventos_pendentes) : 0.0;
 
-            // ===== CARTEIRA =====
+            // Carteira
             if (data.carteira) {
                 Object.keys(data.carteira).forEach(key => {
                     if (carteira[key] !== undefined) carteira[key] = data.carteira[key] || 0;
@@ -230,13 +243,13 @@ async function carregarDadosDoSupabase() {
                 });
             }
 
-            // ===== RPG =====
+            // RPG
             nivel = data.nivel || 1;
             experiencia = data.experiencia || 0;
             exp_proximo = data.exp_proximo || 100;
             hp_max = data.hp_max || 100;
             mp_max = data.mp_max || 50;
-            sm_max = data.sm_max || 40;
+            sm_max = data.sm_max || 100;
             hp_atual = data.hp_atual || 100;
             mp_atual = data.mp_atual || 50;
             sm_atual = data.sm_atual || 100;
@@ -244,16 +257,14 @@ async function carregarDadosDoSupabase() {
             defesa_base = data.defesa_base || 10;
             magia_base = data.magia_base || 8;
 
-            // ===== SELIC =====
+            // SELIC
             if (data.selic) {
                 selicAtual = parseFloat(data.selic);
             }
 
             dadosCarregados = true;
             registrar('📂 Dados carregados do Supabase!', 'operacao');
-            
             atualizarDisplayRPG();
-            
             return true;
         }
         return false;
@@ -278,7 +289,7 @@ async function criarRegistroInicial(userId) {
             exp_proximo: 100,
             hp_max: 100,
             mp_max: 50,
-            sm_max: 40,
+            sm_max: 100,
             hp_atual: 100,
             mp_atual: 50,
             sm_atual: 100,
@@ -309,6 +320,11 @@ async function criarRegistroInicial(userId) {
 
 async function salvarDadosNoSupabase() {
     try {
+        if (!usuario || !usuario.id) {
+            console.error('Usuário não definido');
+            return false;
+        }
+
         const userId = usuario.id;
         const { error } = await supabase
             .from(TABELA)
@@ -347,12 +363,19 @@ async function salvarDadosNoSupabase() {
 //  FUNÇÕES RPG
 // ====================================================================
 function atualizarDisplayRPG() {
-    document.getElementById('lwHp').textContent = `${hp_atual}/${hp_max}`;
-    document.getElementById('lwMp').textContent = `${mp_atual}/${mp_max}`;
-    document.getElementById('lwSm').textContent = `${sm_atual}/${sm_max}`;
-    document.getElementById('lwAtk').textContent = ataque_base;
-    document.getElementById('lwDef').textContent = defesa_base;
-    document.getElementById('lwMag').textContent = magia_base;
+    const hpEl = document.getElementById('lwHp');
+    const mpEl = document.getElementById('lwMp');
+    const smEl = document.getElementById('lwSm');
+    const atkEl = document.getElementById('lwAtk');
+    const defEl = document.getElementById('lwDef');
+    const magEl = document.getElementById('lwMag');
+    
+    if (hpEl) hpEl.textContent = `${hp_atual}/${hp_max}`;
+    if (mpEl) mpEl.textContent = `${mp_atual}/${mp_max}`;
+    if (smEl) smEl.textContent = `${sm_atual}/${sm_max}`;
+    if (atkEl) atkEl.textContent = ataque_base;
+    if (defEl) defEl.textContent = defesa_base;
+    if (magEl) magEl.textContent = magia_base;
 }
 
 // ====================================================================
@@ -361,51 +384,54 @@ function atualizarDisplayRPG() {
 function atualizarStatusInternet(online) {
     const statusEl = document.getElementById('statusInternet');
     const textoEl  = document.getElementById('statusInternetTexto');
+    if (!statusEl || !textoEl) return;
     const dotEl    = statusEl.querySelector('.status-dot');
     if (online) {
         statusEl.className = 'status-item status-online';
         textoEl.textContent = '🌐 Net';
-        dotEl.className = 'status-dot online';
+        if (dotEl) dotEl.className = 'status-dot online';
     } else {
         statusEl.className = 'status-item status-offline';
         textoEl.textContent = '🌐 Net';
-        dotEl.className = 'status-dot offline';
+        if (dotEl) dotEl.className = 'status-dot offline';
     }
 }
 
-function atualizarStatusAPI(online, mensagem = null) {
+function atualizarStatusAPI(online) {
     const statusEl = document.getElementById('statusAPI');
     const textoEl  = document.getElementById('statusAPITexto');
+    if (!statusEl || !textoEl) return;
     const dotEl    = statusEl.querySelector('.status-dot');
     if (verificandoAPI) {
         statusEl.className = 'status-item status-checking';
         textoEl.textContent = '📊 API';
-        dotEl.className = 'status-dot';
+        if (dotEl) dotEl.className = 'status-dot';
         return;
     }
     if (online) {
         statusEl.className = 'status-item status-online';
         textoEl.textContent = '📊 API';
-        dotEl.className = 'status-dot online';
+        if (dotEl) dotEl.className = 'status-dot online';
     } else {
         statusEl.className = 'status-item status-offline';
         textoEl.textContent = '📊 API';
-        dotEl.className = 'status-dot offline';
+        if (dotEl) dotEl.className = 'status-dot offline';
     }
 }
 
-function atualizarStatusSupabase(online, mensagem = null) {
+function atualizarStatusSupabase(online) {
     const statusEl = document.getElementById('statusSupabase');
     const textoEl  = document.getElementById('statusSupabaseTexto');
+    if (!statusEl || !textoEl) return;
     const dotEl    = statusEl.querySelector('.status-dot');
     if (online) {
         statusEl.className = 'status-item status-online';
         textoEl.textContent = '☁️ Supabase';
-        dotEl.className = 'status-dot online';
+        if (dotEl) dotEl.className = 'status-dot online';
     } else {
         statusEl.className = 'status-item status-offline';
         textoEl.textContent = '☁️ Supabase';
-        dotEl.className = 'status-dot offline';
+        if (dotEl) dotEl.className = 'status-dot offline';
     }
 }
 
@@ -415,7 +441,11 @@ function atualizarStatusSupabase(online, mensagem = null) {
 async function verificarSupabase() {
     try {
         const { error } = await supabase.from(TABELA).select('id').limit(1);
-        if (error) { supabaseOnline = false; atualizarStatusSupabase(false); return false; }
+        if (error) { 
+            supabaseOnline = false; 
+            atualizarStatusSupabase(false); 
+            return false; 
+        }
         supabaseOnline = true;
         atualizarStatusSupabase(true);
         return true;
@@ -474,11 +504,20 @@ async function buscarPrecosAPI() {
                 const preco = item.regularMarketPrice || item.price || item.close;
                 if (preco && preco > 0) {
                     const ativoAcao = acoes.find(a => a.ticker === ticker);
-                    if (ativoAcao) { precoHistorico[ativoAcao.ticker] = ativoAcao.preco; ativoAcao.preco = parseFloat(preco.toFixed(2)); }
+                    if (ativoAcao) { 
+                        precoHistorico[ativoAcao.ticker] = ativoAcao.preco; 
+                        ativoAcao.preco = parseFloat(preco.toFixed(2)); 
+                    }
                     const ativoFII = fiis.find(a => a.ticker === ticker);
-                    if (ativoFII) { precoHistorico[ativoFII.ticker] = ativoFII.preco; ativoFII.preco = parseFloat(preco.toFixed(2)); }
+                    if (ativoFII) { 
+                        precoHistorico[ativoFII.ticker] = ativoFII.preco; 
+                        ativoFII.preco = parseFloat(preco.toFixed(2)); 
+                    }
                     const ativoETF = etfs.find(a => a.ticker === ticker);
-                    if (ativoETF) { precoHistorico[ativoETF.ticker] = ativoETF.preco; ativoETF.preco = parseFloat(preco.toFixed(2)); }
+                    if (ativoETF) { 
+                        precoHistorico[ativoETF.ticker] = ativoETF.preco; 
+                        ativoETF.preco = parseFloat(preco.toFixed(2)); 
+                    }
                 }
             });
             return true;
@@ -510,11 +549,14 @@ function variarPrecosOfflineETFs()    { variarPrecosOffline(etfs, 10, 1000, 2.5)
 function variarPrecosTesouro()        { variarPrecosOffline(tesouros, 50, 1200, 1.3); renderTesouro(); }
 
 // ====================================================================
-//  FUNÇÕES DE COMPRA / VENDA (COM TOAST)
+//  FUNÇÕES DE COMPRA / VENDA
 // ====================================================================
 window.comprarAtivo = async function(ticker) {
     const ativo = todosAtivos.find(a => a.ticker === ticker);
-    if (!ativo) return;
+    if (!ativo) {
+        mostrarToast('Ativo não encontrado!', 'erro', '❌ Erro');
+        return;
+    }
     const custo = ativo.preco;
     if (saldo >= custo) {
         saldo -= custo;
@@ -523,7 +565,7 @@ window.comprarAtivo = async function(ticker) {
         const precoMedAtual = precoMedioCompra[ticker] || 0;
         let novoPrecoMedio = qtdAtual === 0 ? custo : ((precoMedAtual * qtdAtual) + custo) / (qtdAtual + 1);
         carteira[ticker] = qtdAtual + 1;
-        precoMedioCompra[ticker] = novoPrecoMedio;
+        precoMedioCompra[ticker] = parseFloat(novoPrecoMedio.toFixed(2));
         registrar(`✅ Comprou 1 ${ticker} por ${formatarMoeda(custo)}.`);
         mostrarToast(`Comprou 1 ${ticker} por ${formatarMoeda(custo)}`, 'sucesso', '✅ Compra Realizada');
         await salvarDadosNoSupabase();
@@ -539,12 +581,17 @@ window.venderAtivo = async function(ticker) {
     const qtdAtual = carteira[ticker] || 0;
     if (qtdAtual > 0) {
         const ativo = todosAtivos.find(a => a.ticker === ticker);
-        if (!ativo) return;
+        if (!ativo) {
+            mostrarToast('Ativo não encontrado!', 'erro', '❌ Erro');
+            return;
+        }
         const valorVenda = ativo.preco;
         saldo += valorVenda;
         saldo = parseFloat(saldo.toFixed(2));
         carteira[ticker] = qtdAtual - 1;
-        if (carteira[ticker] === 0) delete precoMedioCompra[ticker];
+        if (carteira[ticker] === 0) {
+            delete precoMedioCompra[ticker];
+        }
         registrar(`📉 Vendeu 1 ${ticker} por ${formatarMoeda(valorVenda)}.`);
         mostrarToast(`Vendeu 1 ${ticker} por ${formatarMoeda(valorVenda)}`, 'sucesso', '💰 Venda Realizada');
         await salvarDadosNoSupabase();
@@ -558,11 +605,10 @@ window.venderAtivo = async function(ticker) {
 // ====================================================================
 //  FUNÇÕES DE POUPANÇA
 // ====================================================================
-function aplicarPoupanca() {
+async function aplicarPoupanca() {
     let valorAplicar = getValorInput();
     if (valorAplicar <= 0) {
         mostrarToast('Digite um valor válido para aplicar (maior que zero).', 'atencao', '⚠️ Valor Inválido');
-        registrar(`⚠️ Digite um valor válido para aplicar (maior que zero).`, "operacao");
         return;
     }
     if (saldo >= valorAplicar) {
@@ -572,20 +618,18 @@ function aplicarPoupanca() {
         saldoPoupanca = parseFloat(saldoPoupanca.toFixed(2));
         registrar(`🏦 APLICAÇÃO POUPANÇA: ${formatarMoeda(valorAplicar)} transferidos do Saldo para a Poupança.`, "poupanca");
         mostrarToast(`${formatarMoeda(valorAplicar)} aplicado na Poupança!`, 'sucesso', '📈 Aplicação Realizada');
-        salvarDadosNoSupabase();
+        await salvarDadosNoSupabase();
         atualizarTudo();
     } else {
         const falta = valorAplicar - saldo;
         mostrarToast(`Saldo insuficiente! Faltam ${formatarMoeda(falta)} para aplicar.`, 'erro', '❌ Saldo Insuficiente');
-        registrar(`❌ Saldo insuficiente para aplicar ${formatarMoeda(valorAplicar)}.`, "operacao");
     }
 }
 
-function resgatarPoupanca() {
+async function resgatarPoupanca() {
     let valorResgate = getValorInput();
     if (valorResgate <= 0) {
         mostrarToast('Digite um valor válido para resgatar (maior que zero).', 'atencao', '⚠️ Valor Inválido');
-        registrar(`⚠️ Digite um valor válido para resgatar (maior que zero).`, "operacao");
         return;
     }
     if (saldoPoupanca >= valorResgate) {
@@ -595,12 +639,11 @@ function resgatarPoupanca() {
         saldoPoupanca = parseFloat(saldoPoupanca.toFixed(2));
         registrar(`🏦 RESGATE POUPANÇA: ${formatarMoeda(valorResgate)} transferidos da Poupança para o Saldo.`, "poupanca");
         mostrarToast(`${formatarMoeda(valorResgate)} resgatado da Poupança!`, 'sucesso', '🏧 Resgate Realizado');
-        salvarDadosNoSupabase();
+        await salvarDadosNoSupabase();
         atualizarTudo();
     } else {
         const falta = valorResgate - saldoPoupanca;
         mostrarToast(`Saldo na poupança insuficiente! Faltam ${formatarMoeda(falta)}.`, 'erro', '❌ Saldo Insuficiente');
-        registrar(`❌ Saldo insuficiente na poupança para resgatar ${formatarMoeda(valorResgate)}.`, "operacao");
     }
 }
 
@@ -664,7 +707,6 @@ function transferirProventosParaSaldo() {
         atualizarTudo();
     } else {
         mostrarToast('Nenhum provento acumulado para transferir.', 'atencao', '⚠️ Sem Proventos');
-        registrar(`⚠️ Nenhum provento acumulado.`, "operacao");
     }
 }
 
@@ -680,6 +722,8 @@ function calcularMetricas(ativo) {
 }
 
 function renderAcoes() {
+    const tbody = document.getElementById("tabelaAcoes");
+    if (!tbody) return;
     let html = "";
     acoes.forEach(a => {
         const { variacao, dyAnual, rentabilidade } = calcularMetricas(a);
@@ -694,10 +738,12 @@ function renderAcoes() {
             <td><button class="sell" onclick="venderAtivo('${a.ticker}')">Vender 1</button></td>
         </tr>`;
     });
-    document.getElementById("tabelaAcoes").innerHTML = html;
+    tbody.innerHTML = html;
 }
 
 function renderFIIs() {
+    const tbody = document.getElementById("tabelaFIIs");
+    if (!tbody) return;
     let html = "";
     fiis.forEach(a => {
         const { variacao, dyAnual, rentabilidade } = calcularMetricas(a);
@@ -712,10 +758,12 @@ function renderFIIs() {
             <td><button class="sell" onclick="venderAtivo('${a.ticker}')">Vender 1</button></td>
         </tr>`;
     });
-    document.getElementById("tabelaFIIs").innerHTML = html;
+    tbody.innerHTML = html;
 }
 
 function renderETFs() {
+    const tbody = document.getElementById("tabelaETFs");
+    if (!tbody) return;
     let html = "";
     etfs.forEach(a => {
         const { variacao, dyAnual, rentabilidade } = calcularMetricas(a);
@@ -730,10 +778,12 @@ function renderETFs() {
             <td><button class="sell" onclick="venderAtivo('${a.ticker}')">Vender 1</button></td>
         </tr>`;
     });
-    document.getElementById("tabelaETFs").innerHTML = html;
+    tbody.innerHTML = html;
 }
 
 function renderTesouro() {
+    const tbody = document.getElementById("tabelaTesouro");
+    if (!tbody) return;
     let html = "";
     tesouros.forEach(a => {
         const { variacao, rentabilidade } = calcularMetricas(a);
@@ -748,11 +798,12 @@ function renderTesouro() {
             <td><button class="sell" onclick="venderAtivo('${a.ticker}')">Vender 1</button></td>
         </tr>`;
     });
-    document.getElementById("tabelaTesouro").innerHTML = html;
+    tbody.innerHTML = html;
 }
 
 function atualizarCarteira() {
     const tbody = document.getElementById("carteira");
+    if (!tbody) return;
     let html = "";
     const tickersComPosse = Object.keys(carteira).filter(t => carteira[t] > 0);
 
@@ -795,7 +846,10 @@ function atualizarCarteira() {
     }
 
     tbody.innerHTML = html;
-    document.getElementById("carteiraVaziaMsg").style.display = (tickersComPosse.length === 0 && saldoPoupanca <= 0) ? "block" : "none";
+    const vaziaMsg = document.getElementById("carteiraVaziaMsg");
+    if (vaziaMsg) {
+        vaziaMsg.style.display = (tickersComPosse.length === 0 && saldoPoupanca <= 0) ? "block" : "none";
+    }
 }
 
 function atualizarPatrimonio() {
@@ -814,13 +868,19 @@ function atualizarPatrimonio() {
 
     const patrimonioTotal = patrimonioInvestimentos + saldoPoupanca;
 
-    document.getElementById("saldo").innerHTML = `${saldo.toFixed(2)} <span class="moeda-simbolo">${MOEDA}</span>`;
-    document.getElementById("patrimonio").innerHTML = `${patrimonioTotal.toFixed(2)} <span class="moeda-simbolo">${MOEDA}</span>`;
-    document.getElementById("investido").innerHTML = `${totalCustoInvestido.toFixed(2)} <span class="moeda-simbolo">${MOEDA}</span>`;
-    document.getElementById("proventosAcumulados").innerHTML = `${proventosPendentes.toFixed(2)} <span class="moeda-simbolo">${MOEDA}</span>`;
-    document.getElementById("saldoPoupanca").innerHTML = `${saldoPoupanca.toFixed(2)} <span class="moeda-simbolo">${MOEDA}</span>`;
-    
-    document.getElementById("userSaldoDisplay").textContent = `${saldo.toFixed(2)} ${MOEDA}`;
+    const saldoEl = document.getElementById("saldo");
+    const patrimonioEl = document.getElementById("patrimonio");
+    const investidoEl = document.getElementById("investido");
+    const proventosEl = document.getElementById("proventosAcumulados");
+    const saldoPoupancaEl = document.getElementById("saldoPoupanca");
+    const userSaldoEl = document.getElementById("userSaldoDisplay");
+
+    if (saldoEl) saldoEl.innerHTML = `${saldo.toFixed(2)} <span class="moeda-simbolo">${MOEDA}</span>`;
+    if (patrimonioEl) patrimonioEl.innerHTML = `${patrimonioTotal.toFixed(2)} <span class="moeda-simbolo">${MOEDA}</span>`;
+    if (investidoEl) investidoEl.innerHTML = `${totalCustoInvestido.toFixed(2)} <span class="moeda-simbolo">${MOEDA}</span>`;
+    if (proventosEl) proventosEl.innerHTML = `${proventosPendentes.toFixed(2)} <span class="moeda-simbolo">${MOEDA}</span>`;
+    if (saldoPoupancaEl) saldoPoupancaEl.innerHTML = `${saldoPoupanca.toFixed(2)} <span class="moeda-simbolo">${MOEDA}</span>`;
+    if (userSaldoEl) userSaldoEl.textContent = `${saldo.toFixed(2)} ${MOEDA}`;
 }
 
 function atualizarTudo() {
@@ -853,8 +913,8 @@ function atualizarDisplaySelicBolsa(valor) {
     const estrategia = document.getElementById('selicEstrategiaBolsa');
     const badge      = document.getElementById('selicBadge');
 
-    display.textContent = `${valor.toFixed(2)}%`;
-    badge.textContent = `📈 SELIC: ${valor.toFixed(2)}%`;
+    if (display) display.textContent = `${valor.toFixed(2)}%`;
+    if (badge) badge.textContent = `📈 SELIC: ${valor.toFixed(2)}%`;
 
     let classificacao = 'Média';
     let classe = 'selic-media';
@@ -888,15 +948,21 @@ function atualizarDisplaySelicBolsa(valor) {
         estrategiaTexto = '💸 COLHER LUCROS';
     }
 
-    indicador.textContent = classificacao;
-    indicador.className = `selic-indicador ${classe}`;
-    impacto.textContent = impactoTexto;
-    impacto.className = `selic-impacto ${impactoClasse}`;
-    estrategia.textContent = estrategiaTexto;
+    if (indicador) {
+        indicador.textContent = classificacao;
+        indicador.className = `selic-indicador ${classe}`;
+    }
+    if (impacto) {
+        impacto.textContent = impactoTexto;
+        impacto.className = `selic-impacto ${impactoClasse}`;
+    }
+    if (estrategia) estrategia.textContent = estrategiaTexto;
 }
 
 async function carregarSelicDoSupabase() {
     try {
+        if (!usuario || !usuario.id) return 10.75;
+        
         const { data, error } = await supabase
             .from(TABELA)
             .select('selic')
@@ -904,6 +970,7 @@ async function carregarSelicDoSupabase() {
             .single();
 
         if (error) {
+            // Tenta buscar de qualquer registro
             const { data: dataAdmin, error: errorAdmin } = await supabase
                 .from(TABELA)
                 .select('selic')
@@ -924,10 +991,17 @@ async function carregarSelicDoSupabase() {
 // ====================================================================
 //  INICIALIZAÇÃO
 // ====================================================================
+// Inicializa estruturas
 initEstruturas();
 
-await carregarDadosDoSupabase();
+// Carrega dados do Supabase
+try {
+    await carregarDadosDoSupabase();
+} catch (e) {
+    console.error('Erro ao carregar dados iniciais:', e);
+}
 
+// Se não carregou, usa valores padrão
 if (!dadosCarregados) {
     const precosAcoes = [34.50, 58.90, 31.20];
     acoes.forEach((a, idx) => a.preco = precosAcoes[idx]);
@@ -940,21 +1014,33 @@ if (!dadosCarregados) {
     tesouros[2].preco = 850.00;
 }
 
-document.getElementById("valorPoupanca").value = "10.00";
+// Define valor padrão para poupança
+const valorPoupancaEl = document.getElementById("valorPoupanca");
+if (valorPoupancaEl) valorPoupancaEl.value = "10.00";
+
+// Atualiza status
 atualizarStatusInternet(navigator.onLine);
 await verificarSupabase();
 await verificarAPI();
-if (navigator.onLine && apiOnline) await buscarPrecosAPI();
 
+// Busca preços da API se estiver online
+if (navigator.onLine && apiOnline) {
+    await buscarPrecosAPI();
+}
+
+// Atualiza exibição
 atualizarTudo();
 
-document.getElementById("historico").innerHTML = "";
+// Limpa histórico e registra início
+const historicoEl = document.getElementById("historico");
+if (historicoEl) historicoEl.innerHTML = "";
 registrar(`🚀 Jogo iniciado com SALDO DE ${formatarMoeda(saldo)}!`);
 registrar(`👤 Usuário: ${usuario.nome || usuario.login}`);
 registrar("💰 Ações: proventos a cada 60s | FIIs: 30s | ETFs: 90s");
 registrar("🏦 Poupança: rende 0,6% a cada 60s. Boa sorte!");
 if (supabaseOnline) registrar("☁️ Supabase disponível para salvar seu progresso!");
 
+// Carrega e exibe SELIC
 const selicSalva = await carregarSelicDoSupabase();
 if (selicSalva !== null && selicSalva !== undefined) {
     selicAtual = selicSalva;
@@ -964,17 +1050,28 @@ atualizarDisplaySelicBolsa(selicAtual);
 // ====================================================================
 //  EVENT LISTENERS
 // ====================================================================
-document.getElementById("btnSair").addEventListener("click", sair);
-document.getElementById("btnTransferirProventos").addEventListener("click", transferirProventosParaSaldo);
-document.getElementById("btnAplicarPoupanca").addEventListener("click", aplicarPoupanca);
-document.getElementById("btnResgatarPoupanca").addEventListener("click", resgatarPoupanca);
+const btnSair = document.getElementById("btnSair");
+if (btnSair) btnSair.addEventListener("click", sair);
 
+const btnTransferir = document.getElementById("btnTransferirProventos");
+if (btnTransferir) btnTransferir.addEventListener("click", transferirProventosParaSaldo);
+
+const btnAplicar = document.getElementById("btnAplicarPoupanca");
+if (btnAplicar) btnAplicar.addEventListener("click", aplicarPoupanca);
+
+const btnResgatar = document.getElementById("btnResgatarPoupanca");
+if (btnResgatar) btnResgatar.addEventListener("click", resgatarPoupanca);
+
+// Eventos de conexão
 window.addEventListener('online', async () => {
     atualizarStatusInternet(true);
     registrar('🌐 Conexão restaurada!');
     await verificarSupabase();
     await verificarAPI();
-    if (apiOnline) { await buscarPrecosAPI(); atualizarTudo(); }
+    if (apiOnline) { 
+        await buscarPrecosAPI(); 
+        atualizarTudo(); 
+    }
 });
 
 window.addEventListener('offline', () => {
@@ -987,6 +1084,7 @@ window.addEventListener('offline', () => {
 // ====================================================================
 //  INTERVALOS
 // ====================================================================
+// Atualização de preços a cada 30 segundos
 setInterval(() => {
     if (navigator.onLine && apiOnline) {
         buscarPrecosAPI().then(() => atualizarTudo());
@@ -1000,6 +1098,7 @@ setInterval(() => {
     }
 }, 30000);
 
+// Variação offline adicional
 setInterval(() => {
     if (!navigator.onLine || !apiOnline) {
         variarPrecosOfflineAcoes();
@@ -1011,6 +1110,7 @@ setInterval(() => {
     }
 }, 10000);
 
+// Proventos
 setInterval(() => {
     distribuirProventos(acoes, '📈 AÇÕES');
 }, 60000);
@@ -1023,10 +1123,21 @@ setInterval(() => {
     distribuirProventos(etfs, '📊 ETFs');
 }, 90000);
 
+// Poupança
 setInterval(renderPoupanca, 60000);
-setInterval(() => { atualizarCarteira(); atualizarPatrimonio(); }, 5000);
-setInterval(async () => { await verificarSupabase(); }, 60000);
 
+// Atualização da carteira
+setInterval(() => { 
+    atualizarCarteira(); 
+    atualizarPatrimonio(); 
+}, 5000);
+
+// Verificação do Supabase
+setInterval(async () => { 
+    await verificarSupabase(); 
+}, 60000);
+
+// Verificação da SELIC
 setInterval(async () => {
     const selicSalva = await carregarSelicDoSupabase();
     if (selicSalva !== null && selicSalva !== undefined && selicSalva !== selicAtual) {

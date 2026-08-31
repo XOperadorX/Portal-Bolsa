@@ -1,0 +1,318 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🔑 Login - MM World</title>
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500;700;900&family=Rajdhani:wght@600;700&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.39.0/dist/umd/supabase.min.js"></script>
+    <style>
+        :root {
+            --bg-dark: #0a0b10;
+            --neon-blue: #00f0ff;
+            --neon-purple: #7000ff;
+            --neon-green: #00ff66;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Rajdhani', sans-serif;
+        }
+
+        body {
+            background-color: #0a0b10;
+            color: #f0f4f8;
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background-image:
+                radial-gradient(circle at 15% 20%, rgba(112, 0, 255, 0.15) 0%, transparent 40%),
+                radial-gradient(circle at 85% 80%, rgba(0, 240, 255, 0.15) 0%, transparent 40%);
+            padding: 20px;
+        }
+
+        .login-container {
+            background: rgba(18, 21, 32, 0.85);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            padding: 40px;
+            max-width: 420px;
+            width: 100%;
+            border: 1px solid rgba(0, 240, 255, 0.15);
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.5);
+        }
+
+        .login-title {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 1.8rem;
+            font-weight: 900;
+            text-align: center;
+            margin-bottom: 8px;
+            background: linear-gradient(135deg, var(--neon-blue), var(--neon-purple));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .login-subtitle {
+            text-align: center;
+            color: #8a99ad;
+            font-size: 0.9rem;
+            margin-bottom: 30px;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            font-weight: 700;
+            font-size: 0.85rem;
+            color: #a0aec0;
+            margin-bottom: 6px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .form-group input {
+            width: 100%;
+            padding: 12px 16px;
+            background: rgba(255, 255, 255, 0.06);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 12px;
+            color: #f0f4f8;
+            font-size: 1rem;
+            font-weight: 600;
+            transition: all 0.3s;
+        }
+
+        .form-group input:focus {
+            outline: none;
+            border-color: var(--neon-blue);
+            box-shadow: 0 0 20px rgba(0, 240, 255, 0.15);
+        }
+
+        .form-group input::placeholder {
+            color: #4a5568;
+        }
+
+        .btn-login {
+            width: 100%;
+            padding: 14px;
+            background: linear-gradient(135deg, var(--neon-blue), var(--neon-purple));
+            border: none;
+            border-radius: 12px;
+            color: #fff;
+            font-size: 1.1rem;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.3s;
+            box-shadow: 0 0 20px rgba(0, 240, 255, 0.2);
+            font-family: 'Rajdhani', sans-serif;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .btn-login:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 0 30px rgba(0, 240, 255, 0.4);
+        }
+
+        .btn-login:active {
+            transform: scale(0.97);
+        }
+
+        .btn-register {
+            width: 100%;
+            padding: 12px;
+            background: transparent;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 12px;
+            color: #8a99ad;
+            font-size: 0.9rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-family: 'Rajdhani', sans-serif;
+            margin-top: 10px;
+        }
+
+        .btn-register:hover {
+            border-color: var(--neon-blue);
+            color: #fff;
+            background: rgba(0, 240, 255, 0.05);
+        }
+
+        .divider {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            margin: 20px 0;
+            color: #4a5568;
+            font-size: 0.8rem;
+        }
+
+        .divider::before,
+        .divider::after {
+            content: "";
+            flex: 1;
+            height: 1px;
+            background: rgba(255, 255, 255, 0.06);
+        }
+
+        .toast {
+            position: fixed;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: rgba(10, 11, 16, 0.95);
+            backdrop-filter: blur(8px);
+            color: #fff;
+            padding: 10px 22px;
+            border-radius: 12px;
+            font-weight: 600;
+            font-size: 0.85rem;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.5);
+            border-left: 4px solid #3b82f6;
+            z-index: 9999;
+            display: none;
+            opacity: 0;
+            transition: opacity 0.4s ease;
+            max-width: 90%;
+            text-align: center;
+        }
+
+        .toast.show {
+            display: block;
+            opacity: 1;
+        }
+
+        .back-link {
+            display: block;
+            text-align: center;
+            margin-top: 16px;
+            color: #4a5568;
+            text-decoration: none;
+            font-size: 0.85rem;
+            transition: color 0.3s;
+        }
+
+        .back-link:hover {
+            color: var(--neon-blue);
+        }
+
+        @media (max-width: 480px) {
+            .login-container {
+                padding: 24px;
+            }
+            .login-title {
+                font-size: 1.4rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="login-container">
+        <h1 class="login-title">MM World</h1>
+        <p class="login-subtitle">🔑 Entre no jogo</p>
+
+        <div class="form-group">
+            <label>👤 Usuário</label>
+            <input type="text" id="loginInput" placeholder="Digite seu usuário" autocomplete="username">
+        </div>
+
+        <div class="form-group">
+            <label>🔒 Senha</label>
+            <input type="password" id="senhaInput" placeholder="Digite sua senha" autocomplete="current-password">
+        </div>
+
+        <button class="btn-login" onclick="fazerLogin()">🚀 Entrar</button>
+
+        <div class="divider">ou</div>
+
+        <button class="btn-register" onclick="irParaRegistro()">📝 Criar nova conta</button>
+
+        <a href="index.html" class="back-link">← Voltar para o início</a>
+    </div>
+
+    <div id="toast" class="toast"></div>
+
+    <script>
+        const SUPABASE_URL = 'https://xrcxvizzdumcxbylmkvn.supabase.co';
+        const SUPABASE_KEY = 'sb_publishable_E-g3G3wW4EySbCsXLXp8KQ_FnmERMcD';
+        const TABELA = 'Geral';
+
+        const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+
+        function showToast(msg, isError = false) {
+            const toast = document.getElementById('toast');
+            toast.textContent = msg;
+            toast.style.borderLeftColor = isError ? '#ef4444' : '#00f0ff';
+            toast.classList.add('show');
+            clearTimeout(toast._timeout);
+            toast._timeout = setTimeout(() => toast.classList.remove('show'), 3000);
+        }
+
+        async function fazerLogin() {
+            const login = document.getElementById('loginInput').value.trim();
+            const senha = document.getElementById('senhaInput').value.trim();
+
+            if (!login || !senha) {
+                showToast('❌ Preencha todos os campos!', true);
+                return;
+            }
+
+            try {
+                const { data, error } = await supabase
+                    .from(TABELA)
+                    .select('*')
+                    .eq('login', login)
+                    .single();
+
+                if (error || !data) {
+                    showToast('❌ Usuário não encontrado!', true);
+                    return;
+                }
+
+                if (data.senha !== senha) {
+                    showToast('❌ Senha incorreta!', true);
+                    return;
+                }
+
+                localStorage.setItem('usuario_logado', JSON.stringify({
+                    id: data.id,
+                    login: data.login
+                }));
+
+                showToast('✅ Login realizado com sucesso!');
+                setTimeout(() => {
+                    window.location.href = 'index.html';
+                }, 1000);
+
+            } catch (err) {
+                console.error('Erro ao fazer login:', err);
+                showToast('❌ Erro ao fazer login', true);
+            }
+        }
+
+        function irParaRegistro() {
+            window.location.href = 'register.html';
+        }
+
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Enter') {
+                fazerLogin();
+            }
+        });
+
+        // Verifica se já está logado
+        const usuarioLogado = localStorage.getItem('usuario_logado');
+        if (usuarioLogado) {
+            window.location.href = 'index.html';
+        }
+    </script>
+</body>
+</html>

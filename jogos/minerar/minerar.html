@@ -553,7 +553,7 @@
         let estado = {
             id: null,
             login: '',
-            saldo: 500,
+            saldo: 0,
             btc: 0,
             poderHash: 1.0
         };
@@ -641,7 +641,7 @@
         function carregarEstadoDoUsuario(data) {
             estado.id = data.id;
             estado.login = data.login;
-            estado.saldo = parseFloat(data.saldo) || 500;
+            estado.saldo = parseFloat(data.saldo) || 0;
             estado.btc = parseFloat(data.btc) || 0;
             estado.poderHash = parseFloat(data.poder_hash) || 1.0;
             atualizarUI();
@@ -799,7 +799,7 @@
 
                 if (error) throw error;
 
-                estado.saldo = parseFloat(data.saldo) || 500;
+                estado.saldo = parseFloat(data.saldo) || 0;
                 estado.btc = parseFloat(data.btc) || 0;
                 estado.poderHash = parseFloat(data.poder_hash) || 1.0;
 
@@ -824,7 +824,7 @@
 
             // 3. Atualiza botão para Dashboard
             const btnLogin = document.getElementById('btnLogin');
-            btnLogin.textContent = '🏠 DASHBOARD';
+            btnLogin.textContent = '🏠 Voltar';
             btnLogin.onclick = function() {
                 window.location.href = '../../dashboard.html';
             };

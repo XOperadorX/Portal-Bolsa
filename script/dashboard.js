@@ -7,6 +7,7 @@
     const SUPABASE_URL = 'https://xrcxvizzdumcxbylmkvn.supabase.co';
     const SUPABASE_KEY = 'sb_publishable_E-g3G3wW4EySbCsXLXp8KQ_FnmERMcD';
     const TABELA = 'Geral';
+    const TABELA_ATIVIDADES = 'Atividades';
 
     const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
@@ -53,6 +54,8 @@
             this.totalDescansos = 0;
             this.ultimaAtividade = null;
             this.ultimoReset = null;
+            this.toastTimer = null;
+            this.saveTimeout = null;
 
             // Bind dos métodos
             this.treinar = this.treinar.bind(this);
@@ -129,7 +132,11 @@
             }
 
             this.renderLog();
-            this.salvarLog(mensagem, tipo);
+            
+            // Salva no Supabase se estiver online
+            if (this.usuario && this.supabaseOnline) {
+                this.salvarLog(mensagem, tipo);
+            }
         }
 
         renderLog() {
@@ -163,7 +170,7 @@
 
             try {
                 const { error } = await supabase
-                    .from('Atividades')
+                    .from(TABELA_ATIVIDADES)
                     .insert({
                         login: this.usuario.login,
                         mensagem: mensagem,
@@ -189,7 +196,7 @@
 
             try {
                 const { data, error } = await supabase
-                    .from('Atividades')
+                    .from(TABELA_ATIVIDADES)
                     .select('*')
                     .eq('login', login)
                     .order('created_at', { ascending: false })
@@ -232,6 +239,7 @@
 
             // Verificar se subiu de nível
             let subiu = false;
+            let nivelAntes = this.nivel;
             while (this.experiencia >= this.getExpProximo()) {
                 this.experiencia -= this.getExpProximo();
                 this.nivel++;
@@ -252,7 +260,10 @@
             }
 
             this.addLog(`🏋️ Treinou +${ganho} EXP (Nível ${this.nivel})`, 'info');
-            this.salvar();
+            
+            // Salva imediatamente após treinar
+            this.salvarComDelay();
+            
             return true;
         }
 
@@ -269,7 +280,7 @@
             this.atualizarUI();
             this.mostrarToast(`🛌 Descansou! +${hpRestaurado} HP, +${mpRestaurado} MP, +${smRestaurado} SM`, 'sucesso');
             this.addLog(`🛌 Descansou (+${hpRestaurado} HP, +${mpRestaurado} MP, +${smRestaurado} SM)`, 'info');
-            this.salvar();
+            this.salvarComDelay();
             return true;
         }
 
@@ -286,7 +297,7 @@
             this.atualizarUI();
             this.mostrarToast('🔄 Nível resetado para 1!', 'info');
             this.addLog('🔄 Nível resetado para 1', 'info');
-            this.salvar();
+            this.salvarComDelay();
             return true;
         }
 
@@ -308,7 +319,7 @@
             this.atualizarUI();
             this.mostrarToast(`➕ +${ganhoReal} SM (${this.sm}/${smMax})`, 'sucesso');
             this.addLog(`➕ +${ganhoReal} SM (${this.sm}/${smMax})`, 'info');
-            this.salvar();
+            this.salvarComDelay();
             return true;
         }
 
@@ -324,7 +335,7 @@
             this.atualizarUI();
             this.mostrarToast(`➖ -${gasto} SM (${this.sm}/${this.getSmMax()})`, 'info');
             this.addLog(`➖ -${gasto} SM (${this.sm}/${this.getSmMax()})`, 'info');
-            this.salvar();
+            this.salvarComDelay();
             return true;
         }
 
@@ -335,8 +346,21 @@
             this.atualizarUI();
             this.mostrarToast(`🔄 SM resetado para ${this.sm}/${this.getSmMax()}`, 'info');
             this.addLog(`🔄 SM resetado para ${this.sm}/${this.getSmMax()}`, 'info');
-            this.salvar();
+            this.salvarComDelay();
             return true;
+        }
+
+        // ============================================================
+        // SALVAR COM DELAY (evita muitas chamadas)
+        // ============================================================
+        salvarComDelay() {
+            if (this.saveTimeout) {
+                clearTimeout(this.saveTimeout);
+            }
+            this.saveTimeout = setTimeout(() => {
+                this.salvar();
+                this.salvarStats();
+            }, 500);
         }
 
         // ============================================================
@@ -502,7 +526,7 @@
             try {
                 const { data, error } = await supabase
                     .from(TABELA)
-                    .select('nivel, experiencia, exp_proximo, lwHp, lwMp, lwSm, lwAtk, lwDef, lwMag, hp_atual, mp_atual, sm_atual, total_treinos, total_descansos, ultima_atividade, ultimo_reset')
+                    .select('*')
                     .eq('login', usuario.login)
                     .single();
 
@@ -516,14 +540,15 @@
                 }
 
                 if (data) {
+                    // Carrega dados do nível
                     this.nivel = data.nivel || 1;
                     this.experiencia = data.experiencia || 0;
-                    this.hpMax = data.lwHp || 100;
-                    this.mpMax = data.lwMp || 50;
-                    this.smMax = data.lwSm || 100;
-                    this.ataqueBase = data.lwAtk || 15;
-                    this.defesaBase = data.lwDef || 10;
-                    this.magiaBase = data.lwMag || 8;
+                    this.hpMax = data.lwhp || data.lwHp || 100;
+                    this.mpMax = data.lwmp || data.lwMp || 50;
+                    this.smMax = data.lwsm || data.lwSm || 100;
+                    this.ataqueBase = data.lwatk || data.lwAtk || 15;
+                    this.defesaBase = data.lwdef || data.lwDef || 10;
+                    this.magiaBase = data.lwmag || data.lwMag || 8;
                     this.hp = data.hp_atual || this.getHpMax();
                     this.mp = data.mp_atual || this.getMpMax();
                     this.sm = data.sm_atual || this.getSmMax();
@@ -532,8 +557,12 @@
                     this.ultimaAtividade = data.ultima_atividade || null;
                     this.ultimoReset = data.ultimo_reset || null;
 
+                    // Atualiza UI
                     this.atualizarUI();
+                    
+                    // Carrega logs
                     await this.carregarLogs(usuario.login);
+                    
                     return true;
                 }
 
@@ -541,44 +570,66 @@
 
             } catch (error) {
                 console.error('❌ Erro ao carregar nível:', error);
-                return false;
+                // Tenta criar registro
+                return await this.criarRegistroNivel(usuario);
             }
         }
 
         async criarRegistroNivel(usuario) {
             try {
+                // Verifica se já existe registro
+                const { data: existing } = await supabase
+                    .from(TABELA)
+                    .select('login')
+                    .eq('login', usuario.login)
+                    .single();
+
+                if (existing) {
+                    // Já existe, apenas carrega novamente
+                    return await this.carregar(usuario);
+                }
+
                 const payload = {
                     login: usuario.login,
                     nivel: 1,
                     experiencia: 0,
                     exp_proximo: 100,
-                    lwHp: 100,
-                    lwMp: 50,
-                    lwSm: 100,
-                    lwAtk: 15,
-                    lwDef: 10,
-                    lwMag: 8,
+                    lwhp: 100,
+                    lwmp: 50,
+                    lwsm: 100,
+                    lwatk: 15,
+                    lwdef: 10,
+                    lwmag: 8,
                     hp_atual: 100,
                     mp_atual: 50,
                     sm_atual: 100,
                     total_treinos: 0,
-                    total_descansos: 0
+                    total_descansos: 0,
+                    created_at: new Date().toISOString(),
+                    updated_at: new Date().toISOString()
                 };
 
                 const { error } = await supabase
                     .from(TABELA)
-                    .update(payload)
-                    .eq('login', usuario.login);
+                    .insert(payload);
 
                 if (error) throw error;
 
+                // Reseta valores
                 this.nivel = 1;
                 this.experiencia = 0;
                 this.hp = 100;
                 this.mp = 50;
                 this.sm = 100;
+                this.hpMax = 100;
+                this.mpMax = 50;
+                this.smMax = 100;
+                this.ataqueBase = 15;
+                this.defesaBase = 10;
+                this.magiaBase = 8;
                 this.totalTreinos = 0;
                 this.totalDescansos = 0;
+                
                 this.atualizarUI();
                 this.addLog('🌱 Registro de nível criado!', 'info');
 
@@ -660,10 +711,15 @@
             toast.style.display = 'block';
             toast.style.opacity = '1';
 
-            clearTimeout(this.toastTimer);
+            if (this.toastTimer) {
+                clearTimeout(this.toastTimer);
+            }
+            
             this.toastTimer = setTimeout(() => {
                 toast.style.opacity = '0';
-                setTimeout(() => { toast.style.display = 'none'; }, 400);
+                setTimeout(() => { 
+                    toast.style.display = 'none'; 
+                }, 400);
             }, 3000);
         }
 
@@ -672,7 +728,7 @@
         // ============================================================
         async verificarConexao() {
             try {
-                const { error } = await supabase.from(TABELA).select('id').limit(1);
+                const { error } = await supabase.from(TABELA).select('login').limit(1);
                 this.supabaseOnline = !error;
                 
                 const dot = document.getElementById('supabaseDot');
@@ -704,6 +760,7 @@
             const gameCards = document.querySelectorAll('.game-card');
             
             gameCards.forEach(card => {
+                // Remove eventos antigos para evitar duplicação
                 card.removeEventListener('click', this.gastarStaminaParaJogar);
                 card.addEventListener('click', this.gastarStaminaParaJogar);
             });
@@ -752,40 +809,33 @@
                 return;
             }
 
+            // Primeiro tenta carregar o nível
+            await levelSystem.carregar(usuario);
+
+            // Depois busca o perfil completo
             const { data: profile, error: profileError } = await supabase
                 .from(TABELA)
                 .select('*')
                 .eq('login', usuario.login)
                 .single();
 
-            if (profileError) {
-                const nick = usuario.nome || usuario.login;
-                document.getElementById('userNick').textContent = nick;
-                document.getElementById('userBalance').textContent = 'R$ 0,00';
-                document.getElementById('userAvatar').textContent = nick.charAt(0).toUpperCase();
-                document.getElementById('headerUser').textContent = nick;
-                await levelSystem.carregar(usuario);
-                return;
+            if (profileError && profileError.code !== 'PGRST116') {
+                console.warn('⚠️ Erro ao buscar perfil:', profileError);
             }
 
-            if (profile) {
-                const nick = profile.nome || profile.login || usuario.login;
-                document.getElementById('userNick').textContent = nick;
-                document.getElementById('headerUser').textContent = nick;
+            // Define o nick e saldo
+            const nick = profile?.nome || usuario.nome || usuario.login;
+            const balance = profile?.saldo !== undefined && profile.saldo !== null ? profile.saldo : 0;
 
-                const balance = profile.saldo !== undefined && profile.saldo !== null ? profile.saldo : 0;
-                document.getElementById('userBalance').textContent = new Intl.NumberFormat('pt-BR', {
-                    style: 'currency',
-                    currency: 'BRL'
-                }).format(balance);
+            document.getElementById('userNick').textContent = nick;
+            document.getElementById('headerUser').textContent = nick;
+            document.getElementById('userBalance').textContent = new Intl.NumberFormat('pt-BR', {
+                style: 'currency',
+                currency: 'BRL'
+            }).format(balance);
+            document.getElementById('userAvatar').textContent = nick.charAt(0).toUpperCase();
 
-                document.getElementById('userAvatar').textContent = nick.charAt(0).toUpperCase();
-
-                await levelSystem.carregar(profile);
-                levelSystem.addLog(`👋 Bem-vindo, ${nick}!`, 'info');
-            } else {
-                setFallbackUser();
-            }
+            levelSystem.addLog(`👋 Bem-vindo, ${nick}!`, 'info');
 
         } catch (error) {
             console.error('❌ Erro ao carregar perfil:', error);
@@ -818,7 +868,10 @@
     // ============================================================
     document.getElementById('btnSair')?.addEventListener('click', function() {
         if (confirm('Tem certeza que deseja sair?')) {
-            levelSystem.salvar();
+            // Salva antes de sair
+            if (levelSystem.usuario && levelSystem.supabaseOnline) {
+                levelSystem.salvar();
+            }
             localStorage.removeItem('usuario_logado');
             window.location.href = 'login.html';
         }
@@ -835,8 +888,10 @@
     document.addEventListener('DOMContentLoaded', function() {
         console.log('🚀 Dashboard carregado!');
 
+        // Verifica conexão
         levelSystem.verificarConexao();
         
+        // Carrega dados do usuário
         setTimeout(() => {
             loadUserData();
             setTimeout(() => {
@@ -844,6 +899,7 @@
             }, 500);
         }, 300);
 
+        // Inicia salvamento automático
         iniciarSalvamentoAutomatico();
         levelSystem.iniciarRecuperacaoStamina();
 
@@ -862,6 +918,7 @@
             document.body.appendChild(toast);
         }
 
+        // Salva ao fechar a página
         window.addEventListener('beforeunload', () => {
             if (levelSystem.usuario && levelSystem.supabaseOnline) {
                 levelSystem.salvar();

@@ -23,7 +23,7 @@ const MOEDA = 'Mumu';
 
 let supabaseOnline = false;
 let usuariosCache = [];
-let selicAtual = 14.75;
+let selicAtual = 10.75; // Valor padrão inicial, será sobrescrito pelo Supabase
 
 // ==================== FUNÇÕES ====================
 function mostrarMensagem(texto, tipo = 'info') {
@@ -114,6 +114,7 @@ function atualizarDisplaySelic(valor) {
 
 async function salvarSelicNoSupabase(valor) {
     try {
+        // Primeiro, verifica se o registro existe
         const { data: existingData, error: checkError } = await supabase
             .from(TABELA)
             .select('id')
@@ -121,14 +122,16 @@ async function salvarSelicNoSupabase(valor) {
             .single();
 
         if (checkError && checkError.code === 'PGRST116') {
+            // Registro não existe, cria
             const { error: insertError } = await supabase
                 .from(TABELA)
-                .insert({ id: 1, selic: valor });
+                .insert({ id: 1, selic: valor, updated_at: new Date().toISOString() });
             if (insertError) {
                 console.error('Erro ao criar registro SELIC:', insertError);
                 return false;
             }
         } else {
+            // Registro existe, atualiza
             const { error: updateError } = await supabase
                 .from(TABELA)
                 .update({ selic: valor, updated_at: new Date().toISOString() })
@@ -152,12 +155,16 @@ async function carregarSelicDoSupabase() {
             .select('selic')
             .eq('id', 1)
             .single();
+            
         if (error) {
-            if (error.code === 'PGRST116') return null;
+            if (error.code === 'PGRST116') {
+                // Nenhum registro encontrado, retorna null para criar um novo
+                return null;
+            }
             console.warn('Erro ao carregar SELIC:', error);
             return null;
         }
-        return data?.selic || null;
+        return data?.selic ?? null;
     } catch (error) {
         console.error('Erro ao carregar SELIC:', error);
         return null;
@@ -681,19 +688,27 @@ document.getElementById('selicInput').addEventListener('keypress', (e) => {
 async function inicializar() {
     await verificarSupabase();
 
+    // Sempre carrega a SELIC do Supabase
     const selicSalva = await carregarSelicDoSupabase();
+    
     if (selicSalva !== null && selicSalva !== undefined) {
+        // Usa o valor salvo no Supabase
         selicAtual = selicSalva;
         document.getElementById('selicInput').value = selicSalva;
         atualizarDisplaySelic(selicSalva);
+        console.log('✅ SELIC carregada do Supabase:', selicSalva);
     } else {
-        await salvarSelicNoSupabase(10.75);
-        selicAtual = 10.75;
-        document.getElementById('selicInput').value = 10.75;
-        atualizarDisplaySelic(10.75);
+        // Nenhum registro encontrado, cria com valor padrão
+        const valorPadrao = 10.75;
+        await salvarSelicNoSupabase(valorPadrao);
+        selicAtual = valorPadrao;
+        document.getElementById('selicInput').value = valorPadrao;
+        atualizarDisplaySelic(valorPadrao);
+        console.log('✅ SELIC criada no Supabase com valor padrão:', valorPadrao);
     }
 
     await carregarDados();
 }
 
+// Inicia a aplicação
 inicializar();
