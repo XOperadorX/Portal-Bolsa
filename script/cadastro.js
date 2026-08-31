@@ -239,3 +239,7 @@ if (usuarioLogado) {
         localStorage.removeItem('usuario_logado');
     }
 }
+
+
+// Depois de alterar o saldo ou inventário
+await salvarDadosDoJogador();

@@ -3,50 +3,28 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>🌾 Mercado de Plantas - MM</title>
+    <title>🌾 Mercado - MM</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Rajdhani:wght@400;500;600;700&family=Share+Tech+Mono&display=swap" rel="stylesheet">
     <style>
-        /* ============================================================
-           🌾 MERCADO DE PLANTAS - CSS FUTURÍSTICO
-           Tema: Cyberpunk Neon / RPG
-           ============================================================ */
         :root {
-            /* Cores Principais - Neon Cyberpunk */
             --neon-green: #00ff88;
             --neon-blue: #00d4ff;
             --neon-purple: #a855f7;
-            --neon-pink: #ff2d95;
             --neon-yellow: #fbbf24;
-            --neon-orange: #fb923c;
-            --neon-red: #ff4444;
-
-            /* Fundo e Texto */
             --bg-primary: #0a0a0f;
             --bg-secondary: #111122;
             --bg-card: #1a1a2e;
-            --bg-card-hover: #222244;
             --bg-input: #0d0d1a;
-
             --text-primary: #e8e8ff;
             --text-secondary: #a0a0c0;
             --text-muted: #6a6a8a;
-            --text-glow: #ffffff;
-
-            /* Bordas e Sombras */
             --border-neon: 0 0 15px rgba(0, 255, 136, 0.3);
-            --border-glow: 0 0 30px rgba(0, 212, 255, 0.15);
             --shadow-card: 0 8px 32px rgba(0, 0, 0, 0.6);
-
-            /* Transições */
             --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
         }
 
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
 
         body {
             font-family: 'Rajdhani', 'Segoe UI', sans-serif;
@@ -56,70 +34,19 @@
             display: flex;
             justify-content: center;
             align-items: center;
-            background-image:
-                radial-gradient(ellipse at 10% 20%, rgba(0, 255, 136, 0.05) 0%, transparent 50%),
-                radial-gradient(ellipse at 90% 80%, rgba(168, 85, 247, 0.05) 0%, transparent 50%),
-                radial-gradient(ellipse at 50% 50%, rgba(0, 212, 255, 0.03) 0%, transparent 70%);
             padding: 20px;
         }
 
-        /* ============================================================
-           SCROLLBAR PERSONALIZADA
-           ============================================================ */
-        ::-webkit-scrollbar {
-            width: 6px;
-            height: 6px;
-        }
-        ::-webkit-scrollbar-track {
-            background: var(--bg-secondary);
-            border-radius: 3px;
-        }
-        ::-webkit-scrollbar-thumb {
-            background: linear-gradient(180deg, var(--neon-green), var(--neon-blue));
-            border-radius: 3px;
-        }
-        ::-webkit-scrollbar-thumb:hover {
-            background: linear-gradient(180deg, var(--neon-blue), var(--neon-purple));
-        }
-
-        /* ============================================================
-           CARD PRINCIPAL
-           ============================================================ */
         .card {
             width: 100%;
             max-width: 1100px;
             background: var(--bg-card);
-            backdrop-filter: blur(20px);
             border-radius: 24px;
             padding: 24px 28px 32px;
             border: 1px solid rgba(0, 255, 136, 0.12);
-            box-shadow: var(--shadow-card), var(--border-glow);
-            position: relative;
-            overflow: hidden;
-            transition: var(--transition);
+            box-shadow: var(--shadow-card);
         }
 
-        .card::before {
-            content: '';
-            position: absolute;
-            top: -2px;
-            left: -2px;
-            right: -2px;
-            bottom: -2px;
-            border-radius: 24px;
-            background: linear-gradient(135deg, rgba(0, 255, 136, 0.15), transparent 40%, transparent 60%, rgba(168, 85, 247, 0.15));
-            z-index: -1;
-            animation: borderPulse 4s ease-in-out infinite;
-        }
-
-        @keyframes borderPulse {
-            0%, 100% { opacity: 0.5; }
-            50% { opacity: 1; }
-        }
-
-        /* ============================================================
-           NAVEGAÇÃO
-           ============================================================ */
         .nav-bar {
             display: flex;
             justify-content: space-between;
@@ -139,11 +66,6 @@
             padding: 8px 16px 8px 10px;
             border-radius: 50px;
             border: 1px solid rgba(0, 255, 136, 0.1);
-            transition: var(--transition);
-        }
-        .user-profile:hover {
-            border-color: rgba(0, 255, 136, 0.3);
-            box-shadow: 0 0 20px rgba(0, 255, 136, 0.05);
         }
 
         .user-avatar {
@@ -159,36 +81,11 @@
             color: var(--bg-primary);
             font-family: 'Orbitron', monospace;
             box-shadow: 0 0 20px rgba(0, 255, 136, 0.3);
-            transition: var(--transition);
-        }
-        .user-avatar:hover {
-            transform: scale(1.05);
-            box-shadow: 0 0 30px rgba(0, 255, 136, 0.5);
         }
 
-        .user-info {
-            display: flex;
-            flex-direction: column;
-            line-height: 1.3;
-        }
-        .user-nick {
-            font-family: 'Orbitron', monospace;
-            font-size: 0.85rem;
-            font-weight: 700;
-            color: var(--text-primary);
-            letter-spacing: 0.5px;
-        }
-        .user-nick::before {
-            content: '▶ ';
-            color: var(--neon-green);
-            font-size: 0.6rem;
-        }
-        .user-balance {
-            font-size: 0.8rem;
-            color: var(--neon-yellow);
-            font-family: 'Share Tech Mono', monospace;
-            font-weight: 600;
-        }
+        .user-info { display: flex; flex-direction: column; line-height: 1.3; }
+        .user-nick { font-family: 'Orbitron', monospace; font-size: 0.85rem; font-weight: 700; color: var(--text-primary); }
+        .user-balance { font-size: 0.8rem; color: var(--neon-yellow); font-family: 'Share Tech Mono', monospace; font-weight: 600; }
 
         .btn-voltar {
             display: inline-flex;
@@ -201,7 +98,6 @@
             border-radius: 50px;
             font-size: 0.8rem;
             font-weight: 600;
-            font-family: 'Rajdhani', sans-serif;
             border: 1px solid rgba(0, 255, 136, 0.15);
             transition: var(--transition);
             text-transform: uppercase;
@@ -211,8 +107,6 @@
         .btn-voltar:hover {
             background: linear-gradient(135deg, rgba(0, 255, 136, 0.2), rgba(0, 212, 255, 0.2));
             border-color: var(--neon-green);
-            box-shadow: 0 0 25px rgba(0, 255, 136, 0.15);
-            transform: translateY(-1px);
         }
 
         .status-bar {
@@ -227,39 +121,22 @@
             border-radius: 50px;
             border: 1px solid rgba(0, 255, 136, 0.06);
         }
-        .status-item {
-            display: flex;
-            align-items: center;
-            gap: 6px;
-        }
+        .status-item { display: flex; align-items: center; gap: 6px; }
         .dot {
             width: 8px;
             height: 8px;
             border-radius: 50%;
             display: inline-block;
-            transition: var(--transition);
         }
-        .dot.online {
-            background: var(--neon-green);
-            box-shadow: 0 0 12px rgba(0, 255, 136, 0.6);
-            animation: dotPulse 1.5s ease-in-out infinite;
-        }
-        .dot.offline {
-            background: var(--neon-red);
-            box-shadow: 0 0 12px rgba(255, 68, 68, 0.4);
-        }
-        .dot.checking {
-            background: var(--neon-yellow);
-            box-shadow: 0 0 12px rgba(251, 191, 36, 0.4);
-            animation: dotPulse 0.8s ease-in-out infinite;
-        }
-        @keyframes dotPulse {
+        .dot.online { background: var(--neon-green); box-shadow: 0 0 12px rgba(0, 255, 136, 0.6); }
+        .dot.offline { background: #ff4444; }
+        .dot.checking { background: var(--neon-yellow); animation: pulse-dot 1s ease-in-out infinite; }
+        @keyframes pulse-dot {
             0%, 100% { opacity: 1; transform: scale(1); }
             50% { opacity: 0.4; transform: scale(0.7); }
         }
-        .status-item .label { color: var(--text-muted); }
         .status-item .value.online { color: var(--neon-green); }
-        .status-item .value.offline { color: var(--neon-red); }
+        .status-item .value.offline { color: #ff4444; }
         .status-item .value.checking { color: var(--neon-yellow); }
 
         .status-reconnect {
@@ -272,40 +149,14 @@
             border-radius: 4px;
             transition: var(--transition);
         }
-        .status-reconnect:hover {
-            color: var(--neon-blue);
-            transform: rotate(45deg);
-        }
-        #headerSaldo {
-            color: var(--neon-yellow);
-            font-weight: 700;
-            font-size: 0.9rem;
-        }
+        .status-reconnect:hover { color: var(--neon-blue); }
 
-        /* ============================================================
-           LEVEL WIDGET
-           ============================================================ */
         .level-widget {
             background: linear-gradient(145deg, rgba(0, 255, 136, 0.04), rgba(0, 212, 255, 0.04));
             border: 1px solid rgba(0, 255, 136, 0.08);
             border-radius: 16px;
             padding: 16px 20px;
             margin-bottom: 20px;
-            transition: var(--transition);
-            position: relative;
-            overflow: hidden;
-        }
-        .level-widget::after {
-            content: '';
-            position: absolute;
-            top: 0; left: 0; right: 0; bottom: 0;
-            background: linear-gradient(90deg, transparent, rgba(0, 255, 136, 0.02), transparent);
-            animation: shimmer 4s ease-in-out infinite;
-            pointer-events: none;
-        }
-        @keyframes shimmer {
-            0%, 100% { transform: translateX(-100%); }
-            50% { transform: translateX(100%); }
         }
 
         .lw-header {
@@ -315,12 +166,7 @@
             flex-wrap: wrap;
             gap: 12px;
         }
-        .lw-badge {
-            display: flex;
-            align-items: center;
-            gap: 14px;
-            position: relative;
-        }
+        .lw-badge { display: flex; align-items: center; gap: 14px; }
         .lw-num {
             font-family: 'Orbitron', monospace;
             font-size: 2.2rem;
@@ -330,49 +176,13 @@
             -webkit-text-fill-color: transparent;
             background-clip: text;
             line-height: 1;
-            text-shadow: 0 0 40px rgba(0, 255, 136, 0.2);
         }
-        .lw-label {
-            font-family: 'Orbitron', monospace;
-            font-size: 0.55rem;
-            color: var(--text-muted);
-            letter-spacing: 2px;
-            text-transform: uppercase;
-        }
-        .lw-title {
-            font-family: 'Orbitron', monospace;
-            font-size: 0.85rem;
-            font-weight: 700;
-            color: var(--text-primary);
-        }
-        .lw-exp {
-            flex: 1;
-            min-width: 150px;
-            max-width: 350px;
-        }
-        .lw-bar {
-            width: 100%;
-            height: 6px;
-            background: var(--bg-secondary);
-            border-radius: 50px;
-            overflow: hidden;
-            border: 1px solid rgba(0, 255, 136, 0.05);
-        }
-        .lw-fill {
-            height: 100%;
-            background: linear-gradient(90deg, var(--neon-green), var(--neon-blue));
-            border-radius: 50px;
-            transition: width 0.8s cubic-bezier(0.4, 0, 0.2, 1);
-            box-shadow: 0 0 20px rgba(0, 255, 136, 0.2);
-        }
-        .lw-text {
-            display: flex;
-            justify-content: space-between;
-            font-size: 0.7rem;
-            font-family: 'Share Tech Mono', monospace;
-            color: var(--text-secondary);
-            margin-top: 4px;
-        }
+        .lw-label { font-family: 'Orbitron', monospace; font-size: 0.55rem; color: var(--text-muted); letter-spacing: 2px; text-transform: uppercase; }
+        .lw-title { font-family: 'Orbitron', monospace; font-size: 0.85rem; font-weight: 700; color: var(--text-primary); }
+        .lw-exp { flex: 1; min-width: 150px; max-width: 350px; }
+        .lw-bar { width: 100%; height: 6px; background: var(--bg-secondary); border-radius: 50px; overflow: hidden; border: 1px solid rgba(0, 255, 136, 0.05); }
+        .lw-fill { height: 100%; background: linear-gradient(90deg, var(--neon-green), var(--neon-blue)); border-radius: 50px; transition: width 0.8s cubic-bezier(0.4, 0, 0.2, 1); }
+        .lw-text { display: flex; justify-content: space-between; font-size: 0.7rem; font-family: 'Share Tech Mono', monospace; color: var(--text-secondary); margin-top: 4px; }
         .lw-cur { color: var(--neon-green); font-weight: 700; }
         .lw-nxt { color: var(--text-muted); }
 
@@ -387,60 +197,14 @@
             font-family: 'Share Tech Mono', monospace;
             color: var(--text-secondary);
         }
-        .lw-stats span {
-            display: flex;
-            align-items: center;
-            gap: 6px;
-        }
-        .lw-stats .hp-c { color: var(--neon-red); font-weight: 600; }
+        .lw-stats span { display: flex; align-items: center; gap: 6px; }
+        .lw-stats .hp-c { color: #ff4444; font-weight: 600; }
         .lw-stats .mp-c { color: var(--neon-blue); font-weight: 600; }
         .lw-stats .sm-c { color: var(--neon-yellow); font-weight: 600; }
         .lw-stats .atk-c { color: #ff6b6b; font-weight: 600; }
         .lw-stats .def-c { color: #4ecdc4; font-weight: 600; }
         .lw-stats .mag-c { color: var(--neon-purple); font-weight: 600; }
 
-        .lw-actions {
-            display: flex;
-            gap: 8px;
-            margin-top: 10px;
-            flex-wrap: wrap;
-        }
-        .btn-level-quick {
-            padding: 6px 16px;
-            border: none;
-            border-radius: 50px;
-            font-family: 'Rajdhani', sans-serif;
-            font-weight: 600;
-            font-size: 0.75rem;
-            cursor: pointer;
-            transition: var(--transition);
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-        }
-        .btn-treinar {
-            background: linear-gradient(135deg, rgba(0, 255, 136, 0.15), rgba(0, 212, 255, 0.15));
-            color: var(--neon-green);
-            border: 1px solid rgba(0, 255, 136, 0.2);
-        }
-        .btn-treinar:hover {
-            background: linear-gradient(135deg, rgba(0, 255, 136, 0.25), rgba(0, 212, 255, 0.25));
-            box-shadow: 0 0 25px rgba(0, 255, 136, 0.1);
-            transform: translateY(-1px);
-        }
-        .btn-descansar {
-            background: linear-gradient(135deg, rgba(168, 85, 247, 0.15), rgba(0, 212, 255, 0.15));
-            color: var(--neon-purple);
-            border: 1px solid rgba(168, 85, 247, 0.2);
-        }
-        .btn-descansar:hover {
-            background: linear-gradient(135deg, rgba(168, 85, 247, 0.25), rgba(0, 212, 255, 0.25));
-            box-shadow: 0 0 25px rgba(168, 85, 247, 0.1);
-            transform: translateY(-1px);
-        }
-
-        /* ============================================================
-           MERCADO HEADER
-           ============================================================ */
         .market-header {
             display: flex;
             justify-content: space-between;
@@ -457,13 +221,8 @@
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
             background-clip: text;
-            letter-spacing: 1px;
         }
-        .market-header h2 i {
-            -webkit-text-fill-color: initial;
-            color: var(--neon-green);
-            margin-right: 8px;
-        }
+        .market-header h2 i { -webkit-text-fill-color: initial; color: var(--neon-green); margin-right: 8px; }
         .saldo-box {
             background: var(--bg-secondary);
             padding: 8px 20px;
@@ -474,19 +233,9 @@
             align-items: center;
             gap: 8px;
         }
-        .saldo-box .label {
-            color: var(--text-muted);
-            font-size: 0.75rem;
-        }
-        .saldo-box .value {
-            color: var(--neon-yellow);
-            font-weight: 700;
-            font-size: 1.1rem;
-        }
+        .saldo-box .label { color: var(--text-muted); font-size: 0.75rem; }
+        .saldo-box .value { color: var(--neon-yellow); font-weight: 700; font-size: 1.1rem; }
 
-        /* ============================================================
-           GRADE DO MERCADO
-           ============================================================ */
         .market-grid {
             display: grid;
             grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
@@ -502,28 +251,13 @@
             position: relative;
             overflow: hidden;
         }
-        .market-item::before {
-            content: '';
-            position: absolute;
-            top: 0; left: 0; right: 0;
-            height: 2px;
-            background: linear-gradient(90deg, var(--neon-green), var(--neon-blue), transparent);
-            opacity: 0;
-            transition: var(--transition);
-        }
         .market-item:hover {
             border-color: rgba(0, 255, 136, 0.15);
             transform: translateY(-2px);
             box-shadow: 0 8px 30px rgba(0, 0, 0, 0.3);
         }
-        .market-item:hover::before { opacity: 1; }
 
-        .item-header {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            margin-bottom: 8px;
-        }
+        .item-header { display: flex; align-items: center; gap: 12px; margin-bottom: 8px; }
         .item-icon {
             font-size: 2rem;
             width: 44px;
@@ -534,51 +268,16 @@
             background: rgba(0, 255, 136, 0.04);
             border-radius: 12px;
             border: 1px solid rgba(0, 255, 136, 0.06);
-            transition: var(--transition);
         }
-        .market-item:hover .item-icon {
-            border-color: rgba(0, 255, 136, 0.15);
-            transform: scale(1.05);
-        }
-        .item-name {
-            font-family: 'Orbitron', monospace;
-            font-size: 0.9rem;
-            font-weight: 700;
-            color: var(--text-primary);
-        }
-        .item-sub {
-            font-size: 0.7rem;
-            color: var(--text-muted);
-        }
-        .item-price {
-            font-family: 'Share Tech Mono', monospace;
-            font-size: 1.2rem;
-            font-weight: 700;
-            color: var(--neon-yellow);
-            margin: 6px 0 4px;
-        }
-        .item-price span {
-            font-size: 0.7rem;
-            font-weight: 400;
-            color: var(--text-muted);
-        }
-        .item-stock {
-            font-size: 0.7rem;
-            color: var(--text-muted);
-            margin-bottom: 10px;
-        }
+        .item-name { font-family: 'Orbitron', monospace; font-size: 0.9rem; font-weight: 700; color: var(--text-primary); }
+        .item-sub { font-size: 0.7rem; color: var(--text-muted); }
+        .item-price { font-family: 'Share Tech Mono', monospace; font-size: 1.2rem; font-weight: 700; color: var(--neon-yellow); margin: 6px 0 4px; }
+        .item-price span { font-size: 0.7rem; font-weight: 400; color: var(--text-muted); }
+        .item-stock { font-size: 0.7rem; color: var(--text-muted); margin-bottom: 10px; }
         .item-stock strong { color: var(--text-secondary); }
 
-        .item-actions {
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            flex-wrap: wrap;
-        }
-        .qty-group {
-            display: flex;
-            align-items: center;
-        }
+        .item-actions { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+        .qty-group { display: flex; align-items: center; }
         .qty-input {
             width: 56px;
             padding: 6px 4px;
@@ -589,18 +288,9 @@
             font-family: 'Share Tech Mono', monospace;
             font-size: 0.9rem;
             text-align: center;
-            transition: var(--transition);
         }
-        .qty-input:focus {
-            outline: none;
-            border-color: var(--neon-green);
-            box-shadow: 0 0 20px rgba(0, 255, 136, 0.05);
-        }
-        .qty-input::-webkit-inner-spin-button,
-        .qty-input::-webkit-outer-spin-button {
-            -webkit-appearance: none;
-            margin: 0;
-        }
+        .qty-input:focus { outline: none; border-color: var(--neon-green); }
+        .qty-input::-webkit-inner-spin-button { -webkit-appearance: none; }
         .qty-input[type="number"] { -moz-appearance: textfield; }
 
         .btn {
@@ -625,10 +315,8 @@
         }
         .btn-buy:hover {
             background: linear-gradient(135deg, rgba(0, 255, 136, 0.2), rgba(0, 212, 255, 0.2));
-            box-shadow: 0 0 25px rgba(0, 255, 136, 0.1);
-            transform: translateY(-1px);
         }
-        .btn-buy:active { transform: scale(0.97); }
+        .btn-buy:disabled { opacity: 0.4; cursor: not-allowed; }
 
         .btn-sell {
             background: linear-gradient(135deg, rgba(251, 191, 36, 0.08), rgba(251, 146, 60, 0.08));
@@ -637,19 +325,9 @@
         }
         .btn-sell:hover:not(:disabled) {
             background: linear-gradient(135deg, rgba(251, 191, 36, 0.15), rgba(251, 146, 60, 0.15));
-            box-shadow: 0 0 25px rgba(251, 191, 36, 0.08);
-            transform: translateY(-1px);
         }
-        .btn-sell:disabled {
-            opacity: 0.3;
-            cursor: not-allowed;
-            transform: none !important;
-        }
-        .btn-sell:active:not(:disabled) { transform: scale(0.97); }
+        .btn-sell:disabled { opacity: 0.3; cursor: not-allowed; }
 
-        /* ============================================================
-           INVENTÁRIO
-           ============================================================ */
         .player-inventory {
             background: var(--bg-secondary);
             border-radius: 16px;
@@ -665,16 +343,8 @@
             margin-bottom: 10px;
             letter-spacing: 0.5px;
         }
-        .player-inventory h3 i {
-            color: var(--neon-green);
-            margin-right: 8px;
-        }
-        .inv-grid {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 8px;
-            min-height: 36px;
-        }
+        .player-inventory h3 i { color: var(--neon-green); margin-right: 8px; }
+        .inv-grid { display: flex; flex-wrap: wrap; gap: 8px; min-height: 36px; }
         .inv-item {
             background: var(--bg-input);
             padding: 4px 14px;
@@ -683,26 +353,10 @@
             border: 1px solid rgba(0, 255, 136, 0.06);
             transition: var(--transition);
             font-family: 'Rajdhani', sans-serif;
-            animation: itemPop 0.3s ease-out forwards;
         }
-        .inv-item:hover {
-            border-color: rgba(0, 255, 136, 0.15);
-            background: rgba(0, 255, 136, 0.04);
-        }
-        .inv-item .qty {
-            color: var(--neon-yellow);
-            font-weight: 700;
-            font-family: 'Share Tech Mono', monospace;
-        }
-        @keyframes itemPop {
-            0% { transform: scale(0.8); opacity: 0; }
-            60% { transform: scale(1.05); }
-            100% { transform: scale(1); opacity: 1; }
-        }
+        .inv-item:hover { border-color: rgba(0, 255, 136, 0.15); background: rgba(0, 255, 136, 0.04); }
+        .inv-item .qty { color: var(--neon-yellow); font-weight: 700; font-family: 'Share Tech Mono', monospace; }
 
-        /* ============================================================
-           TOAST
-           ============================================================ */
         .toast {
             position: fixed;
             bottom: 30px;
@@ -713,34 +367,19 @@
             padding: 12px 28px;
             border-radius: 12px;
             border: 1px solid rgba(0, 255, 136, 0.12);
-            box-shadow: var(--shadow-card), 0 0 40px rgba(0, 0, 0, 0.5);
+            box-shadow: var(--shadow-card);
             font-family: 'Rajdhani', sans-serif;
             font-size: 0.9rem;
             font-weight: 500;
             z-index: 9999;
             opacity: 0;
             transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
-            backdrop-filter: blur(20px);
             max-width: 90%;
             text-align: center;
             pointer-events: none;
         }
-        .toast.show {
-            opacity: 1;
-            transform: translateX(-50%) translateY(0);
-        }
-        .toast::before {
-            content: '';
-            position: absolute;
-            top: -1px; left: -1px; right: -1px; bottom: -1px;
-            border-radius: 12px;
-            background: linear-gradient(135deg, rgba(0, 255, 136, 0.1), transparent 40%, transparent 60%, rgba(168, 85, 247, 0.1));
-            z-index: -1;
-        }
+        .toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
 
-        /* ============================================================
-           LOGIN MODAL
-           ============================================================ */
         #loginModal {
             display: none;
             position: fixed;
@@ -750,13 +389,8 @@
             z-index: 10000;
             justify-content: center;
             align-items: center;
-            animation: fadeIn 0.4s ease-out;
         }
         #loginModal.show { display: flex; }
-        @keyframes fadeIn {
-            from { opacity: 0; transform: scale(0.95); }
-            to { opacity: 1; transform: scale(1); }
-        }
 
         .modal-box {
             background: var(--bg-card);
@@ -765,17 +399,7 @@
             max-width: 420px;
             width: 100%;
             border: 1px solid rgba(0, 255, 136, 0.08);
-            box-shadow: var(--shadow-card), 0 0 60px rgba(0, 0, 0, 0.5);
-            position: relative;
-            overflow: hidden;
-        }
-        .modal-box::before {
-            content: '';
-            position: absolute;
-            top: -2px; left: -2px; right: -2px; bottom: -2px;
-            border-radius: 24px;
-            background: linear-gradient(135deg, rgba(0, 255, 136, 0.1), transparent 40%, transparent 60%, rgba(168, 85, 247, 0.1));
-            z-index: -1;
+            box-shadow: var(--shadow-card);
         }
         .modal-box h2 {
             font-family: 'Orbitron', monospace;
@@ -788,24 +412,9 @@
             background-clip: text;
             margin-bottom: 4px;
         }
-        .modal-box .sub {
-            text-align: center;
-            color: var(--text-muted);
-            font-size: 0.85rem;
-            margin-bottom: 24px;
-        }
-        .form-group {
-            margin-bottom: 14px;
-        }
-        .form-group label {
-            display: block;
-            font-size: 0.75rem;
-            font-weight: 600;
-            color: var(--text-secondary);
-            text-transform: uppercase;
-            letter-spacing: 1px;
-            margin-bottom: 4px;
-        }
+        .modal-box .sub { text-align: center; color: var(--text-muted); font-size: 0.85rem; margin-bottom: 24px; }
+        .form-group { margin-bottom: 14px; }
+        .form-group label { display: block; font-size: 0.75rem; font-weight: 600; color: var(--text-secondary); text-transform: uppercase; letter-spacing: 1px; margin-bottom: 4px; }
         .form-group input {
             width: 100%;
             padding: 12px 16px;
@@ -817,21 +426,8 @@
             font-size: 1rem;
             transition: var(--transition);
         }
-        .form-group input:focus {
-            outline: none;
-            border-color: var(--neon-green);
-            box-shadow: 0 0 30px rgba(0, 255, 136, 0.04);
-        }
-        .form-group input::placeholder {
-            color: var(--text-muted);
-        }
-        .login-error {
-            color: var(--neon-red);
-            font-size: 0.8rem;
-            min-height: 24px;
-            text-align: center;
-            margin-top: 4px;
-        }
+        .form-group input:focus { outline: none; border-color: var(--neon-green); }
+        .login-error { color: #ff4444; font-size: 0.8rem; min-height: 24px; text-align: center; margin-top: 4px; }
         .btn-login-modal {
             width: 100%;
             padding: 14px;
@@ -848,18 +444,9 @@
             letter-spacing: 1px;
             margin-top: 8px;
         }
-        .btn-login-modal:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 8px 40px rgba(0, 255, 136, 0.2);
-        }
-        .btn-login-modal:active { transform: scale(0.97); }
+        .btn-login-modal:hover { transform: translateY(-2px); box-shadow: 0 8px 40px rgba(0, 255, 136, 0.2); }
 
-        .modal-actions {
-            display: flex;
-            justify-content: center;
-            gap: 16px;
-            margin-top: 16px;
-        }
+        .modal-actions { display: flex; justify-content: center; gap: 16px; margin-top: 16px; }
         .modal-actions button {
             background: transparent;
             border: none;
@@ -871,56 +458,23 @@
             padding: 4px 12px;
             border-radius: 8px;
         }
-        .modal-actions button:hover {
-            color: var(--neon-green);
-            background: rgba(0, 255, 136, 0.04);
-        }
+        .modal-actions button:hover { color: var(--neon-green); background: rgba(0, 255, 136, 0.04); }
 
-        /* ============================================================
-           RESPONSIVIDADE
-           ============================================================ */
         @media (max-width: 768px) {
-            .card { padding: 16px 14px 24px; border-radius: 16px; }
+            .card { padding: 16px 14px 24px; }
             .nav-bar { flex-direction: column; align-items: stretch; gap: 10px; }
             .user-profile { width: 100%; justify-content: center; }
-            .status-bar { justify-content: center; flex-wrap: wrap; font-size: 0.65rem; }
-            .level-widget { padding: 14px 16px; }
+            .market-grid { grid-template-columns: 1fr; }
+            .modal-box { padding: 28px 20px; margin: 16px; }
             .lw-header { flex-direction: column; align-items: stretch; }
             .lw-badge { justify-content: center; }
             .lw-exp { max-width: 100%; }
-            .lw-stats { justify-content: center; gap: 8px 16px; font-size: 0.65rem; }
-            .lw-actions { justify-content: center; }
-            .market-header { flex-direction: column; align-items: stretch; text-align: center; }
-            .market-header h2 { font-size: 1.2rem; }
-            .saldo-box { justify-content: center; font-size: 0.9rem; }
-            .market-grid { grid-template-columns: 1fr; }
-            .modal-box { padding: 28px 20px; margin: 16px; }
-            .modal-box h2 { font-size: 1.4rem; }
-            .toast { font-size: 0.8rem; padding: 10px 20px; bottom: 20px; max-width: 95%; }
-            .btn-voltar { font-size: 0.7rem; padding: 6px 14px; }
-        }
-        @media (max-width: 480px) {
-            .market-item { padding: 12px 14px; }
-            .item-actions { flex-direction: column; align-items: stretch; }
-            .item-actions .qty-group { justify-content: center; }
-            .btn { justify-content: center; }
-            .inv-grid { justify-content: center; }
-            .lw-num { font-size: 1.8rem; }
-        }
-
-        /* ============================================================
-           EFEITOS ESPECIAIS
-           ============================================================ */
-        .glow-text {
-            text-shadow: 0 0 20px rgba(0, 255, 136, 0.15), 0 0 60px rgba(0, 255, 136, 0.05);
         }
     </style>
 </head>
 <body>
-    <!-- CARD PRINCIPAL -->
     <div class="card">
 
-        <!-- NAVEGAÇÃO -->
         <nav class="nav-bar">
             <div class="user-profile" id="userInfo">
                 <div class="user-avatar" id="userAvatar">?</div>
@@ -931,6 +485,8 @@
             </div>
 
             <div style="display:flex; gap:8px; flex-wrap:wrap; align-items:center;">
+                <a href="planta.html" class="btn-voltar" style="background:linear-gradient(135deg,#27ae60,#1e8449);border-color:#27ae60;">🌽 Fazenda</a>
+                <a href="mochila.html" class="btn-voltar" style="background:linear-gradient(135deg,#f59e0b,#d97706);border-color:#f59e0b;">🎒 Mochila</a>
                 <a href="../../dashboard.html" class="btn-voltar">🏠 Voltar</a>
             </div>
 
@@ -947,7 +503,6 @@
             </div>
         </nav>
 
-        <!-- LEVEL WIDGET -->
         <div class="level-widget" id="levelWidget">
             <div class="lw-header">
                 <div class="lw-badge">
@@ -976,11 +531,8 @@
                 <span>🛡️ DEFESA<span class="def-c" id="lwDef">10</span></span>
                 <span>🔮 MAGIA<span class="mag-c" id="lwMag">8</span></span>
             </div>
-
-
         </div>
 
-        <!-- MERCADO HEADER -->
         <div class="market-header">
             <h2><i class="fas fa-store"></i> Mercado</h2>
             <div class="saldo-box">
@@ -989,12 +541,8 @@
             </div>
         </div>
 
-        <!-- GRADE DO MERCADO -->
-        <div class="market-grid" id="marketGrid">
-            <!-- Gerado pelo JavaScript -->
-        </div>
+        <div class="market-grid" id="marketGrid"></div>
 
-        <!-- INVENTÁRIO -->
         <div class="player-inventory">
             <h3><i class="fas fa-box"></i> Seu Estoque</h3>
             <div class="inv-grid" id="inventoryGrid">
@@ -1004,10 +552,8 @@
 
     </div>
 
-    <!-- TOAST -->
     <div class="toast" id="toast"></div>
 
-    <!-- LOGIN MODAL -->
     <div id="loginModal">
         <div class="modal-box">
             <h2>🌾 Mercado</h2>
@@ -1033,94 +579,32 @@
         (function() {
             'use strict';
 
-            // ============================================================
-            // CONFIGURAÇÃO SUPABASE
-            // ============================================================
             const SUPABASE_URL = 'https://xrcxvizzdumcxbylmkvn.supabase.co';
             const SUPABASE_KEY = 'sb_publishable_E-g3G3wW4EySbCsXLXp8KQ_FnmERMcD';
             const TABELA = 'Geral';
 
-            // ============================================================
-            // ESTADO GLOBAL
-            // ============================================================
             let supabaseOnline = false;
             let usuarioLogado = null;
             let toastTimeout = null;
             let salvando = false;
-            let dadosCompletos = null;
 
             // ============================================================
-            // ESTADO DO PERSONAGEM
-            // ============================================================
-            const personagem = {
-                nivel: 1,
-                experiencia: 0,
-                expProximo: 100,
-                hp: 100,
-                maxHp: 100,
-                mp: 50,
-                maxMp: 50,
-                sm: 100,
-                maxSm: 100,
-                atk: 15,
-                def: 10,
-                mag: 8,
-                saldo: 0,
-                btc: 0,
-                poderHash: 1.0,
-                itens: [],
-
-                titulos: [
-                    { min: 1, titulo: '🌱 Iniciante' },
-                    { min: 5, titulo: '🌿 Aprendiz' },
-                    { min: 10, titulo: '⚔️ Guerreiro' },
-                    { min: 20, titulo: '🛡️ Mestre' },
-                    { min: 35, titulo: '🏆 Lendário' },
-                    { min: 50, titulo: '👑 Herói' },
-                    { min: 75, titulo: '⚡ Deus da Guerra' },
-                    { min: 100, titulo: '🌟 Imortal' },
-                ],
-
-                getTitulo() {
-                    let titulo = this.titulos[0].titulo;
-                    for (const t of this.titulos) {
-                        if (this.nivel >= t.min) titulo = t.titulo;
-                    }
-                    return titulo;
-                },
-
-                getExpProximo() {
-                    return Math.floor(100 * Math.pow(1.2, this.nivel - 1));
-                },
-
-                getHpMax() { return this.maxHp + Math.floor(this.nivel * 6); },
-                getMpMax() { return this.maxMp + Math.floor(this.nivel * 4); },
-                getSmMax() { return this.maxSm + Math.floor(this.nivel * 3); },
-                getAtaque() { return this.atk + Math.floor(this.nivel * 1.5); },
-                getDefesa() { return this.def + Math.floor(this.nivel * 1.2); },
-                getMagia() { return this.mag + Math.floor(this.nivel * 1.0); }
-            };
-
-            // ============================================================
-            // MERCADO - ITENS
+            // ITENS DO MERCADO
             // ============================================================
             const ITENS_MERCADO = [
-                { id: 'sementes', nome: 'Sementes', emoji: '🌰', descricao: 'Plante no milharal', precoBase: 5, precoAtual: 5, variacao: 0, qtdDisponivel: 100, qtdMaxima: 200 },
-                { id: 'milho', nome: 'Milho', emoji: '🌽', descricao: 'Colheita do milharal', precoBase: 8, precoAtual: 8, variacao: 0, qtdDisponivel: 80, qtdMaxima: 150 },
-                { id: 'ovos', nome: 'Ovos', emoji: '🥚', descricao: 'Produzidos por galinhas', precoBase: 3, precoAtual: 3, variacao: 0, qtdDisponivel: 120, qtdMaxima: 200 },
-                { id: 'galinhas', nome: 'Galinhas', emoji: '🐔', descricao: 'Produzem ovos', precoBase: 25, precoAtual: 25, variacao: 0, qtdDisponivel: 30, qtdMaxima: 60 },
-                { id: 'madeira', nome: 'Madeira', emoji: '🪵', descricao: 'Recurso básico', precoBase: 10, precoAtual: 10, variacao: 0, qtdDisponivel: 150, qtdMaxima: 300 },
-                { id: 'pedra', nome: 'Pedra', emoji: '🪨', descricao: 'Recurso básico', precoBase: 15, precoAtual: 15, variacao: 0, qtdDisponivel: 120, qtdMaxima: 250 },
-                { id: 'ouro', nome: 'Ouro', emoji: '💎', descricao: 'Recurso valioso', precoBase: 50, precoAtual: 50, variacao: 0, qtdDisponivel: 40, qtdMaxima: 100 },
-                { id: 'pocao', nome: 'Poção', emoji: '🧪', descricao: 'Item mágico', precoBase: 25, precoAtual: 25, variacao: 0, qtdDisponivel: 60, qtdMaxima: 120 },
-                { id: 'balde', nome: 'Balde', emoji: '🪣', descricao: 'Útil para carregar líquidos', precoBase: 12, precoAtual: 12, variacao: 0, qtdDisponivel: 80, qtdMaxima: 150 }
+                { id: 'sementes', nome: 'Sementes', emoji: '🌰', descricao: 'Plante no milharal', precoBase: 5, precoAtual: 5, qtdDisponivel: 100, qtdMaxima: 200 },
+                { id: 'milho', nome: 'Milho', emoji: '🌽', descricao: 'Colheita do milharal', precoBase: 8, precoAtual: 8, qtdDisponivel: 80, qtdMaxima: 150 },
+                { id: 'ovos', nome: 'Ovos', emoji: '🥚', descricao: 'Produzidos por galinhas', precoBase: 3, precoAtual: 3, qtdDisponivel: 120, qtdMaxima: 200 },
+                { id: 'galinhas', nome: 'Galinhas', emoji: '🐔', descricao: 'Produzem ovos', precoBase: 25, precoAtual: 25, qtdDisponivel: 30, qtdMaxima: 60 },
+                { id: 'madeira', nome: 'Madeira', emoji: '🪵', descricao: 'Recurso básico', precoBase: 10, precoAtual: 10, qtdDisponivel: 150, qtdMaxima: 300 },
+                { id: 'pedra', nome: 'Pedra', emoji: '🪨', descricao: 'Recurso básico', precoBase: 15, precoAtual: 15, qtdDisponivel: 120, qtdMaxima: 250 },
+                { id: 'ouro', nome: 'Ouro', emoji: '💎', descricao: 'Recurso valioso', precoBase: 50, precoAtual: 50, qtdDisponivel: 40, qtdMaxima: 100 },
+                { id: 'pocao', nome: 'Poção', emoji: '🧪', descricao: 'Item mágico', precoBase: 25, precoAtual: 25, qtdDisponivel: 60, qtdMaxima: 120 },
+                { id: 'balde', nome: 'Balde', emoji: '🪣', descricao: 'Útil para carregar líquidos', precoBase: 12, precoAtual: 12, qtdDisponivel: 80, qtdMaxima: 150 }
             ];
 
-            // ============================================================
-            // ESTADO DO JOGADOR
-            // ============================================================
             let inventario = {};
-            let saldo = 0.00;
+            let saldo = 0;
 
             function initInventario() {
                 inventario = {};
@@ -1157,93 +641,51 @@
 
             function showToast(text, duration = 2200) {
                 const toastEl = document.getElementById('toast');
-                if (toastTimeout) {
-                    clearTimeout(toastTimeout);
-                    toastEl.classList.remove('show');
-                }
+                if (toastTimeout) { clearTimeout(toastTimeout); toastEl.classList.remove('show'); }
                 toastEl.textContent = text;
                 toastEl.classList.add('show');
-                toastTimeout = setTimeout(() => {
-                    toastEl.classList.remove('show');
-                    toastTimeout = null;
-                }, duration);
+                toastTimeout = setTimeout(() => { toastEl.classList.remove('show'); toastTimeout = null; }, duration);
             }
 
             // ============================================================
-            // ATUALIZAR UI DO PERSONAGEM
+            // FUNÇÕES DE NÍVEL
             // ============================================================
-            function atualizarUIPersonagem() {
-                const expProx = personagem.getExpProximo();
-                const pct = (personagem.experiencia / expProx) * 100;
+            function getTitulo(nivel) {
+                const titulos = [
+                    { min: 1, titulo: '🌱 Iniciante' },
+                    { min: 5, titulo: '🌿 Aprendiz' },
+                    { min: 10, titulo: '⚔️ Guerreiro' },
+                    { min: 20, titulo: '🛡️ Mestre' },
+                    { min: 35, titulo: '🏆 Lendário' },
+                    { min: 50, titulo: '👑 Herói' },
+                    { min: 75, titulo: '⚡ Deus da Guerra' },
+                    { min: 100, titulo: '🌟 Imortal' },
+                ];
+                let titulo = titulos[0].titulo;
+                for (const t of titulos) {
+                    if (nivel >= t.min) titulo = t.titulo;
+                }
+                return titulo;
+            }
 
-                document.getElementById('lwNivel').textContent = personagem.nivel;
-                document.getElementById('lwTitulo').textContent = personagem.getTitulo();
+            function atualizarLevelWidget(dados) {
+                if (!dados) return;
+                const nivel = dados.nivel || 1;
+                const exp = dados.experiencia || 0;
+                const expProx = dados.exp_next || 100;
+                const pct = (exp / expProx) * 100;
+
+                document.getElementById('lwNivel').textContent = nivel;
+                document.getElementById('lwTitulo').textContent = getTitulo(nivel);
                 document.getElementById('lwExpFill').style.width = Math.min(pct, 100) + '%';
-                document.getElementById('lwExpAtual').textContent = personagem.experiencia;
+                document.getElementById('lwExpAtual').textContent = exp;
                 document.getElementById('lwExpProx').textContent = expProx;
-
-                document.getElementById('lwHp').textContent = `${personagem.hp}/${personagem.getHpMax()}`;
-                document.getElementById('lwMp').textContent = `${personagem.mp}/${personagem.getMpMax()}`;
-                document.getElementById('lwSm').textContent = `${personagem.sm}/${personagem.getSmMax()}`;
-                document.getElementById('lwAtk').textContent = personagem.getAtaque();
-                document.getElementById('lwDef').textContent = personagem.getDefesa();
-                document.getElementById('lwMag').textContent = personagem.getMagia();
-            }
-
-            // ============================================================
-            // AÇÕES DO PERSONAGEM
-            // ============================================================
-            function treinar() {
-                if (personagem.sm < 10) {
-                    showToast('⚡ Stamina insuficiente! Descanse.', 2000);
-                    return false;
-                }
-
-                personagem.sm -= 10;
-
-                const ganhoBase = 15 + Math.floor(personagem.nivel * 2);
-                const variacao = Math.floor(Math.random() * 15);
-                const ganho = ganhoBase + variacao;
-
-                personagem.experiencia += ganho;
-
-                let subiu = false;
-                const expProx = personagem.getExpProximo();
-
-                while (personagem.experiencia >= expProx) {
-                    personagem.experiencia -= expProx;
-                    personagem.nivel++;
-                    subiu = true;
-                    personagem.hp = personagem.getHpMax();
-                    personagem.mp = personagem.getMpMax();
-                    personagem.sm = personagem.getSmMax();
-                    showToast(`🎉 SUBIU PARA NÍVEL ${personagem.nivel}!`, 3000);
-                }
-
-                atualizarUIPersonagem();
-                atualizarSaldoGlobal();
-
-                if (!subiu) {
-                    showToast(`💪 Treinou! +${ganho} EXP (${personagem.experiencia}/${personagem.getExpProximo()})`, 2000);
-                }
-
-                salvarDadosDoJogador();
-                return true;
-            }
-
-            function descansar() {
-                const hpRestaurado = Math.floor(personagem.getHpMax() * 0.4);
-                const mpRestaurado = Math.floor(personagem.getMpMax() * 0.35);
-                const smRestaurado = Math.floor(personagem.getSmMax() * 0.5);
-
-                personagem.hp = Math.min(personagem.getHpMax(), personagem.hp + hpRestaurado);
-                personagem.mp = Math.min(personagem.getMpMax(), personagem.mp + mpRestaurado);
-                personagem.sm = Math.min(personagem.getSmMax(), personagem.sm + smRestaurado);
-
-                atualizarUIPersonagem();
-                showToast(`🛌 Descansou! +${hpRestaurado} HP, +${mpRestaurado} MP, +${smRestaurado} SM`, 2000);
-                salvarDadosDoJogador();
-                return true;
+                document.getElementById('lwHp').textContent = `${dados.hp || 100}/${dados.max_hp || 100}`;
+                document.getElementById('lwMp').textContent = `${dados.mp || 50}/${dados.max_mp || 50}`;
+                document.getElementById('lwSm').textContent = `${dados.sm || 100}/${dados.max_sm || 100}`;
+                document.getElementById('lwAtk').textContent = dados.atk || 15;
+                document.getElementById('lwDef').textContent = dados.def || 10;
+                document.getElementById('lwMag').textContent = dados.mag || 8;
             }
 
             // ============================================================
@@ -1252,9 +694,7 @@
             function atualizarStatusSupabase(online, texto) {
                 const dot = document.getElementById('supabaseDot');
                 const status = document.getElementById('supabaseStatus');
-                if (dot) {
-                    dot.className = 'dot ' + (online ? 'online' : 'offline');
-                }
+                if (dot) dot.className = 'dot ' + (online ? 'online' : 'offline');
                 if (status) {
                     status.className = 'value ' + (online ? 'online' : 'offline');
                     status.textContent = texto;
@@ -1299,9 +739,7 @@
                         usuarioLogado = JSON.parse(data);
                         return true;
                     }
-                } catch (e) {
-                    console.error(e);
-                }
+                } catch (e) { console.error(e); }
                 return false;
             }
 
@@ -1309,9 +747,7 @@
                 try {
                     localStorage.setItem('usuario_logado', JSON.stringify(usuario));
                     usuarioLogado = usuario;
-                } catch (e) {
-                    console.error(e);
-                }
+                } catch (e) { console.error(e); }
             }
 
             function atualizarInterfaceUsuario() {
@@ -1330,17 +766,11 @@
                 atualizarSaldoGlobal();
             }
 
-            // ============================================================
-            // LOGIN MODAL
-            // ============================================================
             function mostrarLogin() {
-                const modal = document.getElementById('loginModal');
-                if (modal) modal.classList.add('show');
+                document.getElementById('loginModal').classList.add('show');
             }
-
             function esconderLogin() {
-                const modal = document.getElementById('loginModal');
-                if (modal) modal.classList.remove('show');
+                document.getElementById('loginModal').classList.remove('show');
             }
 
             // ============================================================
@@ -1363,9 +793,10 @@
                     options.headers['Content-Type'] = 'application/json';
 
                     const invInicial = {};
-                    ITENS_MERCADO.forEach(item => {
-                        invInicial[item.id] = 0;
-                    });
+                    ITENS_MERCADO.forEach(item => { invInicial[item.id] = 0; });
+
+                    const mercadoInicial = {};
+                    ITENS_MERCADO.forEach(item => { mercadoInicial[item.id] = item.qtdMaxima; });
 
                     options.body = JSON.stringify({
                         login: login,
@@ -1373,8 +804,8 @@
                         senha: senha,
                         saldo: 50.00,
                         seeds: 0,
-                        btc: 0,
-                        poder_hash: 1.0,
+                        nivel: 1,
+                        experiencia: 0,
                         hp: 100,
                         max_hp: 100,
                         mp: 50,
@@ -1384,10 +815,6 @@
                         atk: 15,
                         def: 10,
                         mag: 8,
-                        nivel: 1,
-                        experiencia: 0,
-                        exp_next: 100,
-                        itens: [],
                         carteira: {
                             'Madeira': 0,
                             'Pedra': 0,
@@ -1399,7 +826,8 @@
                             inventario: invInicial,
                             plantio: { active: false, stage: 0, progress: 0 },
                             incubacao: { active: false, stage: 0, progress: 0 },
-                            saldo: 50.00
+                            saldo: 50.00,
+                            mercado_estoque: mercadoInicial
                         }
                     });
                 }
@@ -1408,11 +836,9 @@
                     const response = await fetch(url, options);
 
                     if (!response.ok) {
-                        if (criar) {
-                            if (response.status === 409) {
-                                document.getElementById('loginError').textContent = '❌ Usuário já existe!';
-                                return false;
-                            }
+                        if (criar && response.status === 409) {
+                            document.getElementById('loginError').textContent = '❌ Usuário já existe!';
+                            return false;
                         }
                         document.getElementById('loginError').textContent = `❌ Erro ${response.status}`;
                         return false;
@@ -1451,7 +877,7 @@
             }
 
             // ============================================================
-            // CARREGAR DADOS DO JOGADOR
+            // CARREGAR E SALVAR DADOS
             // ============================================================
             async function carregarDadosDoJogador() {
                 if (!usuarioLogado) return;
@@ -1471,58 +897,51 @@
                     const data = await response.json();
                     if (!data || data.length === 0) return;
 
-                    dadosCompletos = data[0];
-                    console.log('📥 Dados carregados:', dadosCompletos);
+                    const d = data[0];
+                    saldo = Number(d.saldo ?? 50.00);
 
-                    saldo = Number(dadosCompletos.saldo ?? 50.00);
+                    // Carregar estoque do mercado
+                    if (d.fazendinha_dados && d.fazendinha_dados.mercado_estoque) {
+                        const mercadoEstoque = d.fazendinha_dados.mercado_estoque;
+                        ITENS_MERCADO.forEach(item => {
+                            if (mercadoEstoque[item.id] !== undefined) {
+                                item.qtdDisponivel = Number(mercadoEstoque[item.id]) || 0;
+                            }
+                        });
+                    } else {
+                        ITENS_MERCADO.forEach(item => {
+                            item.qtdDisponivel = item.qtdMaxima;
+                        });
+                    }
 
-                    personagem.nivel = dadosCompletos.nivel || 1;
-                    personagem.experiencia = Number(dadosCompletos.experiencia) || 0;
-                    personagem.expProximo = Number(dadosCompletos.exp_next) || 100;
-                    personagem.hp = Number(dadosCompletos.hp) || 100;
-                    personagem.maxHp = Number(dadosCompletos.max_hp) || 100;
-                    personagem.mp = Number(dadosCompletos.mp) || 50;
-                    personagem.maxMp = Number(dadosCompletos.max_mp) || 50;
-                    personagem.sm = Number(dadosCompletos.sm) || 100;
-                    personagem.maxSm = Number(dadosCompletos.max_sm) || 100;
-                    personagem.atk = Number(dadosCompletos.atk) || 15;
-                    personagem.def = Number(dadosCompletos.def) || 10;
-                    personagem.mag = Number(dadosCompletos.mag) || 8;
-                    personagem.btc = Number(dadosCompletos.btc) || 0;
-                    personagem.poderHash = Number(dadosCompletos.poder_hash) || 1.0;
-                    personagem.itens = dadosCompletos.itens || [];
-
+                    // Carregar inventário
                     initInventario();
-
-                    if (dadosCompletos.fazendinha_dados && dadosCompletos.fazendinha_dados.inventario) {
-                        const inv = dadosCompletos.fazendinha_dados.inventario;
+                    if (d.fazendinha_dados && d.fazendinha_dados.inventario) {
+                        const inv = d.fazendinha_dados.inventario;
                         ITENS_MERCADO.forEach(item => {
                             if (inv[item.id] !== undefined) {
                                 inventario[item.id] = Number(inv[item.id]) || 0;
                             }
                         });
-                    } else {
-                        if (dadosCompletos.seeds !== undefined) {
-                            inventario.sementes = Number(dadosCompletos.seeds) || 0;
-                        }
-                        if (dadosCompletos.carteira) {
-                            const carteira = dadosCompletos.carteira;
-                            const mapCarteira = {
-                                'Madeira': 'madeira',
-                                'Pedra': 'pedra',
-                                'Ouro': 'ouro',
-                                'Poção': 'pocao',
-                                'Balde': 'balde'
-                            };
-                            Object.keys(mapCarteira).forEach(key => {
-                                if (carteira[key] !== undefined) {
-                                    inventario[mapCarteira[key]] = Number(carteira[key]) || 0;
-                                }
-                            });
-                        }
                     }
 
-                    atualizarUIPersonagem();
+                    if (d.carteira) {
+                        const c = d.carteira;
+                        const map = {
+                            'Madeira': 'madeira',
+                            'Pedra': 'pedra',
+                            'Ouro': 'ouro',
+                            'Poção': 'pocao',
+                            'Balde': 'balde'
+                        };
+                        Object.keys(map).forEach(key => {
+                            if (c[key] !== undefined) {
+                                inventario[map[key]] = Number(c[key]) || 0;
+                            }
+                        });
+                    }
+
+                    atualizarLevelWidget(d);
                     atualizarSaldoGlobal();
                     renderizarMercado();
                     renderizarInventario();
@@ -1533,21 +952,22 @@
                 }
             }
 
-            // ============================================================
-            // SALVAR DADOS DO JOGADOR
-            // ============================================================
             async function salvarDadosDoJogador() {
-                if (!usuarioLogado || !supabaseOnline) {
-                    console.warn('⚠️ Não é possível salvar: usuário não logado ou offline');
-                    return;
-                }
-                if (salvando) {
-                    console.log('⏳ Salvamento em andamento, ignorando...');
-                    return;
-                }
+                if (!usuarioLogado || !supabaseOnline || salvando) return;
                 salvando = true;
 
                 try {
+                    const invCompleto = {};
+                    ITENS_MERCADO.forEach(item => {
+                        invCompleto[item.id] = inventario[item.id] || 0;
+                    });
+
+                    const mercadoEstoque = {};
+                    ITENS_MERCADO.forEach(item => {
+                        mercadoEstoque[item.id] = item.qtdDisponivel;
+                    });
+
+                    // Buscar dados atuais para preservar outros campos
                     const responseGet = await fetch(
                         `${SUPABASE_URL}/rest/v1/${TABELA}?login=eq.${encodeURIComponent(usuarioLogado.login)}`, {
                             headers: {
@@ -1556,60 +976,30 @@
                             }
                         }
                     );
+                    const data = await responseGet.json();
+                    const dadosAtuais = data[0] || {};
 
-                    let dadosAtuais = {};
-                    if (responseGet.ok) {
-                        const data = await responseGet.json();
-                        if (data && data.length > 0) {
-                            dadosAtuais = data[0];
-                        }
-                    }
-
-                    const carteira = {
-                        'Madeira': inventario.madeira || 0,
-                        'Pedra': inventario.pedra || 0,
-                        'Ouro': inventario.ouro || 0,
-                        'Poção': inventario.pocao || 0,
-                        'Balde': inventario.balde || 0
-                    };
-
-                    const inventarioCompleto = {};
-                    ITENS_MERCADO.forEach(item => {
-                        inventarioCompleto[item.id] = inventario[item.id] || 0;
-                    });
-
-                    const plantioAtual = dadosAtuais.fazendinha_dados?.plantio || { active: false, stage: 0,
-                    progress: 0 };
-                    const incubacaoAtual = dadosAtuais.fazendinha_dados?.incubacao || { active: false, stage: 0,
-                        progress: 0 };
-
-                    const fazendinhaDados = {
-                        inventario: inventarioCompleto,
-                        plantio: plantioAtual,
-                        incubacao: incubacaoAtual,
+                    const fazendinhaDados = dadosAtuais.fazendinha_dados || {
+                        inventario: invCompleto,
+                        plantio: { active: false, stage: 0, progress: 0 },
+                        incubacao: { active: false, stage: 0, progress: 0 },
                         saldo: saldo
                     };
 
+                    fazendinhaDados.inventario = invCompleto;
+                    fazendinhaDados.saldo = saldo;
+                    fazendinhaDados.mercado_estoque = mercadoEstoque;
+
                     const payload = {
                         saldo: Number(saldo).toFixed(2),
-                        seeds: inventario.sementes || 0,
-                        carteira: carteira,
+                        carteira: {
+                            'Madeira': inventario.madeira || 0,
+                            'Pedra': inventario.pedra || 0,
+                            'Ouro': inventario.ouro || 0,
+                            'Poção': inventario.pocao || 0,
+                            'Balde': inventario.balde || 0
+                        },
                         fazendinha_dados: fazendinhaDados,
-                        nivel: personagem.nivel,
-                        experiencia: personagem.experiencia,
-                        exp_next: personagem.getExpProximo(),
-                        hp: personagem.hp,
-                        max_hp: personagem.getHpMax(),
-                        mp: personagem.mp,
-                        max_mp: personagem.getMpMax(),
-                        sm: personagem.sm,
-                        max_sm: personagem.getSmMax(),
-                        atk: personagem.atk,
-                        def: personagem.def,
-                        mag: personagem.mag,
-                        btc: personagem.btc,
-                        poder_hash: personagem.poderHash,
-                        itens: personagem.itens,
                         updated_at: new Date().toISOString()
                     };
 
@@ -1627,7 +1017,7 @@
 
                     if (!response.ok) {
                         const errorText = await response.text();
-                        console.error('❌ Erro ao salvar:', response.status, errorText);
+                        console.error('Erro ao salvar:', response.status, errorText);
                         throw new Error(`Erro ao salvar: ${response.status}`);
                     }
 
@@ -1647,7 +1037,6 @@
             function gerarPrecos() {
                 ITENS_MERCADO.forEach(item => {
                     const variacao = (Math.random() - 0.5) * 0.4;
-                    item.variacao = variacao;
                     item.precoAtual = Math.max(0.5, item.precoBase * (1 + variacao));
                     item.precoAtual = Math.round(item.precoAtual * 100) / 100;
                 });
@@ -1658,10 +1047,6 @@
                 ITENS_MERCADO.forEach(item => {
                     const qtd = inventario[item.id] || 0;
                     const preco = item.precoAtual.toFixed(2);
-                    const variacaoClass = item.variacao > 0 ? 'color:var(--neon-green);' : (item.variacao < 0 ?
-                        'color:#ef4444;' : 'color:var(--text-muted);');
-                    const variacaoText = item.variacao > 0 ? `+${(item.variacao * 100).toFixed(1)}%` : (item
-                        .variacao < 0 ? `${(item.variacao * 100).toFixed(1)}%` : '0%');
 
                     html += `
                         <div class="market-item">
@@ -1674,10 +1059,9 @@
                             </div>
                             <div class="item-price">
                                 R$ ${preco} <span>cada</span>
-                                <span style="font-size:0.7rem; ${variacaoClass}">(${variacaoText})</span>
                             </div>
                             <div class="item-stock">
-                                Você tem: <strong>${qtd}</strong> | Mercado: ${item.qtdDisponivel} disponíveis
+                                Você tem: <strong>${qtd}</strong> | Mercado: <strong style="color:var(--neon-blue);">${item.qtdDisponivel}</strong> disponíveis
                             </div>
                             <div class="item-actions">
                                 <div class="qty-group">
@@ -1723,24 +1107,15 @@
             // COMPRAR E VENDER
             // ============================================================
             window.comprarItem = async function(itemId) {
-                if (!usuarioLogado) {
-                    showToast('👤 Faça login para comprar!', 2000);
-                    return;
-                }
-                if (!supabaseOnline) {
-                    showToast('⚠️ Sem conexão com o banco de dados!', 2000);
-                    return;
-                }
+                if (!usuarioLogado) { showToast('👤 Faça login para comprar!', 2000); return; }
+                if (!supabaseOnline) { showToast('⚠️ Sem conexão com o banco!', 2000); return; }
 
                 const item = ITENS_MERCADO.find(i => i.id === itemId);
                 if (!item) return;
 
                 const qtyInput = document.getElementById(`qty_${itemId}`);
                 const qty = parseInt(qtyInput.value) || 1;
-                if (qty <= 0) {
-                    showToast('⚠️ Quantidade inválida', 1500);
-                    return;
-                }
+                if (qty <= 0) { showToast('⚠️ Quantidade inválida', 1500); return; }
 
                 const custo = item.precoAtual * qty;
 
@@ -1754,52 +1129,35 @@
                     return;
                 }
 
-                saldo -= custo;
-                saldo = Math.round(saldo * 100) / 100;
-                item.qtdDisponivel -= qty;
-                inventario[itemId] = (inventario[itemId] || 0) + qty;
+                try {
+                    saldo -= custo;
+                    saldo = Math.round(saldo * 100) / 100;
+                    item.qtdDisponivel -= qty;
+                    inventario[itemId] = (inventario[itemId] || 0) + qty;
 
-                const expGanha = Math.floor(qty * 2);
-                personagem.experiencia += expGanha;
-                let subiu = false;
-                while (personagem.experiencia >= personagem.getExpProximo()) {
-                    personagem.experiencia -= personagem.getExpProximo();
-                    personagem.nivel++;
-                    subiu = true;
-                    personagem.hp = personagem.getHpMax();
-                    personagem.mp = personagem.getMpMax();
-                    personagem.sm = personagem.getSmMax();
-                    showToast(`🎉 SUBIU PARA NÍVEL ${personagem.nivel}!`, 3000);
+                    atualizarSaldoGlobal();
+                    renderizarMercado();
+                    renderizarInventario();
+
+                    await salvarDadosDoJogador();
+                    showToast(`✅ Comprou ${qty} ${item.nome} por R$ ${formatSaldo(custo)}`, 2500);
+
+                } catch (error) {
+                    console.error('❌ Erro na compra:', error);
+                    showToast('❌ Erro ao processar compra: ' + error.message, 3000);
                 }
-
-                showToast(`✅ Comprou ${qty} ${item.nome} por R$ ${formatSaldo(custo)} +${expGanha} EXP`, 2000);
-
-                atualizarUIPersonagem();
-                atualizarSaldoGlobal();
-                renderizarMercado();
-                renderizarInventario();
-                await salvarDadosDoJogador();
             };
 
             window.venderItem = async function(itemId) {
-                if (!usuarioLogado) {
-                    showToast('👤 Faça login para vender!', 2000);
-                    return;
-                }
-                if (!supabaseOnline) {
-                    showToast('⚠️ Sem conexão com o banco de dados!', 2000);
-                    return;
-                }
+                if (!usuarioLogado) { showToast('👤 Faça login para vender!', 2000); return; }
+                if (!supabaseOnline) { showToast('⚠️ Sem conexão com o banco!', 2000); return; }
 
                 const item = ITENS_MERCADO.find(i => i.id === itemId);
                 if (!item) return;
 
                 const qtyInput = document.getElementById(`qty_${itemId}`);
                 const qty = parseInt(qtyInput.value) || 1;
-                if (qty <= 0) {
-                    showToast('⚠️ Quantidade inválida', 1500);
-                    return;
-                }
+                if (qty <= 0) { showToast('⚠️ Quantidade inválida', 1500); return; }
 
                 const qtdAtual = inventario[itemId] || 0;
                 if (qtdAtual < qty) {
@@ -1807,43 +1165,32 @@
                     return;
                 }
 
-                const precoVenda = item.precoAtual * 0.7;
-                const total = precoVenda * qty;
+                try {
+                    const precoVenda = item.precoAtual * 0.7;
+                    const total = precoVenda * qty;
 
-                saldo += total;
-                saldo = Math.round(saldo * 100) / 100;
-                inventario[itemId] = qtdAtual - qty;
-                item.qtdDisponivel += qty;
+                    saldo += total;
+                    saldo = Math.round(saldo * 100) / 100;
+                    inventario[itemId] = qtdAtual - qty;
+                    item.qtdDisponivel += qty;
 
-                const expGanha = Math.floor(qty * 1.5);
-                personagem.experiencia += expGanha;
-                let subiu = false;
-                while (personagem.experiencia >= personagem.getExpProximo()) {
-                    personagem.experiencia -= personagem.getExpProximo();
-                    personagem.nivel++;
-                    subiu = true;
-                    personagem.hp = personagem.getHpMax();
-                    personagem.mp = personagem.getMpMax();
-                    personagem.sm = personagem.getSmMax();
-                    showToast(`🎉 SUBIU PARA NÍVEL ${personagem.nivel}!`, 3000);
+                    atualizarSaldoGlobal();
+                    renderizarMercado();
+                    renderizarInventario();
+
+                    await salvarDadosDoJogador();
+                    showToast(`💰 Vendeu ${qty} ${item.nome} por R$ ${formatSaldo(total)}`, 2500);
+
+                } catch (error) {
+                    console.error('❌ Erro na venda:', error);
+                    showToast('❌ Erro ao processar venda: ' + error.message, 3000);
                 }
-
-                showToast(`💰 Vendeu ${qty} ${item.nome} por R$ ${formatSaldo(total)} +${expGanha} EXP`, 2000);
-
-                atualizarUIPersonagem();
-                atualizarSaldoGlobal();
-                renderizarMercado();
-                renderizarInventario();
-                await salvarDadosDoJogador();
             };
 
             // ============================================================
             // EVENTOS
             // ============================================================
             document.addEventListener('DOMContentLoaded', function() {
-                document.getElementById('btnTreinarQuick')?.addEventListener('click', treinar);
-                document.getElementById('btnDescansarQuick')?.addEventListener('click', descansar);
-
                 const loginBtn = document.getElementById('btnLogin');
                 const registerBtn = document.getElementById('btnRegister');
                 const guestBtn = document.getElementById('btnGuest');
@@ -1875,8 +1222,7 @@
                             return;
                         }
                         if (pass.length < 4) {
-                            document.getElementById('loginError').textContent =
-                                '⚠️ Senha deve ter pelo menos 4 caracteres';
+                            document.getElementById('loginError').textContent = '⚠️ Senha deve ter pelo menos 4 caracteres';
                             return;
                         }
                         registerBtn.disabled = true;
@@ -1893,20 +1239,11 @@
                         showToast('👤 Modo visitante - dados não serão salvos.', 3000);
                         initInventario();
                         saldo = 50.00;
-                        personagem.nivel = 1;
-                        personagem.experiencia = 0;
-                        personagem.hp = 100;
-                        personagem.maxHp = 100;
-                        personagem.mp = 50;
-                        personagem.maxMp = 50;
-                        personagem.sm = 100;
-                        personagem.maxSm = 100;
-                        personagem.atk = 15;
-                        personagem.def = 10;
-                        personagem.mag = 8;
+                        ITENS_MERCADO.forEach(item => {
+                            item.qtdDisponivel = item.qtdMaxima;
+                        });
                         atualizarInterfaceUsuario();
-                        atualizarUIPersonagem();
-                        gerarPrecos();
+                        atualizarSaldoGlobal();
                         renderizarMercado();
                         renderizarInventario();
                     });
@@ -1914,7 +1251,7 @@
 
                 document.getElementById('btnReconnectSupabase')?.addEventListener('click', function() {
                     verificarSupabase();
-                    showToast('🔄 Verificando conexão com Supabase...', 1500);
+                    showToast('🔄 Verificando conexão...', 1500);
                 });
 
                 if (loginUser) {
@@ -1942,7 +1279,6 @@
             renderizarMercado();
             renderizarInventario();
             atualizarInterfaceUsuario();
-            atualizarUIPersonagem();
 
             if (usuarioLogado) {
                 esconderLogin();
@@ -1950,7 +1286,7 @@
                     if (supabaseOnline) {
                         carregarDadosDoJogador();
                     } else {
-                        showToast('⚠️ Sem conexão com o banco. Dados locais carregados.', 3000);
+                        showToast('⚠️ Sem conexão com o banco.', 3000);
                     }
                 }, 600);
                 showToast(`👋 Olá, ${usuarioLogado.nome || usuarioLogado.login}!`, 2500);
@@ -1967,7 +1303,7 @@
             setInterval(() => verificarSupabase(), 30000);
 
             setInterval(() => {
-                if (usuarioLogado && supabaseOnline) {
+                if (usuarioLogado && supabaseOnline && !salvando) {
                     salvarDadosDoJogador();
                 }
             }, 30000);
@@ -1978,7 +1314,7 @@
                 }
             });
 
-            console.log('🌾 Mercado de Plantas carregado - integrado com sistema de personagem!');
+            console.log('🌾 Mercado carregado!');
 
         })();
     </script>

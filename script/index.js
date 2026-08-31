@@ -18,3 +18,6 @@ if (usuarioLogado) {
         window.location.href = 'login.html';
     }, 1000);
 }
+
+// Depois de alterar o saldo ou inventário
+await salvarDadosDoJogador();

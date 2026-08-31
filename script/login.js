@@ -160,3 +160,7 @@ document.addEventListener('keydown', (e) => {
         formLogin.dispatchEvent(new Event('submit'));
     }
 });
+
+
+// Depois de alterar o saldo ou inventário
+await salvarDadosDoJogador();

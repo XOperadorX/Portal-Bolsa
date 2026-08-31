@@ -221,7 +221,7 @@
             color: #fff;
         }
 
-        /* SISTEMA DE NÍVEL - WIDGET (atualizado) */
+        /* SISTEMA DE NÍVEL - WIDGET */
         .level-widget {
             background: #0f141e;
             border-radius: 16px;
@@ -347,9 +347,6 @@
         <small id="itens-count">0 itens</small>
     </h1>
 
-
-    
-    <!-- Info do Usuário Logado -->
     <div class="usuario-info" id="usuarioInfo">
         <span class="user">👤 <strong id="usuarioNome">Carregando...</strong></span>
         <a href="../../dashboard.html" class="btn-voltar">🏠 Voltar</a>
@@ -360,7 +357,7 @@
         <span class="valor" id="saldo-display">0,00</span>
     </div>
 
-    <!-- SISTEMA DE NÍVEL - WIDGET (sem botões) -->
+    <!-- SISTEMA DE NÍVEL - WIDGET -->
     <div class="level-widget" id="levelWidget">
         <div class="lw-header">
             <div class="lw-badge">
@@ -399,10 +396,12 @@
         <!-- itens renderizados via JS -->
     </div>
 
-</div>
+    <div class="nav-links">
+        <a href="planta.html" class="fazenda">🌽 Fazenda</a>
+        <a href="mercado.html">🏪 Mercado</a>
+    </div>
 
-<!-- Supabase JS -->
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+</div>
 
 <script>
     (function() {
@@ -414,9 +413,6 @@
         const SUPABASE_URL = 'https://xrcxvizzdumcxbylmkvn.supabase.co';
         const SUPABASE_KEY = 'sb_publishable_E-g3G3wW4EySbCsXLXp8KQ_FnmERMcD';
         const TABELA = 'Geral';
-
-        // Inicializa cliente Supabase
-        const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
         // ============================================================
         // REFERÊNCIAS DOS ELEMENTOS
@@ -452,31 +448,28 @@
             }
         }
 
-        function logout() {
-            localStorage.removeItem('usuario_logado');
-            window.location.href = 'login.html';
-        }
-
         // ============================================================
         // FUNÇÕES DE ACESSO AO SUPABASE
         // ============================================================
         async function buscarDadosUsuario(login) {
             try {
-                const { data, error } = await supabase
-                    .from(TABELA)
-                    .select('*')
-                    .eq('login', login)
-                    .single();
-
-                if (error) {
-                    if (error.code === 'PGRST116') {
-                        console.warn('⚠️ Usuário não encontrado no Supabase:', login);
-                        return null;
+                const response = await fetch(
+                    `${SUPABASE_URL}/rest/v1/${TABELA}?login=eq.${encodeURIComponent(login)}`, {
+                        headers: {
+                            'apikey': SUPABASE_KEY,
+                            'Authorization': `Bearer ${SUPABASE_KEY}`
+                        }
                     }
-                    throw error;
+                );
+
+                if (!response.ok) {
+                    if (response.status === 404) return null;
+                    throw new Error(`Erro ${response.status}`);
                 }
 
-                return data;
+                const data = await response.json();
+                if (!data || data.length === 0) return null;
+                return data[0];
             } catch (error) {
                 console.error('❌ Erro ao buscar dados:', error);
                 throw error;
@@ -492,12 +485,12 @@
                 'Pedra': '🪨',
                 'Ouro': '💎',
                 'Poção': '🧪',
-                'Ferramenta': '🔧',
-                'Semente': '🌱',
-                'Planta': '🌿',
-                'Colheita': '🌾',
-                'Água': '💧',
-                'Fertilizante': '🧴'
+                'Balde': '🪣',
+                'Sementes': '🌱',
+                'Milho': '🌽',
+                'Ovos': '🥚',
+                'Galinhas': '🐔',
+                'Pintinhos': '🐣'
             };
             return mapa[nome] || '📦';
         }
@@ -508,18 +501,18 @@
                 'Pedra': 15,
                 'Ouro': 50,
                 'Poção': 25,
-                'Ferramenta': 30,
-                'Semente': 5,
-                'Planta': 20,
-                'Colheita': 40,
-                'Água': 3,
-                'Fertilizante': 8
+                'Balde': 12,
+                'Sementes': 5,
+                'Milho': 8,
+                'Ovos': 3,
+                'Galinhas': 25,
+                'Pintinhos': 15
             };
             return valores[nome] || 10;
         }
 
         function getOrigemItem(nome) {
-            const itensFazendinha = ['Semente', 'Planta', 'Colheita', 'Água', 'Fertilizante'];
+            const itensFazendinha = ['Sementes', 'Milho', 'Ovos', 'Galinhas', 'Pintinhos'];
             return itensFazendinha.includes(nome) ? '🌾 Fazendinha' : '🎒 Carteira';
         }
 
@@ -529,45 +522,56 @@
         function extrairTodosItens(dadosUsuario) {
             const todosItens = {};
             
+            // Carteira
             if (dadosUsuario.carteira && typeof dadosUsuario.carteira === 'object') {
-                Object.entries(dadosUsuario.carteira).forEach(([nome, qtd]) => {
+                const map = {
+                    'Madeira': 'Madeira',
+                    'Pedra': 'Pedra',
+                    'Ouro': 'Ouro',
+                    'Poção': 'Poção',
+                    'Balde': 'Balde'
+                };
+                Object.keys(map).forEach(key => {
+                    const qtd = dadosUsuario.carteira[key] || 0;
                     if (qtd > 0) {
-                        todosItens[nome] = (todosItens[nome] || 0) + qtd;
+                        todosItens[map[key]] = (todosItens[map[key]] || 0) + qtd;
                     }
                 });
             }
 
+            // Fazendinha
             if (dadosUsuario.fazendinha_dados && typeof dadosUsuario.fazendinha_dados === 'object') {
                 const fd = dadosUsuario.fazendinha_dados;
-                if (fd.seeds && fd.seeds > 0) {
-                    todosItens['Semente'] = (todosItens['Semente'] || 0) + fd.seeds;
-                }
-                if (fd.planted && fd.planted > 0) {
-                    todosItens['Planta'] = (todosItens['Planta'] || 0) + fd.planted;
-                }
-                if (fd.harvested && fd.harvested > 0) {
-                    todosItens['Colheita'] = (todosItens['Colheita'] || 0) + fd.harvested;
-                }
-                if (fd.buckets && fd.buckets > 0) {
-                    todosItens['Água'] = (todosItens['Água'] || 0) + fd.buckets;
-                }
-                if (fd.fertilizante && fd.fertilizante > 0) {
-                    todosItens['Fertilizante'] = (todosItens['Fertilizante'] || 0) + fd.fertilizante;
+                if (fd.inventario) {
+                    const map = {
+                        'sementes': 'Sementes',
+                        'milho': 'Milho',
+                        'ovos': 'Ovos',
+                        'pintinhos': 'Pintinhos',
+                        'galinhas': 'Galinhas'
+                    };
+                    Object.keys(map).forEach(key => {
+                        const qtd = fd.inventario[key] || 0;
+                        if (qtd > 0) {
+                            todosItens[map[key]] = (todosItens[map[key]] || 0) + qtd;
+                        }
+                    });
                 }
             }
 
-            if (dadosUsuario.seeds && dadosUsuario.seeds > 0) {
-                todosItens['Semente'] = (todosItens['Semente'] || 0) + dadosUsuario.seeds;
-            }
-            if (dadosUsuario.planted && dadosUsuario.planted > 0) {
-                todosItens['Planta'] = (todosItens['Planta'] || 0) + dadosUsuario.planted;
-            }
-            if (dadosUsuario.harvested && dadosUsuario.harvested > 0) {
-                todosItens['Colheita'] = (todosItens['Colheita'] || 0) + dadosUsuario.harvested;
-            }
-            if (dadosUsuario.buckets && dadosUsuario.buckets > 0) {
-                todosItens['Água'] = (todosItens['Água'] || 0) + dadosUsuario.buckets;
-            }
+            // Campos diretos
+            const camposDiretos = {
+                'seeds': 'Sementes',
+                'planted': 'Planta',
+                'harvested': 'Colheita',
+                'buckets': 'Balde'
+            };
+            Object.keys(camposDiretos).forEach(key => {
+                const qtd = dadosUsuario[key] || 0;
+                if (qtd > 0 && key !== 'buckets') {
+                    todosItens[camposDiretos[key]] = (todosItens[camposDiretos[key]] || 0) + qtd;
+                }
+            });
 
             return Object.entries(todosItens).map(([nome, quantidade]) => ({
                 nome,
@@ -617,6 +621,58 @@
         }
 
         // ============================================================
+        // ATUALIZAR WIDGET DE NÍVEL
+        // ============================================================
+        function atualizarLevelWidget(dados) {
+            if (!dados) return;
+            
+            const nivel = dados.nivel || 1;
+            const experiencia = dados.experiencia || 0;
+            const expProx = dados.exp_next || 100;
+            const hp = dados.hp || 100;
+            const maxHp = dados.max_hp || 100;
+            const mp = dados.mp || 50;
+            const maxMp = dados.max_mp || 50;
+            const sm = dados.sm || 100;
+            const maxSm = dados.max_sm || 100;
+            const atk = dados.atk || 15;
+            const def = dados.def || 10;
+            const mag = dados.mag || 8;
+
+            const pct = (experiencia / expProx) * 100;
+
+            document.getElementById('lwNivel').textContent = nivel;
+            document.getElementById('lwTitulo').textContent = getTitulo(nivel);
+            document.getElementById('lwExpFill').style.width = Math.min(pct, 100) + '%';
+            document.getElementById('lwExpAtual').textContent = experiencia;
+            document.getElementById('lwExpProx').textContent = expProx;
+            document.getElementById('lwHp').textContent = `${hp}/${maxHp}`;
+            document.getElementById('lwMp').textContent = `${mp}/${maxMp}`;
+            document.getElementById('lwSm').textContent = `${sm}/${maxSm}`;
+            document.getElementById('lwAtk').textContent = atk;
+            document.getElementById('lwDef').textContent = def;
+            document.getElementById('lwMag').textContent = mag;
+        }
+
+        function getTitulo(nivel) {
+            const titulos = [
+                { min: 1, titulo: '🌱 Iniciante' },
+                { min: 5, titulo: '🌿 Aprendiz' },
+                { min: 10, titulo: '⚔️ Guerreiro' },
+                { min: 20, titulo: '🛡️ Mestre' },
+                { min: 35, titulo: '🏆 Lendário' },
+                { min: 50, titulo: '👑 Herói' },
+                { min: 75, titulo: '⚡ Deus da Guerra' },
+                { min: 100, titulo: '🌟 Imortal' },
+            ];
+            let titulo = titulos[0].titulo;
+            for (const t of titulos) {
+                if (nivel >= t.min) titulo = t.titulo;
+            }
+            return titulo;
+        }
+
+        // ============================================================
         // CARREGAR DADOS
         // ============================================================
         async function carregarDados() {
@@ -632,42 +688,14 @@
                 state.dadosUsuario = await buscarDadosUsuario(state.usuarioLogado.login);
                 
                 if (!state.dadosUsuario) {
-                    const dadosPadrao = {
-                        carteira: {
-                            'Madeira': 5,
-                            'Pedra': 3,
-                            'Ouro': 2,
-                            'Poção': 1
-                        },
-                        saldo: 0,
-                        fazendinha_dados: {
-                            seeds: 10,
-                            planted: 0,
-                            harvested: 0,
-                            buckets: 5,
-                            fertilizante: 2
-                        },
-                        seeds: 10,
-                        planted: 0,
-                        harvested: 0,
-                        buckets: 5,
-                        historico: []
-                    };
-                    
-                    const { error } = await supabase
-                        .from(TABELA)
-                        .update(dadosPadrao)
-                        .eq('login', state.usuarioLogado.login);
-                    
-                    if (error) throw error;
-                    
-                    state.dadosUsuario = await buscarDadosUsuario(state.usuarioLogado.login);
+                    console.warn('⚠️ Usuário não encontrado no banco');
                 }
                 
                 render();
+                atualizarLevelWidget(state.dadosUsuario);
+                
             } catch (error) {
                 console.error('❌ Erro ao carregar dados:', error);
-                alert('❌ Erro ao carregar dados: ' + error.message);
             } finally {
                 state.isLoading = false;
                 loadingIndicator.style.display = 'none';
@@ -679,8 +707,13 @@
         // ============================================================
         async function verificarConexao() {
             try {
-                const { error } = await supabase.from(TABELA).select('id').limit(1);
-                state.supabaseOnline = !error;
+                const response = await fetch(`${SUPABASE_URL}/rest/v1/${TABELA}?select=id&limit=1`, {
+                    headers: {
+                        'apikey': SUPABASE_KEY,
+                        'Authorization': `Bearer ${SUPABASE_KEY}`
+                    }
+                });
+                state.supabaseOnline = response.ok;
                 console.log(state.supabaseOnline ? '✅ Supabase Online' : '❌ Supabase Offline');
                 return state.supabaseOnline;
             } catch {
@@ -712,7 +745,6 @@
             await carregarDados();
 
             console.log('🎒 Mochila carregada com Supabase!');
-            console.log('📋 Conectado à tabela public."Geral"');
         }
 
         // ============================================================

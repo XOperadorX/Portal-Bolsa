@@ -131,3 +131,6 @@ formRecuperar.addEventListener('submit', async (e) => {
 });
 
 verificarSupabase();
+
+// Depois de alterar o saldo ou inventário
+await salvarDadosDoJogador();

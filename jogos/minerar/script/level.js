@@ -21,7 +21,7 @@ class LevelSystem {
         // Atributos base
         this.hpMax = 100;
         this.mpMax = 50;
-        this.smMax = 40;
+        this.smMax = 100;
         this.ataqueBase = 15;
         this.defesaBase = 10;
         this.magiaBase = 8;
@@ -29,7 +29,7 @@ class LevelSystem {
         // Atributos atuais (podem ser modificados por buffs)
         this.hp = 100;
         this.mp = 50;
-        this.sm = 40;
+        this.sm = 100;
 
         // Títulos por nível
         this.titulos = [
@@ -286,7 +286,7 @@ class LevelSystem {
                 this.experiencia = data.experiencia || 0;
                 this.hpMax = data.hp_max || 100;
                 this.mpMax = data.mp_max || 50;
-                this.smMax = data.sm_max || 40;
+                this.smMax = data.sm_max || 100;
                 this.ataqueBase = data.ataque_base || 15;
                 this.defesaBase = data.defesa_base || 10;
                 this.magiaBase = data.magia_base || 8;
@@ -315,13 +315,13 @@ class LevelSystem {
                 exp_proximo: 100,
                 hp_max: 100,
                 mp_max: 50,
-                sm_max: 40,
+                sm_max: 100,
                 ataque_base: 15,
                 defesa_base: 10,
                 magia_base: 8,
                 hp_atual: 100,
                 mp_atual: 50,
-                sm_atual: 40
+                sm_atual: 100
             };
 
             const { error } = await supabase
@@ -335,7 +335,7 @@ class LevelSystem {
             this.experiencia = 0;
             this.hp = 100;
             this.mp = 50;
-            this.sm = 40;
+            this.sm = 100;
             this.atualizarUI();
 
             return true;

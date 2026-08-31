@@ -8,9 +8,6 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Rajdhani:wght@400;600;700&display=swap" rel="stylesheet">
     
-    <!-- ============================================================
-    ESTILOS GLOBAIS
-    ============================================================ -->
     <style>
         /* ---------- VARIÁVEIS E RESET ---------- */
         :root {
@@ -42,7 +39,6 @@
             justify-content: center;
         }
 
-        /* ---------- CARD PRINCIPAL ---------- */
         .card {
             background: var(--card-bg);
             max-width: 960px;
@@ -110,6 +106,26 @@
         .user-nick { font-family: 'Orbitron', sans-serif; font-size: 0.8rem; letter-spacing: 0.5px; color: #fff; }
         .user-balance { font-size: 0.7rem; color: var(--neon-green); display: flex; align-items: center; gap: 4px; }
         .user-balance::before { content: "💰"; font-size: 0.6rem; }
+
+        .btn-voltar {
+            background: linear-gradient(135deg, var(--neon-purple), #8b5cf6);
+            color: white;
+            border: none;
+            padding: 6px 16px;
+            border-radius: 40px;
+            font-weight: bold;
+            font-size: 0.75rem;
+            cursor: pointer;
+            transition: all 0.2s;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+        }
+        .btn-voltar:hover {
+            transform: scale(0.95);
+            box-shadow: 0 0 20px rgba(112, 0, 255, 0.4);
+        }
 
         .logout-btn {
             background: linear-gradient(135deg, #ef4444, #dc2626);
@@ -569,7 +585,7 @@
         @keyframes fadeIn { from { opacity: 0; transform: scale(0.95); } to { opacity: 1; transform: scale(1); } }
 
         /* ============================================================
-           SISTEMA DE NÍVEL - ESTILOS COMPLETOS (integrado)
+           SISTEMA DE NÍVEL - ESTILOS COMPLETOS
            ============================================================ */
         .level-system-container {
             background: rgba(0, 0, 0, 0.4);
@@ -857,7 +873,7 @@
                 </div>
             </div>
             <div style="display:flex; gap:8px; flex-wrap:wrap; align-items:center;">
-                <a href="../../dashboard.html" class="logout-btn" style="background:linear-gradient(135deg,#7000ff,#8b5cf6);">🏠 Voltar Para Dashboard</a>
+                <a href="../../dashboard.html" class="btn-voltar">🏠 Voltar</a>
             </div>
 
             <div class="status-bar" id="statusBar">
@@ -923,17 +939,7 @@
                 </span>
             </div>
 
-            <div class="level-actions">
-                <button class="btn-level btn-treinar" id="btnTreinar">🏋️ Treinar (+EXP)</button>
-                <button class="btn-level btn-descansar" id="btnDescansar">🛌 Descansar</button>
-                <button class="btn-level btn-reset" id="btnResetLevel">🔄 Resetar Nível</button>
-            </div>
 
-            <div class="sm-actions">
-                <button class="btn-sm btn-sm-ganhar" id="btnSmGanhar">➕ Ganhar 50 SM</button>
-                <button class="btn-sm btn-sm-gastar" id="btnSmGastar">➖ Gastar 30 SM</button>
-                <button class="btn-sm btn-sm-resetar" id="btnSmResetar">🔄 Resetar SM</button>
-            </div>
         </div>
 
         <!-- ============================================================
@@ -953,14 +959,10 @@
 
                 <div class="milharal-header">
                     <div class="milharal-stats">
-                        <span class="stat-item"><i class="fas fa-seedling"></i><span class="num" id="seedCount">🌰 0</span>Semente</span>
-                        <span class="stat-item"><i class="fas fa-trowel"></i><span class="num" id="plantedCount">🌱 0</span>Broto</span>
-                        <span class="stat-item"><i class="fas fa-trowel"></i><span class="num" id="plantedCount">🌿 0</span>muda</span>
-                        <span class="stat-item"><i class="fas fa-trowel"></i><span class="num" id="plantedCount">🌾 0</span>crescendo</span>
-                        <span class="stat-item"><i class="fas fa-corn"></i><span class="num" id="harvestCount">🌽 0</span>Milho</span>
-                        <span class="stat-item"><i class="fas fa-egg"></i><span class="num" id="harvestCount">🥚 0</span>Ovo</span>
-                        <span class="stat-item"><i class="fas fa-egg"></i><span class="num" id="harvestCount">🐔 0</span>Frango</span>
-                        <span class="stat-item"><i class="fas fa-water" style="color:var(--neon-blue);"></i><span class="num" id="bucketCount">🪣 0</span>Baude de Agua</span>
+                        <span class="stat-item"><i class="fas fa-seedling"></i><span class="num" id="seedCount">🌰 0</span></span>
+                        <span class="stat-item"><i class="fas fa-trowel"></i><span class="num" id="plantedCount">🌱 0</span></span>
+                        <span class="stat-item"><i class="fas fa-corn"></i><span class="num" id="harvestCount">🌽 0</span></span>
+                        <span class="stat-item"><i class="fas fa-water" style="color:var(--neon-blue);"></i><span class="num" id="bucketCount">🪣 0</span></span>
                     </div>
                     <div style="display:flex;gap:0.3rem;flex-wrap:wrap;align-items:center;">
                         <span class="stock-display" id="stockDisplay">
@@ -980,7 +982,6 @@
                     <button class="btn btn-primary" id="btnPlant">🌱 Plantar</button>
                     <button class="btn btn-secondary" id="btnWater">💧 Regar <span id="bucketStatus">🪣 0</span></button>
                     <button class="btn btn-gold" id="btnHarvestAll">🌽 Colher tudo</button>
-                    <button class="btn btn-danger" id="btnResetMilharal">↺ Reiniciar</button>
                 </div>
 
                 <div class="milharal-message" id="message">
@@ -1012,6 +1013,7 @@
                     <span><i class="fas fa-🪨"></i> Pedra: <strong id="invPedra">0</strong></span>
                     <span><i class="fas fa-💎"></i> Ouro: <strong id="invOuro">0</strong></span>
                     <span><i class="fas fa-🧪"></i> Poção: <strong id="invPocao">0</strong></span>
+                    <span><i class="fas fa-🪣"></i> Balde: <strong id="invBalde">0</strong></span>
                 </div>
 
                 <div class="farm-grid-2">
@@ -1088,9 +1090,6 @@
         </div>
     </div>
 
-    <!-- ============================================================
-    JAVASCRIPT PRINCIPAL
-    ============================================================ -->
     <script>
         (function() {
             'use strict';
@@ -1127,6 +1126,7 @@
             let toastTimeout = null;
             let ultimoSalvamento = 0;
             let salvando = false;
+            let dadosCompletos = null;
 
             // ============================================================
             // 3. ESTADO DO MILHARAL
@@ -1179,7 +1179,8 @@
                     madeira: 0,
                     pedra: 0,
                     ouro: 0,
-                    pocao: 0
+                    pocao: 0,
+                    balde: 0
                 },
                 plantio: { active: false, stage: 0, progress: 0 },
                 incubacao: { active: false, stage: 0, progress: 0 },
@@ -1188,7 +1189,7 @@
             };
 
             // ============================================================
-            // 5. SISTEMA DE NÍVEL - INTEGRADO
+            // 5. SISTEMA DE NÍVEL
             // ============================================================
             const levelSystem = {
                 nivel: 1,
@@ -1253,7 +1254,7 @@
                     if (!subiu) {
                         this.mostrarToast(`💪 Treinou! +${ganho} EXP (${this.experiencia}/${this.getExpProximo()})`, 'info');
                     }
-                    this.salvar();
+                    salvarDadosCompletos();
                     return true;
                 },
 
@@ -1266,7 +1267,7 @@
                     this.sm = Math.min(this.getSmMax(), this.sm + smRestaurado);
                     this.atualizarUI();
                     this.mostrarToast(`🛌 Descansou! +${hpRestaurado} HP, +${mpRestaurado} MP, +${smRestaurado} SM`, 'sucesso');
-                    this.salvar();
+                    salvarDadosCompletos();
                     return true;
                 },
 
@@ -1279,7 +1280,7 @@
                     this.sm = this.getSmMax();
                     this.atualizarUI();
                     this.mostrarToast('🔄 Nível resetado para 1!', 'info');
-                    this.salvar();
+                    salvarDadosCompletos();
                     return true;
                 },
 
@@ -1295,7 +1296,7 @@
                     this.sm = novoSm;
                     this.atualizarUI();
                     this.mostrarToast(`➕ +${ganhoReal} SM (${this.sm}/${smMax})`, 'sucesso');
-                    this.salvar();
+                    salvarDadosCompletos();
                     return true;
                 },
 
@@ -1308,7 +1309,7 @@
                     this.sm -= gasto;
                     this.atualizarUI();
                     this.mostrarToast(`➖ -${gasto} SM (${this.sm}/${this.getSmMax()})`, 'info');
-                    this.salvar();
+                    salvarDadosCompletos();
                     return true;
                 },
 
@@ -1317,7 +1318,7 @@
                     this.sm = this.getSmMax();
                     this.atualizarUI();
                     this.mostrarToast(`🔄 SM resetado para ${this.sm}/${this.getSmMax()}`, 'info');
-                    this.salvar();
+                    salvarDadosCompletos();
                     return true;
                 },
 
@@ -1353,80 +1354,6 @@
                     toast.className = 'show';
                     clearTimeout(this.toastTimer);
                     this.toastTimer = setTimeout(() => { toast.className = ''; }, 3000);
-                },
-
-                async salvar() {
-                    if (!usuarioLogado || !supabaseOnline) return false;
-                    try {
-                        const payload = {
-                            nivel: this.nivel,
-                            experiencia: this.experiencia,
-                            hp_max: this.getHpMax(),
-                            mp_max: this.getMpMax(),
-                            sm_max: this.getSmMax(),
-                            ataque_base: this.ataqueBase,
-                            defesa_base: this.defesaBase,
-                            magia_base: this.magiaBase,
-                            hp_atual: this.hp,
-                            mp_atual: this.mp,
-                            sm_atual: this.sm,
-                            updated_at: new Date().toISOString()
-                        };
-                        const response = await fetch(
-                            `${CONFIG.SUPABASE_URL}/rest/v1/${CONFIG.TABELA}?login=eq.${encodeURIComponent(usuarioLogado.login)}`,
-                            {
-                                method: 'PATCH',
-                                headers: {
-                                    'Content-Type': 'application/json',
-                                    'apikey': CONFIG.SUPABASE_KEY,
-                                    'Authorization': `Bearer ${CONFIG.SUPABASE_KEY}`
-                                },
-                                body: JSON.stringify(payload)
-                            }
-                        );
-                        if (!response.ok) throw new Error(`Erro ao salvar nível: ${response.status}`);
-                        return true;
-                    } catch (error) {
-                        console.error('❌ Erro ao salvar nível:', error);
-                        return false;
-                    }
-                },
-
-                async carregar() {
-                    if (!usuarioLogado || !supabaseOnline) return false;
-                    try {
-                        const response = await fetch(
-                            `${CONFIG.SUPABASE_URL}/rest/v1/${CONFIG.TABELA}?login=eq.${encodeURIComponent(usuarioLogado.login)}`,
-                            {
-                                headers: {
-                                    'apikey': CONFIG.SUPABASE_KEY,
-                                    'Authorization': `Bearer ${CONFIG.SUPABASE_KEY}`
-                                }
-                            }
-                        );
-                        if (!response.ok) throw new Error(`Erro ao carregar nível: ${response.status}`);
-                        const data = await response.json();
-                        if (data && data.length > 0) {
-                            const d = data[0];
-                            this.nivel = d.nivel || 1;
-                            this.experiencia = d.experiencia || 0;
-                            this.hpMax = d.hp_max || 100;
-                            this.mpMax = d.mp_max || 50;
-                            this.smMax = d.sm_max || 40;
-                            this.ataqueBase = d.ataque_base || 15;
-                            this.defesaBase = d.defesa_base || 10;
-                            this.magiaBase = d.magia_base || 8;
-                            this.hp = d.hp_atual || this.getHpMax();
-                            this.mp = d.mp_atual || this.getMpMax();
-                            this.sm = d.sm_atual || this.getSmMax();
-                            this.atualizarUI();
-                            return true;
-                        }
-                        return false;
-                    } catch (error) {
-                        console.error('❌ Erro ao carregar nível:', error);
-                        return false;
-                    }
                 }
             };
 
@@ -1456,6 +1383,7 @@
                 invPedra: document.getElementById('invPedra'),
                 invOuro: document.getElementById('invOuro'),
                 invPocao: document.getElementById('invPocao'),
+                invBalde: document.getElementById('invBalde'),
                 milhoEmoji: document.getElementById('milhoEmoji'),
                 milhoStatus: document.getElementById('milhoStatus'),
                 milhoProgress: document.getElementById('milhoProgress'),
@@ -1489,7 +1417,7 @@
             }
 
             function atualizarSaldoGlobal() {
-                const total = milharal.saldo || 0;
+                const total = getSaldoTotal();
                 if (DOM.headerSaldo) DOM.headerSaldo.textContent = formatSaldo(total);
                 if (DOM.userBalance) DOM.userBalance.textContent = `💰 R$ ${formatSaldo(total)}`;
                 if (DOM.saldoDisplay) DOM.saldoDisplay.textContent = `R$ ${formatSaldo(milharal.saldo || 0)}`;
@@ -1538,28 +1466,18 @@
                     const nome = usuarioLogado.nome || usuarioLogado.login;
                     if (DOM.userAvatar) DOM.userAvatar.textContent = nome.charAt(0).toUpperCase();
                     if (DOM.userName) DOM.userName.textContent = nome;
-                    if (DOM.userBalance) DOM.userBalance.textContent = `💰 R$ ${formatSaldo(getSaldoTotal())}`;
                 } else {
                     if (DOM.userAvatar) DOM.userAvatar.textContent = '?';
                     if (DOM.userName) DOM.userName.textContent = 'Visitante';
-                    if (DOM.userBalance) DOM.userBalance.textContent = '💰 R$ 0,00';
                 }
                 atualizarSaldoGlobal();
-            }
-
-            function fazerLogout() {
-                localStorage.removeItem('usuario_logado');
-                usuarioLogado = null;
-                atualizarInterfaceUsuario();
-                mostrarLogin();
-                showToast('👋 Logout realizado!', 2000);
             }
 
             function mostrarLogin() { if (DOM.loginModal) DOM.loginModal.classList.add('show'); }
             function esconderLogin() { if (DOM.loginModal) DOM.loginModal.classList.remove('show'); }
 
             // ============================================================
-            // 10. SUPABASE - VERIFICAÇÃO E AUTENTICAÇÃO
+            // 10. SUPABASE - OPERAÇÕES
             // ============================================================
             async function verificarSupabase() {
                 try {
@@ -1600,6 +1518,20 @@
                 if (criar) {
                     options.method = 'POST';
                     options.headers['Content-Type'] = 'application/json';
+                    
+                    const invInicial = {
+                        sementes: 0,
+                        milho: 0,
+                        ovos: 0,
+                        pintinhos: 0,
+                        galinhas: 0,
+                        madeira: 0,
+                        pedra: 0,
+                        ouro: 0,
+                        pocao: 0,
+                        balde: 0
+                    };
+
                     options.body = JSON.stringify({
                         login: login,
                         nome: login,
@@ -1614,24 +1546,11 @@
                             'Pedra': 0,
                             'Ouro': 0,
                             'Poção': 0,
-                            'Sementes': 0,
-                            'Milho': 0,
-                            'Ovos': 0,
-                            'Galinhas': 0
+                            'Balde': 0
                         },
                         plot_data: milharal.plots.map(p => ({ stage: p.stage, progress: p.progress })),
                         fazendinha_dados: {
-                            inventario: {
-                                sementes: 0,
-                                milho: 0,
-                                ovos: 0,
-                                pintinhos: 0,
-                                galinhas: 0,
-                                madeira: 0,
-                                pedra: 0,
-                                ouro: 0,
-                                pocao: 0
-                            },
+                            inventario: invInicial,
                             plantio: { active: false, stage: 0, progress: 0 },
                             incubacao: { active: false, stage: 0, progress: 0 },
                             saldo: 50.00
@@ -1683,8 +1602,7 @@
                     DOM.loginError.textContent = '';
                     esconderLogin();
                     atualizarInterfaceUsuario();
-                    await loadFromSupabase();
-                    await levelSystem.carregar();
+                    await carregarDadosCompletos();
                     showToast(`👋 Bem-vindo, ${usuario.nome || usuario.login}!`, 2500);
                     return true;
 
@@ -1696,7 +1614,207 @@
             }
 
             // ============================================================
-            // 11. FUNÇÕES DO MILHARAL
+            // 11. CARREGAR E SALVAR DADOS COMPLETOS
+            // ============================================================
+            async function carregarDadosCompletos() {
+                if (!usuarioLogado || !supabaseOnline) return;
+
+                try {
+                    const response = await fetch(
+                        `${CONFIG.SUPABASE_URL}/rest/v1/${CONFIG.TABELA}?login=eq.${encodeURIComponent(usuarioLogado.login)}`, {
+                            headers: {
+                                'apikey': CONFIG.SUPABASE_KEY,
+                                'Authorization': `Bearer ${CONFIG.SUPABASE_KEY}`
+                            }
+                        }
+                    );
+
+                    if (!response.ok) throw new Error(`Erro ao carregar: ${response.status}`);
+
+                    const data = await response.json();
+                    if (!data || data.length === 0) return;
+
+                    dadosCompletos = data[0];
+                    const d = dadosCompletos;
+
+                    // ============================================================
+                    // CARREGAR MILHARAL
+                    // ============================================================
+                    milharal.seeds = d.seeds ?? CONFIG.INITIAL_SEEDS;
+                    milharal.planted = d.planted ?? 0;
+                    milharal.harvested = d.harvested ?? 0;
+                    milharal.saldo = Number(d.saldo ?? CONFIG.INITIAL_SALDO);
+                    milharal.buckets = d.buckets ?? CONFIG.INITIAL_BUCKETS;
+
+                    if (d.plot_data && Array.isArray(d.plot_data) && d.plot_data.length > 0) {
+                        milharal.plots = d.plot_data.map((p, index) => ({
+                            id: index,
+                            stage: p.stage || STAGES.EMPTY,
+                            progress: p.progress || 0,
+                            row: Math.floor(index / CONFIG.COLS),
+                            col: index % CONFIG.COLS
+                        }));
+                    } else {
+                        initPlots();
+                    }
+
+                    // ============================================================
+                    // CARREGAR FAZENDINHA
+                    // ============================================================
+                    if (d.fazendinha_dados && typeof d.fazendinha_dados === 'object') {
+                        const fd = d.fazendinha_dados;
+                        
+                        fazendinha.saldo = Number(fd.saldo ?? 50.00);
+                        
+                        if (fd.inventario) {
+                            fazendinha.inventario = {
+                                sementes: fd.inventario.sementes || 0,
+                                milho: fd.inventario.milho || 0,
+                                ovos: fd.inventario.ovos || 0,
+                                pintinhos: fd.inventario.pintinhos || 0,
+                                galinhas: fd.inventario.galinhas || 0,
+                                madeira: fd.inventario.madeira || 0,
+                                pedra: fd.inventario.pedra || 0,
+                                ouro: fd.inventario.ouro || 0,
+                                pocao: fd.inventario.pocao || 0,
+                                balde: fd.inventario.balde || 0
+                            };
+                        }
+                        
+                        if (fd.plantio) {
+                            fazendinha.plantio = {
+                                active: fd.plantio.active || false,
+                                stage: fd.plantio.stage || 0,
+                                progress: fd.plantio.progress || 0
+                            };
+                        }
+                        
+                        if (fd.incubacao) {
+                            fazendinha.incubacao = {
+                                active: fd.incubacao.active || false,
+                                stage: fd.incubacao.stage || 0,
+                                progress: fd.incubacao.progress || 0
+                            };
+                        }
+                    }
+
+                    // ============================================================
+                    // CARREGAR CARTEIRA
+                    // ============================================================
+                    if (d.carteira) {
+                        const c = d.carteira;
+                        fazendinha.inventario.madeira = c.Madeira || 0;
+                        fazendinha.inventario.pedra = c.Pedra || 0;
+                        fazendinha.inventario.ouro = c.Ouro || 0;
+                        fazendinha.inventario.pocao = c.Poção || 0;
+                        fazendinha.inventario.balde = c.Balde || 0;
+                    }
+
+                    // ============================================================
+                    // CARREGAR NÍVEL
+                    // ============================================================
+                    if (d.nivel !== undefined) {
+                        levelSystem.nivel = d.nivel || 1;
+                        levelSystem.experiencia = d.experiencia || 0;
+                        levelSystem.hpMax = d.hp_max || 100;
+                        levelSystem.mpMax = d.mp_max || 50;
+                        levelSystem.smMax = d.sm_max || 40;
+                        levelSystem.ataqueBase = d.ataque_base || 15;
+                        levelSystem.defesaBase = d.defesa_base || 10;
+                        levelSystem.magiaBase = d.magia_base || 8;
+                        levelSystem.hp = d.hp_atual || levelSystem.getHpMax();
+                        levelSystem.mp = d.mp_atual || levelSystem.getMpMax();
+                        levelSystem.sm = d.sm_atual || levelSystem.getSmMax();
+                        levelSystem.atualizarUI();
+                    }
+
+                    renderMilharal();
+                    atualizarFazendinhaUI();
+                    startMilharal();
+                    reiniciarTimersFazenda();
+
+                    showToast(`📥 Dados de ${usuarioLogado.nome || usuarioLogado.login} carregados!`, 2000);
+
+                } catch (error) {
+                    console.error('Erro ao carregar:', error);
+                    showToast('❌ Erro ao carregar: ' + error.message, 3000);
+                }
+            }
+
+            async function salvarDadosCompletos() {
+                if (!usuarioLogado || !supabaseOnline || salvando) return;
+                salvando = true;
+
+                try {
+                    const plotData = milharal.plots.map(p => ({ stage: p.stage, progress: p.progress || 0 }));
+
+                    const fazendinhaDados = {
+                        inventario: fazendinha.inventario,
+                        plantio: fazendinha.plantio,
+                        incubacao: fazendinha.incubacao,
+                        saldo: fazendinha.saldo
+                    };
+
+                    const payload = {
+                        saldo: Number(milharal.saldo || 0).toFixed(2),
+                        seeds: milharal.seeds || 0,
+                        planted: milharal.planted || 0,
+                        harvested: milharal.harvested || 0,
+                        buckets: milharal.buckets || 0,
+                        plot_data: plotData,
+                        carteira: {
+                            'Madeira': fazendinha.inventario.madeira || 0,
+                            'Pedra': fazendinha.inventario.pedra || 0,
+                            'Ouro': fazendinha.inventario.ouro || 0,
+                            'Poção': fazendinha.inventario.pocao || 0,
+                            'Balde': fazendinha.inventario.balde || 0
+                        },
+                        fazendinha_dados: fazendinhaDados,
+                        nivel: levelSystem.nivel,
+                        experiencia: levelSystem.experiencia,
+                        hp_max: levelSystem.getHpMax(),
+                        mp_max: levelSystem.getMpMax(),
+                        sm_max: levelSystem.getSmMax(),
+                        ataque_base: levelSystem.ataqueBase,
+                        defesa_base: levelSystem.defesaBase,
+                        magia_base: levelSystem.magiaBase,
+                        hp_atual: levelSystem.hp,
+                        mp_atual: levelSystem.mp,
+                        sm_atual: levelSystem.sm,
+                        updated_at: new Date().toISOString()
+                    };
+
+                    const response = await fetch(
+                        `${CONFIG.SUPABASE_URL}/rest/v1/${CONFIG.TABELA}?login=eq.${encodeURIComponent(usuarioLogado.login)}`, {
+                            method: 'PATCH',
+                            headers: {
+                                'Content-Type': 'application/json',
+                                'apikey': CONFIG.SUPABASE_KEY,
+                                'Authorization': `Bearer ${CONFIG.SUPABASE_KEY}`
+                            },
+                            body: JSON.stringify(payload)
+                        }
+                    );
+
+                    if (!response.ok) {
+                        const errorText = await response.text();
+                        console.error('Erro ao salvar:', response.status, errorText);
+                        throw new Error(`Erro ao salvar: ${response.status}`);
+                    }
+
+                    ultimoSalvamento = Date.now();
+                    console.log('💾 Dados salvos com sucesso!');
+
+                } catch (error) {
+                    console.error('Erro ao salvar:', error);
+                    showToast('❌ Erro ao salvar: ' + error.message, 3000);
+                } finally {
+                    salvando = false;
+                }
+            }
+
+            // ============================================================
+            // 12. FUNÇÕES DO MILHARAL
             // ============================================================
             function initPlots() {
                 milharal.plots = [];
@@ -1712,15 +1830,12 @@
             }
 
             function renderMilharal() {
-                const updateEl = (el, value, icon) => {
-                    if (el) el.innerHTML = `<span class="icon-num">${icon}</span> ${value}`;
-                };
-                updateEl(DOM.seedCount, milharal.seeds || 0, '🌰');
-                updateEl(DOM.plantedCount, milharal.planted || 0, '🌱');
-                updateEl(DOM.harvestCount, milharal.harvested || 0, '🌽');
-                updateEl(DOM.bucketCount, milharal.buckets || 0, '🪣');
+                if (DOM.seedCount) DOM.seedCount.textContent = `🌰 ${milharal.seeds || 0}`;
+                if (DOM.plantedCount) DOM.plantedCount.textContent = `🌱 ${milharal.planted || 0}`;
+                if (DOM.harvestCount) DOM.harvestCount.textContent = `🌽 ${milharal.harvested || 0}`;
+                if (DOM.bucketCount) DOM.bucketCount.textContent = `🪣 ${milharal.buckets || 0}`;
                 if (DOM.saldoDisplay) DOM.saldoDisplay.textContent = `R$ ${formatSaldo(milharal.saldo || 0)}`;
-                if (DOM.stockDisplay) DOM.stockDisplay.innerHTML = `<span class="icon-num">🌽</span> ${milharal.stock || 0}`;
+                if (DOM.stockDisplay) DOM.stockDisplay.innerHTML = `<i class="fas fa-warehouse"></i> <span class="num">🌽 ${milharal.stock || 0}</span>`;
                 if (DOM.bucketStatus) DOM.bucketStatus.textContent = `🪣 ${milharal.buckets || 0}`;
 
                 atualizarSaldoGlobal();
@@ -1817,7 +1932,7 @@
                     }
                 }
                 renderMilharal();
-                autoSave();
+                salvarDadosCompletos();
             }
 
             function plantAt(id) {
@@ -1830,7 +1945,7 @@
                 milharal.planted++;
                 showToast(`🌱 Plantou na parcela ${id+1}!`, 1400);
                 renderMilharal();
-                autoSave();
+                salvarDadosCompletos();
                 return true;
             }
 
@@ -1843,7 +1958,7 @@
                 p.progress = 0;
                 showToast(`🟫 Canteiro ${id+1} limpo! (-R$ ${CONFIG.CLEAR_COST.toFixed(2)})`, 1600);
                 renderMilharal();
-                autoSave();
+                salvarDadosCompletos();
                 return true;
             }
 
@@ -1868,7 +1983,7 @@
                     showToast(`💧 Regado! Progresso: ${Math.round(p.progress)}%`, 1400);
                 }
                 renderMilharal();
-                autoSave();
+                salvarDadosCompletos();
                 return true;
             }
 
@@ -1880,10 +1995,11 @@
                 milharal.harvested++;
                 milharal.seeds += 2;
                 milharal.stock++;
-                adicionarItemCarteira('Milho', 1);
+                fazendinha.inventario.milho = (fazendinha.inventario.milho || 0) + 1;
                 showToast(`🌽 Colheu 1 milho! +2 sementes, +1 estoque.`, 1600);
                 renderMilharal();
-                autoSave();
+                atualizarFazendinhaUI();
+                salvarDadosCompletos();
                 return true;
             }
 
@@ -1901,10 +2017,11 @@
                 milharal.harvested += count;
                 milharal.seeds += count * 2;
                 milharal.stock += count;
-                adicionarItemCarteira('Milho', count);
+                fazendinha.inventario.milho = (fazendinha.inventario.milho || 0) + count;
                 showToast(`🌽 Colheu ${count} milho(s)! +${count*2} sementes, +${count} estoque.`, 2500);
                 renderMilharal();
-                autoSave();
+                atualizarFazendinhaUI();
+                salvarDadosCompletos();
                 return count;
             }
 
@@ -1921,7 +2038,7 @@
                 renderMilharal();
                 startMilharal();
                 showToast('🔄 Milharal reiniciado!', 2200);
-                autoSave();
+                salvarDadosCompletos();
             }
 
             function startMilharal() {
@@ -1930,48 +2047,8 @@
             }
 
             // ============================================================
-            // 12. FUNÇÕES DA FAZENDINHA
+            // 13. FUNÇÕES DA FAZENDINHA
             // ============================================================
-            function adicionarItemCarteira(nome, quantidade) {
-                if (!usuarioLogado) return;
-                const map = {
-                    'Madeira': 'madeira',
-                    'Pedra': 'pedra',
-                    'Ouro': 'ouro',
-                    'Poção': 'pocao',
-                    'Sementes': 'sementes',
-                    'Milho': 'milho',
-                    'Ovos': 'ovos',
-                    'Galinhas': 'galinhas',
-                    'Pintinhos': 'pintinhos'
-                };
-                const key = map[nome];
-                if (key && fazendinha.inventario.hasOwnProperty(key)) {
-                    fazendinha.inventario[key] = (fazendinha.inventario[key] || 0) + quantidade;
-                }
-            }
-
-            function removerItemCarteira(nome, quantidade) {
-                if (!usuarioLogado) return false;
-                const map = {
-                    'Madeira': 'madeira',
-                    'Pedra': 'pedra',
-                    'Ouro': 'ouro',
-                    'Poção': 'pocao',
-                    'Sementes': 'sementes',
-                    'Milho': 'milho',
-                    'Ovos': 'ovos',
-                    'Galinhas': 'galinhas',
-                    'Pintinhos': 'pintinhos'
-                };
-                const key = map[nome];
-                if (key && fazendinha.inventario[key] >= quantidade) {
-                    fazendinha.inventario[key] -= quantidade;
-                    return true;
-                }
-                return false;
-            }
-
             function atualizarFazendinhaUI() {
                 const inv = fazendinha.inventario;
                 DOM.invSementes.textContent = inv.sementes || 0;
@@ -1983,6 +2060,7 @@
                 DOM.invPedra.textContent = inv.pedra || 0;
                 DOM.invOuro.textContent = inv.ouro || 0;
                 DOM.invPocao.textContent = inv.pocao || 0;
+                DOM.invBalde.textContent = inv.balde || 0;
 
                 const plantio = fazendinha.plantio;
                 if (plantio.active) {
@@ -2035,7 +2113,7 @@
                 fazendinha.plantio.progress = 0;
                 atualizarFazendinhaUI();
                 showToast('🌱 Semente plantada!', 1500);
-                autoSave();
+                salvarDadosCompletos();
 
                 const interval = setInterval(() => {
                     if (!fazendinha.plantio.active) { clearInterval(interval); return; }
@@ -2045,7 +2123,7 @@
                         fazendinha.plantio.stage = 2;
                         clearInterval(interval);
                         showToast('🌽 Milho pronto para colher!', 2000);
-                        autoSave();
+                        salvarDadosCompletos();
                     } else if (fazendinha.plantio.progress >= 50 && fazendinha.plantio.stage < 1) {
                         fazendinha.plantio.stage = 1;
                     }
@@ -2060,13 +2138,13 @@
                     return;
                 }
                 const colhido = 1 + Math.floor(Math.random() * 2);
-                adicionarItemCarteira('Milho', colhido);
+                fazendinha.inventario.milho = (fazendinha.inventario.milho || 0) + colhido;
                 fazendinha.plantio.active = false;
                 fazendinha.plantio.stage = 0;
                 fazendinha.plantio.progress = 0;
                 atualizarFazendinhaUI();
                 showToast(`🧺 Colheu ${colhido} milho (na mochila)!`, 2000);
-                autoSave();
+                salvarDadosCompletos();
             }
 
             function incubarOvo() {
@@ -2078,7 +2156,7 @@
                 fazendinha.incubacao.progress = 0;
                 atualizarFazendinhaUI();
                 showToast('🥚 Ovo incubando...', 1500);
-                autoSave();
+                salvarDadosCompletos();
 
                 const interval = setInterval(() => {
                     if (!fazendinha.incubacao.active) { clearInterval(interval); return; }
@@ -2087,10 +2165,10 @@
                         fazendinha.incubacao.progress = 100;
                         fazendinha.incubacao.stage = 1;
                         clearInterval(interval);
-                        adicionarItemCarteira('Pintinhos', 1);
+                        fazendinha.inventario.pintinhos = (fazendinha.inventario.pintinhos || 0) + 1;
                         fazendinha.incubacao.active = false;
                         showToast('🐣 Nasceu um pintinho!', 2000);
-                        autoSave();
+                        salvarDadosCompletos();
                         atualizarFazendinhaUI();
                     } else {
                         atualizarFazendinhaUI();
@@ -2104,19 +2182,19 @@
                 if (fazendinha.inventario.milho <= 0) { showToast('😅 Sem milho!', 1500); return; }
                 fazendinha.inventario.milho--;
                 fazendinha.inventario.pintinhos--;
-                adicionarItemCarteira('Galinhas', 1);
+                fazendinha.inventario.galinhas = (fazendinha.inventario.galinhas || 0) + 1;
                 atualizarFazendinhaUI();
                 showToast('🐔 Pintinho virou galinha (na mochila)!', 2000);
-                autoSave();
+                salvarDadosCompletos();
             }
 
             function producaoOvos() {
                 if (fazendinha.inventario.galinhas > 0) {
                     const ovos = Math.floor(fazendinha.inventario.galinhas * (0.5 + Math.random() * 0.5));
                     if (ovos > 0) {
-                        adicionarItemCarteira('Ovos', ovos);
+                        fazendinha.inventario.ovos = (fazendinha.inventario.ovos || 0) + ovos;
                         showToast(`🐔 Galinhas produziram ${ovos} ovos (na mochila)!`, 2000);
-                        autoSave();
+                        salvarDadosCompletos();
                         atualizarFazendinhaUI();
                     }
                 }
@@ -2136,10 +2214,56 @@
                 if (inv.galinhas > 0) { valorTotal += inv.galinhas * precos.galinha; inv.galinhas = 0; }
 
                 const valorArredondado = Math.round(valorTotal * 100) / 100;
-                fazendinha.saldo = (fazendinha.saldo || 0) + valorArredondado;
+                milharal.saldo = (milharal.saldo || 0) + valorArredondado;
                 atualizarFazendinhaUI();
+                renderMilharal();
                 showToast(`💰 Vendeu por R$ ${valorArredondado.toFixed(2)}!`, 2500);
-                autoSave();
+                salvarDadosCompletos();
+            }
+
+            function reiniciarTimersFazenda() {
+                limparIntervalosFazenda();
+                
+                if (fazendinha.plantio.active) {
+                    const interval = setInterval(() => {
+                        if (!fazendinha.plantio.active) { clearInterval(interval); return; }
+                        fazendinha.plantio.progress = (fazendinha.plantio.progress || 0) + 1 + Math.random() * 2;
+                        if (fazendinha.plantio.progress >= 100) {
+                            fazendinha.plantio.progress = 100;
+                            fazendinha.plantio.stage = 2;
+                            clearInterval(interval);
+                            showToast('🌽 Milho pronto para colher!', 2000);
+                            salvarDadosCompletos();
+                        } else if (fazendinha.plantio.progress >= 50 && fazendinha.plantio.stage < 1) {
+                            fazendinha.plantio.stage = 1;
+                        }
+                        atualizarFazendinhaUI();
+                    }, CONFIG.PLANTIO_INTERVAL);
+                    fazendinha.intervalos.push(interval);
+                }
+
+                if (fazendinha.incubacao.active) {
+                    const interval = setInterval(() => {
+                        if (!fazendinha.incubacao.active) { clearInterval(interval); return; }
+                        fazendinha.incubacao.progress = (fazendinha.incubacao.progress || 0) + 1 + Math.random() * 1.5;
+                        if (fazendinha.incubacao.progress >= 100) {
+                            fazendinha.incubacao.progress = 100;
+                            fazendinha.incubacao.stage = 1;
+                            clearInterval(interval);
+                            fazendinha.inventario.pintinhos = (fazendinha.inventario.pintinhos || 0) + 1;
+                            fazendinha.incubacao.active = false;
+                            showToast('🐣 Nasceu um pintinho!', 2000);
+                            salvarDadosCompletos();
+                            atualizarFazendinhaUI();
+                        } else {
+                            atualizarFazendinhaUI();
+                        }
+                    }, CONFIG.INCUBACAO_INTERVAL);
+                    fazendinha.intervalos.push(interval);
+                }
+
+                if (fazendinha.ovosInterval) clearInterval(fazendinha.ovosInterval);
+                fazendinha.ovosInterval = setInterval(producaoOvos, CONFIG.OVOS_INTERVAL);
             }
 
             function limparIntervalosFazenda() {
@@ -2149,269 +2273,7 @@
             }
 
             // ============================================================
-            // 13. SUPABASE - SALVAR E CARREGAR
-            // ============================================================
-            async function saveToSupabase() {
-                if (!usuarioLogado) { showToast('⚠️ Faça login para salvar!', 2000); return; }
-                if (!supabaseOnline) { showToast('⚠️ Sem conexão com o banco de dados!', 2000); return; }
-                if (salvando) return;
-                salvando = true;
-
-                try {
-                    const plotData = milharal.plots.map(p => ({ stage: p.stage, progress: p.progress || 0 }));
-
-                    const carteira = {
-                        'Madeira': fazendinha.inventario.madeira || 0,
-                        'Pedra': fazendinha.inventario.pedra || 0,
-                        'Ouro': fazendinha.inventario.ouro || 0,
-                        'Poção': fazendinha.inventario.pocao || 0,
-                        'Sementes': fazendinha.inventario.sementes || 0,
-                        'Milho': fazendinha.inventario.milho || 0,
-                        'Ovos': fazendinha.inventario.ovos || 0,
-                        'Galinhas': fazendinha.inventario.galinhas || 0,
-                        'Pintinhos': fazendinha.inventario.pintinhos || 0
-                    };
-
-                    const fazendinhaDados = {
-                        inventario: {
-                            sementes: fazendinha.inventario.sementes || 0,
-                            milho: fazendinha.inventario.milho || 0,
-                            ovos: fazendinha.inventario.ovos || 0,
-                            pintinhos: fazendinha.inventario.pintinhos || 0,
-                            galinhas: fazendinha.inventario.galinhas || 0,
-                            madeira: fazendinha.inventario.madeira || 0,
-                            pedra: fazendinha.inventario.pedra || 0,
-                            ouro: fazendinha.inventario.ouro || 0,
-                            pocao: fazendinha.inventario.pocao || 0
-                        },
-                        plantio: fazendinha.plantio,
-                        incubacao: fazendinha.incubacao,
-                        saldo: fazendinha.saldo
-                    };
-
-                    const payload = {
-                        saldo: Number(milharal.saldo || 0).toFixed(2),
-                        seeds: milharal.seeds || 0,
-                        planted: milharal.planted || 0,
-                        harvested: milharal.harvested || 0,
-                        buckets: milharal.buckets || 0,
-                        plot_data: plotData,
-                        carteira: carteira,
-                        fazendinha_dados: fazendinhaDados,
-                        nivel: levelSystem.nivel,
-                        experiencia: levelSystem.experiencia,
-                        hp_max: levelSystem.getHpMax(),
-                        mp_max: levelSystem.getMpMax(),
-                        sm_max: levelSystem.getSmMax(),
-                        ataque_base: levelSystem.ataqueBase,
-                        defesa_base: levelSystem.defesaBase,
-                        magia_base: levelSystem.magiaBase,
-                        hp_atual: levelSystem.hp,
-                        mp_atual: levelSystem.mp,
-                        sm_atual: levelSystem.sm,
-                        updated_at: new Date().toISOString()
-                    };
-
-                    const response = await fetch(
-                        `${CONFIG.SUPABASE_URL}/rest/v1/${CONFIG.TABELA}?login=eq.${encodeURIComponent(usuarioLogado.login)}`, {
-                            method: 'PATCH',
-                            headers: {
-                                'Content-Type': 'application/json',
-                                'apikey': CONFIG.SUPABASE_KEY,
-                                'Authorization': `Bearer ${CONFIG.SUPABASE_KEY}`
-                            },
-                            body: JSON.stringify(payload)
-                        }
-                    );
-
-                    if (!response.ok) {
-                        const errorText = await response.text();
-                        console.error('Erro ao salvar:', response.status, errorText);
-                        throw new Error(`Erro ao salvar: ${response.status} - ${errorText}`);
-                    }
-
-                    ultimoSalvamento = Date.now();
-                    console.log('💾 Dados salvos com sucesso!');
-                } catch (error) {
-                    console.error('Erro ao salvar:', error);
-                    showToast('❌ Erro ao salvar: ' + error.message, 3000);
-                } finally {
-                    salvando = false;
-                }
-            }
-
-            async function loadFromSupabase() {
-                if (!usuarioLogado) { showToast('👤 Faça login para carregar seus dados.', 2000); return; }
-                if (!supabaseOnline) { showToast('⚠️ Sem conexão com o banco de dados!', 2000); return; }
-
-                try {
-                    const response = await fetch(
-                        `${CONFIG.SUPABASE_URL}/rest/v1/${CONFIG.TABELA}?login=eq.${encodeURIComponent(usuarioLogado.login)}`, {
-                            headers: {
-                                'apikey': CONFIG.SUPABASE_KEY,
-                                'Authorization': `Bearer ${CONFIG.SUPABASE_KEY}`
-                            }
-                        }
-                    );
-
-                    if (!response.ok) throw new Error(`Erro ao carregar: ${response.status}`);
-
-                    const data = await response.json();
-
-                    if (!data || data.length === 0) {
-                        showToast('📭 Nenhum dado salvo encontrado. Comece do zero!', 2000);
-                        return;
-                    }
-
-                    const usuario = data[0];
-                    console.log('Dados carregados:', usuario);
-
-                    // Milharal
-                    milharal.seeds = usuario.seeds ?? CONFIG.INITIAL_SEEDS;
-                    milharal.planted = usuario.planted ?? 0;
-                    milharal.harvested = usuario.harvested ?? 0;
-                    milharal.saldo = Number(usuario.saldo ?? CONFIG.INITIAL_SALDO);
-                    milharal.buckets = usuario.buckets ?? CONFIG.INITIAL_BUCKETS;
-
-                    if (usuario.plot_data && Array.isArray(usuario.plot_data) && usuario.plot_data.length > 0) {
-                        milharal.plots = usuario.plot_data.map((p, index) => ({
-                            id: index,
-                            stage: p.stage || STAGES.EMPTY,
-                            progress: p.progress || 0,
-                            row: Math.floor(index / CONFIG.COLS),
-                            col: index % CONFIG.COLS
-                        }));
-                    } else {
-                        initPlots();
-                    }
-
-                    // Fazendinha
-                    if (usuario.fazendinha_dados) {
-                        const fd = usuario.fazendinha_dados;
-                        fazendinha.saldo = Number(fd.saldo ?? 10.00);
-                        if (fd.inventario) {
-                            fazendinha.inventario = {
-                                sementes: fd.inventario.sementes || 0,
-                                milho: fd.inventario.milho || 0,
-                                ovos: fd.inventario.ovos || 0,
-                                pintinhos: fd.inventario.pintinhos || 0,
-                                galinhas: fd.inventario.galinhas || 0,
-                                madeira: fd.inventario.madeira || 0,
-                                pedra: fd.inventario.pedra || 0,
-                                ouro: fd.inventario.ouro || 0,
-                                pocao: fd.inventario.pocao || 0
-                            };
-                        }
-                        if (fd.plantio) {
-                            fazendinha.plantio = {
-                                active: fd.plantio.active || false,
-                                stage: fd.plantio.stage || 0,
-                                progress: fd.plantio.progress || 0
-                            };
-                        }
-                        if (fd.incubacao) {
-                            fazendinha.incubacao = {
-                                active: fd.incubacao.active || false,
-                                stage: fd.incubacao.stage || 0,
-                                progress: fd.incubacao.progress || 0
-                            };
-                        }
-                    }
-
-                    // Carteira
-                    if (usuario.carteira) {
-                        const c = usuario.carteira;
-                        fazendinha.inventario.madeira = c.Madeira || 0;
-                        fazendinha.inventario.pedra = c.Pedra || 0;
-                        fazendinha.inventario.ouro = c.Ouro || 0;
-                        fazendinha.inventario.pocao = c.Poção || 0;
-                        fazendinha.inventario.sementes = c.Sementes || 0;
-                        fazendinha.inventario.milho = c.Milho || 0;
-                        fazendinha.inventario.ovos = c.Ovos || 0;
-                        fazendinha.inventario.galinhas = c.Galinhas || 0;
-                        fazendinha.inventario.pintinhos = c.Pintinhos || 0;
-                    }
-
-                    renderMilharal();
-                    atualizarFazendinhaUI();
-
-                    if (milharal.growthTimer) clearInterval(milharal.growthTimer);
-                    startMilharal();
-
-                    // Reativar timers da fazendinha
-                    if (fazendinha.plantio.active) {
-                        const interval = setInterval(() => {
-                            if (!fazendinha.plantio.active) { clearInterval(interval); return; }
-                            fazendinha.plantio.progress = (fazendinha.plantio.progress || 0) + 1 + Math.random() * 2;
-                            if (fazendinha.plantio.progress >= 100) {
-                                fazendinha.plantio.progress = 100;
-                                fazendinha.plantio.stage = 2;
-                                clearInterval(interval);
-                                showToast('🌽 Milho pronto para colher!', 2000);
-                                autoSave();
-                            } else if (fazendinha.plantio.progress >= 50 && fazendinha.plantio.stage < 1) {
-                                fazendinha.plantio.stage = 1;
-                            }
-                            atualizarFazendinhaUI();
-                        }, CONFIG.PLANTIO_INTERVAL);
-                        fazendinha.intervalos.push(interval);
-                    }
-
-                    if (fazendinha.incubacao.active) {
-                        const interval = setInterval(() => {
-                            if (!fazendinha.incubacao.active) { clearInterval(interval); return; }
-                            fazendinha.incubacao.progress = (fazendinha.incubacao.progress || 0) + 1 + Math.random() * 1.5;
-                            if (fazendinha.incubacao.progress >= 100) {
-                                fazendinha.incubacao.progress = 100;
-                                fazendinha.incubacao.stage = 1;
-                                clearInterval(interval);
-                                adicionarItemCarteira('Pintinhos', 1);
-                                fazendinha.incubacao.active = false;
-                                showToast('🐣 Nasceu um pintinho!', 2000);
-                                autoSave();
-                                atualizarFazendinhaUI();
-                            } else {
-                                atualizarFazendinhaUI();
-                            }
-                        }, CONFIG.INCUBACAO_INTERVAL);
-                        fazendinha.intervalos.push(interval);
-                    }
-
-                    // Nível
-                    if (usuario.nivel !== undefined) {
-                        levelSystem.nivel = usuario.nivel || 1;
-                        levelSystem.experiencia = usuario.experiencia || 0;
-                        levelSystem.hpMax = usuario.hp_max || 100;
-                        levelSystem.mpMax = usuario.mp_max || 50;
-                        levelSystem.smMax = usuario.sm_max || 40;
-                        levelSystem.ataqueBase = usuario.ataque_base || 15;
-                        levelSystem.defesaBase = usuario.defesa_base || 10;
-                        levelSystem.magiaBase = usuario.magia_base || 8;
-                        levelSystem.hp = usuario.hp_atual || levelSystem.getHpMax();
-                        levelSystem.mp = usuario.mp_atual || levelSystem.getMpMax();
-                        levelSystem.sm = usuario.sm_atual || levelSystem.getSmMax();
-                        levelSystem.atualizarUI();
-                    }
-
-                    showToast(`📥 Dados de ${usuarioLogado.nome || usuarioLogado.login} carregados!`, 2000);
-
-                } catch (error) {
-                    console.error('Erro ao carregar:', error);
-                    showToast('❌ Erro ao carregar: ' + error.message, 3000);
-                }
-            }
-
-            // ============================================================
-            // 14. AUTO SAVE
-            // ============================================================
-            function autoSave() {
-                if (usuarioLogado && supabaseOnline && !salvando && Date.now() - ultimoSalvamento > CONFIG.AUTO_SAVE_INTERVAL) {
-                    saveToSupabase();
-                }
-            }
-
-            // ============================================================
-            // 15. EVENTOS
+            // 14. EVENTOS
             // ============================================================
 
             // Milharal - Clique no campo
@@ -2456,7 +2318,7 @@
                     renderMilharal();
                     const mature = milharal.plots.filter(p => p.stage === STAGES.MATURE).length;
                     if (mature > 0) setTimeout(() => showToast(`🌽 ${mature} amadureceu(ram)!`, 1600), 400);
-                    autoSave();
+                    salvarDadosCompletos();
                 } else showToast('💧 Nada para regar.', 1200);
             });
 
@@ -2470,18 +2332,13 @@
             document.getElementById('btnAlimentarGalinha')?.addEventListener('click', alimentarGalinha);
             document.getElementById('btnVenderProducao')?.addEventListener('click', venderProducao);
 
-            // Nível - Eventos
+            // Nível
             document.getElementById('btnTreinar')?.addEventListener('click', () => levelSystem.treinar());
             document.getElementById('btnDescansar')?.addEventListener('click', () => levelSystem.descansar());
             document.getElementById('btnResetLevel')?.addEventListener('click', () => levelSystem.resetar());
             document.getElementById('btnSmGanhar')?.addEventListener('click', () => levelSystem.ganharSm());
             document.getElementById('btnSmGastar')?.addEventListener('click', () => levelSystem.gastarSm());
             document.getElementById('btnSmResetar')?.addEventListener('click', () => levelSystem.resetarSm());
-
-            // Logout
-            document.getElementById('btnLogout')?.addEventListener('click', function() {
-                if (confirm('Deseja realmente sair?')) fazerLogout();
-            });
 
             // Reconectar
             document.getElementById('btnReconnectSupabase')?.addEventListener('click', function() {
@@ -2490,7 +2347,7 @@
             });
 
             // ============================================================
-            // 16. LOGIN MODAL - EVENTOS
+            // 15. LOGIN MODAL - EVENTOS
             // ============================================================
             document.addEventListener('DOMContentLoaded', function() {
                 const loginBtn = document.getElementById('btnLogin');
@@ -2562,7 +2419,7 @@
             });
 
             // ============================================================
-            // 17. INICIALIZAÇÃO
+            // 16. INICIALIZAÇÃO
             // ============================================================
             verificarSupabase();
             carregarUsuario();
@@ -2572,15 +2429,12 @@
             levelSystem.atualizarUI();
             startMilharal();
 
-            // Produção automática de ovos
-            fazendinha.ovosInterval = setInterval(() => producaoOvos(), CONFIG.OVOS_INTERVAL);
-
             if (usuarioLogado) {
                 esconderLogin();
                 atualizarInterfaceUsuario();
                 setTimeout(() => {
                     if (supabaseOnline) {
-                        loadFromSupabase().then(() => levelSystem.carregar());
+                        carregarDadosCompletos();
                     } else {
                         showToast('⚠️ Sem conexão com o banco. Dados locais carregados.', 3000);
                     }
@@ -2592,12 +2446,16 @@
             }
 
             setInterval(() => verificarSupabase(), 30000);
-            setInterval(() => autoSave(), CONFIG.AUTO_SAVE_INTERVAL);
+            setInterval(() => {
+                if (usuarioLogado && supabaseOnline && !salvando) {
+                    salvarDadosCompletos();
+                }
+            }, CONFIG.AUTO_SAVE_INTERVAL);
 
             window.addEventListener('beforeunload', function() {
                 if (milharal.growthTimer) clearInterval(milharal.growthTimer);
                 limparIntervalosFazenda();
-                if (usuarioLogado && supabaseOnline && !salvando) saveToSupabase();
+                if (usuarioLogado && supabaseOnline && !salvando) salvarDadosCompletos();
             });
 
             console.log('🌽 Milharal + Fazendinha + Sistema de Nível carregados!');
@@ -2607,5 +2465,4 @@
     </script>
 
 </body>
-
 </html>
