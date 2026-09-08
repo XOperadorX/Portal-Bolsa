@@ -2,7 +2,7 @@
     'use strict';
 
     // ============================================================
-    // CONFIGURAÇÕES SUPABASE
+    // CONFIGURAÇÕES SUPABASE (ÚNICA DECLARAÇÃO)
     // ============================================================
     const SUPABASE_URL = 'https://xrcxvizzdumcxbylmkvn.supabase.co';
     const SUPABASE_KEY = 'sb_publishable_E-g3G3wW4EySbCsXLXp8KQ_FnmERMcD';
@@ -56,6 +56,7 @@
             this.ultimoReset = null;
             this.toastTimer = null;
             this.saveTimeout = null;
+            this.mineracaoInterval = null;
 
             // Bind dos métodos
             this.treinar = this.treinar.bind(this);
@@ -72,6 +73,8 @@
             this.carregarLogs = this.carregarLogs.bind(this);
             this.gastarStaminaParaJogar = this.gastarStaminaParaJogar.bind(this);
             this.configurarEventosDosJogos = this.configurarEventosDosJogos.bind(this);
+            this.minerar = this.minerar.bind(this);
+            this.upgradeMineracao = this.upgradeMineracao.bind(this);
         }
 
         // ============================================================
@@ -239,7 +242,6 @@
 
             // Verificar se subiu de nível
             let subiu = false;
-            let nivelAntes = this.nivel;
             while (this.experiencia >= this.getExpProximo()) {
                 this.experiencia -= this.getExpProximo();
                 this.nivel++;
@@ -368,6 +370,7 @@
         // ============================================================
         gastarStaminaParaJogar(event) {
             event.preventDefault();
+            event.stopPropagation();
             
             const link = event.currentTarget;
             const gameName = link.getAttribute('data-game-name') || link.getAttribute('data-game') || 'Jogo';
@@ -384,18 +387,19 @@
             // MOSTRA OVERLAY DE CARREGAMENTO
             // ============================================================
             const loadingOverlay = document.getElementById('gameLoadingOverlay');
-            const loadingIcon = document.getElementById('loadingIcon');
-            const loadingTitle = document.getElementById('loadingTitle');
-            const loadingSub = document.getElementById('loadingSub');
-            const loadingStamina = document.getElementById('loadingStamina');
-            const loadingProgressFill = document.getElementById('loadingProgressFill');
-
+            
             if (loadingOverlay) {
-                loadingIcon.textContent = gameIcon;
-                loadingTitle.textContent = `Entrando em ${gameName}...`;
-                loadingSub.textContent = 'Preparando sua aventura';
-                loadingStamina.textContent = `⚡ -10 STAMINA (${this.sm} → ${this.sm - 10})`;
-                loadingProgressFill.style.width = '0%';
+                const loadingIcon = document.getElementById('loadingIcon');
+                const loadingTitle = document.getElementById('loadingTitle');
+                const loadingSub = document.getElementById('loadingSub');
+                const loadingStamina = document.getElementById('loadingStamina');
+                const loadingProgressFill = document.getElementById('loadingProgressFill');
+
+                if (loadingIcon) loadingIcon.textContent = gameIcon;
+                if (loadingTitle) loadingTitle.textContent = `Entrando em ${gameName}...`;
+                if (loadingSub) loadingSub.textContent = 'Preparando sua aventura';
+                if (loadingStamina) loadingStamina.textContent = `⚡ -10 STAMINA (${this.sm} → ${this.sm - 10})`;
+                if (loadingProgressFill) loadingProgressFill.style.width = '0%';
                 loadingOverlay.classList.add('active');
             }
 
@@ -404,6 +408,8 @@
             const progressInterval = setInterval(() => {
                 progress += Math.random() * 15 + 5;
                 if (progress > 95) progress = 95;
+                const loadingProgressFill = document.getElementById('loadingProgressFill');
+                const loadingSub = document.getElementById('loadingSub');
                 if (loadingProgressFill) {
                     loadingProgressFill.style.width = Math.min(progress, 95) + '%';
                 }
@@ -430,6 +436,8 @@
                 .then(() => this.salvarStats())
                 .then(() => {
                     clearInterval(progressInterval);
+                    const loadingProgressFill = document.getElementById('loadingProgressFill');
+                    const loadingSub = document.getElementById('loadingSub');
                     if (loadingProgressFill) loadingProgressFill.style.width = '100%';
                     if (loadingSub) loadingSub.textContent = '✅ Pronto! Redirecionando...';
                     
@@ -440,6 +448,7 @@
                 .catch((error) => {
                     console.error('❌ Erro ao salvar:', error);
                     clearInterval(progressInterval);
+                    const loadingSub = document.getElementById('loadingSub');
                     if (loadingSub) loadingSub.textContent = '⚠️ Erro ao salvar, mas continuando...';
                     setTimeout(() => {
                         window.location.href = href;
@@ -490,12 +499,12 @@
                     nivel: this.nivel,
                     experiencia: this.experiencia,
                     exp_proximo: this.getExpProximo(),
-                    lwHp: this.getHpMax(),
-                    lwMp: this.getMpMax(),
-                    lwSm: this.getSmMax(),
-                    lwAtk: this.ataqueBase,
-                    lwDef: this.defesaBase,
-                    lwMag: this.magiaBase,
+                    lwhp: this.getHpMax(),
+                    lwmp: this.getMpMax(),
+                    lwsm: this.getSmMax(),
+                    lwatk: this.ataqueBase,
+                    lwdef: this.defesaBase,
+                    lwmag: this.magiaBase,
                     hp_atual: this.hp,
                     mp_atual: this.mp,
                     sm_atual: this.sm,
@@ -543,12 +552,12 @@
                     // Carrega dados do nível
                     this.nivel = data.nivel || 1;
                     this.experiencia = data.experiencia || 0;
-                    this.hpMax = data.lwhp || data.lwHp || 100;
-                    this.mpMax = data.lwmp || data.lwMp || 50;
-                    this.smMax = data.lwsm || data.lwSm || 100;
-                    this.ataqueBase = data.lwatk || data.lwAtk || 15;
-                    this.defesaBase = data.lwdef || data.lwDef || 10;
-                    this.magiaBase = data.lwmag || data.lwMag || 8;
+                    this.hpMax = data.lwhp || 100;
+                    this.mpMax = data.lwmp || 50;
+                    this.smMax = data.lwsm || 100;
+                    this.ataqueBase = data.lwatk || 15;
+                    this.defesaBase = data.lwdef || 10;
+                    this.magiaBase = data.lwmag || 8;
                     this.hp = data.hp_atual || this.getHpMax();
                     this.mp = data.mp_atual || this.getMpMax();
                     this.sm = data.sm_atual || this.getSmMax();
@@ -556,6 +565,11 @@
                     this.totalDescansos = data.total_descansos || 0;
                     this.ultimaAtividade = data.ultima_atividade || null;
                     this.ultimoReset = data.ultimo_reset || null;
+
+                    // Carrega saldo e BTC
+                    this.saldo = parseFloat(data.saldo) || 0;
+                    this.btc = parseFloat(data.btc) || 0;
+                    this.poderHash = parseFloat(data.poder_hash) || 1.0;
 
                     // Atualiza UI
                     this.atualizarUI();
@@ -603,6 +617,9 @@
                     hp_atual: 100,
                     mp_atual: 50,
                     sm_atual: 100,
+                    saldo: 0,
+                    btc: 0,
+                    poder_hash: 1.0,
                     total_treinos: 0,
                     total_descansos: 0,
                     created_at: new Date().toISOString(),
@@ -629,6 +646,9 @@
                 this.magiaBase = 8;
                 this.totalTreinos = 0;
                 this.totalDescansos = 0;
+                this.saldo = 0;
+                this.btc = 0;
+                this.poderHash = 1.0;
                 
                 this.atualizarUI();
                 this.addLog('🌱 Registro de nível criado!', 'info');
@@ -639,6 +659,62 @@
                 console.error('❌ Erro ao criar registro de nível:', error);
                 return false;
             }
+        }
+
+        // ============================================================
+        // MINERAÇÃO
+        // ============================================================
+        minerar() {
+            if (!this.usuario) {
+                this.mostrarToast('❌ Faça login primeiro!', 'erro');
+                return;
+            }
+            const ganho = (0.0000001 + Math.random() * 0.000001) * this.poderHash;
+            this.btc += ganho;
+            this.atualizarUI();
+            
+            const log = document.getElementById('logMineracao');
+            if (log) {
+                log.innerHTML += `<div>⛏️ +${ganho.toFixed(8)} BTC</div>`;
+                log.scrollTop = log.scrollHeight;
+                if (log.children.length > 20) log.removeChild(log.firstChild);
+            }
+            this.addLog(`⛏️ Minerou +${ganho.toFixed(8)} BTC`, 'info');
+            this.salvarComDelay();
+        }
+
+        upgradeMineracao() {
+            if (!this.usuario) {
+                this.mostrarToast('❌ Faça login primeiro!', 'erro');
+                return;
+            }
+            if (this.btc < 10) {
+                this.mostrarToast('❌ Precisa de 10 BTC.', 'erro');
+                return;
+            }
+            this.btc -= 10;
+            this.poderHash += 0.5;
+            this.atualizarUI();
+            
+            const log = document.getElementById('logMineracao');
+            if (log) log.innerHTML += `<div>⬆️ Upgrade! Poder ${this.poderHash.toFixed(1)} MH/s</div>`;
+            this.addLog(`⬆️ Upgrade mineração para ${this.poderHash.toFixed(1)} MH/s`, 'info');
+            this.mostrarToast(`✅ Upgrade realizado! Poder: ${this.poderHash.toFixed(1)} MH/s`, 'sucesso');
+            this.salvarComDelay();
+        }
+
+        iniciarMineracaoPassiva() {
+            if (this.mineracaoInterval) clearInterval(this.mineracaoInterval);
+            this.mineracaoInterval = setInterval(() => {
+                if (!this.usuario) return;
+                if (this.poderHash > 0) {
+                    const ganho = this.poderHash * 0.00000001 * 3;
+                    if (ganho > 0) {
+                        this.btc += ganho;
+                        this.atualizarUI();
+                    }
+                }
+            }, 3000);
         }
 
         // ============================================================
@@ -687,12 +763,63 @@
             if (lwAtk) lwAtk.textContent = this.getAtaque();
             if (lwDef) lwDef.textContent = this.getDefesa();
             if (lwMag) lwMag.textContent = this.getMagia();
+
+            // Atualiza dados de mineração
+            const saldoElement = document.getElementById('saldo');
+            const btcElement = document.getElementById('btcTotal');
+            const poderElement = document.getElementById('poderMineracao');
+            const passivaElement = document.getElementById('mineracaoPassiva');
+            const btcWidget = document.getElementById('btcAccumulatedWidget');
+
+            if (saldoElement) {
+                saldoElement.textContent = new Intl.NumberFormat('pt-BR', {
+                    style: 'currency',
+                    currency: 'BRL'
+                }).format(this.saldo || 0);
+            }
+            if (btcElement) btcElement.textContent = (this.btc || 0).toFixed(8);
+            if (poderElement) poderElement.textContent = `${(this.poderHash || 1.0).toFixed(1)} MH/s`;
+            if (passivaElement) {
+                const passiva = (this.poderHash || 1.0) * 0.00000001;
+                passivaElement.textContent = passiva.toFixed(8) + ' BTC/s';
+            }
+            if (btcWidget) btcWidget.textContent = (this.btc || 0).toFixed(8);
+
+            // Atualiza avatar e nick
+            const avatar = document.getElementById('userAvatar');
+            const nick = document.getElementById('nomeJogador') || document.getElementById('userNick');
+            const headerUser = document.getElementById('headerUser');
+
+            if (nick && this.usuario) {
+                const nome = this.usuario.nome || this.usuario.login;
+                nick.textContent = nome;
+            }
+            if (avatar && this.usuario) {
+                avatar.textContent = this.usuario.login ? this.usuario.login.charAt(0).toUpperCase() : '👤';
+            }
+            if (headerUser && this.usuario) {
+                headerUser.textContent = this.usuario.nome || this.usuario.login;
+            }
         }
 
         // ============================================================
         // TOAST
         // ============================================================
         mostrarToast(mensagem, tipo = 'info') {
+            // Usa o toast da mineração se existir
+            const toastMineracao = document.getElementById('toast');
+            if (toastMineracao) {
+                toastMineracao.textContent = mensagem;
+                toastMineracao.style.borderLeftColor = tipo === 'erro' ? '#ef4444' : 
+                                                       tipo === 'sucesso' ? '#10b981' :
+                                                       tipo === 'aviso' ? '#f59e0b' : '#00f0ff';
+                toastMineracao.classList.add('show');
+                clearTimeout(toastMineracao._timeout);
+                toastMineracao._timeout = setTimeout(() => toastMineracao.classList.remove('show'), 3000);
+                return;
+            }
+
+            // Fallback para o toast de nível
             const toast = document.getElementById('levelToast');
             if (!toast) {
                 console.log('[TOAST]', mensagem);
@@ -784,71 +911,78 @@
                 }
             }, 30000);
         }
+
+        // ============================================================
+        // CARREGAR DADOS DO USUÁRIO
+        // ============================================================
+        async loadUserData() {
+            try {
+                const usuarioData = localStorage.getItem('usuario_logado');
+                
+                if (!usuarioData) {
+                    this.setFallbackUser();
+                    return false;
+                }
+
+                const usuario = JSON.parse(usuarioData);
+                if (!usuario.login) {
+                    this.setFallbackUser();
+                    return false;
+                }
+
+                // Primeiro tenta carregar o nível
+                await this.carregar(usuario);
+
+                // Depois busca o perfil completo
+                const { data: profile, error: profileError } = await supabase
+                    .from(TABELA)
+                    .select('*')
+                    .eq('login', usuario.login)
+                    .single();
+
+                if (profileError && profileError.code !== 'PGRST116') {
+                    console.warn('⚠️ Erro ao buscar perfil:', profileError);
+                }
+
+                // Define o nick e saldo
+                const nick = profile?.nome || usuario.nome || usuario.login;
+                const saldo = profile?.saldo !== undefined && profile.saldo !== null ? profile.saldo : 0;
+                this.saldo = saldo;
+
+                // Atualiza a UI
+                this.atualizarUI();
+                
+                this.addLog(`👋 Bem-vindo, ${nick}!`, 'info');
+                
+                // Inicia mineração passiva
+                this.iniciarMineracaoPassiva();
+
+                return true;
+
+            } catch (error) {
+                console.error('❌ Erro ao carregar perfil:', error);
+                this.setFallbackUser();
+                return false;
+            }
+        }
+
+        setFallbackUser() {
+            const nick = document.getElementById('userNick');
+            const saldo = document.getElementById('saldo');
+            const avatar = document.getElementById('userAvatar');
+            const headerUser = document.getElementById('headerUser');
+
+            if (nick) nick.textContent = 'Visitante';
+            if (saldo) saldo.textContent = 'R$ 0,00';
+            if (avatar) avatar.textContent = '👤';
+            if (headerUser) headerUser.textContent = 'Visitante';
+        }
     }
 
     // ============================================================
     // INSTANCIAR SISTEMA DE NÍVEL
     // ============================================================
     const levelSystem = new LevelSystem();
-
-    // ============================================================
-    // CARREGAR DADOS DO USUÁRIO
-    // ============================================================
-    async function loadUserData() {
-        try {
-            const usuarioData = localStorage.getItem('usuario_logado');
-            
-            if (!usuarioData) {
-                setFallbackUser();
-                return;
-            }
-
-            const usuario = JSON.parse(usuarioData);
-            if (!usuario.login) {
-                setFallbackUser();
-                return;
-            }
-
-            // Primeiro tenta carregar o nível
-            await levelSystem.carregar(usuario);
-
-            // Depois busca o perfil completo
-            const { data: profile, error: profileError } = await supabase
-                .from(TABELA)
-                .select('*')
-                .eq('login', usuario.login)
-                .single();
-
-            if (profileError && profileError.code !== 'PGRST116') {
-                console.warn('⚠️ Erro ao buscar perfil:', profileError);
-            }
-
-            // Define o nick e saldo
-            const nick = profile?.nome || usuario.nome || usuario.login;
-            const balance = profile?.saldo !== undefined && profile.saldo !== null ? profile.saldo : 0;
-
-            document.getElementById('userNick').textContent = nick;
-            document.getElementById('headerUser').textContent = nick;
-            document.getElementById('userBalance').textContent = new Intl.NumberFormat('pt-BR', {
-                style: 'currency',
-                currency: 'BRL'
-            }).format(balance);
-            document.getElementById('userAvatar').textContent = nick.charAt(0).toUpperCase();
-
-            levelSystem.addLog(`👋 Bem-vindo, ${nick}!`, 'info');
-
-        } catch (error) {
-            console.error('❌ Erro ao carregar perfil:', error);
-            setFallbackUser();
-        }
-    }
-
-    function setFallbackUser() {
-        document.getElementById('userNick').textContent = 'Visitante';
-        document.getElementById('userBalance').textContent = 'R$ 0,00';
-        document.getElementById('userAvatar').textContent = '👤';
-        document.getElementById('headerUser').textContent = 'Visitante';
-    }
 
     // ============================================================
     // SALVAR AUTOMATICAMENTE EM INTERVALOS
@@ -864,25 +998,6 @@
     }
 
     // ============================================================
-    // EVENTOS
-    // ============================================================
-    document.getElementById('btnSair')?.addEventListener('click', function() {
-        if (confirm('Tem certeza que deseja sair?')) {
-            // Salva antes de sair
-            if (levelSystem.usuario && levelSystem.supabaseOnline) {
-                levelSystem.salvar();
-            }
-            localStorage.removeItem('usuario_logado');
-            window.location.href = 'login.html';
-        }
-    });
-
-    document.getElementById('btnReconnectSupabase')?.addEventListener('click', function() {
-        levelSystem.verificarConexao();
-        levelSystem.mostrarToast('🔄 Verificando conexão...', 'info');
-    });
-
-    // ============================================================
     // INICIALIZAÇÃO
     // ============================================================
     document.addEventListener('DOMContentLoaded', function() {
@@ -893,26 +1008,97 @@
         
         // Carrega dados do usuário
         setTimeout(() => {
-            loadUserData();
-            setTimeout(() => {
-                levelSystem.configurarEventosDosJogos();
-            }, 500);
+            levelSystem.loadUserData().then(() => {
+                setTimeout(() => {
+                    levelSystem.configurarEventosDosJogos();
+                }, 500);
+            });
         }, 300);
 
         // Inicia salvamento automático
         iniciarSalvamentoAutomatico();
         levelSystem.iniciarRecuperacaoStamina();
 
-        // Configurar botões de nível
-        document.getElementById('btnTreinar')?.addEventListener('click', () => levelSystem.treinar());
-        document.getElementById('btnDescansar')?.addEventListener('click', () => levelSystem.descansar());
-        document.getElementById('btnResetLevel')?.addEventListener('click', () => levelSystem.resetar());
-        document.getElementById('btnSmGanhar')?.addEventListener('click', () => levelSystem.ganharSm());
-        document.getElementById('btnSmGastar')?.addEventListener('click', () => levelSystem.gastarSm());
-        document.getElementById('btnSmResetar')?.addEventListener('click', () => levelSystem.resetarSm());
+        // ============================================================
+        // CONFIGURAR EVENTOS DOS BOTÕES (UMA ÚNICA VEZ)
+        // ============================================================
+        const btnTreinar = document.getElementById('btnTreinar');
+        const btnDescansar = document.getElementById('btnDescansar');
+        const btnResetLevel = document.getElementById('btnResetLevel');
+        const btnSmGanhar = document.getElementById('btnSmGanhar');
+        const btnSmGastar = document.getElementById('btnSmGastar');
+        const btnSmResetar = document.getElementById('btnSmResetar');
+        const btnMinerar = document.getElementById('btnMinerar');
+        const btnUpgrade = document.getElementById('btnUpgrade');
+        const btnSair = document.getElementById('btnSair');
+        const btnReconnect = document.getElementById('btnReconnectSupabase');
+
+        // Remove event listeners antigos e adiciona novos
+        if (btnTreinar) {
+            btnTreinar.removeEventListener('click', levelSystem.treinar);
+            btnTreinar.addEventListener('click', levelSystem.treinar);
+        }
+        if (btnDescansar) {
+            btnDescansar.removeEventListener('click', levelSystem.descansar);
+            btnDescansar.addEventListener('click', levelSystem.descansar);
+        }
+        if (btnResetLevel) {
+            btnResetLevel.removeEventListener('click', levelSystem.resetar);
+            btnResetLevel.addEventListener('click', levelSystem.resetar);
+        }
+        if (btnSmGanhar) {
+            btnSmGanhar.removeEventListener('click', levelSystem.ganharSm);
+            btnSmGanhar.addEventListener('click', levelSystem.ganharSm);
+        }
+        if (btnSmGastar) {
+            btnSmGastar.removeEventListener('click', levelSystem.gastarSm);
+            btnSmGastar.addEventListener('click', levelSystem.gastarSm);
+        }
+        if (btnSmResetar) {
+            btnSmResetar.removeEventListener('click', levelSystem.resetarSm);
+            btnSmResetar.addEventListener('click', levelSystem.resetarSm);
+        }
+        if (btnMinerar) {
+            btnMinerar.removeEventListener('click', levelSystem.minerar);
+            btnMinerar.addEventListener('click', levelSystem.minerar);
+        }
+        if (btnUpgrade) {
+            btnUpgrade.removeEventListener('click', levelSystem.upgradeMineracao);
+            btnUpgrade.addEventListener('click', levelSystem.upgradeMineracao);
+        }
+        if (btnSair) {
+            btnSair.removeEventListener('click', function() {
+                if (confirm('Tem certeza que deseja sair?')) {
+                    if (levelSystem.usuario && levelSystem.supabaseOnline) {
+                        levelSystem.salvar();
+                    }
+                    localStorage.removeItem('usuario_logado');
+                    window.location.href = 'login.html';
+                }
+            });
+            btnSair.addEventListener('click', function() {
+                if (confirm('Tem certeza que deseja sair?')) {
+                    if (levelSystem.usuario && levelSystem.supabaseOnline) {
+                        levelSystem.salvar();
+                    }
+                    localStorage.removeItem('usuario_logado');
+                    window.location.href = 'login.html';
+                }
+            });
+        }
+        if (btnReconnect) {
+            btnReconnect.removeEventListener('click', function() {
+                levelSystem.verificarConexao();
+                levelSystem.mostrarToast('🔄 Verificando conexão...', 'info');
+            });
+            btnReconnect.addEventListener('click', function() {
+                levelSystem.verificarConexao();
+                levelSystem.mostrarToast('🔄 Verificando conexão...', 'info');
+            });
+        }
 
         // Criar toast se não existir
-        if (!document.getElementById('levelToast')) {
+        if (!document.getElementById('levelToast') && !document.getElementById('toast')) {
             const toast = document.createElement('div');
             toast.id = 'levelToast';
             document.body.appendChild(toast);
@@ -926,6 +1112,9 @@
             if (saveInterval) {
                 clearInterval(saveInterval);
             }
+            if (levelSystem.mineracaoInterval) {
+                clearInterval(levelSystem.mineracaoInterval);
+            }
         });
     });
 
@@ -938,6 +1127,7 @@
     console.log('💾 Salvamento automático a cada 15 segundos');
     console.log('⚡ Cada jogo gasta 10 de STAMINA com overlay!');
     console.log('🔄 Stamina recupera 1 a cada 30 segundos');
+    console.log('⛏️ Mineração passiva ativa!');
     console.log(`👤 Nível: ${levelSystem.nivel} | EXP: ${levelSystem.experiencia}/${levelSystem.getExpProximo()}`);
 
 })();

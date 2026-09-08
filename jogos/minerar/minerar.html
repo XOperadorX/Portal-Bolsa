@@ -332,28 +332,6 @@
             box-shadow: 0 0 15px rgba(0, 240, 255, 0.2);
         }
 
-        .btc-market .price-row {
-            display: flex;
-            justify-content: space-between;
-            padding: 6px 0;
-            border-bottom: 1px solid rgba(255, 255, 255, 0.04);
-        }
-
-        .btc-market .price-row:last-child {
-            border-bottom: none;
-        }
-
-        .btc-market .label {
-            color: #8a99ad;
-        }
-
-        .btc-market .value {
-            color: #f0f4f8;
-            font-weight: 700;
-            font-family: 'Orbitron', sans-serif;
-            font-size: 0.85rem;
-        }
-
         #logMineracao {
             background: rgba(0, 0, 0, 0.3);
             padding: 10px 14px;
@@ -473,17 +451,13 @@
     <div class="game-container">
         <nav class="nav-bar">
             <div class="nav-links">
-                <a href="personagem.html">🧙 Personagem</a>
-                <a href="mercado.html">🏛️ Mercado</a>
-                <a href="minerar.html" class="active">⛏️ Mineração</a>
-            </div>
-
             <div class="user-profile" id="userProfile">
                 <div class="user-avatar" id="userAvatar">👤</div>
                 <div class="user-info">
                     <span class="user-nick" id="nomeJogador">Desconectado</span>
                     <span class="user-balance" id="saldosaldo">R$ 0,00</span>
                 </div>
+            </div>
             </div>
 
             <button class="btn-login" id="btnLogin" onclick="redirecionarLogin()">🔑 Login</button>
@@ -504,33 +478,6 @@
             <div id="logMineracao" class="mt-2">⛏️ Pronto para minerar!</div>
         </div>
 
-        <div class="card">
-            <div class="card-title">💰 Mercado BTC <span class="badge">LIVE</span></div>
-            <div class="btc-market">
-                <div class="price-row">
-                    <span class="label">📈 Compra (1 BTC)</span>
-                    <span class="value" id="precoCompra">10,000.00 saldo</span>
-                </div>
-                <div class="price-row">
-                    <span class="label">📉 Venda (1 BTC)</span>
-                    <span class="value" id="precoVenda">999.00 saldo</span>
-                </div>
-                <div class="price-row">
-                    <span class="label">📊 Spread</span>
-                    <span class="value" id="spread">90.01%</span>
-                </div>
-            </div>
-            <div class="flex mt-2">
-                <span style="color:#8a99ad;font-weight:600;">Quantidade:</span>
-                <input type="number" id="quantidadeBTC" value="1.0" min="0.00000001" step="0.00000001">
-                <button class="btn btn-success" onclick="comprarBTC()">⬆️ Comprar BTC</button>
-                <button class="btn btn-danger" onclick="venderBTC()">⬇️ Vender BTC</button>
-            </div>
-            <div style="margin-top: 8px; font-size: 0.75rem; color: #8a99ad;">
-                💡 Compra: 1 BTC = 10,000 saldo | Venda: 1 BTC = 999 saldo
-            </div>
-        </div>
-
         <div class="menu-notice">🧭 Use o menu acima para navegar entre as seções</div>
     </div>
 
@@ -545,9 +492,6 @@
         const TABELA = 'Geral';
 
         const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
-
-        const PRECO_COMPRA_BTC = 10000;
-        const PRECO_VENDA_BTC = 999;
 
         let usuarioAtual = null;
         let estado = {
@@ -689,10 +633,6 @@
             document.getElementById('poderMineracao').textContent = `${estado.poderHash.toFixed(1)} MH/s`;
             const passiva = estado.poderHash * 0.00000001;
             document.getElementById('mineracaoPassiva').textContent = passiva.toFixed(8) + ' BTC/s';
-            document.getElementById('precoCompra').textContent = PRECO_COMPRA_BTC.toFixed(2) + ' saldo';
-            document.getElementById('precoVenda').textContent = PRECO_VENDA_BTC.toFixed(2) + ' saldo';
-            const spread = ((PRECO_COMPRA_BTC - PRECO_VENDA_BTC) / PRECO_COMPRA_BTC * 100);
-            document.getElementById('spread').textContent = spread.toFixed(2) + '%';
             salvarNoBanco();
         }
 
@@ -735,54 +675,6 @@
                     }
                 }
             }, 3000);
-        }
-
-        // ============================================================
-        // COMPRA/VENDA BTC
-        // ============================================================
-        function getQuantidade() {
-            const input = document.getElementById('quantidadeBTC');
-            let val = parseFloat(input.value);
-            if (isNaN(val) || val <= 0) val = 0.00000001;
-            if (val < 0.00000001) val = 0.00000001;
-            input.value = val;
-            return val;
-        }
-
-        async function comprarBTC() {
-            if (!usuarioAtual) { showToast('❌ Faça login primeiro!', true); return; }
-            const qtd = getQuantidade();
-            const custo = qtd * PRECO_COMPRA_BTC;
-
-            if (estado.saldo < custo) {
-                showToast(`❌ Saldo insuficiente! Precisa de ${custo.toFixed(2)} saldo`, true);
-                return;
-            }
-
-            estado.saldo -= custo;
-            estado.btc += qtd;
-            atualizarUI();
-            showToast(`✅ Comprou ${qtd.toFixed(8)} BTC por ${custo.toFixed(2)} saldo`);
-            const log = document.getElementById('logMineracao');
-            if (log) log.innerHTML += `<div>🟢 Comprou ${qtd.toFixed(8)} BTC</div>`;
-        }
-
-        async function venderBTC() {
-            if (!usuarioAtual) { showToast('❌ Faça login primeiro!', true); return; }
-            const qtd = getQuantidade();
-
-            if (estado.btc < qtd) {
-                showToast(`❌ BTC insuficiente! Tem ${estado.btc.toFixed(8)} BTC`, true);
-                return;
-            }
-
-            const valor = qtd * PRECO_VENDA_BTC;
-            estado.btc -= qtd;
-            estado.saldo += valor;
-            atualizarUI();
-            showToast(`✅ Vendeu ${qtd.toFixed(8)} BTC por ${valor.toFixed(2)} saldo`);
-            const log = document.getElementById('logMineracao');
-            if (log) log.innerHTML += `<div>🔴 Vendeu ${qtd.toFixed(8)} BTC</div>`;
         }
 
         // ============================================================

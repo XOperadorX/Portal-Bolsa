@@ -1,0 +1,695 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>MMQuaseTudo · Cadeado Level Up</title>
+  <!-- Supabase JS -->
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      background: linear-gradient(145deg, #0b0e1a 0%, #1a1f2f 100%);
+      min-height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      font-family: 'Inter', system-ui, -apple-system, sans-serif;
+      padding: 1.5rem;
+      margin: 0;
+    }
+
+    .card {
+      max-width: 820px;
+      width: 100%;
+      background: rgba(22, 28, 46, 0.85);
+      backdrop-filter: blur(6px);
+      -webkit-backdrop-filter: blur(6px);
+      border-radius: 48px;
+      padding: 2.5rem 2.8rem;
+      box-shadow: 0 20px 40px rgba(0, 0, 0, 0.7), 0 0 0 1px rgba(255, 215, 0, 0.15);
+      border: 1px solid rgba(255, 215, 0, 0.2);
+      transition: all 0.2s ease;
+    }
+
+    .header {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      margin-bottom: 2rem;
+      border-bottom: 1px solid rgba(255, 215, 0, 0.25);
+      padding-bottom: 1.25rem;
+    }
+
+    .logo-icon {
+      background: #f5c842;
+      color: #0b0e1a;
+      width: 48px;
+      height: 48px;
+      border-radius: 16px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 26px;
+      font-weight: 700;
+      box-shadow: 0 4px 12px rgba(245, 200, 66, 0.3);
+    }
+
+    .brand {
+      font-size: 2rem;
+      font-weight: 700;
+      letter-spacing: -0.02em;
+      background: linear-gradient(to right, #f5c842, #f7d97a);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    .brand small {
+      font-weight: 400;
+      font-size: 0.9rem;
+      background: none;
+      -webkit-text-fill-color: rgba(255, 255, 255, 0.5);
+      margin-left: 0.5rem;
+    }
+
+    h1 {
+      font-size: 2.4rem;
+      font-weight: 600;
+      color: #fff;
+      margin-top: 0.25rem;
+      margin-bottom: 0.5rem;
+      letter-spacing: -0.02em;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      flex-wrap: wrap;
+    }
+
+    .badge-lock {
+      background: #f5c842;
+      color: #0b0e1a;
+      font-size: 1rem;
+      font-weight: 600;
+      padding: 0.3rem 1rem;
+      border-radius: 60px;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      box-shadow: 0 2px 8px rgba(245, 200, 66, 0.3);
+    }
+
+    .subhead {
+      font-size: 1.1rem;
+      color: #b9c4e0;
+      margin-bottom: 2rem;
+      border-left: 3px solid #f5c842;
+      padding-left: 1rem;
+      opacity: 0.9;
+    }
+
+    .description {
+      color: #d3def5;
+      line-height: 1.7;
+      font-size: 1rem;
+      margin-bottom: 2rem;
+    }
+
+    .description strong {
+      color: #f5c842;
+      font-weight: 500;
+    }
+
+    .highlight-box {
+      background: rgba(245, 200, 66, 0.07);
+      border: 1px solid rgba(245, 200, 66, 0.2);
+      border-radius: 24px;
+      padding: 1.8rem 2rem;
+      margin: 1.8rem 0 2.2rem 0;
+      backdrop-filter: blur(2px);
+    }
+
+    .highlight-box ul {
+      list-style: none;
+      padding: 0;
+      margin: 0;
+    }
+
+    .highlight-box li {
+      display: flex;
+      align-items: flex-start;
+      gap: 14px;
+      margin-bottom: 1rem;
+      color: #e6edff;
+      font-size: 1rem;
+    }
+
+    .highlight-box li:last-child {
+      margin-bottom: 0;
+    }
+
+    .highlight-box .icon-bullet {
+      background: #f5c842;
+      color: #0b0e1a;
+      width: 22px;
+      height: 22px;
+      border-radius: 30px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 700;
+      font-size: 14px;
+      flex-shrink: 0;
+      margin-top: 3px;
+    }
+
+    .btn-lock {
+      background: #f5c842;
+      border: none;
+      padding: 1rem 2.5rem;
+      font-size: 1.3rem;
+      font-weight: 700;
+      color: #0b0e1a;
+      border-radius: 60px;
+      display: inline-flex;
+      align-items: center;
+      gap: 12px;
+      cursor: pointer;
+      transition: all 0.2s;
+      box-shadow: 0 8px 18px rgba(245, 200, 66, 0.25);
+      border: 1px solid rgba(255, 215, 0, 0.4);
+      letter-spacing: -0.01em;
+    }
+
+    .btn-lock:hover:not(:disabled) {
+      transform: scale(1.02);
+      background: #fcd34d;
+      box-shadow: 0 12px 24px rgba(245, 200, 66, 0.4);
+    }
+
+    .btn-lock:disabled {
+      opacity: 0.5;
+      filter: grayscale(0.4);
+      cursor: not-allowed;
+      transform: none;
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+    }
+
+    .btn-lock .lock-icon {
+      font-size: 1.5rem;
+    }
+
+    .status-area {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 1.2rem;
+      margin-top: 1.8rem;
+      border-top: 1px solid rgba(255, 255, 255, 0.06);
+      padding-top: 1.8rem;
+    }
+
+    .status-badge {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      background: rgba(0, 0, 0, 0.3);
+      padding: 0.5rem 1.4rem;
+      border-radius: 60px;
+      border: 1px solid rgba(255, 255, 255, 0.06);
+    }
+
+    .status-dot {
+      width: 14px;
+      height: 14px;
+      border-radius: 20px;
+      background: #4caf50;
+      box-shadow: 0 0 10px #4caf50aa;
+    }
+
+    .status-dot.locked {
+      background: #f44336;
+      box-shadow: 0 0 10px #f44336aa;
+    }
+
+    .status-text {
+      color: #d3def5;
+      font-weight: 500;
+    }
+
+    .small-note {
+      color: #8892b0;
+      font-size: 0.9rem;
+      margin-top: 1.2rem;
+      border-top: 1px solid rgba(255, 255, 255, 0.04);
+      padding-top: 1.2rem;
+      text-align: center;
+    }
+
+    .small-note a {
+      color: #f5c842;
+      text-decoration: none;
+      border-bottom: 1px dotted rgba(245, 200, 66, 0.3);
+    }
+
+    .small-note a:hover {
+      border-bottom: 1px solid #f5c842;
+    }
+
+    .input-group {
+      display: flex;
+      flex-direction: column;
+      gap: 0.5rem;
+      margin: 1.5rem 0 0.5rem;
+    }
+
+    .input-group label {
+      color: #b9c4e0;
+      font-weight: 500;
+      font-size: 0.95rem;
+    }
+
+    .input-group input,
+    .input-group select {
+      background: #121826;
+      border: 1px solid #2d3650;
+      border-radius: 40px;
+      padding: 0.9rem 1.5rem;
+      font-size: 1rem;
+      color: #fff;
+      outline: none;
+      transition: 0.15s;
+      max-width: 320px;
+    }
+
+    .input-group select option {
+      background: #121826;
+    }
+
+    .input-group input:focus,
+    .input-group select:focus {
+      border-color: #f5c842;
+      box-shadow: 0 0 0 3px rgba(245, 200, 66, 0.2);
+    }
+
+    .flex-row {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: 1rem;
+    }
+
+    .user-info {
+      background: rgba(255, 255, 255, 0.05);
+      padding: 0.3rem 1rem;
+      border-radius: 40px;
+      color: #b9c4e0;
+      font-size: 0.9rem;
+      border: 1px solid rgba(255, 255, 255, 0.05);
+    }
+
+    .user-info strong {
+      color: #f5c842;
+    }
+
+    .btn-refresh {
+      background: transparent;
+      border: 1px solid #2d3650;
+      color: #b9c4e0;
+      padding: 0.4rem 1rem;
+      border-radius: 40px;
+      cursor: pointer;
+      font-size: 0.85rem;
+      transition: 0.15s;
+    }
+
+    .btn-refresh:hover {
+      border-color: #f5c842;
+      color: #f5c842;
+    }
+
+    @media (max-width: 600px) {
+      .card {
+        padding: 1.8rem;
+      }
+      h1 {
+        font-size: 1.8rem;
+      }
+      .brand {
+        font-size: 1.6rem;
+      }
+    }
+  </style>
+</head>
+<body>
+<div class="card" id="app">
+  <!-- cabeçalho com nome MMQuaseTudo -->
+  <div class="header">
+    <div class="logo-icon">🔒</div>
+    <span class="brand">MMQuaseTudo <small>· Level Up</small></span>
+  </div>
+
+  <h1>
+    Cadeado Level Up
+    <span class="badge-lock">🔐 proteção</span>
+  </h1>
+  <div class="subhead">Mais proteção para sua conta</div>
+
+  <div class="description">
+    <strong>O Cadeado Level Up</strong> é um sistema desenvolvido para aumentar a segurança de sua conta de jogo. 
+    Ele adiciona uma verificação extra para evitar que seus itens/moedas estejam em risco. Veja como é simples:
+  </div>
+
+  <div class="highlight-box">
+    <ul>
+      <li><span class="icon-bullet">1</span> Ao ativar esse sistema, o botão <strong>"Cadeado Level Up"</strong> aparecerá da seguinte forma: <span style="background:#2d3650; padding:0.2rem 0.8rem; border-radius:40px; color:#f5c842;">🔒 Cadeado Ativo</span></li>
+      <li><span class="icon-bullet">2</span> Desta forma você <strong>não poderá se conectar ao jogo</strong>, mesmo informando Login e Senha corretamente.</li>
+      <li><span class="icon-bullet">3</span> Para liberar a conexão, acesse sua conta Level Up, localize a conta de jogo e <strong>destranque o cadeado</strong>.</li>
+      <li><span class="icon-bullet">4</span> Abra o jogo e entre normalmente com seu Login e Senha.</li>
+      <li><span class="icon-bullet">5</span> O Cadeado será <strong>TRANCADO novamente depois de 1 hora</strong>, mas não se preocupe, caso já esteja no jogo, não será desconectado.</li>
+      <li><span class="icon-bullet">6</span> Você também pode optar por <strong>TRANCAR</strong> o Cadeado diretamente em sua Conta Level Up após acessar o jogo.</li>
+    </ul>
+  </div>
+
+  <div style="font-weight: 500; color: #d3def5; margin-bottom: 1.2rem;">
+    ⚡ Fácil né? Agora é só clicar no botão abaixo e ativar essa proteção!
+  </div>
+
+  <!-- Seleção de usuário -->
+  <div class="input-group">
+    <label for="userSelect">👤 Selecione sua conta:</label>
+    <div class="flex-row">
+      <select id="userSelect" style="max-width: 280px;">
+        <option value="">Carregando usuários...</option>
+      </select>
+      <button class="btn-refresh" id="refreshUsersBtn">↻ Atualizar</button>
+    </div>
+  </div>
+
+  <!-- Área de interação com o cadeado -->
+  <div style="display: flex; flex-wrap: wrap; gap: 1.2rem; align-items: center; margin-top: 1rem;">
+    <button class="btn-lock" id="toggleLockBtn" disabled>
+      <span class="lock-icon" id="lockIcon">🔓</span>
+      <span id="lockLabel">Selecione um usuário</span>
+    </button>
+
+    <div class="status-area" style="flex:1; min-width: 180px; border-top: none; padding-top: 0; margin-top: 0;">
+      <div class="status-badge">
+        <span class="status-dot" id="statusDot"></span>
+        <span class="status-text" id="statusText">—</span>
+      </div>
+      <div class="user-info" id="userInfo">
+        Usuário: <strong id="currentUserDisplay">—</strong>
+      </div>
+    </div>
+  </div>
+
+  <!-- confirmação de senha -->
+  <div class="input-group">
+    <label for="gamePassword">🔑 Confirme sua senha de jogo para ativar/desativar:</label>
+    <div class="flex-row">
+      <input type="password" id="gamePassword" placeholder="Digite sua senha" value="123456" style="max-width: 240px;">
+      <span style="color:#8892b0; font-size:0.85rem;">(demo: 123456)</span>
+    </div>
+  </div>
+
+  <div class="small-note">
+    <strong>IMPORTANTE:</strong> Para ativar o Cadeado Level Up, você deverá confirmar a sua senha de jogo. 
+    Caso tenha dúvidas, acesse a <a href="#">Central de Suporte</a>.
+  </div>
+</div>
+
+<script>
+  (function() {
+    // ========== CONFIGURAÇÕES SUPABASE ==========
+    const SUPABASE_URL = "https://xrcxvizzdumcxbylmkvn.supabase.co";
+    const SUPABASE_ANON_KEY = "sb_publishable_E-g3G3wW4EySbCsXLXp8KQ_FnmERMcD";
+
+    // Elementos DOM
+    const toggleBtn = document.getElementById('toggleLockBtn');
+    const lockIcon = document.getElementById('lockIcon');
+    const lockLabel = document.getElementById('lockLabel');
+    const statusDot = document.getElementById('statusDot');
+    const statusText = document.getElementById('statusText');
+    const passwordInput = document.getElementById('gamePassword');
+    const userSelect = document.getElementById('userSelect');
+    const refreshUsersBtn = document.getElementById('refreshUsersBtn');
+    const currentUserDisplay = document.getElementById('currentUserDisplay');
+
+    let supabase = null;
+    let currentUser = null;        // { id, login, cadeado }
+    let isUpdating = false;
+    let usersList = [];
+
+    // Inicializa cliente Supabase
+    try {
+      supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+    } catch (e) {
+      console.error("Erro ao criar cliente Supabase:", e);
+      setStatus("erro", "Erro de conexão");
+      toggleBtn.disabled = true;
+      return;
+    }
+
+    // ========== FUNÇÕES DE UI ==========
+    function setStatus(lockState, message) {
+      if (lockState === true) {
+        statusDot.className = 'status-dot locked';
+        statusText.innerText = message || '🔒 Trancado';
+        lockIcon.innerText = '🔒';
+        lockLabel.innerText = 'Cadeado Level Up';
+      } else if (lockState === false) {
+        statusDot.className = 'status-dot';
+        statusText.innerText = message || '🔓 Destrancado';
+        lockIcon.innerText = '🔓';
+        lockLabel.innerText = 'Destrancar Cadeado';
+      } else {
+        statusDot.className = 'status-dot';
+        statusDot.style.background = '#ffaa33';
+        statusDot.style.boxShadow = '0 0 10px #ffaa33aa';
+        statusText.innerText = message || '⏳ Carregando...';
+        lockIcon.innerText = '⏳';
+        lockLabel.innerText = 'Carregando...';
+      }
+    }
+
+    function updateUIFromState(lockState, userLogin) {
+      if (lockState === true) {
+        setStatus(true, '🔒 Trancado (conexão bloqueada)');
+        toggleBtn.disabled = false;
+      } else if (lockState === false) {
+        setStatus(false, '🔓 Destrancado (acesso liberado)');
+        toggleBtn.disabled = false;
+      } else {
+        setStatus(null, '⏳ Indefinido');
+        toggleBtn.disabled = true;
+      }
+      
+      if (userLogin) {
+        currentUserDisplay.textContent = userLogin;
+      }
+    }
+
+    // ========== CARREGAR USUÁRIOS ==========
+    async function loadUsers() {
+      try {
+        if (!supabase) throw new Error("Supabase não inicializado");
+
+        const { data, error } = await supabase
+          .from('Geral')
+          .select('id, login, cadeado')
+          .order('login');
+
+        if (error) {
+          console.error("Erro ao carregar usuários:", error);
+          alert("Erro ao carregar lista de usuários. Verifique a tabela 'Geral'.");
+          return;
+        }
+
+        if (!data || data.length === 0) {
+          userSelect.innerHTML = '<option value="">Nenhum usuário encontrado</option>';
+          toggleBtn.disabled = true;
+          return;
+        }
+
+        usersList = data;
+        
+        // Preenche select
+        userSelect.innerHTML = '<option value="">Selecione um usuário...</option>';
+        data.forEach(user => {
+          const option = document.createElement('option');
+          option.value = user.id;
+          const status = user.cadeado ? '🔒' : '🔓';
+          option.textContent = `${user.login} ${status}`;
+          userSelect.appendChild(option);
+        });
+
+        // Se tiver um usuário selecionado anteriormente, tenta manter
+        if (currentUser) {
+          const found = data.find(u => u.id === currentUser.id);
+          if (found) {
+            userSelect.value = found.id;
+            selectUser(found);
+          } else {
+            // Seleciona o primeiro
+            userSelect.value = data[0].id;
+            selectUser(data[0]);
+          }
+        } else if (data.length > 0) {
+          // Seleciona o primeiro
+          userSelect.value = data[0].id;
+          selectUser(data[0]);
+        }
+
+      } catch (err) {
+        console.error("loadUsers exceção:", err);
+        userSelect.innerHTML = '<option value="">Erro ao carregar</option>';
+      }
+    }
+
+    // ========== SELECIONAR USUÁRIO ==========
+    function selectUser(user) {
+      currentUser = user;
+      currentUserDisplay.textContent = user.login;
+      
+      // Atualiza UI com o estado do cadeado
+      const isLocked = user.cadeado === true;
+      updateUIFromState(isLocked, user.login);
+      
+      // Habilita botão
+      toggleBtn.disabled = false;
+    }
+
+    // ========== ALTERNAR ESTADO (LOCK/UNLOCK) ==========
+    async function toggleLock() {
+      if (isUpdating) return;
+      if (!supabase) {
+        alert("Cliente Supabase não disponível.");
+        return;
+      }
+      if (!currentUser) {
+        alert("Selecione um usuário primeiro.");
+        return;
+      }
+
+      // Verifica senha (demo: 123456)
+      const password = passwordInput.value.trim();
+      if (password !== "123456") {
+        alert("Senha de jogo incorreta. (demo: 123456)");
+        return;
+      }
+
+      const newLockState = !currentUser.cadeado;
+      const label = newLockState ? "trancar" : "destrancar";
+
+      isUpdating = true;
+      toggleBtn.disabled = true;
+
+      try {
+        const { data, error } = await supabase
+          .from('Geral')
+          .update({ cadeado: newLockState })
+          .eq('id', currentUser.id)
+          .select('id, login, cadeado')
+          .single();
+
+        if (error) {
+          console.error("Erro ao atualizar:", error);
+          alert(`Erro ao ${label} o cadeado. Verifique o console.`);
+          isUpdating = false;
+          toggleBtn.disabled = false;
+          return;
+        }
+
+        if (data) {
+          // Atualiza o usuário atual
+          currentUser = data;
+          currentUserDisplay.textContent = data.login;
+          
+          const isLocked = data.cadeado === true;
+          updateUIFromState(isLocked, data.login);
+          
+          // Atualiza a opção no select
+          const option = userSelect.querySelector(`option[value="${data.id}"]`);
+          if (option) {
+            const status = isLocked ? '🔒' : '🔓';
+            option.textContent = `${data.login} ${status}`;
+          }
+
+          // Feedback
+          if (isLocked) {
+            alert("🔒 Cadeado TRANCADO! A conexão ao jogo está bloqueada.");
+          } else {
+            alert("🔓 Cadeado DESTRANCADO! Acesso liberado.");
+          }
+        } else {
+          alert("Usuário não encontrado. Recarregue a lista.");
+        }
+      } catch (e) {
+        console.error("toggleLock exceção:", e);
+        alert("Erro inesperado ao alterar estado.");
+      } finally {
+        isUpdating = false;
+        toggleBtn.disabled = false;
+      }
+    }
+
+    // ========== EVENTOS ==========
+    userSelect.addEventListener('change', function() {
+      const userId = parseInt(this.value);
+      if (!userId) {
+        currentUser = null;
+        currentUserDisplay.textContent = '—';
+        toggleBtn.disabled = true;
+        setStatus(null, 'Selecione um usuário');
+        return;
+      }
+      
+      const user = usersList.find(u => u.id === userId);
+      if (user) {
+        selectUser(user);
+      }
+    });
+
+    refreshUsersBtn.addEventListener('click', function() {
+      loadUsers();
+    });
+
+    toggleBtn.addEventListener('click', toggleLock);
+
+    // ========== INICIALIZAÇÃO ==========
+    async function init() {
+      await loadUsers();
+      
+      // Se não carregou usuários, tenta novamente
+      if (usersList.length === 0) {
+        setTimeout(() => {
+          if (usersList.length === 0) {
+            loadUsers();
+          }
+        }, 1500);
+      }
+    }
+
+    init();
+
+    // Adiciona coluna 'cadeado' se não existir (instrução)
+    console.log("⚠️ Certifique-se de que a coluna 'cadeado' existe na tabela 'Geral'.");
+    console.log("SQL para adicionar: ALTER TABLE public.\"Geral\" ADD COLUMN IF NOT EXISTS cadeado BOOLEAN DEFAULT false;");
+    
+  })();
+</script>
+
+<!-- Instrução SQL para adicionar a coluna cadeado -->
+<!-- 
+  ALTER TABLE public."Geral" ADD COLUMN IF NOT EXISTS cadeado BOOLEAN DEFAULT false;
+  UPDATE public."Geral" SET cadeado = false WHERE cadeado IS NULL;
+-->
+</body>
+</html>
