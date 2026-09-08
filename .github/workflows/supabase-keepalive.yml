@@ -1,0 +1,19 @@
+name: Supabase Keep Alive
+on:
+  schedule:
+    # Faz o ping a cada 3 dias às 09:00 UTC → intervalo seguro
+    - cron: '0 9 */3 * *'
+  # Permite rodar manualmente para testar AGORA
+  workflow_dispatch:
+
+jobs:
+  ping:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - name: 🔄 Pingar para manter projeto ativo
+        run: |
+          curl -s "https://xrcxvizzdumcxbylmkvn.supabase.co/rest/v1/?select=*&limit=1" \
+            -H "apikey: sb_publishable_E-g3G3wW4EySbCsXLXp8KQ_FnmERMcD" \
+            -H "Authorization: Bearer sb_publishable_E-g3G3wW4EySbCsXLXp8KQ_FnmERMcD" \
+            -w "\n✅ Status: %{http_code}\n"
