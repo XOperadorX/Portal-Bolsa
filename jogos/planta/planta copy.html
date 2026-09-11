@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>🌽 Milharal – planta.html</title>
+    <title>🌽 Milharal – Sistema Completo</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" />
     <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Rajdhani:wght@400;600;700&display=swap" rel="stylesheet" />
     <style>
@@ -529,6 +529,139 @@
         .milharal-message .highlight { color: var(--neon-green); font-weight: 700; }
         .milharal-message .exp-highlight { color: #8b5cf6; font-weight: 700; }
 
+        .toast {
+            position: fixed;
+            bottom: 2rem;
+            left: 50%;
+            transform: translateX(-50%) translateY(80px);
+            background: rgba(10, 11, 16, 0.95);
+            backdrop-filter: blur(8px);
+            color: #fff;
+            padding: 0.5rem 1.4rem;
+            border-radius: 60px;
+            font-weight: 600;
+            font-size: 0.8rem;
+            box-shadow: 0 12px 32px rgba(0, 0, 0, 0.5), 0 0 30px rgba(0, 240, 255, 0.1);
+            opacity: 0;
+            transition: all 0.45s ease;
+            pointer-events: none;
+            z-index: 999;
+            border: 1px solid rgba(0, 240, 255, 0.15);
+            text-align: center;
+        }
+        .toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+
+        #loginModal {
+            display: none;
+            position: fixed;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background: rgba(0, 0, 0, 0.85);
+            backdrop-filter: blur(8px);
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+            padding: 20px;
+            animation: fadeIn 0.4s ease;
+        }
+        #loginModal.show { display: flex; }
+        #loginModal .modal-box {
+            background: #121520;
+            border-radius: 16px;
+            padding: 2rem 2.2rem;
+            max-width: 420px;
+            width: 100%;
+            border: 1px solid rgba(0, 240, 255, 0.2);
+            box-shadow: 0 0 60px rgba(0, 240, 255, 0.1);
+        }
+        #loginModal .modal-box h2 {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 1.6rem;
+            text-align: center;
+            margin-bottom: 0.3rem;
+            color: #fff;
+            text-shadow: 0 0 20px #00f0ff;
+        }
+        #loginModal .modal-box p.sub {
+            text-align: center;
+            color: #8a99ad;
+            font-size: 0.85rem;
+            margin-bottom: 1.5rem;
+        }
+        #loginModal .modal-box .form-group { margin-bottom: 1rem; }
+        #loginModal .modal-box .form-group label {
+            display: block;
+            font-weight: 600;
+            font-size: 0.8rem;
+            color: #8a99ad;
+            margin-bottom: 0.2rem;
+        }
+        #loginModal .modal-box .form-group input {
+            width: 100%;
+            padding: 0.6rem 1rem;
+            border-radius: 12px;
+            border: 1px solid rgba(0, 240, 255, 0.15);
+            background: rgba(0, 0, 0, 0.4);
+            color: #fff;
+            font-size: 0.95rem;
+            outline: none;
+            transition: all 0.3s;
+        }
+        #loginModal .modal-box .form-group input:focus {
+            border-color: #00f0ff;
+            box-shadow: 0 0 20px rgba(0, 240, 255, 0.15);
+        }
+        #loginModal .modal-box .login-error {
+            color: #ef4444;
+            font-size: 0.8rem;
+            text-align: center;
+            min-height: 1.2rem;
+        }
+        #loginModal .modal-box .btn-login-modal {
+            width: 100%;
+            padding: 0.7rem;
+            border: none;
+            border-radius: 12px;
+            font-weight: 700;
+            font-size: 1rem;
+            background: linear-gradient(135deg, #00f0ff, #7000ff);
+            color: #fff;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        #loginModal .modal-box .btn-login-modal:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 30px rgba(0, 240, 255, 0.3);
+        }
+        #loginModal .modal-box .btn-login-modal:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            transform: none !important;
+        }
+        #loginModal .modal-box .modal-actions {
+            display: flex;
+            gap: 0.5rem;
+            margin-top: 0.8rem;
+        }
+        #loginModal .modal-box .modal-actions button {
+            flex: 1;
+            padding: 0.4rem;
+            border: 1px solid rgba(0, 240, 255, 0.1);
+            border-radius: 8px;
+            background: transparent;
+            color: #8a99ad;
+            cursor: pointer;
+            font-size: 0.7rem;
+            transition: all 0.3s;
+        }
+        #loginModal .modal-box .modal-actions button:hover {
+            background: rgba(0, 240, 255, 0.1);
+            color: #fff;
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: scale(0.95); }
+            to { opacity: 1; transform: scale(1); }
+        }
+
         @media (max-width: 820px) {
             .stats-grid { grid-template-columns: repeat(3, 1fr); }
             .milharal-actions .btn {
@@ -665,6 +798,29 @@
 
     </div>
 
+    <div class="toast" id="toast"></div>
+
+    <div id="loginModal">
+        <div class="modal-box">
+            <h2>🌽 Milharal</h2>
+            <p class="sub"><i class="fas fa-seedling" style="color:#00ff66;"></i> Entre para salvar seu progresso</p>
+            <div class="form-group">
+                <label>Usuário</label>
+                <input type="text" id="loginUser" placeholder="Digite seu usuário">
+            </div>
+            <div class="form-group">
+                <label>Senha</label>
+                <input type="password" id="loginPass" placeholder="Digite sua senha">
+            </div>
+            <div class="login-error" id="loginError"></div>
+            <button class="btn-login-modal" id="btnLogin">Entrar</button>
+            <div class="modal-actions">
+                <button id="btnRegister">Criar conta</button>
+                <button id="btnGuest">Visitante</button>
+            </div>
+        </div>
+    </div>
+
     <script>
         (function() {
             'use strict';
@@ -688,9 +844,8 @@
                 INITIAL_STOCK: 0,
                 CLEAR_COST: 5.00,
                 AUTO_SAVE_INTERVAL: 30000,
-                SYNC_INTERVAL: 15000,
+                SYNC_INTERVAL: 5000,
                 EXP_PER_HARVEST: 15,
-                SEEDS_PER_HARVEST: 1,
                 INITIAL_HP: 100,
                 INITIAL_MP: 50,
                 INITIAL_SM: 100,
@@ -700,7 +855,7 @@
                 MAX_HP: 100,
                 MAX_MP: 50,
                 MAX_SM: 100,
-                SELL_PRICE_CORN: 10,
+                SELL_PRICE_CORN: 10,   // preço fixo para venda de estoque
             };
 
             // ============================================================
@@ -736,14 +891,10 @@
                 online: false,
                 usuario: null,
                 salvando: false,
-                carregando: false,
                 toastTimer: null,
                 growthTimer: null,
                 syncTimer: null,
-                autoSaveTimer: null,
-                reconnectTimer: null,
                 dadosDB: null,
-                inicializado: false,
 
                 jogo: {
                     seeds: CONFIG.INITIAL_SEEDS,
@@ -794,6 +945,12 @@
 
                 DOM.supabaseDot = document.getElementById('supabaseDot');
                 DOM.supabaseStatus = document.getElementById('supabaseStatus');
+                DOM.toast = document.getElementById('toast');
+
+                DOM.loginModal = document.getElementById('loginModal');
+                DOM.loginError = document.getElementById('loginError');
+                DOM.loginUser = document.getElementById('loginUser');
+                DOM.loginPass = document.getElementById('loginPass');
 
                 DOM.expFill = document.getElementById('expFill');
                 DOM.expCurrent = document.getElementById('expCurrent');
@@ -813,43 +970,25 @@
                 DOM.btnSellAll = document.getElementById('btnSellAll');
                 DOM.btnClearAll = document.getElementById('btnClearAll');
                 DOM.btnReconnectSupabase = document.getElementById('btnReconnectSupabase');
+                DOM.btnLogin = document.getElementById('btnLogin');
+                DOM.btnRegister = document.getElementById('btnRegister');
+                DOM.btnGuest = document.getElementById('btnGuest');
             }
 
             // ============================================================
             // AUXILIARES
             // ============================================================
             function formatSaldo(valor) {
-                return Number(valor || 0).toFixed(2).replace('.', ',');
+                return Number(valor).toFixed(2).replace('.', ',');
             }
 
             function showToast(text, duration = 2200) {
-                let toast = document.getElementById('_toast_dynamic');
-                if (!toast) {
-                    toast = document.createElement('div');
-                    toast.id = '_toast_dynamic';
-                    toast.style.cssText = `
-                        position: fixed; bottom: 2rem; left: 50%; transform: translateX(-50%) translateY(80px);
-                        background: rgba(10, 11, 16, 0.95); backdrop-filter: blur(8px); color: #fff;
-                        padding: 0.5rem 1.4rem; border-radius: 60px; font-weight: 600; font-size: 0.8rem;
-                        box-shadow: 0 12px 32px rgba(0, 0, 0, 0.5), 0 0 30px rgba(0, 240, 255, 0.1);
-                        opacity: 0; transition: all 0.45s ease; pointer-events: none; z-index: 999;
-                        border: 1px solid rgba(0, 240, 255, 0.15); text-align: center;
-                    `;
-                    document.body.appendChild(toast);
-                }
-                if (state.toastTimer) {
-                    clearTimeout(state.toastTimer);
-                    toast.style.opacity = '0';
-                    toast.style.transform = 'translateX(-50%) translateY(80px)';
-                }
-                toast.textContent = text;
-                requestAnimationFrame(() => {
-                    toast.style.opacity = '1';
-                    toast.style.transform = 'translateX(-50%) translateY(0)';
-                });
+                if (state.toastTimer) { clearTimeout(state.toastTimer);
+                    DOM.toast.classList.remove('show'); }
+                DOM.toast.textContent = text;
+                DOM.toast.classList.add('show');
                 state.toastTimer = setTimeout(() => {
-                    toast.style.opacity = '0';
-                    toast.style.transform = 'translateX(-50%) translateY(80px)';
+                    DOM.toast.classList.remove('show');
                     state.toastTimer = null;
                 }, duration);
             }
@@ -865,14 +1004,14 @@
                 const total = getJogo().saldo || 0;
                 if (DOM.headerSaldo) DOM.headerSaldo.textContent = formatSaldo(total);
                 if (DOM.userBalance) DOM.userBalance.textContent = `💰 R$ ${formatSaldo(total)}`;
-                if (DOM.saldoDisplay) DOM.saldoDisplay.textContent = `R$ ${formatSaldo(total)}`;
+                if (DOM.saldoDisplay) DOM.saldoDisplay.textContent = `R$ ${formatSaldo(getJogo().saldo || 0)}`;
             }
 
             function limparTimers() {
-                if (state.growthTimer) { clearInterval(state.growthTimer); state.growthTimer = null; }
-                if (state.syncTimer) { clearInterval(state.syncTimer); state.syncTimer = null; }
-                if (state.autoSaveTimer) { clearInterval(state.autoSaveTimer); state.autoSaveTimer = null; }
-                if (state.reconnectTimer) { clearInterval(state.reconnectTimer); state.reconnectTimer = null; }
+                if (state.growthTimer) { clearInterval(state.growthTimer);
+                    state.growthTimer = null; }
+                if (state.syncTimer) { clearInterval(state.syncTimer);
+                    state.syncTimer = null; }
             }
 
             // ============================================================
@@ -927,6 +1066,7 @@
                     if (!subiu && quantidade > 0) {
                         showToast(`✨ +${quantidade} EXP!`, 1500);
                     }
+                    salvarDadosCompletos();
                 },
 
                 atualizarUI() {
@@ -952,7 +1092,7 @@
             };
 
             // ============================================================
-            // MILHARAL - INICIALIZAÇÃO
+            // MILHARAL
             // ============================================================
             function initPlots() {
                 const j = getJogo();
@@ -968,12 +1108,49 @@
                 }
             }
 
-            // ============================================================
-            // RENDERIZAÇÃO
-            // ============================================================
-            function renderMilharal() {
+            /**
+             * Sincroniza o estado local com o snapshot do banco.
+             * O banco é a FONTE DA VERDADE para todos os stats exibidos no header.
+             */
+            function sincronizarComBanco() {
+                const db = state.dadosDB;
+                if (!db) return;
                 const j = getJogo();
 
+                j.seeds       = db.seeds       ?? j.seeds;
+                j.planted     = db.planted     ?? j.planted;
+                j.harvested   = db.harvested   ?? j.harvested;
+                j.buckets     = db.buckets     ?? j.buckets;
+                j.stock       = db.stock       ?? j.stock;
+                j.saldo       = Number(db.saldo ?? j.saldo);
+                j.experiencia = db.experiencia ?? j.experiencia;
+                j.nivel       = db.nivel       ?? j.nivel;
+                j.hpMax       = db.hp_max      ?? j.hpMax;
+                j.mpMax       = db.mp_max      ?? j.mpMax;
+                j.smMax       = db.sm_max      ?? j.smMax;
+                j.ataqueBase  = db.ataque_base ?? j.ataqueBase;
+                j.defesaBase  = db.defesa_base ?? j.defesaBase;
+                j.magiaBase   = db.magia_base  ?? j.magiaBase;
+                j.hp          = db.hp_atual    ?? j.hp;
+                j.mp          = db.mp_atual    ?? j.mp;
+                j.sm          = db.sm_atual    ?? j.sm;
+
+                if (Array.isArray(db.plot_data) && db.plot_data.length > 0) {
+                    j.plots = db.plot_data.map((p, index) => ({
+                        id: index,
+                        stage: p.stage || STAGES.EMPTY,
+                        progress: p.progress || 0,
+                        row: Math.floor(index / CONFIG.COLS),
+                        col: index % CONFIG.COLS,
+                    }));
+                }
+            }
+
+            function renderMilharal() {
+                sincronizarComBanco();
+                const j = getJogo();
+
+                // ---------- HEADER (direto da Table Geral) ----------
                 DOM.seedCount.textContent     = `🌰 ${j.seeds || 0}`;
                 DOM.plantedCount.textContent  = `🌱 ${j.planted || 0}`;
                 DOM.harvestCount.textContent  = `🌽 ${j.harvested || 0}`;
@@ -984,6 +1161,7 @@
                 DOM.bucketStatus.textContent  = `🪣 ${j.buckets || 0}`;
                 atualizarSaldoGlobal();
 
+                // ---------- GRID ----------
                 let html = '';
                 for (let i = 0; i < j.plots.length; i++) {
                     const p = j.plots[i];
@@ -1020,6 +1198,7 @@
                 }
                 DOM.field.innerHTML = html;
 
+                // ---------- BOTÕES ----------
                 const emptyPlots = j.plots.filter(p => p.stage === STAGES.EMPTY).length;
                 DOM.btnPlantAll.disabled = (j.seeds <= 0 || emptyPlots === 0);
                 DOM.btnWaterAll.disabled = (j.buckets <= 0);
@@ -1047,7 +1226,7 @@
                 } else if (j.seeds <= 0 && empty > 0) {
                     msg = '😅 <span class="highlight">Sem sementes!</span> Colha milho para conseguir mais.';
                 } else if (mature > 0) {
-                    msg = `🌽 <span class="highlight">${mature}</span> maduro(s)! Colher dá <span class="exp-highlight">✨ EXP</span>`;
+                    msg = `🌽 <span class="highlight">${mature}</span> maduro(s)! Clique ou use "Colher tudo" para ganhar <span class="exp-highlight">✨ EXP</span>`;
                 } else if (growing) {
                     msg = j.buckets > 0 ?
                         '💧 <span class="highlight">Regue tudo</span> para acelerar o crescimento' :
@@ -1082,7 +1261,6 @@
             }
 
             function autoGrow() {
-                if (!state.inicializado) return;
                 let any = false;
                 const plots = getPlots();
                 for (const p of plots) {
@@ -1113,7 +1291,6 @@
                 p.stage = STAGES.SEED;
                 p.progress = 0;
                 j.planted++;
-                console.log(`🌱 Plantou! Seeds: ${j.seeds}`);
                 showToast(`🌱 Plantou na parcela ${id + 1}!`, 1400);
                 renderMilharal();
                 salvarDadosCompletos();
@@ -1136,7 +1313,7 @@
                 let planted = 0;
                 const toPlant = Math.min(j.seeds, emptyPlots.length);
 
-                for (let i = 0; i < toPlant; i++) {
+                for (let i = 0; i < toPlant && planted < toPlant; i++) {
                     const p = emptyPlots[i];
                     if (p.stage === STAGES.EMPTY) {
                         j.seeds--;
@@ -1147,7 +1324,6 @@
                     }
                 }
 
-                console.log(`🌱 Plantou ${planted}! Seeds: ${j.seeds}`);
                 showToast(`🌱 Plantou ${planted} canteiro(s)!`, 2000);
                 renderMilharal();
                 salvarDadosCompletos();
@@ -1201,17 +1377,12 @@
                 const j = getJogo();
                 const p = j.plots[id];
                 if (!p || p.stage !== STAGES.MATURE) { showToast('🌽 Só colhe maduro!', 1200); return false; }
-                
                 p.stage = STAGES.HARVESTED;
                 p.progress = 0;
                 j.harvested++;
                 j.stock++;
-                j.seeds += CONFIG.SEEDS_PER_HARVEST;
-                
-                console.log(`🌽 Colheu 1! Seeds agora: ${j.seeds}, Stock: ${j.stock}`);
-                
                 levelSystem.adicionarExp(CONFIG.EXP_PER_HARVEST);
-                showToast(`🌽 Colheu 1 milho! ✨ +${CONFIG.EXP_PER_HARVEST} EXP`, 2200);
+                showToast(`🌽 Colheu 1 milho! ✨ +${CONFIG.EXP_PER_HARVEST} EXP`, 2000);
                 renderMilharal();
                 salvarDadosCompletos();
                 return true;
@@ -1222,21 +1393,17 @@
                 const maturePlots = j.plots.filter(p => p.stage === STAGES.MATURE);
                 const count = maturePlots.length;
                 if (count === 0) { showToast('🌽 Nenhum milho maduro para colher.', 1400); return 0; }
-                
                 for (const p of maturePlots) {
                     p.stage = STAGES.HARVESTED;
                     p.progress = 0;
                 }
                 j.harvested += count;
                 j.stock += count;
-                j.seeds += count * CONFIG.SEEDS_PER_HARVEST;
-                
-                console.log(`🌽 Colheu ${count}! Seeds agora: ${j.seeds}, Stock: ${j.stock}`);
-                
+
                 const expGanho = count * CONFIG.EXP_PER_HARVEST;
                 levelSystem.adicionarExp(expGanho);
 
-                showToast(`🌽 Colheu ${count} milho(s)! ✨ +${expGanho} EXP`, 2600);
+                showToast(`🌽 Colheu ${count} milho(s)! ✨ +${expGanho} EXP`, 2500);
                 renderMilharal();
                 salvarDadosCompletos();
                 return count;
@@ -1279,6 +1446,10 @@
                 salvarDadosCompletos();
             }
 
+            /**
+             * Vende TODO o estoque (stock da tabela Geral) por preço fixo.
+             * Atualiza saldo e stock, depois salva no Supabase.
+             */
             function sellAllStock() {
                 const j = getJogo();
                 if (j.stock <= 0) { showToast('📦 Nenhum milho no estoque para vender.', 1400); return; }
@@ -1297,6 +1468,13 @@
             function clearAllPlots() {
                 const j = getJogo();
                 const plots = getPlots();
+                const toClear = plots.filter(p => p.stage !== STAGES.EMPTY);
+
+                if (toClear.length === 0) {
+                    showToast('🧹 Todos os canteiros já estão vazios!', 1800);
+                    return;
+                }
+
                 const harvestedPlots = plots.filter(p => p.stage === STAGES.HARVESTED);
                 const nonHarvested = plots.filter(p => p.stage !== STAGES.EMPTY && p.stage !== STAGES.HARVESTED);
 
@@ -1396,9 +1574,6 @@
 
             async function verificarSupabase() {
                 try {
-                    const controller = new AbortController();
-                    const timeoutId = setTimeout(() => controller.abort(), 5000);
-
                     const response = await fetch(
                         `${CONFIG.SUPABASE_URL}/rest/v1/${CONFIG.TABELA}?select=id&limit=1`, {
                             headers: {
@@ -1406,11 +1581,8 @@
                                 'Authorization': `Bearer ${CONFIG.SUPABASE_KEY}`,
                             },
                             cache: 'no-store',
-                            signal: controller.signal
                         }
                     );
-                    clearTimeout(timeoutId);
-
                     if (response.ok) {
                         state.online = true;
                         atualizarStatusSupabase(true, 'Online');
@@ -1429,15 +1601,7 @@
             }
 
             async function carregarDadosCompletos() {
-                if (!state.usuario || !state.online || state.carregando) return;
-                
-                // ⚠️ NÃO CARREGAR SE ESTIVER SALVANDO
-                if (state.salvando) {
-                    console.log('⏸️ Carregamento adiado - salvando em andamento...');
-                    return;
-                }
-                
-                state.carregando = true;
+                if (!state.usuario || !state.online) return;
                 try {
                     const response = await fetch(
                         `${CONFIG.SUPABASE_URL}/rest/v1/${CONFIG.TABELA}?login=eq.${encodeURIComponent(state.usuario.login)}&select=*`, {
@@ -1450,26 +1614,15 @@
                     );
                     if (!response.ok) throw new Error(`Erro ao carregar: ${response.status}`);
                     const data = await response.json();
-                    if (!data || data.length === 0) {
-                        state.dadosDB = null;
-                        return;
-                    }
-
-                    // ⚠️ Verifica novamente se começou a salvar durante o fetch
-                    if (state.salvando) {
-                        console.log('⏸️ Carregamento cancelado - save começou durante o fetch');
-                        return;
-                    }
+                    if (!data || data.length === 0) return;
 
                     state.dadosDB = data[0];
                     carregarDadosDoDB(data[0]);
-                    console.log(`📥 Dados carregados. Seeds: ${getJogo().seeds}, Stock: ${getJogo().stock}`);
                     renderMilharal();
                     levelSystem.atualizarUI();
+                    startMilharal();
                 } catch (error) {
                     console.error('Erro ao carregar:', error);
-                } finally {
-                    state.carregando = false;
                 }
             }
 
@@ -1478,8 +1631,6 @@
                 state.salvando = true;
                 try {
                     const payload = prepararDadosParaSalvar();
-                    console.log(`💾 Salvando... Seeds: ${payload.seeds}, Stock: ${payload.stock}, Harvested: ${payload.harvested}`);
-                    
                     const response = await fetch(
                         `${CONFIG.SUPABASE_URL}/rest/v1/${CONFIG.TABELA}?login=eq.${encodeURIComponent(state.usuario.login)}`, {
                             method: 'PATCH',
@@ -1497,8 +1648,8 @@
                     const updated = await response.json();
                     if (Array.isArray(updated) && updated.length > 0) {
                         state.dadosDB = updated[0];
-                        console.log(`✅ Salvo! Seeds no banco: ${updated[0].seeds}, Stock: ${updated[0].stock}`);
                     }
+                    console.log('💾 Dados salvos e sincronizados!');
                 } catch (error) {
                     console.error('Erro ao salvar:', error);
                 } finally {
@@ -1512,14 +1663,16 @@
             function carregarUsuario() {
                 try {
                     const data = localStorage.getItem('usuario_logado');
-                    if (data) {
-                        state.usuario = JSON.parse(data);
-                        return true;
-                    }
-                } catch (e) {
-                    console.error('Erro ao carregar usuário:', e);
-                }
+                    if (data) { state.usuario = JSON.parse(data); return true; }
+                } catch (e) {}
                 return false;
+            }
+
+            function salvarUsuarioLocal(usuario) {
+                try {
+                    localStorage.setItem('usuario_logado', JSON.stringify(usuario));
+                    state.usuario = usuario;
+                } catch (e) {}
             }
 
             function atualizarInterfaceUsuario() {
@@ -1532,6 +1685,92 @@
                     DOM.userName.textContent = 'Visitante';
                 }
                 atualizarSaldoGlobal();
+            }
+
+            function mostrarLogin() { if (DOM.loginModal) DOM.loginModal.classList.add('show'); }
+            function esconderLogin() { if (DOM.loginModal) DOM.loginModal.classList.remove('show'); }
+
+            async function autenticarUsuario(login, senha, criar = false) {
+                const url = criar ?
+                    `${CONFIG.SUPABASE_URL}/rest/v1/${CONFIG.TABELA}` :
+                    `${CONFIG.SUPABASE_URL}/rest/v1/${CONFIG.TABELA}?login=eq.${encodeURIComponent(login)}&select=*`;
+
+                const options = {
+                    headers: {
+                        'apikey': CONFIG.SUPABASE_KEY,
+                        'Authorization': `Bearer ${CONFIG.SUPABASE_KEY}`,
+                    }
+                };
+
+                if (criar) {
+                    options.method = 'POST';
+                    options.headers['Content-Type'] = 'application/json';
+                    options.headers['Prefer'] = 'return=minimal';
+                    const j = getJogo();
+                    initPlots();
+                    options.body = JSON.stringify({
+                        login: login,
+                        nome: login,
+                        senha: senha,
+                        saldo: CONFIG.INITIAL_SALDO,
+                        seeds: CONFIG.INITIAL_SEEDS,
+                        planted: 0,
+                        harvested: 0,
+                        buckets: CONFIG.INITIAL_BUCKETS,
+                        stock: CONFIG.INITIAL_STOCK,
+                        plot_data: j.plots.map(p => ({ stage: p.stage, progress: p.progress })),
+                        nivel: 1,
+                        experiencia: 0,
+                        hp_max: CONFIG.MAX_HP,
+                        mp_max: CONFIG.MAX_MP,
+                        sm_max: CONFIG.MAX_SM,
+                        ataque_base: CONFIG.INITIAL_ATK,
+                        defesa_base: CONFIG.INITIAL_DEF,
+                        magia_base: CONFIG.INITIAL_MAG,
+                        hp_atual: CONFIG.INITIAL_HP,
+                        mp_atual: CONFIG.INITIAL_MP,
+                        sm_atual: CONFIG.INITIAL_SM,
+                        saldo_poupanca: 0,
+                        carteira: {},
+                    });
+                }
+
+                try {
+                    const response = await fetch(url, options);
+                    if (!response.ok) {
+                        if (criar && response.status === 409) {
+                            DOM.loginError.textContent = '❌ Usuário já existe!';
+                            return false;
+                        }
+                        DOM.loginError.textContent = `❌ Erro ${response.status}`;
+                        return false;
+                    }
+                    if (criar) {
+                        DOM.loginError.textContent = '✅ Conta criada! Faça login.';
+                        return false;
+                    }
+                    const data = await response.json();
+                    if (!data || data.length === 0) {
+                        DOM.loginError.textContent = '❌ Usuário não encontrado';
+                        return false;
+                    }
+                    const usuario = data[0];
+                    if (usuario.senha !== senha) {
+                        DOM.loginError.textContent = '❌ Senha incorreta';
+                        return false;
+                    }
+                    salvarUsuarioLocal({ login: usuario.login, nome: usuario.nome || usuario.login });
+                    DOM.loginError.textContent = '';
+                    esconderLogin();
+                    atualizarInterfaceUsuario();
+                    await carregarDadosCompletos();
+                    showToast(`👋 Bem-vindo, ${usuario.nome || usuario.login}!`, 2500);
+                    return true;
+                } catch (error) {
+                    DOM.loginError.textContent = '❌ Erro de conexão';
+                    console.error('Erro autenticação:', error);
+                    return false;
+                }
             }
 
             // ============================================================
@@ -1560,94 +1799,114 @@
                 DOM.btnSellAll?.addEventListener('click', sellAllStock);
                 DOM.btnClearAll?.addEventListener('click', clearAllPlots);
 
-                DOM.btnReconnectSupabase?.addEventListener('click', async function() {
+                DOM.btnReconnectSupabase?.addEventListener('click', function() {
+                    verificarSupabase();
                     showToast('🔄 Verificando conexão...', 1500);
-                    const ok = await verificarSupabase();
-                    if (ok) {
-                        await carregarDadosCompletos();
-                        renderMilharal();
-                        levelSystem.atualizarUI();
-                        showToast('✅ Reconectado!', 1500);
-                    } else {
-                        showToast('❌ Falha na reconexão.', 2000);
-                    }
                 });
+
+                DOM.btnLogin?.addEventListener('click', async function() {
+                    const user = DOM.loginUser.value.trim();
+                    const pass = DOM.loginPass.value.trim();
+                    if (!user || !pass) { DOM.loginError.textContent = '⚠️ Preencha usuário e senha'; return; }
+                    DOM.btnLogin.disabled = true;
+                    DOM.btnLogin.textContent = '⏳ Entrando...';
+                    await autenticarUsuario(user, pass, false);
+                    DOM.btnLogin.disabled = false;
+                    DOM.btnLogin.textContent = 'Entrar';
+                });
+
+                DOM.btnRegister?.addEventListener('click', async function() {
+                    const user = DOM.loginUser.value.trim();
+                    const pass = DOM.loginPass.value.trim();
+                    if (!user || !pass) { DOM.loginError.textContent = '⚠️ Preencha usuário e senha'; return; }
+                    if (pass.length < 4) { DOM.loginError.textContent = '⚠️ Senha deve ter pelo menos 4 caracteres'; return; }
+                    DOM.btnRegister.disabled = true;
+                    DOM.btnRegister.textContent = '⏳ Criando...';
+                    await autenticarUsuario(user, pass, true);
+                    DOM.btnRegister.disabled = false;
+                    DOM.btnRegister.textContent = 'Criar conta';
+                });
+
+                DOM.btnGuest?.addEventListener('click', function() {
+                    esconderLogin();
+                    showToast('👤 Modo visitante', 3000);
+                    const j = getJogo();
+                    initPlots();
+                    j.nivel = 1;
+                    j.experiencia = 0;
+                    j.hpMax = CONFIG.MAX_HP;
+                    j.mpMax = CONFIG.MAX_MP;
+                    j.smMax = CONFIG.MAX_SM;
+                    j.hp = CONFIG.INITIAL_HP;
+                    j.mp = CONFIG.INITIAL_MP;
+                    j.sm = CONFIG.INITIAL_SM;
+                    j.ataqueBase = CONFIG.INITIAL_ATK;
+                    j.defesaBase = CONFIG.INITIAL_DEF;
+                    j.magiaBase = CONFIG.INITIAL_MAG;
+                    j.seeds = CONFIG.INITIAL_SEEDS;
+                    j.saldo = CONFIG.INITIAL_SALDO;
+                    j.buckets = CONFIG.INITIAL_BUCKETS;
+                    j.planted = 0;
+                    j.harvested = 0;
+                    j.stock = 0;
+                    state.dadosDB = null;
+                    renderMilharal();
+                    atualizarInterfaceUsuario();
+                    levelSystem.atualizarUI();
+                    startMilharal();
+                });
+
+                DOM.loginUser?.addEventListener('keydown', function(e) { if (e.key === 'Enter') DOM.btnLogin?.click(); });
+                DOM.loginPass?.addEventListener('keydown', function(e) { if (e.key === 'Enter') DOM.btnLogin?.click(); });
             }
 
             // ============================================================
             // INICIALIZAÇÃO
             // ============================================================
-            async function init() {
-                // 1. DOM e eventos
+            function init() {
                 initDOM();
                 setupEvents();
 
-                // 2. Plots iniciais (garante que sempre existam)
+                verificarSupabase();
+                carregarUsuario();
                 initPlots();
 
-                // 3. Carregar usuário
-                const temUsuario = carregarUsuario();
-                if (!temUsuario || !state.usuario || !state.usuario.login) {
-                    window.location.href = 'login.html';
-                    return;
-                }
-
-                atualizarInterfaceUsuario();
-
-                // 4. Verificar Supabase (aguarda)
-                await verificarSupabase();
-
-                // 5. Se online, carregar dados
-                if (state.online) {
-                    await carregarDadosCompletos();
-                    showToast(`👋 Olá, ${state.usuario.nome || state.usuario.login}!`, 2500);
-                } else {
-                    showToast('⚠️ Sem conexão com o banco. Jogando offline.', 3000);
-                }
-
-                // 6. Renderizar
                 renderMilharal();
                 levelSystem.atualizarUI();
-
-                // 7. Marcar como inicializado e iniciar loops
-                state.inicializado = true;
                 startMilharal();
 
-                // 8. Sincronização periódica
+                if (state.usuario) {
+                    esconderLogin();
+                    atualizarInterfaceUsuario();
+                    setTimeout(() => {
+                        if (state.online) carregarDadosCompletos();
+                        else showToast('⚠️ Sem conexão com o banco.', 3000);
+                    }, 600);
+                    showToast(`👋 Olá, ${state.usuario.nome || state.usuario.login}!`, 2500);
+                } else {
+                    mostrarLogin();
+                    setTimeout(() => showToast('👤 Faça login para salvar seu progresso.', 3000), 800);
+                }
+
+                // 🔄 Sincronização periódica com a Table Geral (5s)
                 state.syncTimer = setInterval(() => {
-                    if (state.usuario && state.online && !state.salvando && !state.carregando) {
+                    if (state.usuario && state.online && !state.salvando) {
                         carregarDadosCompletos();
                     }
                 }, CONFIG.SYNC_INTERVAL);
 
-                // 9. Reconexão automática
-                state.reconnectTimer = setInterval(async () => {
-                    if (!state.online) {
-                        const ok = await verificarSupabase();
-                        if (ok) {
-                            await carregarDadosCompletos();
-                            renderMilharal();
-                            levelSystem.atualizarUI();
-                        }
-                    }
-                }, 30000);
+                setInterval(() => verificarSupabase(), 30000);
 
-                // 10. Auto-save
-                state.autoSaveTimer = setInterval(() => {
-                    if (state.usuario && state.online && !state.salvando) {
-                        salvarDadosCompletos();
-                    }
+                setInterval(() => {
+                    if (state.usuario && state.online && !state.salvando) salvarDadosCompletos();
                 }, CONFIG.AUTO_SAVE_INTERVAL);
 
-                // 11. Salvar ao sair
                 window.addEventListener('beforeunload', function() {
                     limparTimers();
-                    if (state.usuario && state.online && !state.salvando) {
-                        salvarDadosCompletos();
-                    }
+                    if (state.usuario && state.online && !state.salvando) salvarDadosCompletos();
                 });
 
-                console.log('🌽 Milharal carregado com sucesso!');
+                console.log('🌽 Milharal carregado!');
             }
 
             if (document.readyState === 'loading') {

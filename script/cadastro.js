@@ -40,25 +40,24 @@ function ocultarMensagens() {
     mensagemSucesso.className = 'mensagem-sucesso';
 }
 
+// ✅ SIMPLIFICADO: apenas mínimo 6 caracteres
 function validarSenha(senha) {
     const temLength = senha.length >= 6;
-    const temMaiuscula = /[A-Z]/.test(senha);
-    const temMinuscula = /[a-z]/.test(senha);
-    const temNumero = /[0-9]/.test(senha);
 
     reqLength.className = temLength ? 'ok' : 'bad';
     reqLength.textContent = temLength ? '✅ Mínimo 6 caracteres' : '🔴 Mínimo 6 caracteres';
 
-    reqMaiuscula.className = temMaiuscula ? 'ok' : 'bad';
-    reqMaiuscula.textContent = temMaiuscula ? '✅ Pelo menos 1 letra maiúscula' : '🔴 Pelo menos 1 letra maiúscula';
+    // Os outros requisitos agora são sempre considerados OK (opcionais)
+    reqMaiuscula.className = 'ok';
+    reqMaiuscula.textContent = '✅ Pelo menos 1 letra maiúscula (opcional)';
 
-    reqMinuscula.className = temMinuscula ? 'ok' : 'bad';
-    reqMinuscula.textContent = temMinuscula ? '✅ Pelo menos 1 letra minúscula' : '🔴 Pelo menos 1 letra minúscula';
+    reqMinuscula.className = 'ok';
+    reqMinuscula.textContent = '✅ Pelo menos 1 letra minúscula (opcional)';
 
-    reqNumero.className = temNumero ? 'ok' : 'bad';
-    reqNumero.textContent = temNumero ? '✅ Pelo menos 1 número' : '🔴 Pelo menos 1 número';
+    reqNumero.className = 'ok';
+    reqNumero.textContent = '✅ Pelo menos 1 número (opcional)';
 
-    return temLength && temMaiuscula && temMinuscula && temNumero;
+    return temLength;
 }
 
 function validarLogin(login) {
@@ -136,7 +135,6 @@ async function cadastrarUsuario(nome, login, senha) {
         if (error) {
             console.error('Erro detalhado ao cadastrar:', error);
             
-            // Mensagem de erro mais específica
             if (error.code === '23505') {
                 mostrarErro('⚠️ Este login já está em uso. Escolha outro.');
             } else if (error.code === '42P01') {
@@ -199,7 +197,7 @@ formCadastro.addEventListener('submit', async (e) => {
     }
 
     if (!validarSenha(senha)) {
-        mostrarErro('⚠️ A senha não atende aos requisitos de segurança.');
+        mostrarErro('⚠️ A senha deve ter pelo menos 6 caracteres.');
         return;
     }
 
@@ -239,7 +237,3 @@ if (usuarioLogado) {
         localStorage.removeItem('usuario_logado');
     }
 }
-
-
-// Depois de alterar o saldo ou inventário
-await salvarDadosDoJogador();

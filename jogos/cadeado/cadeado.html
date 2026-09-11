@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>MMQuaseTudo · Cadeado Level Up</title>
+  <title>MMQuaseTudo · Cadeado</title>
   <!-- Supabase JS -->
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <style>
@@ -351,29 +351,31 @@
 <div class="card" id="app">
   <!-- cabeçalho com nome MMQuaseTudo -->
   <div class="header">
+            <a href="../../dashboard.html" class="btn-voltar">🏠 Voltar</a>
+
     <div class="logo-icon">🔒</div>
-    <span class="brand">MMQuaseTudo <small>· Level Up</small></span>
+    <span class="brand">MMQuaseTudo <small>· Cadeado</small></span>
   </div>
 
   <h1>
-    Cadeado Level Up
+    Cadeado
     <span class="badge-lock">🔐 proteção</span>
   </h1>
   <div class="subhead">Mais proteção para sua conta</div>
 
   <div class="description">
-    <strong>O Cadeado Level Up</strong> é um sistema desenvolvido para aumentar a segurança de sua conta de jogo. 
+    <strong>O Cadeado</strong> é um sistema desenvolvido para aumentar a segurança de sua conta de jogo. 
     Ele adiciona uma verificação extra para evitar que seus itens/moedas estejam em risco. Veja como é simples:
   </div>
 
   <div class="highlight-box">
     <ul>
-      <li><span class="icon-bullet">1</span> Ao ativar esse sistema, o botão <strong>"Cadeado Level Up"</strong> aparecerá da seguinte forma: <span style="background:#2d3650; padding:0.2rem 0.8rem; border-radius:40px; color:#f5c842;">🔒 Cadeado Ativo</span></li>
+      <li><span class="icon-bullet">1</span> Ao ativar esse sistema, o botão <strong>"Cadeado"</strong> aparecerá da seguinte forma: <span style="background:#2d3650; padding:0.2rem 0.8rem; border-radius:40px; color:#f5c842;">🔒 Cadeado Ativo</span></li>
       <li><span class="icon-bullet">2</span> Desta forma você <strong>não poderá se conectar ao jogo</strong>, mesmo informando Login e Senha corretamente.</li>
-      <li><span class="icon-bullet">3</span> Para liberar a conexão, acesse sua conta Level Up, localize a conta de jogo e <strong>destranque o cadeado</strong>.</li>
+      <li><span class="icon-bullet">3</span> Para liberar a conexão, acesse sua conta , localize a conta de jogo e <strong>destranque o cadeado</strong>.</li>
       <li><span class="icon-bullet">4</span> Abra o jogo e entre normalmente com seu Login e Senha.</li>
       <li><span class="icon-bullet">5</span> O Cadeado será <strong>TRANCADO novamente depois de 1 hora</strong>, mas não se preocupe, caso já esteja no jogo, não será desconectado.</li>
-      <li><span class="icon-bullet">6</span> Você também pode optar por <strong>TRANCAR</strong> o Cadeado diretamente em sua Conta Level Up após acessar o jogo.</li>
+      <li><span class="icon-bullet">6</span> Você também pode optar por <strong>TRANCAR</strong> o Cadeado diretamente em sua Conta MM Quase Tudo após acessar o jogo.</li>
     </ul>
   </div>
 
@@ -420,7 +422,7 @@
   </div>
 
   <div class="small-note">
-    <strong>IMPORTANTE:</strong> Para ativar o Cadeado Level Up, você deverá confirmar a sua senha de jogo. 
+    <strong>IMPORTANTE:</strong> Para ativar o Cadeado , você deverá confirmar a sua senha de jogo. 
     Caso tenha dúvidas, acesse a <a href="#">Central de Suporte</a>.
   </div>
 </div>
@@ -463,7 +465,7 @@
         statusDot.className = 'status-dot locked';
         statusText.innerText = message || '🔒 Trancado';
         lockIcon.innerText = '🔒';
-        lockLabel.innerText = 'Cadeado Level Up';
+        lockLabel.innerText = 'Cadeado';
       } else if (lockState === false) {
         statusDot.className = 'status-dot';
         statusText.innerText = message || '🔓 Destrancado';

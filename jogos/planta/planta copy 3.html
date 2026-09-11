@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>🌽 Milharal – planta.html</title>
+    <title>🌽 Milharal – Sistema Completo</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" />
     <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Rajdhani:wght@400;600;700&display=swap" rel="stylesheet" />
     <style>
@@ -688,7 +688,7 @@
                 INITIAL_STOCK: 0,
                 CLEAR_COST: 5.00,
                 AUTO_SAVE_INTERVAL: 30000,
-                SYNC_INTERVAL: 15000,
+                SYNC_INTERVAL: 5000,
                 EXP_PER_HARVEST: 15,
                 SEEDS_PER_HARVEST: 1,
                 INITIAL_HP: 100,
@@ -736,14 +736,10 @@
                 online: false,
                 usuario: null,
                 salvando: false,
-                carregando: false,
                 toastTimer: null,
                 growthTimer: null,
                 syncTimer: null,
-                autoSaveTimer: null,
-                reconnectTimer: null,
                 dadosDB: null,
-                inicializado: false,
 
                 jogo: {
                     seeds: CONFIG.INITIAL_SEEDS,
@@ -772,8 +768,7 @@
             function getPlots() { return state.jogo.plots; }
 
             // ============================================================
-            // DOM REFS
-            // ============================================================
+            // DOM REFS            // ============================================================
             const DOM = {};
 
             function initDOM() {
@@ -819,7 +814,7 @@
             // AUXILIARES
             // ============================================================
             function formatSaldo(valor) {
-                return Number(valor || 0).toFixed(2).replace('.', ',');
+                return Number(valor).toFixed(2).replace('.', ',');
             }
 
             function showToast(text, duration = 2200) {
@@ -837,11 +832,7 @@
                     `;
                     document.body.appendChild(toast);
                 }
-                if (state.toastTimer) {
-                    clearTimeout(state.toastTimer);
-                    toast.style.opacity = '0';
-                    toast.style.transform = 'translateX(-50%) translateY(80px)';
-                }
+                if (state.toastTimer) { clearTimeout(state.toastTimer); toast.style.opacity = '0'; toast.style.transform = 'translateX(-50%) translateY(80px)'; }
                 toast.textContent = text;
                 requestAnimationFrame(() => {
                     toast.style.opacity = '1';
@@ -865,14 +856,12 @@
                 const total = getJogo().saldo || 0;
                 if (DOM.headerSaldo) DOM.headerSaldo.textContent = formatSaldo(total);
                 if (DOM.userBalance) DOM.userBalance.textContent = `💰 R$ ${formatSaldo(total)}`;
-                if (DOM.saldoDisplay) DOM.saldoDisplay.textContent = `R$ ${formatSaldo(total)}`;
+                if (DOM.saldoDisplay) DOM.saldoDisplay.textContent = `R$ ${formatSaldo(getJogo().saldo || 0)}`;
             }
 
             function limparTimers() {
                 if (state.growthTimer) { clearInterval(state.growthTimer); state.growthTimer = null; }
                 if (state.syncTimer) { clearInterval(state.syncTimer); state.syncTimer = null; }
-                if (state.autoSaveTimer) { clearInterval(state.autoSaveTimer); state.autoSaveTimer = null; }
-                if (state.reconnectTimer) { clearInterval(state.reconnectTimer); state.reconnectTimer = null; }
             }
 
             // ============================================================
@@ -927,6 +916,7 @@
                     if (!subiu && quantidade > 0) {
                         showToast(`✨ +${quantidade} EXP!`, 1500);
                     }
+                    salvarDadosCompletos();
                 },
 
                 atualizarUI() {
@@ -952,7 +942,7 @@
             };
 
             // ============================================================
-            // MILHARAL - INICIALIZAÇÃO
+            // MILHARAL
             // ============================================================
             function initPlots() {
                 const j = getJogo();
@@ -968,10 +958,42 @@
                 }
             }
 
-            // ============================================================
-            // RENDERIZAÇÃO
-            // ============================================================
+            function sincronizarComBanco() {
+                const db = state.dadosDB;
+                if (!db) return;
+                const j = getJogo();
+
+                j.seeds       = db.seeds       ?? j.seeds;
+                j.planted     = db.planted     ?? j.planted;
+                j.harvested   = db.harvested   ?? j.harvested;
+                j.buckets     = db.buckets     ?? j.buckets;
+                j.stock       = db.stock       ?? j.stock;
+                j.saldo       = Number(db.saldo ?? j.saldo);
+                j.experiencia = db.experiencia ?? j.experiencia;
+                j.nivel       = db.nivel       ?? j.nivel;
+                j.hpMax       = db.hp_max      ?? j.hpMax;
+                j.mpMax       = db.mp_max      ?? j.mpMax;
+                j.smMax       = db.sm_max      ?? j.smMax;
+                j.ataqueBase  = db.ataque_base ?? j.ataqueBase;
+                j.defesaBase  = db.defesa_base ?? j.defesaBase;
+                j.magiaBase   = db.magia_base  ?? j.magiaBase;
+                j.hp          = db.hp_atual    ?? j.hp;
+                j.mp          = db.mp_atual    ?? j.mp;
+                j.sm          = db.sm_atual    ?? j.sm;
+
+                if (Array.isArray(db.plot_data) && db.plot_data.length > 0) {
+                    j.plots = db.plot_data.map((p, index) => ({
+                        id: index,
+                        stage: p.stage || STAGES.EMPTY,
+                        progress: p.progress || 0,
+                        row: Math.floor(index / CONFIG.COLS),
+                        col: index % CONFIG.COLS,
+                    }));
+                }
+            }
+
             function renderMilharal() {
+                sincronizarComBanco();
                 const j = getJogo();
 
                 DOM.seedCount.textContent     = `🌰 ${j.seeds || 0}`;
@@ -1047,7 +1069,7 @@
                 } else if (j.seeds <= 0 && empty > 0) {
                     msg = '😅 <span class="highlight">Sem sementes!</span> Colha milho para conseguir mais.';
                 } else if (mature > 0) {
-                    msg = `🌽 <span class="highlight">${mature}</span> maduro(s)! Colher dá <span class="exp-highlight">✨ EXP</span>`;
+                    msg = `🌽 <span class="highlight">${mature}</span> maduro(s)! Colher dá <span class="exp-highlight">✨ EXP</span> e 🌰 semente.`;
                 } else if (growing) {
                     msg = j.buckets > 0 ?
                         '💧 <span class="highlight">Regue tudo</span> para acelerar o crescimento' :
@@ -1082,7 +1104,6 @@
             }
 
             function autoGrow() {
-                if (!state.inicializado) return;
                 let any = false;
                 const plots = getPlots();
                 for (const p of plots) {
@@ -1113,7 +1134,6 @@
                 p.stage = STAGES.SEED;
                 p.progress = 0;
                 j.planted++;
-                console.log(`🌱 Plantou! Seeds: ${j.seeds}`);
                 showToast(`🌱 Plantou na parcela ${id + 1}!`, 1400);
                 renderMilharal();
                 salvarDadosCompletos();
@@ -1136,7 +1156,7 @@
                 let planted = 0;
                 const toPlant = Math.min(j.seeds, emptyPlots.length);
 
-                for (let i = 0; i < toPlant; i++) {
+                for (let i = 0; i < toPlant && planted < toPlant; i++) {
                     const p = emptyPlots[i];
                     if (p.stage === STAGES.EMPTY) {
                         j.seeds--;
@@ -1147,7 +1167,6 @@
                     }
                 }
 
-                console.log(`🌱 Plantou ${planted}! Seeds: ${j.seeds}`);
                 showToast(`🌱 Plantou ${planted} canteiro(s)!`, 2000);
                 renderMilharal();
                 salvarDadosCompletos();
@@ -1197,32 +1216,29 @@
                 return true;
             }
 
+            // 🌽 Colher dá EXP + 1 semente + 1 milho no estoque
             function harvestAt(id) {
                 const j = getJogo();
                 const p = j.plots[id];
                 if (!p || p.stage !== STAGES.MATURE) { showToast('🌽 Só colhe maduro!', 1200); return false; }
-                
                 p.stage = STAGES.HARVESTED;
                 p.progress = 0;
                 j.harvested++;
                 j.stock++;
                 j.seeds += CONFIG.SEEDS_PER_HARVEST;
-                
-                console.log(`🌽 Colheu 1! Seeds agora: ${j.seeds}, Stock: ${j.stock}`);
-                
                 levelSystem.adicionarExp(CONFIG.EXP_PER_HARVEST);
-                showToast(`🌽 Colheu 1 milho! ✨ +${CONFIG.EXP_PER_HARVEST} EXP`, 2200);
+                showToast(`🌽 Colheu 1 milho! ✨ +${CONFIG.EXP_PER_HARVEST} EXP  🌰 +${CONFIG.SEEDS_PER_HARVEST} semente`, 2200);
                 renderMilharal();
                 salvarDadosCompletos();
                 return true;
             }
 
+            // 🌽 Colher tudo dá EXP + N sementes + N milhos no estoque
             function harvestAll() {
                 const j = getJogo();
                 const maturePlots = j.plots.filter(p => p.stage === STAGES.MATURE);
                 const count = maturePlots.length;
                 if (count === 0) { showToast('🌽 Nenhum milho maduro para colher.', 1400); return 0; }
-                
                 for (const p of maturePlots) {
                     p.stage = STAGES.HARVESTED;
                     p.progress = 0;
@@ -1230,13 +1246,11 @@
                 j.harvested += count;
                 j.stock += count;
                 j.seeds += count * CONFIG.SEEDS_PER_HARVEST;
-                
-                console.log(`🌽 Colheu ${count}! Seeds agora: ${j.seeds}, Stock: ${j.stock}`);
-                
+
                 const expGanho = count * CONFIG.EXP_PER_HARVEST;
                 levelSystem.adicionarExp(expGanho);
 
-                showToast(`🌽 Colheu ${count} milho(s)! ✨ +${expGanho} EXP`, 2600);
+                showToast(`🌽 Colheu ${count} milho(s)! ✨ +${expGanho} EXP  🌰 +${count * CONFIG.SEEDS_PER_HARVEST} sementes`, 2600);
                 renderMilharal();
                 salvarDadosCompletos();
                 return count;
@@ -1297,6 +1311,13 @@
             function clearAllPlots() {
                 const j = getJogo();
                 const plots = getPlots();
+                const toClear = plots.filter(p => p.stage !== STAGES.EMPTY);
+
+                if (toClear.length === 0) {
+                    showToast('🧹 Todos os canteiros já estão vazios!', 1800);
+                    return;
+                }
+
                 const harvestedPlots = plots.filter(p => p.stage === STAGES.HARVESTED);
                 const nonHarvested = plots.filter(p => p.stage !== STAGES.EMPTY && p.stage !== STAGES.HARVESTED);
 
@@ -1396,9 +1417,6 @@
 
             async function verificarSupabase() {
                 try {
-                    const controller = new AbortController();
-                    const timeoutId = setTimeout(() => controller.abort(), 5000);
-
                     const response = await fetch(
                         `${CONFIG.SUPABASE_URL}/rest/v1/${CONFIG.TABELA}?select=id&limit=1`, {
                             headers: {
@@ -1406,11 +1424,8 @@
                                 'Authorization': `Bearer ${CONFIG.SUPABASE_KEY}`,
                             },
                             cache: 'no-store',
-                            signal: controller.signal
                         }
                     );
-                    clearTimeout(timeoutId);
-
                     if (response.ok) {
                         state.online = true;
                         atualizarStatusSupabase(true, 'Online');
@@ -1429,15 +1444,7 @@
             }
 
             async function carregarDadosCompletos() {
-                if (!state.usuario || !state.online || state.carregando) return;
-                
-                // ⚠️ NÃO CARREGAR SE ESTIVER SALVANDO
-                if (state.salvando) {
-                    console.log('⏸️ Carregamento adiado - salvando em andamento...');
-                    return;
-                }
-                
-                state.carregando = true;
+                if (!state.usuario || !state.online) return;
                 try {
                     const response = await fetch(
                         `${CONFIG.SUPABASE_URL}/rest/v1/${CONFIG.TABELA}?login=eq.${encodeURIComponent(state.usuario.login)}&select=*`, {
@@ -1450,26 +1457,15 @@
                     );
                     if (!response.ok) throw new Error(`Erro ao carregar: ${response.status}`);
                     const data = await response.json();
-                    if (!data || data.length === 0) {
-                        state.dadosDB = null;
-                        return;
-                    }
-
-                    // ⚠️ Verifica novamente se começou a salvar durante o fetch
-                    if (state.salvando) {
-                        console.log('⏸️ Carregamento cancelado - save começou durante o fetch');
-                        return;
-                    }
+                    if (!data || data.length === 0) return;
 
                     state.dadosDB = data[0];
                     carregarDadosDoDB(data[0]);
-                    console.log(`📥 Dados carregados. Seeds: ${getJogo().seeds}, Stock: ${getJogo().stock}`);
                     renderMilharal();
                     levelSystem.atualizarUI();
+                    startMilharal();
                 } catch (error) {
                     console.error('Erro ao carregar:', error);
-                } finally {
-                    state.carregando = false;
                 }
             }
 
@@ -1478,8 +1474,6 @@
                 state.salvando = true;
                 try {
                     const payload = prepararDadosParaSalvar();
-                    console.log(`💾 Salvando... Seeds: ${payload.seeds}, Stock: ${payload.stock}, Harvested: ${payload.harvested}`);
-                    
                     const response = await fetch(
                         `${CONFIG.SUPABASE_URL}/rest/v1/${CONFIG.TABELA}?login=eq.${encodeURIComponent(state.usuario.login)}`, {
                             method: 'PATCH',
@@ -1497,8 +1491,8 @@
                     const updated = await response.json();
                     if (Array.isArray(updated) && updated.length > 0) {
                         state.dadosDB = updated[0];
-                        console.log(`✅ Salvo! Seeds no banco: ${updated[0].seeds}, Stock: ${updated[0].stock}`);
                     }
+                    console.log('💾 Dados salvos e sincronizados!');
                 } catch (error) {
                     console.error('Erro ao salvar:', error);
                 } finally {
@@ -1507,18 +1501,13 @@
             }
 
             // ============================================================
-            // AUTH
+            // AUTH (simplificado: sem modal, redireciona para login.html)
             // ============================================================
             function carregarUsuario() {
                 try {
                     const data = localStorage.getItem('usuario_logado');
-                    if (data) {
-                        state.usuario = JSON.parse(data);
-                        return true;
-                    }
-                } catch (e) {
-                    console.error('Erro ao carregar usuário:', e);
-                }
+                    if (data) { state.usuario = JSON.parse(data); return true; }
+                } catch (e) {}
                 return false;
             }
 
@@ -1560,94 +1549,60 @@
                 DOM.btnSellAll?.addEventListener('click', sellAllStock);
                 DOM.btnClearAll?.addEventListener('click', clearAllPlots);
 
-                DOM.btnReconnectSupabase?.addEventListener('click', async function() {
+                DOM.btnReconnectSupabase?.addEventListener('click', function() {
+                    verificarSupabase();
                     showToast('🔄 Verificando conexão...', 1500);
-                    const ok = await verificarSupabase();
-                    if (ok) {
-                        await carregarDadosCompletos();
-                        renderMilharal();
-                        levelSystem.atualizarUI();
-                        showToast('✅ Reconectado!', 1500);
-                    } else {
-                        showToast('❌ Falha na reconexão.', 2000);
-                    }
                 });
             }
 
             // ============================================================
             // INICIALIZAÇÃO
             // ============================================================
-            async function init() {
-                // 1. DOM e eventos
+            function init() {
                 initDOM();
                 setupEvents();
 
-                // 2. Plots iniciais (garante que sempre existam)
+                verificarSupabase();
+                carregarUsuario();
                 initPlots();
 
-                // 3. Carregar usuário
-                const temUsuario = carregarUsuario();
-                if (!temUsuario || !state.usuario || !state.usuario.login) {
+                // Se não houver usuário logado, redireciona para login.html
+                if (!state.usuario || !state.usuario.login) {
                     window.location.href = 'login.html';
                     return;
                 }
 
                 atualizarInterfaceUsuario();
 
-                // 4. Verificar Supabase (aguarda)
-                await verificarSupabase();
+                setTimeout(() => {
+                    if (state.online) carregarDadosCompletos();
+                    else showToast('⚠️ Sem conexão com o banco.', 3000);
+                }, 600);
 
-                // 5. Se online, carregar dados
-                if (state.online) {
-                    await carregarDadosCompletos();
-                    showToast(`👋 Olá, ${state.usuario.nome || state.usuario.login}!`, 2500);
-                } else {
-                    showToast('⚠️ Sem conexão com o banco. Jogando offline.', 3000);
-                }
+                showToast(`👋 Olá, ${state.usuario.nome || state.usuario.login}!`, 2500);
 
-                // 6. Renderizar
                 renderMilharal();
                 levelSystem.atualizarUI();
-
-                // 7. Marcar como inicializado e iniciar loops
-                state.inicializado = true;
                 startMilharal();
 
-                // 8. Sincronização periódica
                 state.syncTimer = setInterval(() => {
-                    if (state.usuario && state.online && !state.salvando && !state.carregando) {
+                    if (state.usuario && state.online && !state.salvando) {
                         carregarDadosCompletos();
                     }
                 }, CONFIG.SYNC_INTERVAL);
 
-                // 9. Reconexão automática
-                state.reconnectTimer = setInterval(async () => {
-                    if (!state.online) {
-                        const ok = await verificarSupabase();
-                        if (ok) {
-                            await carregarDadosCompletos();
-                            renderMilharal();
-                            levelSystem.atualizarUI();
-                        }
-                    }
-                }, 30000);
+                setInterval(() => verificarSupabase(), 30000);
 
-                // 10. Auto-save
-                state.autoSaveTimer = setInterval(() => {
-                    if (state.usuario && state.online && !state.salvando) {
-                        salvarDadosCompletos();
-                    }
+                setInterval(() => {
+                    if (state.usuario && state.online && !state.salvando) salvarDadosCompletos();
                 }, CONFIG.AUTO_SAVE_INTERVAL);
 
-                // 11. Salvar ao sair
                 window.addEventListener('beforeunload', function() {
                     limparTimers();
-                    if (state.usuario && state.online && !state.salvando) {
-                        salvarDadosCompletos();
-                    }
+                    if (state.usuario && state.online && !state.salvando) salvarDadosCompletos();
                 });
 
-                console.log('🌽 Milharal carregado com sucesso!');
+                console.log('🌽 Milharal carregado!');
             }
 
             if (document.readyState === 'loading') {

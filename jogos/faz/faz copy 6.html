@@ -53,7 +53,7 @@
             align-items: center;
             justify-content: space-between;
             border: 1px solid #2a3344;
-            margin-bottom: 10px;
+            margin-bottom: 18px;
         }
         .saldo-box span {
             font-size: 16px;
@@ -64,49 +64,6 @@
             font-weight: 800;
             color: #f0c040;
         }
-
-        /* XP box */
-        .xp-box {
-            background: #0f141e;
-            border-radius: 16px;
-            padding: 12px 16px;
-            border: 1px solid #2a3344;
-            margin-bottom: 18px;
-        }
-        .xp-top {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            margin-bottom: 8px;
-        }
-        .xp-top .nivel {
-            font-size: 15px;
-            font-weight: 800;
-            color: #a855f7;
-            display: flex;
-            align-items: center;
-            gap: 6px;
-        }
-        .xp-top .xp-txt {
-            font-size: 12px;
-            color: #8892a8;
-            font-weight: 600;
-        }
-        .xp-barra {
-            height: 10px;
-            background: #0b0e14;
-            border-radius: 20px;
-            overflow: hidden;
-            border: 1px solid #1e2635;
-        }
-        .xp-barra .fill {
-            height: 100%;
-            width: 0%;
-            background: linear-gradient(90deg, #a855f7, #7c3aed);
-            border-radius: 20px;
-            transition: width 0.4s ease;
-        }
-
         .secao {
             background: #0f141e;
             border-radius: 16px;
@@ -139,41 +96,36 @@
         .secao .grid button {
             flex: 1 0 calc(50% - 10px);
             min-width: 100px;
-            padding: 10px 0 8px;
+            padding: 12px 0;
             border: none;
-            border-radius: 16px;
+            border-radius: 40px;
             font-weight: 700;
             font-size: 14px;
             color: #fff;
             background: #2a3344;
             cursor: pointer;
-            transition: transform 0.1s, box-shadow 0.2s, opacity 0.2s;
+            transition: transform 0.1s, box-shadow 0.2s;
             touch-action: manipulation;
             border: 1px solid #3a4458;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            gap: 3px;
-            line-height: 1.2;
         }
         .secao .grid button:active {
             transform: scale(0.94);
         }
-        .secao .grid button .custo {
-            font-size: 10px;
-            font-weight: 600;
-            color: #f0c040;
-            opacity: 0.85;
-        }
-        .secao .grid button .xp-ganho {
-            font-size: 10px;
-            font-weight: 600;
-            color: #c4b5fd;
-            opacity: 0.9;
-        }
         .secao .grid button.colher {
             background: linear-gradient(135deg, #27ae60, #1e8449);
             border-color: #27ae60;
+        }
+        .secao .grid button.vender {
+            background: linear-gradient(135deg, #f39c12, #d68910);
+            border-color: #f39c12;
+        }
+        .secao .grid button.comprar {
+            background: linear-gradient(135deg, #3498db, #2176ae);
+            border-color: #3498db;
+        }
+        .secao .grid button.danger {
+            background: linear-gradient(135deg, #e74c3c, #c0392b);
+            border-color: #e74c3c;
         }
 
         /* Estoque */
@@ -252,32 +204,6 @@
             color: #6b7688;
             margin-top: 2px;
         }
-        .hist-item .tags {
-            display: flex;
-            flex-direction: column;
-            gap: 4px;
-            align-items: flex-end;
-        }
-        .hist-item .custo-tag {
-            font-size: 11px;
-            font-weight: 700;
-            color: #e74c3c;
-            background: rgba(231, 76, 60, 0.12);
-            border: 1px solid rgba(231, 76, 60, 0.4);
-            padding: 2px 8px;
-            border-radius: 20px;
-            white-space: nowrap;
-        }
-        .hist-item .xp-tag {
-            font-size: 11px;
-            font-weight: 700;
-            color: #a855f7;
-            background: rgba(168, 85, 247, 0.12);
-            border: 1px solid rgba(168, 85, 247, 0.4);
-            padding: 2px 8px;
-            border-radius: 20px;
-            white-space: nowrap;
-        }
         .hist-vazio {
             color: #6b7688;
             font-size: 13px;
@@ -311,7 +237,6 @@
             min-height: 44px;
             border: 1px solid #1e2635;
             margin-top: 6px;
-            margin-bottom: 16px;
             display: flex;
             align-items: center;
             gap: 8px;
@@ -345,6 +270,11 @@
         .nav-links a:active {
             transform: scale(0.94);
         }
+        .nav-links a.mochila {
+            background: linear-gradient(135deg, #a855f7, #7c3aed);
+            border-color: #a855f7;
+            color: #fff;
+        }
         .nav-links a.jogo {
             background: linear-gradient(135deg, #4a90d9, #2a5a8a);
             border-color: #4a90d9;
@@ -363,7 +293,7 @@
             #app { padding: 14px 12px 20px; }
             h1 { font-size: 22px; }
             .saldo-box .valor { font-size: 22px; }
-            .secao .grid button { font-size: 12px; padding: 9px 0 7px; }
+            .secao .grid button { font-size: 12px; padding: 10px 0; }
         }
     </style>
 </head>
@@ -382,48 +312,19 @@
         <span>💰 Saldo</span>
         <span class="valor" id="saldo-display">0,00</span>
     </div>
-
-    <!-- XP -->
-    <div class="xp-box">
-        <div class="xp-top">
-            <span class="nivel">⭐ Nível <span id="nivel-display">1</span></span>
-            <span class="xp-txt" id="xp-display">0 / 100 XP</span>
-        </div>
-        <div class="xp-barra">
-            <div class="fill" id="xp-fill" style="width:0%"></div>
-        </div>
-    </div>
-
     <!-- LOG -->
     <div class="log" id="log-area">
         <span class="emoji">📢</span>
         <span class="msg">Bem-vindo à fazenda!</span>
     </div>
-
     <!-- COLHER / PRODUZIR -->
     <div class="secao">
-        <h3>🌱 Produção <span class="badge">custo + XP</span></h3>
+        <h3>🌱 Produção</h3>
         <div class="grid">
-            <button class="colher" id="colher-madeira">
-                🪵 Madeira (+2)
-                <span class="custo">-6,00 💰</span>
-                <span class="xp-ganho">+2 XP</span>
-            </button>
-            <button class="colher" id="colher-pedra">
-                🪨 Pedra (+2)
-                <span class="custo">-10,00 💰</span>
-                <span class="xp-ganho">+4 XP</span>
-            </button>
-            <button class="colher" id="colher-ouro">
-                💎 Ouro (+1)
-                <span class="custo">-20,00 💰</span>
-                <span class="xp-ganho">+8 XP</span>
-            </button>
-            <button class="colher" id="colher-pocao">
-                🧪 Poção (+1)
-                <span class="custo">-12,00 💰</span>
-                <span class="xp-ganho">+5 XP</span>
-            </button>
+            <button class="colher" id="colher-madeira">🪵 Madeira (+2)</button>
+            <button class="colher" id="colher-pedra">🪨 Pedra (+2)</button>
+            <button class="colher" id="colher-ouro">💎 Ouro (+1)</button>
+            <button class="colher" id="colher-pocao">🧪 Poção (+1)</button>
         </div>
     </div>
 
@@ -443,6 +344,8 @@
         </div>
         <button class="btn-limpar" id="btn-limpar-hist">🗑️ Limpar histórico</button>
     </div>
+
+
 </div>
 
 <!-- ═══════════════════════════════════════════════════════════════
@@ -463,12 +366,13 @@ const supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 //  CONFIGURAÇÕES GERAIS
 // ═══════════════════════════════════════════════════════════════
 const TABELA = 'Geral';
-const LIMITE_HISTORICO = 100;
+const LIMITE_HISTORICO = 100; // máximo de registros guardados
 
+// ⚠️ USUARIO agora vem da sessão de login (login.html)
 let USUARIO = null;
 let _cache  = null;
 
-// Emojis por item
+// Emojis por item (para o histórico e estoque)
 const EMOJI_ITEM = {
     'Madeira': '🪵',
     'Pedra':   '🪨',
@@ -476,29 +380,11 @@ const EMOJI_ITEM = {
     'Poção':   '🧪'
 };
 
-// 💰 CUSTO DE PRODUÇÃO POR UNIDADE
-const CUSTO_PRODUCAO = {
-    'Madeira': 3,
-    'Pedra':   5,
-    'Ouro':    20,
-    'Poção':   12
-};
-
-// ⭐ XP POR UNIDADE PRODUZIDA
-const XP_PRODUCAO = {
-    'Madeira': 1,   // 2 un. = 2 XP
-    'Pedra':   2,   // 2 un. = 4 XP
-    'Ouro':    8,   // 1 un. = 8 XP
-    'Poção':   5    // 1 un. = 5 XP
-};
-
-// ⭐ NÍVEL: XP necessário para subir do nível N para N+1 = N * 100
-const XP_BASE_NIVEL = 100;
-
 // ═══════════════════════════════════════════════════════════════
 //  RECUPERAR LOGIN DA SESSÃO
 // ═══════════════════════════════════════════════════════════════
 function obterLoginDaSessao() {
+    // 1) Supabase Auth nativo
     const authKeys = Object.keys(localStorage).filter(k =>
         k.startsWith('sb-') && k.endsWith('-auth-token')
     );
@@ -512,6 +398,7 @@ function obterLoginDaSessao() {
         } catch (_) {}
     }
 
+    // 2) Chaves customizadas
     const chaves = [
         'usuario_logado', 'login', 'login_usuario', 'usuario', 'user',
         'mm_usuario_logado', 'mm_quase_tudo_usuario'
@@ -531,6 +418,7 @@ function obterLoginDaSessao() {
         }
     }
 
+    // 3) Session storage
     for (const chave of chaves) {
         const v = sessionStorage.getItem(chave);
         if (v) {
@@ -578,9 +466,8 @@ async function garantirLinha() {
         preco_medio_compra: {},
         proventos_por_ativo: {},
         plot_data: [],
-        experiencia: 0,          // ⭐ NOVO
         fazendinha_dados: {
-            historico: []
+            historico: []   // ← histórico de produção
         }
     };
 
@@ -632,44 +519,10 @@ function getItem(nome) {
     return parseInt(c[nome] ?? 0, 10) || 0;
 }
 
-function getExperiencia() {
-    return parseInt(_cache?.experiencia ?? 0, 10) || 0;
-}
-
 function getHistorico() {
     const fd = _cache?.fazendinha_dados ?? {};
     const h = fd.historico;
     return Array.isArray(h) ? h : [];
-}
-
-// ═══════════════════════════════════════════════════════════════
-//  SISTEMA DE NÍVEL / XP
-// ═══════════════════════════════════════════════════════════════
-
-/**
- * Calcula nível e progresso a partir do XP total.
- * Regra: para subir do nível N para N+1 precisa de N * XP_BASE_NIVEL.
- *   Nível 1 → 2: 100 XP
- *   Nível 2 → 3: 200 XP
- *   Nível 3 → 4: 300 XP ... etc.
- */
-function calcularNivel(xpTotal) {
-    let nivel = 1;
-    let xpRestante = xpTotal;
-    let xpNecessario = nivel * XP_BASE_NIVEL;
-
-    while (xpRestante >= xpNecessario) {
-        xpRestante -= xpNecessario;
-        nivel++;
-        xpNecessario = nivel * XP_BASE_NIVEL;
-    }
-
-    return {
-        nivel,
-        xpNoNivel: xpRestante,       // XP dentro do nível atual
-        xpNecessario,                // XP para o próximo nível
-        xpTotal
-    };
 }
 
 // ═══════════════════════════════════════════════════════════════
@@ -680,49 +533,8 @@ function atualizarUI() {
     const saldo = getSaldo();
     document.getElementById('saldo-display').textContent = saldo.toFixed(2);
     document.getElementById('moeda-display').textContent = `💰 ${saldo.toFixed(2)}`;
-    renderXP();
     renderEstoque();
     renderHistorico();
-    atualizarBotoesProducao();
-}
-
-/* ---------- XP / NÍVEL ---------- */
-function renderXP() {
-    const xpTotal = getExperiencia();
-    const info = calcularNivel(xpTotal);
-
-    document.getElementById('nivel-display').textContent = info.nivel;
-    document.getElementById('xp-display').textContent =
-        `${info.xpNoNivel} / ${info.xpNecessario} XP`;
-
-    const pct = info.xpNecessario > 0
-        ? Math.min(100, (info.xpNoNivel / info.xpNecessario) * 100)
-        : 0;
-    document.getElementById('xp-fill').style.width = pct + '%';
-}
-
-/* Habilita/desabilita botões de produção conforme o saldo */
-function atualizarBotoesProducao() {
-    const saldo = getSaldo();
-
-    const acoes = {
-        'colher-madeira': { item: 'Madeira', qtd: 2 },
-        'colher-pedra':   { item: 'Pedra',   qtd: 2 },
-        'colher-ouro':    { item: 'Ouro',    qtd: 1 },
-        'colher-pocao':   { item: 'Poção',   qtd: 1 }
-    };
-
-    for (const [id, { item, qtd }] of Object.entries(acoes)) {
-        const btn = document.getElementById(id);
-        if (!btn) continue;
-        const custoUnit = CUSTO_PRODUCAO[item] ?? 0;
-        const custoTotal = custoUnit * qtd;
-        const pode = saldo >= custoTotal;
-
-        btn.disabled = !pode;
-        btn.style.opacity = pode ? '1' : '0.45';
-        btn.style.cursor  = pode ? 'pointer' : 'not-allowed';
-    }
 }
 
 /* ---------- ESTOQUE ---------- */
@@ -731,9 +543,11 @@ function renderEstoque() {
     const badge = document.getElementById('estoque-badge');
     const carteira = getCarteira();
 
+    // Ordem fixa dos itens conhecidos
     const ordem = ['Madeira', 'Pedra', 'Ouro', 'Poção'];
     const itens = ordem.filter(nome => (parseInt(carteira[nome] ?? 0, 10) || 0) > 0);
 
+    // Itens extras que o jogador possa ter
     for (const nome of Object.keys(carteira)) {
         if (!ordem.includes(nome) && (parseInt(carteira[nome] ?? 0, 10) || 0) > 0) {
             itens.push(nome);
@@ -746,6 +560,7 @@ function renderEstoque() {
         return;
     }
 
+    let totalTipos = itens.length;
     let totalQtd = 0;
 
     lista.innerHTML = itens.map(nome => {
@@ -788,29 +603,18 @@ function renderHistorico() {
         return;
     }
 
+    // Mostra os mais recentes primeiro (últimos 30)
     const recentes = [...hist].reverse().slice(0, 30);
 
     lista.innerHTML = recentes.map(reg => {
         const emoji = EMOJI_ITEM[reg.item] ?? '📦';
         const quando = formatarData(reg.data);
-
-        const custoTag = (reg.custo != null)
-            ? `<span class="custo-tag">-${Number(reg.custo).toFixed(2)} 💰</span>`
-            : '';
-        const xpTag = (reg.xp != null)
-            ? `<span class="xp-tag">+${reg.xp} XP</span>`
-            : '';
-
         return `
             <div class="hist-item">
                 <span class="emoji">${emoji}</span>
                 <div class="detalhe">
                     <div class="topo">+${reg.qtd} ${reg.item}</div>
                     <div class="hora">${quando}</div>
-                </div>
-                <div class="tags">
-                    ${custoTag}
-                    ${xpTag}
                 </div>
             </div>
         `;
@@ -838,28 +642,11 @@ function log(emoji, mensagem) {
 
 async function colher(nome, qtd) {
     try {
-        const custoUnit  = CUSTO_PRODUCAO[nome] ?? 0;
-        const custoTotal = +(custoUnit * qtd).toFixed(2);
-        const xpUnit     = XP_PRODUCAO[nome] ?? 0;
-        const xpGanho    = xpUnit * qtd;
-
-        const saldoAtual = getSaldo();
-        const xpAtual    = getExperiencia();
-
-        // 💰 Verifica saldo
-        if (saldoAtual < custoTotal) {
-            log('❌', `Saldo insuficiente! Precisa de ${custoTotal.toFixed(2)}💰 para produzir ${qtd}x ${nome}.`);
-            return;
-        }
-
         // 1) Atualiza carteira
         const carteira = { ...getCarteira() };
         carteira[nome] = (parseInt(carteira[nome] ?? 0, 10) || 0) + qtd;
 
-        // 2) Atualiza XP total
-        const xpNovo = xpAtual + xpGanho;
-
-        // 3) Adiciona registro ao histórico
+        // 2) Adiciona registro ao histórico (dentro de fazendinha_dados)
         const fazendinha_dados = { ...(_cache?.fazendinha_dados ?? {}) };
         const historicoAtual = Array.isArray(fazendinha_dados.historico)
             ? fazendinha_dados.historico
@@ -869,35 +656,20 @@ async function colher(nome, qtd) {
             item: nome,
             qtd: qtd,
             data: new Date().toISOString(),
-            total: carteira[nome],
-            custo: custoTotal,
-            custo_unitario: custoUnit,
-            xp: xpGanho
+            total: carteira[nome]
         };
 
         let novoHistorico = [...historicoAtual, registro];
+        // Limita tamanho (mantém os últimos N)
         if (novoHistorico.length > LIMITE_HISTORICO) {
             novoHistorico = novoHistorico.slice(-LIMITE_HISTORICO);
         }
         fazendinha_dados.historico = novoHistorico;
 
-        // 4) Salva tudo de uma vez
-        await atualizarCampos({
-            saldo: +(saldoAtual - custoTotal).toFixed(2),
-            experiencia: xpNovo,
-            carteira,
-            fazendinha_dados
-        });
+        // 3) Salva tudo de uma vez no Supabase
+        await atualizarCampos({ carteira, fazendinha_dados });
 
-        // 5) Detecta level up
-        const antes = calcularNivel(xpAtual);
-        const depois = calcularNivel(xpNovo);
-        if (depois.nivel > antes.nivel) {
-            log('🎉', `LEVEL UP! Agora você é nível ${depois.nivel}! (+${xpGanho} XP)`);
-        } else {
-            log('🌱', `Colheu ${qtd}x ${nome} por ${custoTotal.toFixed(2)}💰 (+${xpGanho} XP)`);
-        }
-
+        log('🌱', `Colheu ${qtd}x ${nome}! (total: ${carteira[nome]})`);
         atualizarUI();
     } catch (e) {
         console.error(e);
@@ -939,6 +711,7 @@ function bindEventos() {
 async function init() {
     bindEventos();
 
+    // 1) Descobre quem está logado
     USUARIO = obterLoginDaSessao();
 
     if (!USUARIO) {
@@ -950,6 +723,7 @@ async function init() {
         return;
     }
 
+    // 2) Conecta ao Supabase com esse login
     try {
         await garantirLinha();
         setStatus(`✅ Conectado como ${USUARIO}`, 'online');
@@ -962,6 +736,7 @@ async function init() {
         return;
     }
 
+    // 3) Realtime
     supabase
         .channel('geral-changes-' + USUARIO)
         .on('postgres_changes',

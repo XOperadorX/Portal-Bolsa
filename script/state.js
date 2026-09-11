@@ -56,39 +56,39 @@ class StateManager {
     }
 
     get hp() {
-        return this.dados?.hp || this.dados?.hp_atual || 100;
+        return this.dados?.hp ?? this.dados?.hp_atual ?? 100;
     }
 
     get maxHp() {
-        return this.dados?.max_hp || this.dados?.hp_max || 100;
+        return this.dados?.max_hp ?? this.dados?.hp_max ?? 100;
     }
 
     get mp() {
-        return this.dados?.mp || this.dados?.mp_atual || 50;
+        return this.dados?.mp ?? this.dados?.mp_atual ?? 50;
     }
 
     get maxMp() {
-        return this.dados?.max_mp || this.dados?.mp_max || 50;
+        return this.dados?.max_mp ?? this.dados?.mp_max ?? 50;
     }
 
     get sm() {
-        return this.dados?.sm || this.dados?.sm_atual || 100;
+        return this.dados?.sm ?? this.dados?.sm_atual ?? 100;
     }
 
     get maxSm() {
-        return this.dados?.max_sm || this.dados?.sm_max || 100;
+        return this.dados?.max_sm ?? this.dados?.sm_max ?? 100;
     }
 
     get atk() {
-        return this.dados?.atk || this.dados?.ataque_base || 15;
+        return this.dados?.atk ?? this.dados?.ataque_base ?? 15;
     }
 
     get def() {
-        return this.dados?.def || this.dados?.defesa_base || 10;
+        return this.dados?.def ?? this.dados?.defesa_base ?? 10;
     }
 
     get mag() {
-        return this.dados?.mag || this.dados?.magia_base || 8;
+        return this.dados?.mag ?? this.dados?.magia_base ?? 8;
     }
 
     get seeds() {
@@ -136,15 +136,19 @@ class StateManager {
     }
 
     get mumu() {
-        return this.dados?.mumu || 500;
+        return this.dados?.mumu || 0;
     }
 
     // ============================================================
     // FUNÇÕES DE NÍVEL
     // ============================================================
-    getExpProximo() {
-        const nivel = this.nivel;
+    // ✅ CORRIGIDO: agora aceita um nível explícito para não depender de this.nivel
+    calcularExpProximo(nivel = this.nivel) {
         return Math.floor(100 * Math.pow(1.2, nivel - 1));
+    }
+
+    getExpProximo() {
+        return this.calcularExpProximo(this.nivel);
     }
 
     getTitulo() {
@@ -193,29 +197,33 @@ class StateManager {
     async adicionarExp(quantidade) {
         if (!this.isLoggedIn) return false;
 
-        const novaExp = (this.dados.experiencia || 0) + quantidade;
         let nivelAtual = this.dados.nivel || 1;
-        let expRestante = novaExp;
+        let expRestante = (this.dados.experiencia || 0) + quantidade;
 
-        while (expRestante >= this.getExpProximo()) {
-            expRestante -= this.getExpProximo();
+        // ✅ CORRIGIDO: usa calcularExpProximo(nivelAtual) em vez de getExpProximo()
+        while (expRestante >= this.calcularExpProximo(nivelAtual)) {
+            expRestante -= this.calcularExpProximo(nivelAtual);
             nivelAtual++;
         }
 
         const atualizacao = {
             nivel: nivelAtual,
             experiencia: expRestante,
-            exp_proximo: this.getExpProximo()
+            exp_proximo: this.calcularExpProximo(nivelAtual)
         };
 
         // Recuperar atributos se subiu de nível
         if (nivelAtual > (this.dados.nivel || 1)) {
+            const nivelOriginal = this.nivel;
+            // calcula máximos com base no novo nível
+            this.dados.nivel = nivelAtual;
             atualizacao.hp = this.getHpMaxTotal();
             atualizacao.mp = this.getMpMaxTotal();
             atualizacao.sm = this.getSmMaxTotal();
             atualizacao.hp_atual = this.getHpMaxTotal();
             atualizacao.mp_atual = this.getMpMaxTotal();
             atualizacao.sm_atual = this.getSmMaxTotal();
+            this.dados.nivel = nivelOriginal;
         }
 
         const sucesso = await supabase.salvarDadosCompletos(this.login, atualizacao);
@@ -243,7 +251,7 @@ class StateManager {
     async adicionarItem(item, quantidade) {
         if (!this.isLoggedIn) return false;
 
-        const carteira = this.dados.carteira || {};
+        const carteira = { ...(this.dados.carteira || {}) };
         const atual = carteira[item] || 0;
         const novo = atual + quantidade;
 
@@ -321,16 +329,16 @@ class StateManager {
     // ============================================================
     // AUTENTICAÇÃO
     // ============================================================
-    async login(login, senha) {
+    // ✅ CORRIGIDO: renomeado de login() para fazerLogin() para não sobrescrever o getter
+    async fazerLogin(login, senha) {
         const result = await supabase.autenticar(login, senha);
         if (result.success) {
             this.usuario = { login: result.usuario.login, nome: result.usuario.nome };
             this.dados = result.usuario;
             this.notify();
-            
-            // Salvar no localStorage
+
             localStorage.setItem('usuario_logado', JSON.stringify(this.usuario));
-            
+
             await supabase.adicionarHistorico(login, '👋 Login realizado', 'auth');
             return true;
         }
@@ -355,7 +363,9 @@ class StateManager {
                 this.usuario = usuario;
                 return true;
             }
-        } catch (e) {}
+        } catch (e) {
+            console.warn('⚠️ Erro ao ler localStorage:', e);
+        }
         return false;
     }
 
@@ -384,8 +394,7 @@ class StateManager {
         const carteira = this.getItensDaCarteira();
         const fazendinha = this.getItensDaFazendinha();
         const todos = [...carteira, ...fazendinha];
-        
-        // Agrupar por nome
+
         const agrupado = {};
         todos.forEach(item => {
             if (agrupado[item.nome]) {
@@ -394,7 +403,7 @@ class StateManager {
                 agrupado[item.nome] = { ...item };
             }
         });
-        
+
         return Object.values(agrupado);
     }
 

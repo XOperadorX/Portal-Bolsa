@@ -4,14 +4,9 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Dashboard Central de Jogos MM</title>
-    
-    <!-- Fonte Gamer Google Fonts -->
+
     <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500;700;900&family=Rajdhani:wght@600;700&display=swap" rel="stylesheet">
-    
-    <!-- Biblioteca Supabase -->
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-    
-    <!-- CSS Externo -->
     <link rel="stylesheet" href="style/dashboard.css">
 </head>
 <body>
@@ -41,13 +36,13 @@
         </div>
     </div>
 
-    <!-- CABEÇALHO DASHBOARD -->
+    <!-- CABEÇALHO -->
     <div class="dashboard-header">
         <h1>🎮 Central de Jogos</h1>
         <p>Escolha uma arena e comece a jogar agora mesmo!</p>
     </div>
 
-    <!-- BARRA DE NAVEGAÇÃO -->
+    <!-- NAVEGAÇÃO -->
     <nav class="nav-bar">
         <div class="nav-links">
             <a href="../../dashboard.html" class="active">🏠 DASHBOARD</a>
@@ -60,27 +55,34 @@
                 <span class="saldo" id="saldo">R$ 0,00</span>
             </div>
         </div>
-<!-- Adicionar após o botão Mercado -->
-<div class="btc-widget">
-    <div class="btc-icon">⛏️</div>
-    <div class="btc-info">
-        <span class="btc-label">BTC Acumulado</span>
-        <span class="btc-value" id="btcTotal">0.00000000</span>
-    </div>
-</div>
+
+        <div class="btc-widget">
+            <div class="btc-icon">⛏️</div>
+            <div class="btc-info">
+                <span class="btc-label">BTC Acumulado</span>
+                <span class="btc-value" id="btcTotal">0.00000000</span>
+            </div>
+        </div>
+
         <div class="nav-buttons">
             <a href="/jogos/mercado/mercado.html" class="btn-bolsa" style="background: linear-gradient(135deg, #f59e0b, #d97706);">💰 Mercado</a>
             <a href="/jogos/mochila/mochila.html" class="btn-bolsa" style="background: linear-gradient(135deg, #8b5cf6, #7000ff);">🎒 Mochila</a>
-            <a href="/jogos/mumu/mumu.html" class="btn-bolsa" style="background: linear-gradient(135deg, #8b5cf6, #7000ff);">💰 Saldo MUMU</a>
+            <a href="/jogos/mumu/mumu.html" class="btn-bolsa" style="background: linear-gradient(135deg, #8b5cf6, #7000ff);">💰 Troca MUMU</a>
+            <a href="/jogos/troca/troca.html" class="btn-bolsa" style="background: linear-gradient(135deg, #8b5cf6, #7000ff);">💰 Troca BTC</a>
             <a href="/jogos/cadeado/cadeado.html" class="btn-bolsa" style="background: linear-gradient(135deg, #8b5cf6, #7000ff);">🔒 Cadeado</a>
             <button class="btn-sair" id="btnSair">🚪 Sair</button>
-            <a href="/dados/admin/admin.html" class="btn-bolsa" style="background: linear-gradient(135deg, #7000ff, #8b5cf6);">👑 Admin</a>
+
+            <!-- 👑 BOTÃO ADMIN — só aparece se cadeado = true (verificado no dashboard.js) -->
+            <a href="/dados/admin/admin.html"
+               id="btnAdmin"
+               class="btn-bolsa"
+               style="display:none; background: linear-gradient(135deg, #7000ff, #8b5cf6);">
+               👑 Admin
+            </a>
         </div>
     </nav>
 
-    <!-- ============================================================
-    SISTEMA DE NÍVEL - WIDGET COMPLETO
-    ============================================================ -->
+    <!-- SISTEMA DE NÍVEL -->
     <div class="level-widget" id="levelWidget">
         <div class="lw-header">
             <div class="lw-badge">
@@ -108,30 +110,17 @@
             <span>🛡️ DEFESA <span class="def-c" id="lwDef">10</span></span>
             <span>🔮 MAGIA <span class="mag-c" id="lwMag">8</span></span>
         </div>
-
-        <!-- BOTÕES DE AÇÃO DO NÍVEL -->
-        <div class="level-actions">
-            <!-- BOTÕES DE EXP -->
-            <button class="btn-level btn-treinar" id="btnTreinar">🏋️ Treinar (+EXP)</button>
-            <button class="btn-level btn-descansar" id="btnDescansar">🛌 Descansar</button>
-            <button class="btn-level btn-reset" id="btnResetLevel">🔄 Resetar Nível</button>
-
-            <!-- BOTÕES DE STAMINA -->
-            <button class="btn-sm btn-sm-ganhar" id="btnSmGanhar">⬆️ +10 SM</button>
-            <button class="btn-sm btn-sm-gastar" id="btnSmGastar">⬇️ -10 SM</button>
-            <button class="btn-sm btn-sm-resetar" id="btnSmResetar">💪 Resetar SM</button>
-        </div>
     </div>
 
-    <!-- GRADE COM OS BOTÕES DE LINK DE JOGOS -->
+    <!-- GRADE DE JOGOS -->
     <main class="games-grid" id="gamesGrid">
         <a href="/jogos/planta/planta.html" class="game-card hot" data-game="fazendinha" data-game-name="Fazendinha">
-            <span class="game-badge">🌱 Novo</span> 
+            <span class="game-badge">🌱 Novo</span>
             <div class="game-icon">🌱</div>
-            <div class="game-title">Fazendinha</div>
+            <div class="game-title">Milharal</div>
         </a>
         <a href="/jogos/bolsa/bolsa.html" class="game-card" data-game="bolsa" data-game-name="Bolsa Simulator">
-            <span class="game-badge">📈</span> 
+            <span class="game-badge">📈</span>
             <div class="game-icon">📈</div>
             <div class="game-title">Bolsa Simulator</div>
         </a>
@@ -145,9 +134,14 @@
             <div class="game-icon">⛏️</div>
             <div class="game-title">Mineração de BTC</div>
         </a>
+        <a href="/jogos/faz/faz.html" class="game-card" data-game="faz" data-game-name="Fazenda">
+            <span class="game-badge">NOVO</span>
+            <div class="game-icon">🌾</div>
+            <div class="game-title">Fazenda</div>
+        </a>
     </main>
 
-    <!-- HISTÓRICO DE ATIVIDADES -->
+    <!-- HISTÓRICO -->
     <div class="activity-log">
         <h3>📋 Histórico de Atividades</h3>
         <div class="log-list" id="logList">
@@ -158,13 +152,8 @@
         </div>
     </div>
 
-    <!-- TOAST PARA NOTIFICAÇÕES -->
     <div id="levelToast"></div>
 
-    <!-- ============================================================
-    SCRIPTS
-    ============================================================ -->
     <script src="script/dashboard.js"></script>
-
 </body>
 </html>

@@ -10,7 +10,8 @@ export class SupabaseClient {
         this.key = CONFIG.SUPABASE_KEY;
         this.tabela = CONFIG.TABELA;
         this.online = false;
-        this._cache = {};
+        this._cache = new Map();
+        this._cacheTTL = 5000; // ms
     }
 
     // ============================================================
@@ -23,6 +24,28 @@ export class SupabaseClient {
             'Content-Type': 'application/json',
             ...extra
         };
+    }
+
+    // ============================================================
+    // CACHE
+    // ============================================================
+    _getCache(login) {
+        const entry = this._cache.get(login);
+        if (!entry) return null;
+        if (Date.now() - entry.time > this._cacheTTL) {
+            this._cache.delete(login);
+            return null;
+        }
+        return entry.data;
+    }
+
+    _setCache(login, data) {
+        this._cache.set(login, { data, time: Date.now() });
+    }
+
+    _invalidateCache(login) {
+        if (login) this._cache.delete(login);
+        else this._cache.clear();
     }
 
     // ============================================================
@@ -44,7 +67,12 @@ export class SupabaseClient {
     // ============================================================
     // BUSCAR USUÁRIO
     // ============================================================
-    async buscarUsuario(login) {
+    async buscarUsuario(login, forcarRefresh = false) {
+        if (!forcarRefresh) {
+            const cached = this._getCache(login);
+            if (cached) return cached;
+        }
+
         try {
             const response = await fetch(
                 `${this.url}/rest/v1/${this.tabela}?login=eq.${encodeURIComponent(login)}`,
@@ -52,7 +80,9 @@ export class SupabaseClient {
             );
             if (!response.ok) return null;
             const data = await response.json();
-            return data && data.length > 0 ? data[0] : null;
+            const usuario = data && data.length > 0 ? data[0] : null;
+            if (usuario) this._setCache(login, usuario);
+            return usuario;
         } catch (error) {
             console.error('❌ Erro ao buscar usuário:', error);
             return null;
@@ -110,7 +140,7 @@ export class SupabaseClient {
     // ============================================================
     async autenticar(login, senha) {
         try {
-            const usuario = await this.buscarUsuario(login);
+            const usuario = await this.buscarUsuario(login, true);
             if (!usuario) return { success: false, error: 'Usuário não encontrado' };
             if (usuario.senha !== senha) return { success: false, error: 'Senha incorreta' };
             return { success: true, usuario };
@@ -135,6 +165,10 @@ export class SupabaseClient {
                     })
                 }
             );
+
+            if (response.ok) {
+                this._invalidateCache(login);
+            }
             return response.ok;
         } catch (error) {
             console.error('❌ Erro ao salvar dados:', error);
@@ -143,16 +177,50 @@ export class SupabaseClient {
     }
 
     // ============================================================
-    // SALVAR DADOS COMPLETOS (com merge)
+    // SALVAR DADOS COMPLETOS (com merge PROFUNDO)
     // ============================================================
     async salvarDadosCompletos(login, novosDados) {
         try {
-            // Buscar dados atuais
-            const atuais = await this.buscarUsuario(login);
+            const atuais = await this.buscarUsuario(login, true);
             if (!atuais) return false;
 
-            // Merge dos dados
+            // ✅ CORRIGIDO: deep merge para carteira e fazendinha_dados
             const merged = { ...atuais, ...novosDados };
+
+            // Merge profundo de carteira
+            if (novosDados.carteira) {
+                merged.carteira = { ...(atuais.carteira || {}), ...novosDados.carteira };
+            }
+
+            // Merge profundo de fazendinha_dados
+            if (novosDados.fazendinha_dados) {
+                merged.fazendinha_dados = {
+                    ...(atuais.fazendinha_dados || {}),
+                    ...novosDados.fazendinha_dados
+                };
+                // Merge aninhado de inventário se ambos existirem
+                if (atuais.fazendinha_dados?.inventario || novosDados.fazendinha_dados.inventario) {
+                    merged.fazendinha_dados.inventario = {
+                        ...(atuais.fazendinha_dados?.inventario || {}),
+                        ...(novosDados.fazendinha_dados.inventario || {})
+                    };
+                }
+            }
+
+            // Merge profundo de preco_medio_compra e proventos_por_ativo (se existirem)
+            if (novosDados.preco_medio_compra) {
+                merged.preco_medio_compra = {
+                    ...(atuais.preco_medio_compra || {}),
+                    ...novosDados.preco_medio_compra
+                };
+            }
+            if (novosDados.proventos_por_ativo) {
+                merged.proventos_por_ativo = {
+                    ...(atuais.proventos_por_ativo || {}),
+                    ...novosDados.proventos_por_ativo
+                };
+            }
+
             delete merged.id;
             delete merged.created_at;
             delete merged.updated_at;
@@ -169,10 +237,10 @@ export class SupabaseClient {
     // ============================================================
     async adicionarHistorico(login, mensagem, tipo = 'info') {
         try {
-            const usuario = await this.buscarUsuario(login);
+            const usuario = await this.buscarUsuario(login, true);
             if (!usuario) return false;
 
-            const historico = usuario.historico || [];
+            const historico = Array.isArray(usuario.historico) ? [...usuario.historico] : [];
             historico.unshift({
                 data: new Date().toISOString(),
                 mensagem,
@@ -193,17 +261,17 @@ export class SupabaseClient {
     // ============================================================
     async atualizarSaldo(login, valor, motivo = '') {
         try {
-            const usuario = await this.buscarUsuario(login);
+            const usuario = await this.buscarUsuario(login, true);
             if (!usuario) return false;
 
             const novoSaldo = (usuario.saldo || 0) + valor;
-            await this.salvarDados(login, { saldo: novoSaldo });
+            const ok = await this.salvarDados(login, { saldo: novoSaldo });
 
-            if (motivo) {
+            if (ok && motivo) {
                 await this.adicionarHistorico(login, `💰 ${motivo}: R$ ${valor.toFixed(2)}`, 'financeiro');
             }
 
-            return true;
+            return ok;
         } catch (error) {
             console.error('❌ Erro ao atualizar saldo:', error);
             return false;
@@ -215,10 +283,10 @@ export class SupabaseClient {
     // ============================================================
     async atualizarCarteira(login, item, quantidade) {
         try {
-            const usuario = await this.buscarUsuario(login);
+            const usuario = await this.buscarUsuario(login, true);
             if (!usuario) return false;
 
-            const carteira = usuario.carteira || {};
+            const carteira = { ...(usuario.carteira || {}) };
             const atual = carteira[item] || 0;
             const novo = atual + quantidade;
 
@@ -240,7 +308,7 @@ export class SupabaseClient {
     // ============================================================
     async atualizarFazendinha(login, dadosFazendinha) {
         try {
-            const usuario = await this.buscarUsuario(login);
+            const usuario = await this.buscarUsuario(login, true);
             if (!usuario) return false;
 
             const fazendinhaDados = usuario.fazendinha_dados || {};

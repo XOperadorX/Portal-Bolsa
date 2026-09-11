@@ -19,7 +19,6 @@
             --text-primary: #e8e8ff;
             --text-secondary: #a0a0c0;
             --text-muted: #6a6a8a;
-            --border-neon: 0 0 15px rgba(0, 255, 136, 0.3);
             --shadow-card: 0 8px 32px rgba(0, 0, 0, 0.6);
             --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
         }
@@ -107,6 +106,25 @@
         .btn-voltar:hover {
             background: linear-gradient(135deg, rgba(0, 255, 136, 0.2), rgba(0, 212, 255, 0.2));
             border-color: var(--neon-green);
+        }
+
+        .btn-logout {
+            background: linear-gradient(135deg, rgba(255, 68, 68, 0.1), rgba(255, 100, 100, 0.1));
+            border: 1px solid rgba(255, 68, 68, 0.2);
+            color: #ff8888;
+            padding: 8px 14px;
+            border-radius: 50px;
+            font-family: 'Rajdhani', sans-serif;
+            font-weight: 600;
+            font-size: 0.75rem;
+            cursor: pointer;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            transition: var(--transition);
+        }
+        .btn-logout:hover {
+            background: linear-gradient(135deg, rgba(255, 68, 68, 0.2), rgba(255, 100, 100, 0.2));
+            border-color: #ff4444;
         }
 
         .status-bar {
@@ -380,92 +398,11 @@
         }
         .toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
 
-        #loginModal {
-            display: none;
-            position: fixed;
-            top: 0; left: 0; right: 0; bottom: 0;
-            background: rgba(0, 0, 0, 0.85);
-            backdrop-filter: blur(16px);
-            z-index: 10000;
-            justify-content: center;
-            align-items: center;
-        }
-        #loginModal.show { display: flex; }
-
-        .modal-box {
-            background: var(--bg-card);
-            padding: 40px 44px;
-            border-radius: 24px;
-            max-width: 420px;
-            width: 100%;
-            border: 1px solid rgba(0, 255, 136, 0.08);
-            box-shadow: var(--shadow-card);
-        }
-        .modal-box h2 {
-            font-family: 'Orbitron', monospace;
-            font-size: 1.8rem;
-            font-weight: 900;
-            text-align: center;
-            background: linear-gradient(135deg, var(--neon-green), var(--neon-blue));
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
-            margin-bottom: 4px;
-        }
-        .modal-box .sub { text-align: center; color: var(--text-muted); font-size: 0.85rem; margin-bottom: 24px; }
-        .form-group { margin-bottom: 14px; }
-        .form-group label { display: block; font-size: 0.75rem; font-weight: 600; color: var(--text-secondary); text-transform: uppercase; letter-spacing: 1px; margin-bottom: 4px; }
-        .form-group input {
-            width: 100%;
-            padding: 12px 16px;
-            background: var(--bg-input);
-            border: 1px solid rgba(0, 255, 136, 0.06);
-            border-radius: 12px;
-            color: var(--text-primary);
-            font-family: 'Rajdhani', sans-serif;
-            font-size: 1rem;
-            transition: var(--transition);
-        }
-        .form-group input:focus { outline: none; border-color: var(--neon-green); }
-        .login-error { color: #ff4444; font-size: 0.8rem; min-height: 24px; text-align: center; margin-top: 4px; }
-        .btn-login-modal {
-            width: 100%;
-            padding: 14px;
-            background: linear-gradient(135deg, var(--neon-green), #00b368);
-            border: none;
-            border-radius: 12px;
-            color: var(--bg-primary);
-            font-family: 'Orbitron', monospace;
-            font-size: 1rem;
-            font-weight: 700;
-            cursor: pointer;
-            transition: var(--transition);
-            text-transform: uppercase;
-            letter-spacing: 1px;
-            margin-top: 8px;
-        }
-        .btn-login-modal:hover { transform: translateY(-2px); box-shadow: 0 8px 40px rgba(0, 255, 136, 0.2); }
-
-        .modal-actions { display: flex; justify-content: center; gap: 16px; margin-top: 16px; }
-        .modal-actions button {
-            background: transparent;
-            border: none;
-            color: var(--text-muted);
-            font-family: 'Rajdhani', sans-serif;
-            font-size: 0.85rem;
-            cursor: pointer;
-            transition: var(--transition);
-            padding: 4px 12px;
-            border-radius: 8px;
-        }
-        .modal-actions button:hover { color: var(--neon-green); background: rgba(0, 255, 136, 0.04); }
-
         @media (max-width: 768px) {
             .card { padding: 16px 14px 24px; }
             .nav-bar { flex-direction: column; align-items: stretch; gap: 10px; }
             .user-profile { width: 100%; justify-content: center; }
             .market-grid { grid-template-columns: 1fr; }
-            .modal-box { padding: 28px 20px; margin: 16px; }
             .lw-header { flex-direction: column; align-items: stretch; }
             .lw-badge { justify-content: center; }
             .lw-exp { max-width: 100%; }
@@ -479,7 +416,7 @@
             <div class="user-profile" id="userInfo">
                 <div class="user-avatar" id="userAvatar">?</div>
                 <div class="user-info">
-                    <span class="user-nick" id="userName">Visitante</span>
+                    <span class="user-nick" id="userName">Carregando...</span>
                     <span class="user-balance" id="userBalanceDisplay">💰 R$ 0,00</span>
                 </div>
             </div>
@@ -552,769 +489,592 @@
 
     <div class="toast" id="toast"></div>
 
-    <div id="loginModal">
-        <div class="modal-box">
-            <h2>🌾 Mercado</h2>
-            <p class="sub"><i class="fas fa-store" style="color:#f59e0b;"></i> Entre para comprar e vender</p>
-            <div class="form-group">
-                <label>Usuário</label>
-                <input type="text" id="loginUser" placeholder="Digite seu usuário">
-            </div>
-            <div class="form-group">
-                <label>Senha</label>
-                <input type="password" id="loginPass" placeholder="Digite sua senha">
-            </div>
-            <div class="login-error" id="loginError"></div>
-            <button class="btn-login-modal" id="btnLogin">Entrar</button>
-            <div class="modal-actions">
-                <button id="btnRegister">Criar conta</button>
-                <button id="btnGuest">Visitante</button>
-            </div>
-        </div>
-    </div>
-
     <script>
-        (function() {
-            'use strict';
+    (function() {
+        'use strict';
 
-            const SUPABASE_URL = 'https://xrcxvizzdumcxbylmkvn.supabase.co';
-            const SUPABASE_KEY = 'sb_publishable_E-g3G3wW4EySbCsXLXp8KQ_FnmERMcD';
-            const TABELA = 'Geral';
+        // ============================================================
+        // CONFIGURAÇÃO
+        // ============================================================
+        const SUPABASE_URL = 'https://xrcxvizzdumcxbylmkvn.supabase.co';
+        const SUPABASE_KEY = 'sb_publishable_E-g3G3wW4EySbCsXLXp8KQ_FnmERMcD';
+        const TABELA       = 'Geral';
 
-            let supabaseOnline = false;
-            let usuarioLogado = null;
-            let toastTimeout = null;
-            let salvando = false;
+        // ⚠️ AJUSTE O CAMINHO CONFORME SUA ESTRUTURA DE PASTAS
+        // Se o mercado.html está em: pages/mercado/mercado.html
+        // e o login.html está em:    pages/login.html
+        // use: '../../login.html' ou 'login.html' se estiverem no mesmo nível
+        const LOGIN_PAGE   = 'login.html';
+        const DASHBOARD    = '../../dashboard.html';
 
-            // ============================================================
-            // ITENS DO MERCADO
-            // ============================================================
-            const ITENS_MERCADO = [
-                { id: 'sementes', nome: 'Sementes', emoji: '🌰', descricao: 'Plante no milharal', precoBase: 5, precoAtual: 5, qtdDisponivel: 100, qtdMaxima: 200 },
-                { id: 'milho', nome: 'Milho', emoji: '🌽', descricao: 'Colheita do milharal', precoBase: 8, precoAtual: 8, qtdDisponivel: 80, qtdMaxima: 150 },
-                { id: 'ovos', nome: 'Ovos', emoji: '🥚', descricao: 'Produzidos por galinhas', precoBase: 3, precoAtual: 3, qtdDisponivel: 120, qtdMaxima: 200 },
-                { id: 'galinhas', nome: 'Galinhas', emoji: '🐔', descricao: 'Produzem ovos', precoBase: 25, precoAtual: 25, qtdDisponivel: 30, qtdMaxima: 60 },
-                { id: 'madeira', nome: 'Madeira', emoji: '🪵', descricao: 'Recurso básico', precoBase: 10, precoAtual: 10, qtdDisponivel: 150, qtdMaxima: 300 },
-                { id: 'pedra', nome: 'Pedra', emoji: '🪨', descricao: 'Recurso básico', precoBase: 15, precoAtual: 15, qtdDisponivel: 120, qtdMaxima: 250 },
-                { id: 'ouro', nome: 'Ouro', emoji: '💎', descricao: 'Recurso valioso', precoBase: 50, precoAtual: 50, qtdDisponivel: 40, qtdMaxima: 100 },
-                { id: 'pocao', nome: 'Poção', emoji: '🧪', descricao: 'Item mágico', precoBase: 25, precoAtual: 25, qtdDisponivel: 60, qtdMaxima: 120 },
-                { id: 'balde', nome: 'Balde', emoji: '🪣', descricao: 'Útil para carregar líquidos', precoBase: 12, precoAtual: 12, qtdDisponivel: 80, qtdMaxima: 150 }
+        let supabaseOnline = false;
+        let usuarioLogado  = null;
+        let toastTimeout   = null;
+        let salvando       = false;
+
+        // ============================================================
+        // ITENS DO MERCADO
+        // ============================================================
+        const ITENS_MERCADO = [
+            { id: 'sementes', nome: 'Sementes', emoji: '🌰', descricao: 'Plante no milharal',         precoBase: 5,  precoAtual: 5,  qtdDisponivel: 100, qtdMaxima: 200 },
+            { id: 'milho',    nome: 'Milho',    emoji: '🌽', descricao: 'Colheita do milharal',        precoBase: 8,  precoAtual: 8,  qtdDisponivel: 80,  qtdMaxima: 150 },
+            { id: 'ovos',     nome: 'Ovos',     emoji: '🥚', descricao: 'Produzidos por galinhas',     precoBase: 3,  precoAtual: 3,  qtdDisponivel: 120, qtdMaxima: 200 },
+            { id: 'galinhas', nome: 'Galinhas', emoji: '🐔', descricao: 'Produzem ovos',               precoBase: 25, precoAtual: 25, qtdDisponivel: 30,  qtdMaxima: 60  },
+            { id: 'madeira',  nome: 'Madeira',  emoji: '🪵', descricao: 'Recurso básico',              precoBase: 10, precoAtual: 10, qtdDisponivel: 150, qtdMaxima: 300 },
+            { id: 'pedra',    nome: 'Pedra',    emoji: '🪨', descricao: 'Recurso básico',              precoBase: 15, precoAtual: 15, qtdDisponivel: 120, qtdMaxima: 250 },
+            { id: 'ouro',     nome: 'Ouro',     emoji: '💎', descricao: 'Recurso valioso',             precoBase: 50, precoAtual: 50, qtdDisponivel: 40,  qtdMaxima: 100 },
+            { id: 'pocao',    nome: 'Poção',    emoji: '🧪', descricao: 'Item mágico',                 precoBase: 25, precoAtual: 25, qtdDisponivel: 60,  qtdMaxima: 120 },
+            { id: 'balde',    nome: 'Balde',    emoji: '🪣', descricao: 'Útil para carregar líquidos', precoBase: 12, precoAtual: 12, qtdDisponivel: 80,  qtdMaxima: 150 }
+        ];
+
+        let inventario = {};
+        let saldo      = 0;
+
+        function initInventario() {
+            inventario = {};
+            ITENS_MERCADO.forEach(item => { inventario[item.id] = 0; });
+        }
+        initInventario();
+
+        // ============================================================
+        // DOM
+        // ============================================================
+        const marketGrid         = document.getElementById('marketGrid');
+        const inventoryGrid      = document.getElementById('inventoryGrid');
+        const marketSaldo        = document.getElementById('marketSaldo');
+        const headerSaldo        = document.getElementById('headerSaldo');
+        const userBalanceDisplay = document.getElementById('userBalanceDisplay');
+
+        // ============================================================
+        // AUXILIARES
+        // ============================================================
+        function formatSaldo(valor) {
+            return Number(valor).toFixed(2).replace('.', ',');
+        }
+        function getSaldoTotal() { return saldo || 0; }
+
+        function atualizarSaldoGlobal() {
+            const total = getSaldoTotal();
+            if (headerSaldo)        headerSaldo.textContent = formatSaldo(total);
+            if (marketSaldo)        marketSaldo.textContent = `R$ ${formatSaldo(total)}`;
+            if (userBalanceDisplay) userBalanceDisplay.textContent = `💰 R$ ${formatSaldo(total)}`;
+        }
+
+        function showToast(text, duration = 2200) {
+            const toastEl = document.getElementById('toast');
+            if (!toastEl) return;
+            if (toastTimeout) { clearTimeout(toastTimeout); toastEl.classList.remove('show'); }
+            toastEl.textContent = text;
+            toastEl.classList.add('show');
+            toastTimeout = setTimeout(() => {
+                toastEl.classList.remove('show');
+                toastTimeout = null;
+            }, duration);
+        }
+
+        // ============================================================
+        // NÍVEL
+        // ============================================================
+        function getTitulo(nivel) {
+            const titulos = [
+                { min: 1,   titulo: '🌱 Iniciante' },
+                { min: 5,   titulo: '🌿 Aprendiz' },
+                { min: 10,  titulo: '⚔️ Guerreiro' },
+                { min: 20,  titulo: '🛡️ Mestre' },
+                { min: 35,  titulo: '🏆 Lendário' },
+                { min: 50,  titulo: '👑 Herói' },
+                { min: 75,  titulo: '⚡ Deus da Guerra' },
+                { min: 100, titulo: '🌟 Imortal' }
             ];
+            let t = titulos[0].titulo;
+            for (const x of titulos) if (nivel >= x.min) t = x.titulo;
+            return t;
+        }
 
-            let inventario = {};
-            let saldo = 0;
+        function atualizarLevelWidget(dados) {
+            if (!dados) return;
+            const nivel   = dados.nivel || 1;
+            const exp     = dados.experiencia || 0;
+            const expProx = dados.exp_next || 100;
+            const pct     = (exp / expProx) * 100;
 
-            function initInventario() {
-                inventario = {};
-                ITENS_MERCADO.forEach(item => { inventario[item.id] = 0; });
+            document.getElementById('lwNivel').textContent    = nivel;
+            document.getElementById('lwTitulo').textContent   = getTitulo(nivel);
+            document.getElementById('lwExpFill').style.width  = Math.min(pct, 100) + '%';
+            document.getElementById('lwExpAtual').textContent = exp;
+            document.getElementById('lwExpProx').textContent  = expProx;
+            document.getElementById('lwHp').textContent  = `${dados.hp  || 100}/${dados.max_hp || 100}`;
+            document.getElementById('lwMp').textContent  = `${dados.mp  || 50}/${dados.max_mp  || 50}`;
+            document.getElementById('lwSm').textContent  = `${dados.sm  || 100}/${dados.max_sm || 100}`;
+            document.getElementById('lwAtk').textContent = dados.atk || 15;
+            document.getElementById('lwDef').textContent = dados.def || 10;
+            document.getElementById('lwMag').textContent = dados.mag || 8;
+        }
+
+        // ============================================================
+        // STATUS SUPABASE
+        // ============================================================
+        function atualizarStatusSupabase(online, texto) {
+            const dot    = document.getElementById('supabaseDot');
+            const status = document.getElementById('supabaseStatus');
+            if (dot)    dot.className    = 'dot '   + (online ? 'online'  : 'offline');
+            if (status) {
+                status.className   = 'value ' + (online ? 'online' : 'offline');
+                status.textContent = texto;
             }
-            initInventario();
+            supabaseOnline = online;
+        }
 
-            // ============================================================
-            // DOM REFS
-            // ============================================================
-            const marketGrid = document.getElementById('marketGrid');
-            const inventoryGrid = document.getElementById('inventoryGrid');
-            const marketSaldo = document.getElementById('marketSaldo');
-            const headerSaldo = document.getElementById('headerSaldo');
-            const userBalanceDisplay = document.getElementById('userBalanceDisplay');
-
-            // ============================================================
-            // FUNÇÕES AUXILIARES
-            // ============================================================
-            function formatSaldo(valor) {
-                return Number(valor).toFixed(2).replace('.', ',');
-            }
-
-            function getSaldoTotal() {
-                return saldo || 0;
-            }
-
-            function atualizarSaldoGlobal() {
-                const total = getSaldoTotal();
-                if (headerSaldo) headerSaldo.textContent = formatSaldo(total);
-                if (marketSaldo) marketSaldo.textContent = `R$ ${formatSaldo(total)}`;
-                if (userBalanceDisplay) userBalanceDisplay.textContent = `💰 R$ ${formatSaldo(total)}`;
-            }
-
-            function showToast(text, duration = 2200) {
-                const toastEl = document.getElementById('toast');
-                if (toastTimeout) { clearTimeout(toastTimeout); toastEl.classList.remove('show'); }
-                toastEl.textContent = text;
-                toastEl.classList.add('show');
-                toastTimeout = setTimeout(() => { toastEl.classList.remove('show'); toastTimeout = null; }, duration);
-            }
-
-            // ============================================================
-            // FUNÇÕES DE NÍVEL
-            // ============================================================
-            function getTitulo(nivel) {
-                const titulos = [
-                    { min: 1, titulo: '🌱 Iniciante' },
-                    { min: 5, titulo: '🌿 Aprendiz' },
-                    { min: 10, titulo: '⚔️ Guerreiro' },
-                    { min: 20, titulo: '🛡️ Mestre' },
-                    { min: 35, titulo: '🏆 Lendário' },
-                    { min: 50, titulo: '👑 Herói' },
-                    { min: 75, titulo: '⚡ Deus da Guerra' },
-                    { min: 100, titulo: '🌟 Imortal' },
-                ];
-                let titulo = titulos[0].titulo;
-                for (const t of titulos) {
-                    if (nivel >= t.min) titulo = t.titulo;
-                }
-                return titulo;
-            }
-
-            function atualizarLevelWidget(dados) {
-                if (!dados) return;
-                const nivel = dados.nivel || 1;
-                const exp = dados.experiencia || 0;
-                const expProx = dados.exp_next || 100;
-                const pct = (exp / expProx) * 100;
-
-                document.getElementById('lwNivel').textContent = nivel;
-                document.getElementById('lwTitulo').textContent = getTitulo(nivel);
-                document.getElementById('lwExpFill').style.width = Math.min(pct, 100) + '%';
-                document.getElementById('lwExpAtual').textContent = exp;
-                document.getElementById('lwExpProx').textContent = expProx;
-                document.getElementById('lwHp').textContent = `${dados.hp || 100}/${dados.max_hp || 100}`;
-                document.getElementById('lwMp').textContent = `${dados.mp || 50}/${dados.max_mp || 50}`;
-                document.getElementById('lwSm').textContent = `${dados.sm || 100}/${dados.max_sm || 100}`;
-                document.getElementById('lwAtk').textContent = dados.atk || 15;
-                document.getElementById('lwDef').textContent = dados.def || 10;
-                document.getElementById('lwMag').textContent = dados.mag || 8;
-            }
-
-            // ============================================================
-            // STATUS UI
-            // ============================================================
-            function atualizarStatusSupabase(online, texto) {
-                const dot = document.getElementById('supabaseDot');
-                const status = document.getElementById('supabaseStatus');
-                if (dot) dot.className = 'dot ' + (online ? 'online' : 'offline');
-                if (status) {
-                    status.className = 'value ' + (online ? 'online' : 'offline');
-                    status.textContent = texto;
-                }
-                supabaseOnline = online;
-            }
-
-            // ============================================================
-            // VERIFICAÇÃO DE CONEXÃO
-            // ============================================================
-            async function verificarSupabase() {
-                try {
-                    const response = await fetch(`${SUPABASE_URL}/rest/v1/${TABELA}?select=id&limit=1`, {
-                        headers: {
-                            'apikey': SUPABASE_KEY,
-                            'Authorization': `Bearer ${SUPABASE_KEY}`
-                        }
-                    });
-                    if (response.ok) {
-                        supabaseOnline = true;
-                        atualizarStatusSupabase(true, 'Online');
-                        return true;
-                    } else {
-                        supabaseOnline = false;
-                        atualizarStatusSupabase(false, `Erro ${response.status}`);
-                        return false;
-                    }
-                } catch (error) {
-                    supabaseOnline = false;
-                    atualizarStatusSupabase(false, 'Falha');
-                    return false;
-                }
-            }
-
-            // ============================================================
-            // AUTENTICAÇÃO
-            // ============================================================
-            function carregarUsuario() {
-                try {
-                    const data = localStorage.getItem('usuario_logado');
-                    if (data) {
-                        usuarioLogado = JSON.parse(data);
-                        return true;
-                    }
-                } catch (e) { console.error(e); }
+        async function verificarSupabase() {
+            try {
+                const r = await fetch(`${SUPABASE_URL}/rest/v1/${TABELA}?select=id&limit=1`, {
+                    headers: { 'apikey': SUPABASE_KEY, 'Authorization': `Bearer ${SUPABASE_KEY}` }
+                });
+                if (r.ok) { atualizarStatusSupabase(true, 'Online'); return true; }
+                atualizarStatusSupabase(false, `Erro ${r.status}`);
+                return false;
+            } catch (e) {
+                atualizarStatusSupabase(false, 'Falha');
                 return false;
             }
+        }
 
-            function salvarUsuarioLocal(usuario) {
-                try {
-                    localStorage.setItem('usuario_logado', JSON.stringify(usuario));
-                    usuarioLogado = usuario;
-                } catch (e) { console.error(e); }
-            }
-
-            function atualizarInterfaceUsuario() {
-                const avatarEl = document.getElementById('userAvatar');
-                const nomeEl = document.getElementById('userName');
-
-                if (usuarioLogado && usuarioLogado.login) {
-                    const nome = usuarioLogado.nome || usuarioLogado.login;
-                    const inicial = nome.charAt(0).toUpperCase();
-                    if (avatarEl) avatarEl.textContent = inicial;
-                    if (nomeEl) nomeEl.textContent = nome;
-                } else {
-                    if (avatarEl) avatarEl.textContent = '?';
-                    if (nomeEl) nomeEl.textContent = 'Visitante';
+        // ============================================================
+        // USUÁRIO (vem do localStorage definido pela login.html)
+        // ============================================================
+        function carregarUsuario() {
+            try {
+                const data = localStorage.getItem('usuario_logado');
+                if (data) {
+                    usuarioLogado = JSON.parse(data);
+                    return !!(usuarioLogado && usuarioLogado.login);
                 }
-                atualizarSaldoGlobal();
+            } catch (e) { console.error(e); }
+            return false;
+        }
+
+        function salvarUsuarioLocal(usuario) {
+            try {
+                localStorage.setItem('usuario_logado', JSON.stringify(usuario));
+                usuarioLogado = usuario;
+            } catch (e) { console.error(e); }
+        }
+
+        function atualizarInterfaceUsuario() {
+            const avatarEl = document.getElementById('userAvatar');
+            const nomeEl   = document.getElementById('userName');
+
+            if (usuarioLogado && usuarioLogado.login) {
+                const nome = usuarioLogado.nome || usuarioLogado.login;
+                if (avatarEl) avatarEl.textContent = nome.charAt(0).toUpperCase();
+                if (nomeEl)   nomeEl.textContent   = nome;
+            } else {
+                if (avatarEl) avatarEl.textContent = '?';
+                if (nomeEl)   nomeEl.textContent   = 'Visitante';
             }
+            atualizarSaldoGlobal();
+        }
 
-            function mostrarLogin() {
-                document.getElementById('loginModal').classList.add('show');
-            }
-            function esconderLogin() {
-                document.getElementById('loginModal').classList.remove('show');
-            }
+        function redirecionarLogin(msg) {
+            if (msg) showToast(msg, 1800);
+            setTimeout(() => { window.location.href = LOGIN_PAGE; }, 500);
+        }
 
-            // ============================================================
-            // AUTENTICAÇÃO COM SUPABASE
-            // ============================================================
-            async function autenticarUsuario(login, senha, criar = false) {
-                const url = criar ?
-                    `${SUPABASE_URL}/rest/v1/${TABELA}` :
-                    `${SUPABASE_URL}/rest/v1/${TABELA}?login=eq.${encodeURIComponent(login)}`;
+        function fazerLogout() {
+            localStorage.removeItem('usuario_logado');
+            showToast('👋 Saindo...', 1200);
+            setTimeout(() => { window.location.href = LOGIN_PAGE; }, 800);
+        }
 
-                const options = {
-                    headers: {
-                        'apikey': SUPABASE_KEY,
-                        'Authorization': `Bearer ${SUPABASE_KEY}`
-                    }
-                };
+        // ============================================================
+        // REGISTRO COMPLETO (para auto-criar quando não existir)
+        // ============================================================
+        function montarRegistroCompleto(login, senha) {
+            const invInicial = {};
+            ITENS_MERCADO.forEach(i => { invInicial[i.id] = 0; });
 
-                if (criar) {
-                    options.method = 'POST';
-                    options.headers['Content-Type'] = 'application/json';
+            const mercadoInicial = {};
+            ITENS_MERCADO.forEach(i => { mercadoInicial[i.id] = i.qtdMaxima; });
 
-                    const invInicial = {};
-                    ITENS_MERCADO.forEach(item => { invInicial[item.id] = 0; });
-
-                    const mercadoInicial = {};
-                    ITENS_MERCADO.forEach(item => { mercadoInicial[item.id] = item.qtdMaxima; });
-
-                    options.body = JSON.stringify({
-                        login: login,
-                        nome: login,
-                        senha: senha,
-                        saldo: 50.00,
-                        seeds: 0,
-                        nivel: 1,
-                        experiencia: 0,
-                        hp: 100,
-                        max_hp: 100,
-                        mp: 50,
-                        max_mp: 50,
-                        sm: 100,
-                        max_sm: 100,
-                        atk: 15,
-                        def: 10,
-                        mag: 8,
-                        carteira: {
-                            'Madeira': 0,
-                            'Pedra': 0,
-                            'Ouro': 0,
-                            'Poção': 0,
-                            'Balde': 0
-                        },
-                        fazendinha_dados: {
-                            inventario: invInicial,
-                            plantio: { active: false, stage: 0, progress: 0 },
-                            incubacao: { active: false, stage: 0, progress: 0 },
-                            saldo: 50.00,
-                            mercado_estoque: mercadoInicial
-                        }
-                    });
-                }
-
-                try {
-                    const response = await fetch(url, options);
-
-                    if (!response.ok) {
-                        if (criar && response.status === 409) {
-                            document.getElementById('loginError').textContent = '❌ Usuário já existe!';
-                            return false;
-                        }
-                        document.getElementById('loginError').textContent = `❌ Erro ${response.status}`;
-                        return false;
-                    }
-
-                    if (criar) {
-                        document.getElementById('loginError').textContent = '✅ Conta criada! Faça login.';
-                        return false;
-                    }
-
-                    const data = await response.json();
-                    if (!data || data.length === 0) {
-                        document.getElementById('loginError').textContent = '❌ Usuário não encontrado';
-                        return false;
-                    }
-
-                    const usuario = data[0];
-                    if (usuario.senha !== senha) {
-                        document.getElementById('loginError').textContent = '❌ Senha incorreta';
-                        return false;
-                    }
-
-                    salvarUsuarioLocal({ login: usuario.login, nome: usuario.nome || usuario.login });
-                    document.getElementById('loginError').textContent = '';
-                    esconderLogin();
-                    atualizarInterfaceUsuario();
-                    await carregarDadosDoJogador();
-                    showToast(`👋 Bem-vindo, ${usuario.nome || usuario.login}!`, 2500);
-                    return true;
-
-                } catch (error) {
-                    document.getElementById('loginError').textContent = '❌ Erro de conexão';
-                    console.error('Erro autenticação:', error);
-                    return false;
-                }
-            }
-
-            // ============================================================
-            // CARREGAR E SALVAR DADOS
-            // ============================================================
-            async function carregarDadosDoJogador() {
-                if (!usuarioLogado) return;
-
-                try {
-                    const response = await fetch(
-                        `${SUPABASE_URL}/rest/v1/${TABELA}?login=eq.${encodeURIComponent(usuarioLogado.login)}`, {
-                            headers: {
-                                'apikey': SUPABASE_KEY,
-                                'Authorization': `Bearer ${SUPABASE_KEY}`
-                            }
-                        }
-                    );
-
-                    if (!response.ok) throw new Error(`Erro ao carregar: ${response.status}`);
-
-                    const data = await response.json();
-                    if (!data || data.length === 0) return;
-
-                    const d = data[0];
-                    saldo = Number(d.saldo ?? 50.00);
-
-                    // Carregar estoque do mercado
-                    if (d.fazendinha_dados && d.fazendinha_dados.mercado_estoque) {
-                        const mercadoEstoque = d.fazendinha_dados.mercado_estoque;
-                        ITENS_MERCADO.forEach(item => {
-                            if (mercadoEstoque[item.id] !== undefined) {
-                                item.qtdDisponivel = Number(mercadoEstoque[item.id]) || 0;
-                            }
-                        });
-                    } else {
-                        ITENS_MERCADO.forEach(item => {
-                            item.qtdDisponivel = item.qtdMaxima;
-                        });
-                    }
-
-                    // Carregar inventário
-                    initInventario();
-                    if (d.fazendinha_dados && d.fazendinha_dados.inventario) {
-                        const inv = d.fazendinha_dados.inventario;
-                        ITENS_MERCADO.forEach(item => {
-                            if (inv[item.id] !== undefined) {
-                                inventario[item.id] = Number(inv[item.id]) || 0;
-                            }
-                        });
-                    }
-
-                    if (d.carteira) {
-                        const c = d.carteira;
-                        const map = {
-                            'Madeira': 'madeira',
-                            'Pedra': 'pedra',
-                            'Ouro': 'ouro',
-                            'Poção': 'pocao',
-                            'Balde': 'balde'
-                        };
-                        Object.keys(map).forEach(key => {
-                            if (c[key] !== undefined) {
-                                inventario[map[key]] = Number(c[key]) || 0;
-                            }
-                        });
-                    }
-
-                    atualizarLevelWidget(d);
-                    atualizarSaldoGlobal();
-                    renderizarMercado();
-                    renderizarInventario();
-
-                } catch (error) {
-                    console.error('❌ Erro ao carregar dados:', error);
-                    showToast('❌ Erro ao carregar dados: ' + error.message, 3000);
-                }
-            }
-
-            async function salvarDadosDoJogador() {
-                if (!usuarioLogado || !supabaseOnline || salvando) return;
-                salvando = true;
-
-                try {
-                    const invCompleto = {};
-                    ITENS_MERCADO.forEach(item => {
-                        invCompleto[item.id] = inventario[item.id] || 0;
-                    });
-
-                    const mercadoEstoque = {};
-                    ITENS_MERCADO.forEach(item => {
-                        mercadoEstoque[item.id] = item.qtdDisponivel;
-                    });
-
-                    // Buscar dados atuais para preservar outros campos
-                    const responseGet = await fetch(
-                        `${SUPABASE_URL}/rest/v1/${TABELA}?login=eq.${encodeURIComponent(usuarioLogado.login)}`, {
-                            headers: {
-                                'apikey': SUPABASE_KEY,
-                                'Authorization': `Bearer ${SUPABASE_KEY}`
-                            }
-                        }
-                    );
-                    const data = await responseGet.json();
-                    const dadosAtuais = data[0] || {};
-
-                    const fazendinhaDados = dadosAtuais.fazendinha_dados || {
-                        inventario: invCompleto,
-                        plantio: { active: false, stage: 0, progress: 0 },
-                        incubacao: { active: false, stage: 0, progress: 0 },
-                        saldo: saldo
-                    };
-
-                    fazendinhaDados.inventario = invCompleto;
-                    fazendinhaDados.saldo = saldo;
-                    fazendinhaDados.mercado_estoque = mercadoEstoque;
-
-                    const payload = {
-                        saldo: Number(saldo).toFixed(2),
-                        carteira: {
-                            'Madeira': inventario.madeira || 0,
-                            'Pedra': inventario.pedra || 0,
-                            'Ouro': inventario.ouro || 0,
-                            'Poção': inventario.pocao || 0,
-                            'Balde': inventario.balde || 0
-                        },
-                        fazendinha_dados: fazendinhaDados,
-                        updated_at: new Date().toISOString()
-                    };
-
-                    const response = await fetch(
-                        `${SUPABASE_URL}/rest/v1/${TABELA}?login=eq.${encodeURIComponent(usuarioLogado.login)}`, {
-                            method: 'PATCH',
-                            headers: {
-                                'Content-Type': 'application/json',
-                                'apikey': SUPABASE_KEY,
-                                'Authorization': `Bearer ${SUPABASE_KEY}`
-                            },
-                            body: JSON.stringify(payload)
-                        }
-                    );
-
-                    if (!response.ok) {
-                        const errorText = await response.text();
-                        console.error('Erro ao salvar:', response.status, errorText);
-                        throw new Error(`Erro ao salvar: ${response.status}`);
-                    }
-
-                    console.log('✅ Dados salvos com sucesso!');
-
-                } catch (error) {
-                    console.error('❌ Erro ao salvar:', error);
-                    showToast('❌ Erro ao salvar: ' + error.message, 3000);
-                } finally {
-                    salvando = false;
-                }
-            }
-
-            // ============================================================
-            // FUNÇÕES DO MERCADO
-            // ============================================================
-            function gerarPrecos() {
-                ITENS_MERCADO.forEach(item => {
-                    const variacao = (Math.random() - 0.5) * 0.4;
-                    item.precoAtual = Math.max(0.5, item.precoBase * (1 + variacao));
-                    item.precoAtual = Math.round(item.precoAtual * 100) / 100;
-                });
-            }
-
-            function renderizarMercado() {
-                let html = '';
-                ITENS_MERCADO.forEach(item => {
-                    const qtd = inventario[item.id] || 0;
-                    const preco = item.precoAtual.toFixed(2);
-
-                    html += `
-                        <div class="market-item">
-                            <div class="item-header">
-                                <span class="item-icon">${item.emoji}</span>
-                                <div>
-                                    <div class="item-name">${item.nome}</div>
-                                    <div class="item-sub">${item.descricao}</div>
-                                </div>
-                            </div>
-                            <div class="item-price">
-                                R$ ${preco} <span>cada</span>
-                            </div>
-                            <div class="item-stock">
-                                Você tem: <strong>${qtd}</strong> | Mercado: <strong style="color:var(--neon-blue);">${item.qtdDisponivel}</strong> disponíveis
-                            </div>
-                            <div class="item-actions">
-                                <div class="qty-group">
-                                    <input type="number" class="qty-input" id="qty_${item.id}" value="1" min="1" max="99">
-                                </div>
-                                <button class="btn btn-buy" id="buy_${item.id}" onclick="window.comprarItem('${item.id}')">
-                                    <i class="fas fa-shopping-cart"></i> Comprar
-                                </button>
-                                <button class="btn btn-sell" id="sell_${item.id}" onclick="window.venderItem('${item.id}')" ${qtd <= 0 ? 'disabled' : ''}>
-                                    <i class="fas fa-coins"></i> Vender
-                                </button>
-                            </div>
-                        </div>
-                    `;
-                });
-                marketGrid.innerHTML = html;
-            }
-
-            function renderizarInventario() {
-                let html = '';
-                let temItem = false;
-
-                ITENS_MERCADO.forEach(item => {
-                    const qtd = inventario[item.id] || 0;
-                    if (qtd > 0) {
-                        temItem = true;
-                        html += `
-                            <span class="inv-item">
-                                ${item.emoji} ${item.nome}: <span class="qty">${qtd}</span>
-                            </span>
-                        `;
-                    }
-                });
-
-                if (!temItem) {
-                    html = '<span style="color:var(--text-muted); font-size:0.8rem;">📭 Nenhum item no estoque</span>';
-                }
-
-                inventoryGrid.innerHTML = html;
-            }
-
-            // ============================================================
-            // COMPRAR E VENDER
-            // ============================================================
-            window.comprarItem = async function(itemId) {
-                if (!usuarioLogado) { showToast('👤 Faça login para comprar!', 2000); return; }
-                if (!supabaseOnline) { showToast('⚠️ Sem conexão com o banco!', 2000); return; }
-
-                const item = ITENS_MERCADO.find(i => i.id === itemId);
-                if (!item) return;
-
-                const qtyInput = document.getElementById(`qty_${itemId}`);
-                const qty = parseInt(qtyInput.value) || 1;
-                if (qty <= 0) { showToast('⚠️ Quantidade inválida', 1500); return; }
-
-                const custo = item.precoAtual * qty;
-
-                if (saldo < custo) {
-                    showToast(`😅 Saldo insuficiente! Precisa de R$ ${formatSaldo(custo)}`, 2000);
-                    return;
-                }
-
-                if (item.qtdDisponivel < qty) {
-                    showToast(`😅 Mercado tem apenas ${item.qtdDisponivel} disponíveis`, 2000);
-                    return;
-                }
-
-                try {
-                    saldo -= custo;
-                    saldo = Math.round(saldo * 100) / 100;
-                    item.qtdDisponivel -= qty;
-                    inventario[itemId] = (inventario[itemId] || 0) + qty;
-
-                    atualizarSaldoGlobal();
-                    renderizarMercado();
-                    renderizarInventario();
-
-                    await salvarDadosDoJogador();
-                    showToast(`✅ Comprou ${qty} ${item.nome} por R$ ${formatSaldo(custo)}`, 2500);
-
-                } catch (error) {
-                    console.error('❌ Erro na compra:', error);
-                    showToast('❌ Erro ao processar compra: ' + error.message, 3000);
+            return {
+                login: login,
+                nome:  login,
+                senha: senha || 'sem_senha',
+                saldo: 50.00,
+                seeds: 0,
+                nivel: 1,
+                experiencia: 0,
+                exp_next: 100,
+                hp: 100, max_hp: 100,
+                mp: 50,  max_mp: 50,
+                sm: 100, max_sm: 100,
+                atk: 15, def: 10, mag: 8,
+                carteira: {
+                    'Madeira': 0, 'Pedra': 0, 'Ouro': 0, 'Poção': 0, 'Balde': 0
+                },
+                fazendinha_dados: {
+                    inventario: invInicial,
+                    plantio:    { active: false, stage: 0, progress: 0 },
+                    incubacao:  { active: false, stage: 0, progress: 0 },
+                    saldo: 50.00,
+                    mercado_estoque: mercadoInicial
                 }
             };
+        }
 
-            window.venderItem = async function(itemId) {
-                if (!usuarioLogado) { showToast('👤 Faça login para vender!', 2000); return; }
-                if (!supabaseOnline) { showToast('⚠️ Sem conexão com o banco!', 2000); return; }
+        async function criarRegistroSeNaoExistir(usuario) {
+            // 1. Verifica se já existe
+            const r = await fetch(
+                `${SUPABASE_URL}/rest/v1/${TABELA}?login=eq.${encodeURIComponent(usuario.login)}&select=id`,
+                { headers: { 'apikey': SUPABASE_KEY, 'Authorization': `Bearer ${SUPABASE_KEY}` } }
+            );
+            const data = await r.json();
+            if (data && data.length > 0) return false;
 
-                const item = ITENS_MERCADO.find(i => i.id === itemId);
-                if (!item) return;
-
-                const qtyInput = document.getElementById(`qty_${itemId}`);
-                const qty = parseInt(qtyInput.value) || 1;
-                if (qty <= 0) { showToast('⚠️ Quantidade inválida', 1500); return; }
-
-                const qtdAtual = inventario[itemId] || 0;
-                if (qtdAtual < qty) {
-                    showToast(`😅 Você tem apenas ${qtdAtual} ${item.nome}`, 2000);
-                    return;
-                }
-
-                try {
-                    const precoVenda = item.precoAtual * 0.7;
-                    const total = precoVenda * qty;
-
-                    saldo += total;
-                    saldo = Math.round(saldo * 100) / 100;
-                    inventario[itemId] = qtdAtual - qty;
-                    item.qtdDisponivel += qty;
-
-                    atualizarSaldoGlobal();
-                    renderizarMercado();
-                    renderizarInventario();
-
-                    await salvarDadosDoJogador();
-                    showToast(`💰 Vendeu ${qty} ${item.nome} por R$ ${formatSaldo(total)}`, 2500);
-
-                } catch (error) {
-                    console.error('❌ Erro na venda:', error);
-                    showToast('❌ Erro ao processar venda: ' + error.message, 3000);
-                }
-            };
-
-            // ============================================================
-            // EVENTOS
-            // ============================================================
-            document.addEventListener('DOMContentLoaded', function() {
-                const loginBtn = document.getElementById('btnLogin');
-                const registerBtn = document.getElementById('btnRegister');
-                const guestBtn = document.getElementById('btnGuest');
-                const loginUser = document.getElementById('loginUser');
-                const loginPass = document.getElementById('loginPass');
-
-                if (loginBtn) {
-                    loginBtn.addEventListener('click', async function() {
-                        const user = loginUser.value.trim();
-                        const pass = loginPass.value.trim();
-                        if (!user || !pass) {
-                            document.getElementById('loginError').textContent = '⚠️ Preencha usuário e senha';
-                            return;
-                        }
-                        loginBtn.disabled = true;
-                        loginBtn.textContent = '⏳ Entrando...';
-                        await autenticarUsuario(user, pass, false);
-                        loginBtn.disabled = false;
-                        loginBtn.textContent = 'Entrar';
-                    });
-                }
-
-                if (registerBtn) {
-                    registerBtn.addEventListener('click', async function() {
-                        const user = loginUser.value.trim();
-                        const pass = loginPass.value.trim();
-                        if (!user || !pass) {
-                            document.getElementById('loginError').textContent = '⚠️ Preencha usuário e senha';
-                            return;
-                        }
-                        if (pass.length < 4) {
-                            document.getElementById('loginError').textContent = '⚠️ Senha deve ter pelo menos 4 caracteres';
-                            return;
-                        }
-                        registerBtn.disabled = true;
-                        registerBtn.textContent = '⏳ Criando...';
-                        await autenticarUsuario(user, pass, true);
-                        registerBtn.disabled = false;
-                        registerBtn.textContent = 'Criar conta';
-                    });
-                }
-
-                if (guestBtn) {
-                    guestBtn.addEventListener('click', function() {
-                        esconderLogin();
-                        showToast('👤 Modo visitante - dados não serão salvos.', 3000);
-                        initInventario();
-                        saldo = 50.00;
-                        ITENS_MERCADO.forEach(item => {
-                            item.qtdDisponivel = item.qtdMaxima;
-                        });
-                        atualizarInterfaceUsuario();
-                        atualizarSaldoGlobal();
-                        renderizarMercado();
-                        renderizarInventario();
-                    });
-                }
-
-                document.getElementById('btnReconnectSupabase')?.addEventListener('click', function() {
-                    verificarSupabase();
-                    showToast('🔄 Verificando conexão...', 1500);
-                });
-
-                if (loginUser) {
-                    loginUser.addEventListener('keydown', function(e) {
-                        if (e.key === 'Enter') loginPass.focus();
-                    });
-                }
-                if (loginPass) {
-                    loginPass.addEventListener('keydown', function(e) {
-                        if (e.key === 'Enter') loginBtn.click();
-                    });
-                }
-
-                if (!usuarioLogado && loginUser) {
-                    setTimeout(() => loginUser.focus(), 500);
-                }
+            // 2. Cria com TODAS as colunas
+            const payload = montarRegistroCompleto(usuario.login, usuario.senha);
+            const cr = await fetch(`${SUPABASE_URL}/rest/v1/${TABELA}`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type':  'application/json',
+                    'apikey':        SUPABASE_KEY,
+                    'Authorization': `Bearer ${SUPABASE_KEY}`,
+                    'Prefer':        'return=minimal'
+                },
+                body: JSON.stringify(payload)
             });
 
-            // ============================================================
-            // INICIALIZAÇÃO
-            // ============================================================
+            if (cr.ok || cr.status === 201 || cr.status === 204) {
+                console.log('✅ Registro criado automaticamente para', usuario.login);
+                return true;
+            }
+            console.warn('⚠️ Falha ao criar registro:', cr.status, await cr.text());
+            return false;
+        }
+
+        // ============================================================
+        // CARREGAR / SALVAR
+        // ============================================================
+        async function carregarDadosDoJogador() {
+            if (!usuarioLogado) return;
+
+            try {
+                const response = await fetch(
+                    `${SUPABASE_URL}/rest/v1/${TABELA}?login=eq.${encodeURIComponent(usuarioLogado.login)}`,
+                    { headers: { 'apikey': SUPABASE_KEY, 'Authorization': `Bearer ${SUPABASE_KEY}` } }
+                );
+
+                if (!response.ok) throw new Error(`Erro ${response.status}`);
+                const data = await response.json();
+
+                if (!data || data.length === 0) {
+                    // Não existe no banco → cria agora
+                    showToast('📝 Criando seu registro no banco...', 1500);
+                    await criarRegistroSeNaoExistir(usuarioLogado);
+                    // Recarrega
+                    return carregarDadosDoJogador();
+                }
+
+                const d = data[0];
+                saldo = Number(d.saldo ?? 50.00);
+
+                // Atualiza nome caso tenha mudado
+                if (d.nome && d.nome !== usuarioLogado.nome) {
+                    salvarUsuarioLocal({ login: usuarioLogado.login, nome: d.nome });
+                    atualizarInterfaceUsuario();
+                }
+
+                // Estoque do mercado
+                if (d.fazendinha_dados && d.fazendinha_dados.mercado_estoque) {
+                    const me = d.fazendinha_dados.mercado_estoque;
+                    ITENS_MERCADO.forEach(i => {
+                        if (me[i.id] !== undefined) i.qtdDisponivel = Number(me[i.id]) || 0;
+                    });
+                } else {
+                    ITENS_MERCADO.forEach(i => { i.qtdDisponivel = i.qtdMaxima; });
+                }
+
+                // Inventário (formato novo)
+                initInventario();
+                if (d.fazendinha_dados && d.fazendinha_dados.inventario) {
+                    const inv = d.fazendinha_dados.inventario;
+                    ITENS_MERCADO.forEach(i => {
+                        if (inv[i.id] !== undefined) inventario[i.id] = Number(inv[i.id]) || 0;
+                    });
+                }
+
+                // Carteira (formato legado) — mescla
+                if (d.carteira) {
+                    const c = d.carteira;
+                    const map = { 'Madeira': 'madeira', 'Pedra': 'pedra', 'Ouro': 'ouro', 'Poção': 'pocao', 'Balde': 'balde' };
+                    Object.keys(map).forEach(k => {
+                        if (c[k] !== undefined) inventario[map[k]] = Number(c[k]) || 0;
+                    });
+                }
+
+                atualizarLevelWidget(d);
+                atualizarSaldoGlobal();
+                renderizarMercado();
+                renderizarInventario();
+
+            } catch (error) {
+                console.error('❌ Erro ao carregar:', error);
+                showToast('❌ Erro ao carregar: ' + error.message, 3000);
+            }
+        }
+
+        async function salvarDadosDoJogador() {
+            if (!usuarioLogado || !supabaseOnline || salvando) return;
+            salvando = true;
+
+            try {
+                const invCompleto = {};
+                ITENS_MERCADO.forEach(i => { invCompleto[i.id] = inventario[i.id] || 0; });
+
+                const mercadoEstoque = {};
+                ITENS_MERCADO.forEach(i => { mercadoEstoque[i.id] = i.qtdDisponivel; });
+
+                // Busca estado atual para preservar campos
+                const rGet = await fetch(
+                    `${SUPABASE_URL}/rest/v1/${TABELA}?login=eq.${encodeURIComponent(usuarioLogado.login)}`,
+                    { headers: { 'apikey': SUPABASE_KEY, 'Authorization': `Bearer ${SUPABASE_KEY}` } }
+                );
+                const data  = await rGet.json();
+                const atual = (data && data[0]) || {};
+
+                // Se o registro não existe, cria
+                if (!atual.id) {
+                    await criarRegistroSeNaoExistir(usuarioLogado);
+                    salvando = false;
+                    return;
+                }
+
+                const fazendinhaDados = atual.fazendinha_dados || {
+                    inventario: invCompleto,
+                    plantio:    { active: false, stage: 0, progress: 0 },
+                    incubacao:  { active: false, stage: 0, progress: 0 },
+                    saldo: saldo
+                };
+
+                fazendinhaDados.inventario      = invCompleto;
+                fazendinhaDados.saldo           = saldo;
+                fazendinhaDados.mercado_estoque = mercadoEstoque;
+
+                const payload = {
+                    saldo: Number(saldo).toFixed(2),
+                    carteira: {
+                        'Madeira': inventario.madeira || 0,
+                        'Pedra':   inventario.pedra   || 0,
+                        'Ouro':    inventario.ouro    || 0,
+                        'Poção':   inventario.pocao   || 0,
+                        'Balde':   inventario.balde   || 0
+                    },
+                    fazendinha_dados: fazendinhaDados,
+                    updated_at: new Date().toISOString()
+                };
+
+                const response = await fetch(
+                    `${SUPABASE_URL}/rest/v1/${TABELA}?login=eq.${encodeURIComponent(usuarioLogado.login)}`,
+                    {
+                        method: 'PATCH',
+                        headers: {
+                            'Content-Type':  'application/json',
+                            'apikey':        SUPABASE_KEY,
+                            'Authorization': `Bearer ${SUPABASE_KEY}`,
+                            'Prefer':        'return=minimal'
+                        },
+                        body: JSON.stringify(payload)
+                    }
+                );
+
+                if (!response.ok) {
+                    const err = await response.text();
+                    console.warn('⚠️ Erro ao salvar:', response.status, err);
+                } else {
+                    console.log('✅ Dados salvos!');
+                }
+            } catch (error) {
+                console.error('❌ Erro ao salvar:', error);
+            } finally {
+                salvando = false;
+            }
+        }
+
+        // ============================================================
+        // MERCADO
+        // ============================================================
+        function gerarPrecos() {
+            ITENS_MERCADO.forEach(item => {
+                const variacao = (Math.random() - 0.5) * 0.4;
+                item.precoAtual = Math.max(0.5, item.precoBase * (1 + variacao));
+                item.precoAtual = Math.round(item.precoAtual * 100) / 100;
+            });
+        }
+
+        function renderizarMercado() {
+            let html = '';
+            ITENS_MERCADO.forEach(item => {
+                const qtd   = inventario[item.id] || 0;
+                const preco = item.precoAtual.toFixed(2);
+                html += `
+                    <div class="market-item">
+                        <div class="item-header">
+                            <span class="item-icon">${item.emoji}</span>
+                            <div>
+                                <div class="item-name">${item.nome}</div>
+                                <div class="item-sub">${item.descricao}</div>
+                            </div>
+                        </div>
+                        <div class="item-price">R$ ${preco} <span>cada</span></div>
+                        <div class="item-stock">
+                            Você tem: <strong>${qtd}</strong> | Mercado:
+                            <strong style="color:var(--neon-blue);">${item.qtdDisponivel}</strong> disponíveis
+                        </div>
+                        <div class="item-actions">
+                            <div class="qty-group">
+                                <input type="number" class="qty-input" id="qty_${item.id}" value="1" min="1" max="99">
+                            </div>
+                            <button class="btn btn-buy" onclick="window.comprarItem('${item.id}')">
+                                <i class="fas fa-shopping-cart"></i> Comprar
+                            </button>
+                            <button class="btn btn-sell" onclick="window.venderItem('${item.id}')" ${qtd <= 0 ? 'disabled' : ''}>
+                                <i class="fas fa-coins"></i> Vender
+                            </button>
+                        </div>
+                    </div>
+                `;
+            });
+            marketGrid.innerHTML = html;
+        }
+
+        function renderizarInventario() {
+            let html = '';
+            let temItem = false;
+            ITENS_MERCADO.forEach(item => {
+                const qtd = inventario[item.id] || 0;
+                if (qtd > 0) {
+                    temItem = true;
+                    html += `<span class="inv-item">${item.emoji} ${item.nome}: <span class="qty">${qtd}</span></span>`;
+                }
+            });
+            if (!temItem) {
+                html = '<span style="color:var(--text-muted); font-size:0.8rem;">📭 Nenhum item no estoque</span>';
+            }
+            inventoryGrid.innerHTML = html;
+        }
+
+        // ============================================================
+        // COMPRAR / VENDER
+        // ============================================================
+        window.comprarItem = async function(itemId) {
+            if (!usuarioLogado)  { redirecionarLogin('👤 Faça login primeiro!'); return; }
+            if (!supabaseOnline) { showToast('⚠️ Sem conexão com o banco!', 2000); return; }
+
+            const item = ITENS_MERCADO.find(i => i.id === itemId);
+            if (!item) return;
+
+            const qty = parseInt(document.getElementById(`qty_${itemId}`).value) || 1;
+            if (qty <= 0) { showToast('⚠️ Quantidade inválida', 1500); return; }
+
+            const custo = item.precoAtual * qty;
+            if (saldo < custo)            { showToast(`😅 Saldo insuficiente! Precisa R$ ${formatSaldo(custo)}`, 2000); return; }
+            if (item.qtdDisponivel < qty) { showToast(`😅 Mercado tem só ${item.qtdDisponivel}`, 2000); return; }
+
+            saldo = Math.round((saldo - custo) * 100) / 100;
+            item.qtdDisponivel -= qty;
+            inventario[itemId] = (inventario[itemId] || 0) + qty;
+
+            atualizarSaldoGlobal();
+            renderizarMercado();
+            renderizarInventario();
+
+            await salvarDadosDoJogador();
+            showToast(`✅ Comprou ${qty} ${item.nome} por R$ ${formatSaldo(custo)}`, 2500);
+        };
+
+        window.venderItem = async function(itemId) {
+            if (!usuarioLogado)  { redirecionarLogin('👤 Faça login primeiro!'); return; }
+            if (!supabaseOnline) { showToast('⚠️ Sem conexão com o banco!', 2000); return; }
+
+            const item = ITENS_MERCADO.find(i => i.id === itemId);
+            if (!item) return;
+
+            const qty = parseInt(document.getElementById(`qty_${itemId}`).value) || 1;
+            if (qty <= 0) { showToast('⚠️ Quantidade inválida', 1500); return; }
+
+            const qtdAtual = inventario[itemId] || 0;
+            if (qtdAtual < qty) { showToast(`😅 Você tem apenas ${qtdAtual} ${item.nome}`, 2000); return; }
+
+            const total = item.precoAtual * 0.7 * qty;
+            saldo = Math.round((saldo + total) * 100) / 100;
+            inventario[itemId] = qtdAtual - qty;
+            item.qtdDisponivel += qty;
+
+            atualizarSaldoGlobal();
+            renderizarMercado();
+            renderizarInventario();
+
+            await salvarDadosDoJogador();
+            showToast(`💰 Vendeu ${qty} ${item.nome} por R$ ${formatSaldo(total)}`, 2500);
+        };
+
+        // ============================================================
+        // EVENTOS
+        // ============================================================
+        document.getElementById('btnReconnectSupabase')?.addEventListener('click', function() {
             verificarSupabase();
-            carregarUsuario();
+            showToast('🔄 Verificando conexão...', 1500);
+        });
+
+        document.getElementById('btnLogout')?.addEventListener('click', function() {
+            if (confirm('Deseja sair da sua conta?')) fazerLogout();
+        });
+
+        // ============================================================
+        // INICIALIZAÇÃO
+        // ============================================================
+        (async function init() {
+            // 1. Verifica conexão com Supabase
+            await verificarSupabase();
+
+            // 2. Verifica se tem usuário logado
+            if (!carregarUsuario()) {
+                redirecionarLogin('👤 Faça login para acessar o mercado.');
+                return;
+            }
+
+            // 3. Renderiza UI básica
             gerarPrecos();
             renderizarMercado();
             renderizarInventario();
             atualizarInterfaceUsuario();
 
-            if (usuarioLogado) {
-                esconderLogin();
-                setTimeout(() => {
-                    if (supabaseOnline) {
-                        carregarDadosDoJogador();
-                    } else {
-                        showToast('⚠️ Sem conexão com o banco.', 3000);
-                    }
-                }, 600);
-                showToast(`👋 Olá, ${usuarioLogado.nome || usuarioLogado.login}!`, 2500);
+            // 4. Carrega dados do jogador (cria registro se não existir)
+            if (supabaseOnline) {
+                await carregarDadosDoJogador();
+                showToast(`👋 Olá, ${usuarioLogado.nome || usuarioLogado.login}!`, 2000);
             } else {
-                mostrarLogin();
-                setTimeout(() => showToast('👤 Faça login para comprar e vender.', 3000), 800);
+                showToast('⚠️ Sem conexão com o banco.', 3000);
             }
 
-            setInterval(() => {
-                gerarPrecos();
-                renderizarMercado();
-            }, 60000);
-
+            // 5. Timers
+            setInterval(() => { gerarPrecos(); renderizarMercado(); }, 60000);
             setInterval(() => verificarSupabase(), 30000);
-
             setInterval(() => {
-                if (usuarioLogado && supabaseOnline && !salvando) {
-                    salvarDadosDoJogador();
-                }
+                if (usuarioLogado && supabaseOnline && !salvando) salvarDadosDoJogador();
             }, 30000);
 
+            // 6. Salva ao sair
             window.addEventListener('beforeunload', function() {
                 if (usuarioLogado && supabaseOnline && !salvando) {
+                    // Não dá pra await, mas dispara
                     salvarDadosDoJogador();
                 }
             });
 
             console.log('🌾 Mercado carregado!');
-
         })();
+    })();
     </script>
 </body>
 </html>

@@ -1,0 +1,765 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes">
+  <title>Troca BTC ↔ Saldo | Fazendinha</title>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Segoe UI', Roboto, system-ui, sans-serif; }
+
+    body {
+      background: linear-gradient(145deg, #0b1a2b 0%, #1a2f3f 100%);
+      min-height: 100vh; display: flex; align-items: center; justify-content: center; padding: 20px;
+    }
+
+    .card {
+      background: rgba(18, 30, 41, 0.9); backdrop-filter: blur(10px);
+      border-radius: 2rem; padding: 2rem 2.2rem; max-width: 720px; width: 100%;
+      box-shadow: 0 25px 40px -10px rgba(0, 0, 0, 0.7), 0 0 0 1px rgba(255, 215, 0, 0.15);
+      border: 1px solid rgba(255, 215, 0, 0.2); color: #eef5ff;
+      transition: box-shadow 0.3s ease, transform 0.3s ease;
+      /* Animação de sucesso */
+      position: relative;
+    }
+
+    /* ===== ANIMAÇÃO DE SUCESSO NO CARD ===== */
+    .card.sucesso-animacao {
+      animation: cardSucesso 0.8s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+    }
+
+    @keyframes cardSucesso {
+      0%   { transform: scale(1);    box-shadow: 0 25px 40px -10px rgba(0, 0, 0, 0.7), 0 0 0 1px rgba(255, 215, 0, 0.15); }
+      30%  { transform: scale(1.02); box-shadow: 0 0 40px 8px rgba(247, 212, 74, 0.6), 0 0 0 2px #f7d44a; }
+      60%  { transform: scale(0.99); box-shadow: 0 0 30px 4px rgba(247, 212, 74, 0.3), 0 0 0 1px #f7d44a; }
+      100% { transform: scale(1);    box-shadow: 0 25px 40px -10px rgba(0, 0, 0, 0.7), 0 0 0 1px rgba(255, 215, 0, 0.15); }
+    }
+
+    .btn-voltar {
+      display: inline-block; background: #1e3b4f; padding: 0.55rem 1.4rem;
+      border-radius: 30px; color: #cfe7ff; text-decoration: none; font-weight: 500;
+      font-size: 0.95rem; margin-bottom: 1.6rem; border: 1px solid #3f6b85;
+      transition: 0.2s; box-shadow: 0 4px 8px rgba(0,0,0,0.3);
+    }
+    .btn-voltar:hover { background: #2c5775; border-color: #f7d44a; color: #fff; transform: translateY(-2px); }
+
+    h1 {
+      font-size: 1.9rem; font-weight: 600; display: flex; align-items: center; gap: 12px;
+      color: #f7e05e; text-shadow: 0 2px 8px #f0b30040; border-bottom: 1px solid #3e5a6b;
+      padding-bottom: 0.8rem; margin-bottom: 1.8rem;
+    }
+
+    .info-login {
+      background: #102433; border-radius: 16px; padding: 1rem 1.4rem; margin-bottom: 1.8rem;
+      display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between;
+      border-left: 6px solid #f5c542; box-shadow: inset 0 0 20px #00000030;
+      gap: 8px;
+    }
+    .info-login span { font-size: 1.1rem; display: flex; align-items: center; gap: 8px; }
+    .info-login .badge {
+      background: #254a5e; border-radius: 40px; padding: 0.3rem 1rem;
+      font-weight: 600; color: #b9e0ff;
+    }
+
+    .saldos-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 2rem; }
+
+    .saldo-box {
+      background: #0e1e2b; border-radius: 22px; padding: 1.2rem 1rem; text-align: center;
+      border: 1px solid #2f4f65; box-shadow: 0 8px 0 #050b10;
+    }
+    .saldo-box .label {
+      font-size: 0.9rem; text-transform: uppercase; letter-spacing: 2px;
+      color: #9bb7d4; margin-bottom: 6px;
+    }
+    .saldo-box .value {
+      font-size: 1.9rem; font-weight: 800; line-height: 1.3;
+      color: #fadf6b; text-shadow: 0 0 10px #f5b81b80; word-break: break-word;
+    }
+
+    .taxa-info {
+      background: #0a1a24; border-radius: 14px; padding: 0.7rem 1.2rem; font-size: 0.9rem;
+      display: flex; justify-content: space-between; flex-wrap: wrap; gap: 10px;
+      border: 1px dashed #f5c54260; margin-bottom: 1.6rem; color: #b7d1e8;
+    }
+    .taxa-info strong { color: #f7dc6f; }
+
+    .operacao {
+      background: #0f2533; border-radius: 28px; padding: 1.8rem 1.8rem 1.6rem;
+      margin-bottom: 1.5rem; border: 1px solid #2d556b;
+    }
+    .operacao h3 {
+      font-size: 1.2rem; font-weight: 500; margin-bottom: 1.2rem;
+      color: #c3dfff; display: flex; align-items: center; gap: 12px;
+    }
+
+    /* ===== PACOTES ===== */
+    .pacotes-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+      gap: 12px;
+    }
+    .pacote {
+      background: #0c1c26;
+      border: 1px solid #2d556b;
+      border-radius: 18px;
+      padding: 1rem 0.6rem;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 4px;
+      cursor: pointer;
+      transition: all 0.15s ease;
+      color: #d9ecff;
+      font-family: inherit;
+      box-shadow: 0 6px 0 #050e13;
+      user-select: none;
+      -webkit-tap-highlight-color: transparent;
+    }
+    .pacote:hover {
+      transform: translateY(-3px);
+      border-color: #f7d44a;
+      box-shadow: 0 9px 0 #050e13, 0 0 16px #f5b81b40;
+    }
+    .pacote:active {
+      transform: translateY(2px);
+      box-shadow: 0 4px 0 #050e13;
+    }
+    .pacote:disabled {
+      opacity: 0.45; pointer-events: none; filter: grayscale(0.7);
+      transform: none; box-shadow: 0 6px 0 #050e13;
+    }
+    .pacote-emoji { font-size: 1.7rem; line-height: 1; }
+    .pacote-nome {
+      font-size: 0.8rem; font-weight: 700;
+      text-transform: uppercase; letter-spacing: 1px;
+      color: #f7dc6f;
+    }
+    .pacote-btc   { font-size: 0.75rem; color: #a7e8c4; }
+    .pacote-saldo { font-size: 0.75rem; color: #ffd88a; }
+    .pacote-1 { border-color: #8b6b4a; }
+    .pacote-2 { border-color: #9bb7d4; }
+    .pacote-3 { border-color: #f7d44a; }
+    .pacote-4 { border-color: #7ec4f0; }
+    .pacote-5 { border-color: #c77dff; }
+
+    /* ===== HISTÓRICO ===== */
+    .historico { margin-top: 2rem; }
+    .historico h3 {
+      font-size: 1.2rem; font-weight: 500; margin-bottom: 1rem;
+      display: flex; gap: 10px; align-items: center; color: #b9daf5;
+    }
+    .historico-lista {
+      background: #0b1d29; border-radius: 20px; max-height: 260px; overflow-y: auto;
+      padding: 0.2rem 0.2rem; border: 1px solid #27495e; box-shadow: inset 0 0 20px #00000040;
+    }
+    .historico-item {
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 0.85rem 1.2rem; border-bottom: 1px solid #1b3b4d; font-size: 0.9rem;
+      gap: 10px;
+    }
+    .historico-item:last-child { border-bottom: none; }
+    .historico-item .data { color: #7f9fb5; font-size: 0.8rem; display: flex; flex-direction: column; min-width: 70px; }
+    .historico-item .detalhe { font-weight: 600; display: flex; gap: 8px; align-items: center; flex-wrap: wrap; justify-content: flex-end; }
+    .tag { padding: 0.2rem 0.9rem; border-radius: 40px; font-size: 0.7rem; font-weight: 700; text-transform: uppercase; }
+    .tag.btc2saldo { background: #1b5e3f; color: #b6f7d9; }
+    .tag.saldo2btc { background: #7a5518; color: #ffe19e; }
+    .pacote-tag { color: #f7dc6f; font-size: 0.72rem; font-weight: 700; }
+
+    /* ===== MENSAGEM ===== */
+    .mensagem {
+      margin-top: 12px; padding: 0.8rem 1.2rem; border-radius: 40px;
+      font-weight: 500; text-align: center; font-size: 0.95rem; transition: 0.2s;
+    }
+    .msg-sucesso { background: #155f3e; color: #c6ffdd; border: 1px solid #a5f5c0; }
+    .msg-erro { background: #692f2f; color: #ffd6d6; border: 1px solid #ff9b9b; }
+    .msg-info { background: #1e4a6b; color: #cfe8ff; border: 1px solid #7ec4f0; }
+
+    ::-webkit-scrollbar { width: 6px; }
+    ::-webkit-scrollbar-track { background: #0a1a24; }
+    ::-webkit-scrollbar-thumb { background: #2d5970; border-radius: 10px; }
+
+    /* ============================================================
+       RESPONSIVIDADE MOBILE COMPLETA
+       ============================================================ */
+    @media (max-width: 700px) {
+      body {
+        padding: 12px;
+        align-items: flex-start;
+        padding-top: 16px;
+      }
+      .card {
+        padding: 1.4rem 1.2rem;
+        border-radius: 1.5rem;
+      }
+      h1 {
+        font-size: 1.4rem;
+        gap: 8px;
+        padding-bottom: 0.6rem;
+        margin-bottom: 1.2rem;
+      }
+      .btn-voltar {
+        font-size: 0.85rem;
+        padding: 0.45rem 1.1rem;
+        margin-bottom: 1.2rem;
+      }
+      .info-login {
+        padding: 0.8rem 1rem;
+        border-radius: 14px;
+        margin-bottom: 1.2rem;
+      }
+      .info-login span { font-size: 0.95rem; }
+      .info-login .badge { font-size: 0.8rem; padding: 0.25rem 0.8rem; }
+
+      .saldos-grid {
+        gap: 10px;
+        margin-bottom: 1.4rem;
+      }
+      .saldo-box {
+        padding: 1rem 0.6rem;
+        border-radius: 16px;
+        box-shadow: 0 5px 0 #050b10;
+      }
+      .saldo-box .label { font-size: 0.75rem; letter-spacing: 1px; }
+      .saldo-box .value { font-size: 1.4rem; }
+
+      .taxa-info {
+        font-size: 0.78rem;
+        padding: 0.6rem 0.9rem;
+        border-radius: 12px;
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 4px;
+        margin-bottom: 1.2rem;
+      }
+
+      .operacao {
+        padding: 1.2rem 1rem 1.2rem;
+        border-radius: 20px;
+        margin-bottom: 1.2rem;
+      }
+      .operacao h3 {
+        font-size: 1rem;
+        margin-bottom: 0.9rem;
+        gap: 8px;
+      }
+
+      .pacotes-grid {
+        grid-template-columns: repeat(auto-fit, minmax(90px, 1fr));
+        gap: 8px;
+      }
+      .pacote {
+        padding: 0.7rem 0.3rem;
+        border-radius: 14px;
+        box-shadow: 0 4px 0 #050e13;
+      }
+      .pacote-emoji { font-size: 1.3rem; }
+      .pacote-nome { font-size: 0.65rem; letter-spacing: 0.5px; }
+      .pacote-btc,
+      .pacote-saldo { font-size: 0.62rem; }
+
+      .historico h3 { font-size: 1rem; }
+      .historico-lista { max-height: 200px; border-radius: 16px; }
+      .historico-item {
+        padding: 0.7rem 0.8rem;
+        font-size: 0.78rem;
+        flex-wrap: wrap;
+        gap: 6px;
+      }
+      .historico-item .data { min-width: 55px; font-size: 0.7rem; }
+      .historico-item .detalhe {
+        justify-content: flex-start;
+        width: 100%;
+        gap: 6px;
+      }
+      .tag { font-size: 0.6rem; padding: 0.15rem 0.6rem; }
+      .pacote-tag { font-size: 0.65rem; }
+
+      .mensagem {
+        font-size: 0.85rem;
+        padding: 0.7rem 1rem;
+        border-radius: 30px;
+      }
+    }
+
+    @media (max-width: 380px) {
+      .card { padding: 1rem 0.8rem; }
+      h1 { font-size: 1.2rem; }
+      .btn-voltar { font-size: 0.78rem; padding: 0.4rem 0.9rem; }
+      .saldos-grid { gap: 6px; }
+      .saldo-box .value { font-size: 1.15rem; }
+      .pacotes-grid {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 6px;
+      }
+      .pacote { padding: 0.6rem 0.2rem; }
+      .pacote-emoji { font-size: 1.1rem; }
+      .pacote-nome { font-size: 0.6rem; }
+      .pacote-btc,
+      .pacote-saldo { font-size: 0.55rem; }
+      .info-login span { font-size: 0.85rem; }
+      .info-login .badge { font-size: 0.7rem; }
+      .operacao { padding: 1rem 0.7rem; }
+      .operacao h3 { font-size: 0.9rem; }
+      .historico-item { font-size: 0.72rem; padding: 0.6rem 0.6rem; }
+    }
+  </style>
+</head>
+<body>
+<div class="card" id="cardPrincipal">
+  <a href="../../dashboard.html" class="btn-voltar">🏠 Voltar</a>
+
+  <h1>💱 Troca BTC ↔ Saldo</h1>
+
+  <div class="info-login">
+    <span>👤 <span id="nomeUsuario">Carregando...</span></span>
+    <span class="badge" id="loginUsuario">@---</span>
+  </div>
+
+  <div class="saldos-grid">
+    <div class="saldo-box">
+      <div class="label">💰 Saldo</div>
+      <div class="value" id="saldoDisplay">R$ 0,00</div>
+    </div>
+    <div class="saldo-box">
+      <div class="label">₿ Bitcoin</div>
+      <div class="value" id="btcDisplay">0,00000000</div>
+    </div>
+  </div>
+
+
+
+  <!-- ============================ -->
+  <!-- PACOTES BTC → SALDO          -->
+  <!-- ============================ -->
+  <div class="operacao">
+    <h3>🔄 Trocar BTC por Saldo</h3>
+    <div class="pacotes-grid">
+      <button class="pacote pacote-1" data-pacote="1" data-direcao="btc2saldo">
+        <span class="pacote-emoji">🥉</span>
+        <span class="pacote-nome">Bronze</span>
+        <span class="pacote-btc">₿ 0,00010000</span>
+        <span class="pacote-saldo">→ R$ 0,10</span>
+      </button>
+      <button class="pacote pacote-2" data-pacote="2" data-direcao="btc2saldo">
+        <span class="pacote-emoji">🥈</span>
+        <span class="pacote-nome">Prata</span>
+        <span class="pacote-btc">₿ 0,00050000</span>
+        <span class="pacote-saldo">→ R$ 0,50</span>
+      </button>
+      <button class="pacote pacote-3" data-pacote="3" data-direcao="btc2saldo">
+        <span class="pacote-emoji">🥇</span>
+        <span class="pacote-nome">Ouro</span>
+        <span class="pacote-btc">₿ 0,00100000</span>
+        <span class="pacote-saldo">→ R$ 1,00</span>
+      </button>
+      <button class="pacote pacote-4" data-pacote="4" data-direcao="btc2saldo">
+        <span class="pacote-emoji">💎</span>
+        <span class="pacote-nome">Platina</span>
+        <span class="pacote-btc">₿ 0,00500000</span>
+        <span class="pacote-saldo">→ R$ 5,00</span>
+      </button>
+      <button class="pacote pacote-5" data-pacote="5" data-direcao="btc2saldo">
+        <span class="pacote-emoji">💠</span>
+        <span class="pacote-nome">Diamante</span>
+        <span class="pacote-btc">₿ 0,01000000</span>
+        <span class="pacote-saldo">→ R$ 10,00</span>
+      </button>
+    </div>
+  </div>
+
+  <!-- ============================ -->
+  <!-- PACOTES SALDO → BTC (50%)    -->
+  <!-- ============================ -->
+  <div class="operacao">
+    <h3>🔄 Trocar Saldo por BTC</h3>
+    <div class="pacotes-grid">
+      <button class="pacote pacote-1" data-pacote="1" data-direcao="saldo2btc">
+        <span class="pacote-emoji">🥉</span>
+        <span class="pacote-nome">Bronze</span>
+        <span class="pacote-saldo">R$ 0,10</span>
+        <span class="pacote-btc">→ ₿ 0,00005000</span>
+      </button>
+      <button class="pacote pacote-2" data-pacote="2" data-direcao="saldo2btc">
+        <span class="pacote-emoji">🥈</span>
+        <span class="pacote-nome">Prata</span>
+        <span class="pacote-saldo">R$ 0,50</span>
+        <span class="pacote-btc">→ ₿ 0,00025000</span>
+      </button>
+      <button class="pacote pacote-3" data-pacote="3" data-direcao="saldo2btc">
+        <span class="pacote-emoji">🥇</span>
+        <span class="pacote-nome">Ouro</span>
+        <span class="pacote-saldo">R$ 1,00</span>
+        <span class="pacote-btc">→ ₿ 0,00050000</span>
+      </button>
+      <button class="pacote pacote-4" data-pacote="4" data-direcao="saldo2btc">
+        <span class="pacote-emoji">💎</span>
+        <span class="pacote-nome">Platina</span>
+        <span class="pacote-saldo">R$ 5,00</span>
+        <span class="pacote-btc">→ ₿ 0,00250000</span>
+      </button>
+      <button class="pacote pacote-5" data-pacote="5" data-direcao="saldo2btc">
+        <span class="pacote-emoji">💠</span>
+        <span class="pacote-nome">Diamante</span>
+        <span class="pacote-saldo">R$ 10,00</span>
+        <span class="pacote-btc">→ ₿ 0,00500000</span>
+      </button>
+    </div>
+  </div>
+
+  <div id="mensagem" class="mensagem" style="display: none;"></div>
+
+  <div class="historico">
+    <h3>📜 Histórico de trocas</h3>
+    <div class="historico-lista" id="historicoLista">
+      <div class="historico-item" style="justify-content:center; color:#6f8fa3;">Nenhuma troca registrada</div>
+    </div>
+  </div>
+</div>
+
+<script>
+  // ============================================================
+  // CREDENCIAIS SUPABASE
+  // ============================================================
+  const SUPABASE_URL = 'https://xrcxvizzdumcxbylmkvn.supabase.co';
+  const SUPABASE_ANON_KEY = 'sb_publishable_E-g3G3wW4EySbCsXLXp8KQ_FnmERMcD';
+
+  const { createClient } = supabase;
+  const _supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+  let usuarioAtual = null;
+  let carregando   = false;
+
+  // ============================================================
+  // SOM DE MOEDA (Web Audio API — sem arquivo externo)
+  // ============================================================
+  function tocarSomMoeda() {
+    try {
+      const AudioCtx = window.AudioContext || window.webkitAudioContext;
+      if (!AudioCtx) return;
+      const ctx = new AudioCtx();
+
+      // Dois "clinks" rápidos de moeda (frequências metálicas)
+      const now = ctx.currentTime;
+
+      function criarClink(freq, start, duracao) {
+        const osc = ctx.createOscillator();
+        const gain = ctx.createGain();
+        osc.type = 'triangle';
+        osc.frequency.setValueAtTime(freq, start);
+        osc.frequency.exponentialRampToValueAtTime(freq * 1.8, start + duracao * 0.3);
+        osc.frequency.exponentialRampToValueAtTime(freq * 0.9, start + duracao);
+
+        gain.gain.setValueAtTime(0.0001, start);
+        gain.gain.exponentialRampToValueAtTime(0.25, start + 0.005);
+        gain.gain.exponentialRampToValueAtTime(0.0001, start + duracao);
+
+        osc.connect(gain);
+        gain.connect(ctx.destination);
+        osc.start(start);
+        osc.stop(start + duracao + 0.05);
+      }
+
+      // Clink 1 (mais agudo)
+      criarClink(1800, now, 0.12);
+      // Clink 2 (mais grave, ligeiramente atrasado)
+      criarClink(1200, now + 0.08, 0.18);
+      // Clink 3 (brilho final)
+      criarClink(2400, now + 0.16, 0.10);
+
+      // Fecha o contexto após tocar
+      setTimeout(() => { if (ctx.state !== 'closed') ctx.close(); }, 500);
+    } catch (e) {
+      console.warn('Áudio não suportado:', e);
+    }
+  }
+
+  // ============================================================
+  // ANIMAÇÃO DE SUCESSO NO CARD
+  // ============================================================
+  function animarCardSucesso() {
+    const card = document.getElementById('cardPrincipal');
+    if (!card) return;
+    card.classList.remove('sucesso-animacao');
+    // Força reflow para reiniciar animação
+    void card.offsetWidth;
+    card.classList.add('sucesso-animacao');
+    // Remove a classe após a animação terminar
+    setTimeout(() => {
+      card.classList.remove('sucesso-animacao');
+    }, 900);
+  }
+
+  // ============================================================
+  // AUXILIARES
+  // ============================================================
+  const fmtSaldo = v => Number(v).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
+  const fmtBTC   = v => Number(v).toFixed(8).replace('.', ',');
+
+  function mostrarMensagem(texto, tipo = 'sucesso') {
+    const el = document.getElementById('mensagem');
+    el.textContent = texto;
+    el.className = `mensagem msg-${tipo}`;
+    el.style.display = 'block';
+    clearTimeout(window._msgTimer);
+    window._msgTimer = setTimeout(() => { el.style.display = 'none'; }, 4500);
+  }
+
+  function setLoading(v) {
+    carregando = v;
+    document.querySelectorAll('.pacote').forEach(b => b.disabled = v);
+  }
+
+  // ============================================================
+  // BUSCA O LOGIN SALVO EM QUALQUER CHAVE/STORAGE
+  // ============================================================
+  function encontrarLoginSalvo() {
+    const storages = [localStorage, sessionStorage];
+
+    const chavesConhecidas = [
+      'usuario_logado', 'login', 'usuario', 'user',
+      'usuarioLogado', 'loggedUser', 'logged_user',
+      'nome_usuario', 'username', 'auth_user'
+    ];
+
+    for (const storage of storages) {
+      for (const chave of chavesConhecidas) {
+        const v = storage.getItem(chave);
+        if (v && v.trim() && v !== 'undefined' && v !== 'null') {
+          try {
+            const obj = JSON.parse(v);
+            if (obj && typeof obj === 'object') {
+              const login = obj.login || obj.usuario || obj.user || obj.username || obj.nome;
+              if (login) return String(login).trim();
+            } else if (typeof obj === 'string') {
+              return obj.trim();
+            }
+          } catch (_) {
+            return v.trim();
+          }
+        }
+      }
+    }
+
+    for (const storage of storages) {
+      for (let i = 0; i < storage.length; i++) {
+        const chave = storage.key(i);
+        if (!chave) continue;
+        const lower = chave.toLowerCase();
+        if (lower.includes('login') || lower.includes('usuario') || lower.includes('user')) {
+          const v = storage.getItem(chave);
+          if (v && v.trim() && v !== 'undefined' && v !== 'null') {
+            try {
+              const obj = JSON.parse(v);
+              if (obj && typeof obj === 'object') {
+                const login = obj.login || obj.usuario || obj.user || obj.username || obj.nome;
+                if (login) return String(login).trim();
+              } else if (typeof obj === 'string') {
+                return obj.trim();
+              }
+            } catch (_) {
+              return v.trim();
+            }
+          }
+        }
+      }
+    }
+
+    return null;
+  }
+
+  // ============================================================
+  // CARREGAR USUÁRIO
+  // ============================================================
+  async function carregarUsuario() {
+    try {
+      console.log('📦 localStorage:', { ...localStorage });
+      console.log('📦 sessionStorage:', { ...sessionStorage });
+
+      const loginSalvo = encontrarLoginSalvo();
+      console.log('🔎 Login encontrado:', loginSalvo);
+
+      if (!loginSalvo) {
+        mostrarMensagem('⚠️ Nenhum usuário logado. Faça login primeiro.', 'erro');
+        document.getElementById('nomeUsuario').textContent = 'Não logado';
+        document.getElementById('loginUsuario').textContent = '@---';
+        return;
+      }
+
+      const { data, error } = await _supabase
+        .from('Geral')
+        .select('id, nome, login, saldo, btc, historico')
+        .eq('login', loginSalvo)
+        .maybeSingle();
+
+      if (error) {
+        console.error('Erro Supabase:', error);
+        mostrarMensagem('❌ Erro ao carregar: ' + error.message, 'erro');
+        document.getElementById('nomeUsuario').textContent = loginSalvo;
+        document.getElementById('loginUsuario').textContent = '@' + loginSalvo;
+        return;
+      }
+      if (!data) {
+        mostrarMensagem(`❌ Usuário "${loginSalvo}" não encontrado no banco.`, 'erro');
+        document.getElementById('nomeUsuario').textContent = loginSalvo;
+        document.getElementById('loginUsuario').textContent = '@' + loginSalvo;
+        return;
+      }
+
+      usuarioAtual = {
+        id: data.id,
+        nome: data.nome || 'Sem nome',
+        login: data.login,
+        saldo: Number(data.saldo) || 0,
+        btc: Number(data.btc) || 0,
+        historico: Array.isArray(data.historico) ? data.historico : []
+      };
+
+      atualizarUI();
+      mostrarMensagem(`✅ Bem-vindo, ${usuarioAtual.nome}!`, 'sucesso');
+    } catch (err) {
+      console.error(err);
+      mostrarMensagem('Erro inesperado ao carregar dados.', 'erro');
+    }
+  }
+
+  // ============================================================
+  // UI
+  // ============================================================
+  function atualizarUI() {
+    if (!usuarioAtual) return;
+    document.getElementById('nomeUsuario').textContent = usuarioAtual.nome;
+    document.getElementById('loginUsuario').textContent = '@' + usuarioAtual.login;
+    document.getElementById('saldoDisplay').textContent = fmtSaldo(usuarioAtual.saldo);
+    document.getElementById('btcDisplay').textContent = fmtBTC(usuarioAtual.btc);
+    renderizarHistorico();
+  }
+
+  function renderizarHistorico() {
+    const lista = document.getElementById('historicoLista');
+    const hist = usuarioAtual?.historico || [];
+
+    if (hist.length === 0) {
+      lista.innerHTML = '<div class="historico-item" style="justify-content:center; color:#6f8fa3;">Nenhuma troca registrada</div>';
+      return;
+    }
+
+    const ordenado = [...hist].sort((a, b) => new Date(b.data) - new Date(a.data));
+
+    lista.innerHTML = ordenado.map(item => {
+      const dt = new Date(item.data);
+      const dataStr = dt.toLocaleDateString('pt-BR');
+      const horaStr = dt.toLocaleTimeString('pt-BR');
+      const isB2S = item.tipo === 'btc_to_saldo';
+      const tagClass = isB2S ? 'btc2saldo' : 'saldo2btc';
+      const tagTexto = isB2S ? 'BTC → Saldo' : 'Saldo → BTC';
+
+      const pacoteTag = item.pacote_nome
+        ? `<span class="pacote-tag">[${item.pacote_nome}]</span>`
+        : '';
+
+      const detalhe = isB2S
+        ? `₿ ${fmtBTC(item.btc)} → ${fmtSaldo(item.saldo)}`
+        : `${fmtSaldo(item.saldo)} → ₿ ${fmtBTC(item.btc)}`;
+
+      return `
+        <div class="historico-item">
+          <div class="data">
+            <span>${dataStr}</span>
+            <span style="font-size:0.7rem;">${horaStr}</span>
+          </div>
+          <div class="detalhe">
+            <span class="tag ${tagClass}">${tagTexto}</span>
+            ${pacoteTag}
+            <span>${detalhe}</span>
+          </div>
+        </div>`;
+    }).join('');
+  }
+
+  // ============================================================
+  // REFRESH
+  // ============================================================
+  async function recarregarUsuario() {
+    if (!usuarioAtual) return false;
+
+    const { data, error } = await _supabase
+      .from('Geral')
+      .select('id, nome, login, saldo, btc, historico')
+      .eq('login', usuarioAtual.login)
+      .single();
+
+    if (error) {
+      console.error('Erro ao recarregar:', error);
+      return false;
+    }
+    usuarioAtual.saldo = Number(data.saldo) || 0;
+    usuarioAtual.btc   = Number(data.btc)   || 0;
+    usuarioAtual.historico = Array.isArray(data.historico) ? data.historico : [];
+    atualizarUI();
+    return true;
+  }
+
+  // ============================================================
+  // PACOTES DE TROCA
+  // ============================================================
+  async function executarPacote(pacote, direcao) {
+    if (carregando) return;
+    if (!usuarioAtual) {
+      mostrarMensagem('⚠️ Faça login primeiro.', 'erro');
+      return;
+    }
+
+    const rpc = direcao === 'btc2saldo'
+      ? 'pacote_troca'
+      : 'pacote_troca_reverso';
+
+    setLoading(true);
+
+    const { data, error } = await _supabase.rpc(rpc, {
+      p_login: usuarioAtual.login,
+      p_pacote: pacote
+    });
+
+    if (error) {
+      console.error('Erro RPC pacote:', error);
+      mostrarMensagem('❌ ' + (error.message || 'Erro ao executar pacote.'), 'erro');
+    } else {
+      await recarregarUsuario();
+
+      // 🔊 Toca som de moeda
+      tocarSomMoeda();
+
+      // 🎬 Anima o card
+      animarCardSucesso();
+
+      if (direcao === 'btc2saldo') {
+        mostrarMensagem(
+          `✅ ${data.pacote_nome}: ₿ ${fmtBTC(data.btc_gasto)} → ${fmtSaldo(data.saldo_ganho)}`,
+          'sucesso'
+        );
+      } else {
+        mostrarMensagem(
+          `✅ ${data.pacote_nome}: ${fmtSaldo(data.saldo_gasto)} → ₿ ${fmtBTC(data.btc_recebido)}`,
+          'sucesso'
+        );
+      }
+    }
+
+    setLoading(false);
+  }
+
+  // ============================================================
+  // EVENTOS
+  // ============================================================
+  document.querySelectorAll('.pacote').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const pacote  = parseInt(btn.dataset.pacote, 10);
+      const direcao = btn.dataset.direcao;
+      executarPacote(pacote, direcao);
+    });
+  });
+
+  window.addEventListener('DOMContentLoaded', carregarUsuario);
+</script>
+</body>
+</html>

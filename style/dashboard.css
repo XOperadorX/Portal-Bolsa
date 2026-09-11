@@ -1,3 +1,6 @@
+/* ============================================================
+   VARIÁVEIS GLOBAIS
+   ============================================================ */
 :root {
     --bg-dark: #0a0b10;
     --card-bg: #121520;
@@ -17,14 +20,16 @@
 body {
     background-color: var(--bg-dark);
     color: var(--text-color);
-    background-image: 
+    background-image:
         radial-gradient(circle at 15% 20%, rgba(112, 0, 255, 0.15) 0%, transparent 40%),
         radial-gradient(circle at 85% 80%, rgba(0, 240, 255, 0.15) 0%, transparent 40%);
     min-height: 100vh;
     padding: 20px;
 }
 
-/* --- BARRA DE NAVEGAÇÃO SUPERIOR --- */
+/* ============================================================
+   NAVEGAÇÃO
+   ============================================================ */
 .nav-bar {
     display: flex;
     justify-content: space-between;
@@ -60,71 +65,12 @@ body {
     gap: 6px;
 }
 
-.nav-links a:hover, .nav-links a.active {
+.nav-links a:hover,
+.nav-links a.active {
     color: #fff;
     background: rgba(0, 240, 255, 0.15);
     border: 1px solid var(--neon-blue);
     box-shadow: 0 0 10px rgba(0, 240, 255, 0.3);
-}
-
-.user-profile {
-    display: flex;
-    align-items: center;
-    gap: 12px;
-    background: rgba(0, 240, 255, 0.08);
-    padding: 6px 16px 6px 12px;
-    border-radius: 40px;
-    border: 1px solid rgba(0, 240, 255, 0.2);
-    color: #fff;
-    font-weight: 600;
-    font-size: 0.95rem;
-    transition: all 0.3s;
-    cursor: default;
-}
-
-.user-profile:hover {
-    background: rgba(0, 240, 255, 0.15);
-    border-color: var(--neon-blue);
-    box-shadow: 0 0 15px rgba(0, 240, 255, 0.2);
-}
-
-.user-avatar {
-    background: linear-gradient(135deg, var(--neon-blue), var(--neon-purple));
-    width: 36px;
-    height: 36px;
-    border-radius: 50%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 1.2rem;
-    font-weight: bold;
-    box-shadow: 0 0 10px rgba(0, 240, 255, 0.3);
-}
-
-.user-info {
-    display: flex;
-    flex-direction: column;
-    line-height: 1.2;
-}
-
-.user-nick {
-    font-family: 'Orbitron', sans-serif;
-    font-size: 0.9rem;
-    letter-spacing: 0.5px;
-    color: #fff;
-}
-
-.user-balance {
-    font-size: 0.8rem;
-    color: var(--neon-green);
-    display: flex;
-    align-items: center;
-    gap: 4px;
-}
-
-.user-balance::before {
-    content: "💰";
-    font-size: 0.7rem;
 }
 
 .nav-buttons {
@@ -175,7 +121,122 @@ body {
     box-shadow: 0 0 15px rgba(220, 38, 38, 0.6);
 }
 
-/* --- DASHBOARD & GAME GRID --- */
+/* ============================================================
+   PERFIL
+   ============================================================ */
+.user-profile {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    background: rgba(0, 240, 255, 0.08);
+    padding: 6px 16px 6px 12px;
+    border-radius: 40px;
+    border: 1px solid rgba(0, 240, 255, 0.2);
+    color: #fff;
+    font-weight: 600;
+    font-size: 0.95rem;
+    transition: all 0.3s;
+    cursor: default;
+}
+
+.user-profile:hover {
+    background: rgba(0, 240, 255, 0.15);
+    border-color: var(--neon-blue);
+    box-shadow: 0 0 15px rgba(0, 240, 255, 0.2);
+}
+
+.user-avatar {
+    background: linear-gradient(135deg, var(--neon-blue), var(--neon-purple));
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.2rem;
+    font-weight: bold;
+    box-shadow: 0 0 10px rgba(0, 240, 255, 0.3);
+}
+
+.user-info {
+    display: flex;
+    flex-direction: column;
+    line-height: 1.2;
+}
+
+.user-nick {
+    font-family: 'Orbitron', sans-serif;
+    font-size: 0.9rem;
+    letter-spacing: 0.5px;
+    color: #fff;
+}
+
+.saldo {
+    font-size: 0.8rem;
+    color: var(--neon-green);
+    display: flex;
+    align-items: center;
+    gap: 4px;
+}
+
+/* ============================================================
+   WIDGET BTC
+   ============================================================ */
+.btc-widget {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    background: linear-gradient(135deg, #1a1a2e, #16213e);
+    border: 1px solid #f7931a;
+    border-radius: 10px;
+    padding: 6px 14px 6px 10px;
+    margin-right: 10px;
+    box-shadow: 0 0 15px rgba(247, 147, 26, 0.15);
+    transition: all 0.3s ease;
+    cursor: default;
+}
+
+.btc-widget:hover {
+    box-shadow: 0 0 25px rgba(247, 147, 26, 0.3);
+    transform: scale(1.02);
+}
+
+.btc-icon {
+    font-size: 20px;
+    animation: btcPulse 2s ease-in-out infinite;
+}
+
+@keyframes btcPulse {
+    0%, 100% { transform: scale(1); }
+    50% { transform: scale(1.15); }
+}
+
+.btc-info {
+    display: flex;
+    flex-direction: column;
+    line-height: 1.2;
+}
+
+.btc-label {
+    font-size: 9px;
+    text-transform: uppercase;
+    color: #f7931a;
+    letter-spacing: 0.5px;
+    font-weight: 700;
+}
+
+.btc-value {
+    font-size: 14px;
+    font-weight: 700;
+    color: #f7931a;
+    font-family: 'Orbitron', monospace;
+    text-shadow: 0 0 10px rgba(247, 147, 26, 0.3);
+    letter-spacing: 0.5px;
+}
+
+/* ============================================================
+   CABEÇALHO
+   ============================================================ */
 .dashboard-header {
     text-align: center;
     margin-bottom: 25px;
@@ -196,6 +257,9 @@ body {
     margin-top: 5px;
 }
 
+/* ============================================================
+   GRADE DE JOGOS
+   ============================================================ */
 .games-grid {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
@@ -233,9 +297,7 @@ body {
     transition: 0.5s;
 }
 
-.game-card:hover::before {
-    left: 100%;
-}
+.game-card:hover::before { left: 100%; }
 
 .game-card:hover {
     transform: translateY(-6px) scale(1.03);
@@ -282,7 +344,7 @@ body {
 .game-card.hot .game-badge { background: #ff4d4d; box-shadow: 0 0 8px #ff4d4d; }
 
 /* ============================================================
-   SISTEMA DE NÍVEL - WIDGET
+   WIDGET DE NÍVEL
    ============================================================ */
 .level-widget {
     background: rgba(18, 21, 32, 0.85);
@@ -296,7 +358,7 @@ body {
     margin-right: auto;
 }
 
-.level-widget .lw-header {
+.lw-header {
     display: flex;
     justify-content: space-between;
     align-items: center;
@@ -304,14 +366,14 @@ body {
     gap: 8px;
 }
 
-.level-widget .lw-badge {
+.lw-badge {
     display: flex;
     align-items: center;
     gap: 10px;
     font-family: 'Orbitron', sans-serif;
 }
 
-.level-widget .lw-badge .lw-num {
+.lw-num {
     font-size: 2rem;
     font-weight: 900;
     color: #00f0ff;
@@ -319,25 +381,25 @@ body {
     line-height: 1;
 }
 
-.level-widget .lw-badge .lw-label {
+.lw-label {
     font-size: 0.6rem;
     color: #8a99ad;
     text-transform: uppercase;
     letter-spacing: 1px;
 }
 
-.level-widget .lw-badge .lw-title {
+.lw-title {
     font-size: 0.8rem;
     color: #f0f4f8;
     font-weight: 600;
 }
 
-.level-widget .lw-exp {
+.lw-exp {
     flex: 1;
     min-width: 120px;
 }
 
-.level-widget .lw-exp .lw-bar {
+.lw-bar {
     background: rgba(255,255,255,0.06);
     border-radius: 20px;
     height: 10px;
@@ -345,7 +407,7 @@ body {
     border: 1px solid rgba(255,255,255,0.04);
 }
 
-.level-widget .lw-exp .lw-bar .lw-fill {
+.lw-fill {
     height: 100%;
     background: linear-gradient(90deg, #7000ff, #00f0ff);
     border-radius: 20px;
@@ -354,12 +416,12 @@ body {
     box-shadow: 0 0 20px rgba(0, 240, 255, 0.15);
 }
 
-.level-widget .lw-exp .lw-bar .lw-fill.high {
+.lw-fill.high {
     background: linear-gradient(90deg, #00ff66, #00f0ff);
     box-shadow: 0 0 25px rgba(0, 255, 102, 0.2);
 }
 
-.level-widget .lw-exp .lw-text {
+.lw-text {
     display: flex;
     justify-content: space-between;
     font-size: 0.65rem;
@@ -368,10 +430,10 @@ body {
     font-weight: 600;
 }
 
-.level-widget .lw-exp .lw-text .lw-cur { color: #00f0ff; }
-.level-widget .lw-exp .lw-text .lw-nxt { color: #7000ff; }
+.lw-cur { color: #00f0ff; }
+.lw-nxt { color: #7000ff; }
 
-.level-widget .lw-stats {
+.lw-stats {
     display: flex;
     flex-wrap: wrap;
     gap: 4px 10px;
@@ -380,7 +442,7 @@ body {
     border-top: 1px solid rgba(255,255,255,0.04);
 }
 
-.level-widget .lw-stats span {
+.lw-stats span {
     font-size: 0.7rem;
     font-weight: 600;
     color: #c8d0e0;
@@ -390,129 +452,13 @@ body {
     border: 1px solid rgba(255,255,255,0.04);
 }
 
-.level-widget .lw-stats .hp-c { color: #ef4444; }
-.level-widget .lw-stats .mp-c { color: #3b82f6; }
-.level-widget .lw-stats .sm-c { color: #f59e0b; }
-.level-widget .lw-stats .atk-c { color: #ef4444; }
-.level-widget .lw-stats .def-c { color: #8b5cf6; }
-.level-widget .lw-stats .mag-c { color: #10b981; }
+.hp-c { color: #ef4444; }
+.mp-c { color: #3b82f6; }
+.sm-c { color: #f59e0b; }
+.atk-c { color: #ef4444; }
+.def-c { color: #8b5cf6; }
+.mag-c { color: #10b981; }
 
-/* ============================================================
-   BOTÕES DE AÇÃO DO NÍVEL
-   ============================================================ */
-.level-actions {
-    display: flex;
-    gap: 8px;
-    flex-wrap: wrap;
-    margin-top: 10px;
-    padding-top: 10px;
-    border-top: 1px solid rgba(255, 255, 255, 0.05);
-}
-
-.level-actions .btn-level {
-    padding: 6px 18px;
-    border: none;
-    border-radius: 30px;
-    font-weight: 700;
-    font-size: 0.75rem;
-    cursor: pointer;
-    transition: all 0.3s;
-    font-family: 'Rajdhani', sans-serif;
-    letter-spacing: 0.5px;
-}
-
-.level-actions .btn-level:hover {
-    transform: translateY(-2px);
-}
-
-.level-actions .btn-level:active {
-    transform: scale(0.94);
-}
-
-.level-actions .btn-level.btn-treinar {
-    background: linear-gradient(135deg, #00f0ff, #7000ff);
-    color: #fff;
-    box-shadow: 0 0 20px rgba(0, 240, 255, 0.2);
-}
-
-.level-actions .btn-level.btn-treinar:hover {
-    box-shadow: 0 0 35px rgba(0, 240, 255, 0.4);
-}
-
-.level-actions .btn-level.btn-descansar {
-    background: rgba(255, 255, 255, 0.08);
-    color: #c8d0e0;
-    border: 1px solid rgba(255, 255, 255, 0.1);
-}
-
-.level-actions .btn-level.btn-descansar:hover {
-    background: rgba(255, 255, 255, 0.15);
-}
-
-.level-actions .btn-level.btn-reset {
-    background: rgba(239, 68, 68, 0.15);
-    color: #ef4444;
-    border: 1px solid rgba(239, 68, 68, 0.2);
-}
-
-.level-actions .btn-level.btn-reset:hover {
-    background: rgba(239, 68, 68, 0.25);
-}
-
-/* ============================================================
-   BOTÕES DE SM (STAMINA)
-   ============================================================ */
-.btn-sm {
-    padding: 6px 18px;
-    border: none;
-    border-radius: 30px;
-    font-weight: 700;
-    font-size: 0.75rem;
-    cursor: pointer;
-    transition: all 0.3s;
-    font-family: 'Rajdhani', sans-serif;
-    letter-spacing: 0.5px;
-}
-
-.btn-sm:hover {
-    transform: translateY(-2px);
-}
-
-.btn-sm:active {
-    transform: scale(0.94);
-}
-
-.btn-sm.btn-sm-ganhar {
-    background: linear-gradient(135deg, #10b981, #34d399);
-    color: #fff;
-    box-shadow: 0 0 20px rgba(16, 185, 129, 0.2);
-}
-
-.btn-sm.btn-sm-ganhar:hover {
-    box-shadow: 0 0 35px rgba(16, 185, 129, 0.4);
-}
-
-.btn-sm.btn-sm-gastar {
-    background: linear-gradient(135deg, #ef4444, #f87171);
-    color: #fff;
-    box-shadow: 0 0 20px rgba(239, 68, 68, 0.2);
-}
-
-.btn-sm.btn-sm-gastar:hover {
-    box-shadow: 0 0 35px rgba(239, 68, 68, 0.4);
-}
-
-.btn-sm.btn-sm-resetar {
-    background: rgba(255, 255, 255, 0.08);
-    color: #c8d0e0;
-    border: 1px solid rgba(255, 255, 255, 0.1);
-}
-
-.btn-sm.btn-sm-resetar:hover {
-    background: rgba(255, 255, 255, 0.15);
-}
-
-/* STAMINA BAIXA - ANIMAÇÃO */
 .stamina-low {
     color: #ef4444 !important;
     animation: pulse-stamina 1s ease-in-out infinite;
@@ -538,9 +484,7 @@ body {
     font-weight: 500;
     border: 1px solid rgba(0, 240, 255, 0.06);
     max-width: 1300px;
-    margin-left: auto;
-    margin-right: auto;
-    margin-bottom: 20px;
+    margin: 0 auto 20px;
 }
 
 .status-item {
@@ -558,29 +502,18 @@ body {
     transition: all 0.3s;
 }
 
-.status-item .dot.online {
-    background: var(--neon-green);
-    box-shadow: 0 0 8px rgba(0, 255, 102, 0.5);
-}
-
-.status-item .dot.offline {
-    background: #ef4444;
-    box-shadow: 0 0 8px rgba(239, 68, 68, 0.3);
-}
-
-.status-item .dot.checking {
-    background: #f59e0b;
-    animation: pulse-dot 1s ease-in-out infinite;
-}
+.dot.online { background: var(--neon-green); box-shadow: 0 0 8px rgba(0, 255, 102, 0.5); }
+.dot.offline { background: #ef4444; box-shadow: 0 0 8px rgba(239, 68, 68, 0.3); }
+.dot.checking { background: #f59e0b; animation: pulse-dot 1s ease-in-out infinite; }
 
 @keyframes pulse-dot {
     0%, 100% { opacity: 1; transform: scale(1); }
     50% { opacity: 0.4; transform: scale(0.7); }
 }
 
-.status-item .value.online { color: var(--neon-green); }
-.status-item .value.offline { color: #ef4444; }
-.status-item .value.checking { color: #f59e0b; }
+.value.online { color: var(--neon-green); }
+.value.offline { color: #ef4444; }
+.value.checking { color: #f59e0b; }
 
 .status-reconnect {
     background: none;
@@ -599,7 +532,7 @@ body {
 }
 
 /* ============================================================
-   HISTÓRICO DE ATIVIDADES
+   HISTÓRICO
    ============================================================ */
 .activity-log {
     max-width: 1300px;
@@ -619,26 +552,17 @@ body {
     text-transform: uppercase;
 }
 
-.activity-log .log-list {
+.log-list {
     max-height: 80px;
     overflow-y: auto;
     font-size: 0.75rem;
 }
 
-.activity-log .log-list::-webkit-scrollbar {
-    width: 4px;
-}
+.log-list::-webkit-scrollbar { width: 4px; }
+.log-list::-webkit-scrollbar-track { background: rgba(255,255,255,0.02); }
+.log-list::-webkit-scrollbar-thumb { background: rgba(0,240,255,0.3); border-radius: 10px; }
 
-.activity-log .log-list::-webkit-scrollbar-track {
-    background: rgba(255,255,255,0.02);
-}
-
-.activity-log .log-list::-webkit-scrollbar-thumb {
-    background: rgba(0,240,255,0.3);
-    border-radius: 10px;
-}
-
-.activity-log .log-entry {
+.log-entry {
     padding: 3px 0;
     border-bottom: 1px solid rgba(255,255,255,0.03);
     color: #c8d0e0;
@@ -647,17 +571,9 @@ body {
     gap: 10px;
 }
 
-.activity-log .log-entry .log-time {
-    color: #6a7a8a;
-    font-size: 0.6rem;
-    white-space: nowrap;
-}
-
-.activity-log .log-entry .log-msg {
-    flex: 1;
-}
-
-.activity-log .log-entry .log-badge {
+.log-time { color: #6a7a8a; font-size: 0.6rem; white-space: nowrap; }
+.log-msg { flex: 1; }
+.log-badge {
     font-size: 0.55rem;
     background: rgba(0,240,255,0.1);
     padding: 1px 8px;
@@ -666,7 +582,7 @@ body {
 }
 
 /* ============================================================
-   OVERLAY DE CARREGAMENTO PARA JOGOS
+   OVERLAY DE CARREGAMENTO
    ============================================================ */
 .game-loading-overlay {
     position: fixed;
@@ -684,11 +600,9 @@ body {
     gap: 20px;
 }
 
-.game-loading-overlay.active {
-    display: flex;
-}
+.game-loading-overlay.active { display: flex; }
 
-.game-loading-overlay .loading-icon {
+.loading-icon {
     font-size: 4rem;
     animation: loadingPulse 1.2s ease-in-out infinite;
 }
@@ -698,26 +612,23 @@ body {
     50% { transform: scale(1.2); opacity: 0.6; }
 }
 
-.game-loading-overlay .loading-text {
+.loading-text {
     font-family: 'Orbitron', sans-serif;
     font-size: 1.6rem;
     color: #fff;
     text-shadow: 0 0 20px var(--neon-blue), 0 0 40px var(--neon-purple);
 }
 
-.game-loading-overlay .loading-sub {
-    color: #8a99ad;
-    font-size: 1rem;
-}
+.loading-sub { color: #8a99ad; font-size: 1rem; }
 
-.game-loading-overlay .loading-stamina {
+.loading-stamina {
     color: var(--neon-green);
     font-size: 1.2rem;
     font-weight: 700;
     margin-top: 10px;
 }
 
-.game-loading-overlay .loading-spinner {
+.loading-spinner {
     width: 60px;
     height: 60px;
     border: 4px solid rgba(0, 240, 255, 0.1);
@@ -726,9 +637,7 @@ body {
     animation: spin 1s linear infinite;
 }
 
-@keyframes spin {
-    to { transform: rotate(360deg); }
-}
+@keyframes spin { to { transform: rotate(360deg); } }
 
 .loading-progress-bar {
     width: 300px;
@@ -740,7 +649,7 @@ body {
     margin-top: 10px;
 }
 
-.loading-progress-bar .progress-fill {
+.progress-fill {
     height: 100%;
     background: linear-gradient(90deg, var(--neon-purple), var(--neon-blue));
     border-radius: 10px;
@@ -749,7 +658,7 @@ body {
 }
 
 /* ============================================================
-   TOAST / NOTIFICAÇÃO
+   TOAST
    ============================================================ */
 #levelToast {
     position: fixed;
@@ -778,170 +687,58 @@ body {
    RESPONSIVIDADE
    ============================================================ */
 @media (max-width: 700px) {
-    .nav-bar {
-        flex-direction: column;
-        align-items: stretch;
-    }
-    .nav-links {
-        justify-content: center;
-    }
-    .nav-buttons {
-        justify-content: center;
-    }
-    .user-profile {
-        padding: 4px 12px 4px 8px;
-    }
-    .user-info .user-nick {
-        font-size: 0.8rem;
-    }
-    .level-widget .lw-header {
-        flex-direction: column;
-        align-items: stretch;
-    }
-    .level-widget .lw-badge .lw-num {
-        font-size: 1.6rem;
-    }
-    .level-widget .lw-stats span {
-        font-size: 0.6rem;
-        padding: 1px 8px;
-    }
-    .games-grid {
-        grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
-        gap: 12px;
-    }
-    .game-card {
-        padding: 14px 12px;
-    }
-    .game-icon {
-        font-size: 2rem;
-    }
-    .game-title {
-        font-size: 0.8rem;
-    }
-    .game-loading-overlay .loading-text {
-        font-size: 1.2rem;
-    }
-    .level-actions .btn-level,
-    .level-actions .btn-sm {
-        font-size: 0.65rem;
-        padding: 4px 12px;
-    }
-}
-
-@media (max-width: 400px) {
-    .games-grid {
-        grid-template-columns: repeat(2, 1fr);
-        gap: 8px;
-    }
-    .game-card {
-        padding: 10px 8px;
-    }
-    .game-icon {
-        font-size: 1.6rem;
-    }
-    .game-title {
-        font-size: 0.65rem;
-    }
-    .game-badge {
-        font-size: 0.45rem;
-        padding: 1px 5px;
-        top: 4px;
-        right: 4px;
-    }
-    .loading-progress-bar {
-        width: 200px;
-    }
-}
-
-
-/* ============================================================
-   WIDGET BTC ACUMULADO
-   ============================================================ */
-.btc-widget {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    background: linear-gradient(135deg, #1a1a2e, #16213e);
-    border: 1px solid #f7931a;
-    border-radius: 10px;
-    padding: 6px 14px 6px 10px;
-    margin-right: 10px;
-    box-shadow: 0 0 15px rgba(247, 147, 26, 0.15);
-    transition: all 0.3s ease;
-    cursor: default;
-}
-
-.btc-widget:hover {
-    box-shadow: 0 0 25px rgba(247, 147, 26, 0.3);
-    transform: scale(1.02);
-}
-
-.btc-icon {
-    font-size: 20px;
-    animation: btcPulse 2s ease-in-out infinite;
-}
-
-@keyframes btcPulse {
-    0%, 100% { transform: scale(1); }
-    50% { transform: scale(1.15); }
-}
-
-.btc-info {
-    display: flex;
-    flex-direction: column;
-    line-height: 1.2;
-}
-
-.btc-label {
-    font-size: 9px;
-    text-transform: uppercase;
-    color: #f7931a;
-    letter-spacing: 0.5px;
-    font-weight: 700;
-    font-family: 'Rajdhani', sans-serif;
-}
-
-.btc-value {
-    font-size: 14px;
-    font-weight: 700;
-    color: #f7931a;
-    font-family: 'Orbitron', monospace;
-    text-shadow: 0 0 10px rgba(247, 147, 26, 0.3);
-    letter-spacing: 0.5px;
-}
-
-/* Responsivo */
-@media (max-width: 768px) {
-    .btc-widget {
-        padding: 4px 10px 4px 8px;
-        margin-right: 6px;
-    }
-    
-    .btc-icon {
-        font-size: 16px;
-    }
-    
-    .btc-value {
-        font-size: 11px;
-    }
-    
-    .btc-label {
-        font-size: 7px;
-    }
+    .nav-bar { flex-direction: column; align-items: stretch; }
+    .nav-links { justify-content: center; }
+    .nav-buttons { justify-content: center; }
+    .user-profile { padding: 4px 12px 4px 8px; }
+    .user-nick { font-size: 0.8rem; }
+    .lw-header { flex-direction: column; align-items: stretch; }
+    .lw-num { font-size: 1.6rem; }
+    .lw-stats span { font-size: 0.6rem; padding: 1px 8px; }
+    .games-grid { grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 12px; }
+    .game-card { padding: 14px 12px; }
+    .game-icon { font-size: 2rem; }
+    .game-title { font-size: 0.8rem; }
+    .loading-text { font-size: 1.2rem; }
+    .btc-widget { padding: 4px 10px 4px 8px; margin-right: 6px; }
+    .btc-icon { font-size: 16px; }
+    .btc-value { font-size: 11px; }
+    .btc-label { font-size: 7px; }
 }
 
 @media (max-width: 480px) {
-    .btc-widget {
-        padding: 3px 8px 3px 6px;
-        margin-right: 4px;
-        border-radius: 6px;
+    .games-grid { grid-template-columns: repeat(2, 1fr); gap: 8px; }
+    .game-card { padding: 10px 8px; }
+    .game-icon { font-size: 1.6rem; }
+    .game-title { font-size: 0.65rem; }
+    .game-badge { font-size: 0.45rem; padding: 1px 5px; top: 4px; right: 4px; }
+    .loading-progress-bar { width: 200px; }
+    .btc-widget { padding: 3px 8px 3px 6px; margin-right: 4px; border-radius: 6px; }
+    .btc-icon { font-size: 13px; }
+    .btc-value { font-size: 10px; }
+}
+
+/* ============================================================
+   👑 BOTÃO ADMIN — escondido por padrão, aparece se cadeado = true
+   ============================================================ */
+#btnAdmin {
+    display: none;
+}
+
+#btnAdmin.visivel {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    animation: adminPulse 2s ease-in-out infinite;
+}
+
+@keyframes adminPulse {
+    0%, 100% {
+        box-shadow: 0 0 10px rgba(139, 92, 246, 0.6);
     }
-    
-    .btc-icon {
-        font-size: 13px;
-    }
-    
-    .btc-value {
-        font-size: 10px;
+    50% {
+        box-shadow: 0 0 20px rgba(139, 92, 246, 1),
+                    0 0 30px rgba(112, 0, 255, 0.6);
     }
 }

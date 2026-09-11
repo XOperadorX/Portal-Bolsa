@@ -4,6 +4,56 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Painel ADM - BAEP Investimentos</title>
+
+    <!-- 🔐 PROTEÇÃO: bloqueia acesso direto se cadeado !== true -->
+    <script>
+    (async function protegerAdmin() {
+        const usuarioData = localStorage.getItem('usuario_logado');
+
+        if (!usuarioData) {
+            alert('⛔ Você precisa estar logado.');
+            window.location.href = '/dashboard.html';
+            return;
+        }
+
+        let login;
+        try {
+            login = JSON.parse(usuarioData).login;
+        } catch (e) {
+            window.location.href = '/dashboard.html';
+            return;
+        }
+
+        if (!login) {
+            window.location.href = '/dashboard.html';
+            return;
+        }
+
+        const script = document.createElement('script');
+        script.src = 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2';
+        script.onload = async () => {
+            const sb = window.supabase.createClient(
+                'https://xrcxvizzdumcxbylmkvn.supabase.co',
+                'sb_publishable_E-g3G3wW4EySbCsXLXp8KQ_FnmERMcD'
+            );
+
+            const { data, error } = await sb
+                .from('Geral')
+                .select('cadeado')
+                .eq('login', login)
+                .maybeSingle();
+
+            if (error || !data || data.cadeado !== true) {
+                alert('⛔ Acesso negado. Você não é admin.');
+                window.location.href = '/dashboard.html';
+            } else {
+                console.log('👑 Bem-vindo, admin!');
+            }
+        };
+        document.head.appendChild(script);
+    })();
+    </script>
+
     <link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@400;600;700&family=Orbitron:wght@400;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="style/admin.css">
 </head>
@@ -11,8 +61,7 @@
     <!-- BARRA DE NAVEGAÇÃO ESTILIZADA (TEMA CYBERPUNK) -->
     <div class="nav-bar">
         <div class="nav-links">
-            <a href="../../sys/sys.html" class="active">⚡ ADMIN</a>
-
+            <a href="./sys.html" class="active">⚡ ADMIN</a>
         </div>
         <div class="user-profile">
             <div class="user-avatar">👑</div>

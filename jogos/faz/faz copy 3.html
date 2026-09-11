@@ -1,0 +1,593 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+    <title>🌾 Fazenda</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            user-select: none;
+            -webkit-tap-highlight-color: transparent;
+        }
+        body {
+            background: #0b0e14;
+            font-family: 'Segoe UI', system-ui, sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            padding: 16px;
+            touch-action: manipulation;
+        }
+        #app {
+            max-width: 520px;
+            width: 100%;
+            background: #1a1f2a;
+            border-radius: 24px;
+            padding: 20px 18px 28px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.8);
+            border: 1px solid #2a3344;
+        }
+        h1 {
+            font-size: 28px;
+            color: #f0e8d0;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 6px;
+        }
+        h1 small {
+            font-size: 14px;
+            font-weight: 400;
+            color: #8892a8;
+            margin-left: auto;
+        }
+        .saldo-box {
+            background: #0f141e;
+            border-radius: 16px;
+            padding: 10px 16px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            border: 1px solid #2a3344;
+            margin-bottom: 18px;
+        }
+        .saldo-box span {
+            font-size: 16px;
+            color: #b0baca;
+        }
+        .saldo-box .valor {
+            font-size: 26px;
+            font-weight: 800;
+            color: #f0c040;
+        }
+        .secao {
+            background: #0f141e;
+            border-radius: 16px;
+            padding: 14px 16px;
+            margin-bottom: 16px;
+            border: 1px solid #2a3344;
+        }
+        .secao h3 {
+            color: #c8d0e0;
+            font-size: 16px;
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .secao .grid {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+        .secao .grid button {
+            flex: 1 0 calc(50% - 10px);
+            min-width: 100px;
+            padding: 12px 0;
+            border: none;
+            border-radius: 40px;
+            font-weight: 700;
+            font-size: 14px;
+            color: #fff;
+            background: #2a3344;
+            cursor: pointer;
+            transition: transform 0.1s, box-shadow 0.2s;
+            touch-action: manipulation;
+            border: 1px solid #3a4458;
+        }
+        .secao .grid button:active {
+            transform: scale(0.94);
+        }
+        .secao .grid button.colher {
+            background: linear-gradient(135deg, #27ae60, #1e8449);
+            border-color: #27ae60;
+        }
+        .secao .grid button.vender {
+            background: linear-gradient(135deg, #f39c12, #d68910);
+            border-color: #f39c12;
+        }
+        .secao .grid button.comprar {
+            background: linear-gradient(135deg, #3498db, #2176ae);
+            border-color: #3498db;
+        }
+        .secao .grid button.danger {
+            background: linear-gradient(135deg, #e74c3c, #c0392b);
+            border-color: #e74c3c;
+        }
+        .log {
+            background: #0b0e14;
+            border-radius: 12px;
+            padding: 10px 14px;
+            color: #8892a8;
+            font-size: 13px;
+            min-height: 44px;
+            border: 1px solid #1e2635;
+            margin-top: 6px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .log .emoji {
+            font-size: 20px;
+        }
+        .log .msg {
+            flex: 1;
+        }
+        .nav-links {
+            display: flex;
+            gap: 12px;
+            margin-top: 18px;
+            flex-wrap: wrap;
+        }
+        .nav-links a {
+            flex: 1;
+            text-align: center;
+            padding: 12px 0;
+            border-radius: 40px;
+            background: #2a3344;
+            color: #c8d0e0;
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 15px;
+            transition: background 0.15s, transform 0.1s;
+            touch-action: manipulation;
+            border: 1px solid #3a4458;
+        }
+        .nav-links a:active {
+            transform: scale(0.94);
+        }
+        .nav-links a.mochila {
+            background: linear-gradient(135deg, #a855f7, #7c3aed);
+            border-color: #a855f7;
+            color: #fff;
+        }
+        .nav-links a.jogo {
+            background: linear-gradient(135deg, #4a90d9, #2a5a8a);
+            border-color: #4a90d9;
+            color: #fff;
+        }
+        .status-db {
+            font-size: 11px;
+            color: #6b7688;
+            text-align: right;
+            margin-bottom: 8px;
+        }
+        .status-db.online { color: #27ae60; }
+        .status-db.offline { color: #e74c3c; }
+
+        @media (max-width: 420px) {
+            #app { padding: 14px 12px 20px; }
+            h1 { font-size: 22px; }
+            .saldo-box .valor { font-size: 22px; }
+            .secao .grid button { font-size: 12px; padding: 10px 0; }
+        }
+    </style>
+</head>
+<body>
+<div id="app">
+    <h1>
+        🌾 Fazenda
+    <div class="nav-links">
+        <a href="../../dashboard.html" class="nav-link fazenda">🎮 Dashboard</a>
+    </div>
+        <small id="moeda-display">💰 0,00</small>
+    </h1>
+    <div class="status-db" id="status-db">⏳ Conectando ao Supabase...</div>
+
+    <div class="saldo-box">
+        <span>💰 Saldo</span>
+        <span class="valor" id="saldo-display">0,00</span>
+    </div>
+
+    <!-- COLHER / PRODUZIR -->
+    <div class="secao">
+        <h3>🌱 Produção</h3>
+        <div class="grid">
+            <button class="colher" id="colher-madeira">🪵 Madeira (+2)</button>
+            <button class="colher" id="colher-pedra">🪨 Pedra (+2)</button>
+            <button class="colher" id="colher-ouro">💎 Ouro (+1)</button>
+            <button class="colher" id="colher-pocao">🧪 Poção (+1)</button>
+        </div>
+    </div>
+
+    <!-- COMPRAR / VENDER -->
+    <div class="secao">
+        <h3>🏪 Mercado</h3>
+        <div class="grid">
+            <button class="comprar" id="comprar-madeira">🪵 Comprar (10💰)</button>
+            <button class="vender" id="vender-madeira">🪵 Vender (5💰)</button>
+            <button class="comprar" id="comprar-pedra">🪨 Comprar (15💰)</button>
+            <button class="vender" id="vender-pedra">🪨 Vender (8💰)</button>
+            <button class="comprar" id="comprar-ouro">💎 Comprar (50💰)</button>
+            <button class="vender" id="vender-ouro">💎 Vender (25💰)</button>
+            <button class="comprar" id="comprar-pocao">🧪 Comprar (25💰)</button>
+            <button class="vender" id="vender-pocao">🧪 Vender (12💰)</button>
+        </div>
+    </div>
+
+    <!-- LOG -->
+    <div class="log" id="log-area">
+        <span class="emoji">📢</span>
+        <span class="msg">Bem-vindo à fazenda!</span>
+    </div>
+
+
+</div>
+
+<!-- ═══════════════════════════════════════════════════════════════
+     SUPABASE SDK (via CDN, ES module)
+     ═══════════════════════════════════════════════════════════════ -->
+<script type="module">
+import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/+esm';
+
+// ═══════════════════════════════════════════════════════════════
+//  CONFIGURAÇÃO DO SUPABASE
+// ═══════════════════════════════════════════════════════════════
+const SUPABASE_URL      = 'https://xrcxvizzdumcxbylmkvn.supabase.co';
+const SUPABASE_ANON_KEY = 'sb_publishable_E-g3G3wW4EySbCsXLXp8KQ_FnmERMcD';
+
+const supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+// ═══════════════════════════════════════════════════════════════
+//  CONFIGURAÇÕES GERAIS
+// ═══════════════════════════════════════════════════════════════
+const TABELA = 'Geral';
+
+// ⚠️ USUARIO agora vem da sessão de login (login.html)
+let USUARIO = null;
+let _cache  = null;
+
+// ═══════════════════════════════════════════════════════════════
+//  RECUPERAR LOGIN DA SESSÃO
+//  Tenta várias chaves comuns gravadas pelo login.html
+// ═══════════════════════════════════════════════════════════════
+function obterLoginDaSessao() {
+    // 1) Supabase Auth nativo
+    const authKeys = Object.keys(localStorage).filter(k =>
+        k.startsWith('sb-') && k.endsWith('-auth-token')
+    );
+    for (const k of authKeys) {
+        try {
+            const sess = JSON.parse(localStorage.getItem(k));
+            const email = sess?.user?.email;
+            if (email) return email.split('@')[0]; // usa parte antes do @
+            const meta = sess?.user?.user_metadata?.login;
+            if (meta) return meta;
+        } catch (_) {}
+    }
+
+    // 2) Chaves customizadas que o login.html pode ter gravado
+    const chaves = [
+        'usuario_logado',
+        'login',
+        'login_usuario',
+        'usuario',
+        'user',
+        'mm_usuario_logado',
+        'mm_quase_tudo_usuario'
+    ];
+    for (const chave of chaves) {
+        const v = localStorage.getItem(chave);
+        if (v) {
+            try {
+                const parsed = JSON.parse(v);
+                if (typeof parsed === 'string') return parsed;
+                if (parsed?.login)  return parsed.login;
+                if (parsed?.usuario) return parsed.usuario;
+                if (parsed?.email)  return parsed.email.split('@')[0];
+            } catch (_) {
+                return v; // era string pura
+            }
+        }
+    }
+
+    // 3) Session storage (fallback)
+    for (const chave of chaves) {
+        const v = sessionStorage.getItem(chave);
+        if (v) {
+            try {
+                const parsed = JSON.parse(v);
+                if (typeof parsed === 'string') return parsed;
+                if (parsed?.login) return parsed.login;
+            } catch (_) { return v; }
+        }
+    }
+
+    return null;
+}
+
+// ═══════════════════════════════════════════════════════════════
+//  HELPERS SUPABASE — CRUD na tabela "Geral"
+// ═══════════════════════════════════════════════════════════════
+
+async function garantirLinha() {
+    const { data, error } = await supabase
+        .from(TABELA)
+        .select('*')
+        .eq('login', USUARIO)
+        .maybeSingle();
+
+    if (error) {
+        console.error('[Supabase] erro select:', error);
+        throw error;
+    }
+
+    if (data) {
+        _cache = data;
+        return data;
+    }
+
+    // Cria a linha inicial para esse login
+    const nova = {
+        nome: USUARIO,
+        login: USUARIO,
+        senha: '123456',
+        saldo: 0.00,
+        saldo_poupanca: 0.00,
+        proventos_pendentes: 0.00,
+        selic: 10.75,
+        carteira: { 'Madeira': 5, 'Pedra': 3, 'Ouro': 2, 'Poção': 1 },
+        preco_medio_compra: {},
+        proventos_por_ativo: {},
+        plot_data: [],
+        fazendinha_dados: {}
+    };
+
+    const { data: criado, error: errIns } = await supabase
+        .from(TABELA)
+        .insert(nova)
+        .select()
+        .single();
+
+    if (errIns) {
+        console.error('[Supabase] erro insert:', errIns);
+        throw errIns;
+    }
+
+    _cache = criado;
+    return criado;
+}
+
+async function recarregar() {
+    const { data, error } = await supabase
+        .from(TABELA)
+        .select('*')
+        .eq('login', USUARIO)
+        .single();
+    if (error) throw error;
+    _cache = data;
+    return data;
+}
+
+async function atualizarCampos(campos) {
+    const { data, error } = await supabase
+        .from(TABELA)
+        .update(campos)
+        .eq('login', USUARIO)
+        .select()
+        .single();
+
+    if (error) {
+        console.error('[Supabase] erro update:', error);
+        throw error;
+    }
+    _cache = data;
+    return data;
+}
+
+// ═══════════════════════════════════════════════════════════════
+//  ACESSO AOS DADOS
+// ═══════════════════════════════════════════════════════════════
+
+function getSaldo() {
+    return parseFloat(_cache?.saldo ?? 0) || 0;
+}
+
+function getCarteira() {
+    return _cache?.carteira ?? {};
+}
+
+function getItem(nome) {
+    const c = getCarteira();
+    return parseInt(c[nome] ?? 0, 10) || 0;
+}
+
+// ═══════════════════════════════════════════════════════════════
+//  UI HELPERS
+// ═══════════════════════════════════════════════════════════════
+
+function atualizarUI() {
+    const saldo = getSaldo();
+    document.getElementById('saldo-display').textContent = saldo.toFixed(2);
+    document.getElementById('moeda-display').textContent = `💰 ${saldo.toFixed(2)}`;
+}
+
+function setStatus(texto, classe) {
+    const el = document.getElementById('status-db');
+    el.textContent = texto;
+    el.className = 'status-db' + (classe ? ' ' + classe : '');
+}
+
+function log(emoji, mensagem) {
+    const area = document.getElementById('log-area');
+    area.innerHTML = `<span class="emoji">${emoji}</span><span class="msg">${mensagem}</span>`;
+    clearTimeout(window._logTimeout);
+    window._logTimeout = setTimeout(() => {
+        area.innerHTML = `<span class="emoji">📢</span><span class="msg">Pronto para mais ação!</span>`;
+    }, 3000);
+}
+
+// ═══════════════════════════════════════════════════════════════
+//  AÇÕES
+// ═══════════════════════════════════════════════════════════════
+
+async function colher(nome, qtd) {
+    try {
+        const carteira = { ...getCarteira() };
+        carteira[nome] = (parseInt(carteira[nome] ?? 0, 10) || 0) + qtd;
+
+        await atualizarCampos({ carteira });
+        log('🌱', `Colheu ${qtd}x ${nome}! (total: ${carteira[nome]})`);
+        atualizarUI();
+    } catch (e) {
+        log('❌', 'Erro ao colher: ' + e.message);
+    }
+}
+
+async function comprar(nome, preco, qtd = 1) {
+    try {
+        const saldo = getSaldo();
+        const custoTotal = preco * qtd;
+
+        if (saldo < custoTotal) {
+            log('❌', `Saldo insuficiente para comprar ${qtd}x ${nome}!`);
+            return;
+        }
+
+        const carteira = { ...getCarteira() };
+        carteira[nome] = (parseInt(carteira[nome] ?? 0, 10) || 0) + qtd;
+
+        const pm = { ...(_cache.preco_medio_compra ?? {}) };
+        const qtdAntiga = getItem(nome);
+        const pmAntigo  = parseFloat(pm[nome] ?? 0) || 0;
+        const qtdNova   = qtdAntiga + qtd;
+        pm[nome] = qtdNova > 0
+            ? ((pmAntigo * qtdAntiga) + (preco * qtd)) / qtdNova
+            : 0;
+
+        await atualizarCampos({
+            saldo: parseFloat((saldo - custoTotal).toFixed(2)),
+            carteira,
+            preco_medio_compra: pm
+        });
+
+        log('🛒', `Comprou ${qtd}x ${nome} por ${custoTotal.toFixed(2)}💰`);
+        atualizarUI();
+    } catch (e) {
+        log('❌', 'Erro ao comprar: ' + e.message);
+    }
+}
+
+async function vender(nome, preco, qtd = 1) {
+    try {
+        const atual = getItem(nome);
+        if (atual < qtd) {
+            log('❌', `Você não tem ${qtd}x ${nome} para vender! (tem ${atual})`);
+            return;
+        }
+
+        const carteira = { ...getCarteira() };
+        carteira[nome] = atual - qtd;
+        if (carteira[nome] <= 0) delete carteira[nome];
+
+        const saldo = getSaldo();
+        const receita = preco * qtd;
+
+        await atualizarCampos({
+            saldo: parseFloat((saldo + receita).toFixed(2)),
+            carteira
+        });
+
+        log('💰', `Vendeu ${qtd}x ${nome} por ${receita.toFixed(2)}💰`);
+        atualizarUI();
+    } catch (e) {
+        log('❌', 'Erro ao vender: ' + e.message);
+    }
+}
+
+// ═══════════════════════════════════════════════════════════════
+//  EVENTOS
+// ═══════════════════════════════════════════════════════════════
+
+function bindEventos() {
+    document.getElementById('colher-madeira').addEventListener('click', () => colher('Madeira', 2));
+    document.getElementById('colher-pedra').addEventListener('click',   () => colher('Pedra', 2));
+    document.getElementById('colher-ouro').addEventListener('click',    () => colher('Ouro', 1));
+    document.getElementById('colher-pocao').addEventListener('click',   () => colher('Poção', 1));
+
+    document.getElementById('comprar-madeira').addEventListener('click', () => comprar('Madeira', 10));
+    document.getElementById('comprar-pedra').addEventListener('click',   () => comprar('Pedra', 15));
+    document.getElementById('comprar-ouro').addEventListener('click',    () => comprar('Ouro', 50));
+    document.getElementById('comprar-pocao').addEventListener('click',   () => comprar('Poção', 25));
+
+    document.getElementById('vender-madeira').addEventListener('click', () => vender('Madeira', 5));
+    document.getElementById('vender-pedra').addEventListener('click',   () => vender('Pedra', 8));
+    document.getElementById('vender-ouro').addEventListener('click',    () => vender('Ouro', 25));
+    document.getElementById('vender-pocao').addEventListener('click',   () => vender('Poção', 12));
+}
+
+// ═══════════════════════════════════════════════════════════════
+//  INICIALIZAÇÃO
+// ═══════════════════════════════════════════════════════════════
+
+async function init() {
+    bindEventos();
+
+    // 1) Descobre quem está logado
+    USUARIO = obterLoginDaSessao();
+
+    if (!USUARIO) {
+        setStatus('❌ Nenhum login encontrado', 'offline');
+        log('🔒', 'Faça login primeiro! Redirecionando...');
+        setTimeout(() => {
+            // ajuste o caminho se o login.html estiver em outra pasta
+            window.location.href = 'login.html';
+        }, 1500);
+        return;
+    }
+
+    // 2) Conecta ao Supabase com esse login
+    try {
+        await garantirLinha();
+        setStatus(`✅ Conectado como ${USUARIO}`, 'online');
+        atualizarUI();
+        log('📢', `Bem-vindo, ${_cache.nome || USUARIO}!`);
+    } catch (e) {
+        console.error(e);
+        setStatus('❌ Erro Supabase: ' + e.message, 'offline');
+        log('❌', 'Não foi possível conectar ao banco.');
+        return;
+    }
+
+    // 3) Realtime
+    supabase
+        .channel('geral-changes-' + USUARIO)
+        .on('postgres_changes',
+            { event: 'UPDATE', schema: 'public', table: TABELA, filter: `login=eq.${USUARIO}` },
+            (payload) => {
+                _cache = payload.new;
+                atualizarUI();
+                console.log('[Realtime] Linha atualizada:', payload.new);
+            }
+        )
+        .subscribe();
+}
+
+init();
+</script>
+</body>
+</html>

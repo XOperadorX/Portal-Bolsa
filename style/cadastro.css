@@ -186,10 +186,14 @@ body {
 
 .senha-requisitos .ok {
     color: #10b981;
+    display: block;
+    margin-bottom: 2px;
 }
 
 .senha-requisitos .bad {
     color: #ef4444;
+    display: block;
+    margin-bottom: 2px;
 }
 
 .helper-text {

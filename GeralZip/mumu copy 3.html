@@ -268,116 +268,6 @@
             display: block;
         }
 
-        /* ===== HISTÓRICO DE TROCAS ===== */
-        .historico-section {
-            margin-top: 30px;
-            text-align: left;
-        }
-        .historico-section h3 {
-            color: #333;
-            font-size: 1.1rem;
-            margin-bottom: 12px;
-            text-align: center;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 8px;
-        }
-        .historico-lista {
-            max-height: 280px;
-            overflow-y: auto;
-            border: 1px solid #eee;
-            border-radius: 12px;
-            padding: 8px;
-            background: #fafafa;
-        }
-        .historico-lista::-webkit-scrollbar {
-            width: 6px;
-        }
-        .historico-lista::-webkit-scrollbar-track {
-            background: #f1f1f1;
-            border-radius: 10px;
-        }
-        .historico-lista::-webkit-scrollbar-thumb {
-            background: #c7c7c7;
-            border-radius: 10px;
-        }
-        .historico-item {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            padding: 10px 12px;
-            border-radius: 10px;
-            margin-bottom: 6px;
-            background: #fff;
-            box-shadow: 0 1px 4px rgba(0,0,0,0.06);
-            font-size: 0.82rem;
-            transition: all 0.2s ease;
-        }
-        .historico-item:last-child {
-            margin-bottom: 0;
-        }
-        .historico-item:hover {
-            box-shadow: 0 3px 10px rgba(0,0,0,0.1);
-        }
-        .historico-item.troca {
-            border-left: 4px solid #764ba2;
-        }
-        .historico-item.desfazer {
-            border-left: 4px solid #ffc400;
-        }
-        .historico-info {
-            display: flex;
-            flex-direction: column;
-            gap: 2px;
-        }
-        .historico-tipo {
-            font-weight: 700;
-            font-size: 0.75rem;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-        }
-        .historico-item.troca .historico-tipo {
-            color: #764ba2;
-        }
-        .historico-item.desfazer .historico-tipo {
-            color: #b8860b;
-        }
-        .historico-detalhe {
-            color: #555;
-            font-size: 0.8rem;
-        }
-        .historico-data {
-            color: #999;
-            font-size: 0.7rem;
-            white-space: nowrap;
-            margin-left: 8px;
-        }
-        .historico-vazio {
-            text-align: center;
-            color: #aaa;
-            font-size: 0.85rem;
-            padding: 20px;
-            font-style: italic;
-        }
-        .btn-limpar-historico {
-            background: none;
-            border: 1px solid #ddd;
-            color: #999;
-            font-size: 0.7rem;
-            padding: 4px 10px;
-            border-radius: 6px;
-            cursor: pointer;
-            margin-top: 8px;
-            transition: all 0.2s ease;
-            width: 100%;
-        }
-        .btn-limpar-historico:hover {
-            background: #ffebee;
-            border-color: #ffcdd2;
-            color: #c62828;
-        }
-
         @media (max-width: 420px) {
             .pacotes-grid {
                 grid-template-columns: 1fr;
@@ -385,22 +275,12 @@
             .saldos-grid {
                 grid-template-columns: 1fr;
             }
-            .historico-item {
-                flex-direction: column;
-                align-items: flex-start;
-                gap: 4px;
-            }
-            .historico-data {
-                margin-left: 0;
-            }
         }
     </style>
 </head>
 <body>
 
     <div class="card">
-                <a href="../../dashboard.html" class="btn-voltar">🏠 Voltar</a>
-
         <h2>💰 Seus Saldos</h2>
         <p class="subtitulo">Moeda Mumu & Saldo em Reais</p>
 
@@ -482,17 +362,7 @@
             <div class="msg-troca" id="msgTroca"></div>
         </div>
 
-        <!-- ===== HISTÓRICO DE TROCAS ===== -->
-        <div class="historico-section">
-            <h3>📜 Histórico de Trocas</h3>
-            <div class="historico-lista" id="historicoLista">
-                <div class="historico-vazio">Carregando histórico...</div>
-            </div>
-            <button class="btn-limpar-historico" id="btnLimparHistorico" style="display: none;">
-                🗑️ Limpar histórico
-            </button>
-        </div>
-
+        <a href="../../dashboard.html" class="btn-voltar">🏠 Voltar</a>
     </div>
 
     <script>
@@ -506,10 +376,6 @@
         let estaAtualizando = false;
         let saldoMumuAtual = 0;
         let saldoReaisAtual = 0;
-        let historicoTrocas = [];
-
-        // Limite máximo de registros no histórico
-        const MAX_HISTORICO = 50;
 
         function carregarUsuarioLogado() {
             try {
@@ -545,17 +411,6 @@
                 hour: '2-digit',
                 minute: '2-digit',
                 second: '2-digit'
-            });
-        }
-
-        function formatarDataCurta(data) {
-            if (!data) return '--';
-            const d = new Date(data);
-            return d.toLocaleString('pt-BR', {
-                day: '2-digit',
-                month: '2-digit',
-                hour: '2-digit',
-                minute: '2-digit'
             });
         }
 
@@ -599,105 +454,6 @@
                 `<span class="simbolo">R$</span> ${formatarMoeda(reais)}`;
         }
 
-        // ====== RENDERIZAR HISTÓRICO ======
-        function renderizarHistorico() {
-            const lista = document.getElementById('historicoLista');
-            const btnLimpar = document.getElementById('btnLimparHistorico');
-
-            if (!historicoTrocas || historicoTrocas.length === 0) {
-                lista.innerHTML = '<div class="historico-vazio">Nenhuma troca registrada ainda.</div>';
-                btnLimpar.style.display = 'none';
-                return;
-            }
-
-            btnLimpar.style.display = 'block';
-
-            // Mostrar os mais recentes primeiro
-            const historicoOrdenado = [...historicoTrocas].sort(
-                (a, b) => new Date(b.data) - new Date(a.data)
-            );
-
-            lista.innerHTML = historicoOrdenado.map(item => {
-                const isTroca = item.tipo === 'troca';
-                const classe = isTroca ? 'troca' : 'desfazer';
-                const icone = isTroca ? '🔄' : '↩️';
-                const rotulo = isTroca ? 'Troca' : 'Desfazer';
-
-                let detalhe = '';
-                if (isTroca) {
-                    detalhe = `${formatarMoeda(item.mumuGasto)} Mumu → R$ ${formatarMoeda(item.saldoGanho)}`;
-                } else {
-                    detalhe = `R$ ${formatarMoeda(item.saldoGasto)} → ${formatarMoeda(item.mumuGanho)} Mumu`;
-                }
-
-                return `
-                    <div class="historico-item ${classe}">
-                        <div class="historico-info">
-                            <span class="historico-tipo">${icone} ${rotulo}</span>
-                            <span class="historico-detalhe">${detalhe}</span>
-                        </div>
-                        <span class="historico-data">${formatarDataCurta(item.data)}</span>
-                    </div>
-                `;
-            }).join('');
-        }
-
-        // ====== ADICIONAR ITEM AO HISTÓRICO ======
-        function adicionarAoTrocaHistorico(tipo, dados) {
-            const novoItem = {
-                tipo: tipo, // 'troca' ou 'desfazer'
-                data: new Date().toISOString(),
-                ...dados
-            };
-
-            historicoTrocas.unshift(novoItem);
-
-            // Limitar tamanho do histórico
-            if (historicoTrocas.length > MAX_HISTORICO) {
-                historicoTrocas = historicoTrocas.slice(0, MAX_HISTORICO);
-            }
-
-            renderizarHistorico();
-        }
-
-        // ====== SALVAR HISTÓRICO NO SUPABASE ======
-        async function salvarHistoricoSupabase(novoHistorico) {
-            if (!usuarioAtual || !usuarioAtual.login) return;
-
-            try {
-                const resp = await fetch(
-                    `${SUPABASE_URL}/Geral?login=eq.${encodeURIComponent(usuarioAtual.login)}`,
-                    {
-                        method: "PATCH",
-                        headers: {
-                            "apikey": SUPABASE_KEY,
-                            "Content-Type": "application/json"
-                        },
-                        body: JSON.stringify({
-                            historico_trocas: novoHistorico
-                        })
-                    }
-                );
-
-                if (!resp.ok) {
-                    console.warn('Não foi possível salvar o histórico no Supabase:', resp.status);
-                }
-            } catch (e) {
-                console.warn('Erro ao salvar histórico no Supabase:', e.message);
-            }
-        }
-
-        // ====== LIMPAR HISTÓRICO ======
-        async function limparHistorico() {
-            if (!confirm('Tem certeza que deseja limpar todo o histórico de trocas?')) return;
-
-            historicoTrocas = [];
-            renderizarHistorico();
-            await salvarHistoricoSupabase([]);
-            mostrarMensagemTroca('🗑️ Histórico limpo com sucesso!', 'sucesso');
-        }
-
-        // ====== BUSCAR SALDO E HISTÓRICO ======
         async function buscarSaldo() {
             if (!usuarioAtual || !usuarioAtual.login) {
                 document.getElementById('saldoMumu').innerHTML =
@@ -717,7 +473,7 @@
 
             try {
                 const resposta = await fetch(
-                    `${SUPABASE_URL}/Geral?login=eq.${encodeURIComponent(usuarioAtual.login)}&select=mumu,saldo,updated_at,nome,historico_trocas`,
+                    `${SUPABASE_URL}/Geral?login=eq.${encodeURIComponent(usuarioAtual.login)}&select=mumu,saldo,updated_at,nome`,
                     {
                         method: "GET",
                         headers: {
@@ -743,11 +499,9 @@
                 const mumu = parseFloat(dados[0].mumu || 0);
                 const reais = parseFloat(dados[0].saldo || 0);
                 const nome = dados[0].nome || usuarioAtual.nome || usuarioAtual.login;
-                const historico = dados[0].historico_trocas || [];
 
                 saldoMumuAtual = mumu;
                 saldoReaisAtual = reais;
-                historicoTrocas = Array.isArray(historico) ? historico : [];
 
                 if (nome !== usuarioAtual.nome) {
                     usuarioAtual.nome = nome;
@@ -758,7 +512,6 @@
                 localStorage.setItem('usuario_logado', JSON.stringify(usuarioAtual));
 
                 exibirSaldos(mumu, reais);
-                renderizarHistorico();
 
                 const dataBanco = dados[0].updated_at
                     ? new Date(dados[0].updated_at)
@@ -776,7 +529,6 @@
                     elemData.textContent = formatarData(new Date()) + ' (dados locais)';
                     elemErro.textContent = "⚠️ Usando dados salvos localmente - sem conexão";
                     atualizarBotoesPacotes();
-                    renderizarHistorico();
                 } else {
                     document.getElementById('saldoMumu').innerHTML =
                         `<span class="erro">Erro</span>`;
@@ -808,7 +560,7 @@
 
             try {
                 const respGet = await fetch(
-                    `${SUPABASE_URL}/Geral?login=eq.${encodeURIComponent(usuarioAtual.login)}&select=mumu,saldo,historico_trocas`,
+                    `${SUPABASE_URL}/Geral?login=eq.${encodeURIComponent(usuarioAtual.login)}&select=mumu,saldo`,
                     {
                         headers: {
                             "apikey": SUPABASE_KEY,
@@ -826,9 +578,6 @@
 
                 const mumuAtual = parseFloat(dadosAtuais[0].mumu || 0);
                 const saldoAtual = parseFloat(dadosAtuais[0].saldo || 0);
-                let historicoAtual = dadosAtuais[0].historico_trocas || [];
-
-                if (!Array.isArray(historicoAtual)) historicoAtual = [];
 
                 if (mumuAtual < mumuGasto) {
                     throw new Error(`Saldo insuficiente. Você tem ${formatarMoeda(mumuAtual)} Mumu.`);
@@ -836,19 +585,6 @@
 
                 const novoMumu = mumuAtual - mumuGasto;
                 const novoSaldo = saldoAtual + saldoGanho;
-
-                // Adicionar ao histórico
-                const novoRegistro = {
-                    tipo: 'troca',
-                    data: new Date().toISOString(),
-                    mumuGasto: mumuGasto,
-                    saldoGanho: saldoGanho
-                };
-
-                historicoAtual.unshift(novoRegistro);
-                if (historicoAtual.length > MAX_HISTORICO) {
-                    historicoAtual = historicoAtual.slice(0, MAX_HISTORICO);
-                }
 
                 const respPatch = await fetch(
                     `${SUPABASE_URL}/Geral?login=eq.${encodeURIComponent(usuarioAtual.login)}`,
@@ -862,7 +598,6 @@
                         body: JSON.stringify({
                             mumu: novoMumu,
                             saldo: novoSaldo,
-                            historico_trocas: historicoAtual,
                             updated_at: new Date().toISOString()
                         })
                     }
@@ -874,11 +609,9 @@
                 saldoReaisAtual = novoSaldo;
                 usuarioAtual.mumu = novoMumu;
                 usuarioAtual.saldo = novoSaldo;
-                historicoTrocas = historicoAtual;
                 localStorage.setItem('usuario_logado', JSON.stringify(usuarioAtual));
 
                 exibirSaldos(novoMumu, novoSaldo);
-                renderizarHistorico();
                 atualizarBotoesPacotes();
                 mostrarMensagemTroca(
                     `✅ Troca realizada! ${formatarMoeda(mumuGasto)} Mumu → R$ ${formatarMoeda(saldoGanho)} Saldo`,
@@ -907,7 +640,7 @@
 
             try {
                 const respGet = await fetch(
-                    `${SUPABASE_URL}/Geral?login=eq.${encodeURIComponent(usuarioAtual.login)}&select=mumu,saldo,historico_trocas`,
+                    `${SUPABASE_URL}/Geral?login=eq.${encodeURIComponent(usuarioAtual.login)}&select=mumu,saldo`,
                     {
                         headers: {
                             "apikey": SUPABASE_KEY,
@@ -925,9 +658,6 @@
 
                 const mumuAtual = parseFloat(dadosAtuais[0].mumu || 0);
                 const saldoAtual = parseFloat(dadosAtuais[0].saldo || 0);
-                let historicoAtual = dadosAtuais[0].historico_trocas || [];
-
-                if (!Array.isArray(historicoAtual)) historicoAtual = [];
 
                 if (saldoAtual < saldoGasto) {
                     throw new Error(`Saldo em R$ insuficiente. Você tem R$ ${formatarMoeda(saldoAtual)}.`);
@@ -935,19 +665,6 @@
 
                 const novoMumu = mumuAtual + mumuGanho;
                 const novoSaldo = saldoAtual - saldoGasto;
-
-                // Adicionar ao histórico
-                const novoRegistro = {
-                    tipo: 'desfazer',
-                    data: new Date().toISOString(),
-                    saldoGasto: saldoGasto,
-                    mumuGanho: mumuGanho
-                };
-
-                historicoAtual.unshift(novoRegistro);
-                if (historicoAtual.length > MAX_HISTORICO) {
-                    historicoAtual = historicoAtual.slice(0, MAX_HISTORICO);
-                }
 
                 const respPatch = await fetch(
                     `${SUPABASE_URL}/Geral?login=eq.${encodeURIComponent(usuarioAtual.login)}`,
@@ -961,7 +678,6 @@
                         body: JSON.stringify({
                             mumu: novoMumu,
                             saldo: novoSaldo,
-                            historico_trocas: historicoAtual,
                             updated_at: new Date().toISOString()
                         })
                     }
@@ -973,11 +689,9 @@
                 saldoReaisAtual = novoSaldo;
                 usuarioAtual.mumu = novoMumu;
                 usuarioAtual.saldo = novoSaldo;
-                historicoTrocas = historicoAtual;
                 localStorage.setItem('usuario_logado', JSON.stringify(usuarioAtual));
 
                 exibirSaldos(novoMumu, novoSaldo);
-                renderizarHistorico();
                 atualizarBotoesPacotes();
                 mostrarMensagemTroca(
                     `✅ Troca desfeita! R$ ${formatarMoeda(saldoGasto)} Saldo → ${formatarMoeda(mumuGanho)} Mumu`,
@@ -1018,8 +732,6 @@
                     );
                 });
             });
-
-            document.getElementById('btnLimparHistorico').addEventListener('click', limparHistorico);
         });
 
         if (!carregarUsuarioLogado()) {
@@ -1039,7 +751,7 @@
             }
         }, 30000);
 
-        console.log('🔄 Sistema de saldo Mumu + Saldo R$ + trocas + histórico iniciado');
+        console.log('🔄 Sistema de saldo Mumu + Saldo R$ + trocas iniciado');
     </script>
 </body>
 </html>

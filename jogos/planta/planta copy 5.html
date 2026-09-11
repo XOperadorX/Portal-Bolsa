@@ -688,7 +688,7 @@
                 INITIAL_STOCK: 0,
                 CLEAR_COST: 5.00,
                 AUTO_SAVE_INTERVAL: 30000,
-                SYNC_INTERVAL: 15000,
+                SYNC_INTERVAL: 5000,
                 EXP_PER_HARVEST: 15,
                 SEEDS_PER_HARVEST: 1,
                 INITIAL_HP: 100,
@@ -1047,7 +1047,7 @@
                 } else if (j.seeds <= 0 && empty > 0) {
                     msg = '😅 <span class="highlight">Sem sementes!</span> Colha milho para conseguir mais.';
                 } else if (mature > 0) {
-                    msg = `🌽 <span class="highlight">${mature}</span> maduro(s)! Colher dá <span class="exp-highlight">✨ EXP</span>`;
+                    msg = `🌽 <span class="highlight">${mature}</span> maduro(s)! Colher dá <span class="exp-highlight">✨ EXP</span> e 🌰 semente.`;
                 } else if (growing) {
                     msg = j.buckets > 0 ?
                         '💧 <span class="highlight">Regue tudo</span> para acelerar o crescimento' :
@@ -1113,7 +1113,6 @@
                 p.stage = STAGES.SEED;
                 p.progress = 0;
                 j.planted++;
-                console.log(`🌱 Plantou! Seeds: ${j.seeds}`);
                 showToast(`🌱 Plantou na parcela ${id + 1}!`, 1400);
                 renderMilharal();
                 salvarDadosCompletos();
@@ -1147,7 +1146,6 @@
                     }
                 }
 
-                console.log(`🌱 Plantou ${planted}! Seeds: ${j.seeds}`);
                 showToast(`🌱 Plantou ${planted} canteiro(s)!`, 2000);
                 renderMilharal();
                 salvarDadosCompletos();
@@ -1201,17 +1199,13 @@
                 const j = getJogo();
                 const p = j.plots[id];
                 if (!p || p.stage !== STAGES.MATURE) { showToast('🌽 Só colhe maduro!', 1200); return false; }
-                
                 p.stage = STAGES.HARVESTED;
                 p.progress = 0;
                 j.harvested++;
                 j.stock++;
                 j.seeds += CONFIG.SEEDS_PER_HARVEST;
-                
-                console.log(`🌽 Colheu 1! Seeds agora: ${j.seeds}, Stock: ${j.stock}`);
-                
                 levelSystem.adicionarExp(CONFIG.EXP_PER_HARVEST);
-                showToast(`🌽 Colheu 1 milho! ✨ +${CONFIG.EXP_PER_HARVEST} EXP`, 2200);
+                showToast(`🌽 Colheu 1 milho! ✨ +${CONFIG.EXP_PER_HARVEST} EXP  🌰 +${CONFIG.SEEDS_PER_HARVEST} semente`, 2200);
                 renderMilharal();
                 salvarDadosCompletos();
                 return true;
@@ -1222,7 +1216,6 @@
                 const maturePlots = j.plots.filter(p => p.stage === STAGES.MATURE);
                 const count = maturePlots.length;
                 if (count === 0) { showToast('🌽 Nenhum milho maduro para colher.', 1400); return 0; }
-                
                 for (const p of maturePlots) {
                     p.stage = STAGES.HARVESTED;
                     p.progress = 0;
@@ -1230,13 +1223,11 @@
                 j.harvested += count;
                 j.stock += count;
                 j.seeds += count * CONFIG.SEEDS_PER_HARVEST;
-                
-                console.log(`🌽 Colheu ${count}! Seeds agora: ${j.seeds}, Stock: ${j.stock}`);
-                
+
                 const expGanho = count * CONFIG.EXP_PER_HARVEST;
                 levelSystem.adicionarExp(expGanho);
 
-                showToast(`🌽 Colheu ${count} milho(s)! ✨ +${expGanho} EXP`, 2600);
+                showToast(`🌽 Colheu ${count} milho(s)! ✨ +${expGanho} EXP  🌰 +${count * CONFIG.SEEDS_PER_HARVEST} sementes`, 2600);
                 renderMilharal();
                 salvarDadosCompletos();
                 return count;
@@ -1430,13 +1421,6 @@
 
             async function carregarDadosCompletos() {
                 if (!state.usuario || !state.online || state.carregando) return;
-                
-                // ⚠️ NÃO CARREGAR SE ESTIVER SALVANDO
-                if (state.salvando) {
-                    console.log('⏸️ Carregamento adiado - salvando em andamento...');
-                    return;
-                }
-                
                 state.carregando = true;
                 try {
                     const response = await fetch(
@@ -1455,15 +1439,8 @@
                         return;
                     }
 
-                    // ⚠️ Verifica novamente se começou a salvar durante o fetch
-                    if (state.salvando) {
-                        console.log('⏸️ Carregamento cancelado - save começou durante o fetch');
-                        return;
-                    }
-
                     state.dadosDB = data[0];
                     carregarDadosDoDB(data[0]);
-                    console.log(`📥 Dados carregados. Seeds: ${getJogo().seeds}, Stock: ${getJogo().stock}`);
                     renderMilharal();
                     levelSystem.atualizarUI();
                 } catch (error) {
@@ -1478,8 +1455,6 @@
                 state.salvando = true;
                 try {
                     const payload = prepararDadosParaSalvar();
-                    console.log(`💾 Salvando... Seeds: ${payload.seeds}, Stock: ${payload.stock}, Harvested: ${payload.harvested}`);
-                    
                     const response = await fetch(
                         `${CONFIG.SUPABASE_URL}/rest/v1/${CONFIG.TABELA}?login=eq.${encodeURIComponent(state.usuario.login)}`, {
                             method: 'PATCH',
@@ -1497,8 +1472,8 @@
                     const updated = await response.json();
                     if (Array.isArray(updated) && updated.length > 0) {
                         state.dadosDB = updated[0];
-                        console.log(`✅ Salvo! Seeds no banco: ${updated[0].seeds}, Stock: ${updated[0].stock}`);
                     }
+                    console.log('💾 Dados salvos e sincronizados!');
                 } catch (error) {
                     console.error('Erro ao salvar:', error);
                 } finally {
