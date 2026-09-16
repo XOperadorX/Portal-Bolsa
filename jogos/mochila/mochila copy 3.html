@@ -325,78 +325,6 @@
         .lw-stats .def-c { color: #5dade2; font-weight: 600; }
         .lw-stats .mag-c { color: #9b59b6; font-weight: 600; }
 
-        /* NOVOS WIDGETS DE RECURSOS */
-        .recursos-grid {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 10px;
-            margin-bottom: 18px;
-        }
-        .recurso-card {
-            background: #0f141e;
-            border-radius: 14px;
-            padding: 12px 14px;
-            border: 1px solid #2a3344;
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
-        .recurso-card .rc-emoji {
-            font-size: 26px;
-            line-height: 1;
-        }
-        .recurso-card .rc-info {
-            display: flex;
-            flex-direction: column;
-            gap: 2px;
-        }
-        .recurso-card .rc-label {
-            font-size: 10px;
-            color: #5a6478;
-            letter-spacing: 0.5px;
-            text-transform: uppercase;
-        }
-        .recurso-card .rc-valor {
-            font-size: 16px;
-            font-weight: 700;
-            color: #f0e8d0;
-        }
-        .recurso-card .rc-valor.btc { color: #f7931a; }
-        .recurso-card .rc-valor.mumu { color: #e74c3c; }
-        .recurso-card .rc-valor.hash { color: #9b59b6; }
-        .recurso-card .rc-valor.saldo { color: #f0c040; }
-
-        .cadeado-box {
-            background: #0f141e;
-            border-radius: 14px;
-            padding: 12px 18px;
-            border: 1px solid #2a3344;
-            margin-bottom: 18px;
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-        }
-        .cadeado-box .cd-label {
-            font-size: 14px;
-            color: #b0baca;
-        }
-        .cadeado-box .cd-status {
-            font-size: 16px;
-            font-weight: 700;
-            padding: 4px 14px;
-            border-radius: 20px;
-        }
-        .cadeado-box .cd-status.aberto {
-            color: #2ecc71;
-            background: rgba(46, 204, 113, 0.1);
-            border: 1px solid rgba(46, 204, 113, 0.3);
-        }
-        .cadeado-box .cd-status.fechado {
-            color: #e74c3c;
-            background: rgba(231, 76, 60, 0.1);
-            border: 1px solid rgba(231, 76, 60, 0.3);
-        }
-
         @media (max-width: 420px) {
             #app { padding: 14px 12px 20px; }
             h1 { font-size: 22px; }
@@ -404,7 +332,6 @@
             .item .info .emoji { font-size: 22px; }
             .item .info .nome { font-size: 14px; }
             .lw-badge .lw-num { width: 36px; height: 36px; font-size: 22px; }
-            .recursos-grid { grid-template-columns: 1fr; }
         }
         @media (max-width: 360px) {
             .item { flex-wrap: wrap; gap: 6px; }
@@ -425,60 +352,12 @@
         <a href="../../dashboard.html" class="btn-voltar">🏠 Voltar</a>
     </div>
 
-    <!-- SALDO PRINCIPAL -->
     <div class="saldo-box">
         <span><span class="moeda">💰</span> Saldo</span>
         <span class="valor" id="saldo-display">0,00</span>
     </div>
 
-    <!-- NOVOS RECURSOS -->
-    <div class="recursos-grid">
-        <div class="recurso-card">
-            <span class="rc-emoji">₿</span>
-            <div class="rc-info">
-                <span class="rc-label">Bitcoin</span>
-                <span class="rc-valor btc" id="btc-display">0.00000000</span>
-            </div>
-        </div>
-        <div class="recurso-card">
-            <span class="rc-emoji">🐄</span>
-            <div class="rc-info">
-                <span class="rc-label">Mumu</span>
-                <span class="rc-valor mumu" id="mumu-display">0,00</span>
-            </div>
-        </div>
-        <div class="recurso-card">
-            <span class="rc-emoji">⚡</span>
-            <div class="rc-info">
-                <span class="rc-label">Poder Hash</span>
-                <span class="rc-valor hash" id="hash-display">1.0</span>
-            </div>
-        </div>
-        <div class="recurso-card">
-            <span class="rc-emoji">🏦</span>
-            <div class="rc-info">
-                <span class="rc-label">Poupança</span>
-                <span class="rc-valor saldo" id="poupanca-display">0,00</span>
-            </div>
-        </div>
-    </div>
-
-    <!-- PROVENTOS PENDENTES -->
-    <div class="recurso-card" style="margin-bottom: 18px;">
-        <span class="rc-emoji">📊</span>
-        <div class="rc-info">
-            <span class="rc-label">Proventos Pendentes</span>
-            <span class="rc-valor saldo" id="proventos-display">0,00</span>
-        </div>
-    </div>
-
-    <!-- CADEADO -->
-    <div class="cadeado-box">
-        <span class="cd-label">🔒 Status da Conta</span>
-        <span class="cd-status aberto" id="cadeado-status">Aberto</span>
-    </div>
-
-    <!-- SISTEMA DE NÍVEL -->
+    <!-- SISTEMA DE NÍVEL - WIDGET -->
     <div class="level-widget" id="levelWidget">
         <div class="lw-header">
             <div class="lw-badge">
@@ -529,7 +408,8 @@
         const SUPABASE_KEY = 'sb_publishable_E-g3G3wW4EySbCsXLXp8KQ_FnmERMcD';
         const TABELA = 'Geral';
 
-        const POLL_INTERVAL = 5000;
+        // Intervalo de atualização automática (em ms)
+        const POLL_INTERVAL = 5000; // 5 segundos
 
         // ============================================================
         // REFERÊNCIAS DOS ELEMENTOS
@@ -540,13 +420,6 @@
         const loadingIndicator = document.getElementById('loading-indicator');
         const usuarioNome = document.getElementById('usuarioNome');
 
-        const btcDisplay = document.getElementById('btc-display');
-        const mumuDisplay = document.getElementById('mumu-display');
-        const hashDisplay = document.getElementById('hash-display');
-        const poupancaDisplay = document.getElementById('poupanca-display');
-        const proventosDisplay = document.getElementById('proventos-display');
-        const cadeadoStatus = document.getElementById('cadeado-status');
-
         // ============================================================
         // ESTADO
         // ============================================================
@@ -554,7 +427,7 @@
             usuarioLogado: null,
             dadosUsuario: null,
             isLoading: false,
-            supabaseOnline: true,
+            supabaseOnline: false,
             pollTimer: null
         };
 
@@ -600,7 +473,7 @@
         }
 
         // ============================================================
-        // EMOJIS E VALORES (apenas exibição)
+        // EMOJIS E VALORES (apenas exibição — não alteram dados)
         // ============================================================
         function getEmoji(nome) {
             const mapa = {
@@ -621,6 +494,7 @@
         }
 
         function getValorItem(nome) {
+            // Valores apenas para exibição (não são usados para venda)
             const valores = {
                 'Madeira': 10,
                 'Pedra': 15,
@@ -644,7 +518,7 @@
         }
 
         // ============================================================
-        // EXTRAIR ITENS — SEM fazendinha_dados
+        // EXTRAIR ITENS — SOMENTE DO BANCO DE DADOS
         // ============================================================
         function extrairTodosItens(dadosUsuario) {
             const todosItens = {};
@@ -659,12 +533,32 @@
                 });
             }
 
+            // ---------- FAZENDINHA (jsonb) ----------
+            if (dadosUsuario.fazendinha_dados && typeof dadosUsuario.fazendinha_dados === 'object') {
+                const fd = dadosUsuario.fazendinha_dados;
+                if (fd.inventario && typeof fd.inventario === 'object') {
+                    const map = {
+                        'sementes': 'Sementes',
+                        'milho': 'Milho',
+                        'ovos': 'Ovos',
+                        'pintinhos': 'Pintinhos',
+                        'galinhas': 'Galinhas'
+                    };
+                    Object.keys(map).forEach(key => {
+                        const qtd = Number(fd.inventario[key]) || 0;
+                        if (qtd > 0) {
+                            todosItens[map[key]] = (todosItens[map[key]] || 0) + qtd;
+                        }
+                    });
+                }
+            }
+
             // ---------- COLUNAS DIRETAS DO BANCO ----------
-            const seeds     = Number(dadosUsuario.seeds)     || 0;
-            const stock     = Number(dadosUsuario.stock)     || 0;
-            const buckets   = Number(dadosUsuario.buckets)   || 0;
-            const planted   = Number(dadosUsuario.planted)   || 0;
-            const harvested = Number(dadosUsuario.harvested) || 0;
+            const seeds     = Number(dadosUsuario.seeds)     || 0;   // 🌰 sementes
+            const stock     = Number(dadosUsuario.stock)     || 0;   // 🌽 milho colhido
+            const buckets   = Number(dadosUsuario.buckets)   || 0;   // 🪣 baldes
+            const planted   = Number(dadosUsuario.planted)   || 0;   // 🌱 plantado (contador)
+            const harvested = Number(dadosUsuario.harvested) || 0;   // 🌾 colheitas totais
 
             if (seeds > 0)     todosItens['Sementes'] = (todosItens['Sementes'] || 0) + seeds;
             if (stock > 0)     todosItens['Milho']    = (todosItens['Milho']    || 0) + stock;
@@ -720,28 +614,6 @@
             saldoDisplay.textContent = saldo.toFixed(2);
             itensCount.textContent = `${itens.length} itens`;
 
-            // ---- RECURSOS ----
-            const btc = parseFloat(state.dadosUsuario.btc) || 0;
-            const mumu = parseFloat(state.dadosUsuario.mumu) || 0;
-            const poderHash = parseFloat(state.dadosUsuario.poder_hash) || 1.0;
-            const poupanca = parseFloat(state.dadosUsuario.saldo_poupanca) || 0;
-            const proventos = parseFloat(state.dadosUsuario.proventos_pendentes) || 0;
-            const cadeado = state.dadosUsuario.cadeado === true;
-
-            btcDisplay.textContent = btc.toFixed(8);
-            mumuDisplay.textContent = mumu.toFixed(2);
-            hashDisplay.textContent = poderHash.toFixed(2);
-            poupancaDisplay.textContent = poupanca.toFixed(2);
-            proventosDisplay.textContent = proventos.toFixed(2);
-
-            if (cadeado) {
-                cadeadoStatus.textContent = '🔒 Fechado';
-                cadeadoStatus.className = 'cd-status fechado';
-            } else {
-                cadeadoStatus.textContent = '🔓 Aberto';
-                cadeadoStatus.className = 'cd-status aberto';
-            }
-
             if (itens.length === 0) {
                 listaItens.innerHTML = `<div class="vazio">👜 Mochila vazia<br><small>Vá à fazenda para ganhar itens!</small></div>`;
                 return;
@@ -761,19 +633,22 @@
         }
 
         // ============================================================
-        // ATUALIZAR WIDGET DE NÍVEL
+        // ATUALIZAR WIDGET DE NÍVEL — SOMENTE COM DADOS DO BANCO
         // ============================================================
         function atualizarLevelWidget(dados) {
             if (!dados) return;
 
+            // ---- Nível e EXP (colunas reais) ----
             const nivel       = Number(dados.nivel)       || 0;
             const experiencia = Number(dados.experiencia) || 0;
             const expProx     = Number(dados.exp_proximo) || Number(dados.exp_next) || 100;
 
+            // ---- Stats base (colunas reais) ----
             const atkBase = Number(dados.ataque_base) || Number(dados.atk) || 0;
             const defBase = Number(dados.defesa_base) || Number(dados.def) || 0;
             const magBase = Number(dados.magia_base)  || Number(dados.mag) || 0;
 
+            // ---- HP / MP / SM (colunas reais, com fallback) ----
             const maxHp = Number(dados.hp_max) || Number(dados.max_hp) || 100;
             const maxMp = Number(dados.mp_max) || Number(dados.max_mp) || 50;
             const maxSm = Number(dados.sm_max) || Number(dados.max_sm) || 100;
@@ -782,6 +657,7 @@
             const mp = Number(dados.mp_atual) || Number(dados.mp) || maxMp;
             const sm = Number(dados.sm_atual) || Number(dados.sm) || maxSm;
 
+            // ---- Barra de EXP ----
             const pct = expProx > 0 ? Math.min((experiencia / expProx) * 100, 100) : 0;
 
             document.getElementById('lwNivel').textContent = nivel;
@@ -790,6 +666,7 @@
             document.getElementById('lwExpAtual').textContent = experiencia;
             document.getElementById('lwExpProx').textContent = expProx;
 
+            // ---- Stats ----
             document.getElementById('lwHp').textContent = `${hp}/${maxHp}`;
             document.getElementById('lwMp').textContent = `${mp}/${maxMp}`;
             document.getElementById('lwSm').textContent = `${sm}/${maxSm}`;
@@ -888,6 +765,7 @@
 
             await carregarDados();
 
+            // ---- POLLING: atualiza automaticamente a cada X segundos ----
             if (state.pollTimer) clearInterval(state.pollTimer);
             state.pollTimer = setInterval(() => {
                 if (!document.hidden) {

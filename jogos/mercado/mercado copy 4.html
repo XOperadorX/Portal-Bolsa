@@ -356,92 +356,6 @@
         .message .highlight { color: var(--neon-green); font-weight: 700; }
         .message .gold-highlight { color: var(--gold); font-weight: 700; }
 
-        /* ===== HISTÓRICO ===== */
-        .history-section {
-            margin-top: 1.2rem;
-            border-top: 1px solid rgba(0, 240, 255, 0.1);
-            padding-top: 1rem;
-        }
-        .history-title {
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            font-family: 'Orbitron', sans-serif;
-            font-size: 0.9rem;
-            font-weight: 700;
-            color: #fff;
-            margin-bottom: 0.6rem;
-        }
-        .history-title i { color: var(--neon-blue); }
-
-        .history-list {
-            max-height: 200px;
-            overflow-y: auto;
-            display: flex;
-            flex-direction: column;
-            gap: 6px;
-            padding-right: 4px;
-        }
-        .history-list::-webkit-scrollbar { width: 4px; }
-        .history-list::-webkit-scrollbar-track { background: rgba(0,0,0,0.2); border-radius: 4px; }
-        .history-list::-webkit-scrollbar-thumb { background: var(--neon-purple); border-radius: 4px; }
-
-        .history-item {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            gap: 8px;
-            background: rgba(0, 0, 0, 0.25);
-            border: 1px solid rgba(0, 240, 255, 0.06);
-            border-radius: 10px;
-            padding: 6px 10px;
-            font-size: 0.68rem;
-            transition: all 0.2s;
-        }
-        .history-item:hover {
-            background: rgba(0, 240, 255, 0.05);
-            border-color: rgba(0, 240, 255, 0.15);
-        }
-        .history-item .h-left {
-            display: flex;
-            align-items: center;
-            gap: 6px;
-            min-width: 0;
-            flex: 1;
-        }
-        .history-item .h-icon { font-size: 1rem; flex-shrink: 0; }
-        .history-item .h-info { display: flex; flex-direction: column; min-width: 0; }
-        .history-item .h-name {
-            font-weight: 700;
-            color: #fff;
-            white-space: nowrap;
-            overflow: hidden;
-            text-overflow: ellipsis;
-        }
-        .history-item .h-date {
-            font-size: 0.58rem;
-            color: var(--text-muted);
-        }
-        .history-item .h-value {
-            font-weight: 700;
-            color: #ef4444;
-            white-space: nowrap;
-            flex-shrink: 0;
-        }
-        .history-item .h-value.sale { color: var(--neon-green); }
-        .history-item .h-qty {
-            font-size: 0.58rem;
-            color: var(--text-muted);
-            margin-left: 2px;
-        }
-        .history-empty {
-            text-align: center;
-            color: var(--text-muted);
-            font-size: 0.7rem;
-            padding: 0.8rem;
-            font-style: italic;
-        }
-
         @media (max-width: 520px) {
             .card { padding: 0.8rem 0.6rem; }
             .nav-bar {
@@ -459,7 +373,6 @@
             .market-item .item-name { font-size: 0.65rem; }
             .market-item .item-desc { font-size: 0.55rem; }
             .market-item .btn-buy { font-size: 0.6rem; padding: 0.25rem 0.4rem; }
-            .history-item { font-size: 0.6rem; padding: 5px 8px; }
         }
     </style>
 </head>
@@ -511,17 +424,6 @@
             Compre <span class="highlight">sementes</span> e <span class="highlight">baldes</span> para cuidar do seu milharal!
         </div>
 
-        <!-- ===== HISTÓRICO DE COMPRAS ===== -->
-        <div class="history-section">
-            <div class="history-title">
-                <i class="fas fa-history"></i>
-                Histórico de Compras
-            </div>
-            <div class="history-list" id="historyList">
-                <div class="history-empty">Nenhuma compra registrada ainda.</div>
-            </div>
-        </div>
-
     </div>
 
     <script>
@@ -537,7 +439,6 @@
                 TABELA: 'Geral',
                 AUTO_SAVE_INTERVAL: 30000,
                 SYNC_INTERVAL: 15000,
-                MAX_HISTORICO: 50, // máximo de registros exibidos
             };
 
             // ============================================================
@@ -623,7 +524,6 @@
                     harvested: 0,
                     nivel: 1,
                     experiencia: 0,
-                    historico: [], // <-- HISTÓRICO
                 }
             };
 
@@ -642,7 +542,6 @@
                 DOM.userName = document.getElementById('userName');
                 DOM.userBalance = document.getElementById('userBalanceDisplay');
                 DOM.saldoDisplayValue = document.getElementById('saldoDisplayValue');
-                DOM.historyList = document.getElementById('historyList');
 
                 DOM.supabaseDot = document.getElementById('supabaseDot');
                 DOM.supabaseStatus = document.getElementById('supabaseStatus');
@@ -654,23 +553,6 @@
             // ============================================================
             function formatSaldo(valor) {
                 return Number(valor || 0).toFixed(2).replace('.', ',');
-            }
-
-            function formatarDataHora(isoString) {
-                if (!isoString) return '—';
-                try {
-                    const d = new Date(isoString);
-                    if (isNaN(d.getTime())) return '—';
-                    const dia = String(d.getDate()).padStart(2, '0');
-                    const mes = String(d.getMonth() + 1).padStart(2, '0');
-                    const ano = d.getFullYear();
-                    const hora = String(d.getHours()).padStart(2, '0');
-                    const min = String(d.getMinutes()).padStart(2, '0');
-                    const seg = String(d.getSeconds()).padStart(2, '0');
-                    return `${dia}/${mes}/${ano} ${hora}:${min}:${seg}`;
-                } catch (e) {
-                    return '—';
-                }
             }
 
             function showToast(text, duration = 2200) {
@@ -717,55 +599,6 @@
                 if (DOM.headerSaldo) DOM.headerSaldo.textContent = formatSaldo(total);
                 if (DOM.userBalance) DOM.userBalance.textContent = `💰 R$ ${formatSaldo(total)}`;
                 if (DOM.saldoDisplayValue) DOM.saldoDisplayValue.textContent = `R$ ${formatSaldo(total)}`;
-            }
-
-            // ============================================================
-            // HISTÓRICO
-            // ============================================================
-            function adicionarAoHistorico(registro) {
-                const j = getJogo();
-                if (!Array.isArray(j.historico)) j.historico = [];
-                j.historico.unshift(registro); // mais recente primeiro
-                // Limitar tamanho para não estourar o jsonb
-                if (j.historico.length > CONFIG.MAX_HISTORICO) {
-                    j.historico = j.historico.slice(0, CONFIG.MAX_HISTORICO);
-                }
-                renderHistorico();
-            }
-
-            function renderHistorico() {
-                const j = getJogo();
-                const lista = Array.isArray(j.historico) ? j.historico : [];
-
-                if (lista.length === 0) {
-                    DOM.historyList.innerHTML = '<div class="history-empty">Nenhuma compra registrada ainda.</div>';
-                    return;
-                }
-
-                let html = '';
-                for (const h of lista) {
-                    const isVenda = h.tipo === 'venda';
-                    const sinal = isVenda ? '+' : '-';
-                    const valorClass = isVenda ? 'sale' : '';
-                    const qtd = h.quantidade ? `x${h.quantidade}` : '';
-                    const valor = formatSaldo(h.valor || 0);
-                    const data = formatarDataHora(h.data);
-                    const icone = h.icon || (isVenda ? '💰' : '🛒');
-
-                    html += `
-                        <div class="history-item">
-                            <div class="h-left">
-                                <span class="h-icon">${icone}</span>
-                                <div class="h-info">
-                                    <span class="h-name">${h.item || 'Item'} <span class="h-qty">${qtd}</span></span>
-                                    <span class="h-date">${data}</span>
-                                </div>
-                            </div>
-                            <span class="h-value ${valorClass}">${sinal} R$ ${valor}</span>
-                        </div>
-                    `;
-                }
-                DOM.historyList.innerHTML = html;
             }
 
             // ============================================================
@@ -838,17 +671,6 @@
                     j.buckets = (j.buckets || 0) + item.amount;
                     showToast(`🪣 +${item.amount} balde(s) comprado(s)! (-R$ ${formatSaldo(item.price)})`, 2200);
                 }
-
-                // ===== REGISTRAR NO HISTÓRICO =====
-                adicionarAoHistorico({
-                    tipo: 'compra',
-                    item: item.name,
-                    icon: item.icon,
-                    quantidade: item.amount,
-                    valor: item.price,
-                    data: new Date().toISOString(),
-                    saldo_apos: j.saldo,
-                });
 
                 renderMarket();
                 salvarDadosCompletos();
@@ -933,16 +755,8 @@
                     j.nivel     = db.nivel     ?? 1;
                     j.experiencia = db.experiencia ?? 0;
 
-                    // ===== CARREGAR HISTÓRICO DO BANCO =====
-                    let hist = db.historico;
-                    if (typeof hist === 'string') {
-                        try { hist = JSON.parse(hist); } catch (e) { hist = []; }
-                    }
-                    j.historico = Array.isArray(hist) ? hist : [];
-
-                    console.log(`📥 Dados carregados. Saldo: ${j.saldo}, Seeds: ${j.seeds}, Buckets: ${j.buckets}, Histórico: ${j.historico.length}`);
+                    console.log(`📥 Dados carregados. Saldo: ${j.saldo}, Seeds: ${j.seeds}, Buckets: ${j.buckets}`);
                     renderMarket();
-                    renderHistorico();
                 } catch (error) {
                     console.error('Erro ao carregar:', error);
                 } finally {
@@ -964,11 +778,10 @@
                         harvested: j.harvested || 0,
                         nivel: j.nivel || 1,
                         experiencia: j.experiencia || 0,
-                        historico: j.historico || [], // <-- SALVAR HISTÓRICO
                         updated_at: new Date().toISOString(),
                     };
 
-                    console.log(`💾 Salvando... Saldo: ${payload.saldo}, Seeds: ${payload.seeds}, Buckets: ${payload.buckets}, Histórico: ${payload.historico.length}`);
+                    console.log(`💾 Salvando... Saldo: ${payload.saldo}, Seeds: ${payload.seeds}, Buckets: ${payload.buckets}`);
 
                     const response = await fetch(
                         `${CONFIG.SUPABASE_URL}/rest/v1/${CONFIG.TABELA}?login=eq.${encodeURIComponent(state.usuario.login)}`, {
@@ -1041,7 +854,6 @@
                     if (ok) {
                         await carregarDadosCompletos();
                         renderMarket();
-                        renderHistorico();
                         showToast('✅ Reconectado!', 1500);
                     } else {
                         showToast('❌ Falha na reconexão.', 2000);
@@ -1075,7 +887,6 @@
                 }
 
                 renderMarket();
-                renderHistorico();
 
                 // Sincronização periódica
                 state.syncTimer = setInterval(() => {
@@ -1091,7 +902,6 @@
                         if (ok) {
                             await carregarDadosCompletos();
                             renderMarket();
-                            renderHistorico();
                         }
                     }
                 }, 30000);

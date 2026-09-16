@@ -341,6 +341,31 @@ body {
     margin-left: auto;
 }
 
+/* ============ BOTÃO DELETAR (CARD DETALHES) ============ */
+.btn-delete {
+    background: linear-gradient(135deg, #7c3aed, #6d28d9);
+    color: white;
+    border: none;
+    padding: 12px 24px;
+    border-radius: 12px;
+    font-weight: 700;
+    font-size: 1rem;
+    cursor: pointer;
+    transition: all 0.3s;
+    letter-spacing: 0.5px;
+    box-shadow: 0 0 15px rgba(124, 58, 237, 0.3);
+}
+
+.btn-delete:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 25px rgba(124, 58, 237, 0.5);
+    background: linear-gradient(135deg, #6d28d9, #5b21b6);
+}
+
+.btn-delete:active {
+    transform: scale(0.96);
+}
+
 /* Mensagens */
 .mensagem {
     padding: 12px 16px;
@@ -528,6 +553,7 @@ tr:hover td {
     gap: 6px;
     justify-content: center;
     flex-wrap: wrap;
+    align-items: center;
 }
 
 .acao-botoes button {
@@ -565,6 +591,20 @@ tr:hover td {
 
 .acao-botoes .set:hover {
     background: #2563eb;
+}
+
+/* ============ BOTÃO DELETAR (TABELA) ============ */
+.acao-botoes .delete {
+    background: #7c3aed;
+    color: white;
+    padding: 4px 8px;
+    font-size: 0.8rem;
+}
+
+.acao-botoes .delete:hover {
+    background: #6d28d9;
+    box-shadow: 0 0 10px rgba(124, 58, 237, 0.6);
+    transform: scale(1.1);
 }
 
 .quantidade-input {
@@ -727,4 +767,100 @@ tr:hover td {
     table {
         min-width: 500px;
     }
+}
+
+
+/* ===== CÓDIGOS DE RESGATE ===== */
+.codigos-card {
+    border-left: 6px solid var(--neon-green);
+}
+
+.codigos-card h2 {
+    border-left-color: var(--neon-green);
+}
+
+.codigo-badge {
+    display: inline-block;
+    background: linear-gradient(135deg, #7000ff, #00f0ff);
+    color: #fff;
+    font-family: 'Orbitron', monospace;
+    font-weight: 700;
+    padding: 4px 12px;
+    border-radius: 6px;
+    letter-spacing: 1px;
+    font-size: 0.85rem;
+}
+
+.codigo-status {
+    display: inline-block;
+    padding: 3px 10px;
+    border-radius: 20px;
+    font-size: 0.7rem;
+    font-weight: 700;
+}
+
+.codigo-status.ativo {
+    background: #10b981;
+    color: #fff;
+}
+
+.codigo-status.inativo {
+    background: #ef4444;
+    color: #fff;
+}
+
+.codigo-status.esgotado {
+    background: #f59e0b;
+    color: #fff;
+}
+
+.acao-botoes .toggle {
+    background: #3b82f6;
+    color: white;
+}
+
+.acao-botoes .toggle:hover {
+    background: #2563eb;
+}
+
+/* ===== CÓDIGOS DE RESGATE ===== */
+.codigos-card {
+    border-left: 6px solid var(--neon-green);
+}
+
+.codigos-card h2 {
+    border-left-color: var(--neon-green);
+}
+
+.codigo-badge {
+    display: inline-block;
+    background: linear-gradient(135deg, #7000ff, #00f0ff);
+    color: #fff;
+    font-family: 'Orbitron', monospace;
+    font-weight: 700;
+    padding: 4px 12px;
+    border-radius: 6px;
+    letter-spacing: 1px;
+    font-size: 0.85rem;
+}
+
+.codigo-status {
+    display: inline-block;
+    padding: 3px 10px;
+    border-radius: 20px;
+    font-size: 0.7rem;
+    font-weight: 700;
+}
+
+.codigo-status.ativo { background: #10b981; color: #fff; }
+.codigo-status.inativo { background: #ef4444; color: #fff; }
+.codigo-status.esgotado { background: #f59e0b; color: #fff; }
+
+.acao-botoes .toggle {
+    background: #3b82f6;
+    color: white;
+}
+
+.acao-botoes .toggle:hover {
+    background: #2563eb;
 }

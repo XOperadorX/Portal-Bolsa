@@ -28,7 +28,7 @@ export const CONFIG = {
         stock: 0,
         btc: 0,
         poder_hash: 1.0,
-        mumu: 500,
+        mumu: 0,
         selic: 10.75,
         carteira: {},
         itens: [],

@@ -1,4 +1,5 @@
 import { createClient } from '@supabase/supabase-js';
+import { salvarSessao, sessaoValida } from './session.js';
 
 // ==================== CONFIGURAÇÕES ====================
 const SUPABASE_URL = 'https://xrcxvizzdumcxbylmkvn.supabase.co';
@@ -35,17 +36,17 @@ function ocultarMensagens() {
 
 async function verificarSupabase() {
     try {
-        const { data, error } = await supabase
+        const { error } = await supabase
             .from(TABELA)
             .select('id')
             .limit(1);
-        
+
         if (error) {
             statusSupabase.textContent = '⚠️ Erro ao conectar ao Supabase';
             statusSupabase.className = 'status-supabase offline';
             return false;
         }
-        
+
         statusSupabase.textContent = '✅ Conectado ao Supabase';
         statusSupabase.className = 'status-supabase online';
         return true;
@@ -58,7 +59,6 @@ async function verificarSupabase() {
 
 async function fazerLogin(login, senha) {
     try {
-        // Buscar usuário pelo login
         const { data, error } = await supabase
             .from(TABELA)
             .select('id, login, senha, nome, saldo, saldo_poupanca, carteira')
@@ -78,24 +78,23 @@ async function fazerLogin(login, senha) {
             return false;
         }
 
-        // Verificar senha
         if (data.senha !== senha) {
             mostrarErro('❌ Senha incorreta!');
             return false;
         }
 
-        // Login bem-sucedido - salvar dados do usuário
-        localStorage.setItem('usuario_logado', JSON.stringify({
+        // ✅ SALVA COM TIMESTAMP VIA session.js
+        salvarSessao({
             id: data.id,
             login: data.login,
             nome: data.nome || data.login,
             saldo: data.saldo || 0,
             saldo_poupanca: data.saldo_poupanca || 0,
             carteira: data.carteira || {}
-        }));
+        });
 
         mostrarSucesso('✅ Login realizado com sucesso! Redirecionando...');
-        
+
         setTimeout(() => {
             window.location.href = 'dashboard.html';
         }, 1500);
@@ -122,7 +121,6 @@ formLogin.addEventListener('submit', async (e) => {
         return;
     }
 
-    // Verificar Supabase
     const online = await verificarSupabase();
     if (!online) {
         mostrarErro('❌ Sem conexão com o banco de dados. Tente novamente mais tarde.');
@@ -141,17 +139,9 @@ formLogin.addEventListener('submit', async (e) => {
 // Verificar conexão ao carregar
 verificarSupabase();
 
-// Verificar se já está logado
-const usuarioLogado = localStorage.getItem('usuario_logado');
-if (usuarioLogado) {
-    try {
-        const user = JSON.parse(usuarioLogado);
-        if (user && user.login) {
-            window.location.href = 'dashboard.html';
-        }
-    } catch (e) {
-        localStorage.removeItem('usuario_logado');
-    }
+// ✅ Se já está logado E sessão válida (< 24h), vai pro dashboard
+if (sessaoValida()) {
+    window.location.href = 'dashboard.html';
 }
 
 // Enter para submeter
@@ -160,7 +150,3 @@ document.addEventListener('keydown', (e) => {
         formLogin.dispatchEvent(new Event('submit'));
     }
 });
-
-
-// Depois de alterar o saldo ou inventário
-await salvarDadosDoJogador();

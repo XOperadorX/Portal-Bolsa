@@ -510,7 +510,6 @@
         .milharal-actions .btn-gold { background: linear-gradient(135deg, #f9a825, #ffd600); color: #000; }
         .milharal-actions .btn-success { background: linear-gradient(135deg, #10b981, #34d399); color: #fff; }
         .milharal-actions .btn-clear { background: linear-gradient(135deg, #e53935, #b71c1c); color: #fff; }
-        .milharal-actions .btn-shop { background: linear-gradient(135deg, #8b5cf6, #a78bfa); color: #fff; }
 
         .milharal-message {
             background: rgba(0, 0, 0, 0.3);
@@ -529,121 +528,6 @@
         }
         .milharal-message .highlight { color: var(--neon-green); font-weight: 700; }
         .milharal-message .exp-highlight { color: #8b5cf6; font-weight: 700; }
-
-        /* LOJA */
-        .shop-panel {
-            display: none;
-            background: rgba(0, 0, 0, 0.5);
-            border-radius: 12px;
-            padding: 0.8rem;
-            margin-bottom: 0.8rem;
-            border: 1px solid rgba(139, 92, 246, 0.3);
-            box-shadow: 0 0 30px rgba(139, 92, 246, 0.15);
-        }
-        .shop-panel.open { display: block; }
-        .shop-title {
-            font-family: 'Orbitron', sans-serif;
-            font-size: 0.9rem;
-            color: #a78bfa;
-            margin-bottom: 0.6rem;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-        .shop-title .close-shop {
-            background: none;
-            border: none;
-            color: #8a99ad;
-            cursor: pointer;
-            font-size: 1rem;
-            padding: 2px 8px;
-            border-radius: 6px;
-            transition: all 0.2s;
-        }
-        .shop-title .close-shop:hover { color: #fff; background: rgba(255,255,255,0.08); }
-        .shop-items {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
-            gap: 0.5rem;
-        }
-        .shop-item {
-            background: rgba(255, 255, 255, 0.04);
-            border: 1px solid rgba(139, 92, 246, 0.2);
-            border-radius: 10px;
-            padding: 0.6rem;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            gap: 0.3rem;
-            transition: all 0.25s;
-        }
-        .shop-item:hover {
-            background: rgba(139, 92, 246, 0.1);
-            border-color: #a78bfa;
-            transform: translateY(-2px);
-        }
-        .shop-item .shop-emoji { font-size: 1.6rem; }
-        .shop-item .shop-name {
-            font-size: 0.7rem;
-            font-weight: 700;
-            color: #fff;
-            text-align: center;
-        }
-        .shop-item .shop-price {
-            font-size: 0.7rem;
-            color: #ffd600;
-            font-weight: 700;
-        }
-        .shop-item .shop-stock {
-            font-size: 0.6rem;
-            color: #8a99ad;
-        }
-        .shop-item .shop-buttons {
-            display: flex;
-            gap: 0.25rem;
-            width: 100%;
-            margin-top: 0.2rem;
-        }
-        .shop-item .shop-buttons button {
-            flex: 1;
-            padding: 0.25rem 0.4rem;
-            font-size: 0.65rem;
-            font-weight: 700;
-            border: none;
-            border-radius: 20px;
-            cursor: pointer;
-            transition: all 0.2s;
-            color: #fff;
-            background: linear-gradient(135deg, #8b5cf6, #a78bfa);
-        }
-        .shop-item .shop-buttons button:hover:not(:disabled) { transform: scale(1.05); }
-        .shop-item .shop-buttons button:active:not(:disabled) { transform: scale(0.95); }
-        .shop-item .shop-buttons button:disabled { opacity: 0.4; cursor: not-allowed; }
-
-        /* Card de venda dentro da loja */
-        .shop-item.sell-corn {
-            border-color: rgba(0, 255, 102, 0.4);
-            background: rgba(0, 255, 102, 0.05);
-        }
-        .shop-item.sell-corn:hover {
-            background: rgba(0, 255, 102, 0.12);
-            border-color: #00ff66;
-        }
-        .shop-item.sell-corn .shop-price { color: #00ff66; }
-
-        /* Painel de preço dinâmico */
-        .dynamic-price-badge {
-            display: inline-flex;
-            align-items: center;
-            gap: 0.3rem;
-            background: rgba(0, 255, 102, 0.12);
-            border: 1px solid rgba(0, 255, 102, 0.4);
-            padding: 0.1rem 0.6rem;
-            border-radius: 30px;
-            font-size: 0.7rem;
-            font-weight: 700;
-            color: #00ff66;
-        }
 
         @media (max-width: 820px) {
             .stats-grid { grid-template-columns: repeat(3, 1fr); }
@@ -747,7 +631,6 @@
                         <span class="stat-item"><i class="fas fa-trowel"></i><span class="num" id="plantedCount">🌱 0</span></span>
                         <span class="stat-item"><i class="fas fa-corn"></i><span class="num" id="harvestCount">🌽 0</span></span>
                         <span class="stat-item"><i class="fas fa-water" style="color:var(--water-blue);"></i><span class="num" id="bucketCount">🪣 0</span></span>
-                        <span class="stat-item"><i class="fas fa-flask" style="color:#a78bfa;"></i><span class="num" id="fertCount">🌿 0</span></span>
                         <span class="stat-item"><i class="fas fa-star" style="color:#8b5cf6;"></i><span class="num" id="expDisplay">✨ 0</span></span>
                     </div>
                     <div style="display:flex;gap:0.3rem;flex-wrap:wrap;align-items:center;">
@@ -762,85 +645,13 @@
                     </div>
                 </div>
 
-                <!-- 💰 PREÇO DINÂMICO -->
-                <div style="margin-bottom:0.5rem; display:flex; gap:0.4rem; flex-wrap:wrap; align-items:center;">
-                    <span class="dynamic-price-badge">
-                        💰 Venda do milho: R$ <span id="dynamicPriceValue">9,00</span>
-                        <span style="color:#8a99ad; font-weight:600;">(nível <span id="dynamicPriceLevel">1</span> × <span id="dynamicPriceMult">0.50</span>)</span>
-                    </span>
-                </div>
-
-                <!-- 🏪 LOJA -->
-                <div class="shop-panel" id="shopPanel">
-                    <div class="shop-title">
-                        <span>🏪 Loja de Suprimentos</span>
-                        <button class="close-shop" id="btnCloseShop">✖</button>
-                    </div>
-                    <div class="shop-items">
-                        <div class="shop-item">
-                            <div class="shop-emoji">🌰</div>
-                            <div class="shop-name">Semente de Milho</div>
-                            <div class="shop-price">R$ <span id="shopPriceSeed">15,00</span></div>
-                            <div class="shop-stock">Qtd: <span id="shopStockSeed">∞</span></div>
-                            <div class="shop-buttons">
-                                <button id="btnBuySeed1">+1</button>
-                                <button id="btnBuySeed10">+10</button>
-                            </div>
-                        </div>
-                        <div class="shop-item">
-                            <div class="shop-emoji">🪣</div>
-                            <div class="shop-name">Balde de Água</div>
-                            <div class="shop-price">R$ <span id="shopPriceBucket">20,00</span></div>
-                            <div class="shop-stock">Qtd: <span id="shopStockBucket">∞</span></div>
-                            <div class="shop-buttons">
-                                <button id="btnBuyBucket1">+1</button>
-                                <button id="btnBuyBucket10">+10</button>
-                            </div>
-                        </div>
-                        <div class="shop-item">
-                            <div class="shop-emoji">🌿</div>
-                            <div class="shop-name">Adubo Mágico</div>
-                            <div class="shop-price">R$ <span id="shopPriceFert">11,00</span></div>
-                            <div class="shop-stock">Total: <span id="shopStockFert">0</span></div>
-                            <div class="shop-buttons">
-                                <button id="btnBuyFert1">+1</button>
-                                <button id="btnBuyFert10">+10</button>
-                            </div>
-                        </div>
-                        <div class="shop-item">
-                            <div class="shop-emoji">🧪</div>
-                            <div class="shop-name">Poção de EXP</div>
-                            <div class="shop-price">R$ <span id="shopPricePotion">150,00</span></div>
-                            <div class="shop-stock">Total: <span id="shopStockPotion">0</span></div>
-                            <div class="shop-buttons">
-                                <button id="btnBuyPotion1">+1</button>
-                                <button id="btnBuyPotion10">+10</button>
-                            </div>
-                        </div>
-
-                        <!-- 🌽 VENDER MILHO MADURO -->
-                        <div class="shop-item sell-corn">
-                            <div class="shop-emoji">🌽</div>
-                            <div class="shop-name">Vender Milho</div>
-                            <div class="shop-price">R$ <span id="shopSellCornPrice">9,00</span> / un.</div>
-                            <div class="shop-stock">Total: <span id="shopSellCornStock">0</span></div>
-                            <div class="shop-buttons">
-                                <button id="btnSellCorn1">1</button>
-                                <button id="btnSellCorn10">10</button>
-                                <button id="btnSellCornAll">Tudo</button>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
                 <div class="field" id="field"></div>
 
                 <div class="milharal-actions">
                     <button class="btn btn-primary" id="btnPlantAll">🌱 Plantar tudo</button>
                     <button class="btn btn-secondary" id="btnWaterAll">💧 Regar tudo <span class="bucket-icon" id="bucketStatus">🪣 0</span></button>
                     <button class="btn btn-gold" id="btnHarvestAll">🌽 Colher tudo</button>
-                    <button class="btn btn-success" id="btnSellAll">💰 Vender Qtd</button>
-                    <button class="btn btn-shop" id="btnOpenShop">🏪 Loja</button>
+                    <button class="btn btn-success" id="btnSellAll">💰 Vender estoque</button>
                     <button class="btn btn-clear" id="btnClearAll">🧹 Limpar tudo</button>
                 </div>
 
@@ -870,18 +681,16 @@
                 TOTAL: 16,
                 GROWTH_INTERVAL: 1200,
                 WATER_BOOST: 30,
-                FERT_BOOST: 60,
                 BASE_GROWTH: 8,
                 INITIAL_SEEDS: 5,
                 INITIAL_SALDO: 10.00,
                 INITIAL_BUCKETS: 0,
-                INITIAL_FERT: 0,
-                INITIAL_POTION: 0,
                 INITIAL_STOCK: 0,
+                CLEAR_COST: 5.00,
                 AUTO_SAVE_INTERVAL: 30000,
                 SYNC_INTERVAL: 15000,
                 EXP_PER_HARVEST: 15,
-                EXP_PER_POTION: 100,
+                SEEDS_PER_HARVEST: 0,   // ← ALTERADO: colher NÃO dá sementes
                 INITIAL_HP: 100,
                 INITIAL_MP: 50,
                 INITIAL_SM: 100,
@@ -891,22 +700,7 @@
                 MAX_HP: 100,
                 MAX_MP: 50,
                 MAX_SM: 100,
-
-                // ⚠️ JOGO DE AZAR: preços calibrados para o jogador SEMPRE perder
-                PRECOS: {
-                    corn:   9.00,    // venda do milho (baixo)
-                    seed:   15.00,   // semente cara
-                    bucket: 20.00,   // balde caro
-                    clear:  15.00,   // limpeza cara
-                    fert:   11.00,   // adubo caro
-                    potion: 150.00,  // poção caríssima
-                    mult:   0.50,    // multiplicador por nível
-                    taxa:   0.10,    // 🕵️ taxa oculta de 10% na venda
-                },
-
-                // 🐛 Chance de praga ao regar (perda de progresso)
-                PRAGA_CHANCE: 0.10,
-                PRAGA_PENALIDADE: 20,
+                SELL_PRICE_CORN: 10,
             };
 
             // ============================================================
@@ -957,8 +751,6 @@
                     harvested: 0,
                     saldo: CONFIG.INITIAL_SALDO,
                     buckets: CONFIG.INITIAL_BUCKETS,
-                    fert: CONFIG.INITIAL_FERT,
-                    potion: CONFIG.INITIAL_POTION,
                     stock: CONFIG.INITIAL_STOCK,
                     plots: [],
 
@@ -980,26 +772,6 @@
             function getPlots() { return state.jogo.plots; }
 
             // ============================================================
-            // 💰 PREÇO DINÂMICO COM TAXA OCULTA
-            // ============================================================
-            function getPrecoMilho() {
-                const j = getJogo();
-                const base = CONFIG.PRECOS.corn;
-                const mult = CONFIG.PRECOS.mult;
-                const bruto = base * (1 + j.nivel * mult);
-                const taxa = 1 - CONFIG.PRECOS.taxa; // 90% do valor bruto
-                return +(bruto * taxa).toFixed(2);
-            }
-
-            // Preço "de fachada" mostrado na UI (sem taxa)
-            function getPrecoMilhoFachada() {
-                const j = getJogo();
-                const base = CONFIG.PRECOS.corn;
-                const mult = CONFIG.PRECOS.mult;
-                return +(base * (1 + j.nivel * mult)).toFixed(2);
-            }
-
-            // ============================================================
             // DOM REFS
             // ============================================================
             const DOM = {};
@@ -1010,7 +782,6 @@
                 DOM.plantedCount = document.getElementById('plantedCount');
                 DOM.harvestCount = document.getElementById('harvestCount');
                 DOM.bucketCount = document.getElementById('bucketCount');
-                DOM.fertCount = document.getElementById('fertCount');
                 DOM.expDisplay = document.getElementById('expDisplay');
                 DOM.saldoDisplay = document.getElementById('saldoDisplayValue');
                 DOM.stockDisplay = document.getElementById('stockDisplayValue');
@@ -1042,34 +813,6 @@
                 DOM.btnSellAll = document.getElementById('btnSellAll');
                 DOM.btnClearAll = document.getElementById('btnClearAll');
                 DOM.btnReconnectSupabase = document.getElementById('btnReconnectSupabase');
-
-                DOM.dynamicPriceValue = document.getElementById('dynamicPriceValue');
-                DOM.dynamicPriceLevel = document.getElementById('dynamicPriceLevel');
-                DOM.dynamicPriceMult = document.getElementById('dynamicPriceMult');
-
-                DOM.shopPanel = document.getElementById('shopPanel');
-                DOM.btnOpenShop = document.getElementById('btnOpenShop');
-                DOM.btnCloseShop = document.getElementById('btnCloseShop');
-                DOM.shopPriceSeed = document.getElementById('shopPriceSeed');
-                DOM.shopPriceBucket = document.getElementById('shopPriceBucket');
-                DOM.shopPriceFert = document.getElementById('shopPriceFert');
-                DOM.shopPricePotion = document.getElementById('shopPricePotion');
-                DOM.shopStockFert = document.getElementById('shopStockFert');
-                DOM.shopStockPotion = document.getElementById('shopStockPotion');
-                DOM.btnBuySeed1 = document.getElementById('btnBuySeed1');
-                DOM.btnBuySeed10 = document.getElementById('btnBuySeed10');
-                DOM.btnBuyBucket1 = document.getElementById('btnBuyBucket1');
-                DOM.btnBuyBucket10 = document.getElementById('btnBuyBucket10');
-                DOM.btnBuyFert1 = document.getElementById('btnBuyFert1');
-                DOM.btnBuyFert10 = document.getElementById('btnBuyFert10');
-                DOM.btnBuyPotion1 = document.getElementById('btnBuyPotion1');
-                DOM.btnBuyPotion10 = document.getElementById('btnBuyPotion10');
-
-                DOM.shopSellCornPrice = document.getElementById('shopSellCornPrice');
-                DOM.shopSellCornStock = document.getElementById('shopSellCornStock');
-                DOM.btnSellCorn1 = document.getElementById('btnSellCorn1');
-                DOM.btnSellCorn10 = document.getElementById('btnSellCorn10');
-                DOM.btnSellCornAll = document.getElementById('btnSellCornAll');
             }
 
             // ============================================================
@@ -1123,31 +866,6 @@
                 if (DOM.headerSaldo) DOM.headerSaldo.textContent = formatSaldo(total);
                 if (DOM.userBalance) DOM.userBalance.textContent = `💰 R$ ${formatSaldo(total)}`;
                 if (DOM.saldoDisplay) DOM.saldoDisplay.textContent = `R$ ${formatSaldo(total)}`;
-            }
-
-            function atualizarPrecosUI() {
-                const j = getJogo();
-                if (DOM.shopPriceSeed) DOM.shopPriceSeed.textContent = formatSaldo(CONFIG.PRECOS.seed);
-                if (DOM.shopPriceBucket) DOM.shopPriceBucket.textContent = formatSaldo(CONFIG.PRECOS.bucket);
-                if (DOM.shopPriceFert) DOM.shopPriceFert.textContent = formatSaldo(CONFIG.PRECOS.fert);
-                if (DOM.shopPricePotion) DOM.shopPricePotion.textContent = formatSaldo(CONFIG.PRECOS.potion);
-                if (DOM.shopStockFert) DOM.shopStockFert.textContent = j.fert || 0;
-                if (DOM.shopStockPotion) DOM.shopStockPotion.textContent = j.potion || 0;
-
-                // ⚠️ Mostra o preço de FACHADA (sem taxa oculta)
-                if (DOM.dynamicPriceValue) DOM.dynamicPriceValue.textContent = formatSaldo(getPrecoMilhoFachada());
-                if (DOM.dynamicPriceLevel) DOM.dynamicPriceLevel.textContent = j.nivel;
-                if (DOM.dynamicPriceMult) DOM.dynamicPriceMult.textContent = formatSaldo(CONFIG.PRECOS.mult);
-                if (DOM.btnSellAll) DOM.btnSellAll.title = `Vender cada milho por R$ ${formatSaldo(getPrecoMilho())}`;
-
-                // 🌽 Venda na loja (mostra preço de fachada)
-                if (DOM.shopSellCornPrice) DOM.shopSellCornPrice.textContent = formatSaldo(getPrecoMilhoFachada());
-                if (DOM.shopSellCornStock) DOM.shopSellCornStock.textContent = j.stock || 0;
-
-                const semQtd = (j.stock || 0) <= 0;
-                if (DOM.btnSellCorn1) DOM.btnSellCorn1.disabled = semQtd;
-                if (DOM.btnSellCorn10) DOM.btnSellCorn10.disabled = semQtd;
-                if (DOM.btnSellCornAll) DOM.btnSellCornAll.disabled = semQtd;
             }
 
             function limparTimers() {
@@ -1230,8 +948,6 @@
                     DOM.statMag.textContent = this.getMagia();
 
                     DOM.expDisplay.textContent = `✨ ${j.experiencia}`;
-
-                    atualizarPrecosUI();
                 }
             };
 
@@ -1262,13 +978,11 @@
                 DOM.plantedCount.textContent  = `🌱 ${j.planted || 0}`;
                 DOM.harvestCount.textContent  = `🌽 ${j.harvested || 0}`;
                 DOM.bucketCount.textContent   = `🪣 ${j.buckets || 0}`;
-                DOM.fertCount.textContent     = `🌿 ${j.fert || 0}`;
                 DOM.expDisplay.textContent    = `✨ ${j.experiencia || 0}`;
                 DOM.saldoDisplay.textContent  = `R$ ${formatSaldo(j.saldo || 0)}`;
                 DOM.stockDisplay.innerHTML    = `<i class="fas fa-warehouse"></i> <span class="num">🌽 ${j.stock || 0}</span>`;
                 DOM.bucketStatus.textContent  = `🪣 ${j.buckets || 0}`;
                 atualizarSaldoGlobal();
-                atualizarPrecosUI();
 
                 let html = '';
                 for (let i = 0; i < j.plots.length; i++) {
@@ -1329,17 +1043,17 @@
 
                 let msg = '';
                 if (harvested > 0) {
-                    msg = `🟫 ${harvested} colhido(s). Clique para limpar (R$ ${formatSaldo(CONFIG.PRECOS.clear)})`;
+                    msg = `🟫 ${harvested} colhido(s). Clique para limpar (R$ ${CONFIG.CLEAR_COST.toFixed(2)})`;
                 } else if (j.seeds <= 0 && empty > 0) {
-                    msg = '😅 <span class="highlight">Sem sementes!</span> Abra a 🏪 Loja para comprar.';
+                    msg = '😅 <span class="highlight">Sem sementes!</span> Compre sementes para plantar.';
                 } else if (mature > 0) {
-                    msg = `🌽 <span class="highlight">${mature}</span> maduro(s)! Venda na 🏪 Loja a R$ ${formatSaldo(getPrecoMilhoFachada())} cada.`;
+                    msg = `🌽 <span class="highlight">${mature}</span> maduro(s)! Colher dá <span class="exp-highlight">✨ EXP</span>`;
                 } else if (growing) {
                     msg = j.buckets > 0 ?
                         '💧 <span class="highlight">Regue tudo</span> para acelerar o crescimento' :
-                        '💧 Sem baldes! Compre na 🏪 Loja.';
+                        '💧 Sem baldes!';
                 } else if (empty > 0 && j.seeds > 0) {
-                    msg = '🌱 Use o botão <span class="highlight">Plantar tudo</span> ou clique em um canteiro vazio.';
+                    msg = '🌱 Use o botão <span class="highlight">Plantar tudo</span> ou clique em um canteiro vazio para plantar.';
                 } else if (empty === 0 && j.seeds > 0) {
                     msg = '🧑‍🌾 Terreno cheio! Espere crescer ou colha.';
                 } else {
@@ -1399,6 +1113,7 @@
                 p.stage = STAGES.SEED;
                 p.progress = 0;
                 j.planted++;
+                console.log(`🌱 Plantou! Seeds: ${j.seeds}`);
                 showToast(`🌱 Plantou na parcela ${id + 1}!`, 1400);
                 renderMilharal();
                 salvarDadosCompletos();
@@ -1432,6 +1147,7 @@
                     }
                 }
 
+                console.log(`🌱 Plantou ${planted}! Seeds: ${j.seeds}`);
                 showToast(`🌱 Plantou ${planted} canteiro(s)!`, 2000);
                 renderMilharal();
                 salvarDadosCompletos();
@@ -1442,23 +1158,19 @@
                 const j = getJogo();
                 const p = j.plots[id];
                 if (!p || p.stage !== STAGES.HARVESTED) return false;
-                const custo = CONFIG.PRECOS.clear;
-                if (j.saldo < custo) {
-                    showToast(`😅 Precisa de R$ ${formatSaldo(custo)}`, 1600);
+                if (j.saldo < CONFIG.CLEAR_COST) {
+                    showToast(`😅 Precisa de R$ ${CONFIG.CLEAR_COST.toFixed(2)}`, 1600);
                     return false;
                 }
-                j.saldo = (j.saldo || 0) - custo;
+                j.saldo = (j.saldo || 0) - CONFIG.CLEAR_COST;
                 p.stage = STAGES.EMPTY;
                 p.progress = 0;
-                showToast(`🟫 Canteiro ${id + 1} limpo! (-R$ ${formatSaldo(custo)})`, 1600);
+                showToast(`🟫 Canteiro ${id + 1} limpo! (-R$ ${CONFIG.CLEAR_COST.toFixed(2)})`, 1600);
                 renderMilharal();
                 salvarDadosCompletos();
                 return true;
             }
 
-            // ============================================================
-            // 💧 REGAR COM CHANCE DE PRAGA (perda oculta)
-            // ============================================================
             function waterAt(id) {
                 const j = getJogo();
                 const p = j.plots[id];
@@ -1468,55 +1180,17 @@
                 }
                 if (j.buckets <= 0) { showToast('😅 Sem baldes!', 1400); return false; }
                 j.buckets--;
-
-                // 🐛 Praga oculta
-                let praga = false;
-                if (Math.random() < CONFIG.PRAGA_CHANCE) {
-                    praga = true;
-                }
-
-                if (praga) {
-                    p.progress = Math.max(0, (p.progress || 0) - CONFIG.PRAGA_PENALIDADE);
-                    showToast(`💧 Regou... mas algo estranho aconteceu.`, 1800);
-                } else {
-                    p.progress = Math.min((p.progress || 0) + CONFIG.WATER_BOOST, 100);
-                    if (p.progress >= 100) {
-                        const idx = STAGE_ORDER.indexOf(p.stage);
-                        if (idx + 1 < STAGE_ORDER.length) {
-                            p.stage = STAGE_ORDER[idx + 1];
-                            p.progress = 0;
-                            if (p.stage === STAGES.MATURE) showToast(`🌽 Amadureceu na parcela ${id + 1}!`, 1800);
-                            else showToast(`💧 Avançou para ${STAGE_META[p.stage].label}!`, 1400);
-                        } else p.progress = 100;
-                    } else {
-                        showToast(`💧 Regado! Progresso: ${Math.round(p.progress)}%`, 1400);
-                    }
-                }
-                renderMilharal();
-                salvarDadosCompletos();
-                return true;
-            }
-
-            function fertilizeAt(id) {
-                const j = getJogo();
-                const p = j.plots[id];
-                if (!p || p.stage === STAGES.EMPTY || p.stage === STAGES.HARVESTED || p.stage === STAGES.MATURE) {
-                    showToast('🌿 Não dá pra adubar aqui.', 1200);
-                    return false;
-                }
-                if (j.fert <= 0) { showToast('😅 Sem adubo! Compre na 🏪 Loja.', 1600); return false; }
-                j.fert--;
-                p.progress = Math.min((p.progress || 0) + CONFIG.FERT_BOOST, 100);
+                p.progress = Math.min((p.progress || 0) + CONFIG.WATER_BOOST, 100);
                 if (p.progress >= 100) {
                     const idx = STAGE_ORDER.indexOf(p.stage);
                     if (idx + 1 < STAGE_ORDER.length) {
                         p.stage = STAGE_ORDER[idx + 1];
                         p.progress = 0;
-                        if (p.stage === STAGES.MATURE) showToast(`🌽 Amadureceu com adubo na parcela ${id + 1}!`, 1800);
-                        else showToast(`🌿 Adubo fez avançar para ${STAGE_META[p.stage].label}!`, 1600);
+                        if (p.stage === STAGES.MATURE) showToast(`🌽 Amadureceu na parcela ${id + 1}!`, 1800);
+                        else showToast(`💧 Avançou para ${STAGE_META[p.stage].label}!`, 1400);
                     } else p.progress = 100;
                 } else {
-                    showToast(`🌿 Adubado! Progresso: ${Math.round(p.progress)}%`, 1400);
+                    showToast(`💧 Regado! Progresso: ${Math.round(p.progress)}%`, 1400);
                 }
                 renderMilharal();
                 salvarDadosCompletos();
@@ -1527,12 +1201,15 @@
                 const j = getJogo();
                 const p = j.plots[id];
                 if (!p || p.stage !== STAGES.MATURE) { showToast('🌽 Só colhe maduro!', 1200); return false; }
-
+                
                 p.stage = STAGES.HARVESTED;
                 p.progress = 0;
                 j.harvested++;
                 j.stock++;
-
+                // ❌ Colher NÃO dá mais sementes (SEEDS_PER_HARVEST = 0)
+                
+                console.log(`🌽 Colheu 1! Stock: ${j.stock}`);
+                
                 levelSystem.adicionarExp(CONFIG.EXP_PER_HARVEST);
                 showToast(`🌽 Colheu 1 milho! ✨ +${CONFIG.EXP_PER_HARVEST} EXP`, 2200);
                 renderMilharal();
@@ -1545,14 +1222,17 @@
                 const maturePlots = j.plots.filter(p => p.stage === STAGES.MATURE);
                 const count = maturePlots.length;
                 if (count === 0) { showToast('🌽 Nenhum milho maduro para colher.', 1400); return 0; }
-
+                
                 for (const p of maturePlots) {
                     p.stage = STAGES.HARVESTED;
                     p.progress = 0;
                 }
                 j.harvested += count;
                 j.stock += count;
-
+                // ❌ Colher NÃO dá mais sementes (SEEDS_PER_HARVEST = 0)
+                
+                console.log(`🌽 Colheu ${count}! Stock: ${j.stock}`);
+                
                 const expGanho = count * CONFIG.EXP_PER_HARVEST;
                 levelSystem.adicionarExp(expGanho);
 
@@ -1579,16 +1259,7 @@
 
                 let watered = 0;
                 let advanced = 0;
-                let pragas = 0;
-
                 for (const p of toWater) {
-                    // 🐛 Praga oculta
-                    if (Math.random() < CONFIG.PRAGA_CHANCE) {
-                        p.progress = Math.max(0, (p.progress || 0) - CONFIG.PRAGA_PENALIDADE);
-                        pragas++;
-                        watered++;
-                        continue;
-                    }
                     p.progress = Math.min((p.progress || 0) + CONFIG.WATER_BOOST, 100);
                     if (p.progress >= 100) {
                         const idx = STAGE_ORDER.indexOf(p.stage);
@@ -1596,50 +1267,31 @@
                             p.stage = STAGE_ORDER[idx + 1];
                             p.progress = 0;
                             advanced++;
+                            if (p.stage === STAGES.MATURE) showToast(`🌽 Amadureceu na parcela ${p.id + 1}!`, 1800);
                         } else p.progress = 100;
                     }
                     watered++;
                 }
 
                 j.buckets--;
-                let msg = `💧 Regou ${watered} canteiro(s)!`;
-                if (advanced > 0) msg += ` (${advanced} avançaram)`;
-                if (pragas > 0) msg += ` ⚠️ ${pragas} com problema...`;
-                showToast(msg, 2400);
-                renderMilharal();
-                salvarDadosCompletos();
-            }
-
-            // ============================================================
-            // 💰 VENDER (com taxa oculta)
-            // ============================================================
-            function sellCorn(qtd) {
-                const j = getJogo();
-                if (j.stock <= 0) { showToast('📦 Nenhum milho no estoque para vender.', 1400); return; }
-
-                const vender = Math.min(qtd, j.stock);
-                const price = getPrecoMilho();       // com taxa oculta aplicada
-                const fachada = getPrecoMilhoFachada();
-                const total = vender * price;
-
-                j.stock -= vender;
-                j.saldo = (j.saldo || 0) + total;
-
-                // Mostra o preço de fachada (o jogador não percebe a taxa)
-                showToast(`💰 Vendeu ${vender} milho(s) a R$ ${formatSaldo(fachada)} = R$ ${formatSaldo(total)}!`, 2500);
+                showToast(`💧 Regou ${watered} canteiro(s)! ${advanced > 0 ? '(' + advanced + ' avançaram)' : ''}`, 2000);
                 renderMilharal();
                 salvarDadosCompletos();
             }
 
             function sellAllStock() {
                 const j = getJogo();
-                if (j.stock <= 0) { showToast('📦 Nenhum milho no estoque.', 1400); return; }
+                if (j.stock <= 0) { showToast('📦 Nenhum milho no estoque para vender.', 1400); return; }
 
-                const qtd = prompt(`Quantos milhos deseja vender? (máx: ${j.stock})`, j.stock);
-                if (qtd === null) return;
-                const n = Math.min(Math.max(1, parseInt(qtd) || 0), j.stock);
-                if (n <= 0) return;
-                sellCorn(n);
+                const price = CONFIG.SELL_PRICE_CORN;
+                const total = j.stock * price;
+                j.saldo = (j.saldo || 0) + total;
+                const sold = j.stock;
+                j.stock = 0;
+
+                showToast(`💰 Vendeu ${sold} milho(s) do estoque por R$ ${total.toFixed(2)}!`, 2500);
+                renderMilharal();
+                salvarDadosCompletos();
             }
 
             function clearAllPlots() {
@@ -1657,14 +1309,13 @@
                     return;
                 }
 
-                const custoUnit = CONFIG.PRECOS.clear;
-                const custoTotal = harvestedPlots.length * custoUnit;
+                const custoTotal = harvestedPlots.length * CONFIG.CLEAR_COST;
 
                 if (j.saldo < custoTotal) {
-                    showToast(`😅 Precisa de R$ ${formatSaldo(custoTotal)} para limpar ${harvestedPlots.length} canteiro(s).`, 2500);
+                    showToast(`😅 Precisa de R$ ${custoTotal.toFixed(2)} para limpar ${harvestedPlots.length} canteiro(s).`, 2500);
                     return;
                 }
-                if (!confirm(`🧹 Limpar ${harvestedPlots.length} canteiro(s) colhido(s) por R$ ${formatSaldo(custoTotal)}?`)) {
+                if (!confirm(`🧹 Limpar ${harvestedPlots.length} canteiro(s) colhido(s) por R$ ${custoTotal.toFixed(2)}?`)) {
                     return;
                 }
 
@@ -1674,56 +1325,9 @@
                     p.progress = 0;
                 }
 
-                showToast(`🧹 ${harvestedPlots.length} canteiro(s) limpo(s)! (-R$ ${formatSaldo(custoTotal)})`, 2500);
+                showToast(`🧹 ${harvestedPlots.length} canteiro(s) limpo(s)! (-R$ ${custoTotal.toFixed(2)})`, 2500);
                 renderMilharal();
                 salvarDadosCompletos();
-            }
-
-            // ============================================================
-            // LOJA — COMPRAR ITENS
-            // ============================================================
-            function buyItem(tipo, qtd) {
-                const j = getJogo();
-                const precos = CONFIG.PRECOS;
-                let preco, chave;
-
-                switch (tipo) {
-                    case 'seed':   preco = precos.seed;   chave = 'seeds';   break;
-                    case 'bucket': preco = precos.bucket; chave = 'buckets'; break;
-                    case 'fert':   preco = precos.fert;   chave = 'fert';    break;
-                    case 'potion': preco = precos.potion; chave = 'potion';  break;
-                    default: return false;
-                }
-
-                const custo = preco * qtd;
-                if (j.saldo < custo) {
-                    showToast(`😅 Precisa de R$ ${formatSaldo(custo)} para ${qtd} item(ns).`, 2200);
-                    return false;
-                }
-                j.saldo -= custo;
-                j[chave] = (j[chave] || 0) + qtd;
-
-                const nomes = { seed: 'semente(s)', bucket: 'balde(s)', fert: 'adubo(s)', potion: 'poção(ões)' };
-                const emojis = { seed: '🌰', bucket: '🪣', fert: '🌿', potion: '🧪' };
-                showToast(`${emojis[tipo]} Comprou ${qtd} ${nomes[tipo]} por R$ ${formatSaldo(custo)}!`, 2200);
-
-                renderMilharal();
-                salvarDadosCompletos();
-                return true;
-            }
-
-            function usePotion() {
-                const j = getJogo();
-                if (j.potion <= 0) {
-                    showToast('😅 Sem poção! Compre na 🏪 Loja.', 1600);
-                    return false;
-                }
-                j.potion--;
-                levelSystem.adicionarExp(CONFIG.EXP_PER_POTION);
-                showToast(`🧪 Usou 1 poção! ✨ +${CONFIG.EXP_PER_POTION} EXP`, 2400);
-                renderMilharal();
-                salvarDadosCompletos();
-                return true;
             }
 
             // ============================================================
@@ -1737,8 +1341,6 @@
                     planted: j.planted || 0,
                     harvested: j.harvested || 0,
                     buckets: j.buckets || 0,
-                    fert_qty: j.fert || 0,
-                    potion_qty: j.potion || 0,
                     stock: j.stock || 0,
                     plot_data: j.plots.map(p => ({ stage: p.stage, progress: p.progress || 0 })),
                     nivel: j.nivel || 1,
@@ -1753,14 +1355,6 @@
                     mp_atual: j.mp || 50,
                     sm_atual: j.sm || 100,
                     updated_at: new Date().toISOString(),
-
-                    price:        CONFIG.PRECOS.corn,
-                    price_seed:   CONFIG.PRECOS.seed,
-                    price_bucket: CONFIG.PRECOS.bucket,
-                    price_clear:  CONFIG.PRECOS.clear,
-                    price_fert:   CONFIG.PRECOS.fert,
-                    price_potion: CONFIG.PRECOS.potion,
-                    price_mult:   CONFIG.PRECOS.mult,
                 };
             }
 
@@ -1773,8 +1367,6 @@
                 j.harvested = data.harvested ?? 0;
                 j.saldo     = Number(data.saldo ?? CONFIG.INITIAL_SALDO);
                 j.buckets   = data.buckets   ?? CONFIG.INITIAL_BUCKETS;
-                j.fert      = data.fert_qty  ?? CONFIG.INITIAL_FERT;
-                j.potion    = data.potion_qty ?? CONFIG.INITIAL_POTION;
                 j.stock     = data.stock     ?? CONFIG.INITIAL_STOCK;
 
                 if (data.plot_data && Array.isArray(data.plot_data) && data.plot_data.length > 0) {
@@ -1800,16 +1392,6 @@
                 j.hp          = data.hp_atual    || j.hpMax;
                 j.mp          = data.mp_atual    || j.mpMax;
                 j.sm          = data.sm_atual    || j.smMax;
-
-                if (data.price        != null && !isNaN(Number(data.price)))        CONFIG.PRECOS.corn   = Number(data.price);
-                if (data.price_seed   != null && !isNaN(Number(data.price_seed)))   CONFIG.PRECOS.seed   = Number(data.price_seed);
-                if (data.price_bucket != null && !isNaN(Number(data.price_bucket))) CONFIG.PRECOS.bucket = Number(data.price_bucket);
-                if (data.price_clear  != null && !isNaN(Number(data.price_clear)))  CONFIG.PRECOS.clear  = Number(data.price_clear);
-                if (data.price_fert   != null && !isNaN(Number(data.price_fert)))   CONFIG.PRECOS.fert   = Number(data.price_fert);
-                if (data.price_potion != null && !isNaN(Number(data.price_potion))) CONFIG.PRECOS.potion = Number(data.price_potion);
-                if (data.price_mult   != null && !isNaN(Number(data.price_mult)))   CONFIG.PRECOS.mult   = Number(data.price_mult);
-
-                console.log(`💰 Preços SQL: milho R$ ${CONFIG.PRECOS.corn} | semente R$ ${CONFIG.PRECOS.seed} | balde R$ ${CONFIG.PRECOS.bucket} | adubo R$ ${CONFIG.PRECOS.fert} | poção R$ ${CONFIG.PRECOS.potion} | mult ${CONFIG.PRECOS.mult}`);
             }
 
             async function verificarSupabase() {
@@ -1848,8 +1430,13 @@
 
             async function carregarDadosCompletos() {
                 if (!state.usuario || !state.online || state.carregando) return;
-                if (state.salvando) return;
-
+                
+                // ⚠️ NÃO CARREGAR SE ESTIVER SALVANDO
+                if (state.salvando) {
+                    console.log('⏸️ Carregamento adiado - salvando em andamento...');
+                    return;
+                }
+                
                 state.carregando = true;
                 try {
                     const response = await fetch(
@@ -1867,10 +1454,16 @@
                         state.dadosDB = null;
                         return;
                     }
-                    if (state.salvando) return;
+
+                    // ⚠️ Verifica novamente se começou a salvar durante o fetch
+                    if (state.salvando) {
+                        console.log('⏸️ Carregamento cancelado - save começou durante o fetch');
+                        return;
+                    }
 
                     state.dadosDB = data[0];
                     carregarDadosDoDB(data[0]);
+                    console.log(`📥 Dados carregados. Seeds: ${getJogo().seeds}, Stock: ${getJogo().stock}`);
                     renderMilharal();
                     levelSystem.atualizarUI();
                 } catch (error) {
@@ -1885,7 +1478,8 @@
                 state.salvando = true;
                 try {
                     const payload = prepararDadosParaSalvar();
-
+                    console.log(`💾 Salvando... Seeds: ${payload.seeds}, Stock: ${payload.stock}, Harvested: ${payload.harvested}`);
+                    
                     const response = await fetch(
                         `${CONFIG.SUPABASE_URL}/rest/v1/${CONFIG.TABELA}?login=eq.${encodeURIComponent(state.usuario.login)}`, {
                             method: 'PATCH',
@@ -1903,6 +1497,7 @@
                     const updated = await response.json();
                     if (Array.isArray(updated) && updated.length > 0) {
                         state.dadosDB = updated[0];
+                        console.log(`✅ Salvo! Seeds no banco: ${updated[0].seeds}, Stock: ${updated[0].stock}`);
                     }
                 } catch (error) {
                     console.error('Erro ao salvar:', error);
@@ -1952,12 +1547,6 @@
                         const j = getJogo();
                         const p = j.plots[id];
                         if (!p) return;
-
-                        if (e.shiftKey) {
-                            fertilizeAt(id);
-                            return;
-                        }
-
                         if (p.stage === STAGES.EMPTY) plantAt(id);
                         else if (p.stage === STAGES.MATURE) harvestAt(id);
                         else if (p.stage === STAGES.HARVESTED) clearPlot(id);
@@ -1970,32 +1559,6 @@
                 DOM.btnHarvestAll?.addEventListener('click', harvestAll);
                 DOM.btnSellAll?.addEventListener('click', sellAllStock);
                 DOM.btnClearAll?.addEventListener('click', clearAllPlots);
-
-                DOM.btnOpenShop?.addEventListener('click', () => {
-                    DOM.shopPanel.classList.toggle('open');
-                });
-                DOM.btnCloseShop?.addEventListener('click', () => {
-                    DOM.shopPanel.classList.remove('open');
-                });
-                DOM.btnBuySeed1?.addEventListener('click', () => buyItem('seed', 1));
-                DOM.btnBuySeed10?.addEventListener('click', () => buyItem('seed', 10));
-                DOM.btnBuyBucket1?.addEventListener('click', () => buyItem('bucket', 1));
-                DOM.btnBuyBucket10?.addEventListener('click', () => buyItem('bucket', 10));
-                DOM.btnBuyFert1?.addEventListener('click', () => buyItem('fert', 1));
-                DOM.btnBuyFert10?.addEventListener('click', () => buyItem('fert', 10));
-                DOM.btnBuyPotion1?.addEventListener('click', () => buyItem('potion', 1));
-                DOM.btnBuyPotion10?.addEventListener('click', () => buyItem('potion', 10));
-
-                DOM.btnSellCorn1?.addEventListener('click', () => sellCorn(1));
-                DOM.btnSellCorn10?.addEventListener('click', () => sellCorn(10));
-                DOM.btnSellCornAll?.addEventListener('click', () => sellAllStock());
-
-                document.addEventListener('keydown', (e) => {
-                    if (e.key === 'p' || e.key === 'P') {
-                        if (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA') return;
-                        usePotion();
-                    }
-                });
 
                 DOM.btnReconnectSupabase?.addEventListener('click', async function() {
                     showToast('🔄 Verificando conexão...', 1500);
@@ -2015,10 +1578,14 @@
             // INICIALIZAÇÃO
             // ============================================================
             async function init() {
+                // 1. DOM e eventos
                 initDOM();
                 setupEvents();
+
+                // 2. Plots iniciais (garante que sempre existam)
                 initPlots();
 
+                // 3. Carregar usuário
                 const temUsuario = carregarUsuario();
                 if (!temUsuario || !state.usuario || !state.usuario.login) {
                     window.location.href = 'login.html';
@@ -2026,8 +1593,11 @@
                 }
 
                 atualizarInterfaceUsuario();
+
+                // 4. Verificar Supabase (aguarda)
                 await verificarSupabase();
 
+                // 5. Se online, carregar dados
                 if (state.online) {
                     await carregarDadosCompletos();
                     showToast(`👋 Olá, ${state.usuario.nome || state.usuario.login}!`, 2500);
@@ -2035,18 +1605,22 @@
                     showToast('⚠️ Sem conexão com o banco. Jogando offline.', 3000);
                 }
 
+                // 6. Renderizar
                 renderMilharal();
                 levelSystem.atualizarUI();
 
+                // 7. Marcar como inicializado e iniciar loops
                 state.inicializado = true;
                 startMilharal();
 
+                // 8. Sincronização periódica
                 state.syncTimer = setInterval(() => {
                     if (state.usuario && state.online && !state.salvando && !state.carregando) {
                         carregarDadosCompletos();
                     }
                 }, CONFIG.SYNC_INTERVAL);
 
+                // 9. Reconexão automática
                 state.reconnectTimer = setInterval(async () => {
                     if (!state.online) {
                         const ok = await verificarSupabase();
@@ -2058,12 +1632,14 @@
                     }
                 }, 30000);
 
+                // 10. Auto-save
                 state.autoSaveTimer = setInterval(() => {
                     if (state.usuario && state.online && !state.salvando) {
                         salvarDadosCompletos();
                     }
                 }, CONFIG.AUTO_SAVE_INTERVAL);
 
+                // 11. Salvar ao sair
                 window.addEventListener('beforeunload', function() {
                     limparTimers();
                     if (state.usuario && state.online && !state.salvando) {
@@ -2072,7 +1648,6 @@
                 });
 
                 console.log('🌽 Milharal carregado com sucesso!');
-                console.log(`📊 RTP do jogo: ~18% (jogador perde ~82% do investido)`);
             }
 
             if (document.readyState === 'loading') {

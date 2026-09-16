@@ -51,6 +51,7 @@
             color: #333;
         }
 
+        /* ===== DOIS SALDOS LADO A LADO ===== */
         .saldos-grid {
             display: grid;
             grid-template-columns: 1fr 1fr;
@@ -325,9 +326,6 @@
         .historico-item.desfazer {
             border-left: 4px solid #ffc400;
         }
-        .historico-item.resgate {
-            border-left: 4px solid #00b894;
-        }
         .historico-info {
             display: flex;
             flex-direction: column;
@@ -344,9 +342,6 @@
         }
         .historico-item.desfazer .historico-tipo {
             color: #b8860b;
-        }
-        .historico-item.resgate .historico-tipo {
-            color: #00b894;
         }
         .historico-detalhe {
             color: #555;
@@ -383,77 +378,6 @@
             color: #c62828;
         }
 
-        /* ===== RESGATAR CÓDIGO ===== */
-        .resgate-section {
-            margin-top: 30px;
-            text-align: left;
-        }
-        .resgate-section h3 {
-            color: #333;
-            font-size: 1.1rem;
-            margin-bottom: 5px;
-            text-align: center;
-        }
-        .resgate-section .regra {
-            font-size: 0.8rem;
-            color: #888;
-            text-align: center;
-            margin-bottom: 15px;
-            line-height: 1.5;
-        }
-        .resgate-input-group {
-            display: flex;
-            gap: 8px;
-        }
-        .resgate-input-group input {
-            flex: 1;
-            padding: 12px 14px;
-            border: 2px solid #e0e0ff;
-            border-radius: 10px;
-            font-size: 0.95rem;
-            font-weight: 600;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-            transition: all 0.25s;
-            outline: none;
-            min-width: 0;
-        }
-        .resgate-input-group input:focus {
-            border-color: #764ba2;
-            box-shadow: 0 0 0 4px rgba(118, 75, 162, 0.15);
-        }
-        .btn-resgatar {
-            background: linear-gradient(135deg, #00b894 0%, #00cec9 100%);
-            color: #fff;
-            border: none;
-            padding: 12px 22px;
-            border-radius: 10px;
-            font-size: 0.9rem;
-            font-weight: 700;
-            cursor: pointer;
-            transition: all 0.25s;
-            white-space: nowrap;
-        }
-        .btn-resgatar:hover:not(:disabled) {
-            transform: translateY(-2px);
-            box-shadow: 0 6px 18px rgba(0, 184, 148, 0.4);
-        }
-        .btn-resgatar:disabled {
-            background: #ccc;
-            cursor: not-allowed;
-            opacity: 0.7;
-        }
-        .msg-resgate {
-            margin-top: 12px;
-            font-size: 0.85rem;
-            padding: 10px 14px;
-            border-radius: 8px;
-            display: none;
-        }
-        .msg-resgate.sucesso { background: #e8f5e9; color: #2e7d32; display: block; }
-        .msg-resgate.erro { background: #ffebee; color: #c62828; display: block; }
-        .msg-resgate.carregando { background: #fff8e1; color: #856d00; display: block; }
-
         @media (max-width: 420px) {
             .pacotes-grid {
                 grid-template-columns: 1fr;
@@ -469,16 +393,87 @@
             .historico-data {
                 margin-left: 0;
             }
-            .resgate-input-group {
-                flex-direction: column;
-            }
         }
+
+
+
+
+        /* ===== RESGATAR CÓDIGO ===== */
+.resgate-section {
+    margin-top: 30px;
+    text-align: left;
+}
+.resgate-section h3 {
+    color: #333;
+    font-size: 1.1rem;
+    margin-bottom: 5px;
+    text-align: center;
+}
+.resgate-input-group {
+    display: flex;
+    gap: 8px;
+    margin-top: 12px;
+}
+.resgate-input-group input {
+    flex: 1;
+    padding: 12px 14px;
+    border: 2px solid #e0e0ff;
+    border-radius: 10px;
+    font-size: 0.95rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    transition: all 0.25s;
+    outline: none;
+}
+.resgate-input-group input:focus {
+    border-color: #764ba2;
+    box-shadow: 0 0 0 4px rgba(118, 75, 162, 0.15);
+}
+.btn-resgatar {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: #fff;
+    border: none;
+    padding: 12px 22px;
+    border-radius: 10px;
+    font-size: 0.9rem;
+    font-weight: 700;
+    cursor: pointer;
+    transition: all 0.25s;
+    white-space: nowrap;
+}
+.btn-resgatar:hover:not(:disabled) {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 18px rgba(118, 75, 162, 0.35);
+}
+.btn-resgatar:disabled {
+    background: #ccc;
+    cursor: not-allowed;
+    opacity: 0.7;
+}
+.msg-resgate {
+    margin-top: 12px;
+    font-size: 0.85rem;
+    padding: 10px 14px;
+    border-radius: 8px;
+    display: none;
+}
+.msg-resgate.sucesso { background: #e8f5e9; color: #2e7d32; display: block; }
+.msg-resgate.erro { background: #ffebee; color: #c62828; display: block; }
+.msg-resgate.carregando { background: #fff8e1; color: #856d00; display: block; }
+
+@media (max-width: 420px) {
+    .resgate-input-group { flex-direction: column; }
+}
+
+
+
     </style>
 </head>
 <body>
 
     <div class="card">
-        <a href="../../dashboard.html" class="btn-voltar">🏠 Voltar</a>
+                <a href="../../dashboard.html" class="btn-voltar">🏠 Voltar</a>
 
         <h2>💰 Seus Saldos</h2>
         <p class="subtitulo">Moeda Mumu & Saldo em Reais</p>
@@ -487,6 +482,7 @@
             <strong>👤</strong> <span id="nomeUsuario">Carregando...</span>
         </div>
 
+        <!-- ===== DOIS SALDOS: MUMU + REAIS ===== -->
         <div class="saldos-grid">
             <div class="saldo-container mumu">
                 <div class="saldo-label">🪙 Mumu</div>
@@ -506,19 +502,6 @@
         <p class="info erro" id="mensagemErro"></p>
         <div id="statusConexao" class="online-badge">✅ Conectado</div>
 
-        <!-- ===== RESGATAR CÓDIGO ===== -->
-        <div class="resgate-section">
-            <h3>🎁 Resgatar Código</h3>
-            <p class="regra">Digite um código promocional para ganhar recompensas</p>
-
-            <div class="resgate-input-group">
-                <input type="text" id="inputCodigo" placeholder="Digite o código..." maxlength="30" autocomplete="off">
-                <button class="btn-resgatar" id="btnResgatar">🎁 Resgatar</button>
-            </div>
-
-            <div class="msg-resgate" id="msgResgate"></div>
-        </div>
-
         <!-- ===== PACOTES DE TROCA ===== -->
         <div class="troca-section">
             <h3>🔄 Trocar Mumu por Saldo</h3>
@@ -528,6 +511,7 @@
             </p>
 
             <div class="pacotes-grid" id="pacotesGrid">
+                <!-- Pacote 1 -->
                 <div class="pacote" data-pacote="1">
                     <div class="custo">🪙 10,00 Mumu</div>
                     <div class="ganho">R$ 1,00 <small>Saldo</small></div>
@@ -535,6 +519,7 @@
                     <button class="btn-desfazer desfazer" data-saldo="1" data-mumu="5" disabled>Desfazer</button>
                     <span class="aviso-desfazer">Volta: 5,00 Mumu</span>
                 </div>
+                <!-- Pacote 2 -->
                 <div class="pacote" data-pacote="2">
                     <div class="custo">🪙 20,00 Mumu</div>
                     <div class="ganho">R$ 2,00 <small>Saldo</small></div>
@@ -542,6 +527,7 @@
                     <button class="btn-desfazer desfazer" data-saldo="2" data-mumu="10" disabled>Desfazer</button>
                     <span class="aviso-desfazer">Volta: 10,00 Mumu</span>
                 </div>
+                <!-- Pacote 3 -->
                 <div class="pacote" data-pacote="3">
                     <div class="custo">🪙 50,00 Mumu</div>
                     <div class="ganho">R$ 5,00 <small>Saldo</small></div>
@@ -549,6 +535,7 @@
                     <button class="btn-desfazer desfazer" data-saldo="5" data-mumu="25" disabled>Desfazer</button>
                     <span class="aviso-desfazer">Volta: 25,00 Mumu</span>
                 </div>
+                <!-- Pacote 4 -->
                 <div class="pacote" data-pacote="4">
                     <div class="custo">🪙 100,00 Mumu</div>
                     <div class="ganho">R$ 10,00 <small>Saldo</small></div>
@@ -556,6 +543,7 @@
                     <button class="btn-desfazer desfazer" data-saldo="10" data-mumu="50" disabled>Desfazer</button>
                     <span class="aviso-desfazer">Volta: 50,00 Mumu</span>
                 </div>
+                <!-- Pacote 5 -->
                 <div class="pacote" data-pacote="5">
                     <div class="custo">🪙 200,00 Mumu</div>
                     <div class="ganho">R$ 20,00 <small>Saldo</small></div>
@@ -568,9 +556,9 @@
             <div class="msg-troca" id="msgTroca"></div>
         </div>
 
-        <!-- ===== HISTÓRICO ===== -->
+        <!-- ===== HISTÓRICO DE TROCAS ===== -->
         <div class="historico-section">
-            <h3>📜 Histórico</h3>
+            <h3>📜 Histórico de Trocas</h3>
             <div class="historico-lista" id="historicoLista">
                 <div class="historico-vazio">Carregando histórico...</div>
             </div>
@@ -581,9 +569,28 @@
 
     </div>
 
+
+
+
+    <!-- ===== RESGATAR CÓDIGO ===== -->
+<div class="resgate-section">
+    <h3>🎁 Resgatar Código</h3>
+    <p class="regra">Digite um código promocional para ganhar recompensas</p>
+    
+    <div class="resgate-input-group">
+        <input type="text" id="inputCodigo" placeholder="Digite o código aqui..." maxlength="30" autocomplete="off">
+        <button class="btn-resgatar" id="btnResgatar">🎁 Resgatar</button>
+    </div>
+    
+    <div class="msg-resgate" id="msgResgate"></div>
+</div>
+
+
     <script>
+        // ====== DADOS DO SEU SUPABASE ======
         const SUPABASE_URL = "https://xrcxvizzdumcxbylmkvn.supabase.co/rest/v1";
         const SUPABASE_KEY = "sb_publishable_E-g3G3wW4EySbCsXLXp8KQ_FnmERMcD";
+        // ===================================
 
         let usuarioAtual = null;
         let intervaloAtualizacao = null;
@@ -591,8 +598,8 @@
         let saldoMumuAtual = 0;
         let saldoReaisAtual = 0;
         let historicoTrocas = [];
-        let codigosUsados = [];
 
+        // Limite máximo de registros no histórico
         const MAX_HISTORICO = 50;
 
         function carregarUsuarioLogado() {
@@ -623,8 +630,12 @@
             if (!data) return '--';
             const d = new Date(data);
             return d.toLocaleString('pt-BR', {
-                day: '2-digit', month: '2-digit', year: 'numeric',
-                hour: '2-digit', minute: '2-digit', second: '2-digit'
+                day: '2-digit',
+                month: '2-digit',
+                year: 'numeric',
+                hour: '2-digit',
+                minute: '2-digit',
+                second: '2-digit'
             });
         }
 
@@ -632,8 +643,10 @@
             if (!data) return '--';
             const d = new Date(data);
             return d.toLocaleString('pt-BR', {
-                day: '2-digit', month: '2-digit',
-                hour: '2-digit', minute: '2-digit'
+                day: '2-digit',
+                month: '2-digit',
+                hour: '2-digit',
+                minute: '2-digit'
             });
         }
 
@@ -649,16 +662,22 @@
             el.textContent = texto;
             el.className = 'msg-troca ' + tipo;
             if (tipo === 'sucesso' || tipo === 'erro') {
-                setTimeout(() => { el.className = 'msg-troca'; }, 5000);
+                setTimeout(() => {
+                    el.className = 'msg-troca';
+                }, 5000);
             }
         }
 
         function atualizarBotoesPacotes() {
-            document.querySelectorAll('.btn-trocar').forEach(btn => {
+            const botoesTrocar = document.querySelectorAll('.btn-trocar');
+            const botoesDesfazer = document.querySelectorAll('.btn-desfazer');
+
+            botoesTrocar.forEach(btn => {
                 const custo = parseFloat(btn.dataset.mumu);
                 btn.disabled = saldoMumuAtual < custo;
             });
-            document.querySelectorAll('.btn-desfazer').forEach(btn => {
+
+            botoesDesfazer.forEach(btn => {
                 const custoSaldo = parseFloat(btn.dataset.saldo);
                 btn.disabled = saldoReaisAtual < custoSaldo;
             });
@@ -671,48 +690,35 @@
                 `<span class="simbolo">R$</span> ${formatarMoeda(reais)}`;
         }
 
-        // ====== HISTÓRICO ======
+        // ====== RENDERIZAR HISTÓRICO ======
         function renderizarHistorico() {
             const lista = document.getElementById('historicoLista');
             const btnLimpar = document.getElementById('btnLimparHistorico');
 
-            // Junta trocas + resgates
-            const todos = [...historicoTrocas];
-            codigosUsados.forEach(c => {
-                todos.push({
-                    tipo: 'resgate',
-                    data: c.data,
-                    mumuGanho: c.mumu || 0,
-                    saldoGanho: c.saldo || 0,
-                    codigo: c.codigo
-                });
-            });
-
-            if (todos.length === 0) {
-                lista.innerHTML = '<div class="historico-vazio">Nenhuma movimentação registrada ainda.</div>';
+            if (!historicoTrocas || historicoTrocas.length === 0) {
+                lista.innerHTML = '<div class="historico-vazio">Nenhuma troca registrada ainda.</div>';
                 btnLimpar.style.display = 'none';
                 return;
             }
 
             btnLimpar.style.display = 'block';
 
-            const ordenado = todos.sort((a, b) => new Date(b.data) - new Date(a.data));
+            // Mostrar os mais recentes primeiro
+            const historicoOrdenado = [...historicoTrocas].sort(
+                (a, b) => new Date(b.data) - new Date(a.data)
+            );
 
-            lista.innerHTML = ordenado.map(item => {
-                let classe, icone, rotulo, detalhe;
+            lista.innerHTML = historicoOrdenado.map(item => {
+                const isTroca = item.tipo === 'troca';
+                const classe = isTroca ? 'troca' : 'desfazer';
+                const icone = isTroca ? '🔄' : '↩️';
+                const rotulo = isTroca ? 'Troca' : 'Desfazer';
 
-                if (item.tipo === 'troca') {
-                    classe = 'troca'; icone = '🔄'; rotulo = 'Troca';
+                let detalhe = '';
+                if (isTroca) {
                     detalhe = `${formatarMoeda(item.mumuGasto)} Mumu → R$ ${formatarMoeda(item.saldoGanho)}`;
-                } else if (item.tipo === 'desfazer') {
-                    classe = 'desfazer'; icone = '↩️'; rotulo = 'Desfazer';
-                    detalhe = `R$ ${formatarMoeda(item.saldoGasto)} → ${formatarMoeda(item.mumuGanho)} Mumu`;
                 } else {
-                    classe = 'resgate'; icone = '🎁'; rotulo = `Resgate "${item.codigo || ''}"`;
-                    const partes = [];
-                    if (item.mumuGanho > 0) partes.push(`${formatarMoeda(item.mumuGanho)} Mumu`);
-                    if (item.saldoGanho > 0) partes.push(`R$ ${formatarMoeda(item.saldoGanho)}`);
-                    detalhe = partes.join(' + ') || 'Sem recompensa';
+                    detalhe = `R$ ${formatarMoeda(item.saldoGasto)} → ${formatarMoeda(item.mumuGanho)} Mumu`;
                 }
 
                 return `
@@ -727,10 +733,30 @@
             }).join('');
         }
 
+        // ====== ADICIONAR ITEM AO HISTÓRICO ======
+        function adicionarAoTrocaHistorico(tipo, dados) {
+            const novoItem = {
+                tipo: tipo, // 'troca' ou 'desfazer'
+                data: new Date().toISOString(),
+                ...dados
+            };
+
+            historicoTrocas.unshift(novoItem);
+
+            // Limitar tamanho do histórico
+            if (historicoTrocas.length > MAX_HISTORICO) {
+                historicoTrocas = historicoTrocas.slice(0, MAX_HISTORICO);
+            }
+
+            renderizarHistorico();
+        }
+
+        // ====== SALVAR HISTÓRICO NO SUPABASE ======
         async function salvarHistoricoSupabase(novoHistorico) {
             if (!usuarioAtual || !usuarioAtual.login) return;
+
             try {
-                await fetch(
+                const resp = await fetch(
                     `${SUPABASE_URL}/Geral?login=eq.${encodeURIComponent(usuarioAtual.login)}`,
                     {
                         method: "PATCH",
@@ -738,41 +764,35 @@
                             "apikey": SUPABASE_KEY,
                             "Content-Type": "application/json"
                         },
-                        body: JSON.stringify({ historico_trocas: novoHistorico })
+                        body: JSON.stringify({
+                            historico_trocas: novoHistorico
+                        })
                     }
                 );
+
+                if (!resp.ok) {
+                    console.warn('Não foi possível salvar o histórico no Supabase:', resp.status);
+                }
             } catch (e) {
-                console.warn('Erro ao salvar histórico:', e.message);
+                console.warn('Erro ao salvar histórico no Supabase:', e.message);
             }
         }
 
+        // ====== LIMPAR HISTÓRICO ======
         async function limparHistorico() {
-            if (!confirm('Tem certeza que deseja limpar todo o histórico?')) return;
+            if (!confirm('Tem certeza que deseja limpar todo o histórico de trocas?')) return;
+
             historicoTrocas = [];
-            codigosUsados = [];
             renderizarHistorico();
             await salvarHistoricoSupabase([]);
-            // Limpa também códigos usados
-            try {
-                await fetch(
-                    `${SUPABASE_URL}/Geral?login=eq.${encodeURIComponent(usuarioAtual.login)}`,
-                    {
-                        method: "PATCH",
-                        headers: {
-                            "apikey": SUPABASE_KEY,
-                            "Content-Type": "application/json"
-                        },
-                        body: JSON.stringify({ codigos_usados: [] })
-                    }
-                );
-            } catch (e) {}
-            mostrarMensagemTroca('🗑️ Histórico limpo!', 'sucesso');
+            mostrarMensagemTroca('🗑️ Histórico limpo com sucesso!', 'sucesso');
         }
 
-        // ====== BUSCAR SALDO ======
+        // ====== BUSCAR SALDO E HISTÓRICO ======
         async function buscarSaldo() {
             if (!usuarioAtual || !usuarioAtual.login) {
-                document.getElementById('saldoMumu').innerHTML = `<span class="erro">Sessão expirada</span>`;
+                document.getElementById('saldoMumu').innerHTML =
+                    `<span class="erro">Sessão expirada</span>`;
                 return;
             }
 
@@ -788,7 +808,7 @@
 
             try {
                 const resposta = await fetch(
-                    `${SUPABASE_URL}/Geral?login=eq.${encodeURIComponent(usuarioAtual.login)}&select=mumu,saldo,updated_at,nome,historico_trocas,codigos_usados`,
+                    `${SUPABASE_URL}/Geral?login=eq.${encodeURIComponent(usuarioAtual.login)}&select=mumu,saldo,updated_at,nome,historico_trocas`,
                     {
                         method: "GET",
                         headers: {
@@ -799,11 +819,14 @@
                 );
 
                 if (!resposta.ok) throw new Error(`Erro HTTP: ${resposta.status}`);
+
                 const dados = await resposta.json();
 
                 if (!dados || dados.length === 0) {
-                    document.getElementById('saldoMumu').innerHTML = `<span class="erro">Não encontrado</span>`;
-                    document.getElementById('saldoReais').innerHTML = `<span class="erro">--</span>`;
+                    document.getElementById('saldoMumu').innerHTML =
+                        `<span class="erro">Não encontrado</span>`;
+                    document.getElementById('saldoReais').innerHTML =
+                        `<span class="erro">--</span>`;
                     mostrarStatusConexao(true);
                     return;
                 }
@@ -812,14 +835,14 @@
                 const reais = parseFloat(dados[0].saldo || 0);
                 const nome = dados[0].nome || usuarioAtual.nome || usuarioAtual.login;
                 const historico = dados[0].historico_trocas || [];
-                const usados = dados[0].codigos_usados || [];
 
                 saldoMumuAtual = mumu;
                 saldoReaisAtual = reais;
                 historicoTrocas = Array.isArray(historico) ? historico : [];
-                codigosUsados = Array.isArray(usados) ? usados : [];
 
-                if (nome !== usuarioAtual.nome) usuarioAtual.nome = nome;
+                if (nome !== usuarioAtual.nome) {
+                    usuarioAtual.nome = nome;
+                }
 
                 usuarioAtual.mumu = mumu;
                 usuarioAtual.saldo = reais;
@@ -828,7 +851,9 @@
                 exibirSaldos(mumu, reais);
                 renderizarHistorico();
 
-                const dataBanco = dados[0].updated_at ? new Date(dados[0].updated_at) : new Date();
+                const dataBanco = dados[0].updated_at
+                    ? new Date(dados[0].updated_at)
+                    : new Date();
                 elemData.textContent = formatarData(dataBanco);
 
                 mostrarStatusConexao(true);
@@ -840,27 +865,34 @@
                     saldoReaisAtual = parseFloat(usuarioAtual.saldo || 0);
                     exibirSaldos(saldoMumuAtual, saldoReaisAtual);
                     elemData.textContent = formatarData(new Date()) + ' (dados locais)';
-                    elemErro.textContent = "⚠️ Usando dados salvos localmente";
+                    elemErro.textContent = "⚠️ Usando dados salvos localmente - sem conexão";
                     atualizarBotoesPacotes();
                     renderizarHistorico();
                 } else {
-                    document.getElementById('saldoMumu').innerHTML = `<span class="erro">Erro</span>`;
-                    document.getElementById('saldoReais').innerHTML = `<span class="erro">Erro</span>`;
+                    document.getElementById('saldoMumu').innerHTML =
+                        `<span class="erro">Erro</span>`;
+                    document.getElementById('saldoReais').innerHTML =
+                        `<span class="erro">Erro</span>`;
                     elemErro.textContent = `Detalhe: ${erro.message}`;
                 }
+
                 mostrarStatusConexao(false);
+                console.error("Erro ao buscar saldo:", erro);
             } finally {
                 estaAtualizando = false;
             }
         }
 
-        // ====== TROCA ======
+        // ====== TROCA: MUMU -> SALDO ======
         async function trocarMumuPorSaldo(mumuGasto, saldoGanho) {
             if (!usuarioAtual || !usuarioAtual.login) {
-                mostrarMensagemTroca('Sessão expirada.', 'erro'); return;
+                mostrarMensagemTroca('Sessão expirada. Faça login novamente.', 'erro');
+                return;
             }
+
             if (saldoMumuAtual < mumuGasto) {
-                mostrarMensagemTroca(`Saldo insuficiente. Você tem ${formatarMoeda(saldoMumuAtual)} Mumu.`, 'erro'); return;
+                mostrarMensagemTroca(`Saldo insuficiente. Você tem ${formatarMoeda(saldoMumuAtual)} Mumu.`, 'erro');
+                return;
             }
 
             mostrarMensagemTroca('Processando troca...', 'carregando');
@@ -868,31 +900,46 @@
             try {
                 const respGet = await fetch(
                     `${SUPABASE_URL}/Geral?login=eq.${encodeURIComponent(usuarioAtual.login)}&select=mumu,saldo,historico_trocas`,
-                    { headers: { "apikey": SUPABASE_KEY, "Content-Type": "application/json" } }
+                    {
+                        headers: {
+                            "apikey": SUPABASE_KEY,
+                            "Content-Type": "application/json"
+                        }
+                    }
                 );
 
                 if (!respGet.ok) throw new Error(`Erro HTTP: ${respGet.status}`);
                 const dadosAtuais = await respGet.json();
-                if (!dadosAtuais || dadosAtuais.length === 0) throw new Error('Usuário não encontrado.');
+
+                if (!dadosAtuais || dadosAtuais.length === 0) {
+                    throw new Error('Usuário não encontrado.');
+                }
 
                 const mumuAtual = parseFloat(dadosAtuais[0].mumu || 0);
                 const saldoAtual = parseFloat(dadosAtuais[0].saldo || 0);
                 let historicoAtual = dadosAtuais[0].historico_trocas || [];
+
                 if (!Array.isArray(historicoAtual)) historicoAtual = [];
 
-                if (mumuAtual < mumuGasto) throw new Error(`Saldo insuficiente.`);
+                if (mumuAtual < mumuGasto) {
+                    throw new Error(`Saldo insuficiente. Você tem ${formatarMoeda(mumuAtual)} Mumu.`);
+                }
 
                 const novoMumu = mumuAtual - mumuGasto;
                 const novoSaldo = saldoAtual + saldoGanho;
 
+                // Adicionar ao histórico
                 const novoRegistro = {
                     tipo: 'troca',
                     data: new Date().toISOString(),
                     mumuGasto: mumuGasto,
                     saldoGanho: saldoGanho
                 };
+
                 historicoAtual.unshift(novoRegistro);
-                if (historicoAtual.length > MAX_HISTORICO) historicoAtual = historicoAtual.slice(0, MAX_HISTORICO);
+                if (historicoAtual.length > MAX_HISTORICO) {
+                    historicoAtual = historicoAtual.slice(0, MAX_HISTORICO);
+                }
 
                 const respPatch = await fetch(
                     `${SUPABASE_URL}/Geral?login=eq.${encodeURIComponent(usuarioAtual.login)}`,
@@ -924,19 +971,27 @@
                 exibirSaldos(novoMumu, novoSaldo);
                 renderizarHistorico();
                 atualizarBotoesPacotes();
-                mostrarMensagemTroca(`✅ Troca realizada! ${formatarMoeda(mumuGasto)} Mumu → R$ ${formatarMoeda(saldoGanho)}`, 'sucesso');
+                mostrarMensagemTroca(
+                    `✅ Troca realizada! ${formatarMoeda(mumuGasto)} Mumu → R$ ${formatarMoeda(saldoGanho)} Saldo`,
+                    'sucesso'
+                );
 
             } catch (erro) {
+                console.error('Erro na troca:', erro);
                 mostrarMensagemTroca(`❌ ${erro.message}`, 'erro');
             }
         }
 
+        // ====== DESFAZER: SALDO -> MUMU ======
         async function desfazerTroca(saldoGasto, mumuGanho) {
             if (!usuarioAtual || !usuarioAtual.login) {
-                mostrarMensagemTroca('Sessão expirada.', 'erro'); return;
+                mostrarMensagemTroca('Sessão expirada. Faça login novamente.', 'erro');
+                return;
             }
+
             if (saldoReaisAtual < saldoGasto) {
-                mostrarMensagemTroca(`Saldo em R$ insuficiente.`, 'erro'); return;
+                mostrarMensagemTroca(`Saldo em R$ insuficiente. Você tem R$ ${formatarMoeda(saldoReaisAtual)}.`, 'erro');
+                return;
             }
 
             mostrarMensagemTroca('Processando desfazer...', 'carregando');
@@ -944,30 +999,46 @@
             try {
                 const respGet = await fetch(
                     `${SUPABASE_URL}/Geral?login=eq.${encodeURIComponent(usuarioAtual.login)}&select=mumu,saldo,historico_trocas`,
-                    { headers: { "apikey": SUPABASE_KEY, "Content-Type": "application/json" } }
+                    {
+                        headers: {
+                            "apikey": SUPABASE_KEY,
+                            "Content-Type": "application/json"
+                        }
+                    }
                 );
+
                 if (!respGet.ok) throw new Error(`Erro HTTP: ${respGet.status}`);
                 const dadosAtuais = await respGet.json();
-                if (!dadosAtuais || dadosAtuais.length === 0) throw new Error('Usuário não encontrado.');
+
+                if (!dadosAtuais || dadosAtuais.length === 0) {
+                    throw new Error('Usuário não encontrado.');
+                }
 
                 const mumuAtual = parseFloat(dadosAtuais[0].mumu || 0);
                 const saldoAtual = parseFloat(dadosAtuais[0].saldo || 0);
                 let historicoAtual = dadosAtuais[0].historico_trocas || [];
+
                 if (!Array.isArray(historicoAtual)) historicoAtual = [];
 
-                if (saldoAtual < saldoGasto) throw new Error(`Saldo em R$ insuficiente.`);
+                if (saldoAtual < saldoGasto) {
+                    throw new Error(`Saldo em R$ insuficiente. Você tem R$ ${formatarMoeda(saldoAtual)}.`);
+                }
 
                 const novoMumu = mumuAtual + mumuGanho;
                 const novoSaldo = saldoAtual - saldoGasto;
 
+                // Adicionar ao histórico
                 const novoRegistro = {
                     tipo: 'desfazer',
                     data: new Date().toISOString(),
                     saldoGasto: saldoGasto,
                     mumuGanho: mumuGanho
                 };
+
                 historicoAtual.unshift(novoRegistro);
-                if (historicoAtual.length > MAX_HISTORICO) historicoAtual = historicoAtual.slice(0, MAX_HISTORICO);
+                if (historicoAtual.length > MAX_HISTORICO) {
+                    historicoAtual = historicoAtual.slice(0, MAX_HISTORICO);
+                }
 
                 const respPatch = await fetch(
                     `${SUPABASE_URL}/Geral?login=eq.${encodeURIComponent(usuarioAtual.login)}`,
@@ -986,6 +1057,7 @@
                         })
                     }
                 );
+
                 if (!respPatch.ok) throw new Error(`Erro HTTP: ${respPatch.status}`);
 
                 saldoMumuAtual = novoMumu;
@@ -998,188 +1070,47 @@
                 exibirSaldos(novoMumu, novoSaldo);
                 renderizarHistorico();
                 atualizarBotoesPacotes();
-                mostrarMensagemTroca(`✅ Troca desfeita! R$ ${formatarMoeda(saldoGasto)} → ${formatarMoeda(mumuGanho)} Mumu`, 'sucesso');
+                mostrarMensagemTroca(
+                    `✅ Troca desfeita! R$ ${formatarMoeda(saldoGasto)} Saldo → ${formatarMoeda(mumuGanho)} Mumu`,
+                    'sucesso'
+                );
 
             } catch (erro) {
+                console.error('Erro ao desfazer:', erro);
                 mostrarMensagemTroca(`❌ ${erro.message}`, 'erro');
             }
         }
 
-        // ====== RESGATAR CÓDIGO ======
-        function mostrarMsgResgate(texto, tipo) {
-            const el = document.getElementById('msgResgate');
-            el.textContent = texto;
-            el.className = 'msg-resgate ' + tipo;
-            if (tipo === 'sucesso' || tipo === 'erro') {
-                setTimeout(() => { el.className = 'msg-resgate'; }, 6000);
-            }
-        }
-
-        async function buscarCodigosAdmin() {
-            try {
-                const resp = await fetch(
-                    `${SUPABASE_URL}/Geral?id=eq.1&select=codigos_resgate`,
-                    { headers: { "apikey": SUPABASE_KEY, "Content-Type": "application/json" } }
-                );
-                if (!resp.ok) throw new Error(`HTTP ${resp.status}`);
-                const data = await resp.json();
-                if (!data || data.length === 0) return [];
-                return Array.isArray(data[0].codigos_resgate) ? data[0].codigos_resgate : [];
-            } catch (e) {
-                console.warn('Erro ao buscar códigos:', e.message);
-                return [];
-            }
-        }
-
-        async function resgatarCodigo() {
-            const input = document.getElementById('inputCodigo');
-            const btn = document.getElementById('btnResgatar');
-            const codigo = (input.value || '').trim().toUpperCase();
-
-            if (!codigo) {
-                mostrarMsgResgate('⚠️ Digite um código para resgatar.', 'erro');
-                return;
-            }
-            if (!usuarioAtual || !usuarioAtual.login) {
-                mostrarMsgResgate('❌ Sessão expirada. Faça login novamente.', 'erro');
-                return;
-            }
-
-            btn.disabled = true;
-            mostrarMsgResgate('🔍 Verificando código...', 'carregando');
-
-            try {
-                // 1) Busca códigos disponíveis
-                const codigos = await buscarCodigosAdmin();
-                const codigoEncontrado = codigos.find(
-                    c => (c.codigo || '').toUpperCase() === codigo && c.ativo !== false
-                );
-
-                if (!codigoEncontrado) throw new Error('Código inválido ou expirado.');
-
-                // 2) Busca dados atuais do usuário
-                const respUser = await fetch(
-                    `${SUPABASE_URL}/Geral?login=eq.${encodeURIComponent(usuarioAtual.login)}&select=mumu,saldo,codigos_usados,historico_trocas`,
-                    { headers: { "apikey": SUPABASE_KEY, "Content-Type": "application/json" } }
-                );
-                if (!respUser.ok) throw new Error(`HTTP ${respUser.status}`);
-                const dadosUser = await respUser.json();
-                if (!dadosUser || dadosUser.length === 0) throw new Error('Usuário não encontrado.');
-
-                const user = dadosUser[0];
-                const usados = Array.isArray(user.codigos_usados) ? user.codigos_usados : [];
-
-                // 3) Verifica se já usou
-                if (usados.some(u => (u.codigo || '').toUpperCase() === codigo)) {
-                    throw new Error('Você já resgatou este código.');
-                }
-
-                // 4) Verifica limite global
-                const limite = codigoEncontrado.limite || 0;
-                const usosAtuais = codigoEncontrado.usos || 0;
-                if (limite > 0 && usosAtuais >= limite) {
-                    throw new Error('Este código já atingiu o limite de resgates.');
-                }
-
-                // 5) Aplica recompensas
-                const bonusMumu = parseFloat(codigoEncontrado.mumu || 0);
-                const bonusSaldo = parseFloat(codigoEncontrado.saldo || 0);
-                if (bonusMumu <= 0 && bonusSaldo <= 0) {
-                    throw new Error('Este código não possui recompensas.');
-                }
-
-                const novoMumu = parseFloat(user.mumu || 0) + bonusMumu;
-                const novoSaldo = parseFloat(user.saldo || 0) + bonusSaldo;
-
-                // 6) Registra no histórico de códigos usados
-                const novoUsados = [
-                    { codigo: codigo, data: new Date().toISOString(), mumu: bonusMumu, saldo: bonusSaldo },
-                    ...usados
-                ].slice(0, 100);
-
-                // 7) Atualiza usuário
-                const respPatchUser = await fetch(
-                    `${SUPABASE_URL}/Geral?login=eq.${encodeURIComponent(usuarioAtual.login)}`,
-                    {
-                        method: 'PATCH',
-                        headers: {
-                            "apikey": SUPABASE_KEY,
-                            "Content-Type": "application/json",
-                            "Prefer": "return=representation"
-                        },
-                        body: JSON.stringify({
-                            mumu: novoMumu,
-                            saldo: novoSaldo,
-                            codigos_usados: novoUsados,
-                            updated_at: new Date().toISOString()
-                        })
-                    }
-                );
-                if (!respPatchUser.ok) throw new Error(`Erro ao salvar: HTTP ${respPatchUser.status}`);
-
-                // 8) Incrementa contador de usos do código
-                const codigosAtualizados = codigos.map(c => {
-                    if ((c.codigo || '').toUpperCase() === codigo) {
-                        return { ...c, usos: (c.usos || 0) + 1 };
-                    }
-                    return c;
-                });
-
-                await fetch(`${SUPABASE_URL}/Geral?id=eq.1`, {
-                    method: 'PATCH',
-                    headers: { "apikey": SUPABASE_KEY, "Content-Type": "application/json" },
-                    body: JSON.stringify({ codigos_resgate: codigosAtualizados })
-                });
-
-                // 9) Atualiza estado local
-                saldoMumuAtual = novoMumu;
-                saldoReaisAtual = novoSaldo;
-                usuarioAtual.mumu = novoMumu;
-                usuarioAtual.saldo = novoSaldo;
-                codigosUsados = novoUsados;
-                localStorage.setItem('usuario_logado', JSON.stringify(usuarioAtual));
-
-                exibirSaldos(novoMumu, novoSaldo);
-                atualizarBotoesPacotes();
-                renderizarHistorico();
-
-                // 10) Mensagem
-                const partes = [];
-                if (bonusMumu > 0) partes.push(`${formatarMoeda(bonusMumu)} Mumu`);
-                if (bonusSaldo > 0) partes.push(`R$ ${formatarMoeda(bonusSaldo)}`);
-                mostrarMsgResgate(`✅ Código resgatado! Você ganhou ${partes.join(' + ')}`, 'sucesso');
-
-                input.value = '';
-
-            } catch (erro) {
-                mostrarMsgResgate(`❌ ${erro.message}`, 'erro');
-            } finally {
-                btn.disabled = false;
-            }
-        }
-
         function iniciarAtualizacaoAutomatica() {
-            if (intervaloAtualizacao) clearInterval(intervaloAtualizacao);
+            if (intervaloAtualizacao) {
+                clearInterval(intervaloAtualizacao);
+            }
             buscarSaldo();
-            intervaloAtualizacao = setInterval(() => { buscarSaldo(); }, 10000);
+            intervaloAtualizacao = setInterval(() => {
+                buscarSaldo();
+            }, 10000);
         }
 
         document.addEventListener('DOMContentLoaded', () => {
             document.querySelectorAll('.btn-trocar').forEach(btn => {
                 btn.addEventListener('click', () => {
-                    trocarMumuPorSaldo(parseFloat(btn.dataset.mumu), parseFloat(btn.dataset.saldo));
+                    trocarMumuPorSaldo(
+                        parseFloat(btn.dataset.mumu),
+                        parseFloat(btn.dataset.saldo)
+                    );
                 });
             });
+
             document.querySelectorAll('.btn-desfazer').forEach(btn => {
                 btn.addEventListener('click', () => {
-                    desfazerTroca(parseFloat(btn.dataset.saldo), parseFloat(btn.dataset.mumu));
+                    desfazerTroca(
+                        parseFloat(btn.dataset.saldo),
+                        parseFloat(btn.dataset.mumu)
+                    );
                 });
             });
+
             document.getElementById('btnLimparHistorico').addEventListener('click', limparHistorico);
-            document.getElementById('btnResgatar').addEventListener('click', resgatarCodigo);
-            document.getElementById('inputCodigo').addEventListener('keypress', (e) => {
-                if (e.key === 'Enter') resgatarCodigo();
-            });
         });
 
         if (!carregarUsuarioLogado()) {
@@ -1199,7 +1130,185 @@
             }
         }, 30000);
 
-        console.log('🔄 Sistema de saldo Mumu + trocas + resgate de códigos iniciado');
+
+
+        // ====== SISTEMA DE CÓDIGOS DE RESGATE ======
+// O admin (ID=1) guarda os códigos na coluna `codigos_resgate`
+// Cada usuário guarda em `codigos_usados` os códigos já resgatados
+
+async function buscarCodigosAdmin() {
+    try {
+        // Busca a linha do admin (id=1) que contém todos os códigos
+        const resp = await fetch(
+            `${SUPABASE_URL}/Geral?id=eq.1&select=codigos_resgate`,
+            { headers: { "apikey": SUPABASE_KEY, "Content-Type": "application/json" } }
+        );
+        if (!resp.ok) throw new Error(`HTTP ${resp.status}`);
+        const data = await resp.json();
+        if (!data || data.length === 0) return [];
+        return Array.isArray(data[0].codigos_resgate) ? data[0].codigos_resgate : [];
+    } catch (e) {
+        console.warn('Erro ao buscar códigos:', e.message);
+        return [];
+    }
+}
+
+function mostrarMsgResgate(texto, tipo) {
+    const el = document.getElementById('msgResgate');
+    el.textContent = texto;
+    el.className = 'msg-resgate ' + tipo;
+    if (tipo === 'sucesso' || tipo === 'erro') {
+        setTimeout(() => { el.className = 'msg-resgate'; }, 6000);
+    }
+}
+
+async function resgatarCodigo() {
+    const input = document.getElementById('inputCodigo');
+    const btn = document.getElementById('btnResgatar');
+    const codigo = (input.value || '').trim().toUpperCase();
+
+    if (!codigo) {
+        mostrarMsgResgate('⚠️ Digite um código para resgatar.', 'erro');
+        return;
+    }
+    if (!usuarioAtual || !usuarioAtual.login) {
+        mostrarMsgResgate('❌ Sessão expirada. Faça login novamente.', 'erro');
+        return;
+    }
+
+    btn.disabled = true;
+    mostrarMsgResgate('🔍 Verificando código...', 'carregando');
+
+    try {
+        // 1) Busca códigos disponíveis (linha do admin)
+        const codigos = await buscarCodigosAdmin();
+
+        const codigoEncontrado = codigos.find(
+            c => (c.codigo || '').toUpperCase() === codigo && c.ativo !== false
+        );
+
+        if (!codigoEncontrado) {
+            throw new Error('Código inválido ou expirado.');
+        }
+
+        // 2) Busca dados atuais do usuário (saldo + códigos usados)
+        const respUser = await fetch(
+            `${SUPABASE_URL}/Geral?login=eq.${encodeURIComponent(usuarioAtual.login)}&select=mumu,saldo,codigos_usados,nome`,
+            { headers: { "apikey": SUPABASE_KEY, "Content-Type": "application/json" } }
+        );
+        if (!respUser.ok) throw new Error(`HTTP ${respUser.status}`);
+        const dadosUser = await respUser.json();
+        if (!dadosUser || dadosUser.length === 0) throw new Error('Usuário não encontrado.');
+
+        const user = dadosUser[0];
+        const usados = Array.isArray(user.codigos_usados) ? user.codigos_usados : [];
+
+        // 3) Verifica se já foi usado
+        if (usados.some(u => (u.codigo || '').toUpperCase() === codigo)) {
+            throw new Error('Você já resgatou este código.');
+        }
+
+        // 4) Verifica limite de usos globais
+        const limite = codigoEncontrado.limite || 0;
+        const usosAtuais = codigoEncontrado.usos || 0;
+        if (limite > 0 && usosAtuais >= limite) {
+            throw new Error('Este código já atingiu o limite de resgates.');
+        }
+
+        // 5) Aplica recompensas
+        const bonusMumu = parseFloat(codigoEncontrado.mumu || 0);
+        const bonusSaldo = parseFloat(codigoEncontrado.saldo || 0);
+
+        if (bonusMumu <= 0 && bonusSaldo <= 0) {
+            throw new Error('Este código não possui recompensas.');
+        }
+
+        const novoMumu = parseFloat(user.mumu || 0) + bonusMumu;
+        const novoSaldo = parseFloat(user.saldo || 0) + bonusSaldo;
+
+        // 6) Marca como usado pelo usuário
+        const novoUsados = [
+            { codigo: codigo, data: new Date().toISOString(), mumu: bonusMumu, saldo: bonusSaldo },
+            ...usados
+        ].slice(0, 100);
+
+        // 7) Atualiza usuário no banco
+        const respPatchUser = await fetch(
+            `${SUPABASE_URL}/Geral?login=eq.${encodeURIComponent(usuarioAtual.login)}`,
+            {
+                method: 'PATCH',
+                headers: {
+                    "apikey": SUPABASE_KEY,
+                    "Content-Type": "application/json",
+                    "Prefer": "return=representation"
+                },
+                body: JSON.stringify({
+                    mumu: novoMumu,
+                    saldo: novoSaldo,
+                    codigos_usados: novoUsados,
+                    updated_at: new Date().toISOString()
+                })
+            }
+        );
+        if (!respPatchUser.ok) throw new Error(`Erro ao salvar: HTTP ${respPatchUser.status}`);
+
+        // 8) Incrementa contador de usos do código (na linha do admin)
+        const codigosAtualizados = codigos.map(c => {
+            if ((c.codigo || '').toUpperCase() === codigo) {
+                return { ...c, usos: (c.usos || 0) + 1 };
+            }
+            return c;
+        });
+
+        await fetch(`${SUPABASE_URL}/Geral?id=eq.1`, {
+            method: 'PATCH',
+            headers: { "apikey": SUPABASE_KEY, "Content-Type": "application/json" },
+            body: JSON.stringify({ codigos_resgate: codigosAtualizados })
+        });
+
+        // 9) Atualiza estado local
+        saldoMumuAtual = novoMumu;
+        saldoReaisAtual = novoSaldo;
+        usuarioAtual.mumu = novoMumu;
+        usuarioAtual.saldo = novoSaldo;
+        localStorage.setItem('usuario_logado', JSON.stringify(usuarioAtual));
+
+        exibirSaldos(novoMumu, novoSaldo);
+        atualizarBotoesPacotes();
+
+        // 10) Monta mensagem de sucesso
+        const partes = [];
+        if (bonusMumu > 0) partes.push(`${formatarMoeda(bonusMumu)} Mumu`);
+        if (bonusSaldo > 0) partes.push(`R$ ${formatarMoeda(bonusSaldo)}`);
+        mostrarMsgResgate(`✅ Código resgatado! Você ganhou ${partes.join(' + ')}`, 'sucesso');
+
+        input.value = '';
+        input.focus();
+
+    } catch (erro) {
+        console.error('Erro no resgate:', erro);
+        mostrarMsgResgate(`❌ ${erro.message}`, 'erro');
+    } finally {
+        btn.disabled = false;
+    }
+}
+
+// Event listeners do resgate
+document.addEventListener('DOMContentLoaded', () => {
+    const btn = document.getElementById('btnResgatar');
+    const input = document.getElementById('inputCodigo');
+    if (btn) btn.addEventListener('click', resgatarCodigo);
+    if (input) {
+        input.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') resgatarCodigo();
+        });
+    }
+});
+
+
+
+
+        console.log('🔄 Sistema de saldo Mumu + Saldo R$ + trocas + histórico iniciado');
     </script>
 </body>
 </html>

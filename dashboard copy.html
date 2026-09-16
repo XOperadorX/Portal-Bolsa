@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard Central de Jogos MM</title>
+
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500;700;900&family=Rajdhani:wght@600;700&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <link rel="stylesheet" href="style/dashboard.css">
+</head>
+<body>
+
+    <!-- OVERLAY DE CARREGAMENTO PARA JOGOS -->
+    <div class="game-loading-overlay" id="gameLoadingOverlay">
+        <div class="loading-spinner"></div>
+        <div class="loading-icon" id="loadingIcon">🎮</div>
+        <div class="loading-text" id="loadingTitle">Entrando no Jogo...</div>
+        <div class="loading-sub" id="loadingSub">Preparando sua aventura</div>
+        <div class="loading-stamina" id="loadingStamina">⚡ -10 STAMINA</div>
+        <div class="loading-progress-bar">
+            <div class="progress-fill" id="loadingProgressFill"></div>
+        </div>
+    </div>
+
+    <!-- STATUS BAR -->
+    <div class="status-bar">
+        <div class="status-item">
+            <span class="dot checking" id="supabaseDot"></span>
+            <span>Supabase:</span>
+            <span class="value checking" id="supabaseStatus">Verificando...</span>
+            <button class="status-reconnect" id="btnReconnectSupabase" title="Reconectar">🔄</button>
+        </div>
+        <div class="status-item" style="margin-left:auto;">
+            <span>👤 <span id="headerUser">Visitante</span></span>
+        </div>
+    </div>
+
+    <!-- CABEÇALHO -->
+    <div class="dashboard-header">
+        <h1>🎮 Central de Jogos</h1>
+        <p>Escolha uma arena e comece a jogar agora mesmo!</p>
+    </div>
+
+    <!-- NAVEGAÇÃO -->
+    <nav class="nav-bar">
+        <div class="nav-links">
+            <a href="../../dashboard.html" class="active">🏠 DASHBOARD</a>
+        </div>
+
+        <div class="user-profile" id="userProfile">
+            <div class="user-avatar" id="userAvatar">👤</div>
+            <div class="user-info">
+                <span class="user-nick" id="userNick">Carregando...</span>
+                <span class="saldo" id="saldo">R$ 0,00</span>
+            </div>
+        </div>
+
+        <div class="btc-widget">
+            <div class="btc-icon">⛏️</div>
+            <div class="btc-info">
+                <span class="btc-label">BTC Acumulado</span>
+                <span class="btc-value" id="btcTotal">0.00000000</span>
+            </div>
+        </div>
+
+        <div class="nav-buttons">
+            <a href="/jogos/mercado/mercado.html" class="btn-bolsa" style="background: linear-gradient(135deg, #f59e0b, #d97706);">💰 Mercado</a>
+            <a href="/jogos/mochila/mochila.html" class="btn-bolsa" style="background: linear-gradient(135deg, #8b5cf6, #7000ff);">🎒 Mochila</a>
+            <a href="/jogos/mumu/mumu.html" class="btn-bolsa" style="background: linear-gradient(135deg, #8b5cf6, #7000ff);">💰 Troca MUMU</a>
+            <a href="/jogos/troca/troca.html" class="btn-bolsa" style="background: linear-gradient(135deg, #8b5cf6, #7000ff);">💰 Troca BTC</a>
+            <a href="/jogos/cadeado/cadeado.html" class="btn-bolsa" style="background: linear-gradient(135deg, #8b5cf6, #7000ff);">🔒 Cadeado</a>
+            <button class="btn-sair" id="btnSair">🚪 Sair</button>
+
+            <!-- 👑 BOTÃO ADMIN — só aparece se cadeado = true (verificado no dashboard.js) -->
+            <a href="/dados/admin/admin.html"
+               id="btnAdmin"
+               class="btn-bolsa"
+               style="display:none; background: linear-gradient(135deg, #7000ff, #8b5cf6);">
+               👑 Admin
+            </a>
+        </div>
+    </nav>
+
+    <!-- SISTEMA DE NÍVEL -->
+    <div class="level-widget" id="levelWidget">
+        <div class="lw-header">
+            <div class="lw-badge">
+                <span class="lw-num" id="lwNivel">1</span>
+                <div>
+                    <div class="lw-label">NÍVEL</div>
+                    <div class="lw-title" id="lwTitulo">🌱 Iniciante</div>
+                </div>
+            </div>
+            <div class="lw-exp">
+                <div class="lw-bar">
+                    <div class="lw-fill" id="lwExpFill" style="width:0%"></div>
+                </div>
+                <div class="lw-text">
+                    <span class="lw-cur" id="lwExpAtual">0</span>
+                    <span>/ <span class="lw-nxt" id="lwExpProx">100</span> EXP</span>
+                </div>
+            </div>
+        </div>
+        <div class="lw-stats">
+            <span>❤️ HP <span class="hp-c" id="lwHp">100/100</span></span>
+            <span>💧 MANA <span class="mp-c" id="lwMp">50/50</span></span>
+            <span>⚡ STAMINA <span class="sm-c" id="lwSm">100/100</span></span>
+            <span>⚔️ FORCA <span class="atk-c" id="lwAtk">15</span></span>
+            <span>🛡️ DEFESA <span class="def-c" id="lwDef">10</span></span>
+            <span>🔮 MAGIA <span class="mag-c" id="lwMag">8</span></span>
+        </div>
+    </div>
+
+    <!-- GRADE DE JOGOS -->
+    <main class="games-grid" id="gamesGrid">
+        <a href="/jogos/planta/planta.html" class="game-card hot" data-game="fazendinha" data-game-name="Fazendinha">
+            <span class="game-badge">🌱 Novo</span>
+            <div class="game-icon">🌱</div>
+            <div class="game-title">Milharal</div>
+        </a>
+        <a href="/jogos/bolsa/bolsa.html" class="game-card" data-game="bolsa" data-game-name="Bolsa Simulator">
+            <span class="game-badge">📈</span>
+            <div class="game-icon">📈</div>
+            <div class="game-title">Bolsa Simulator</div>
+        </a>
+        <a href="/jogos/torre/torre.html" class="game-card" data-game="torre" data-game-name="Torre de Arena">
+            <span class="game-badge">NOVO</span>
+            <div class="game-icon">⚔️</div>
+            <div class="game-title">Torre de Arena</div>
+        </a>
+        <a href="/jogos/minerar/minerar.html" class="game-card" data-game="minerar" data-game-name="Mineração de BTC">
+            <span class="game-badge">NOVO</span>
+            <div class="game-icon">⛏️</div>
+            <div class="game-title">Mineração de BTC</div>
+        </a>
+        <a href="/jogos/faz/faz.html" class="game-card" data-game="faz" data-game-name="Fazenda">
+            <span class="game-badge">NOVO</span>
+            <div class="game-icon">🌾</div>
+            <div class="game-title">Fazenda</div>
+        </a>
+    </main>
+
+    <!-- HISTÓRICO -->
+    <div class="activity-log">
+        <h3>📋 Histórico de Atividades</h3>
+        <div class="log-list" id="logList">
+            <div class="log-entry">
+                <span class="log-time">--</span>
+                <span class="log-msg" style="color:#6a7a8a;">Aguardando atividades...</span>
+            </div>
+        </div>
+    </div>
+
+    <div id="levelToast"></div>
+
+    <script src="script/dashboard.js"></script>
+</body>
+</html>

@@ -23,9 +23,10 @@ const MOEDA = 'Mumu';
 
 let supabaseOnline = false;
 let usuariosCache = [];
-let selicAtual = 10.75; // Valor padrão inicial, será sobrescrito pelo Supabase
+let selicAtual = 10.75;
+let codigosCache = [];
 
-// ==================== FUNÇÕES ====================
+// ==================== FUNÇÕES UTILITÁRIAS ====================
 function mostrarMensagem(texto, tipo = 'info') {
     const el = document.getElementById('mensagem');
     el.textContent = texto;
@@ -114,7 +115,6 @@ function atualizarDisplaySelic(valor) {
 
 async function salvarSelicNoSupabase(valor) {
     try {
-        // Primeiro, verifica se o registro existe
         const { data: existingData, error: checkError } = await supabase
             .from(TABELA)
             .select('id')
@@ -122,7 +122,6 @@ async function salvarSelicNoSupabase(valor) {
             .single();
 
         if (checkError && checkError.code === 'PGRST116') {
-            // Registro não existe, cria
             const { error: insertError } = await supabase
                 .from(TABELA)
                 .insert({ id: 1, selic: valor, updated_at: new Date().toISOString() });
@@ -131,7 +130,6 @@ async function salvarSelicNoSupabase(valor) {
                 return false;
             }
         } else {
-            // Registro existe, atualiza
             const { error: updateError } = await supabase
                 .from(TABELA)
                 .update({ selic: valor, updated_at: new Date().toISOString() })
@@ -158,7 +156,6 @@ async function carregarSelicDoSupabase() {
             
         if (error) {
             if (error.code === 'PGRST116') {
-                // Nenhum registro encontrado, retorna null para criar um novo
                 return null;
             }
             console.warn('Erro ao carregar SELIC:', error);
@@ -186,7 +183,7 @@ async function atualizarSelic(valor) {
     }
 }
 
-// ==================== SUPABASE ====================
+// ==================== SUPABASE - USUÁRIOS ====================
 async function verificarSupabase() {
     try {
         const { data, error } = await supabase
@@ -271,6 +268,50 @@ async function atualizarSaldoUsuario(id, novoSaldo) {
     }
 }
 
+// ==================== DELETAR USUÁRIO ====================
+async function deletarUsuario(id, login) {
+    const confirmacao1 = confirm(`⚠️ ATENÇÃO!\n\nTem certeza que deseja DELETAR o usuário "${login}" (ID: ${id})?\n\nEsta ação é IRREVERSÍVEL!`);
+    
+    if (!confirmacao1) return;
+    
+    const confirmacao2 = prompt(`🔴 CONFIRMAÇÃO FINAL\n\nDigite "DELETAR" (em maiúsculas) para confirmar a exclusão de "${login}":`);
+    
+    if (confirmacao2 !== 'DELETAR') {
+        mostrarMensagem('❌ Exclusão cancelada. Você digitou "' + (confirmacao2 || 'nada') + '" em vez de "DELETAR".', 'erro');
+        return;
+    }
+
+    try {
+        const usuario = await buscarUsuarioPorId(id);
+        if (!usuario) {
+            mostrarMensagem('❌ Usuário não encontrado.', 'erro');
+            return;
+        }
+
+        const { error } = await supabase
+            .from(TABELA)
+            .delete()
+            .eq('id', id);
+
+        if (error) {
+            console.error('Erro ao deletar usuário:', error);
+            mostrarMensagem('❌ Erro ao deletar usuário: ' + error.message, 'erro');
+            return;
+        }
+
+        console.log(`🗑️ Usuário deletado: ID ${id} | Login: ${login} | Saldo: ${usuario.saldo} | Poupança: ${usuario.saldo_poupanca}`);
+
+        mostrarMensagem(`🗑️ Usuário "${login}" (ID: ${id}) deletado com sucesso!`, 'sucesso');
+        
+        document.getElementById('cardResultados').style.display = 'none';
+        await carregarDados();
+        
+    } catch (error) {
+        console.error('Erro:', error);
+        mostrarMensagem('❌ Erro ao deletar usuário.', 'erro');
+    }
+}
+
 // ==================== FUNÇÕES DE UI ====================
 function renderizarUsuarioDetalhes(usuario) {
     const container = document.getElementById('detalhesUsuario');
@@ -316,6 +357,7 @@ function renderizarUsuarioDetalhes(usuario) {
             <button class="btn btn-success" onclick="window.adicionarSaldoEspecifico(${usuario.id})">➕ Adicionar</button>
             <button class="btn btn-danger" onclick="window.removerSaldoEspecifico(${usuario.id})">➖ Remover</button>
             <button class="btn btn-warning" onclick="window.definirSaldoEspecifico(${usuario.id})">🎯 Definir</button>
+            <button class="btn-delete" onclick="window.deletarUsuario(${usuario.id}, '${usuario.login}')">🗑️ Deletar Conta</button>
         </div>
     `;
 
@@ -348,6 +390,7 @@ function renderizarListaUsuarios(usuarios) {
                         <button class="add" onclick="window.adicionarSaldoUsuario(${u.id})">+</button>
                         <button class="remove" onclick="window.removerSaldoUsuario(${u.id})">-</button>
                         <button class="set" onclick="window.definirSaldoUsuario(${u.id})">=</button>
+                        <button class="delete" onclick="window.deletarUsuario(${u.id}, '${u.login}')">🗑️</button>
                     </div>
                 </td>
             </tr>
@@ -373,7 +416,7 @@ async function atualizarEstatisticas(usuarios) {
     document.getElementById('totalPoupanca').innerHTML = `${totalPoupanca.toFixed(2)} <span class="moeda-simbolo">${MOEDA}</span>`;
 }
 
-// ==================== AÇÕES ====================
+// ==================== AÇÕES DE SALDO ====================
 window.adicionarSaldoUsuario = async function(id) {
     const input = document.getElementById(`valor_${id}`);
     const valor = parseFloat(input.value);
@@ -448,6 +491,9 @@ window.definirSaldoUsuario = async function(id) {
     }
 };
 
+window.deletarUsuario = deletarUsuario;
+
+// ==================== AÇÕES ESPECÍFICAS ====================
 window.adicionarSaldoEspecifico = async function(id) {
     const valorInput = document.getElementById('valorAcao');
     const valor = parseFloat(valorInput.value);
@@ -618,6 +664,177 @@ async function definirSaldoMassa() {
     }
 }
 
+// ==================== CÓDIGOS DE RESGATE ====================
+// Os códigos ficam armazenados na linha do admin (id=1) na coluna `codigos_resgate`
+
+async function carregarCodigos() {
+    try {
+        const { data, error } = await supabase
+            .from(TABELA)
+            .select('codigos_resgate')
+            .eq('id', 1)
+            .single();
+
+        if (error) {
+            console.warn('Erro ao carregar códigos:', error);
+            codigosCache = [];
+            renderizarTabelaCodigos();
+            return [];
+        }
+
+        codigosCache = Array.isArray(data?.codigos_resgate) ? data.codigos_resgate : [];
+        renderizarTabelaCodigos();
+        return codigosCache;
+    } catch (e) {
+        console.error('Erro ao carregar códigos:', e);
+        codigosCache = [];
+        renderizarTabelaCodigos();
+        return [];
+    }
+}
+
+function renderizarTabelaCodigos() {
+    const tbody = document.getElementById('tabelaCodigos');
+    if (!tbody) return;
+
+    if (!codigosCache || codigosCache.length === 0) {
+        tbody.innerHTML = `<tr><td colspan="7" style="padding: 20px; color: #8a99ad; text-align: center;">Nenhum código criado ainda.</td></tr>`;
+        return;
+    }
+
+    const ordenados = [...codigosCache].sort(
+        (a, b) => new Date(b.criado_em || 0) - new Date(a.criado_em || 0)
+    );
+
+    tbody.innerHTML = ordenados.map(c => {
+        const usos = c.usos || 0;
+        const limite = c.limite || 0;
+        const esgotado = limite > 0 && usos >= limite;
+
+        let statusClasse = 'ativo';
+        let statusTexto = 'Ativo';
+        if (esgotado) { statusClasse = 'esgotado'; statusTexto = 'Esgotado'; }
+        else if (c.ativo === false) { statusClasse = 'inativo'; statusTexto = 'Inativo'; }
+
+        return `
+            <tr>
+                <td><span class="codigo-badge">${c.codigo}</span></td>
+                <td style="color: var(--neon-green); font-weight: 600;">${(c.mumu || 0).toFixed(2)}</td>
+                <td style="color: var(--neon-blue); font-weight: 600;">R$ ${(c.saldo || 0).toFixed(2)}</td>
+                <td>${usos}</td>
+                <td>${limite === 0 ? '∞' : limite}</td>
+                <td><span class="codigo-status ${statusClasse}">${statusTexto}</span></td>
+                <td>
+                    <div class="acao-botoes">
+                        <button class="toggle" onclick="window.alternarCodigo('${c.codigo}')">
+                            ${c.ativo === false ? '✅ Ativar' : '⏸️ Pausar'}
+                        </button>
+                        <button class="delete" onclick="window.deletarCodigo('${c.codigo}')">🗑️</button>
+                    </div>
+                </td>
+            </tr>
+        `;
+    }).join('');
+}
+
+async function salvarCodigosNoBanco() {
+    try {
+        const { error } = await supabase
+            .from(TABELA)
+            .update({ codigos_resgate: codigosCache })
+            .eq('id', 1);
+
+        if (error) throw error;
+        return true;
+    } catch (e) {
+        console.error('Erro ao salvar códigos:', e);
+        mostrarMensagem('❌ Erro ao salvar códigos no banco.', 'erro');
+        return false;
+    }
+}
+
+async function criarCodigo() {
+    const codigoInput = document.getElementById('codigoInput');
+    const mumuInput = document.getElementById('codigoMumu');
+    const saldoInput = document.getElementById('codigoSaldo');
+    const limiteInput = document.getElementById('codigoLimite');
+
+    const codigo = (codigoInput.value || '').trim().toUpperCase().replace(/\s+/g, '');
+    const mumu = parseFloat(mumuInput.value) || 0;
+    const saldo = parseFloat(saldoInput.value) || 0;
+    const limite = parseInt(limiteInput.value) || 0;
+
+    if (!codigo || codigo.length < 3) {
+        mostrarMensagem('⚠️ O código deve ter pelo menos 3 caracteres.', 'erro');
+        return;
+    }
+    if (!/^[A-Z0-9_-]+$/.test(codigo)) {
+        mostrarMensagem('⚠️ Use apenas letras, números, _ ou -.', 'erro');
+        return;
+    }
+    if (mumu <= 0 && saldo <= 0) {
+        mostrarMensagem('⚠️ Defina pelo menos uma recompensa (Mumu ou Saldo R$).', 'erro');
+        return;
+    }
+
+    if (codigosCache.some(c => (c.codigo || '').toUpperCase() === codigo)) {
+        mostrarMensagem('⚠️ Já existe um código com esse nome.', 'erro');
+        return;
+    }
+
+    const novoCodigo = {
+        codigo: codigo,
+        mumu: mumu,
+        saldo: saldo,
+        limite: limite,
+        usos: 0,
+        ativo: true,
+        criado_em: new Date().toISOString()
+    };
+
+    codigosCache.push(novoCodigo);
+
+    const ok = await salvarCodigosNoBanco();
+    if (ok) {
+        mostrarMensagem(`✅ Código "${codigo}" criado com sucesso!`, 'sucesso');
+        codigoInput.value = '';
+        mumuInput.value = 0;
+        saldoInput.value = 0;
+        limiteInput.value = 0;
+        renderizarTabelaCodigos();
+    } else {
+        codigosCache = codigosCache.filter(c => c.codigo !== codigo);
+    }
+}
+
+window.alternarCodigo = async function(codigo) {
+    const idx = codigosCache.findIndex(c => c.codigo === codigo);
+    if (idx === -1) return;
+
+    codigosCache[idx].ativo = codigosCache[idx].ativo === false ? true : false;
+
+    const ok = await salvarCodigosNoBanco();
+    if (ok) {
+        mostrarMensagem(`✅ Código "${codigo}" ${codigosCache[idx].ativo ? 'ativado' : 'pausado'}.`, 'sucesso');
+        renderizarTabelaCodigos();
+    }
+};
+
+window.deletarCodigo = async function(codigo) {
+    if (!confirm(`Tem certeza que deseja deletar o código "${codigo}"?`)) return;
+
+    const backup = [...codigosCache];
+    codigosCache = codigosCache.filter(c => c.codigo !== codigo);
+
+    const ok = await salvarCodigosNoBanco();
+    if (ok) {
+        mostrarMensagem(`🗑️ Código "${codigo}" deletado.`, 'sucesso');
+        renderizarTabelaCodigos();
+    } else {
+        codigosCache = backup;
+    }
+};
+
 // ==================== CARREGAR DADOS ====================
 async function carregarDados() {
     const filtro = document.getElementById('buscaUsuario').value.trim();
@@ -651,13 +868,6 @@ document.getElementById('btnAdicionarSaldo').addEventListener('click', adicionar
 document.getElementById('btnRemoverSaldo').addEventListener('click', removerSaldoMassa);
 document.getElementById('btnDefinirSaldo').addEventListener('click', definirSaldoMassa);
 
-document.getElementById('btnSair').addEventListener('click', () => {
-    if (confirm('Tem certeza que deseja sair?')) {
-        localStorage.removeItem('usuario_logado');
-        window.location.href = 'login.html';
-    }
-});
-
 document.getElementById('buscaUsuario').addEventListener('keypress', (e) => {
     if (e.key === 'Enter') {
         carregarDados();
@@ -684,21 +894,29 @@ document.getElementById('selicInput').addEventListener('keypress', (e) => {
     }
 });
 
+// ==================== EVENTOS CÓDIGOS DE RESGATE ====================
+document.getElementById('btnCriarCodigo').addEventListener('click', criarCodigo);
+document.getElementById('btnRecarregarCodigos').addEventListener('click', async () => {
+    await carregarCodigos();
+    mostrarMensagem('🔄 Lista de códigos recarregada.', 'info');
+});
+document.getElementById('codigoInput').addEventListener('keypress', (e) => {
+    if (e.key === 'Enter') criarCodigo();
+});
+
 // ==================== INICIALIZAÇÃO ====================
 async function inicializar() {
     await verificarSupabase();
 
-    // Sempre carrega a SELIC do Supabase
+    // Carrega SELIC do Supabase
     const selicSalva = await carregarSelicDoSupabase();
     
     if (selicSalva !== null && selicSalva !== undefined) {
-        // Usa o valor salvo no Supabase
         selicAtual = selicSalva;
         document.getElementById('selicInput').value = selicSalva;
         atualizarDisplaySelic(selicSalva);
         console.log('✅ SELIC carregada do Supabase:', selicSalva);
     } else {
-        // Nenhum registro encontrado, cria com valor padrão
         const valorPadrao = 10.75;
         await salvarSelicNoSupabase(valorPadrao);
         selicAtual = valorPadrao;
@@ -707,6 +925,11 @@ async function inicializar() {
         console.log('✅ SELIC criada no Supabase com valor padrão:', valorPadrao);
     }
 
+    // Carrega códigos de resgate
+    await carregarCodigos();
+    console.log('✅ Códigos de resgate carregados:', codigosCache.length);
+
+    // Carrega dados dos usuários
     await carregarDados();
 }
 
