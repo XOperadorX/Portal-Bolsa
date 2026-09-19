@@ -728,6 +728,14 @@ tr:hover td {
     letter-spacing: 1px;
 }
 
+/* ===== COLUNA SM ATUAL ===== */
+.sm-atual-texto {
+    font-family: 'Orbitron', monospace;
+    font-weight: 700;
+    color: #a78bfa;
+    letter-spacing: 0.5px;
+}
+
 @media (max-width: 768px) {
     .form-row {
         grid-template-columns: 1fr;
@@ -813,48 +821,6 @@ tr:hover td {
     background: #f59e0b;
     color: #fff;
 }
-
-.acao-botoes .toggle {
-    background: #3b82f6;
-    color: white;
-}
-
-.acao-botoes .toggle:hover {
-    background: #2563eb;
-}
-
-/* ===== CÓDIGOS DE RESGATE ===== */
-.codigos-card {
-    border-left: 6px solid var(--neon-green);
-}
-
-.codigos-card h2 {
-    border-left-color: var(--neon-green);
-}
-
-.codigo-badge {
-    display: inline-block;
-    background: linear-gradient(135deg, #7000ff, #00f0ff);
-    color: #fff;
-    font-family: 'Orbitron', monospace;
-    font-weight: 700;
-    padding: 4px 12px;
-    border-radius: 6px;
-    letter-spacing: 1px;
-    font-size: 0.85rem;
-}
-
-.codigo-status {
-    display: inline-block;
-    padding: 3px 10px;
-    border-radius: 20px;
-    font-size: 0.7rem;
-    font-weight: 700;
-}
-
-.codigo-status.ativo { background: #10b981; color: #fff; }
-.codigo-status.inativo { background: #ef4444; color: #fff; }
-.codigo-status.esgotado { background: #f59e0b; color: #fff; }
 
 .acao-botoes .toggle {
     background: #3b82f6;

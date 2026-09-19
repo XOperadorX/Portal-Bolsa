@@ -18,7 +18,12 @@
             --text-color: #f0f4f8;
         }
 
-        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Rajdhani', sans-serif; }
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Rajdhani', sans-serif;
+        }
 
         body {
             background-color: var(--bg-dark);
@@ -49,7 +54,12 @@
             gap: 10px;
         }
 
-        .nav-links { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+        .nav-links {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            flex-wrap: wrap;
+        }
 
         .user-profile {
             display: flex;
@@ -202,7 +212,6 @@
 
         .stat-box .value.btc { color: var(--neon-green); }
         .stat-box .value.hash { color: var(--neon-blue); }
-        .stat-box .value.temp { color: var(--neon-gold); }
 
         .flex { display: flex; flex-wrap: wrap; gap: 12px; align-items: center; }
         .mt-2 { margin-top: 16px; }
@@ -230,6 +239,7 @@
         }
 
         .btn:active:not(:disabled) { transform: scale(0.95); }
+
         .btn:disabled { opacity: 0.45; cursor: not-allowed; box-shadow: none; }
 
         .btn-secondary {
@@ -238,28 +248,27 @@
             box-shadow: none;
         }
 
-        .btn-secondary:hover:not(:disabled) { background: rgba(255, 255, 255, 0.15); }
+        .btn-secondary:hover:not(:disabled) {
+            background: rgba(255, 255, 255, 0.15);
+        }
 
         .btn-green {
             background: linear-gradient(135deg, #10b981, #00ff66);
             box-shadow: 0 0 12px rgba(16, 185, 129, 0.4);
         }
 
-        .btn-green:hover:not(:disabled) { box-shadow: 0 0 25px rgba(16, 185, 129, 0.6); }
+        .btn-green:hover:not(:disabled) {
+            box-shadow: 0 0 25px rgba(16, 185, 129, 0.6);
+        }
 
         .btn-red {
             background: linear-gradient(135deg, #ef4444, #b91c1c);
             box-shadow: 0 0 12px rgba(239, 68, 68, 0.4);
         }
 
-        .btn-red:hover:not(:disabled) { box-shadow: 0 0 25px rgba(239, 68, 68, 0.6); }
-
-        .btn-gold {
-            background: linear-gradient(135deg, #f59e0b, #b45309);
-            box-shadow: 0 0 12px rgba(245, 158, 11, 0.4);
+        .btn-red:hover:not(:disabled) {
+            box-shadow: 0 0 25px rgba(239, 68, 68, 0.6);
         }
-
-        .btn-gold:hover:not(:disabled) { box-shadow: 0 0 25px rgba(245, 158, 11, 0.6); }
 
         #logMineracao {
             background: rgba(0, 0, 0, 0.3);
@@ -315,8 +324,13 @@
             height: 3px;
         }
 
-        .mercado-card.compra::before { background: linear-gradient(90deg, var(--neon-green), #10b981); }
-        .mercado-card.venda::before { background: linear-gradient(90deg, var(--neon-red), #b91c1c); }
+        .mercado-card.compra::before {
+            background: linear-gradient(90deg, var(--neon-green), #10b981);
+        }
+
+        .mercado-card.venda::before {
+            background: linear-gradient(90deg, var(--neon-red), #b91c1c);
+        }
 
         .mercado-header {
             display: flex;
@@ -338,7 +352,11 @@
 
         .mercado-info b { color: #fff; }
 
-        .input-group { display: flex; flex-direction: column; gap: 4px; }
+        .input-group {
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+        }
 
         .input-group label {
             font-size: 0.65rem;
@@ -373,7 +391,12 @@
         }
         .input-group input[type=number] { -moz-appearance: textfield; }
 
-        .quick-btns { display: flex; gap: 4px; flex-wrap: wrap; margin-top: 4px; }
+        .quick-btns {
+            display: flex;
+            gap: 4px;
+            flex-wrap: wrap;
+            margin-top: 4px;
+        }
 
         .quick-btn {
             flex: 1;
@@ -420,8 +443,14 @@
             color: #fff;
         }
 
-        .mercado-resumo .linha.destaque span:last-child { color: var(--neon-green); }
-        .mercado-resumo .linha.taxa span:last-child { color: var(--neon-red); font-size: 0.7rem; }
+        .mercado-resumo .linha.destaque span:last-child {
+            color: var(--neon-green);
+        }
+
+        .mercado-resumo .linha.taxa span:last-child {
+            color: var(--neon-red);
+            font-size: 0.7rem;
+        }
 
         .mercado-status {
             margin-bottom: 12px;
@@ -435,64 +464,19 @@
             align-items: center;
             flex-wrap: wrap;
             gap: 8px;
-            transition: all 0.3s;
         }
 
         .mercado-status b { font-family: 'Orbitron', sans-serif; }
 
         .mercado-status.alerta {
-            background: rgba(245, 158, 11, 0.12);
-            border-color: rgba(245, 158, 11, 0.4);
+            background: rgba(245, 158, 11, 0.08);
+            border-color: rgba(245, 158, 11, 0.3);
             animation: pulse-alerta 1.5s infinite;
-        }
-
-        .mercado-status.critico {
-            background: rgba(239, 68, 68, 0.12);
-            border-color: rgba(239, 68, 68, 0.5);
-            animation: pulse-critico 1s infinite;
         }
 
         @keyframes pulse-alerta {
             0%, 100% { box-shadow: 0 0 0 0 rgba(245, 158, 11, 0.3); }
-            50% { box-shadow: 0 0 15px 2px rgba(245, 158, 11, 0.5); }
-        }
-
-        @keyframes pulse-critico {
-            0%, 100% { box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.5); transform: scale(1); }
-            50% { box-shadow: 0 0 20px 3px rgba(239, 68, 68, 0.7); transform: scale(1.01); }
-        }
-
-        .tipo-venda {
-            display: flex;
-            gap: 6px;
-            margin-bottom: 4px;
-        }
-
-        .tipo-btn {
-            flex: 1;
-            background: rgba(255, 255, 255, 0.06);
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            color: #a0aec0;
-            padding: 5px 8px;
-            border-radius: 8px;
-            font-size: 0.65rem;
-            font-weight: 700;
-            cursor: pointer;
-            transition: all 0.2s;
-            font-family: 'Rajdhani', sans-serif;
-            text-transform: uppercase;
-        }
-
-        .tipo-btn.ativo.mercado {
-            background: rgba(0, 240, 255, 0.15);
-            border-color: var(--neon-blue);
-            color: #fff;
-        }
-
-        .tipo-btn.ativo.base {
-            background: rgba(245, 158, 11, 0.15);
-            border-color: var(--neon-gold);
-            color: #fff;
+            50% { box-shadow: 0 0 15px 2px rgba(245, 158, 11, 0.3); }
         }
 
         .taxa-info {
@@ -674,17 +658,13 @@
             <p style="margin-bottom: 8px; color: #8a99ad;">Clique para minerar ou deixe a mineração passiva rodar!</p>
             <div class="grid-2">
                 <div class="stat-box"><label>⛏️ BTC acumulado</label><div class="value btc" id="btcTotal">0.00000000</div></div>
-                <div class="stat-box"><label>⚡ Poder ativo</label><div class="value hash" id="poderMineracao">1.0 MH/s</div></div>
+                <div class="stat-box"><label>⚡ Poder de mineração</label><div class="value hash" id="poderMineracao">1.0 MH/s</div></div>
                 <div class="stat-box"><label>⏱️ Mineração passiva</label><div class="value" id="mineracaoPassiva">0.00000000 BTC/s</div></div>
                 <div class="stat-box"><label>📈 Ganho por clique</label><div class="value hash" id="ganhoClique">0.00000000</div></div>
             </div>
-            <div class="grid-2 mt-2">
-                <div class="stat-box"><label>🔒 Poder base (permanente)</label><div class="value hash" id="poderBase">1.0 MH/s</div></div>
-                <div class="stat-box"><label>⏳ Poder mercado (24h)</label><div class="value temp" id="poderMercadoTxt">0.0 MH/s</div></div>
-            </div>
             <div class="flex mt-2">
                 <button class="btn" onclick="minerar()">⛏️ Minerar (clique)</button>
-                <button class="btn btn-secondary" onclick="upgradeMineracao()">⬆️ Upgrade (+0.5 MH/s base) - 10 BTC</button>
+                <button class="btn btn-secondary" onclick="upgradeMineracao()">⬆️ Upgrade (+0.5 MH/s) - 10 BTC</button>
             </div>
             <div id="logMineracao" class="mt-2">⛏️ Pronto para minerar!</div>
         </div>
@@ -693,12 +673,12 @@
         <div class="card">
             <div class="card-title">🛒 Mercado de Mineração <span class="badge gold">24 HORAS</span></div>
             <p style="margin-bottom: 12px; color: #8a99ad; font-size: 0.85rem;">
-                O <b style="color:#f59e0b;">⚡ poder do mercado</b> <u>substitui</u> o poder base enquanto ativo. Compre com <b style="color:#00ff66;">⛏️ BTC acumulado</b> ou venda poder base/mercado.
+                Compre <b style="color:#00f0ff;">⚡ Poder temporário (24h)</b> com seu <b style="color:#00ff66;">⛏️ BTC acumulado</b> ou venda o poder ativo.
             </p>
 
             <!-- STATUS DO PODER TEMPORÁRIO -->
             <div class="mercado-status" id="mercadoStatus">
-                <span>⚡ Poder do mercado ativo: <b id="poderTempAtivo" style="color:#00f0ff;">0.0 MH/s</b></span>
+                <span>⚡ Poder temporário ativo: <b id="poderTempAtivo" style="color:#00f0ff;">0.0 MH/s</b></span>
                 <span>⏳ Expira em: <b id="tempoExpira" style="color:#f59e0b;">—</b></span>
             </div>
 
@@ -710,8 +690,7 @@
                         <span>Comprar Poder (24h)</span>
                     </div>
                     <div class="mercado-info">
-                        Preço: <b id="precoCompra">0.00100000 BTC</b> por <b>1 MH/s</b><br>
-                        <em>Substitui o poder base por 24h</em>
+                        Preço: <b id="precoCompra">0.00100000 BTC</b> por <b>1 MH/s</b>
                     </div>
                     <div class="input-group">
                         <label>⚡ Quantidade (MH/s)</label>
@@ -726,7 +705,7 @@
                     </div>
                     <div class="mercado-resumo">
                         <div class="linha"><span>Custo:</span><span id="custoCompra">0.00100000 BTC</span></div>
-                        <div class="linha destaque"><span>Novo poder ativo:</span><span id="novoPoderCompra">1.0 MH/s</span></div>
+                        <div class="linha destaque"><span>Novo poder total:</span><span id="novoPoderCompra">1.0 MH/s</span></div>
                         <div class="linha"><span>Seu BTC:</span><span id="btcAtualCompra">0.00000000</span></div>
                     </div>
                     <button class="btn btn-green" id="btnComprar" onclick="comprarPoder()">💰 Comprar (24h)</button>
@@ -739,12 +718,7 @@
                         <span>Vender Poder</span>
                     </div>
                     <div class="mercado-info">
-                        <b>Mercado:</b> <span id="precoVenda">0.00080000 BTC</span>/MH/s (taxa 20%)<br>
-                        <b>Base:</b> <span id="precoVendaBase">0.00065000 BTC</span>/MH/s (taxa 35%)
-                    </div>
-                    <div class="tipo-venda">
-                        <button class="tipo-btn ativo mercado" id="tipoMercado" onclick="setTipoVenda('mercado')">⏳ Mercado</button>
-                        <button class="tipo-btn base" id="tipoBase" onclick="setTipoVenda('base')">🔒 Base</button>
+                        Recebe: <b id="precoVenda">0.00080000 BTC</b> por <b>1 MH/s</b> (taxa 20%)
                     </div>
                     <div class="input-group">
                         <label>⚡ Quantidade (MH/s)</label>
@@ -759,15 +733,15 @@
                     </div>
                     <div class="mercado-resumo">
                         <div class="linha destaque"><span>Você recebe:</span><span id="recebeVenda">0.00080000 BTC</span></div>
-                        <div class="linha taxa"><span>Taxa:</span><span id="taxaVenda">-0.00020000 BTC</span></div>
-                        <div class="linha"><span>Disponível:</span><span id="disponivelVenda">0.0 MH/s</span></div>
+                        <div class="linha taxa"><span>Taxa (20%):</span><span id="taxaVenda">-0.00020000 BTC</span></div>
+                        <div class="linha"><span>Poder temporário restante:</span><span id="poderRestanteVenda">1.0 MH/s</span></div>
                     </div>
                     <button class="btn btn-red" id="btnVender" onclick="venderPoder()">💸 Vender Poder</button>
                 </div>
             </div>
 
             <div class="taxa-info mt-2">
-                ⚠️ <b>Poder do mercado</b> dura 24h e substitui o base &nbsp;|&nbsp; <b>Taxa mercado:</b> 20% &nbsp;|&nbsp; <b>Taxa base:</b> 35% &nbsp;|&nbsp; <b>Base mínima:</b> 1.0 MH/s
+                ⚠️ <b>Poder temporário</b> dura 24h &nbsp;|&nbsp; <b>Taxa de venda:</b> 20% &nbsp;|&nbsp; <b>Preço base:</b> 0.001 BTC/MH/s
             </div>
         </div>
 
@@ -811,17 +785,14 @@
     const INTERVALO_PASSIVA_MS = 3000;
     const MAX_LOG_LINHAS = 20;
     const CUSTO_UPGRADE = 10;
+    const BONUS_UPGRADE = 0.5;
 
     // ===== MERCADO =====
-    const PRECO_COMPRA_BTC      = 0.001;    // compra: 1 MH/s = 0.001 BTC
-    const PRECO_VENDA_MERCADO   = 0.0008;   // venda mercado: 20% taxa
-    const PRECO_VENDA_BASE      = 0.00065;  // venda base: 35% taxa
-    const TAXA_VENDA_MERCADO    = 0.20;
-    const TAXA_VENDA_BASE       = 0.35;
-    const QTD_MINIMA            = 0.1;
-    const PODER_BASE_MINIMO     = 1.0;
-    const DURACAO_HORAS         = 24;
-    const ALERTA_HORAS          = 1;        // <1h pisca laranja
+    const PRECO_COMPRA_BTC = 0.001;
+    const PRECO_VENDA_BTC  = 0.0008;
+    const TAXA_VENDA       = 0.20;
+    const QTD_MINIMA       = 0.1;
+    const DURACAO_HORAS    = 24;
 
     // ============================================================
     // ESTADO
@@ -837,7 +808,6 @@
         poderMercadoExpiraEm: null
     };
 
-    let tipoVenda = 'mercado'; // 'mercado' ou 'base'
     let historicoCompleto = [];
     let historicoFiltro = 'todos';
 
@@ -846,7 +816,6 @@
     let rpcEmAndamento = false;
     let contadorInterval = null;
     let expiracaoInterval = null;
-    let alertaDisparado = false;
 
     // ============================================================
     // UTILITÁRIOS
@@ -857,10 +826,12 @@
         toast.style.borderLeftColor = isError ? '#ef4444' : '#00f0ff';
         toast.classList.add('show');
         clearTimeout(toast._timeout);
-        toast._timeout = setTimeout(() => toast.classList.remove('show'), 4000);
+        toast._timeout = setTimeout(() => toast.classList.remove('show'), 3500);
     }
 
-    function formatarBTC(valor) { return Number(valor).toFixed(8); }
+    function formatarBTC(valor) {
+        return Number(valor).toFixed(8);
+    }
 
     function formatarDuracao(segundos) {
         if (segundos < 60) return `${Math.floor(segundos)}s`;
@@ -904,18 +875,8 @@
         return Math.round(valor * f) / f;
     }
 
-    // Poder ativo: se mercado > 0 E ainda válido → mercado; senão → base
-    function poderAtivo() {
-        if (estado.poderMercado > 0 && estado.poderMercadoExpiraEm) {
-            const expira = new Date(estado.poderMercadoExpiraEm).getTime();
-            if (expira > Date.now()) return estado.poderMercado;
-        }
-        return estado.poderHash;
-    }
-
-    function mercadoAtivo() {
-        if (estado.poderMercado <= 0 || !estado.poderMercadoExpiraEm) return false;
-        return new Date(estado.poderMercadoExpiraEm).getTime() > Date.now();
+    function poderTotal() {
+        return estado.poderHash + estado.poderMercado;
     }
 
     // ============================================================
@@ -951,8 +912,14 @@
                 .eq('login', login)
                 .maybeSingle();
 
-            if (error) throw error;
-            if (!data) { showToast('❌ Jogador não encontrado', true); return false; }
+            if (error) {
+                console.error('Erro Supabase (select):', error);
+                throw error;
+            }
+            if (!data) {
+                showToast('❌ Jogador não encontrado', true);
+                return false;
+            }
 
             usuarioAtual = data;
             estado.id = data.id;
@@ -975,7 +942,9 @@
     async function reclamarOffline() {
         if (!estado.login) return;
         try {
-            const { data, error } = await supabase.rpc('minerar_offline', { p_login: estado.login });
+            const { data, error } = await supabase.rpc('minerar_offline', {
+                p_login: estado.login
+            });
             if (error) throw error;
             if (!data || !data.ok) return;
             if (data.segundos > 5) {
@@ -984,7 +953,9 @@
                 adicionarLog(`💤 Mineração offline: +${formatarBTC(data.ganho)} BTC (${formatarDuracao(data.segundos)})`);
                 showToast(`💤 Ausente ${formatarDuracao(data.segundos)}: +${formatarBTC(data.ganho)} BTC`);
             }
-        } catch (err) { console.error('Erro na mineração offline:', err); }
+        } catch (err) {
+            console.error('Erro na mineração offline:', err);
+        }
     }
 
     // ============================================================
@@ -997,33 +968,28 @@
 
         nick.textContent = estado.login || 'Desconectado';
         avatar.textContent = estado.login ? estado.login.charAt(0).toUpperCase() : '👤';
-        saldo.textContent = new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(estado.saldo);
+        saldo.textContent = new Intl.NumberFormat('pt-BR', {
+            style: 'currency',
+            currency: 'BRL'
+        }).format(estado.saldo);
 
         const btcEl = document.getElementById('btcTotal');
         if (btcEl) btcEl.textContent = formatarBTC(estado.btc);
 
-        const ativo = poderAtivo();
+        const total = poderTotal();
         const poderEl = document.getElementById('poderMineracao');
-        if (poderEl) poderEl.textContent = `${ativo.toFixed(1)} MH/s`;
+        if (poderEl) poderEl.textContent = `${total.toFixed(1)} MH/s`;
 
         const passivaEl = document.getElementById('mineracaoPassiva');
-        if (passivaEl) passivaEl.textContent = (ativo * TAXA_BASE).toFixed(8) + ' BTC/s';
+        if (passivaEl) {
+            const passiva = total * TAXA_BASE;
+            passivaEl.textContent = passiva.toFixed(8) + ' BTC/s';
+        }
 
         const ganhoCliqueEl = document.getElementById('ganhoClique');
-        if (ganhoCliqueEl) ganhoCliqueEl.textContent = ((0.0000001 + 0.0000005) * ativo).toFixed(8);
-
-        const baseEl = document.getElementById('poderBase');
-        if (baseEl) baseEl.textContent = estado.poderHash.toFixed(1) + ' MH/s';
-
-        const mktEl = document.getElementById('poderMercadoTxt');
-        if (mktEl) {
-            if (mercadoAtivo()) {
-                mktEl.textContent = estado.poderMercado.toFixed(1) + ' MH/s';
-                mktEl.style.color = 'var(--neon-gold)';
-            } else {
-                mktEl.textContent = 'inativo';
-                mktEl.style.color = '#8a99ad';
-            }
+        if (ganhoCliqueEl) {
+            const ganhoMedio = (0.0000001 + 0.0000005) * total;
+            ganhoCliqueEl.textContent = ganhoMedio.toFixed(8);
         }
 
         atualizarResumoCompra();
@@ -1032,7 +998,7 @@
     }
 
     // ============================================================
-    // CONTADOR DO MERCADO (com alerta <1h)
+    // CONTADOR DO MERCADO
     // ============================================================
     function atualizarContadorMercado() {
         const ativoEl = document.getElementById('poderTempAtivo');
@@ -1040,51 +1006,35 @@
         const statusEl = document.getElementById('mercadoStatus');
         if (!ativoEl || !tempoEl) return;
 
-        if (!mercadoAtivo()) {
-            ativoEl.textContent = 'inativo';
-            ativoEl.style.color = '#8a99ad';
+        ativoEl.textContent = estado.poderMercado.toFixed(1) + ' MH/s';
+
+        if (!estado.poderMercadoExpiraEm || estado.poderMercado <= 0) {
             tempoEl.textContent = '—';
-            tempoEl.style.color = '#8a99ad';
-            if (statusEl) statusEl.classList.remove('alerta', 'critico');
-            alertaDisparado = false;
+            if (statusEl) statusEl.classList.remove('alerta');
             return;
         }
 
-        ativoEl.textContent = estado.poderMercado.toFixed(1) + ' MH/s';
-        ativoEl.style.color = 'var(--neon-blue)';
-
         const expira = new Date(estado.poderMercadoExpiraEm).getTime();
-        const restante = Math.max(0, expira - Date.now());
+        const agora = Date.now();
+        const restante = Math.max(0, expira - agora);
+
+        if (restante <= 0) {
+            tempoEl.textContent = 'expirado';
+            if (statusEl) statusEl.classList.add('alerta');
+            return;
+        }
 
         const h = Math.floor(restante / 3600000);
         const m = Math.floor((restante % 3600000) / 60000);
         const s = Math.floor((restante % 60000) / 1000);
         tempoEl.textContent = `${String(h).padStart(2,'0')}h ${String(m).padStart(2,'0')}m ${String(s).padStart(2,'0')}s`;
 
-        const limiteAlerta = ALERTA_HORAS * 3600000;
-
         if (statusEl) {
-            if (restante < 15 * 60000) {
-                statusEl.classList.add('critico');
-                statusEl.classList.remove('alerta');
-                tempoEl.style.color = '#ef4444';
-            } else if (restante < limiteAlerta) {
+            if (restante < 3600000) {
                 statusEl.classList.add('alerta');
-                statusEl.classList.remove('critico');
-                tempoEl.style.color = '#f59e0b';
             } else {
-                statusEl.classList.remove('alerta', 'critico');
-                tempoEl.style.color = '#f59e0b';
+                statusEl.classList.remove('alerta');
             }
-        }
-
-        // Toast de alerta (uma vez por ciclo)
-        if (restante < limiteAlerta && restante > 0 && !alertaDisparado) {
-            alertaDisparado = true;
-            showToast(`⚠️ Seu poder do mercado expira em menos de 1 hora!`, true);
-        }
-        if (restante >= limiteAlerta) {
-            alertaDisparado = false;
         }
     }
 
@@ -1101,12 +1051,10 @@
 
         const qtd = parseFloat(input.value) || 0;
         const custo = arredondar(qtd * PRECO_COMPRA_BTC, 8);
-        // Novo poder ativo = substitui base pelo mercado (soma se já tem mercado)
-        const novoMkt = mercadoAtivo() ? estado.poderMercado + qtd : qtd;
-        const novoAtivo = Math.max(estado.poderHash, novoMkt);
+        const novoTotal = arredondar(poderTotal() + qtd, 2);
 
         custoEl.textContent = formatarBTC(custo) + ' BTC';
-        novoPoderEl.textContent = novoAtivo.toFixed(1) + ' MH/s';
+        novoPoderEl.textContent = novoTotal.toFixed(1) + ' MH/s';
         btcAtualEl.textContent = formatarBTC(estado.btc) + ' BTC';
 
         const valido = qtd >= QTD_MINIMA && custo > 0 && estado.btc >= custo;
@@ -1131,12 +1079,18 @@
         if (rpcEmAndamento) return;
 
         const qtd = parseFloat(document.getElementById('inputCompraHash').value) || 0;
-        if (qtd < QTD_MINIMA) { showToast(`❌ Quantidade mínima: ${QTD_MINIMA} MH/s`, true); return; }
+        if (qtd < QTD_MINIMA) {
+            showToast(`❌ Quantidade mínima: ${QTD_MINIMA} MH/s`, true);
+            return;
+        }
 
         const custo = arredondar(qtd * PRECO_COMPRA_BTC, 8);
-        if (estado.btc < custo) { showToast(`❌ BTC insuficiente. Necessário: ${formatarBTC(custo)} BTC`, true); return; }
+        if (estado.btc < custo) {
+            showToast(`❌ BTC insuficiente. Necessário: ${formatarBTC(custo)} BTC`, true);
+            return;
+        }
 
-        if (!confirm(`Confirmar compra?\n\n⚡ +${qtd.toFixed(1)} MH/s (válido 24h)\n💰 Custo: ${formatarBTC(custo)} BTC\n\n⚠️ Substitui seu poder base enquanto ativo.`)) return;
+        if (!confirm(`Confirmar compra?\n\n⚡ +${qtd.toFixed(1)} MH/s (válido 24h)\n💰 Custo: ${formatarBTC(custo)} BTC`)) return;
 
         try {
             rpcEmAndamento = true;
@@ -1147,22 +1101,24 @@
                 p_hash: qtd
             });
             if (error) throw error;
-            if (!data || !data.ok) { showToast('❌ ' + (data?.erro || 'erro na compra'), true); return; }
+            if (!data || !data.ok) {
+                showToast('❌ ' + (data?.erro || 'erro na compra'), true);
+                return;
+            }
 
             estado.btc = parseFloat(data.btc);
             estado.poderMercado = parseFloat(data.poder_mercado) || 0;
             estado.poderMercadoExpiraEm = data.expira_em || null;
-            alertaDisparado = false;
             atualizarUI();
 
             adicionarLog(`💰 Compra: -${formatarBTC(data.custo)} BTC → +${qtd.toFixed(1)} MH/s (24h)`);
-            showToast(`✅ Compra! Poder do mercado: ${estado.poderMercado.toFixed(1)} MH/s (24h)`);
+            showToast(`✅ Compra! Poder temporário: +${qtd.toFixed(1)} MH/s (24h)`);
 
             inserirHistoricoLocal({
                 tipo: 'compra',
                 ganho: -parseFloat(data.custo),
                 btc_apos: data.btc,
-                poder_apos: data.poder_mercado,
+                poder_apos: data.poder_total,
                 meta: { hash: qtd, temporario: true, expira_em: data.expira_em },
                 criado_em: new Date().toISOString()
             });
@@ -1178,45 +1134,25 @@
     // ============================================================
     // MERCADO — VENDA
     // ============================================================
-    function setTipoVenda(tipo) {
-        tipoVenda = tipo;
-        document.getElementById('tipoMercado').classList.toggle('ativo', tipo === 'mercado');
-        document.getElementById('tipoBase').classList.toggle('ativo', tipo === 'base');
-        // Ajusta o botão
-        const btn = document.getElementById('btnVender');
-        btn.className = tipo === 'mercado' ? 'btn btn-red' : 'btn btn-gold';
-        atualizarResumoVenda();
-    }
-
     function atualizarResumoVenda() {
         const input = document.getElementById('inputVendaHash');
         const recebeEl = document.getElementById('recebeVenda');
         const taxaEl = document.getElementById('taxaVenda');
-        const dispEl = document.getElementById('disponivelVenda');
+        const restanteEl = document.getElementById('poderRestanteVenda');
         const btn = document.getElementById('btnVender');
-        if (!input || !recebeEl || !taxaEl || !dispEl || !btn) return;
+        if (!input || !recebeEl || !taxaEl || !restanteEl || !btn) return;
 
         const qtd = parseFloat(input.value) || 0;
-        const preco = tipoVenda === 'mercado' ? PRECO_VENDA_MERCADO : PRECO_VENDA_BASE;
-        const taxaPct = tipoVenda === 'mercado' ? TAXA_VENDA_MERCADO : TAXA_VENDA_BASE;
-
         const bruto = qtd * PRECO_COMPRA_BTC;
-        const taxa = bruto * taxaPct;
+        const taxa = bruto * TAXA_VENDA;
         const liquido = bruto - taxa;
-
-        // Disponível
-        let disponivel = 0;
-        if (tipoVenda === 'mercado') {
-            disponivel = mercadoAtivo() ? estado.poderMercado : 0;
-        } else {
-            disponivel = Math.max(0, estado.poderHash - PODER_BASE_MINIMO);
-        }
+        const restante = estado.poderMercado - qtd;
 
         recebeEl.textContent = formatarBTC(arredondar(liquido, 8)) + ' BTC';
-        taxaEl.textContent = `-${formatarBTC(arredondar(taxa, 8))} BTC (${(taxaPct*100).toFixed(0)}%)`;
-        dispEl.textContent = disponivel.toFixed(1) + ' MH/s';
+        taxaEl.textContent = '-' + formatarBTC(arredondar(taxa, 8)) + ' BTC';
+        restanteEl.textContent = Math.max(0, restante).toFixed(1) + ' MH/s';
 
-        const valido = qtd >= QTD_MINIMA && qtd <= disponivel;
+        const valido = qtd >= QTD_MINIMA && qtd <= estado.poderMercado;
         btn.disabled = !valido || rpcEmAndamento;
     }
 
@@ -1228,12 +1164,7 @@
 
     function setVendaMax() {
         const input = document.getElementById('inputVendaHash');
-        let maxHash = 0;
-        if (tipoVenda === 'mercado') {
-            maxHash = mercadoAtivo() ? estado.poderMercado : 0;
-        } else {
-            maxHash = Math.max(0, estado.poderHash - PODER_BASE_MINIMO);
-        }
+        const maxHash = Math.max(0, estado.poderMercado);
         input.value = maxHash > 0 ? (Math.floor(maxHash * 10) / 10).toFixed(1) : 0;
         atualizarResumoVenda();
     }
@@ -1243,29 +1174,19 @@
         if (rpcEmAndamento) return;
 
         const qtd = parseFloat(document.getElementById('inputVendaHash').value) || 0;
-        if (qtd < QTD_MINIMA) { showToast(`❌ Quantidade mínima: ${QTD_MINIMA} MH/s`, true); return; }
-
-        const preco = tipoVenda === 'mercado' ? PRECO_VENDA_MERCADO : PRECO_VENDA_BASE;
-        const taxaPct = tipoVenda === 'mercado' ? TAXA_VENDA_MERCADO : TAXA_VENDA_BASE;
-
-        // Verificação local
-        if (tipoVenda === 'mercado') {
-            if (!mercadoAtivo() || qtd > estado.poderMercado) {
-                showToast(`❌ Sem poder de mercado ativo suficiente (${estado.poderMercado.toFixed(1)} MH/s).`, true);
-                return;
-            }
-        } else {
-            if (estado.poderHash - qtd < PODER_BASE_MINIMO) {
-                showToast(`❌ Você precisa manter no mínimo ${PODER_BASE_MINIMO} MH/s base.`, true);
-                return;
-            }
+        if (qtd < QTD_MINIMA) {
+            showToast(`❌ Quantidade mínima: ${QTD_MINIMA} MH/s`, true);
+            return;
+        }
+        if (qtd > estado.poderMercado) {
+            showToast(`❌ Você só pode vender poder do mercado. Disponível: ${estado.poderMercado.toFixed(1)} MH/s`, true);
+            return;
         }
 
         const bruto = qtd * PRECO_COMPRA_BTC;
-        const liquido = arredondar(bruto * (1 - taxaPct), 8);
-        const rotulo = tipoVenda === 'mercado' ? '⏳ Mercado' : '🔒 Base';
-        const confirmMsg = `Confirmar venda de poder ${rotulo}?\n\n⚡ -${qtd.toFixed(1)} MH/s\n💰 Recebe: ${formatarBTC(liquido)} BTC\n📉 Taxa: ${(taxaPct*100).toFixed(0)}%`;
-        if (!confirm(confirmMsg)) return;
+        const liquido = arredondar(bruto * (1 - TAXA_VENDA), 8);
+
+        if (!confirm(`Confirmar venda?\n\n⚡ -${qtd.toFixed(1)} MH/s\n💰 Recebe: ${formatarBTC(liquido)} BTC\n📉 Taxa: 20%`)) return;
 
         try {
             rpcEmAndamento = true;
@@ -1273,29 +1194,28 @@
 
             const { data, error } = await supabase.rpc('vender_poder', {
                 p_login: estado.login,
-                p_hash: qtd,
-                p_tipo: tipoVenda   // 'mercado' ou 'base'
+                p_hash: qtd
             });
             if (error) throw error;
-            if (!data || !data.ok) { showToast('❌ ' + (data?.erro || 'erro na venda'), true); return; }
+            if (!data || !data.ok) {
+                showToast('❌ ' + (data?.erro || 'erro na venda'), true);
+                return;
+            }
 
             estado.btc = parseFloat(data.btc);
             estado.poderMercado = parseFloat(data.poder_mercado) || 0;
-            estado.poderHash = parseFloat(data.poder_base) || estado.poderHash;
             if (estado.poderMercado <= 0) estado.poderMercadoExpiraEm = null;
-            else if (data.expira_em) estado.poderMercadoExpiraEm = data.expira_em;
-
             atualizarUI();
 
-            adicionarLog(`💸 Venda (${tipoVenda}): -${qtd.toFixed(1)} MH/s → +${formatarBTC(data.ganho)} BTC`);
+            adicionarLog(`💸 Venda: -${qtd.toFixed(1)} MH/s → +${formatarBTC(data.ganho)} BTC`);
             showToast(`✅ Venda! +${formatarBTC(data.ganho)} BTC`);
 
             inserirHistoricoLocal({
                 tipo: 'venda',
                 ganho: parseFloat(data.ganho),
                 btc_apos: data.btc,
-                poder_apos: data.poder_mercado || data.poder_base,
-                meta: { hash: qtd, taxa: data.taxa, tipo: tipoVenda },
+                poder_apos: data.poder_total,
+                meta: { hash: qtd, taxa: data.taxa },
                 criado_em: new Date().toISOString()
             });
         } catch (err) {
@@ -1313,23 +1233,26 @@
     async function verificarExpiracao() {
         if (!usuarioAtual || rpcEmAndamento) return;
         try {
-            const { data, error } = await supabase.rpc('expirar_poder_mercado', { p_login: estado.login });
+            const { data, error } = await supabase.rpc('expirar_poder_mercado', {
+                p_login: estado.login
+            });
             if (error) throw error;
             if (!data || !data.ok) return;
 
             if (data.expirou) {
                 estado.poderMercado = 0;
                 estado.poderMercadoExpiraEm = null;
-                alertaDisparado = false;
                 atualizarUI();
-                adicionarLog('⏰ Poder do mercado expirou. Voltou ao poder base.');
-                showToast('⏰ Poder do mercado expirou!', true);
+                adicionarLog('⏰ Poder temporário do mercado expirou.');
+                showToast('⏰ Poder temporário do mercado expirou!', true);
             } else {
                 estado.poderMercado = parseFloat(data.poder_mercado) || 0;
                 estado.poderMercadoExpiraEm = data.expira_em || null;
                 atualizarContadorMercado();
             }
-        } catch (err) { console.error('Erro ao verificar expiração:', err); }
+        } catch (err) {
+            console.error('Erro ao verificar expiração:', err);
+        }
     }
 
     // ============================================================
@@ -1339,14 +1262,16 @@
         if (!usuarioAtual) { showToast('❌ Faça login primeiro!', true); return; }
         if (rpcEmAndamento) return;
 
-        const ativo = poderAtivo();
-        const ganhoPreview = (0.0000001 + Math.random() * 0.000001) * ativo;
+        const total = poderTotal();
+        const ganhoPreview = (0.0000001 + Math.random() * 0.000001) * total;
         estado.btc += ganhoPreview;
         atualizarUI();
 
         try {
             rpcEmAndamento = true;
-            const { data, error } = await supabase.rpc('minerar_clique', { p_login: estado.login });
+            const { data, error } = await supabase.rpc('minerar_clique', {
+                p_login: estado.login
+            });
             if (error) throw error;
             if (!data || !data.ok) {
                 estado.btc -= ganhoPreview;
@@ -1362,7 +1287,7 @@
                 tipo: 'clique',
                 ganho: data.ganho,
                 btc_apos: data.btc,
-                poder_apos: ativo,
+                poder_apos: data.poder || total,
                 criado_em: new Date().toISOString()
             });
         } catch (err) {
@@ -1382,7 +1307,10 @@
         if (rpcEmAndamento) return;
 
         const custo = calcularCusto(qtd);
-        if (estado.btc < custo) { showToast(`❌ Precisa de ${custo} BTC.`, true); return; }
+        if (estado.btc < custo) {
+            showToast(`❌ Precisa de ${custo} BTC.`, true);
+            return;
+        }
 
         try {
             rpcEmAndamento = true;
@@ -1391,7 +1319,10 @@
                 p_qtd: qtd
             });
             if (error) throw error;
-            if (!data || !data.ok) { showToast('❌ ' + (data?.erro || 'erro'), true); return; }
+            if (!data || !data.ok) {
+                showToast('❌ ' + (data?.erro || 'erro'), true);
+                return;
+            }
 
             estado.btc = parseFloat(data.btc);
             estado.poderHash = parseFloat(data.poder);
@@ -1418,16 +1349,18 @@
         }
     }
 
-    function upgradeMineracao() { comprarPacote(1); }
+    function upgradeMineracao() {
+        comprarPacote(1);
+    }
 
     // ============================================================
-    // MINERAÇÃO PASSIVA
+    // MINERAÇÃO PASSIVA (usa poder total)
     // ============================================================
     function iniciarMineracaoPassiva() {
         if (mineracaoInterval) clearInterval(mineracaoInterval);
         mineracaoInterval = setInterval(() => {
             if (!usuarioAtual) return;
-            const ganho = poderAtivo() * TAXA_BASE * (INTERVALO_PASSIVA_MS / 1000);
+            const ganho = poderTotal() * TAXA_BASE * (INTERVALO_PASSIVA_MS / 1000);
             estado.btc += ganho;
             atualizarUI();
         }, INTERVALO_PASSIVA_MS);
@@ -1440,7 +1373,9 @@
         if (!usuarioAtual || rpcEmAndamento) return;
         try {
             rpcEmAndamento = true;
-            const { data, error } = await supabase.rpc('coletar_passiva', { p_login: estado.login });
+            const { data, error } = await supabase.rpc('coletar_passiva', {
+                p_login: estado.login
+            });
             if (error) throw error;
             if (!data || !data.ok) return;
 
@@ -1452,13 +1387,16 @@
                     tipo: 'passiva',
                     ganho: data.ganho,
                     btc_apos: data.btc,
-                    poder_apos: data.poder || poderAtivo(),
+                    poder_apos: data.poder || poderTotal(),
                     meta: { segundos: data.segundos },
                     criado_em: new Date().toISOString()
                 });
             }
-        } catch (err) { console.error('Erro na coleta passiva:', err); }
-        finally { rpcEmAndamento = false; }
+        } catch (err) {
+            console.error('Erro na coleta passiva:', err);
+        } finally {
+            rpcEmAndamento = false;
+        }
     }
 
     // ============================================================
@@ -1467,19 +1405,32 @@
     async function sincronizarSaldo() {
         if (!usuarioAtual) return;
         try {
-            const { data, error } = await supabase.from(TABELA).select('saldo').eq('id', estado.id).single();
+            const { data, error } = await supabase
+                .from(TABELA)
+                .select('saldo')
+                .eq('id', estado.id)
+                .single();
             if (error) throw error;
             estado.saldo = parseFloat(data.saldo) || 0;
             atualizarUI();
-        } catch (err) { console.error('Erro ao sincronizar saldo:', err); }
+        } catch (err) {
+            console.error('Erro ao sincronizar saldo:', err);
+        }
     }
 
     function configurarSalvamentoAoSair() {
         document.addEventListener('visibilitychange', () => {
-            if (document.visibilityState === 'hidden') coletarPassivaServidor();
+            if (document.visibilityState === 'hidden') {
+                coletarPassivaServidor();
+            }
         });
-        window.addEventListener('beforeunload', () => { coletarPassivaServidor(); });
-        setInterval(() => { if (usuarioAtual) sincronizarSaldo(); }, 60000);
+        window.addEventListener('beforeunload', () => {
+            coletarPassivaServidor();
+        });
+
+        setInterval(() => {
+            if (usuarioAtual) sincronizarSaldo();
+        }, 60000);
     }
 
     // ============================================================
@@ -1491,9 +1442,13 @@
         if (lista) lista.innerHTML = '<div class="hist-empty">🔄 Carregando...</div>';
 
         try {
-            const { data, error } = await supabase.rpc('listar_historico', { p_login: estado.login, p_limite: 50 });
+            const { data, error } = await supabase.rpc('listar_historico', {
+                p_login: estado.login,
+                p_limite: 50
+            });
             if (error) throw error;
             if (!data || !data.ok) throw new Error('resposta inválida');
+
             historicoCompleto = Array.isArray(data.itens) ? data.itens : [];
             renderizarHistorico();
         } catch (err) {
@@ -1503,7 +1458,10 @@
     }
 
     function inserirHistoricoLocal(item) {
-        historicoCompleto.unshift({ id: 'local-' + Date.now(), ...item });
+        historicoCompleto.unshift({
+            id: 'local-' + Date.now(),
+            ...item
+        });
         if (historicoCompleto.length > 100) historicoCompleto.pop();
         renderizarHistorico();
     }
@@ -1520,7 +1478,9 @@
         if (!lista) return;
 
         let itens = historicoCompleto;
-        if (historicoFiltro !== 'todos') itens = itens.filter(i => i.tipo === historicoFiltro);
+        if (historicoFiltro !== 'todos') {
+            itens = itens.filter(i => i.tipo === historicoFiltro);
+        }
 
         if (!itens.length) {
             lista.innerHTML = '<div class="hist-empty">📭 Nenhum registro ainda. Comece a minerar!</div>';
@@ -1543,12 +1503,14 @@
             const classe = ganho < 0 ? 'hist-valor negativo' : 'hist-valor';
 
             let detalhe = '';
-            if (item.tipo === 'upgrade' && item.meta?.qtd) detalhe = ` ×${item.meta.qtd}`;
-            else if (item.tipo === 'offline' && item.meta?.segundos) detalhe = ` (${formatarDuracao(item.meta.segundos)})`;
-            else if (item.tipo === 'passiva' && item.meta?.segundos) detalhe = ` (${formatarDuracao(item.meta.segundos)})`;
-            else if ((item.tipo === 'compra' || item.tipo === 'venda') && item.meta?.hash) {
-                const tipoTxt = item.meta?.tipo ? ` ${item.meta.tipo}` : '';
-                detalhe = ` ${parseFloat(item.meta.hash).toFixed(1)} MH/s${tipoTxt}`;
+            if (item.tipo === 'upgrade' && item.meta?.qtd) {
+                detalhe = ` ×${item.meta.qtd}`;
+            } else if (item.tipo === 'offline' && item.meta?.segundos) {
+                detalhe = ` (${formatarDuracao(item.meta.segundos)})`;
+            } else if (item.tipo === 'passiva' && item.meta?.segundos) {
+                detalhe = ` (${formatarDuracao(item.meta.segundos)})`;
+            } else if ((item.tipo === 'compra' || item.tipo === 'venda') && item.meta?.hash) {
+                detalhe = ` ${parseFloat(item.meta.hash).toFixed(1)} MH/s`;
             }
 
             const dataHora = formatarData(item.criado_em);
@@ -1582,13 +1544,16 @@
         iniciarMineracaoPassiva();
         configurarSalvamentoAoSair();
 
+        // Contador de expiração a cada segundo
         if (contadorInterval) clearInterval(contadorInterval);
         contadorInterval = setInterval(atualizarContadorMercado, 1000);
 
+        // Verificação de expiração no servidor a cada 30s
         if (expiracaoInterval) clearInterval(expiracaoInterval);
         expiracaoInterval = setInterval(verificarExpiracao, 30000);
 
         await carregarHistorico();
+
         showToast(`✅ Bem-vindo, ${estado.login}!`);
     }
 

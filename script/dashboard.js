@@ -1,5 +1,7 @@
 // ============================================================
 // DASHBOARD — SISTEMA DE NÍVEL (SCHEMA PADRONIZADO)
+// + LOGIN DIRETO NA TABELA "Geral" (sem Supabase Auth)
+// + REGENERAÇÃO DE STAMINA OFFLINE (proporcional até 24h / 100% após 24h)
 // ============================================================
 (function() {
     'use strict';
@@ -13,6 +15,11 @@
     const SESSION_DURATION = 24 * 60 * 60 * 1000;
     const SESSION_KEY = 'usuario_logado';
     const SESSION_TIMESTAMP_KEY = 'session_timestamp';
+
+    // ==================== REGENERAÇÃO DE STAMINA ====================
+    const STAMINA_REGEN_INTERVAL   = 30 * 1000;   // online: +1 SM a cada 30s
+    const STAMINA_REGEN_PER_TICK   = 1;           // quantidade por tick
+    const OFFLINE_MAX_MS           = 24 * 60 * 60 * 1000; // 24h
 
     function limparSessao() {
         localStorage.removeItem(SESSION_KEY);
@@ -28,6 +35,7 @@
         return (Date.now() - loginTime) < SESSION_DURATION;
     }
 
+    // Cliente Supabase (usa o global do CDN)
     const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
     class LevelSystem {
@@ -61,7 +69,7 @@
                 { min: 100, titulo: '🌟 Imortal' },
             ];
 
-            this.usuario = null;
+            this.usuario = null;          // { login, nome, email }
             this.supabaseOnline = false;
             this.atividades = [];
             this.totalTreinos = 0;
@@ -71,8 +79,11 @@
             this.toastTimer = null;
             this.saveTimeout = null;
             this.mineracaoInterval = null;
+            this.staminaInterval = null;
             this._processandoJogo = false;
+            this.ultimaVezOnline = Date.now();
 
+            // binds
             this.treinar = this.treinar.bind(this);
             this.descansar = this.descansar.bind(this);
             this.resetar = this.resetar.bind(this);
@@ -90,6 +101,8 @@
             this.minerar = this.minerar.bind(this);
             this.upgradeMineracao = this.upgradeMineracao.bind(this);
             this.verificarAdmin = this.verificarAdmin.bind(this);
+            this.aplicarRegeneracaoOffline = this.aplicarRegeneracaoOffline.bind(this);
+            this.loadUserData = this.loadUserData.bind(this);
         }
 
         getAtaque()  { return this.ataqueBase + Math.floor(this.nivel * 1.5); }
@@ -115,6 +128,51 @@
             return titulo;
         }
 
+        // ============================================================
+        // REGENERAÇÃO OFFLINE DE STAMINA
+        // ============================================================
+        aplicarRegeneracaoOffline(timestampUltimaVez) {
+            if (!timestampUltimaVez) return;
+
+            const agora = Date.now();
+            const offlineMs = agora - timestampUltimaVez;
+            if (offlineMs <= 0) return;
+
+            const smMax = this.getSmMax();
+
+            if (this.sm >= smMax) {
+                this.ultimaVezOnline = agora;
+                return;
+            }
+
+            let smGanho = 0;
+
+            if (offlineMs >= OFFLINE_MAX_MS) {
+                smGanho = smMax - this.sm;
+                console.log(`⏰ Offline ≥ 24h → stamina restaurada ao máximo (+${smGanho})`);
+            } else {
+                const intervalos = Math.floor(offlineMs / STAMINA_REGEN_INTERVAL);
+                smGanho = intervalos * STAMINA_REGEN_PER_TICK;
+                if (smGanho <= 0) {
+                    this.ultimaVezOnline = agora;
+                    return;
+                }
+                console.log(`⏰ Offline por ${Math.round(offlineMs / 1000 / 60)} min → +${smGanho} SM`);
+            }
+
+            const smAntes = this.sm;
+            this.sm = Math.min(smMax, this.sm + smGanho);
+            this.ultimaVezOnline = agora;
+
+            if (this.sm > smAntes) {
+                this.addLog(`⚡ Regenerou +${this.sm - smAntes} SM offline (${this.sm}/${smMax})`, 'info');
+                this.atualizarUI();
+            }
+        }
+
+        // ============================================================
+        // ADMIN
+        // ============================================================
         async verificarAdmin() {
             const btnAdmin = document.getElementById('btnAdmin');
             if (!btnAdmin) return;
@@ -152,6 +210,9 @@
             }
         }
 
+        // ============================================================
+        // LOGS
+        // ============================================================
         addLog(mensagem, tipo = 'info') {
             const now = new Date();
             const timeStr = now.toLocaleTimeString('pt-BR', {
@@ -235,6 +296,9 @@
             }
         }
 
+        // ============================================================
+        // AÇÕES DE NÍVEL
+        // ============================================================
         treinar() {
             if (this.sm < 10) {
                 this.mostrarToast('⚡ Stamina insuficiente! Descanse.', 'erro');
@@ -351,6 +415,9 @@
             return true;
         }
 
+        // ============================================================
+        // SALVAMENTO
+        // ============================================================
         salvarComDelay() {
             if (this.saveTimeout) clearTimeout(this.saveTimeout);
             this.saveTimeout = setTimeout(() => {
@@ -411,6 +478,7 @@
 
             const staminaAntes = this.sm;
             this.sm -= 10;
+            this.ultimaVezOnline = Date.now();
             this.atualizarUI();
 
             const msg = `🎮 Entrou em ${gameName} (-10 SM: ${staminaAntes} → ${this.sm})`;
@@ -422,13 +490,12 @@
                         .from(TABELA)
                         .update({
                             sm_atual: this.sm,
+                            ultima_vez_online: new Date().toISOString(),
                             updated_at: new Date().toISOString()
                         })
                         .eq('login', this.usuario.login);
 
-                    if (error) {
-                        console.error('❌ Erro ao salvar SM no Supabase:', error);
-                    }
+                    if (error) console.error('❌ Erro ao salvar SM no Supabase:', error);
                 }
             } catch (e) {
                 console.error('❌ Exceção ao salvar SM:', e);
@@ -454,6 +521,7 @@
                         total_descansos: this.totalDescansos,
                         ultima_atividade: this.ultimaAtividade,
                         ultimo_reset: this.ultimoReset,
+                        ultima_vez_online: new Date().toISOString(),
                         updated_at: new Date().toISOString()
                     })
                     .eq('login', this.usuario.login);
@@ -468,6 +536,8 @@
             if (!this.supabaseOnline) return false;
 
             try {
+                this.ultimaVezOnline = Date.now();
+
                 const payload = {
                     nivel: this.nivel,
                     experiencia: this.experiencia,
@@ -490,6 +560,7 @@
                     total_descansos: this.totalDescansos,
                     ultima_atividade: this.ultimaAtividade,
                     ultimo_reset: this.ultimoReset,
+                    ultima_vez_online: new Date().toISOString(),
                     updated_at: new Date().toISOString()
                 };
 
@@ -506,6 +577,9 @@
             }
         }
 
+        // ============================================================
+        // CARREGAMENTO
+        // ============================================================
         async carregar(usuario) {
             this.usuario = usuario;
 
@@ -543,8 +617,22 @@
                     this.btc = parseFloat(data.btc) || 0;
                     this.poderHash = parseFloat(data.poder_hash) || 1.0;
 
+                    // Regeneração offline
+                    const timestampUltimaVez =
+                        data.ultima_vez_online ||
+                        data.ultima_coleta    ||
+                        data.ultima_atividade ||
+                        data.updated_at;
+
+                    this.aplicarRegeneracaoOffline(
+                        timestampUltimaVez ? new Date(timestampUltimaVez).getTime() : null
+                    );
+
                     this.atualizarUI();
                     await this.carregarLogs(usuario.login);
+
+                    this.salvarComDelay();
+
                     return true;
                 }
 
@@ -575,6 +663,7 @@
                     hp: 100, mp: 50, sm: 100,
                     saldo: 0, btc: 0, poder_hash: 1.0,
                     total_treinos: 0, total_descansos: 0,
+                    ultima_vez_online: new Date().toISOString(),
                     created_at: new Date().toISOString(),
                     updated_at: new Date().toISOString()
                 };
@@ -588,6 +677,7 @@
                 this.ataqueBase = 15; this.defesaBase = 10; this.magiaBase = 8;
                 this.totalTreinos = 0; this.totalDescansos = 0;
                 this.saldo = 0; this.btc = 0; this.poderHash = 1.0;
+                this.ultimaVezOnline = Date.now();
 
                 this.atualizarUI();
                 this.addLog('🌱 Registro de nível criado!', 'info');
@@ -598,6 +688,9 @@
             }
         }
 
+        // ============================================================
+        // MINERAÇÃO
+        // ============================================================
         minerar() {
             if (!this.usuario) {
                 this.mostrarToast('❌ Faça login primeiro!', 'erro');
@@ -641,6 +734,9 @@
             }, 3000);
         }
 
+        // ============================================================
+        // UI
+        // ============================================================
         atualizarUI() {
             const expProx = this.getExpProximo();
             const pct = Math.min((this.experiencia / expProx) * 100, 100);
@@ -711,6 +807,9 @@
             }, 3000);
         }
 
+        // ============================================================
+        // CONEXÃO
+        // ============================================================
         async verificarConexao() {
             try {
                 const { error } = await supabase.from(TABELA).select('login').limit(1);
@@ -747,54 +846,87 @@
         }
 
         iniciarRecuperacaoStamina() {
-            setInterval(() => {
+            if (this.staminaInterval) clearInterval(this.staminaInterval);
+            this.staminaInterval = setInterval(() => {
                 const smMax = this.getSmMax();
                 if (this.sm < smMax) {
-                    this.sm = Math.min(this.sm + 1, smMax);
+                    this.sm = Math.min(this.sm + STAMINA_REGEN_PER_TICK, smMax);
+                    this.ultimaVezOnline = Date.now();
                     this.atualizarUI();
                     if (this.usuario && this.supabaseOnline) this.salvar();
+                } else {
+                    this.ultimaVezOnline = Date.now();
                 }
-            }, 30000);
+            }, STAMINA_REGEN_INTERVAL);
         }
 
+        // ============================================================
+        // CARREGAR DADOS DO USUÁRIO — VIA SESSÃO LOCAL (SEM AUTH)
+        // ============================================================
         async loadUserData() {
             try {
-                const usuarioData = localStorage.getItem(SESSION_KEY);
-                if (!usuarioData) {
+                // 1) Lê dados da sessão local
+                const raw = localStorage.getItem(SESSION_KEY);
+                if (!raw) {
+                    console.warn('⚠️ Sessão local inexistente.');
                     this.setFallbackUser();
-                    await this.verificarAdmin();
                     return false;
                 }
 
-                const usuario = JSON.parse(usuarioData);
-                if (!usuario.login) {
+                let sessao;
+                try {
+                    sessao = JSON.parse(raw);
+                } catch {
+                    console.warn('⚠️ Sessão local corrompida.');
                     this.setFallbackUser();
-                    await this.verificarAdmin();
                     return false;
                 }
+
+                if (!sessao?.login) {
+                    console.warn('⚠️ Sessão sem login.');
+                    this.setFallbackUser();
+                    return false;
+                }
+
+                // 2) Busca perfil atualizado na tabela Geral
+                const { data: profile, error } = await supabase
+                    .from(TABELA)
+                    .select('*')
+                    .eq('login', sessao.login)
+                    .maybeSingle();
+
+                if (error || !profile) {
+                    console.error('❌ Perfil não encontrado:', error);
+                    this.setFallbackUser();
+                    return false;
+                }
+
+                const usuario = {
+                    login: profile.login,
+                    nome: profile.nome || profile.login,
+                    email: profile.email || sessao.email
+                };
+
+                this.usuario = usuario;
+                localStorage.setItem(SESSION_KEY, JSON.stringify({
+                    ...sessao,
+                    ...usuario
+                }));
 
                 await this.carregar(usuario);
 
-                const { data: profile } = await supabase
-                    .from(TABELA)
-                    .select('*')
-                    .eq('login', usuario.login)
-                    .single();
-
-                const nick = profile?.nome || usuario.nome || usuario.login;
-                this.saldo = profile?.saldo ?? 0;
+                const nick = profile.nome || usuario.login;
+                this.saldo = profile.saldo ?? 0;
 
                 this.atualizarUI();
                 this.addLog(`👋 Bem-vindo, ${nick}!`, 'info');
                 this.iniciarMineracaoPassiva();
 
                 await this.verificarAdmin();
-
                 return true;
             } catch (error) {
                 console.error('❌ Erro ao carregar perfil:', error);
                 this.setFallbackUser();
-                await this.verificarAdmin();
                 return false;
             }
         }
@@ -823,8 +955,10 @@
         }, 15000);
     }
 
-    // ==================== VERIFICAÇÃO DE SESSÃO (24H) ====================
-    function verificarSessao() {
+    // ============================================================
+    // VERIFICAÇÃO DE SESSÃO — APENAS LOCAL (24h)
+    // ============================================================
+    async function verificarSessao() {
         const timestamp = localStorage.getItem(SESSION_TIMESTAMP_KEY);
         const usuarioLogado = localStorage.getItem(SESSION_KEY);
 
@@ -847,7 +981,6 @@
         const restante = SESSION_DURATION - decorrido;
         console.log(`⏰ Sessão válida por mais ${Math.round(restante / 1000 / 60)} minutos`);
 
-        // Agenda logout automático
         setTimeout(() => {
             console.warn('⏰ Sessão expirou. Redirecionando...');
             limparSessao();
@@ -857,25 +990,27 @@
         return true;
     }
 
-    document.addEventListener('DOMContentLoaded', function() {
+    // ============================================================
+    // INICIALIZAÇÃO
+    // ============================================================
+    document.addEventListener('DOMContentLoaded', async function() {
         console.log('🚀 Dashboard carregado!');
 
-        // ✅ PRIMEIRO: verifica sessão
-        if (!verificarSessao()) return;
+        if (!(await verificarSessao())) return;
 
         levelSystem.verificarConexao();
 
-        setTimeout(() => {
-            levelSystem.loadUserData().then(() => {
-                setTimeout(() => {
-                    levelSystem.configurarEventosDosJogos();
-                }, 500);
-            });
+        setTimeout(async () => {
+            await levelSystem.loadUserData();
+            setTimeout(() => {
+                levelSystem.configurarEventosDosJogos();
+            }, 500);
         }, 300);
 
         iniciarSalvamentoAutomatico();
         levelSystem.iniciarRecuperacaoStamina();
 
+        // Botões
         const btnTreinar = document.getElementById('btnTreinar');
         const btnDescansar = document.getElementById('btnDescansar');
         const btnResetLevel = document.getElementById('btnResetLevel');
@@ -896,12 +1031,23 @@
         if (btnMinerar) btnMinerar.addEventListener('click', levelSystem.minerar);
         if (btnUpgrade) btnUpgrade.addEventListener('click', levelSystem.upgradeMineracao);
 
+        // ============================================================
+        // LOGOUT — APENAS LOCAL (SEM SUPABASE AUTH)
+        // ============================================================
         if (btnSair) {
-            btnSair.addEventListener('click', function() {
-                if (confirm('Tem certeza que deseja sair?')) {
+            const novoBtnSair = btnSair.cloneNode(true);
+            btnSair.parentNode.replaceChild(novoBtnSair, btnSair);
+
+            novoBtnSair.addEventListener('click', async function() {
+                if (!confirm('Tem certeza que deseja sair?')) return;
+
+                try {
                     if (levelSystem.usuario && levelSystem.supabaseOnline) {
-                        levelSystem.salvar();
+                        await levelSystem.salvar();
                     }
+                } catch (e) {
+                    console.warn('Erro ao salvar antes de sair:', e);
+                } finally {
                     limparSessao();
                     window.location.href = 'login.html';
                 }
@@ -929,10 +1075,11 @@
             }
             if (saveInterval) clearInterval(saveInterval);
             if (levelSystem.mineracaoInterval) clearInterval(levelSystem.mineracaoInterval);
+            if (levelSystem.staminaInterval) clearInterval(levelSystem.staminaInterval);
         });
     });
 
     window.levelSystem = levelSystem;
 
-    console.log('📊 Dashboard integrado com sessão de 24h!');
+    console.log('📊 Dashboard integrado com login direto na tabela "Geral" + sessão 24h + regeneração offline de stamina!');
 })();

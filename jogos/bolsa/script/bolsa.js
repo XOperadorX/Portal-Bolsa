@@ -51,7 +51,8 @@ function mostrarToast(mensagem, tipo = 'erro', titulo = '') {
     const tipos = {
         erro: { icon: '❌', title: titulo || 'Erro' },
         sucesso: { icon: '✅', title: titulo || 'Sucesso' },
-        atencao: { icon: '⚠️', title: titulo || 'Atenção' }
+        atencao: { icon: '⚠️', title: titulo || 'Atenção' },
+        realtime: { icon: '🔄', title: titulo || 'Realtime' }
     };
 
     const config = tipos[tipo] || tipos.erro;
@@ -94,6 +95,10 @@ let verificandoAPI             = false;
 let supabaseOnline             = true;
 let dadosCarregados            = false;
 let selicAtual                 = 10.75;
+
+// Realtime
+let realtimeChannel   = null;
+let realtimeConectado = false;
 
 // RPG
 let nivel = 1;
@@ -221,47 +226,7 @@ async function carregarDadosDoSupabase() {
         }
 
         if (data) {
-            // Financeiro
-            saldo              = data.saldo !== null && data.saldo !== undefined ? parseFloat(data.saldo) : 0.00;
-            saldoPoupanca      = data.saldo_poupanca !== null && data.saldo_poupanca !== undefined ? parseFloat(data.saldo_poupanca) : 0.00;
-            proventosPendentes = data.proventos_pendentes !== null && data.proventos_pendentes !== undefined ? parseFloat(data.proventos_pendentes) : 0.0;
-
-            // Carteira
-            if (data.carteira) {
-                Object.keys(data.carteira).forEach(key => {
-                    if (carteira[key] !== undefined) carteira[key] = data.carteira[key] || 0;
-                });
-            }
-            if (data.preco_medio_compra) {
-                Object.keys(data.preco_medio_compra).forEach(key => {
-                    if (precoMedioCompra[key] !== undefined) precoMedioCompra[key] = data.preco_medio_compra[key] || 0;
-                });
-            }
-            if (data.proventos_por_ativo) {
-                Object.keys(data.proventos_por_ativo).forEach(key => {
-                    if (proventosPorAtivo[key] !== undefined) proventosPorAtivo[key] = data.proventos_por_ativo[key] || 0;
-                });
-            }
-
-            // RPG
-            nivel = data.nivel || 1;
-            experiencia = data.experiencia || 0;
-            exp_proximo = data.exp_proximo || 100;
-            hp_max = data.hp_max || 100;
-            mp_max = data.mp_max || 50;
-            sm_max = data.sm_max || 100;
-            hp_atual = data.hp_atual || 100;
-            mp_atual = data.mp_atual || 50;
-            sm_atual = data.sm_atual || 100;
-            ataque_base = data.ataque_base || 15;
-            defesa_base = data.defesa_base || 10;
-            magia_base = data.magia_base || 8;
-
-            // SELIC
-            if (data.selic) {
-                selicAtual = parseFloat(data.selic);
-            }
-
+            aplicarDadosDoRegistro(data);
             dadosCarregados = true;
             registrar('📂 Dados carregados do Supabase!', 'operacao');
             atualizarDisplayRPG();
@@ -360,6 +325,143 @@ async function salvarDadosNoSupabase() {
 }
 
 // ====================================================================
+//  🔄 SUPABASE REALTIME — Atualização em tempo real
+// ====================================================================
+function aplicarDadosDoRegistro(data) {
+    if (!data) return;
+
+    // Financeiro
+    if (data.saldo !== undefined && data.saldo !== null) {
+        saldo = parseFloat(data.saldo);
+    }
+    if (data.saldo_poupanca !== undefined && data.saldo_poupanca !== null) {
+        saldoPoupanca = parseFloat(data.saldo_poupanca);
+    }
+    if (data.proventos_pendentes !== undefined && data.proventos_pendentes !== null) {
+        proventosPendentes = parseFloat(data.proventos_pendentes);
+    }
+
+    // Carteira
+    if (data.carteira) {
+        Object.keys(data.carteira).forEach(key => {
+            if (carteira[key] !== undefined) carteira[key] = data.carteira[key] || 0;
+        });
+    }
+    if (data.preco_medio_compra) {
+        Object.keys(data.preco_medio_compra).forEach(key => {
+            if (precoMedioCompra[key] !== undefined) {
+                precoMedioCompra[key] = data.preco_medio_compra[key] || 0;
+            }
+        });
+    }
+    if (data.proventos_por_ativo) {
+        Object.keys(data.proventos_por_ativo).forEach(key => {
+            if (proventosPorAtivo[key] !== undefined) {
+                proventosPorAtivo[key] = data.proventos_por_ativo[key] || 0;
+            }
+        });
+    }
+
+    // RPG
+    if (data.nivel !== undefined) nivel = data.nivel;
+    if (data.experiencia !== undefined) experiencia = data.experiencia;
+    if (data.exp_proximo !== undefined) exp_proximo = data.exp_proximo;
+    if (data.hp_max !== undefined) hp_max = data.hp_max;
+    if (data.mp_max !== undefined) mp_max = data.mp_max;
+    if (data.sm_max !== undefined) sm_max = data.sm_max;
+    if (data.hp_atual !== undefined) hp_atual = data.hp_atual;
+    if (data.mp_atual !== undefined) mp_atual = data.mp_atual;
+    if (data.sm_atual !== undefined) sm_atual = data.sm_atual;
+    if (data.ataque_base !== undefined) ataque_base = data.ataque_base;
+    if (data.defesa_base !== undefined) defesa_base = data.defesa_base;
+    if (data.magia_base !== undefined) magia_base = data.magia_base;
+
+    // SELIC
+    if (data.selic !== undefined && data.selic !== null) {
+        const novaSelic = parseFloat(data.selic);
+        if (novaSelic !== selicAtual) {
+            selicAtual = novaSelic;
+            atualizarDisplaySelicBolsa(selicAtual);
+            registrar(`📈 SELIC atualizada em tempo real: ${selicAtual.toFixed(2)}%`, 'operacao');
+        }
+    }
+
+    // Atualiza interface
+    atualizarTudo();
+}
+
+function iniciarRealtime() {
+    if (realtimeChannel) {
+        supabase.removeChannel(realtimeChannel);
+        realtimeChannel = null;
+    }
+
+    if (!usuario || !usuario.id) {
+        console.warn('Realtime: usuário não definido');
+        return;
+    }
+
+    const userId = usuario.id;
+    atualizarStatusRealtime(false, 'checking');
+
+    realtimeChannel = supabase
+        .channel(`geral-realtime-${userId}`)
+        .on(
+            'postgres_changes',
+            {
+                event: 'UPDATE',
+                schema: 'public',
+                table: TABELA,
+                filter: `id=eq.${userId}`
+            },
+            (payload) => {
+                console.log('🔴 Realtime UPDATE recebido:', payload);
+                aplicarDadosDoRegistro(payload.new);
+                mostrarToast('Dados sincronizados em tempo real!', 'realtime', '🔄 Realtime');
+            }
+        )
+        .on(
+            'postgres_changes',
+            {
+                event: 'INSERT',
+                schema: 'public',
+                table: TABELA,
+                filter: `id=eq.${userId}`
+            },
+            (payload) => {
+                console.log('🟢 Realtime INSERT recebido:', payload);
+                aplicarDadosDoRegistro(payload.new);
+            }
+        )
+        .subscribe((status) => {
+            console.log('📡 Realtime status:', status);
+            if (status === 'SUBSCRIBED') {
+                realtimeConectado = true;
+                atualizarStatusRealtime(true);
+                registrar('📡 Realtime conectado ao Supabase!', 'operacao');
+            } else if (status === 'CHANNEL_ERROR' || status === 'TIMED_OUT') {
+                realtimeConectado = false;
+                atualizarStatusRealtime(false);
+                registrar('⚠️ Realtime desconectado. Tentando reconectar...', 'operacao');
+                setTimeout(iniciarRealtime, 5000);
+            } else if (status === 'CLOSED') {
+                realtimeConectado = false;
+                atualizarStatusRealtime(false);
+            }
+        });
+}
+
+function pararRealtime() {
+    if (realtimeChannel) {
+        supabase.removeChannel(realtimeChannel);
+        realtimeChannel = null;
+        realtimeConectado = false;
+        atualizarStatusRealtime(false);
+        console.log('📡 Realtime desconectado');
+    }
+}
+
+// ====================================================================
 //  FUNÇÕES RPG
 // ====================================================================
 function atualizarDisplayRPG() {
@@ -369,13 +471,38 @@ function atualizarDisplayRPG() {
     const atkEl = document.getElementById('lwAtk');
     const defEl = document.getElementById('lwDef');
     const magEl = document.getElementById('lwMag');
-    
+    const nivelEl = document.getElementById('lwNivel');
+    const tituloEl = document.getElementById('lwTitulo');
+    const expAtualEl = document.getElementById('lwExpAtual');
+    const expProxEl = document.getElementById('lwExpProx');
+    const expFillEl = document.getElementById('lwExpFill');
+
     if (hpEl) hpEl.textContent = `${hp_atual}/${hp_max}`;
     if (mpEl) mpEl.textContent = `${mp_atual}/${mp_max}`;
     if (smEl) smEl.textContent = `${sm_atual}/${sm_max}`;
     if (atkEl) atkEl.textContent = ataque_base;
     if (defEl) defEl.textContent = defesa_base;
     if (magEl) magEl.textContent = magia_base;
+    if (nivelEl) nivelEl.textContent = nivel;
+    if (expAtualEl) expAtualEl.textContent = experiencia;
+    if (expProxEl) expProxEl.textContent = exp_proximo;
+
+    if (tituloEl) {
+        let titulo = '🌱 Iniciante';
+        if (nivel >= 50) titulo = '👑 Lenda';
+        else if (nivel >= 30) titulo = '🔥 Mestre';
+        else if (nivel >= 20) titulo = '⚔️ Veterano';
+        else if (nivel >= 10) titulo = '🛡️ Experiente';
+        else if (nivel >= 5) titulo = '🌿 Aprendiz';
+        tituloEl.textContent = titulo;
+    }
+
+    if (expFillEl) {
+        const pct = exp_proximo > 0 ? Math.min(100, (experiencia / exp_proximo) * 100) : 0;
+        expFillEl.style.width = `${pct}%`;
+        if (pct >= 75) expFillEl.classList.add('high');
+        else expFillEl.classList.remove('high');
+    }
 }
 
 // ====================================================================
@@ -431,6 +558,30 @@ function atualizarStatusSupabase(online) {
     } else {
         statusEl.className = 'status-item status-offline';
         textoEl.textContent = '☁️ Supabase';
+        if (dotEl) dotEl.className = 'status-dot offline';
+    }
+}
+
+function atualizarStatusRealtime(online, estado = '') {
+    const statusEl = document.getElementById('statusRealtime');
+    const textoEl  = document.getElementById('statusRealtimeTexto');
+    if (!statusEl || !textoEl) return;
+    const dotEl    = statusEl.querySelector('.status-dot');
+
+    if (estado === 'checking') {
+        statusEl.className = 'status-item status-checking';
+        textoEl.textContent = '🔄 Realtime';
+        if (dotEl) dotEl.className = 'status-dot';
+        return;
+    }
+
+    if (online) {
+        statusEl.className = 'status-item status-online';
+        textoEl.textContent = '🔄 Realtime';
+        if (dotEl) dotEl.className = 'status-dot online';
+    } else {
+        statusEl.className = 'status-item status-offline';
+        textoEl.textContent = '🔄 Realtime';
         if (dotEl) dotEl.className = 'status-dot offline';
     }
 }
@@ -898,6 +1049,7 @@ function atualizarTudo() {
 // ====================================================================
 function sair() {
     if (confirm('Tem certeza que deseja sair?')) {
+        pararRealtime();
         localStorage.removeItem('usuario_logado');
         window.location.href = 'login.html';
     }
@@ -970,7 +1122,6 @@ async function carregarSelicDoSupabase() {
             .single();
 
         if (error) {
-            // Tenta buscar de qualquer registro
             const { data: dataAdmin, error: errorAdmin } = await supabase
                 .from(TABELA)
                 .select('selic')
@@ -991,17 +1142,14 @@ async function carregarSelicDoSupabase() {
 // ====================================================================
 //  INICIALIZAÇÃO
 // ====================================================================
-// Inicializa estruturas
 initEstruturas();
 
-// Carrega dados do Supabase
 try {
     await carregarDadosDoSupabase();
 } catch (e) {
     console.error('Erro ao carregar dados iniciais:', e);
 }
 
-// Se não carregou, usa valores padrão
 if (!dadosCarregados) {
     const precosAcoes = [34.50, 58.90, 31.20];
     acoes.forEach((a, idx) => a.preco = precosAcoes[idx]);
@@ -1014,24 +1162,26 @@ if (!dadosCarregados) {
     tesouros[2].preco = 850.00;
 }
 
-// Define valor padrão para poupança
 const valorPoupancaEl = document.getElementById("valorPoupanca");
 if (valorPoupancaEl) valorPoupancaEl.value = "10.00";
 
-// Atualiza status
+// Status
 atualizarStatusInternet(navigator.onLine);
 await verificarSupabase();
 await verificarAPI();
+
+// 🔄 Inicia Realtime se Supabase estiver online
+if (supabaseOnline) {
+    iniciarRealtime();
+}
 
 // Busca preços da API se estiver online
 if (navigator.onLine && apiOnline) {
     await buscarPrecosAPI();
 }
 
-// Atualiza exibição
 atualizarTudo();
 
-// Limpa histórico e registra início
 const historicoEl = document.getElementById("historico");
 if (historicoEl) historicoEl.innerHTML = "";
 registrar(`🚀 Jogo iniciado com SALDO DE ${formatarMoeda(saldo)}!`);
@@ -1039,8 +1189,8 @@ registrar(`👤 Usuário: ${usuario.nome || usuario.login}`);
 registrar("💰 Ações: proventos a cada 60s | FIIs: 30s | ETFs: 90s");
 registrar("🏦 Poupança: rende 0,6% a cada 60s. Boa sorte!");
 if (supabaseOnline) registrar("☁️ Supabase disponível para salvar seu progresso!");
+if (realtimeConectado) registrar("🔄 Realtime conectado — dados sincronizados em tempo real!");
 
-// Carrega e exibe SELIC
 const selicSalva = await carregarSelicDoSupabase();
 if (selicSalva !== null && selicSalva !== undefined) {
     selicAtual = selicSalva;
@@ -1068,6 +1218,7 @@ window.addEventListener('online', async () => {
     registrar('🌐 Conexão restaurada!');
     await verificarSupabase();
     await verificarAPI();
+    if (supabaseOnline) iniciarRealtime();
     if (apiOnline) { 
         await buscarPrecosAPI(); 
         atualizarTudo(); 
@@ -1078,11 +1229,17 @@ window.addEventListener('offline', () => {
     atualizarStatusInternet(false);
     apiOnline = false;
     atualizarStatusAPI(false);
+    pararRealtime();
     registrar('📡 Modo offline ativado.');
 });
 
+// Fecha canal Realtime ao sair da página
+window.addEventListener('beforeunload', () => {
+    pararRealtime();
+});
+
 // ====================================================================
-//  INTERVALOS
+//  INTERVALOS (mercado — Realtime cuida do banco)
 // ====================================================================
 // Atualização de preços a cada 30 segundos
 setInterval(() => {
@@ -1111,17 +1268,9 @@ setInterval(() => {
 }, 10000);
 
 // Proventos
-setInterval(() => {
-    distribuirProventos(acoes, '📈 AÇÕES');
-}, 60000);
-
-setInterval(() => {
-    distribuirProventos(fiis, '🏢 FIIs');
-}, 30000);
-
-setInterval(() => {
-    distribuirProventos(etfs, '📊 ETFs');
-}, 90000);
+setInterval(() => distribuirProventos(acoes, '📈 AÇÕES'), 60000);
+setInterval(() => distribuirProventos(fiis, '🏢 FIIs'), 30000);
+setInterval(() => distribuirProventos(etfs, '📊 ETFs'), 90000);
 
 // Poupança
 setInterval(renderPoupanca, 60000);
@@ -1131,17 +1280,3 @@ setInterval(() => {
     atualizarCarteira(); 
     atualizarPatrimonio(); 
 }, 5000);
-
-// Verificação do Supabase
-setInterval(async () => { 
-    await verificarSupabase(); 
-}, 60000);
-
-// Verificação da SELIC
-setInterval(async () => {
-    const selicSalva = await carregarSelicDoSupabase();
-    if (selicSalva !== null && selicSalva !== undefined && selicSalva !== selicAtual) {
-        selicAtual = selicSalva;
-        atualizarDisplaySelicBolsa(selicAtual);
-    }
-}, 30000);

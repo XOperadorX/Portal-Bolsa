@@ -8,23 +8,23 @@ const supabase = createClient(SUPABASE_URL, SUPABASE_KEY);
 const TABELA = 'Geral';
 
 // ==================== ELEMENTOS ====================
-const formLogin = document.getElementById('formLogin');
-const loginInput = document.getElementById('login');
-const senhaInput = document.getElementById('senha');
-const btnLogin = document.getElementById('btnLogin');
-const mensagemErro = document.getElementById('mensagemErro');
-const mensagemSucesso = document.getElementById('mensagemSucesso');
-const statusSupabase = document.getElementById('statusSupabase');
+const formLogin        = document.getElementById('formLogin');
+const emailInput       = document.getElementById('login'); // campo agora é e-mail
+const senhaInput       = document.getElementById('senha');
+const btnLogin         = document.getElementById('btnLogin');
+const mensagemErro     = document.getElementById('mensagemErro');
+const mensagemSucesso  = document.getElementById('mensagemSucesso');
+const statusSupabase   = document.getElementById('statusSupabase');
 
-// ==================== FUNÇÕES ====================
-function mostrarErro(mensagem) {
-    mensagemErro.textContent = mensagem;
+// ==================== MENSAGENS ====================
+function mostrarErro(m) {
+    mensagemErro.textContent = m;
     mensagemErro.className = 'mensagem-erro show';
     mensagemSucesso.className = 'mensagem-sucesso';
 }
 
-function mostrarSucesso(mensagem) {
-    mensagemSucesso.textContent = mensagem;
+function mostrarSucesso(m) {
+    mensagemSucesso.textContent = m;
     mensagemSucesso.className = 'mensagem-sucesso show';
     mensagemErro.className = 'mensagem-erro';
 }
@@ -34,89 +34,111 @@ function ocultarMensagens() {
     mensagemSucesso.className = 'mensagem-sucesso';
 }
 
+// ==================== CONEXÃO ====================
 async function verificarSupabase() {
     try {
-        const { error } = await supabase
-            .from(TABELA)
-            .select('id')
-            .limit(1);
-
+        const { error } = await supabase.from(TABELA).select('id').limit(1);
         if (error) {
-            statusSupabase.textContent = '⚠️ Erro ao conectar ao Supabase';
+            statusSupabase.textContent = '⚠️ Erro ao conectar';
             statusSupabase.className = 'status-supabase offline';
             return false;
         }
-
         statusSupabase.textContent = '✅ Conectado ao Supabase';
         statusSupabase.className = 'status-supabase online';
         return true;
-    } catch (error) {
-        statusSupabase.textContent = '❌ Erro ao conectar ao Supabase';
+    } catch {
+        statusSupabase.textContent = '❌ Erro ao conectar';
         statusSupabase.className = 'status-supabase offline';
         return false;
     }
 }
 
-async function fazerLogin(login, senha) {
+// ==================== LOGIN ====================
+async function fazerLogin(email, senha) {
     try {
-        const { data, error } = await supabase
-            .from(TABELA)
-            .select('id, login, senha, nome, saldo, saldo_poupanca, carteira')
-            .eq('login', login)
-            .single();
-
-        if (error) {
-            if (error.code === 'PGRST116') {
-                mostrarErro('❌ Usuário não encontrado!');
-                return false;
-            }
-            throw error;
-        }
-
-        if (!data) {
-            mostrarErro('❌ Usuário não encontrado!');
-            return false;
-        }
-
-        if (data.senha !== senha) {
-            mostrarErro('❌ Senha incorreta!');
-            return false;
-        }
-
-        // ✅ SALVA COM TIMESTAMP VIA session.js
-        salvarSessao({
-            id: data.id,
-            login: data.login,
-            nome: data.nome || data.login,
-            saldo: data.saldo || 0,
-            saldo_poupanca: data.saldo_poupanca || 0,
-            carteira: data.carteira || {}
+        // 1) Autentica via Supabase Auth
+        const { data, error } = await supabase.auth.signInWithPassword({
+            email: email,
+            password: senha
         });
 
-        mostrarSucesso('✅ Login realizado com sucesso! Redirecionando...');
+        if (error) {
+            console.error('Erro login:', error);
+            const msg = (error.message || '').toLowerCase();
+
+            if (msg.includes('email not confirmed')) {
+                mostrarErro('📧 Confirme seu e-mail antes de fazer login. Verifique sua caixa de entrada.');
+            } else if (msg.includes('invalid login credentials')) {
+                mostrarErro('❌ E-mail ou senha incorretos.');
+            } else {
+                mostrarErro(`❌ ${error.message}`);
+            }
+            return false;
+        }
+
+        if (!data?.user) {
+            mostrarErro('❌ Erro ao autenticar. Tente novamente.');
+            return false;
+        }
+
+        // 2) Busca dados do jogo na tabela Geral
+        const { data: perfil, error: perfilError } = await supabase
+            .from(TABELA)
+            .select('id, login, nome, saldo, saldo_poupanca, carteira, email_confirmado')
+            .eq('auth_id', data.user.id)
+            .maybeSingle();
+
+        if (perfilError) {
+            console.error('Erro ao buscar perfil:', perfilError);
+        }
+
+        if (!perfil) {
+            mostrarErro('⚠️ Perfil não encontrado. Contate o suporte.');
+            await supabase.auth.signOut();
+            return false;
+        }
+
+        if (perfil.email_confirmado === false) {
+            mostrarErro('📧 Confirme seu e-mail antes de fazer login.');
+            await supabase.auth.signOut();
+            return false;
+        }
+
+        // 3) Salva sessão local (expira em 24h via session.js)
+        salvarSessao({
+            id: perfil.id,
+            auth_id: data.user.id,
+            login: perfil.login,
+            email: data.user.email,
+            nome: perfil.nome || perfil.login,
+            saldo: perfil.saldo || 0,
+            saldo_poupanca: perfil.saldo_poupanca || 0,
+            carteira: perfil.carteira || {}
+        });
+
+        mostrarSucesso('✅ Login realizado! Redirecionando...');
 
         setTimeout(() => {
             window.location.href = 'dashboard.html';
-        }, 1500);
+        }, 1200);
 
         return true;
-
     } catch (error) {
-        console.error('Erro no login:', error);
+        console.error('Erro inesperado:', error);
         mostrarErro('❌ Erro ao realizar login. Tente novamente.');
         return false;
     }
 }
 
-// ==================== EVENT LISTENERS ====================
+// ==================== EVENTOS ====================
 formLogin.addEventListener('submit', async (e) => {
     e.preventDefault();
     ocultarMensagens();
 
-    const login = loginInput.value.trim();
+    const email = emailInput.value.trim().toLowerCase();
     const senha = senhaInput.value.trim();
 
-    if (!login || !senha) {
+    if (!email || !senha) {
         mostrarErro('⚠️ Preencha todos os campos!');
         return;
     }
@@ -130,23 +152,20 @@ formLogin.addEventListener('submit', async (e) => {
     btnLogin.disabled = true;
     btnLogin.innerHTML = '<span class="loading"></span> Entrando...';
 
-    await fazerLogin(login, senha);
+    await fazerLogin(email, senha);
 
     btnLogin.disabled = false;
     btnLogin.innerHTML = '🔐 Entrar';
 });
 
-// Verificar conexão ao carregar
+document.addEventListener('keydown', (e) => {
+    if (e.key === 'Enter') formLogin.dispatchEvent(new Event('submit'));
+});
+
+// ==================== INICIALIZAÇÃO ====================
 verificarSupabase();
 
-// ✅ Se já está logado E sessão válida (< 24h), vai pro dashboard
+// Se já está logado (sessão local válida), vai direto ao dashboard
 if (sessaoValida()) {
     window.location.href = 'dashboard.html';
 }
-
-// Enter para submeter
-document.addEventListener('keydown', (e) => {
-    if (e.key === 'Enter') {
-        formLogin.dispatchEvent(new Event('submit'));
-    }
-});

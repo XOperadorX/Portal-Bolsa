@@ -209,7 +209,7 @@ async function buscarUsuarios(filtro = null) {
     try {
         let query = supabase
             .from(TABELA)
-            .select('id, nome, login, senha, saldo, saldo_poupanca, sm_atual, bloqueado')
+            .select('id, nome, login, senha, saldo, saldo_poupanca, sm_atual')
             .not('login', 'is', null);
 
         if (filtro) {
@@ -268,36 +268,6 @@ async function atualizarSaldoUsuario(id, novoSaldo) {
     }
 }
 
-async function atualizarSmAtual(id, valor) {
-    try {
-        const { data, error } = await supabase
-            .from(TABELA)
-            .update({ sm_atual: valor, updated_at: new Date().toISOString() })
-            .eq('id', id)
-            .select();
-        if (error) throw error;
-        return data;
-    } catch (error) {
-        console.error('Erro ao atualizar SM Atual:', error);
-        throw error;
-    }
-}
-
-async function atualizarBloqueio(id, bloqueado) {
-    try {
-        const { data, error } = await supabase
-            .from(TABELA)
-            .update({ bloqueado: bloqueado, updated_at: new Date().toISOString() })
-            .eq('id', id)
-            .select();
-        if (error) throw error;
-        return data;
-    } catch (error) {
-        console.error('Erro ao atualizar bloqueio:', error);
-        throw error;
-    }
-}
-
 // ==================== DELETAR USUÁRIO ====================
 async function deletarUsuario(id, login) {
     const confirmacao1 = confirm(`⚠️ ATENÇÃO!\n\nTem certeza que deseja DELETAR o usuário "${login}" (ID: ${id})?\n\nEsta ação é IRREVERSÍVEL!`);
@@ -352,8 +322,6 @@ function renderizarUsuarioDetalhes(usuario) {
         return;
     }
 
-    const estaBloqueado = usuario.bloqueado === true;
-
     container.innerHTML = `
         <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 16px; background: #1a1f2f; padding: 20px; border-radius: 16px; border: 1px solid #2a2f45;">
             <div>
@@ -382,29 +350,17 @@ function renderizarUsuarioDetalhes(usuario) {
             </div>
             <div>
                 <p style="font-size: 0.8rem; color: #8a99ad;">SM Atual</p>
-                <div style="display: flex; gap: 8px; align-items: center; margin-top: 4px;">
-                    <input type="number" id="smAtualDetalhe_${usuario.id}" class="quantidade-input" style="width: 100px; font-size: 1rem; padding: 6px 10px;" step="0.01" value="${usuario.sm_atual ?? 0}">
-                    <button class="acao-botoes" style="background:#a78bfa; color:#fff; border:none; border-radius:20px; padding:6px 12px; font-weight:700; cursor:pointer; font-size:0.75rem;" onclick="window.salvarSmAtualDetalhe(${usuario.id})">💾 Salvar</button>
-                </div>
+                <p style="font-size: 1.4rem; font-weight: 700; color: #a78bfa;">${(usuario.sm_atual ?? 0).toFixed(2)}</p>
             </div>
             <div>
                 <p style="font-size: 0.8rem; color: #8a99ad;">Patrimônio Total</p>
                 <p style="font-size: 1.4rem; font-weight: 700; color: #fff;">${formatarMoeda((usuario.saldo || 0) + (usuario.saldo_poupanca || 0))}</p>
-            </div>
-            <div>
-                <p style="font-size: 0.8rem; color: #8a99ad;">Status</p>
-                <p style="font-size: 1.2rem; font-weight: 700; color: ${estaBloqueado ? '#ef4444' : '#10b981'};">
-                    ${estaBloqueado ? '🔒 Bloqueado' : '✅ Ativo'}
-                </p>
             </div>
         </div>
         <div style="margin-top: 16px; display: flex; gap: 10px; flex-wrap: wrap;">
             <button class="btn btn-success" onclick="window.adicionarSaldoEspecifico(${usuario.id})">➕ Adicionar</button>
             <button class="btn btn-danger" onclick="window.removerSaldoEspecifico(${usuario.id})">➖ Remover</button>
             <button class="btn btn-warning" onclick="window.definirSaldoEspecifico(${usuario.id})">🎯 Definir</button>
-            <button class="btn btn-bloquear" onclick="window.alternarBloqueio(${usuario.id}, '${usuario.login}', ${estaBloqueado})">
-                ${estaBloqueado ? '🔓 Desbloquear' : '🔒 Bloquear'}
-            </button>
             <button class="btn-delete" onclick="window.deletarUsuario(${usuario.id}, '${usuario.login}')">🗑️ Deletar Conta</button>
         </div>
     `;
@@ -417,42 +373,28 @@ function renderizarListaUsuarios(usuarios) {
     const card = document.getElementById('cardLista');
 
     if (!usuarios || usuarios.length === 0) {
-        tbody.innerHTML = `<tr><td colspan="9" style="padding: 20px; color: #8a99ad;">Nenhum usuário encontrado.</td></tr>`;
+        tbody.innerHTML = `<tr><td colspan="8" style="padding: 20px; color: #8a99ad;">Nenhum usuário encontrado.</td></tr>`;
         card.style.display = 'block';
         return;
     }
 
     let html = '';
     usuarios.forEach(u => {
-        const estaBloqueado = u.bloqueado === true;
         html += `
-            <tr style="${estaBloqueado ? 'opacity: 0.6;' : ''}">
+            <tr>
                 <td style="color: var(--neon-blue);">#${u.id}</td>
                 <td><strong>${u.nome || '—'}</strong></td>
                 <td>${u.login}</td>
                 <td><span class="senha-texto">${u.senha || '—'}</span></td>
                 <td style="color: var(--neon-green); font-weight: 600;">${formatarMoeda(u.saldo || 0)}</td>
                 <td style="color: #f59e0b; font-weight: 600;">${formatarMoeda(u.saldo_poupanca || 0)}</td>
-                <td>
-                    <div class="sm-edit-wrapper">
-                        <input type="number" id="sm_${u.id}" class="quantidade-input" step="0.01" value="${u.sm_atual ?? 0}">
-                        <button class="sm-save" onclick="window.salvarSmAtual(${u.id})">💾</button>
-                    </div>
-                </td>
-                <td>
-                    <span class="status-badge ${estaBloqueado ? 'bloqueado' : 'ativo'}">
-                        ${estaBloqueado ? '🔒 Bloqueado' : '✅ Ativo'}
-                    </span>
-                </td>
+                <td style="color: #a78bfa; font-weight: 600;">${(u.sm_atual ?? 0).toFixed(2)}</td>
                 <td>
                     <div class="acao-botoes">
                         <input type="number" id="valor_${u.id}" class="quantidade-input" placeholder="Valor" step="0.01" min="0.01" value="10">
                         <button class="add" onclick="window.adicionarSaldoUsuario(${u.id})">+</button>
                         <button class="remove" onclick="window.removerSaldoUsuario(${u.id})">-</button>
                         <button class="set" onclick="window.definirSaldoUsuario(${u.id})">=</button>
-                        <button class="${estaBloqueado ? 'unlock' : 'lock'}" onclick="window.alternarBloqueio(${u.id}, '${u.login}', ${estaBloqueado})">
-                            ${estaBloqueado ? '🔓' : '🔒'}
-                        </button>
                         <button class="delete" onclick="window.deletarUsuario(${u.id}, '${u.login}')">🗑️</button>
                     </div>
                 </td>
@@ -473,14 +415,10 @@ async function atualizarEstatisticas(usuarios) {
     const total = usuarios.length;
     const totalSaldo = usuarios.reduce((acc, u) => acc + (u.saldo || 0), 0);
     const totalPoupanca = usuarios.reduce((acc, u) => acc + (u.saldo_poupanca || 0), 0);
-    const totalBloqueados = usuarios.filter(u => u.bloqueado === true).length;
 
     document.getElementById('totalUsuarios').textContent = total;
     document.getElementById('totalCirculacao').innerHTML = `${totalSaldo.toFixed(2)} <span class="moeda-simbolo">${MOEDA}</span>`;
     document.getElementById('totalPoupanca').innerHTML = `${totalPoupanca.toFixed(2)} <span class="moeda-simbolo">${MOEDA}</span>`;
-    
-    const elBloq = document.getElementById('totalBloqueados');
-    if (elBloq) elBloq.textContent = totalBloqueados;
 }
 
 // ==================== AÇÕES DE SALDO ====================
@@ -555,72 +493,6 @@ window.definirSaldoUsuario = async function(id) {
         await carregarDados();
     } catch (error) {
         mostrarMensagem('❌ Erro ao definir saldo.', 'erro');
-    }
-};
-
-// ==================== SM ATUAL ====================
-window.salvarSmAtual = async function(id) {
-    const input = document.getElementById(`sm_${id}`);
-    const valor = parseFloat(input.value);
-    if (isNaN(valor)) {
-        mostrarMensagem('⚠️ Digite um valor válido para SM Atual.', 'erro');
-        return;
-    }
-
-    try {
-        const usuario = await buscarUsuarioPorId(id);
-        if (!usuario) {
-            mostrarMensagem('❌ Usuário não encontrado.', 'erro');
-            return;
-        }
-
-        await atualizarSmAtual(id, valor);
-
-        mostrarMensagem(`✅ SM Atual de ${usuario.login} atualizado para ${valor.toFixed(2)}`, 'sucesso');
-        await carregarDados();
-    } catch (error) {
-        mostrarMensagem('❌ Erro ao atualizar SM Atual.', 'erro');
-    }
-};
-
-window.salvarSmAtualDetalhe = async function(id) {
-    const input = document.getElementById(`smAtualDetalhe_${id}`);
-    const valor = parseFloat(input.value);
-    if (isNaN(valor)) {
-        mostrarMensagem('⚠️ Digite um valor válido para SM Atual.', 'erro');
-        return;
-    }
-
-    try {
-        const usuario = await buscarUsuarioPorId(id);
-        if (!usuario) {
-            mostrarMensagem('❌ Usuário não encontrado.', 'erro');
-            return;
-        }
-
-        await atualizarSmAtual(id, valor);
-
-        mostrarMensagem(`✅ SM Atual de ${usuario.login} atualizado para ${valor.toFixed(2)}`, 'sucesso');
-        await carregarDados();
-    } catch (error) {
-        mostrarMensagem('❌ Erro ao atualizar SM Atual.', 'erro');
-    }
-};
-
-// ==================== BLOQUEIO ====================
-window.alternarBloqueio = async function(id, login, estaBloqueado) {
-    const acao = estaBloqueado ? 'DESBLOQUEAR' : 'BLOQUEAR';
-    
-    if (!confirm(`Tem certeza que deseja ${acao} o usuário "${login}" (ID: ${id})?`)) {
-        return;
-    }
-
-    try {
-        await atualizarBloqueio(id, !estaBloqueado);
-        mostrarMensagem(`✅ Usuário "${login}" ${estaBloqueado ? 'desbloqueado' : 'bloqueado'} com sucesso!`, 'sucesso');
-        await carregarDados();
-    } catch (error) {
-        mostrarMensagem(`❌ Erro ao ${acao.toLowerCase()} usuário.`, 'erro');
     }
 };
 
@@ -798,6 +670,8 @@ async function definirSaldoMassa() {
 }
 
 // ==================== CÓDIGOS DE RESGATE ====================
+// Os códigos ficam armazenados na linha do admin (id=1) na coluna `codigos_resgate`
+
 async function carregarCodigos() {
     try {
         const { data, error } = await supabase
@@ -1039,6 +913,7 @@ document.getElementById('codigoInput').addEventListener('keypress', (e) => {
 async function inicializar() {
     await verificarSupabase();
 
+    // Carrega SELIC do Supabase
     const selicSalva = await carregarSelicDoSupabase();
     
     if (selicSalva !== null && selicSalva !== undefined) {
@@ -1055,10 +930,13 @@ async function inicializar() {
         console.log('✅ SELIC criada no Supabase com valor padrão:', valorPadrao);
     }
 
+    // Carrega códigos de resgate
     await carregarCodigos();
     console.log('✅ Códigos de resgate carregados:', codigosCache.length);
 
+    // Carrega dados dos usuários
     await carregarDados();
 }
 
+// Inicia a aplicação
 inicializar();

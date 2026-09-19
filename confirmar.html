@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Confirmar E-mail - MM Quase Tudo</title>
+    <link rel="stylesheet" href="style/login.css">
+    <style>
+        .confirm-box { text-align: center; padding: 30px 20px; }
+        .confirm-icon { font-size: 60px; margin-bottom: 15px; }
+        .confirm-title { font-size: 20px; margin-bottom: 10px; color: #fff; }
+        .confirm-msg { color: #9ca3af; margin-bottom: 20px; }
+        .confirm-link {
+            display: inline-block; padding: 12px 24px;
+            background: linear-gradient(135deg, #7000ff, #8b5cf6);
+            color: #fff; text-decoration: none; border-radius: 8px;
+            font-weight: 700;
+        }
+    </style>
+</head>
+<body>
+    <div class="login-container">
+        <div class="logo">
+            <h1>🏦 MM Quase Tudo</h1>
+            <span>Confirmação de E-mail</span>
+        </div>
+        <div class="confirm-box">
+            <div class="confirm-icon" id="confirmIcon">⏳</div>
+            <div class="confirm-title" id="confirmTitle">Confirmando seu e-mail...</div>
+            <div class="confirm-msg" id="confirmMsg">Aguarde um instante.</div>
+            <a href="login.html" class="confirm-link" id="btnIrLogin" style="display:none;">🔐 Ir para o Login</a>
+        </div>
+    </div>
+
+    <script type="importmap">
+    {
+        "imports": {
+            "@supabase/supabase-js": "https://esm.sh/@supabase/supabase-js@2"
+        }
+    }
+    </script>
+    <script type="module">
+        import { createClient } from '@supabase/supabase-js';
+
+        const supabase = createClient(
+            'https://xrcxvizzdumcxbylmkvn.supabase.co',
+            'sb_publishable_E-g3G3wW4EySbCsXLXp8KQ_FnmERMcD'
+        );
+
+        const icon  = document.getElementById('confirmIcon');
+        const title = document.getElementById('confirmTitle');
+        const msg   = document.getElementById('confirmMsg');
+        const btn   = document.getElementById('btnIrLogin');
+
+        function finalizar(ok, titulo, mensagem) {
+            icon.textContent  = ok ? '✅' : '❌';
+            title.textContent = titulo;
+            msg.textContent   = mensagem;
+            btn.style.display = 'inline-block';
+        }
+
+        async function processar() {
+            try {
+                // Supabase processa o token do hash (#access_token...) automaticamente
+                const { data: { session }, error } = await supabase.auth.getSession();
+
+                if (error) {
+                    console.error('Erro ao obter sessão:', error);
+                }
+
+                // Espera o evento de auth mudar (quando o token é processado)
+                if (!session) {
+                    const { data: listener } = supabase.auth.onAuthStateChange(
+                        async (event, newSession) => {
+                            if (event === 'SIGNED_IN' && newSession) {
+                                listener.subscription.unsubscribe();
+                                await finalizarConfirmacao(newSession);
+                            }
+                        }
+                    );
+
+                    // timeout de segurança (10s)
+                    setTimeout(() => {
+                        listener.subscription.unsubscribe();
+                        if (icon.textContent === '⏳') {
+                            finalizar(false, 'Link inválido ou expirado',
+                                'Solicite um novo e-mail de confirmação fazendo login.');
+                        }
+                    }, 10000);
+                    return;
+                }
+
+                await finalizarConfirmacao(session);
+            } catch (e) {
+                console.error(e);
+                finalizar(false, 'Erro ao confirmar', 'Tente novamente mais tarde.');
+            }
+        }
+
+        async function finalizarConfirmacao(session) {
+            if (session?.user?.email_confirmed_at) {
+                // Atualiza tabela Geral (caso o trigger não tenha rodado)
+                await supabase
+                    .from('Geral')
+                    .update({ email_confirmado: true })
+                    .eq('auth_id', session.user.id);
+
+                finalizar(true,
+                    'E-mail confirmado com sucesso!',
+                    'Sua conta está ativa. Faça login para começar.');
+
+                // faz logout do Auth para evitar auto-login no dashboard
+                await supabase.auth.signOut();
+            } else {
+                finalizar(false, 'Link inválido ou expirado',
+                    'Solicite um novo e-mail de confirmação fazendo login.');
+            }
+        }
+
+        processar();
+    </script>
+</body>
+</html>

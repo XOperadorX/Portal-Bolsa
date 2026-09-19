@@ -7,22 +7,22 @@ const supabase = createClient(SUPABASE_URL, SUPABASE_KEY);
 const TABELA = 'Geral';
 
 // ==================== ELEMENTOS ====================
-const formCadastro = document.getElementById('formCadastro');
-const nomeInput = document.getElementById('nome');
-const loginInput = document.getElementById('login');
-const senhaInput = document.getElementById('senha');
+const formCadastro      = document.getElementById('formCadastro');
+const nomeInput         = document.getElementById('nome');
+const loginInput        = document.getElementById('login'); // campo agora é e-mail
+const senhaInput        = document.getElementById('senha');
 const senhaConfirmInput = document.getElementById('senha_confirm');
-const btnCadastrar = document.getElementById('btnCadastrar');
-const mensagemErro = document.getElementById('mensagemErro');
-const mensagemSucesso = document.getElementById('mensagemSucesso');
-const statusSupabase = document.getElementById('statusSupabase');
+const btnCadastrar      = document.getElementById('btnCadastrar');
+const mensagemErro      = document.getElementById('mensagemErro');
+const mensagemSucesso   = document.getElementById('mensagemSucesso');
+const statusSupabase    = document.getElementById('statusSupabase');
 
-const reqLength = document.getElementById('req-length');
+const reqLength    = document.getElementById('req-length');
 const reqMaiuscula = document.getElementById('req-maiuscula');
 const reqMinuscula = document.getElementById('req-minuscula');
-const reqNumero = document.getElementById('req-numero');
+const reqNumero    = document.getElementById('req-numero');
 
-// ==================== FUNÇÕES ====================
+// ==================== MENSAGENS ====================
 function mostrarErro(mensagem) {
     mensagemErro.textContent = mensagem;
     mensagemErro.className = 'mensagem-erro show';
@@ -40,125 +40,112 @@ function ocultarMensagens() {
     mensagemSucesso.className = 'mensagem-sucesso';
 }
 
-// ✅ SIMPLIFICADO: apenas mínimo 6 caracteres
+// ==================== VALIDAÇÕES ====================
 function validarSenha(senha) {
     const temLength = senha.length >= 6;
 
     reqLength.className = temLength ? 'ok' : 'bad';
-    reqLength.textContent = temLength ? '✅ Mínimo 6 caracteres' : '🔴 Mínimo 6 caracteres';
+    reqLength.textContent = temLength
+        ? '✅ Mínimo 6 caracteres'
+        : '🔴 Mínimo 6 caracteres';
 
-    // Os outros requisitos agora são sempre considerados OK (opcionais)
     reqMaiuscula.className = 'ok';
     reqMaiuscula.textContent = '✅ Pelo menos 1 letra maiúscula (opcional)';
-
     reqMinuscula.className = 'ok';
     reqMinuscula.textContent = '✅ Pelo menos 1 letra minúscula (opcional)';
-
     reqNumero.className = 'ok';
     reqNumero.textContent = '✅ Pelo menos 1 número (opcional)';
 
     return temLength;
 }
 
-function validarLogin(login) {
-    if (login.length < 3) return false;
-    return /^[a-zA-Z0-9@._\-]+$/.test(login);
+function validarlogin(login) {
+    return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(login);
 }
 
+// ==================== CONEXÃO ====================
 async function verificarSupabase() {
     try {
-        const { data, error } = await supabase
-            .from(TABELA)
-            .select('id')
-            .limit(1);
-        
+        const { error } = await supabase.from(TABELA).select('id').limit(1);
         if (error) {
             statusSupabase.textContent = '⚠️ Erro ao conectar ao Supabase';
             statusSupabase.className = 'status-supabase offline';
-            console.error('Erro ao verificar Supabase:', error);
             return false;
         }
-        
         statusSupabase.textContent = '✅ Conectado ao Supabase';
         statusSupabase.className = 'status-supabase online';
         return true;
-    } catch (error) {
+    } catch {
         statusSupabase.textContent = '❌ Erro ao conectar ao Supabase';
         statusSupabase.className = 'status-supabase offline';
-        console.error('Erro ao verificar Supabase:', error);
         return false;
     }
 }
 
+// ==================== CADASTRO ====================
 async function cadastrarUsuario(nome, login, senha) {
     try {
-        // 1. Verificar se login já existe
-        const { data: existe, error: checkError } = await supabase
+        // 1) Verifica se e-mail já existe na tabela Geral
+        const { data: existente, error: checkError } = await supabase
             .from(TABELA)
-            .select('id')
+            .select('id, login_confirmado')
             .eq('login', login)
             .maybeSingle();
 
         if (checkError) {
-            console.error('Erro ao verificar login:', checkError);
-            mostrarErro('❌ Erro ao verificar disponibilidade do login.');
-            return false;
+            console.error('Erro ao verificar e-mail:', checkError);
         }
 
-        if (existe) {
-            mostrarErro('⚠️ Este login já está em uso. Escolha outro.');
-            return false;
-        }
-
-        // 2. Criar novo usuário
-        const novoUsuario = {
-            nome: nome,
-            login: login,
-            senha: senha,
-            saldo: 0,
-            saldo_poupanca: 0,
-            proventos_pendentes: 0,
-            carteira: {},
-            preco_medio_compra: {},
-            proventos_por_ativo: {},
-            created_at: new Date().toISOString(),
-            updated_at: new Date().toISOString()
-        };
-
-        console.log('Tentando criar usuário:', { ...novoUsuario, senha: '***' });
-
-        const { data, error } = await supabase
-            .from(TABELA)
-            .insert([novoUsuario])
-            .select();
-
-        if (error) {
-            console.error('Erro detalhado ao cadastrar:', error);
-            
-            if (error.code === '23505') {
-                mostrarErro('⚠️ Este login já está em uso. Escolha outro.');
-            } else if (error.code === '42P01') {
-                mostrarErro('❌ Tabela "Geral" não encontrada. Execute o SQL de criação no Supabase.');
+        if (existente) {
+            if (existente.login_confirmado) {
+                mostrarErro('⚠️ Este e-mail já está cadastrado. Faça login.');
             } else {
-                mostrarErro(`❌ Erro ao cadastrar: ${error.message || 'Tente novamente.'}`);
+                mostrarErro('⚠️ Este e-mail já foi cadastrado. Confirme sua caixa de entrada.');
             }
             return false;
         }
 
-        if (!data || data.length === 0) {
-            mostrarErro('❌ Erro ao criar usuário. Nenhum dado retornado.');
+        // 2) Cria usuário no Supabase Auth (envia e-mail de confirmação)
+        const { data, error } = await supabase.auth.signUp({
+            login: login,
+            password: senha,
+            options: {
+                data: {
+                    nome: nome,
+                    login: login
+                },
+                loginRedirectTo: `${window.location.origin}/confirmar.html`
+            }
+        });
+
+        if (error) {
+            console.error('Erro no signUp:', error);
+
+            const msg = (error.message || '').toLowerCase();
+
+            if (msg.includes('already registered') || msg.includes('already been registered')) {
+                mostrarErro('⚠️ Este e-mail já está cadastrado. Faça login.');
+            } else if (msg.includes('password should be')) {
+                mostrarErro('⚠️ Senha muito fraca. Use pelo menos 6 caracteres.');
+            } else if (msg.includes('invalid login')) {
+                mostrarErro('⚠️ E-mail inválido.');
+            } else {
+                mostrarErro(`❌ Erro ao cadastrar: ${error.message}`);
+            }
             return false;
         }
 
-        console.log('Usuário criado com sucesso:', data[0]);
-        mostrarSucesso('✅ Conta criada com sucesso! Redirecionando para o login...');
-        
-        setTimeout(() => {
-            window.location.href = 'login.html';
-        }, 2000);
+        // 3) Sucesso
+        console.log('Usuário criado:', data?.user?.id);
+        mostrarSucesso(
+            '✅ Conta criada! Verifique seu e-mail e clique no link de confirmação para ativar a conta.'
+        );
+
+        formCadastro.reset();
+        reqLength.className = 'bad';
+        reqLength.textContent = '🔴 Mínimo 6 caracteres';
 
         return true;
-
     } catch (error) {
         console.error('Erro inesperado no cadastro:', error);
         mostrarErro(`❌ Erro inesperado: ${error.message || 'Tente novamente.'}`);
@@ -166,21 +153,18 @@ async function cadastrarUsuario(nome, login, senha) {
     }
 }
 
-// ==================== EVENT LISTENERS ====================
-senhaInput.addEventListener('input', () => {
-    validarSenha(senhaInput.value);
-});
+// ==================== EVENTOS ====================
+senhaInput.addEventListener('input', () => validarSenha(senhaInput.value));
 
 formCadastro.addEventListener('submit', async (e) => {
     e.preventDefault();
     ocultarMensagens();
 
-    const nome = nomeInput.value.trim();
-    const login = loginInput.value.trim();
-    const senha = senhaInput.value;
+    const nome         = nomeInput.value.trim();
+    const login        = loginInput.value.trim().toLowerCase();
+    const senha        = senhaInput.value;
     const senhaConfirm = senhaConfirmInput.value;
 
-    // Validações
     if (!nome || !login || !senha || !senhaConfirm) {
         mostrarErro('⚠️ Preencha todos os campos!');
         return;
@@ -191,8 +175,8 @@ formCadastro.addEventListener('submit', async (e) => {
         return;
     }
 
-    if (!validarLogin(login)) {
-        mostrarErro('⚠️ Login deve ter pelo menos 3 caracteres e pode conter letras, números, @, ., - e _');
+    if (!validarlogin(login)) {
+        mostrarErro('⚠️ Digite um e-mail válido.');
         return;
     }
 
@@ -206,7 +190,6 @@ formCadastro.addEventListener('submit', async (e) => {
         return;
     }
 
-    // Verificar Supabase
     const online = await verificarSupabase();
     if (!online) {
         mostrarErro('❌ Sem conexão com o banco de dados. Tente novamente mais tarde.');
@@ -222,18 +205,12 @@ formCadastro.addEventListener('submit', async (e) => {
     btnCadastrar.innerHTML = '📝 Criar Conta';
 });
 
-// Verificar conexão ao carregar
+// ==================== INICIALIZAÇÃO ====================
 verificarSupabase();
 
-// Verificar se já está logado
-const usuarioLogado = localStorage.getItem('usuario_logado');
-if (usuarioLogado) {
-    try {
-        const user = JSON.parse(usuarioLogado);
-        if (user && user.login) {
-            window.location.href = 'dashboard.html';
-        }
-    } catch (e) {
-        localStorage.removeItem('usuario_logado');
+// Se já tem sessão ativa no Supabase Auth, redireciona
+supabase.auth.getSession().then(({ data: { session } }) => {
+    if (session?.user?.login_confirmed_at) {
+        window.location.href = 'dashboard.html';
     }
-}
+});

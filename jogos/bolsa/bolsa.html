@@ -13,7 +13,7 @@
     <!-- ========== BARRA DE NAVEGAÇÃO ========== -->
     <nav class="nav-bar">
         <div class="nav-brand">
-            🏦 <span>BAEP</span> Investimentos
+            🏦 <span>BAEP</span> Simulador de Investimentos B3
             <span class="badge-tempo">⏱️ Ações:60s | FIIs:30s | ETFs:90s | Tesouro:120s</span>
             <span class="badge-tempo" id="selicBadge" style="border-color: #f59e0b; color: #f59e0b;">📈 SELIC: 10,75%</span>
         </div>
@@ -32,30 +32,55 @@
                     <span class="status-dot"></span>
                     <span id="statusSupabaseTexto">☁️ Supabase</span>
                 </span>
+                <span id="statusRealtime" class="status-item status-checking">
+                    <span class="status-dot"></span>
+                    <span id="statusRealtimeTexto">🔄 Realtime</span>
+                </span>
             </div>
-        </div>
-
-        <!-- ========== ESTATÍSTICAS RPG ========== -->
-        <div class="lw-stats">
-            <span>❤️ HP<span class="hp-c" id="lwHp">100/100</span></span>
-            <span>💧 MANA<span class="mp-c" id="lwMp">50/50</span></span>
-            <span>⚡ STAMINA<span class="sm-c" id="lwSm">100/100</span></span>
-            <span>⚔️ FORCA<span class="atk-c" id="lwAtk">15</span></span>
-            <span>🛡️ DEFESA<span class="def-c" id="lwDef">10</span></span>
-            <span>🔮 MAGIA<span class="mag-c" id="lwMag">8</span></span>
-        </div>
-
-        <div class="nav-buttons">
-            <div class="user-profile">
-                <div class="user-avatar" id="userAvatar">👤</div>
-                <div class="user-info">
-                    <span class="user-nick" id="usuarioLogado">Carregando...</span>
-                    <span class="user-balance" id="userSaldoDisplay">0,00 Mumu</span>
-                </div>
-            </div>
-            <a href="../../dashboard.html" class="btn-bolsa" style="background: linear-gradient(135deg, #00ff66, #00cc55); color: #0a0b10;">🏠 Voltar</a>
         </div>
     </nav>
+
+    <!-- ========== SISTEMA DE NÍVEL ========== -->
+    <div class="level-widget" id="levelWidget">
+        <div class="lw-header">
+            <div class="lw-badge">
+                <span class="lw-num" id="lwNivel">1</span>
+                <div>
+                    <div class="lw-label">NÍVEL</div>
+                    <div class="lw-title" id="lwTitulo">🌱 Iniciante</div>
+                </div>
+            </div>
+            <div class="lw-exp">
+                <div class="lw-bar">
+                    <div class="lw-fill" id="lwExpFill" style="width:0%"></div>
+                </div>
+                <div class="lw-text">
+                    <span class="lw-cur" id="lwExpAtual">0</span>
+                    <span>/ <span class="lw-nxt" id="lwExpProx">100</span> EXP</span>
+                </div>
+            </div>
+        </div>
+        <div class="lw-stats">
+            <span>❤️ HP <span class="hp-c" id="lwHp">100/100</span></span>
+            <span>💧 MANA <span class="mp-c" id="lwMp">50/50</span></span>
+            <span>⚡ STAMINA <span class="sm-c" id="lwSm">100/100</span></span>
+            <span>⚔️ FORCA <span class="atk-c" id="lwAtk">15</span></span>
+            <span>🛡️ DEFESA <span class="def-c" id="lwDef">10</span></span>
+            <span>🔮 MAGIA <span class="mag-c" id="lwMag">8</span></span>
+        </div>
+    </div>
+
+    <!-- ========== BARRA DE AÇÕES DO USUÁRIO ========== -->
+    <div class="nav-buttons-bar">
+        <div class="user-profile">
+            <div class="user-avatar" id="userAvatar">👤</div>
+            <div class="user-info">
+                <span class="user-nick" id="usuarioLogado">Carregando...</span>
+                <span class="user-balance" id="userSaldoDisplay">0,00 Mumu</span>
+            </div>
+        </div>
+        <a href="../../dashboard.html" class="btn-bolsa" style="background: linear-gradient(135deg, #00ff66, #00cc55); color: #0a0b10;">🏠 Voltar</a>
+    </div>
 
     <!-- ========== CONTEÚDO ========== -->
     <div class="container">
