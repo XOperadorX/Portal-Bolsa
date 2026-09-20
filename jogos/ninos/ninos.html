@@ -1,0 +1,1605 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<title>Nino Pixel Adventure</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<style>
+* { margin:0; padding:0; box-sizing:border-box; }
+html, body { 
+  width:100%; height:100%; overflow:hidden; font-family: Arial; 
+  background:black; touch-action:none; position:fixed;
+  -webkit-user-select: none; user-select: none;
+  -webkit-tap-highlight-color: transparent;
+}
+
+/* ================= CARD PRINCIPAL ================= */
+#cardPrincipal {
+  position: fixed; top: 12px; left: 50%;
+  transform: translateX(-50%);
+  z-index: 10;
+  background: rgba(0,0,0,0.6);
+  border: 1px solid rgba(255,255,255,0.15);
+  border-radius: 16px;
+  padding: 10px 18px;
+  display: none;
+  align-items: center;
+  gap: 14px;
+  backdrop-filter: blur(10px);
+  font-family: 'Segoe UI', Arial, sans-serif;
+  box-shadow: 0 4px 20px rgba(0,0,0,0.4);
+  pointer-events: auto;
+}
+#cardPrincipal .btn-voltar {
+  display: flex; align-items: center; gap: 6px;
+  color: #fff; text-decoration: none;
+  font-size: 13px; font-weight: bold;
+  background: linear-gradient(135deg, #667eea, #764ba2);
+  padding: 7px 14px; border-radius: 10px;
+  transition: transform 0.15s, opacity 0.15s;
+  white-space: nowrap;
+}
+#cardPrincipal .btn-voltar:hover { transform: scale(1.05); opacity: 0.9; }
+#cardPrincipal .btn-voltar:active { transform: scale(0.95); }
+#cardPrincipal .info-login {
+  color: #fff; font-size: 13px;
+  display: flex; align-items: center; gap: 6px;
+  white-space: nowrap;
+}
+#cardPrincipal .info-login #nomeUsuario { font-weight: bold; color: #ffd740; }
+
+/* ================= LOADING ================= */
+#loadingScreen {
+  position: absolute; width: 100%; height: 100%;
+  background: #0a0a1a; color: white;
+  display: flex; flex-direction: column;
+  justify-content: center; align-items: center;
+  font-size: 30px; z-index: 20;
+}
+.loading-bar {
+  width: 200px; height: 4px; background: #333;
+  border-radius: 2px; margin-top: 20px; overflow: hidden;
+}
+.loading-fill {
+  width: 0%; height: 100%;
+  background: linear-gradient(90deg, #667eea, #764ba2);
+  transition: width 0.1s;
+}
+
+/* ================= CANVAS ================= */
+#gameCanvas {
+  display: none; width: 100vw; height: 100vh;
+  background: #87ceeb; position: fixed; top: 0; left: 0;
+  touch-action: none;
+}
+
+/* ================= CONTROLES MOBILE ================= */
+#controls {
+  position: fixed; bottom: 0; left: 0;
+  width: 100%; height: 200px; display: none;
+  z-index: 50; touch-action: none;
+  pointer-events: none;
+}
+#controls * { pointer-events: auto; }
+
+.dpad {
+  position: absolute; left: 20px; bottom: 25px;
+  width: 150px; height: 150px; touch-action: none;
+  pointer-events: auto;
+}
+.dpad-btn {
+  position: absolute; width: 50px; height: 50px;
+  background: rgba(255,255,255,0.3);
+  border: 3px solid rgba(255,255,255,0.5);
+  border-radius: 12px; display: flex;
+  align-items: center; justify-content: center;
+  font-size: 24px; color: white;
+  user-select: none; touch-action: none;
+  pointer-events: auto;
+  transition: background 0.1s, transform 0.1s;
+  text-shadow: 0 0 10px rgba(0,0,0,0.5);
+  cursor: pointer;
+}
+.dpad-btn:active, .dpad-btn.active { 
+  background: rgba(102,126,234,0.7); 
+  transform: scale(0.9); 
+}
+.dpad-up { top: 0; left: 50px; }
+.dpad-down { bottom: 0; left: 50px; }
+.dpad-left { top: 50px; left: 0; }
+.dpad-right { top: 50px; right: 0; }
+
+.jump-btn {
+  position: absolute; right: 25px; bottom: 35px;
+  width: 90px; height: 90px;
+  background: rgba(255,255,255,0.3);
+  border: 3px solid rgba(255,255,255,0.5);
+  border-radius: 50%; display: flex;
+  align-items: center; justify-content: center;
+  font-size: 40px; color: white;
+  user-select: none; touch-action: none;
+  pointer-events: auto;
+  transition: background 0.1s, transform 0.1s;
+  text-shadow: 0 0 10px rgba(0,0,0,0.5);
+  cursor: pointer;
+  box-shadow: 0 0 30px rgba(102,126,234,0.4);
+}
+.jump-btn:active, .jump-btn.active { 
+  background: rgba(102,126,234,0.7); 
+  transform: scale(0.9); 
+}
+
+/* ================= HUD ================= */
+#hud {
+  position: fixed; top: 10px; left: 10px;
+  color: white; font-size: 18px;
+  text-shadow: 0 0 10px rgba(0,0,0,0.8);
+  z-index: 6; display: none; pointer-events: none;
+}
+
+/* ================= LEVEL WIDGET ================= */
+#levelWidget {
+  position: fixed; top: 10px; right: 10px;
+  z-index: 7; display: none;
+  background: rgba(0,0,0,0.55);
+  border: 1px solid rgba(255,255,255,0.15);
+  border-radius: 14px; padding: 10px 14px;
+  color: white; font-size: 13px;
+  backdrop-filter: blur(8px);
+  min-width: 240px;
+  pointer-events: none;
+  font-family: 'Segoe UI', Arial, sans-serif;
+}
+#levelWidget .lw-header { display: flex; align-items: center; gap: 10px; }
+#levelWidget .lw-badge {
+  display: flex; align-items: center; gap: 8px;
+  background: linear-gradient(135deg, #667eea, #764ba2);
+  padding: 6px 10px; border-radius: 10px;
+}
+#levelWidget .lw-num { font-size: 22px; font-weight: bold; line-height: 1; }
+#levelWidget .lw-label { font-size: 9px; opacity: 0.8; letter-spacing: 1px; }
+#levelWidget .lw-title { font-size: 12px; font-weight: bold; }
+#levelWidget .lw-exp { flex: 1; }
+#levelWidget .lw-bar {
+  width: 100%; height: 8px; background: rgba(255,255,255,0.15);
+  border-radius: 4px; overflow: hidden;
+}
+#levelWidget .lw-fill {
+  height: 100%; width: 0%;
+  background: linear-gradient(90deg, #00e676, #00c853);
+  transition: width 0.4s;
+  border-radius: 4px;
+}
+#levelWidget .lw-text {
+  display: flex; justify-content: space-between;
+  font-size: 10px; margin-top: 3px; opacity: 0.85;
+}
+#levelWidget .lw-stats {
+  display: flex; flex-wrap: wrap; gap: 6px 12px;
+  margin-top: 8px; font-size: 11px;
+  border-top: 1px solid rgba(255,255,255,0.1);
+  padding-top: 6px;
+}
+#levelWidget .lw-stats span { white-space: nowrap; }
+.hp-c { color: #ff5252; }
+.mp-c { color: #40c4ff; }
+.sm-c { color: #ffd740; }
+.atk-c { color: #ff7043; }
+.def-c { color: #81c784; }
+.mag-c { color: #ba68c8; }
+.btc-c { color: #f7931a; font-weight: bold; font-family: 'Courier New', monospace; }
+
+/* ================= CHEAT TOAST ================= */
+#cheatToast {
+  position: fixed; top: 50%; left: 50%;
+  transform: translate(-50%, -50%);
+  color: #ff0; font-size: 32px; font-weight: bold;
+  text-shadow: 0 0 30px rgba(255,255,0,0.5);
+  z-index: 15; display: none; pointer-events: none; text-align: center;
+}
+
+/* ================= SAVE INDICATOR ================= */
+#saveIndicator {
+  position: fixed; bottom: 220px; right: 20px;
+  background: rgba(0,200,0,0.8); color: white;
+  padding: 6px 14px; border-radius: 20px;
+  font-size: 13px; z-index: 12; display: none;
+  pointer-events: none;
+}
+
+/* ================= DAMAGE FLASH ================= */
+#damageFlash {
+  position: fixed; top: 0; left: 0;
+  width: 100%; height: 100%;
+  background: red; opacity: 0;
+  pointer-events: none; z-index: 8;
+  transition: opacity 0.1s;
+}
+
+/* ================= GAME OVER OVERLAY ================= */
+#gameOverOverlay {
+  position: fixed; top: 0; left: 0;
+  width: 100%; height: 100%;
+  background: rgba(0,0,0,0.75);
+  display: none; flex-direction: column;
+  align-items: center; justify-content: center;
+  z-index: 30; backdrop-filter: blur(6px);
+  font-family: 'Segoe UI', Arial, sans-serif;
+  gap: 24px;
+  padding: 20px;
+}
+#gameOverOverlay .go-title {
+  font-size: 64px; font-weight: bold;
+  color: #ff4444; text-shadow: 0 0 30px rgba(255,0,0,0.6);
+  letter-spacing: 4px;
+}
+#gameOverOverlay .go-sub { color: #ccc; font-size: 16px; }
+#gameOverOverlay .btn-voltar-go {
+  display: flex; align-items: center; gap: 8px;
+  color: #fff; text-decoration: none;
+  font-size: 18px; font-weight: bold;
+  background: linear-gradient(135deg, #667eea, #764ba2);
+  padding: 14px 32px; border-radius: 14px;
+  transition: transform 0.15s, opacity 0.15s;
+  box-shadow: 0 6px 24px rgba(102,126,234,0.4);
+}
+#gameOverOverlay .btn-voltar-go:hover { transform: scale(1.05); opacity: 0.9; }
+#gameOverOverlay .btn-voltar-go:active { transform: scale(0.95); }
+
+/* ================= MINING TOAST (BTC) ================= */
+#miningToast {
+  position: fixed;
+  top: 50%; left: 50%;
+  transform: translate(-50%, -50%) scale(0.7);
+  color: #f7931a;
+  font-size: 26px; font-weight: bold;
+  text-shadow: 0 0 20px rgba(247,147,26,0.8);
+  z-index: 14; display: none;
+  pointer-events: none; text-align: center;
+  opacity: 0;
+  transition: opacity 0.2s, transform 0.2s;
+  font-family: 'Courier New', monospace;
+}
+
+/* ================= DAMAGE TOAST (perda EXP/BTC) ================= */
+#damageToast {
+  position: fixed;
+  top: 45%; left: 50%;
+  transform: translate(-50%, -50%) scale(0.7);
+  color: #ff5252;
+  font-size: 28px; font-weight: bold;
+  text-shadow: 0 0 20px rgba(255,82,82,0.8);
+  z-index: 14; display: none;
+  pointer-events: none; text-align: center;
+  opacity: 0;
+  transition: opacity 0.2s, transform 0.2s;
+  font-family: 'Courier New', monospace;
+}
+
+/* ================= AJUSTES PARA CELULAR ================= */
+@media (max-width: 768px) {
+  #cardPrincipal {
+    top: 5px;
+    padding: 6px 10px;
+    gap: 8px;
+    border-radius: 12px;
+    max-width: 95vw;
+  }
+  #cardPrincipal .btn-voltar {
+    font-size: 11px;
+    padding: 5px 10px;
+  }
+  #cardPrincipal .info-login {
+    font-size: 11px;
+  }
+  #levelWidget {
+    top: 55px;
+    right: 5px;
+    left: 5px;
+    min-width: auto;
+    padding: 8px 10px;
+    font-size: 11px;
+  }
+  #levelWidget .lw-num { font-size: 18px; }
+  #levelWidget .lw-stats { font-size: 10px; gap: 4px 8px; }
+  #hud { top: 5px; left: 5px; }
+  
+  .dpad {
+    left: 10px; bottom: 15px;
+    width: 140px; height: 140px;
+  }
+  .dpad-btn {
+    width: 48px; height: 48px;
+    font-size: 22px;
+    border-radius: 10px;
+  }
+  .dpad-up { top: 0; left: 46px; }
+  .dpad-down { bottom: 0; left: 46px; }
+  .dpad-left { top: 46px; left: 0; }
+  .dpad-right { top: 46px; right: 0; }
+  
+  .jump-btn {
+    right: 15px; bottom: 25px;
+    width: 85px; height: 85px;
+    font-size: 36px;
+  }
+  
+  #gameOverOverlay .go-title { font-size: 42px; }
+  #gameOverOverlay .go-sub { font-size: 14px; }
+  #gameOverOverlay .btn-voltar-go { font-size: 16px; padding: 12px 24px; }
+  
+  #miningToast { font-size: 20px; }
+  #damageToast { font-size: 22px; }
+  #saveIndicator { bottom: 180px; right: 10px; font-size: 12px; }
+}
+
+@media (max-width: 380px) {
+  .dpad { width: 120px; height: 120px; left: 8px; bottom: 10px; }
+  .dpad-btn { width: 42px; height: 42px; font-size: 18px; }
+  .dpad-up { top: 0; left: 39px; }
+  .dpad-down { bottom: 0; left: 39px; }
+  .dpad-left { top: 39px; left: 0; }
+  .dpad-right { top: 39px; right: 0; }
+  .jump-btn { width: 75px; height: 75px; font-size: 30px; right: 12px; bottom: 20px; }
+}
+
+@media (max-height: 400px) and (orientation: landscape) {
+  .dpad { width: 110px; height: 110px; bottom: 8px; }
+  .dpad-btn { width: 36px; height: 36px; font-size: 16px; }
+  .dpad-up { top: 0; left: 37px; }
+  .dpad-down { bottom: 0; left: 37px; }
+  .dpad-left { top: 37px; left: 0; }
+  .dpad-right { top: 37px; right: 0; }
+  .jump-btn { width: 70px; height: 70px; font-size: 28px; bottom: 15px; right: 15px; }
+  #levelWidget { top: 5px; padding: 5px 8px; }
+}
+</style>
+</head>
+<body>
+
+<!-- LOADING SCREEN -->
+<div id="loadingScreen">
+  <span id="loadingPercent">0%</span>
+  <div class="loading-bar"><div class="loading-fill" id="loadingFill"></div></div>
+</div>
+
+<!-- CANVAS -->
+<canvas id="gameCanvas"></canvas>
+
+<!-- DAMAGE FLASH -->
+<div id="damageFlash"></div>
+
+<!-- HUD -->
+<div id="hud">
+  <div class="card" id="cardPrincipal">
+    <a href="../../dashboard.html" class="btn-voltar">🏠 Voltar</a>
+    <div class="info-login">
+      <span>👤 <span id="nomeUsuario">Carregando...</span></span>
+    </div>
+  </div>
+</div>
+
+<!-- LEVEL WIDGET -->
+<div id="levelWidget">
+  <div class="lw-header">
+    <div class="lw-badge">
+      <span class="lw-num" id="lwNivel">1</span>
+      <div>
+        <div class="lw-label">NÍVEL</div>
+        <div class="lw-title" id="lwTitulo">🌱 Iniciante</div>
+      </div>
+    </div>
+    <div class="lw-exp">
+      <div class="lw-bar">
+        <div class="lw-fill" id="lwExpFill" style="width:0%"></div>
+      </div>
+      <div class="lw-text">
+        <span class="lw-cur" id="lwExpAtual">0</span>
+        <span>/ <span class="lw-nxt" id="lwExpProx">100</span> EXP</span>
+      </div>
+    </div>
+  </div>
+  <div class="lw-stats">
+    <span>❤️ HP <span class="hp-c" id="lwHp">100/100</span></span>
+    <span>💧 MANA <span class="mp-c" id="lwMp">50/50</span></span>
+    <span>⚡ STAMINA <span class="sm-c" id="lwSm">100/100</span></span>
+    <span>⚔️ FORCA <span class="atk-c" id="lwAtk">15</span></span>
+    <span>🛡️ DEFESA <span class="def-c" id="lwDef">10</span></span>
+    <span>🔮 MAGIA <span class="mag-c" id="lwMag">8</span></span>
+    <span>⛏️ BTC <span class="btc-c" id="lwBtc">0.00000000</span></span>
+  </div>
+</div>
+
+<!-- CONTROLES MOBILE -->
+<div id="controls">
+  <div class="dpad" id="dpad">
+    <div class="dpad-btn dpad-up" id="btnUp">▲</div>
+    <div class="dpad-btn dpad-down" id="btnDown">▼</div>
+    <div class="dpad-btn dpad-left" id="btnLeft">◀</div>
+    <div class="dpad-btn dpad-right" id="btnRight">▶</div>
+  </div>
+  <div class="jump-btn" id="btnJump">⬆</div>
+</div>
+
+<!-- CHEAT TOAST -->
+<div id="cheatToast">⚡ CHEAT ATIVADO!</div>
+<div id="saveIndicator">💾 Salvando...</div>
+<div id="miningToast">⛏️ +0.00000000 BTC</div>
+<div id="damageToast">💢 -EXP</div>
+
+<!-- GAME OVER OVERLAY -->
+<div id="gameOverOverlay">
+  <div class="go-title">💀 GAME OVER</div>
+  <div class="go-sub">Seu progresso foi salvo automaticamente.</div>
+  <a href="../../dashboard.html" class="btn-voltar-go">🏠 Voltar ao Dashboard</a>
+</div>
+
+<script>
+// ================= SUPABASE =================
+const SUPABASE_URL = "https://xrcxvizzdumcxbylmkvn.supabase.co";
+const SUPABASE_KEY = "sb_publishable_E-g3G3wW4EySbCsXLXp8KQ_FnmERMcD";
+const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+
+// ================= SESSÃO (24 HORAS) =================
+const SESSION_KEY = 'usuario_logado';
+const SESSION_TIMESTAMP_KEY = 'session_timestamp';
+const SESSION_DURATION = 24 * 60 * 60 * 1000;
+
+function obterUsuarioLogado() {
+  try {
+    const raw = localStorage.getItem(SESSION_KEY);
+    if(!raw) return null;
+    const u = JSON.parse(raw);
+    if(!u || !u.login) return null;
+    return u;
+  } catch(e) {
+    console.warn("⚠️ Erro ao ler sessão:", e);
+    return null;
+  }
+}
+
+function sessaoValida() {
+  const ts = localStorage.getItem(SESSION_TIMESTAMP_KEY);
+  const u = localStorage.getItem(SESSION_KEY);
+  if(!ts || !u) return false;
+  const t = parseInt(ts, 10);
+  if(isNaN(t)) return false;
+  return (Date.now() - t) < SESSION_DURATION;
+}
+
+// ================= JOGADOR =================
+let jogador = null;
+let jogadorId = null;
+let loginAtual = null;
+let salvando = false;
+
+// ================= ELEMENTOS =================
+const canvas = document.getElementById("gameCanvas");
+const ctx = canvas.getContext("2d");
+const loadingScreen = document.getElementById("loadingScreen");
+const loadingPercent = document.getElementById("loadingPercent");
+const loadingFill = document.getElementById("loadingFill");
+const controls = document.getElementById("controls");
+const hud = document.getElementById("hud");
+const cheatToast = document.getElementById("cheatToast");
+const levelWidget = document.getElementById("levelWidget");
+const saveIndicator = document.getElementById("saveIndicator");
+const damageFlash = document.getElementById("damageFlash");
+const cardPrincipal = document.getElementById("cardPrincipal");
+const nomeUsuarioSpan = document.getElementById("nomeUsuario");
+const gameOverOverlay = document.getElementById("gameOverOverlay");
+const miningToast = document.getElementById("miningToast");
+const damageToast = document.getElementById("damageToast");
+
+// ================= AJUSTE DE TELA =================
+function resizeCanvas() {
+  canvas.width = window.innerWidth;
+  canvas.height = window.innerHeight;
+  canvas.style.width = window.innerWidth + 'px';
+  canvas.style.height = window.innerHeight + 'px';
+  ctx.setTransform(1, 0, 0, 1, 0, 0);
+}
+window.addEventListener("resize", resizeCanvas);
+window.addEventListener("orientationchange", () => {
+  setTimeout(resizeCanvas, 200);
+});
+resizeCanvas();
+
+// ================= ESTADO =================
+let gameRunning = false;
+let coins = 0;
+let btcSats = 0;
+let combo = 0, comboTimer = 0;
+let playerHp = 100;
+let playerHpMax = 100;
+let damageFlashTimer = 0;
+
+// ⚠️ FLAG IMPORTANTE: HP travado impede regeneração.
+// Uma vez que o jogador toma dano, o HP NUNCA sobe automaticamente.
+let hpTravado = false;
+
+let syncQueueSats = 0;
+let syncQueueExp = 0;
+let syncing = false;
+
+// ================= FORMATAR BTC =================
+function formatBTC(sats) {
+  const satsInt = Math.max(0, Math.floor(sats));
+  return (satsInt / 100000000).toFixed(8);
+}
+
+function btcParaSats(btc) {
+  const n = Number(btc) || 0;
+  return Math.max(0, Math.round(n * 100000000));
+}
+
+// ================= INPUT =================
+let keys = {};
+let touchLeft = false, touchRight = false, touchJump = false;
+
+// ================= PLAYER =================
+let player = { 
+  x: 100, y: 250, w: 50, h: 140, 
+  vy: 0, gravity: 0.8, jump: -16, 
+  grounded: true, invincible: 0 
+};
+let walkAnim = 0, isMoving = false;
+let lookingRight = true;
+
+// ================= INIMIGOS =================
+let enemyList = [], lastEnemyX = 600;
+
+// ================= MUNDO =================
+let cameraX = 0, ground = 450;
+
+// ================= MOEDAS =================
+let coinList = [];
+
+// ================= PARTICULAS =================
+let particles = [];
+
+// ================= RANKING =================
+let rankingData = JSON.parse(localStorage.getItem("ranking")) || [];
+let showRankingTimer = 0;
+
+// ================= REALTIME =================
+let realtimeChannel = null;
+
+function iniciarRealtime() {
+  if(!jogadorId) return;
+
+  if(realtimeChannel) {
+    supabaseClient.removeChannel(realtimeChannel);
+    realtimeChannel = null;
+  }
+
+  realtimeChannel = supabaseClient
+    .channel("geral-realtime-" + jogadorId)
+    .on(
+      "postgres_changes",
+      {
+        event: "UPDATE",
+        schema: "public",
+        table: "Geral",
+        filter: `id=eq.${jogadorId}`
+      },
+      (payload) => {
+        console.log("🔴 Realtime UPDATE recebido:", payload.new);
+        aplicarDadosRealtime(payload.new);
+      }
+    )
+    .subscribe((status) => {
+      console.log("📡 Realtime status:", status);
+    });
+}
+
+function aplicarDadosRealtime(novo) {
+  if(!novo) return;
+
+  const temSyncPendente = (syncQueueSats !== 0 || syncing);
+
+  jogador = { ...jogador, ...novo };
+
+  // =====================================================
+  // ⚠️ HP NUNCA REGENERA
+  // Só aceita HP do servidor se:
+  //   1) for MAIOR que o HP local (restauração vinda do banco após carregamento) E
+  //   2) o jogador NÃO estiver com hpTravado (ainda não tomou dano nessa run)
+  // Se hpTravado = true → HP local manda, ignora o servidor.
+  // =====================================================
+  const hpCandidates = [novo.hp, novo.hp_atual];
+  const hpMaxCandidates = [novo.max_hp, novo.hp_max];
+  let hpH = hpCandidates.find(v => v !== null && v !== undefined && Number(v) > 0);
+  let hpMH = hpMaxCandidates.find(v => v !== null && v !== undefined && Number(v) > 0);
+  
+  if(hpMH !== undefined) playerHpMax = Number(hpMH);
+  if(playerHp > playerHpMax) playerHp = playerHpMax;
+
+  // Só aceita HP do servidor se NÃO estiver travado
+  if(!hpTravado && hpH !== undefined) {
+    const hpHNum = Number(hpH);
+    // Nunca deixa o servidor reduzir o HP local, só restaurar se for maior
+    if(hpHNum > playerHp) {
+      playerHp = hpHNum;
+    }
+  }
+  // Se hpTravado: NÃO mexe em playerHp (mantém o valor local)
+
+  if(!temSyncPendente && novo.btc !== null && novo.btc !== undefined) {
+    const satsServidor = btcParaSats(novo.btc);
+    if(satsServidor !== btcSats) {
+      btcSats = satsServidor;
+    }
+  }
+
+  const nome = novo.nome || novo.login || loginAtual || "Jogador";
+  nomeUsuarioSpan.innerText = nome;
+
+  atualizarLevelWidget();
+}
+
+// ================= CARREGAR JOGADOR =================
+async function carregarJogador() {
+  try {
+    const usuario = obterUsuarioLogado();
+
+    if(!usuario || !usuario.login) {
+      nomeUsuarioSpan.innerText = "Visitante";
+      cardPrincipal.style.display = "flex";
+      return false;
+    }
+
+    loginAtual = usuario.login;
+
+    const { data, error } = await supabaseClient
+      .from("Geral")
+      .select("*")
+      .eq("login", loginAtual)
+      .limit(1);
+
+    if(error) throw error;
+
+    if(!data || data.length === 0) {
+      nomeUsuarioSpan.innerText = loginAtual;
+      cardPrincipal.style.display = "flex";
+      return false;
+    }
+
+    jogador = data[0];
+    jogadorId = jogador.id;
+
+    const nome = jogador.nome || jogador.login || loginAtual;
+    nomeUsuarioSpan.innerText = nome;
+    cardPrincipal.style.display = "flex";
+
+    const hpCandidates = [jogador.hp, jogador.hp_atual];
+    const hpMaxCandidates = [jogador.max_hp, jogador.hp_max];
+    let hpH = hpCandidates.find(v => v !== null && v !== undefined && Number(v) > 0);
+    let hpMH = hpMaxCandidates.find(v => v !== null && v !== undefined && Number(v) > 0);
+    playerHp = Number(hpH ?? 100);
+    playerHpMax = Number(hpMH ?? 100);
+    if(playerHp > playerHpMax) playerHp = playerHpMax;
+
+    // ⚠️ Se o HP vindo do banco for 0 ou o jogador já morreu,
+    // o jogo carrega com esse HP. NÃO regenera.
+    if(playerHp <= 0) {
+      console.log("💀 Jogador já estava com HP 0 no banco.");
+    }
+
+    btcSats = btcParaSats(jogador.btc);
+    atualizarLevelWidget();
+
+    console.log("✅ Jogador carregado:", nome);
+    iniciarRealtime();
+    return true;
+
+  } catch(err) {
+    console.error("❌ Erro ao carregar jogador:", err);
+    nomeUsuarioSpan.innerText = loginAtual || "Jogador";
+    cardPrincipal.style.display = "flex";
+    return false;
+  }
+}
+
+// ================= LEVEL WIDGET =================
+function getTituloNivel(nivel) {
+  if(nivel >= 50) return "👑 Lendário";
+  if(nivel >= 40) return "🐉 Mestre";
+  if(nivel >= 30) return "⚔️ Guerreiro";
+  if(nivel >= 20) return "🛡️ Veterano";
+  if(nivel >= 10) return "🌿 Fazendeiro";
+  if(nivel >= 5) return "🌱 Aprendiz";
+  return "🌱 Iniciante";
+}
+
+function atualizarLevelWidget() {
+  if(!jogador) return;
+
+  const nivel = jogador.nivel || 1;
+  const exp = Number(jogador.exp ?? jogador.experiencia ?? 0);
+  const expProx = Number(jogador.exp_next ?? jogador.exp_proximo ?? 100);
+  const mp = Number(jogador.mp ?? jogador.mp_atual ?? 50);
+  const mpMax = Number(jogador.max_mp ?? jogador.mp_max ?? 50);
+  const sm = Number(jogador.sm ?? jogador.sm_atual ?? 100);
+  const smMax = Number(jogador.max_sm ?? jogador.sm_max ?? 100);
+  const atk = Number(jogador.atk ?? jogador.ataque_base ?? 15);
+  const def = Number(jogador.def ?? jogador.defesa_base ?? 10);
+  const mag = Number(jogador.mag ?? jogador.magia_base ?? 8);
+
+  document.getElementById("lwNivel").innerText = nivel;
+  document.getElementById("lwTitulo").innerText = getTituloNivel(nivel);
+  document.getElementById("lwExpAtual").innerText = Math.floor(exp);
+  document.getElementById("lwExpProx").innerText = Math.floor(expProx);
+  const pct = expProx > 0 ? Math.min(100, (exp / expProx) * 100) : 0;
+  document.getElementById("lwExpFill").style.width = pct + "%";
+
+  document.getElementById("lwHp").innerText = `${Math.floor(playerHp)}/${Math.floor(playerHpMax)}`;
+  document.getElementById("lwMp").innerText = `${Math.floor(mp)}/${Math.floor(mpMax)}`;
+  document.getElementById("lwSm").innerText = `${Math.floor(sm)}/${Math.floor(smMax)}`;
+  document.getElementById("lwAtk").innerText = Math.floor(atk);
+  document.getElementById("lwDef").innerText = Math.floor(def);
+  document.getElementById("lwMag").innerText = Math.floor(mag);
+  document.getElementById("lwBtc").innerText = formatBTC(btcSats);
+}
+
+// ================= MINERAÇÃO =================
+function minerarMoeda(coin) {
+  const valor = coin.value;
+
+  btcSats += valor;
+
+  if(jogador) {
+    let expAtual = Number(jogador.exp ?? jogador.experiencia ?? 0) + valor;
+    let expProx = Number(jogador.exp_next ?? jogador.exp_proximo ?? 100);
+    let nivel = Number(jogador.nivel || 1);
+
+    while(expAtual >= expProx) {
+      nivel++;
+      expAtual -= expProx;
+      expProx = Math.floor(expProx * 1.5);
+    }
+
+    jogador.nivel = nivel;
+    jogador.exp = expAtual;
+    jogador.experiencia = Math.floor(expAtual);
+    jogador.exp_next = expProx;
+    jogador.exp_proximo = Math.floor(expProx);
+    jogador.btc = btcSats / 100000000;
+  }
+
+  atualizarLevelWidget();
+  mostrarMiningToast(valor);
+
+  syncQueueSats += valor;
+  syncQueueExp  += valor;
+  agendarSync();
+}
+
+function mostrarMiningToast(valor) {
+  miningToast.innerText = `⛏️ +${formatBTC(valor)} BTC`;
+  miningToast.style.display = "block";
+  miningToast.style.opacity = "1";
+  miningToast.style.transform = "translate(-50%, -50%) scale(1)";
+  clearTimeout(miningToast._t);
+  miningToast._t = setTimeout(() => {
+    miningToast.style.opacity = "0";
+    miningToast.style.transform = "translate(-50%, -50%) scale(0.7)";
+    setTimeout(() => { miningToast.style.display = "none"; }, 200);
+  }, 700);
+}
+
+// ================= PERDA DE EXP + BTC =================
+function perderExpEBtcPorDano(expQtd = 10, btcQtd = 10) {
+  if(!jogador) return;
+
+  let nivel = Number(jogador.nivel || 1);
+  let expAtual = Number(jogador.exp ?? jogador.experiencia ?? 0);
+  let expProx = Number(jogador.exp_next ?? jogador.exp_proximo ?? 100);
+
+  expAtual -= expQtd;
+
+  while(expAtual < 0 && nivel > 1) {
+    nivel--;
+    expProx = Math.max(100, Math.floor(expProx / 1.5));
+    expAtual += expProx;
+  }
+  if(expAtual < 0) expAtual = 0;
+
+  jogador.nivel = nivel;
+  jogador.exp = expAtual;
+  jogador.experiencia = Math.floor(expAtual);
+  jogador.exp_next = expProx;
+  jogador.exp_proximo = Math.floor(expProx);
+
+  const btcAntes = btcSats;
+  btcSats = Math.max(0, btcSats - btcQtd);
+  const btcPerdidoReal = btcAntes - btcSats;
+  jogador.btc = btcSats / 100000000;
+
+  atualizarLevelWidget();
+  mostrarDamageToast(expQtd, btcPerdidoReal);
+
+  syncQueueExp  -= expQtd;
+  syncQueueSats -= btcPerdidoReal;
+  agendarSync();
+}
+
+function mostrarDamageToast(expQtd, btcQtd) {
+  if(btcQtd > 0) {
+    damageToast.innerText = `💢 -${expQtd} EXP  |  -${formatBTC(btcQtd)} BTC`;
+  } else {
+    damageToast.innerText = `💢 -${expQtd} EXP`;
+  }
+  damageToast.style.display = "block";
+  damageToast.style.opacity = "1";
+  damageToast.style.transform = "translate(-50%, -50%) scale(1)";
+  clearTimeout(damageToast._t);
+  damageToast._t = setTimeout(() => {
+    damageToast.style.opacity = "0";
+    damageToast.style.transform = "translate(-50%, -50%) scale(0.7)";
+    setTimeout(() => { damageToast.style.display = "none"; }, 200);
+  }, 900);
+}
+
+// ================= SYNC COM SUPABASE =================
+let syncTimer = null;
+function agendarSync() {
+  if(syncTimer) return;
+  syncTimer = setTimeout(async () => {
+    syncTimer = null;
+    await sincronizarComSupabase();
+  }, 400);
+}
+
+async function sincronizarComSupabase() {
+  if(!jogadorId || syncing) return;
+  if(syncQueueSats === 0 && syncQueueExp === 0) return;
+
+  const loteSats = syncQueueSats;
+  const loteExp  = syncQueueExp;
+  syncQueueSats = 0;
+  syncQueueExp  = 0;
+  syncing = true;
+
+  const snapshot = {
+    nivel: Number(jogador.nivel || 1),
+    exp: Number(jogador.exp ?? jogador.experiencia ?? 0),
+    experiencia: Math.floor(Number(jogador.exp ?? jogador.experiencia ?? 0)),
+    exp_next: Number(jogador.exp_next ?? jogador.exp_proximo ?? 100),
+    exp_proximo: Math.floor(Number(jogador.exp_next ?? jogador.exp_proximo ?? 100)),
+    btc: btcSats / 100000000
+  };
+
+  try {
+    const { error } = await supabaseClient
+      .from("Geral")
+      .update({
+        nivel: snapshot.nivel,
+        exp: snapshot.exp,
+        experiencia: snapshot.experiencia,
+        exp_next: snapshot.exp_next,
+        exp_proximo: snapshot.exp_proximo,
+        btc: snapshot.btc,
+        hp: playerHp,
+        hp_atual: Math.floor(playerHp),
+        updated_at: new Date().toISOString()
+      })
+      .eq("id", jogadorId);
+
+    if(error) throw error;
+
+    console.log(`⛏️ Sync OK | sats=${loteSats} exp=${loteExp} | HP=${playerHp} | BTC=${formatBTC(btcSats)}`);
+
+  } catch(err) {
+    console.error("❌ Erro ao sincronizar:", err);
+    syncQueueSats += loteSats;
+    syncQueueExp  += loteExp;
+  } finally {
+    syncing = false;
+    if(syncQueueSats !== 0 || syncQueueExp !== 0) agendarSync();
+  }
+}
+
+// ================= SALVAR NO SUPABASE (GAME OVER) =================
+async function salvarProgresso() {
+  if(!jogadorId || salvando) return;
+  salvando = true;
+  saveIndicator.style.display = "block";
+  saveIndicator.innerText = "💾 Salvando...";
+
+  try {
+    const { error } = await supabaseClient
+      .from("Geral")
+      .update({
+        nivel: Number(jogador?.nivel || 1),
+        exp: Number(jogador?.exp ?? jogador?.experiencia ?? 0),
+        experiencia: Math.floor(Number(jogador?.exp ?? jogador?.experiencia ?? 0)),
+        exp_next: Number(jogador?.exp_next ?? jogador?.exp_proximo ?? 100),
+        exp_proximo: Math.floor(Number(jogador?.exp_next ?? jogador?.exp_proximo ?? 100)),
+        btc: btcSats / 100000000,
+        hp: playerHp,
+        hp_atual: Math.floor(playerHp),
+        updated_at: new Date().toISOString()
+      })
+      .eq("id", jogadorId);
+
+    if(error) throw error;
+
+    jogador.btc = btcSats / 100000000;
+    jogador.hp = playerHp;
+    jogador.hp_atual = Math.floor(playerHp);
+
+    atualizarLevelWidget();
+    saveIndicator.innerText = "✅ Salvo!";
+    setTimeout(() => { saveIndicator.style.display = "none"; }, 1500);
+
+  } catch(err) {
+    console.error(err);
+    saveIndicator.innerText = "❌ Erro ao salvar";
+    setTimeout(() => { saveIndicator.style.display = "none"; }, 2000);
+  } finally {
+    salvando = false;
+  }
+}
+
+// ================= CONTROLES TOQUE =================
+function setupTouchControls() {
+  const btnLeft = document.getElementById("btnLeft");
+  const btnRight = document.getElementById("btnRight");
+  const btnJump = document.getElementById("btnJump");
+  const btnUp = document.getElementById("btnUp");
+  const btnDown = document.getElementById("btnDown");
+
+  function addButtonListeners(el, onStart, onEnd) {
+    if (!el) return;
+
+    el.addEventListener("touchstart", (e) => {
+      e.preventDefault();
+      e.stopPropagation();
+      onStart();
+      el.classList.add("active");
+    }, { passive: false });
+
+    el.addEventListener("touchend", (e) => {
+      e.preventDefault();
+      e.stopPropagation();
+      onEnd();
+      el.classList.remove("active");
+    }, { passive: false });
+
+    el.addEventListener("touchcancel", (e) => {
+      e.preventDefault();
+      e.stopPropagation();
+      onEnd();
+      el.classList.remove("active");
+    }, { passive: false });
+
+    el.addEventListener("mousedown", (e) => {
+      e.preventDefault();
+      e.stopPropagation();
+      onStart();
+      el.classList.add("active");
+    });
+
+    el.addEventListener("mouseup", (e) => {
+      e.preventDefault();
+      e.stopPropagation();
+      onEnd();
+      el.classList.remove("active");
+    });
+
+    el.addEventListener("mouseleave", () => {
+      onEnd();
+      el.classList.remove("active");
+    });
+  }
+
+  addButtonListeners(btnLeft, 
+    () => { touchLeft = true; }, 
+    () => { touchLeft = false; }
+  );
+
+  addButtonListeners(btnRight, 
+    () => { touchRight = true; }, 
+    () => { touchRight = false; }
+  );
+
+  addButtonListeners(btnJump, 
+    () => { 
+      touchJump = true;
+      if(player.grounded) { 
+        player.vy = player.jump; 
+        player.grounded = false; 
+      }
+    }, 
+    () => { touchJump = false; }
+  );
+
+  addButtonListeners(btnUp, 
+    () => { 
+      if(player.grounded) { 
+        player.vy = player.jump; 
+        player.grounded = false; 
+      }
+    }, 
+    () => {}
+  );
+
+  addButtonListeners(btnDown, 
+    () => { console.log("⬇️ Baixo"); }, 
+    () => {}
+  );
+
+  document.addEventListener("keydown", (e) => {
+    const key = e.key.toLowerCase();
+    keys[key] = true;
+
+    if(e.key === "ArrowUp" || key === "w") {
+      e.preventDefault();
+      if(player.grounded) { 
+        player.vy = player.jump; 
+        player.grounded = false; 
+      }
+    }
+    if(e.key === "ArrowRight" || key === "d") {
+      e.preventDefault();
+      touchRight = true;
+    }
+    if(e.key === "ArrowLeft" || key === "a") {
+      e.preventDefault();
+      touchLeft = true;
+    }
+  });
+
+  document.addEventListener("keyup", (e) => {
+    const key = e.key.toLowerCase();
+    keys[key] = false;
+
+    if(e.key === "ArrowRight" || key === "d") touchRight = false;
+    if(e.key === "ArrowLeft" || key === "a") touchLeft = false;
+  });
+
+  canvas.addEventListener("touchstart", (e) => e.preventDefault(), { passive: false });
+  canvas.addEventListener("touchmove", (e) => e.preventDefault(), { passive: false });
+}
+
+// ================= FUNÇÕES =================
+async function initLoading() {
+  loadingScreen.style.display = "flex";
+  loadingPercent.innerText = "0%";
+  loadingFill.style.width = "0%";
+
+  await carregarJogador();
+
+  let load = 0;
+  function loop() {
+    loadingPercent.innerText = load + "%";
+    loadingFill.style.width = load + "%";
+    if(load < 100) { load++; setTimeout(loop, 15); }
+    else { loadingScreen.style.display = "none"; startGame(); }
+  }
+  loop();
+}
+
+function startGame() {
+  gameRunning = true;
+  canvas.style.display = "block";
+  controls.style.display = "block";
+  hud.style.display = "block";
+  levelWidget.style.display = "block";
+
+  atualizarLevelWidget();
+
+  setupTouchControls();
+  spawnEnemy();
+  spawnCoins();
+  requestAnimationFrame(gameLoop);
+}
+
+function gameLoop() {
+  if(!gameRunning) return;
+  ctx.clearRect(0, 0, canvas.width, canvas.height);
+  updateGame();
+  drawGame();
+  updateHUD();
+  requestAnimationFrame(gameLoop);
+}
+
+function updateGame() {
+  ground = canvas.height - 120;
+  cameraX = player.x - canvas.width/2 + player.w/2;
+  if(cameraX < 0) cameraX = 0;
+
+  let speed = 5;
+  isMoving = false;
+  
+  if(touchRight) { player.x += speed; isMoving = true; lookingRight = true; }
+  if(touchLeft) { player.x -= speed; isMoving = true; lookingRight = false; }
+  
+  if((keys["w"] || keys["arrowup"]) && player.grounded) {
+    player.vy = player.jump;
+    player.grounded = false;
+  }
+
+  player.vy += player.gravity;
+  player.y += player.vy;
+  if(player.y + player.h >= ground) { 
+    player.y = ground - player.h; player.vy = 0; player.grounded = true; 
+  }
+
+  if(player.invincible > 0) player.invincible--;
+  if(damageFlashTimer > 0) damageFlashTimer--;
+
+  damageFlash.style.opacity = (damageFlashTimer > 0) ? (damageFlashTimer / 20) * 0.4 : 0;
+
+  if(isMoving && player.grounded) walkAnim += 0.3;
+  else walkAnim = 0;
+
+  updateEnemies();
+  updateCoins();
+  updateParticles();
+
+  if(comboTimer > 0) comboTimer--;
+}
+
+function colide(a, b) {
+  return a.x < b.x + b.w &&
+         a.x + a.w > b.x &&
+         a.y < b.y + b.h &&
+         a.y + a.h > b.y;
+}
+
+function updateEnemies() {
+  for(let i = enemyList.length - 1; i >= 0; i--) {
+    const enemy = enemyList[i];
+
+    if(enemy.invincible === undefined || enemy.invincible === null) enemy.invincible = 0;
+    if(enemy.walkAnim === undefined) enemy.walkAnim = 0;
+
+    let dx = player.x - enemy.x;
+    enemy.x += (dx > 0 ? 2 : -2);
+    if(Math.abs(dx) > 1) enemy.walkAnim += 0.2;
+    else enemy.walkAnim = 0;
+
+    if(Math.abs(enemy.x - player.x) > 1200) {
+      enemyList.splice(i, 1);
+      enemyList.push({
+        x: player.x + 400 + Math.random() * 400, 
+        y: ground - 120, w: 40, h: 100, 
+        speed: 2, invincible: 0, walkAnim: 0
+      });
+      continue;
+    }
+
+    const colidiu = colide(player, enemy);
+    const podeTomarDano = player.invincible <= 0 && enemy.invincible <= 0;
+
+    if(colidiu && podeTomarDano) {
+      const dano = 10;
+      playerHp = Math.max(0, playerHp - dano);
+
+      // ⚠️ Trava o HP: a partir de agora ele NÃO regenera mais
+      hpTravado = true;
+
+      perderExpEBtcPorDano(10, 10);
+
+      player.invincible = 60;
+      enemy.invincible = 60;
+
+      enemy.x += (dx > 0 ? -200 : 200);
+
+      damageFlashTimer = 20;
+
+      console.log("💥 Dano! HP:", playerHp, "/", playerHpMax, "| BTC:", formatBTC(btcSats));
+
+      atualizarLevelWidget();
+
+      // Salva o HP imediatamente para o banco (para não voltar com HP cheio)
+      agendarSync();
+
+      if(playerHp <= 0) {
+        gameOver();
+        return;
+      }
+    }
+
+    if(enemy.invincible > 0) enemy.invincible--;
+  }
+}
+
+function updateCoins() {
+  coinList.forEach(coin => {
+    if(!coin.collected && player.x + player.w > coin.x && player.x < coin.x + coin.w &&
+       player.y + player.h > coin.y && player.y < coin.y + coin.h) {
+      coin.collected = true;
+      coins += coin.value;
+      let color = coin.type === "yellow" ? "#FFD700" : coin.type === "blue" ? "#00f" : "#800080";
+      spawnParticles(coin.x + coin.w/2, coin.y + coin.h/2, color);
+      combo++;
+      comboTimer = 120;
+
+      minerarMoeda(coin);
+    }
+  });
+}
+
+function updateParticles() {
+  particles.forEach((p, i) => {
+    p.x += p.vx; p.y += p.vy; p.alpha -= 0.05;
+    if(p.alpha <= 0) particles.splice(i, 1);
+  });
+}
+
+function drawGame() {
+  drawBackground();
+  drawPlayer(player.x, player.y, walkAnim);
+  drawEnemies();
+  drawCoins();
+  drawParticles();
+  drawRanking();
+  drawCheat();
+}
+
+// ================= DESENHO DO JOGADOR =================
+function drawPlayer(x, y, anim) {
+  const legOffset  = Math.sin(anim) * 5;
+  const armOffset  = Math.sin(anim + Math.PI / 2) * 3;
+  const bodyOffset = Math.sin(anim) * 2;
+
+  const flip = lookingRight ? 0 : 1;
+  const headW = 30;
+  const bodyW = 30;
+  const armW  = 10;
+  const legW  = 12;
+
+  const flipX = (localX, w) => flip ? (headW - localX - w) : localX;
+
+  if(player.invincible > 0 && Math.floor(player.invincible / 5) % 2 === 0) {
+    ctx.globalAlpha = 0.4;
+  } else {
+    ctx.globalAlpha = 1;
+  }
+
+  // Pernas
+  ctx.fillStyle = "#2c3e50";
+  ctx.fillRect(x - cameraX + 8,  y + 130 + legOffset, 14, 10);
+  ctx.fillRect(x - cameraX + 28, y + 130 - legOffset, 14, 10);
+
+  ctx.fillStyle = "#ecf0f1";
+  ctx.fillRect(x - cameraX + 8,  y + 132 + legOffset, 4, 4);
+  ctx.fillRect(x - cameraX + 28, y + 132 - legOffset, 4, 4);
+
+  // Tronco
+  ctx.fillStyle = "#e74c3c";
+  ctx.fillRect(x - cameraX + 10, y + 30 + bodyOffset, bodyW, 40);
+
+  ctx.fillStyle = "#c0392b";
+  ctx.fillRect(x - cameraX + 15, y + 30 + bodyOffset, 20, 5);
+
+  ctx.fillStyle = "#2c3e50";
+  ctx.fillRect(x - cameraX + 10, y + 67 + bodyOffset, bodyW, 3);
+
+  ctx.fillStyle = "#f1c40f";
+  ctx.fillRect(x - cameraX + 23, y + 67 + bodyOffset, 4, 3);
+
+  ctx.fillStyle = "#2980b9";
+  ctx.fillRect(x - cameraX + 10, y + 70 + bodyOffset, legW, 40);
+  ctx.fillRect(x - cameraX + 28, y + 70 - bodyOffset, legW, 40);
+
+  ctx.fillStyle = "#1a5276";
+  ctx.fillRect(x - cameraX + 15, y + 75 + bodyOffset, 2, 30);
+  ctx.fillRect(x - cameraX + 33, y + 75 - bodyOffset, 2, 30);
+
+  // Braços
+  ctx.fillStyle = "#f5d7b2";
+  ctx.fillRect(x - cameraX,      y + 30 + armOffset, armW, 40);
+  ctx.fillRect(x - cameraX + 40, y + 30 - armOffset, armW, 40);
+
+  // Cabeça
+  ctx.fillStyle = "#f5d7b2";
+  ctx.fillRect(x - cameraX + 10, y, headW, 30);
+
+  // Olhos
+  ctx.fillStyle = "#ffffff";
+  const olhoEsqLocalX = flipX(2, 8);
+  const olhoDirLocalX = flipX(20, 8);
+  ctx.fillRect(x - cameraX + 10 + olhoEsqLocalX, y + 8, 8, 10);
+  ctx.fillRect(x - cameraX + 10 + olhoDirLocalX, y + 8, 8, 10);
+
+  // Íris
+  const irisLocalDentro = 2;
+  const irisLocalEsq = flipX(2 + irisLocalDentro, 4);
+  const irisLocalDir = flipX(20 + irisLocalDentro, 4);
+  ctx.fillStyle = "#4a2f1b";
+  ctx.fillRect(x - cameraX + 10 + irisLocalEsq, y + 10, 4, 6);
+  ctx.fillRect(x - cameraX + 10 + irisLocalDir, y + 10, 4, 6);
+
+  // Sobrancelhas
+  ctx.fillStyle = "#3d2b1f";
+  const sobEsqLocalX = flipX(0, 10);
+  const sobDirLocalX = flipX(20, 10);
+  ctx.fillRect(x - cameraX + 10 + sobEsqLocalX, y + 6, 10, 2);
+  ctx.fillRect(x - cameraX + 10 + sobDirLocalX, y + 6, 10, 2);
+
+  // Boca
+  ctx.fillStyle = "#c0392b";
+  const bocaLocalX = flipX(8, 14);
+  ctx.fillRect(x - cameraX + 10 + bocaLocalX, y + 22, 14, 3);
+
+  ctx.globalAlpha = 1;
+}
+
+function spawnEnemy() {
+  for(let i = 0; i < 5; i++) {
+    enemyList.push({
+      x: lastEnemyX + i * 400, y: ground - 120,
+      w: 40, h: 100, speed: 2, invincible: 0, walkAnim: 0
+    });
+  }
+}
+
+function drawEnemies() {
+  enemyList.forEach(enemy => {
+    let legOffset = Math.sin(enemy.walkAnim) * 5;
+    let armOffset = Math.sin(enemy.walkAnim + Math.PI/2) * 3;
+    let bodyOffset = Math.sin(enemy.walkAnim) * 2;
+    ctx.fillStyle = "#f5d7b2";
+    ctx.fillRect(enemy.x - cameraX + 5, enemy.y, 30, 30);
+    ctx.fillStyle = "#f55";
+    ctx.fillRect(enemy.x - cameraX + 5, enemy.y + 30 + bodyOffset, 30, 60);
+    ctx.fillStyle = "#f5d7b2";
+    ctx.fillRect(enemy.x - cameraX, enemy.y + 30 + armOffset, 5, 40);
+    ctx.fillRect(enemy.x - cameraX + 40, enemy.y + 30 - armOffset, 5, 40);
+    ctx.fillStyle = "#000";
+    ctx.fillRect(enemy.x - cameraX + 5, enemy.y + 90 + legOffset, 12, 30);
+    ctx.fillRect(enemy.x - cameraX + 23, enemy.y + 90 - legOffset, 12, 30);
+
+    if(enemy.invincible > 0) {
+      ctx.globalAlpha = 0.4;
+      ctx.fillStyle = "#fff";
+      ctx.fillRect(enemy.x - cameraX, enemy.y, enemy.w, enemy.h);
+      ctx.globalAlpha = 1;
+    }
+  });
+}
+
+function spawnCoins() {
+  let x = 500;
+  for(let i = 0; i < 50; i++) {
+    let y = ground - 60 - Math.random() * 100;
+    let rand = Math.random();
+    let type = "yellow", value = 1;
+    if(rand > 0.75) { type = "blue"; value = 5; }
+    if(rand > 0.9) { type = "purple"; value = 20; }
+    coinList.push({ x, y, w: 25, h: 25, type, value, collected: false });
+    x += 150 + Math.random() * 250;
+  }
+}
+
+function drawCoins() {
+  coinList.forEach(coin => {
+    if(!coin.collected) {
+      ctx.fillStyle = coin.type === "yellow" ? "#FFD700" : coin.type === "blue" ? "#00f" : "#800080";
+      ctx.beginPath();
+      ctx.arc(coin.x - cameraX + coin.w/2, coin.y + coin.h/2, coin.w/1.5, 0, Math.PI * 2);
+      ctx.fill();
+    }
+  });
+}
+
+function spawnParticles(x, y, color) {
+  for(let i = 0; i < 15; i++) {
+    particles.push({
+      x, y,
+      vx: (Math.random() - 0.5) * 4,
+      vy: (Math.random() - 1.5) * 4,
+      alpha: 1, color,
+      size: 4 + Math.random() * 3
+    });
+  }
+}
+
+function drawParticles() {
+  particles.forEach(p => {
+    ctx.fillStyle = `rgba(${hexToRgb(p.color)},${p.alpha})`;
+    ctx.beginPath();
+    ctx.arc(p.x - cameraX, p.y, p.size, 0, Math.PI * 2);
+    ctx.fill();
+  });
+}
+
+function updateHUD() {}
+
+function drawRanking() {
+  if(showRankingTimer > 0) {
+    ctx.fillStyle = "rgba(0,0,0,0.7)";
+    ctx.fillRect(canvas.width - 220, 20, 200, 120);
+    ctx.fillStyle = "white";
+    ctx.font = "20px Arial";
+    ctx.fillText("🏆 TOP 3", canvas.width - 180, 50);
+    rankingData.forEach((r, i) => {
+      ctx.fillText(`${i+1} - ${r.nome}: ${r.pontos}`, canvas.width - 200, 80 + i * 25);
+    });
+    showRankingTimer--;
+  }
+}
+
+// ================= CHEATS =================
+let cheatActive = false;
+const secretCode = ["arrowup", "arrowup", "arrowdown", "arrowdown", "arrowleft", "arrowright", "arrowleft", "arrowright"];
+let inputBuffer = [];
+
+document.addEventListener("keydown", e => {
+  const key = e.key.toLowerCase();
+  inputBuffer.push(key);
+  if(inputBuffer.length > secretCode.length) inputBuffer.shift();
+  
+  if(inputBuffer.join(",") === secretCode.join(",")) {
+    cheatActive = !cheatActive;
+    inputBuffer = [];
+    if(cheatActive) {
+      player.invincible = 999;
+      cheatToast.style.display = "block";
+      cheatToast.innerText = "⚡ CHEAT ATIVADO!";
+      cheatToast.style.color = "#0f0";
+      setTimeout(() => { cheatToast.style.display = "none"; }, 2000);
+    } else {
+      player.invincible = 0;
+      cheatToast.style.display = "block";
+      cheatToast.innerText = "🚫 CHEAT DESATIVADO";
+      cheatToast.style.color = "#f00";
+      setTimeout(() => { cheatToast.style.display = "none"; }, 2000);
+    }
+  }
+});
+
+function drawCheat() {
+  if(cheatActive) {
+    ctx.fillStyle = "rgba(0,255,0,0.05)";
+    ctx.fillRect(0, 0, canvas.width, canvas.height);
+  }
+}
+
+// ================= AUX =================
+function hexToRgb(hex) {
+  hex = hex.replace("#", "");
+  let bigint = parseInt(hex, 16);
+  return ((bigint >> 16) & 255) + "," + ((bigint >> 8) & 255) + "," + (bigint & 255);
+}
+
+// ================= CENÁRIO =================
+function drawBackground() {
+  ctx.fillStyle = "#87ceeb";
+  ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+  for(let i = 0; i < 5; i++) {
+    ctx.fillStyle = "rgba(255,255,255,0.7)";
+    let cloudX = ((i * 300) - cameraX * 0.1) % (canvas.width + 300);
+    let cloudY = 50 + Math.sin((cameraX + i * 50) * 0.01) * 20;
+    ctx.beginPath();
+    ctx.arc(cloudX, cloudY, 40, 0, Math.PI * 2);
+    ctx.arc(cloudX + 30, cloudY + 10, 30, 0, Math.PI * 2);
+    ctx.arc(cloudX - 30, cloudY + 10, 30, 0, Math.PI * 2);
+    ctx.fill();
+  }
+
+  let layers = [
+    { speed: 0.2, color: "#1a1a2e", height: 220, buildings: 6 },
+    { speed: 0.4, color: "#222244", height: 180, buildings: 8 },
+    { speed: 0.7, color: "#2e2e5e", height: 140, buildings: 10 }
+  ];
+  layers.forEach(layer => {
+    let offset = (cameraX * layer.speed) % canvas.width;
+    for(let i = -1; i < 2; i++) {
+      let baseX = -offset + (i * canvas.width);
+      for(let b = 0; b < layer.buildings; b++) {
+        let bw = 60 + (b % 3) * 20;
+        let bh = layer.height + (b % 5) * 20;
+        let bx = baseX + b * 120;
+        let by = ground - bh;
+        ctx.fillStyle = layer.color;
+        ctx.fillRect(bx, by, bw, bh);
+        ctx.fillStyle = "#fff";
+        for(let wy = 10; wy < bh - 20; wy += 25) {
+          for(let wx = 10; wx < bw - 10; wx += 20) {
+            if(Math.random() > 0.5) ctx.fillRect(bx + wx, by + wy, 8, 8);
+          }
+        }
+      }
+    }
+  });
+
+  const CALCADA_H = 26;
+  const MEIOFIO_H = 6;
+  const ASFALTO_H = 40;
+
+  ctx.fillStyle = "#b8b8b8";
+  ctx.fillRect(0, ground, canvas.width, CALCADA_H);
+
+  ctx.fillStyle = "rgba(255,255,255,0.35)";
+  for(let i = 0; i < canvas.width; i += 40) {
+    let x = i - (cameraX % 40);
+    ctx.fillRect(x + 6, ground + 6, 2, 2);
+    ctx.fillRect(x + 22, ground + 16, 2, 2);
+  }
+
+  ctx.fillStyle = "rgba(255,255,255,0.5)";
+  ctx.fillRect(0, ground, canvas.width, 2);
+
+  ctx.fillStyle = "#6b6b6b";
+  ctx.fillRect(0, ground + CALCADA_H, canvas.width, MEIOFIO_H);
+
+  ctx.fillStyle = "#8a8a8a";
+  ctx.fillRect(0, ground + CALCADA_H, canvas.width, 1);
+
+  const asfaltoTop = ground + CALCADA_H + MEIOFIO_H;
+  ctx.fillStyle = "#1e1e1e";
+  ctx.fillRect(0, asfaltoTop, canvas.width, ASFALTO_H);
+
+  ctx.fillStyle = "rgba(255,255,255,0.05)";
+  for(let i = 0; i < canvas.width; i += 24) {
+    let x = i - (cameraX % 24);
+    ctx.fillRect(x + 3, asfaltoTop + 8, 1, 1);
+    ctx.fillRect(x + 12, asfaltoTop + 22, 1, 1);
+    ctx.fillRect(x + 20, asfaltoTop + 32, 1, 1);
+  }
+
+  const faixaY = asfaltoTop + Math.floor(ASFALTO_H / 2) - 2;
+  const faixaH = 4;
+  const dashW = 40;
+  const gapW = 30;
+  const step = dashW + gapW;
+
+  ctx.fillStyle = "#ffd700";
+  for(let i = -step; i < canvas.width + step; i += step) {
+    let x = i - (cameraX % step);
+    ctx.fillRect(x, faixaY, dashW, faixaH);
+  }
+
+  ctx.fillStyle = "rgba(255,255,255,0.15)";
+  for(let i = -step; i < canvas.width + step; i += step) {
+    let x = i - (cameraX % step);
+    ctx.fillRect(x, faixaY, dashW, 1);
+  }
+
+  ctx.fillStyle = "#0e0e0e";
+  ctx.fillRect(0, asfaltoTop + ASFALTO_H - 3, canvas.width, 3);
+
+  for(let i = 0; i < canvas.width; i += 80) {
+    let x = i - (cameraX % 80);
+    ctx.fillStyle = "#0f0";
+    ctx.fillRect(x, ground - 10, 10, 10);
+    ctx.fillStyle = "#070";
+    ctx.fillRect(x + 3, ground - 20, 4, 10);
+  }
+}
+
+// ================= GAME OVER =================
+async function gameOver() {
+  gameRunning = false;
+  controls.style.display = "none";
+  
+  // Salva HP=0 no banco
+  if(syncQueueSats !== 0 || syncQueueExp !== 0) {
+    await sincronizarComSupabase();
+  }
+  await salvarProgresso();
+
+  gameOverOverlay.style.display = "flex";
+}
+
+// ================= INICIALIZAÇÃO =================
+setTimeout(resizeCanvas, 100);
+window.addEventListener("load", () => {
+  if(!sessaoValida()) {
+    console.warn("⚠️ Sessão inválida/expirada. Redirecionando para login...");
+    window.location.href = "../../login.html";
+    return;
+  }
+  initLoading();
+});
+</script>
+
+</body>
+</html>
