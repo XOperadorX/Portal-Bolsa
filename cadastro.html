@@ -1,3 +1,4 @@
+<!-- cadastro.html -->
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
@@ -117,6 +118,16 @@
         const TABELA = 'Geral';
 
         const supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+
+        // ==================== ATRIBUTOS INICIAIS ====================
+        const ATRIBUTOS_INICIAIS = {
+            hp: 50,
+            mana: 25,
+            stamina: 50,
+            forca: 8,
+            defesa: 6,
+            magia: 4
+        };
 
         // ==================== SESSÃO LOCAL (24h) ====================
         const SESSION_KEY = 'usuario_logado';
@@ -242,7 +253,7 @@
                 // 3) Gera hash da senha
                 const senhaHash = await hashSenha(dados.senha);
 
-                // 4) Insere novo usuário
+                // 4) Insere novo usuário COM os atributos iniciais
                 const novoUsuario = {
                     nome: dados.nome,
                     login: dados.login,
@@ -251,13 +262,19 @@
                     saldo: 0,
                     saldo_poupanca: 0,
                     carteira: {},
-                    email_confirmado: true
+                    email_confirmado: true,
+                    hp: ATRIBUTOS_INICIAIS.hp,
+                    mana: ATRIBUTOS_INICIAIS.mana,
+                    stamina: ATRIBUTOS_INICIAIS.stamina,
+                    forca: ATRIBUTOS_INICIAIS.forca,
+                    defesa: ATRIBUTOS_INICIAIS.defesa,
+                    magia: ATRIBUTOS_INICIAIS.magia
                 };
 
                 const { data: inserido, error: erroInsert } = await supabaseClient
                     .from(TABELA)
                     .insert(novoUsuario)
-                    .select('id, login, nome, email, saldo, saldo_poupanca, carteira')
+                    .select('id, login, nome, email, saldo, saldo_poupanca, carteira, hp, mana, stamina, forca, defesa, magia')
                     .single();
 
                 if (erroInsert) {
@@ -266,7 +283,7 @@
                     return false;
                 }
 
-                // 5) Salva sessão (login automático)
+                // 5) Salva sessão (login automático) incluindo atributos
                 const usuarioSessao = {
                     id: inserido.id,
                     login: inserido.login,
@@ -274,7 +291,13 @@
                     email: inserido.email,
                     saldo: inserido.saldo || 0,
                     saldo_poupanca: inserido.saldo_poupanca || 0,
-                    carteira: inserido.carteira || {}
+                    carteira: inserido.carteira || {},
+                    hp: inserido.hp ?? ATRIBUTOS_INICIAIS.hp,
+                    mana: inserido.mana ?? ATRIBUTOS_INICIAIS.mana,
+                    stamina: inserido.stamina ?? ATRIBUTOS_INICIAIS.stamina,
+                    forca: inserido.forca ?? ATRIBUTOS_INICIAIS.forca,
+                    defesa: inserido.defesa ?? ATRIBUTOS_INICIAIS.defesa,
+                    magia: inserido.magia ?? ATRIBUTOS_INICIAIS.magia
                 };
                 salvarSessao(usuarioSessao);
 
