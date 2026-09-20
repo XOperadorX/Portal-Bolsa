@@ -59,4 +59,7 @@ jobs:
 
       - name: Publicar no ar
         id: deployment
-        uses: actions/deploy-pages@v4
+        uses: actions/deploy-pages@v5
+        environment:
+          name: github-pages
+          url: ${{ steps.deployment.outputs.page_url }}
