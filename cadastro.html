@@ -1,4 +1,3 @@
-<!-- cadastro.html -->
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
@@ -120,13 +119,40 @@
         const supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
         // ==================== ATRIBUTOS INICIAIS ====================
+        // Usando EXATAMENTE os nomes das colunas da tabela "Geral"
         const ATRIBUTOS_INICIAIS = {
+            // Vida
             hp: 50,
-            mana: 25,
-            stamina: 50,
-            forca: 8,
-            defesa: 6,
-            magia: 4
+            max_hp: 50,
+            hp_atual: 50,
+            hp_max: 50,
+
+            // Mana
+            mp: 25,
+            max_mp: 25,
+            mp_atual: 25,
+            mp_max: 25,
+
+            // Stamina
+            sm: 50,
+            max_sm: 50,
+            sm_atual: 50,
+            sm_max: 50,
+
+            // Combate
+            atk: 8,
+            ataque_base: 8,
+            def: 6,
+            defesa_base: 6,
+            mag: 4,
+            magia_base: 4,
+
+            // Progressão
+            nivel: 1,
+            experiencia: 0,
+            exp_proximo: 100,
+            exp: 0,
+            exp_next: 100
         };
 
         // ==================== SESSÃO LOCAL (24h) ====================
@@ -253,37 +279,95 @@
                 // 3) Gera hash da senha
                 const senhaHash = await hashSenha(dados.senha);
 
-                // 4) Insere novo usuário COM os atributos iniciais
+                // 4) Insere novo usuário com os atributos iniciais
                 const novoUsuario = {
+                    // Dados básicos
                     nome: dados.nome,
                     login: dados.login,
                     email: dados.email,
                     senha: senhaHash,
+                    email_confirmado: true,
+
+                    // Economia
                     saldo: 0,
                     saldo_poupanca: 0,
+                    proventos_pendentes: 0,
                     carteira: {},
-                    email_confirmado: true,
+                    preco_medio_compra: {},
+                    proventos_por_ativo: {},
+
+                    // Fazendinha
+                    seeds: 0,
+                    planted: 0,
+                    harvested: 0,
+                    buckets: 0,
+                    plot_data: [],
+
+                    // Progressão / Nível
+                    nivel: ATRIBUTOS_INICIAIS.nivel,
+                    experiencia: ATRIBUTOS_INICIAIS.experiencia,
+                    exp_proximo: ATRIBUTOS_INICIAIS.exp_proximo,
+                    exp: ATRIBUTOS_INICIAIS.exp,
+                    exp_next: ATRIBUTOS_INICIAIS.exp_next,
+
+                    // Vida (HP)
                     hp: ATRIBUTOS_INICIAIS.hp,
-                    mana: ATRIBUTOS_INICIAIS.mana,
-                    stamina: ATRIBUTOS_INICIAIS.stamina,
-                    forca: ATRIBUTOS_INICIAIS.forca,
-                    defesa: ATRIBUTOS_INICIAIS.defesa,
-                    magia: ATRIBUTOS_INICIAIS.magia
+                    max_hp: ATRIBUTOS_INICIAIS.max_hp,
+                    hp_atual: ATRIBUTOS_INICIAIS.hp_atual,
+                    hp_max: ATRIBUTOS_INICIAIS.hp_max,
+
+                    // Mana (MP)
+                    mp: ATRIBUTOS_INICIAIS.mp,
+                    max_mp: ATRIBUTOS_INICIAIS.max_mp,
+                    mp_atual: ATRIBUTOS_INICIAIS.mp_atual,
+                    mp_max: ATRIBUTOS_INICIAIS.mp_max,
+
+                    // Stamina (SM)
+                    sm: ATRIBUTOS_INICIAIS.sm,
+                    max_sm: ATRIBUTOS_INICIAIS.max_sm,
+                    sm_atual: ATRIBUTOS_INICIAIS.sm_atual,
+                    sm_max: ATRIBUTOS_INICIAIS.sm_max,
+
+                    // Combate
+                    atk: ATRIBUTOS_INICIAIS.atk,
+                    ataque_base: ATRIBUTOS_INICIAIS.ataque_base,
+                    def: ATRIBUTOS_INICIAIS.def,
+                    defesa_base: ATRIBUTOS_INICIAIS.defesa_base,
+                    mag: ATRIBUTOS_INICIAIS.mag,
+                    magia_base: ATRIBUTOS_INICIAIS.magia_base,
+
+                    // Outros campos com defaults seguros
+                    itens: [],
+                    historico: [],
+                    historico_trocas: [],
+                    codigos_resgate: [],
+                    codigos_usados: [],
+                    meta: {},
+                    fazendinha_dados: {},
+                    cadeado: false,
+                    bloqueado: false,
+                    stock: 0,
+                    total_upgrades: 0,
+                    fert_qty: 0,
+                    potion_qty: 0,
+                    mumu: 0
                 };
 
                 const { data: inserido, error: erroInsert } = await supabaseClient
                     .from(TABELA)
                     .insert(novoUsuario)
-                    .select('id, login, nome, email, saldo, saldo_poupanca, carteira, hp, mana, stamina, forca, defesa, magia')
+                    .select('id, login, nome, email, saldo, saldo_poupanca, carteira, nivel, experiencia, exp_proximo, hp, max_hp, hp_atual, hp_max, mp, max_mp, mp_atual, mp_max, sm, max_sm, sm_atual, sm_max, atk, ataque_base, def, defesa_base, mag, magia_base, exp, exp_next')
                     .single();
 
                 if (erroInsert) {
                     console.error('Erro ao cadastrar:', erroInsert);
-                    mostrarErro('❌ Erro ao criar conta. Tente novamente.');
+                    mostrarErro('❌ ' + (erroInsert.message || 'Erro ao criar conta.') +
+                                (erroInsert.details ? ' | ' + erroInsert.details : '') +
+                                (erroInsert.hint ? ' | ' + erroInsert.hint : ''));
                     return false;
                 }
 
-                // 5) Salva sessão (login automático) incluindo atributos
+                // 5) Salva sessão (login automático)
                 const usuarioSessao = {
                     id: inserido.id,
                     login: inserido.login,
@@ -292,12 +376,34 @@
                     saldo: inserido.saldo || 0,
                     saldo_poupanca: inserido.saldo_poupanca || 0,
                     carteira: inserido.carteira || {},
+
+                    nivel: inserido.nivel ?? ATRIBUTOS_INICIAIS.nivel,
+                    experiencia: inserido.experiencia ?? ATRIBUTOS_INICIAIS.experiencia,
+                    exp_proximo: inserido.exp_proximo ?? ATRIBUTOS_INICIAIS.exp_proximo,
+                    exp: inserido.exp ?? ATRIBUTOS_INICIAIS.exp,
+                    exp_next: inserido.exp_next ?? ATRIBUTOS_INICIAIS.exp_next,
+
                     hp: inserido.hp ?? ATRIBUTOS_INICIAIS.hp,
-                    mana: inserido.mana ?? ATRIBUTOS_INICIAIS.mana,
-                    stamina: inserido.stamina ?? ATRIBUTOS_INICIAIS.stamina,
-                    forca: inserido.forca ?? ATRIBUTOS_INICIAIS.forca,
-                    defesa: inserido.defesa ?? ATRIBUTOS_INICIAIS.defesa,
-                    magia: inserido.magia ?? ATRIBUTOS_INICIAIS.magia
+                    max_hp: inserido.max_hp ?? ATRIBUTOS_INICIAIS.max_hp,
+                    hp_atual: inserido.hp_atual ?? ATRIBUTOS_INICIAIS.hp_atual,
+                    hp_max: inserido.hp_max ?? ATRIBUTOS_INICIAIS.hp_max,
+
+                    mp: inserido.mp ?? ATRIBUTOS_INICIAIS.mp,
+                    max_mp: inserido.max_mp ?? ATRIBUTOS_INICIAIS.max_mp,
+                    mp_atual: inserido.mp_atual ?? ATRIBUTOS_INICIAIS.mp_atual,
+                    mp_max: inserido.mp_max ?? ATRIBUTOS_INICIAIS.mp_max,
+
+                    sm: inserido.sm ?? ATRIBUTOS_INICIAIS.sm,
+                    max_sm: inserido.max_sm ?? ATRIBUTOS_INICIAIS.max_sm,
+                    sm_atual: inserido.sm_atual ?? ATRIBUTOS_INICIAIS.sm_atual,
+                    sm_max: inserido.sm_max ?? ATRIBUTOS_INICIAIS.sm_max,
+
+                    atk: inserido.atk ?? ATRIBUTOS_INICIAIS.atk,
+                    ataque_base: inserido.ataque_base ?? ATRIBUTOS_INICIAIS.ataque_base,
+                    def: inserido.def ?? ATRIBUTOS_INICIAIS.def,
+                    defesa_base: inserido.defesa_base ?? ATRIBUTOS_INICIAIS.defesa_base,
+                    mag: inserido.mag ?? ATRIBUTOS_INICIAIS.mag,
+                    magia_base: inserido.magia_base ?? ATRIBUTOS_INICIAIS.magia_base
                 };
                 salvarSessao(usuarioSessao);
 
@@ -306,7 +412,7 @@
                 return true;
             } catch (e) {
                 console.error('Erro inesperado:', e);
-                mostrarErro('❌ Erro ao criar conta. Tente novamente.');
+                mostrarErro('❌ ' + (e.message || 'Erro ao criar conta. Tente novamente.'));
                 return false;
             }
         }
