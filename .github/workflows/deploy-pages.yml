@@ -1,0 +1,62 @@
+name: Deploy — Tudo Misturado
+
+on:
+  push:
+    branches: ["main"]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: "pages"
+  cancel-in-progress: false
+
+jobs:
+  build-e-publica:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Baixar arquivos do repositório
+        uses: actions/checkout@v4
+
+      - name: Instalar dependências e compilar
+        run: |
+          if [ -f package.json ]; then
+            npm ci
+            npm run build
+          fi
+
+      - name: Montar tudo junto
+        run: |
+          # Cria pasta final onde tudo vai ficar junto
+          mkdir -p public
+
+          # 1. Copia arquivos da RAIZ primeiro
+          # (index.html, páginas, estilos, imagens etc.)
+          cp -r *.html *.css *.js *.json *.png *.jpg *.jpeg *.gif *.svg *.ico public/ 2>/dev/null || true
+          cp -r assets/ fonts/ imagens/ css/ js/ public/ 2>/dev/null || true
+
+          # 2. Copia conteúdo de DIST — SOBRESCREVE se houver nomes iguais
+          if [ -d "dist" ]; then
+            cp -r dist/* public/
+          fi
+
+          echo "✅ Arquivos prontos — tudo misturado:"
+          ls -la public/
+
+      - name: Configurar GitHub Pages
+        uses: actions/configure-pages@v5
+
+      - name: Enviar para publicação
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: './public'
+
+      - name: Publicar no ar
+        id: deployment
+        uses: actions/deploy-pages@v5
+        environment:
+          name: github-pages
+          url: ${{ steps.deployment.outputs.page_url }}
