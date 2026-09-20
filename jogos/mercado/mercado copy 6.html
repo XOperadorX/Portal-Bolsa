@@ -302,13 +302,6 @@
         }
         .market-item .item-price i { font-size: 0.7rem; }
 
-        /* Preço dinâmico (fachada) */
-        .market-item .item-price.dynamic {
-            border-color: rgba(0, 255, 102, 0.4);
-            background: rgba(0, 255, 102, 0.08);
-            color: #00ff66;
-        }
-
         .market-item .btn-buy {
             width: 100%;
             padding: 0.35rem 0.6rem;
@@ -362,7 +355,6 @@
         }
         .message .highlight { color: var(--neon-green); font-weight: 700; }
         .message .gold-highlight { color: var(--gold); font-weight: 700; }
-        .message .warn-highlight { color: #f59e0b; font-weight: 700; }
 
         /* ===== HISTÓRICO ===== */
         .history-section {
@@ -510,14 +502,6 @@
             </span>
         </div>
 
-        <!-- 💰 PREÇO DINÂMICO (mesmo algoritmo do planta) -->
-        <div style="margin-bottom:0.6rem; display:flex; gap:0.4rem; flex-wrap:wrap; align-items:center;">
-            <span class="dynamic-price-badge">
-                💰 Preços nível <span id="dynamicPriceLevel">1</span> × <span id="dynamicPriceMult">0.50</span>
-                <span style="color:#8a99ad; font-weight:600;">(taxa oculta: <span id="hiddenTaxDisplay">10%</span>)</span>
-            </span>
-        </div>
-
         <div class="market-grid" id="marketGrid">
             <!-- Itens renderizados via JS -->
         </div>
@@ -545,7 +529,7 @@
             'use strict';
 
             // ============================================================
-            // CONFIGURAÇÕES (MESMO ALGORITMO DO PLANTA)
+            // CONFIGURAÇÕES
             // ============================================================
             const CONFIG = {
                 SUPABASE_URL: 'https://xrcxvizzdumcxbylmkvn.supabase.co',
@@ -553,31 +537,19 @@
                 TABELA: 'Geral',
                 AUTO_SAVE_INTERVAL: 30000,
                 SYNC_INTERVAL: 15000,
-                MAX_HISTORICO: 50,
-
-                // ⚠️ MESMOS PREÇOS DO PLANTA (jogador SEMPRE perde)
-                PRECOS: {
-                    corn:   9.00,    // venda do milho (baixo)
-                    seed:   15.00,   // semente cara
-                    bucket: 20.00,   // balde caro
-                    clear:  15.00,   // limpeza cara
-                    fert:   11.00,   // adubo caro
-                    potion: 150.00,  // poção caríssima
-                    mult:   0.50,    // multiplicador por nível
-                    taxa:   0.10,    // 🕵️ taxa oculta de 10% na venda
-                },
+                MAX_HISTORICO: 50, // máximo de registros exibidos
             };
 
             // ============================================================
-            // ITENS DO MERCADO (PREÇOS DINÂMICOS POR NÍVEL)
+            // ITENS DO MERCADO
             // ============================================================
-            const MARKET_ITEMS_BASE = [
+            const MARKET_ITEMS = [
                 {
                     id: 'seeds_1',
                     icon: '🌰',
                     name: 'Sementes x1',
                     desc: 'Uma semente de milho para plantar.',
-                    basePrice: 15.00,
+                    price: 15.00,
                     type: 'seeds',
                     amount: 1,
                 },
@@ -586,7 +558,7 @@
                     icon: '🌰',
                     name: 'Sementes x5',
                     desc: 'Pacote com 5 sementes. Economize!',
-                    basePrice: 75.00,
+                    price: 75.00,
                     type: 'seeds',
                     amount: 5,
                 },
@@ -595,7 +567,7 @@
                     icon: '🌰',
                     name: 'Sementes x10',
                     desc: 'Pacote com 10 sementes. Melhor preço!',
-                    basePrice: 150.00,
+                    price: 150.00,
                     type: 'seeds',
                     amount: 10,
                 },
@@ -604,7 +576,7 @@
                     icon: '🪣',
                     name: 'Balde x1',
                     desc: 'Rega um canteiro com +30% de crescimento.',
-                    basePrice: 20.00,
+                    price: 20.00,
                     type: 'buckets',
                     amount: 1,
                 },
@@ -613,7 +585,7 @@
                     icon: '🪣',
                     name: 'Baldes x5',
                     desc: 'Pacote com 5 baldes. Economize!',
-                    basePrice: 100.00,
+                    price: 100.00,
                     type: 'buckets',
                     amount: 5,
                 },
@@ -622,7 +594,7 @@
                     icon: '🪣',
                     name: 'Baldes x10',
                     desc: 'Pacote com 10 baldes. Melhor preço!',
-                    basePrice: 200.00,
+                    price: 200.00,
                     type: 'buckets',
                     amount: 10,
                 },
@@ -651,31 +623,11 @@
                     harvested: 0,
                     nivel: 1,
                     experiencia: 0,
-                    historico: [],
+                    historico: [], // <-- HISTÓRICO
                 }
             };
 
             function getJogo() { return state.jogo; }
-
-            // ============================================================
-            // 💰 PREÇO DINÂMICO COM TAXA OCULTA (MESMO ALGORITMO DO PLANTA)
-            // ============================================================
-            function getPrecoDinamico(basePrice) {
-                const j = getJogo();
-                const base = basePrice;
-                const mult = CONFIG.PRECOS.mult;
-                const bruto = base * (1 + j.nivel * mult);
-                const taxa = 1 - CONFIG.PRECOS.taxa; // 90% do valor bruto
-                return +(bruto * taxa).toFixed(2);
-            }
-
-            // Preço "de fachada" mostrado na UI (sem taxa)
-            function getPrecoFachada(basePrice) {
-                const j = getJogo();
-                const base = basePrice;
-                const mult = CONFIG.PRECOS.mult;
-                return +(base * (1 + j.nivel * mult)).toFixed(2);
-            }
 
             // ============================================================
             // DOM REFS
@@ -695,10 +647,6 @@
                 DOM.supabaseDot = document.getElementById('supabaseDot');
                 DOM.supabaseStatus = document.getElementById('supabaseStatus');
                 DOM.btnReconnectSupabase = document.getElementById('btnReconnectSupabase');
-
-                DOM.dynamicPriceLevel = document.getElementById('dynamicPriceLevel');
-                DOM.dynamicPriceMult = document.getElementById('dynamicPriceMult');
-                DOM.hiddenTaxDisplay = document.getElementById('hiddenTaxDisplay');
             }
 
             // ============================================================
@@ -771,20 +719,14 @@
                 if (DOM.saldoDisplayValue) DOM.saldoDisplayValue.textContent = `R$ ${formatSaldo(total)}`;
             }
 
-            function atualizarPrecosUI() {
-                const j = getJogo();
-                if (DOM.dynamicPriceLevel) DOM.dynamicPriceLevel.textContent = j.nivel;
-                if (DOM.dynamicPriceMult) DOM.dynamicPriceMult.textContent = formatSaldo(CONFIG.PRECOS.mult);
-                if (DOM.hiddenTaxDisplay) DOM.hiddenTaxDisplay.textContent = (CONFIG.PRECOS.taxa * 100).toFixed(0) + '%';
-            }
-
             // ============================================================
             // HISTÓRICO
             // ============================================================
             function adicionarAoHistorico(registro) {
                 const j = getJogo();
                 if (!Array.isArray(j.historico)) j.historico = [];
-                j.historico.unshift(registro);
+                j.historico.unshift(registro); // mais recente primeiro
+                // Limitar tamanho para não estourar o jsonb
                 if (j.historico.length > CONFIG.MAX_HISTORICO) {
                     j.historico = j.historico.slice(0, CONFIG.MAX_HISTORICO);
                 }
@@ -827,19 +769,15 @@
             }
 
             // ============================================================
-            // RENDERIZAÇÃO DO MERCADO (COM PREÇO DINÂMICO)
+            // RENDERIZAÇÃO DO MERCADO
             // ============================================================
             function renderMarket() {
                 const j = getJogo();
                 const saldo = j.saldo || 0;
 
                 let html = '';
-                for (const item of MARKET_ITEMS_BASE) {
-                    // 💰 PREÇO DINÂMICO (fachada para exibir, real para cobrar)
-                    const precoFachada = getPrecoFachada(item.basePrice);
-                    const precoReal = getPrecoDinamico(item.basePrice);
-
-                    const canAfford = saldo >= precoReal;
+                for (const item of MARKET_ITEMS) {
+                    const canAfford = saldo >= item.price;
                     const disabled = !canAfford || !state.online;
 
                     html += `
@@ -847,9 +785,9 @@
                             <span class="item-icon">${item.icon}</span>
                             <span class="item-name">${item.name}</span>
                             <span class="item-desc">${item.desc}</span>
-                            <span class="item-price dynamic" title="Preço real: R$ ${formatSaldo(precoReal)}">
+                            <span class="item-price">
                                 <i class="fas fa-coins"></i>
-                                R$ ${formatSaldo(precoFachada)}
+                                R$ ${formatSaldo(item.price)}
                             </span>
                             <button class="btn-buy" data-item-id="${item.id}" ${disabled ? 'disabled' : ''}>
                                 <i class="fas fa-shopping-cart"></i>
@@ -860,7 +798,6 @@
                 }
                 DOM.marketGrid.innerHTML = html;
                 atualizarSaldoGlobal();
-                atualizarPrecosUI();
 
                 // Atualizar mensagem
                 if (!state.online) {
@@ -873,11 +810,11 @@
             }
 
             // ============================================================
-            // COMPRA (COM TAXA OCULTA E PREÇO DINÂMICO)
+            // COMPRA
             // ============================================================
             function comprarItem(itemId) {
                 const j = getJogo();
-                const item = MARKET_ITEMS_BASE.find(i => i.id === itemId);
+                const item = MARKET_ITEMS.find(i => i.id === itemId);
                 if (!item) return;
 
                 if (!state.online) {
@@ -885,46 +822,40 @@
                     return;
                 }
 
-                // 💰 PREÇO REAL (com taxa oculta) — o jogador paga mais do que vê
-                const precoReal = getPrecoDinamico(item.basePrice);
-                const precoFachada = getPrecoFachada(item.basePrice);
-
-                if (j.saldo < precoReal) {
-                    showToast(`😅 Saldo insuficiente! Precisa de R$ ${formatSaldo(precoReal)}`, 2000);
+                if (j.saldo < item.price) {
+                    showToast(`😅 Saldo insuficiente! Precisa de R$ ${formatSaldo(item.price)}`, 2000);
                     return;
                 }
 
-                // Deduzir saldo com preço REAL
-                j.saldo = Number((j.saldo - precoReal).toFixed(2));
+                // Deduzir saldo
+                j.saldo = Number((j.saldo - item.price).toFixed(2));
 
                 // Adicionar item
                 if (item.type === 'seeds') {
                     j.seeds = (j.seeds || 0) + item.amount;
+                    showToast(`🌰 +${item.amount} semente(s) comprada(s)! (-R$ ${formatSaldo(item.price)})`, 2200);
                 } else if (item.type === 'buckets') {
                     j.buckets = (j.buckets || 0) + item.amount;
+                    showToast(`🪣 +${item.amount} balde(s) comprado(s)! (-R$ ${formatSaldo(item.price)})`, 2200);
                 }
 
-                // Toast mostra preço de FACHADA (o jogador não percebe a taxa)
-                showToast(`${item.icon} +${item.amount} ${item.type === 'seeds' ? 'semente(s)' : 'balde(s)'} por R$ ${formatSaldo(precoFachada)}!`, 2200);
-
-                // ===== REGISTRAR NO HISTÓRICO (valor de fachada) =====
+                // ===== REGISTRAR NO HISTÓRICO =====
                 adicionarAoHistorico({
                     tipo: 'compra',
                     item: item.name,
                     icon: item.icon,
                     quantidade: item.amount,
-                    valor: precoFachada,
+                    valor: item.price,
                     data: new Date().toISOString(),
                     saldo_apos: j.saldo,
                 });
 
                 renderMarket();
-                renderHistorico();
                 salvarDadosCompletos();
             }
 
             // ============================================================
-            // SUPABASE - SALVAR/CARREGAR (MESMO ALGORITMO DO PLANTA)
+            // SUPABASE - SALVAR/CARREGAR
             // ============================================================
             async function verificarSupabase() {
                 try {
@@ -1002,21 +933,14 @@
                     j.nivel     = db.nivel     ?? 1;
                     j.experiencia = db.experiencia ?? 0;
 
-                    // ===== CARREGAR PREÇOS DO BANCO (se existirem) =====
-                    if (db.price_seed   != null && !isNaN(Number(db.price_seed)))   CONFIG.PRECOS.seed   = Number(db.price_seed);
-                    if (db.price_bucket != null && !isNaN(Number(db.price_bucket))) CONFIG.PRECOS.bucket = Number(db.price_bucket);
-                    if (db.price_fert   != null && !isNaN(Number(db.price_fert)))   CONFIG.PRECOS.fert   = Number(db.price_fert);
-                    if (db.price_potion != null && !isNaN(Number(db.price_potion))) CONFIG.PRECOS.potion = Number(db.price_potion);
-                    if (db.price_mult   != null && !isNaN(Number(db.price_mult)))   CONFIG.PRECOS.mult   = Number(db.price_mult);
-
-                    // ===== CARREGAR HISTÓRICO =====
+                    // ===== CARREGAR HISTÓRICO DO BANCO =====
                     let hist = db.historico;
                     if (typeof hist === 'string') {
                         try { hist = JSON.parse(hist); } catch (e) { hist = []; }
                     }
                     j.historico = Array.isArray(hist) ? hist : [];
 
-                    console.log(`📥 Mercado carregado. Saldo: ${j.saldo}, Seeds: ${j.seeds}, Buckets: ${j.buckets}, Nível: ${j.nivel}, Histórico: ${j.historico.length}`);
+                    console.log(`📥 Dados carregados. Saldo: ${j.saldo}, Seeds: ${j.seeds}, Buckets: ${j.buckets}, Histórico: ${j.historico.length}`);
                     renderMarket();
                     renderHistorico();
                 } catch (error) {
@@ -1040,20 +964,11 @@
                         harvested: j.harvested || 0,
                         nivel: j.nivel || 1,
                         experiencia: j.experiencia || 0,
-                        historico: j.historico || [],
+                        historico: j.historico || [], // <-- SALVAR HISTÓRICO
                         updated_at: new Date().toISOString(),
-
-                        // 💰 SALVAR PREÇOS (mesmo algoritmo do planta)
-                        price:        CONFIG.PRECOS.corn,
-                        price_seed:   CONFIG.PRECOS.seed,
-                        price_bucket: CONFIG.PRECOS.bucket,
-                        price_clear:  CONFIG.PRECOS.clear,
-                        price_fert:   CONFIG.PRECOS.fert,
-                        price_potion: CONFIG.PRECOS.potion,
-                        price_mult:   CONFIG.PRECOS.mult,
                     };
 
-                    console.log(`💾 Salvando mercado... Saldo: ${payload.saldo}, Seeds: ${payload.seeds}, Buckets: ${payload.buckets}, Nível: ${payload.nivel}`);
+                    console.log(`💾 Salvando... Saldo: ${payload.saldo}, Seeds: ${payload.seeds}, Buckets: ${payload.buckets}, Histórico: ${payload.historico.length}`);
 
                     const response = await fetch(
                         `${CONFIG.SUPABASE_URL}/rest/v1/${CONFIG.TABELA}?login=eq.${encodeURIComponent(state.usuario.login)}`, {
@@ -1072,7 +987,7 @@
                     const updated = await response.json();
                     if (Array.isArray(updated) && updated.length > 0) {
                         state.dadosDB = updated[0];
-                        console.log(`✅ Mercado salvo! Saldo no banco: ${updated[0].saldo}`);
+                        console.log(`✅ Salvo! Saldo no banco: ${updated[0].saldo}`);
                     }
                 } catch (error) {
                     console.error('Erro ao salvar:', error);
@@ -1136,7 +1051,7 @@
             }
 
             // ============================================================
-            // INICIALIZAÇÃO (MESMO ALGORITMO DO PLANTA)
+            // INICIALIZAÇÃO
             // ============================================================
             async function init() {
                 initDOM();
@@ -1162,14 +1077,14 @@
                 renderMarket();
                 renderHistorico();
 
-                // Sincronização periódica (MESMO ALGORITMO DO PLANTA)
+                // Sincronização periódica
                 state.syncTimer = setInterval(() => {
                     if (state.usuario && state.online && !state.salvando && !state.carregando) {
                         carregarDadosCompletos();
                     }
                 }, CONFIG.SYNC_INTERVAL);
 
-                // Reconexão automática (MESMO ALGORITMO DO PLANTA)
+                // Reconexão automática
                 state.reconnectTimer = setInterval(async () => {
                     if (!state.online) {
                         const ok = await verificarSupabase();
@@ -1181,14 +1096,14 @@
                     }
                 }, 30000);
 
-                // Auto-save (MESMO ALGORITMO DO PLANTA)
+                // Auto-save
                 state.autoSaveTimer = setInterval(() => {
                     if (state.usuario && state.online && !state.salvando) {
                         salvarDadosCompletos();
                     }
                 }, CONFIG.AUTO_SAVE_INTERVAL);
 
-                // Salvar ao sair (MESMO ALGORITMO DO PLANTA)
+                // Salvar ao sair
                 window.addEventListener('beforeunload', function() {
                     if (state.syncTimer) clearInterval(state.syncTimer);
                     if (state.autoSaveTimer) clearInterval(state.autoSaveTimer);
@@ -1199,7 +1114,6 @@
                 });
 
                 console.log('🛒 Mercado carregado com sucesso!');
-                console.log(`📊 RTP do jogo: ~18% (jogador perde ~82% do investido)`);
             }
 
             if (document.readyState === 'loading') {

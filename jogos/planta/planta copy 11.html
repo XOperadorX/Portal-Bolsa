@@ -1,0 +1,2088 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>🌽 Milharal – planta.html</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" />
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Rajdhani:wght@400;600;700&display=swap" rel="stylesheet" />
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        :root {
+            --bg-dark: #0a0b10;
+            --card-bg: #121520;
+            --neon-blue: #00f0ff;
+            --neon-purple: #7000ff;
+            --neon-green: #00ff66;
+            --neon-pink: #ff00aa;
+            --text-color: #f0f4f8;
+            --text-muted: #8a99ad;
+            --shadow-glow: 0 0 30px rgba(0, 240, 255, 0.15);
+            --radius: 16px;
+            --transition: 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            --gold: #f9a825;
+            --gold-dark: #f57f17;
+            --soil: #8d6e63;
+            --soil-light: #a1887f;
+            --water-blue: #42a5f5;
+        }
+
+        body {
+            background: var(--bg-dark);
+            color: var(--text-color);
+            background-image:
+                radial-gradient(circle at 15% 20%, rgba(112, 0, 255, 0.15) 0%, transparent 40%),
+                radial-gradient(circle at 85% 80%, rgba(0, 240, 255, 0.15) 0%, transparent 40%);
+            min-height: 100vh;
+            padding: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-family: 'Rajdhani', sans-serif;
+        }
+
+        .card {
+            background: var(--card-bg);
+            max-width: 900px;
+            width: 100%;
+            padding: 1.6rem 1.4rem 1.4rem;
+            border-radius: var(--radius);
+            border: 1px solid rgba(0, 240, 255, 0.15);
+            box-shadow: var(--shadow-glow), 0 8px 32px rgba(0, 0, 0, 0.5);
+            backdrop-filter: blur(4px);
+            transition: transform var(--transition);
+        }
+        .card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 0 40px rgba(0, 240, 255, 0.2), 0 8px 32px rgba(0, 0, 0, 0.5);
+        }
+
+        .nav-bar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: rgba(18, 21, 32, 0.8);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(0, 240, 255, 0.2);
+            padding: 10px 20px;
+            border-radius: var(--radius);
+            margin-bottom: 20px;
+            box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+
+        .user-profile {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            background: rgba(0, 240, 255, 0.08);
+            padding: 4px 14px 4px 8px;
+            border-radius: 40px;
+            border: 1px solid rgba(0, 240, 255, 0.2);
+            color: #fff;
+            font-weight: 600;
+            font-size: 0.85rem;
+            transition: all 0.3s;
+            cursor: default;
+        }
+        .user-profile:hover {
+            background: rgba(0, 240, 255, 0.15);
+            border-color: var(--neon-blue);
+            box-shadow: 0 0 15px rgba(0, 240, 255, 0.2);
+        }
+        .user-avatar {
+            background: linear-gradient(135deg, var(--neon-blue), var(--neon-purple));
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1rem;
+            font-weight: bold;
+            box-shadow: 0 0 10px rgba(0, 240, 255, 0.3);
+        }
+        .user-info { display: flex; flex-direction: column; line-height: 1.2; }
+        .user-nick {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 0.8rem;
+            letter-spacing: 0.5px;
+            color: #fff;
+        }
+        .user-balance {
+            font-size: 0.7rem;
+            color: var(--neon-green);
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+        .user-balance::before { content: "💰"; font-size: 0.6rem; }
+
+        .btn-voltar {
+            background: linear-gradient(135deg, var(--neon-purple), #8b5cf6);
+            color: white;
+            border: none;
+            padding: 6px 16px;
+            border-radius: 40px;
+            font-weight: bold;
+            font-size: 0.75rem;
+            cursor: pointer;
+            transition: all 0.2s;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+        }
+        .btn-voltar:hover {
+            transform: scale(0.95);
+            box-shadow: 0 0 20px rgba(112, 0, 255, 0.4);
+        }
+
+        .status-bar {
+            display: flex;
+            align-items: center;
+            gap: 0.8rem;
+            flex-wrap: wrap;
+            padding: 0.3rem 0.8rem;
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: 30px;
+            font-size: 0.7rem;
+            font-weight: 500;
+            border: 1px solid rgba(0, 240, 255, 0.08);
+            margin-bottom: 16px;
+        }
+        .status-item {
+            display: flex;
+            align-items: center;
+            gap: 0.3rem;
+            color: var(--text-muted);
+        }
+        .status-item .dot {
+            width: 8px; height: 8px;
+            border-radius: 50%;
+            display: inline-block;
+            transition: all 0.3s;
+        }
+        .status-item .dot.online {
+            background: var(--neon-green);
+            box-shadow: 0 0 8px rgba(0, 255, 102, 0.5);
+        }
+        .status-item .dot.offline {
+            background: #ef4444;
+            box-shadow: 0 0 8px rgba(239, 68, 68, 0.3);
+        }
+        .status-item .dot.checking {
+            background: #f59e0b;
+            animation: pulse-dot 1s ease-in-out infinite;
+        }
+        @keyframes pulse-dot {
+            0%, 100% { opacity: 1; transform: scale(1); }
+            50% { opacity: 0.4; transform: scale(0.7); }
+        }
+        .status-item .value { font-weight: 600; color: var(--text-color); }
+        .status-item .value.online { color: var(--neon-green); }
+        .status-item .value.offline { color: #ef4444; }
+        .status-item .value.checking { color: #f59e0b; }
+
+        .status-reconnect {
+            background: none;
+            border: none;
+            color: #8a99ad;
+            cursor: pointer;
+            padding: 2px 6px;
+            border-radius: 4px;
+            transition: all 0.2s;
+            font-size: 0.7rem;
+        }
+        .status-reconnect:hover { color: #fff; background: rgba(255, 255, 255, 0.06); }
+
+        .level-system-container {
+            background: rgba(0, 0, 0, 0.4);
+            border-radius: 12px;
+            padding: 12px 16px;
+            border: 1px solid rgba(0, 240, 255, 0.1);
+            margin: 0 0 12px 0;
+        }
+        .level-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+        .level-badge {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            font-family: 'Orbitron', sans-serif;
+        }
+        .level-badge .level-number {
+            font-size: 2rem;
+            font-weight: 900;
+            color: #00f0ff;
+            text-shadow: 0 0 30px rgba(0, 240, 255, 0.3);
+            line-height: 1;
+            background: rgba(0, 0, 0, 0.3);
+            padding: 0 6px;
+            border-radius: 8px;
+        }
+        .level-badge .level-label {
+            font-size: 0.6rem;
+            color: #8a99ad;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+        }
+        .level-badge .level-title {
+            font-size: 0.8rem;
+            color: #f0f4f8;
+            font-weight: 600;
+            margin-top: 2px;
+        }
+        .exp-container { flex: 1; min-width: 120px; }
+        .exp-bar {
+            background: rgba(255, 255, 255, 0.06);
+            border-radius: 20px;
+            height: 10px;
+            overflow: hidden;
+            border: 1px solid rgba(255, 255, 255, 0.05);
+        }
+        .exp-bar .exp-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #7000ff, #00f0ff);
+            border-radius: 20px;
+            transition: width 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            box-shadow: 0 0 20px rgba(0, 240, 255, 0.2);
+            width: 0%;
+        }
+        .exp-text {
+            display: flex;
+            justify-content: space-between;
+            font-size: 0.65rem;
+            color: #8a99ad;
+            margin-top: 2px;
+            font-weight: 600;
+        }
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(6, 1fr);
+            gap: 6px;
+            margin-top: 10px;
+            padding-top: 10px;
+            border-top: 1px solid rgba(255, 255, 255, 0.05);
+        }
+        .stat-pill {
+            display: flex;
+            align-items: center;
+            gap: 4px;
+            background: rgba(255, 255, 255, 0.04);
+            padding: 2px 10px;
+            border-radius: 20px;
+            font-size: 0.7rem;
+            font-weight: 600;
+            color: #c8d0e0;
+            border: 1px solid rgba(255, 255, 255, 0.04);
+            white-space: nowrap;
+            justify-content: center;
+        }
+        .stat-pill .stat-value { color: #fff; font-weight: 700; margin-left: 2px; }
+        .stat-pill .stat-value.hp { color: #ef4444; }
+        .stat-pill .stat-value.mp { color: #3b82f6; }
+        .stat-pill .stat-value.sm { color: #f59e0b; }
+
+        .game-container {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 1rem;
+        }
+        .game-section {
+            background: rgba(0, 0, 0, 0.25);
+            border-radius: var(--radius);
+            padding: 0.8rem;
+            border: 1px solid rgba(0, 240, 255, 0.05);
+        }
+        .game-section-title {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-weight: 700;
+            font-size: 1rem;
+            color: #fff;
+            margin-bottom: 0.5rem;
+            padding: 0 0.2rem;
+        }
+        .field {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 8px;
+            margin-bottom: 0.8rem;
+            aspect-ratio: 1 / 1;
+        }
+        .plot {
+            background: var(--soil);
+            border-radius: 12px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            font-size: 2rem;
+            cursor: pointer;
+            transition: all var(--transition);
+            box-shadow: inset 0 -4px 0 rgba(0, 0, 0, 0.3), 0 2px 6px rgba(0, 0, 0, 0.3);
+            position: relative;
+            min-height: 60px;
+            user-select: none;
+            border: 2px solid rgba(0, 240, 255, 0.1);
+        }
+        .plot:hover {
+            transform: scale(1.03);
+            box-shadow: 0 0 20px rgba(0, 240, 255, 0.15), inset 0 -4px 0 rgba(0, 0, 0, 0.3);
+            z-index: 2;
+            border-color: var(--neon-blue);
+        }
+        .plot:active { transform: scale(0.94); }
+        .plot.empty { background: var(--soil); border-color: rgba(0, 240, 255, 0.05); }
+        .plot.harvested {
+            background: var(--soil-light);
+            border-color: rgba(255, 77, 77, 0.2);
+        }
+        .plot.harvested:hover { background: #bcaaa4; border-color: #ff4d4d; }
+        .plot:not(.empty):not(.harvested) {
+            background: #6d8f6d;
+            border-color: rgba(0, 255, 102, 0.2);
+        }
+        .plot .stage-label {
+            position: absolute;
+            bottom: 2px;
+            font-size: 0.45rem;
+            background: rgba(0, 0, 0, 0.7);
+            color: var(--text-muted);
+            padding: 0 4px;
+            border-radius: 8px;
+            letter-spacing: 0.3px;
+            backdrop-filter: blur(4px);
+            white-space: nowrap;
+            opacity: 0.7;
+            pointer-events: none;
+            font-weight: 600;
+        }
+        .plot .progress-bar {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            height: 3px;
+            background: var(--neon-blue);
+            border-radius: 0 0 12px 12px;
+            transition: width 0.4s ease;
+            width: 0%;
+            pointer-events: none;
+            box-shadow: 0 0 10px rgba(0, 240, 255, 0.4);
+        }
+        .plot .progress-bar.done {
+            background: var(--neon-green);
+            box-shadow: 0 0 15px rgba(0, 255, 102, 0.6);
+        }
+        .plot .plant-emoji {
+            line-height: 1;
+            transition: transform 0.5s ease;
+            filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.3));
+        }
+        .plot.growing .plant-emoji { animation: sway 2.5s ease-in-out infinite; }
+        .plot.mature .plant-emoji { animation: glow-neon 1.2s ease-in-out infinite alternate; }
+        .plot.sprout .plant-emoji { animation: pop 1s ease-out; }
+        .plot.seed .plant-emoji { animation: pulse 1.6s ease-in-out infinite; }
+
+        @keyframes sway {
+            0%, 100% { transform: rotate(-3deg) scale(1); }
+            50% { transform: rotate(3deg) scale(1.02); }
+        }
+        @keyframes glow-neon {
+            0% { filter: drop-shadow(0 0 2px var(--neon-green)); transform: scale(1); }
+            100% { filter: drop-shadow(0 0 20px var(--neon-green)); transform: scale(1.06); }
+        }
+        @keyframes pop {
+            0% { transform: scale(0); opacity: 0; }
+            60% { transform: scale(1.2); opacity: 1; }
+            100% { transform: scale(1); }
+        }
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(0.92); }
+        }
+
+        .milharal-stats {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.2rem;
+            margin-bottom: 0.6rem;
+        }
+        .milharal-stats .stat-item {
+            display: flex;
+            align-items: center;
+            gap: 0.2rem;
+            font-size: 0.7rem;
+            font-weight: 600;
+            color: var(--text-color);
+            padding: 0.05rem 0.4rem;
+            border-radius: 20px;
+            background: rgba(0, 0, 0, 0.3);
+        }
+        .milharal-stats .stat-item i { font-size: 0.8rem; color: var(--neon-blue); }
+        .milharal-stats .stat-item .num {
+            background: rgba(0, 0, 0, 0.4);
+            padding: 0 0.3rem;
+            border-radius: 20px;
+            font-size: 0.7rem;
+            color: #fff;
+        }
+
+        .milharal-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            gap: 0.3rem;
+            margin-bottom: 0.5rem;
+        }
+        .saldo-display {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.3rem;
+            background: rgba(112, 0, 255, 0.15);
+            border: 1px solid var(--neon-purple);
+            padding: 0.1rem 0.6rem 0.1rem 0.4rem;
+            border-radius: 30px;
+            font-weight: 700;
+            font-size: 0.8rem;
+            color: var(--neon-purple);
+            box-shadow: 0 0 20px rgba(112, 0, 255, 0.2);
+        }
+        .saldo-display i { font-size: 0.9rem; color: var(--neon-purple); }
+        .saldo-display .num { color: #fff; }
+        .stock-display {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.3rem;
+            background: rgba(255, 214, 0, 0.15);
+            border: 1px solid #ffd600;
+            padding: 0.1rem 0.6rem 0.1rem 0.4rem;
+            border-radius: 30px;
+            font-weight: 700;
+            font-size: 0.8rem;
+            color: #ffd600;
+            box-shadow: 0 0 20px rgba(255, 214, 0, 0.15);
+        }
+        .stock-display i { font-size: 0.9rem; color: #ffd600; }
+        .stock-display .num { color: #fff; }
+
+        .milharal-actions {
+            display: flex;
+            gap: 0.4rem;
+            flex-wrap: wrap;
+            margin-bottom: 0.6rem;
+        }
+        .milharal-actions .btn {
+            padding: 0.3rem 0.8rem;
+            font-size: 0.7rem;
+            border-radius: 40px;
+            font-weight: 700;
+            border: 1px solid transparent;
+            cursor: pointer;
+            transition: all var(--transition);
+            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
+            display: inline-flex;
+            align-items: center;
+            gap: 0.3rem;
+            color: #fff;
+            flex: 1 1 auto;
+            justify-content: center;
+        }
+        .milharal-actions .btn:disabled {
+            opacity: 0.4;
+            cursor: not-allowed;
+            transform: none !important;
+            box-shadow: none !important;
+        }
+        .milharal-actions .btn:active:not(:disabled) { transform: scale(0.94) !important; }
+        .milharal-actions .btn-primary { background: linear-gradient(135deg, #00c853, #00e676); color: #000; }
+        .milharal-actions .btn-secondary { background: linear-gradient(135deg, #0288d1, #03a9f4); color: #fff; }
+        .milharal-actions .btn-gold { background: linear-gradient(135deg, #f9a825, #ffd600); color: #000; }
+        .milharal-actions .btn-success { background: linear-gradient(135deg, #10b981, #34d399); color: #fff; }
+        .milharal-actions .btn-clear { background: linear-gradient(135deg, #e53935, #b71c1c); color: #fff; }
+        .milharal-actions .btn-shop { background: linear-gradient(135deg, #8b5cf6, #a78bfa); color: #fff; }
+
+        .milharal-message {
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: 20px;
+            padding: 0.3rem 0.6rem;
+            font-size: 0.65rem;
+            color: var(--text-muted);
+            text-align: center;
+            min-height: 1.8rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.3rem;
+            border: 1px solid rgba(0, 240, 255, 0.05);
+            flex-wrap: wrap;
+        }
+        .milharal-message .highlight { color: var(--neon-green); font-weight: 700; }
+        .milharal-message .exp-highlight { color: #8b5cf6; font-weight: 700; }
+
+        /* LOJA */
+        .shop-panel {
+            display: none;
+            background: rgba(0, 0, 0, 0.5);
+            border-radius: 12px;
+            padding: 0.8rem;
+            margin-bottom: 0.8rem;
+            border: 1px solid rgba(139, 92, 246, 0.3);
+            box-shadow: 0 0 30px rgba(139, 92, 246, 0.15);
+        }
+        .shop-panel.open { display: block; }
+        .shop-title {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 0.9rem;
+            color: #a78bfa;
+            margin-bottom: 0.6rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .shop-title .close-shop {
+            background: none;
+            border: none;
+            color: #8a99ad;
+            cursor: pointer;
+            font-size: 1rem;
+            padding: 2px 8px;
+            border-radius: 6px;
+            transition: all 0.2s;
+        }
+        .shop-title .close-shop:hover { color: #fff; background: rgba(255,255,255,0.08); }
+        .shop-items {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+            gap: 0.5rem;
+        }
+        .shop-item {
+            background: rgba(255, 255, 255, 0.04);
+            border: 1px solid rgba(139, 92, 246, 0.2);
+            border-radius: 10px;
+            padding: 0.6rem;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 0.3rem;
+            transition: all 0.25s;
+        }
+        .shop-item:hover {
+            background: rgba(139, 92, 246, 0.1);
+            border-color: #a78bfa;
+            transform: translateY(-2px);
+        }
+        .shop-item .shop-emoji { font-size: 1.6rem; }
+        .shop-item .shop-name {
+            font-size: 0.7rem;
+            font-weight: 700;
+            color: #fff;
+            text-align: center;
+        }
+        .shop-item .shop-price {
+            font-size: 0.7rem;
+            color: #ffd600;
+            font-weight: 700;
+        }
+        .shop-item .shop-stock {
+            font-size: 0.6rem;
+            color: #8a99ad;
+        }
+        .shop-item .shop-buttons {
+            display: flex;
+            gap: 0.25rem;
+            width: 100%;
+            margin-top: 0.2rem;
+        }
+        .shop-item .shop-buttons button {
+            flex: 1;
+            padding: 0.25rem 0.4rem;
+            font-size: 0.65rem;
+            font-weight: 700;
+            border: none;
+            border-radius: 20px;
+            cursor: pointer;
+            transition: all 0.2s;
+            color: #fff;
+            background: linear-gradient(135deg, #8b5cf6, #a78bfa);
+        }
+        .shop-item .shop-buttons button:hover:not(:disabled) { transform: scale(1.05); }
+        .shop-item .shop-buttons button:active:not(:disabled) { transform: scale(0.95); }
+        .shop-item .shop-buttons button:disabled { opacity: 0.4; cursor: not-allowed; }
+
+        /* Card de venda dentro da loja */
+        .shop-item.sell-corn {
+            border-color: rgba(0, 255, 102, 0.4);
+            background: rgba(0, 255, 102, 0.05);
+        }
+        .shop-item.sell-corn:hover {
+            background: rgba(0, 255, 102, 0.12);
+            border-color: #00ff66;
+        }
+        .shop-item.sell-corn .shop-price { color: #00ff66; }
+
+        /* Painel de preço dinâmico */
+        .dynamic-price-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.3rem;
+            background: rgba(0, 255, 102, 0.12);
+            border: 1px solid rgba(0, 255, 102, 0.4);
+            padding: 0.1rem 0.6rem;
+            border-radius: 30px;
+            font-size: 0.7rem;
+            font-weight: 700;
+            color: #00ff66;
+        }
+
+        @media (max-width: 820px) {
+            .stats-grid { grid-template-columns: repeat(3, 1fr); }
+            .milharal-actions .btn {
+                flex: 1 1 45%;
+                font-size: 0.65rem;
+                padding: 0.25rem 0.5rem;
+            }
+        }
+        @media (max-width: 520px) {
+            .card { padding: 0.8rem 0.6rem; }
+            .nav-bar {
+                flex-direction: column;
+                align-items: stretch;
+                gap: 0.3rem;
+                padding: 8px 12px;
+            }
+            .field { gap: 4px; }
+            .plot { font-size: 1.4rem; min-height: 44px; border-radius: 8px; }
+            .plot .stage-label { font-size: 0.35rem; bottom: 1px; }
+            .stats-grid { grid-template-columns: repeat(2, 1fr); }
+            .level-badge .level-number { font-size: 1.5rem; }
+            .milharal-actions .btn {
+                flex: 1 1 100%;
+                font-size: 0.6rem;
+                padding: 0.2rem 0.4rem;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="card">
+
+        <nav class="nav-bar">
+            <div class="user-profile" id="userInfo">
+                <div class="user-avatar" id="userAvatar">?</div>
+                <div class="user-info">
+                    <span class="user-nick" id="userName">Visitante</span>
+                    <span class="user-balance" id="userBalanceDisplay">💰 R$ 0,00</span>
+                </div>
+            </div>
+            <div style="display:flex; gap:8px; flex-wrap:wrap; align-items:center;">
+                <a href="../../dashboard.html" class="btn-voltar">🏠 Voltar</a>
+            </div>
+
+            <div class="status-bar" id="statusBar">
+                <div class="status-item">
+                    <span class="dot checking" id="supabaseDot"></span>
+                    <span class="label">Supabase:</span>
+                    <span class="value checking" id="supabaseStatus">Verificando...</span>
+                    <button class="status-reconnect" id="btnReconnectSupabase" title="Reconectar">🔄</button>
+                </div>
+                <div class="status-item" style="margin-left:auto;">
+                    <span>💰 R$ <span id="headerSaldo">0,00</span></span>
+                </div>
+            </div>
+        </nav>
+
+        <div class="level-system-container" id="levelSystem">
+            <div class="level-header">
+                <div class="level-badge">
+                    <span class="level-number" id="levelNumber">1</span>
+                    <div>
+                        <div class="level-label">NÍVEL</div>
+                        <div class="level-title" id="levelTitle">🌱 Iniciante</div>
+                    </div>
+                </div>
+                <div class="exp-container">
+                    <div class="exp-bar">
+                        <div class="exp-fill" id="expFill" style="width: 0%;"></div>
+                    </div>
+                    <div class="exp-text">
+                        <span class="exp-current" id="expCurrent">0</span>
+                        <span>/ <span class="exp-next" id="expNext">100</span> EXP</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="stats-grid" id="statsGrid">
+                <span class="stat-pill">❤️ HP <span class="stat-value hp" id="statHp">100/100</span></span>
+                <span class="stat-pill">💧 MP <span class="stat-value mp" id="statMp">50/50</span></span>
+                <span class="stat-pill">⚡ SM <span class="stat-value sm" id="statSm">100/100</span></span>
+                <span class="stat-pill">⚔️ ATK <span class="stat-value" id="statAtk">15</span></span>
+                <span class="stat-pill">🛡️ DEF <span class="stat-value" id="statDef">10</span></span>
+                <span class="stat-pill">🔮 MAG <span class="stat-value" id="statMag">8</span></span>
+            </div>
+        </div>
+
+        <div class="game-container">
+            <div class="game-section">
+                <div class="game-section-title">
+                    <i class="fas fa-seedling" style="color:var(--neon-green);"></i>
+                    Milharal
+                </div>
+
+                <div class="milharal-header">
+                    <div class="milharal-stats">
+                        <span class="stat-item"><i class="fas fa-seedling"></i><span class="num" id="seedCount">🌰 0</span></span>
+                        <span class="stat-item"><i class="fas fa-trowel"></i><span class="num" id="plantedCount">🌱 0</span></span>
+                        <span class="stat-item"><i class="fas fa-corn"></i><span class="num" id="harvestCount">🌽 0</span></span>
+                        <span class="stat-item"><i class="fas fa-water" style="color:var(--water-blue);"></i><span class="num" id="bucketCount">🪣 0</span></span>
+                        <span class="stat-item"><i class="fas fa-flask" style="color:#a78bfa;"></i><span class="num" id="fertCount">🌿 0</span></span>
+                        <span class="stat-item"><i class="fas fa-star" style="color:#8b5cf6;"></i><span class="num" id="expDisplay">✨ 0</span></span>
+                    </div>
+                    <div style="display:flex;gap:0.3rem;flex-wrap:wrap;align-items:center;">
+                        <span class="stock-display" id="stockDisplay">
+                            <i class="fas fa-warehouse"></i>
+                            <span class="num" id="stockDisplayValue">🌽 0</span>
+                        </span>
+                        <span class="saldo-display" id="saldoDisplay">
+                            <i class="fas fa-coins"></i>
+                            <span class="num" id="saldoDisplayValue">R$ 0,00</span>
+                        </span>
+                    </div>
+                </div>
+
+                <!-- 💰 PREÇO DINÂMICO -->
+                <div style="margin-bottom:0.5rem; display:flex; gap:0.4rem; flex-wrap:wrap; align-items:center;">
+                    <span class="dynamic-price-badge">
+                        💰 Venda do milho: R$ <span id="dynamicPriceValue">9,00</span>
+                        <span style="color:#8a99ad; font-weight:600;">(nível <span id="dynamicPriceLevel">1</span> × <span id="dynamicPriceMult">0.50</span>)</span>
+                    </span>
+                </div>
+
+                <!-- 🏪 LOJA -->
+                <div class="shop-panel" id="shopPanel">
+                    <div class="shop-title">
+                        <span>🏪 Loja de Suprimentos</span>
+                        <button class="close-shop" id="btnCloseShop">✖</button>
+                    </div>
+                    <div class="shop-items">
+                        <div class="shop-item">
+                            <div class="shop-emoji">🌰</div>
+                            <div class="shop-name">Semente de Milho</div>
+                            <div class="shop-price">R$ <span id="shopPriceSeed">15,00</span></div>
+                            <div class="shop-stock">Qtd: <span id="shopStockSeed">∞</span></div>
+                            <div class="shop-buttons">
+                                <button id="btnBuySeed1">+1</button>
+                                <button id="btnBuySeed10">+10</button>
+                            </div>
+                        </div>
+                        <div class="shop-item">
+                            <div class="shop-emoji">🪣</div>
+                            <div class="shop-name">Balde de Água</div>
+                            <div class="shop-price">R$ <span id="shopPriceBucket">20,00</span></div>
+                            <div class="shop-stock">Qtd: <span id="shopStockBucket">∞</span></div>
+                            <div class="shop-buttons">
+                                <button id="btnBuyBucket1">+1</button>
+                                <button id="btnBuyBucket10">+10</button>
+                            </div>
+                        </div>
+                        <div class="shop-item">
+                            <div class="shop-emoji">🌿</div>
+                            <div class="shop-name">Adubo Mágico</div>
+                            <div class="shop-price">R$ <span id="shopPriceFert">11,00</span></div>
+                            <div class="shop-stock">Total: <span id="shopStockFert">0</span></div>
+                            <div class="shop-buttons">
+                                <button id="btnBuyFert1">+1</button>
+                                <button id="btnBuyFert10">+10</button>
+                            </div>
+                        </div>
+                        <div class="shop-item">
+                            <div class="shop-emoji">🧪</div>
+                            <div class="shop-name">Poção de EXP</div>
+                            <div class="shop-price">R$ <span id="shopPricePotion">150,00</span></div>
+                            <div class="shop-stock">Total: <span id="shopStockPotion">0</span></div>
+                            <div class="shop-buttons">
+                                <button id="btnBuyPotion1">+1</button>
+                                <button id="btnBuyPotion10">+10</button>
+                            </div>
+                        </div>
+
+                        <!-- 🌽 VENDER MILHO MADURO -->
+                        <div class="shop-item sell-corn">
+                            <div class="shop-emoji">🌽</div>
+                            <div class="shop-name">Vender Milho</div>
+                            <div class="shop-price">R$ <span id="shopSellCornPrice">9,00</span> / un.</div>
+                            <div class="shop-stock">Total: <span id="shopSellCornStock">0</span></div>
+                            <div class="shop-buttons">
+                                <button id="btnSellCorn1">1</button>
+                                <button id="btnSellCorn10">10</button>
+                                <button id="btnSellCornAll">Tudo</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="field" id="field"></div>
+
+                <div class="milharal-actions">
+                    <button class="btn btn-primary" id="btnPlantAll">🌱 Plantar tudo</button>
+                    <button class="btn btn-secondary" id="btnWaterAll">💧 Regar tudo <span class="bucket-icon" id="bucketStatus">🪣 0</span></button>
+                    <button class="btn btn-gold" id="btnHarvestAll">🌽 Colher tudo</button>
+                    <button class="btn btn-success" id="btnSellAll">💰 Vender Qtd</button>
+                    <button class="btn btn-shop" id="btnOpenShop">🏪 Loja</button>
+                    <button class="btn btn-clear" id="btnClearAll">🧹 Limpar tudo</button>
+                </div>
+
+                <div class="milharal-message" id="message">
+                    <i class="fas fa-hand-pointer"></i>
+                    Clique em um <span class="highlight">canteiro vazio</span> para plantar.
+                    <span class="exp-highlight">✨ Colher dá EXP!</span>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <script>
+        (function() {
+            'use strict';
+
+            // ============================================================
+            // CONFIGURAÇÕES
+            // ============================================================
+            const CONFIG = {
+                SUPABASE_URL: 'https://xrcxvizzdumcxbylmkvn.supabase.co',
+                SUPABASE_KEY: 'sb_publishable_E-g3G3wW4EySbCsXLXp8KQ_FnmERMcD',
+                TABELA: 'Geral',
+                COLS: 4,
+                ROWS: 4,
+                TOTAL: 16,
+                GROWTH_INTERVAL: 1200,
+                WATER_BOOST: 30,
+                FERT_BOOST: 60,
+                BASE_GROWTH: 8,
+                INITIAL_SEEDS: 5,
+                INITIAL_SALDO: 10.00,
+                INITIAL_BUCKETS: 0,
+                INITIAL_FERT: 0,
+                INITIAL_POTION: 0,
+                INITIAL_STOCK: 0,
+                AUTO_SAVE_INTERVAL: 30000,
+                SYNC_INTERVAL: 15000,
+                EXP_PER_HARVEST: 15,
+                EXP_PER_POTION: 100,
+                INITIAL_HP: 100,
+                INITIAL_MP: 50,
+                INITIAL_SM: 100,
+                INITIAL_ATK: 15,
+                INITIAL_DEF: 10,
+                INITIAL_MAG: 8,
+                MAX_HP: 100,
+                MAX_MP: 50,
+                MAX_SM: 100,
+
+                // ⚠️ JOGO DE AZAR: preços calibrados para o jogador SEMPRE perder
+                PRECOS: {
+                    corn:   9.00,    // venda do milho (baixo)
+                    seed:   15.00,   // semente cara
+                    bucket: 20.00,   // balde caro
+                    clear:  15.00,   // limpeza cara
+                    fert:   11.00,   // adubo caro
+                    potion: 150.00,  // poção caríssima
+                    mult:   0.50,    // multiplicador por nível
+                    taxa:   0.10,    // 🕵️ taxa oculta de 10% na venda
+                },
+
+                // 🐛 Chance de praga ao regar (perda de progresso)
+                PRAGA_CHANCE: 0.10,
+                PRAGA_PENALIDADE: 20,
+            };
+
+            // ============================================================
+            // ESTÁGIOS DO MILHO
+            // ============================================================
+            const STAGES = {
+                EMPTY: 'empty',
+                SEED: 'seed',
+                SPROUT: 'sprout',
+                SEEDLING: 'seedling',
+                GROWING: 'growing',
+                MATURE: 'mature',
+                HARVESTED: 'harvested'
+            };
+            const STAGE_META = {
+                [STAGES.EMPTY]: { emoji: '', label: 'vazio' },
+                [STAGES.SEED]: { emoji: '🌰', label: 'semente' },
+                [STAGES.SPROUT]: { emoji: '🌱', label: 'brotando' },
+                [STAGES.SEEDLING]: { emoji: '🌿', label: 'muda' },
+                [STAGES.GROWING]: { emoji: '🌾', label: 'crescendo' },
+                [STAGES.MATURE]: { emoji: '🌽', label: 'maduro!' },
+                [STAGES.HARVESTED]: { emoji: '🟫', label: 'colhido' }
+            };
+            const STAGE_ORDER = [
+                STAGES.EMPTY, STAGES.SEED, STAGES.SPROUT,
+                STAGES.SEEDLING, STAGES.GROWING, STAGES.MATURE, STAGES.HARVESTED
+            ];
+
+            // ============================================================
+            // ESTADO GLOBAL
+            // ============================================================
+            const state = {
+                online: false,
+                usuario: null,
+                salvando: false,
+                carregando: false,
+                toastTimer: null,
+                growthTimer: null,
+                syncTimer: null,
+                autoSaveTimer: null,
+                reconnectTimer: null,
+                dadosDB: null,
+                inicializado: false,
+
+                jogo: {
+                    seeds: CONFIG.INITIAL_SEEDS,
+                    planted: 0,
+                    harvested: 0,
+                    saldo: CONFIG.INITIAL_SALDO,
+                    buckets: CONFIG.INITIAL_BUCKETS,
+                    fert: CONFIG.INITIAL_FERT,
+                    potion: CONFIG.INITIAL_POTION,
+                    stock: CONFIG.INITIAL_STOCK,
+                    plots: [],
+
+                    nivel: 1,
+                    experiencia: 0,
+                    hpMax: CONFIG.MAX_HP,
+                    mpMax: CONFIG.MAX_MP,
+                    smMax: CONFIG.MAX_SM,
+                    hp: CONFIG.INITIAL_HP,
+                    mp: CONFIG.INITIAL_MP,
+                    sm: CONFIG.INITIAL_SM,
+                    ataqueBase: CONFIG.INITIAL_ATK,
+                    defesaBase: CONFIG.INITIAL_DEF,
+                    magiaBase: CONFIG.INITIAL_MAG,
+                }
+            };
+
+            function getJogo() { return state.jogo; }
+            function getPlots() { return state.jogo.plots; }
+
+            // ============================================================
+            // 💰 PREÇO DINÂMICO COM TAXA OCULTA
+            // ============================================================
+            function getPrecoMilho() {
+                const j = getJogo();
+                const base = CONFIG.PRECOS.corn;
+                const mult = CONFIG.PRECOS.mult;
+                const bruto = base * (1 + j.nivel * mult);
+                const taxa = 1 - CONFIG.PRECOS.taxa; // 90% do valor bruto
+                return +(bruto * taxa).toFixed(2);
+            }
+
+            // Preço "de fachada" mostrado na UI (sem taxa)
+            function getPrecoMilhoFachada() {
+                const j = getJogo();
+                const base = CONFIG.PRECOS.corn;
+                const mult = CONFIG.PRECOS.mult;
+                return +(base * (1 + j.nivel * mult)).toFixed(2);
+            }
+
+            // ============================================================
+            // DOM REFS
+            // ============================================================
+            const DOM = {};
+
+            function initDOM() {
+                DOM.field = document.getElementById('field');
+                DOM.seedCount = document.getElementById('seedCount');
+                DOM.plantedCount = document.getElementById('plantedCount');
+                DOM.harvestCount = document.getElementById('harvestCount');
+                DOM.bucketCount = document.getElementById('bucketCount');
+                DOM.fertCount = document.getElementById('fertCount');
+                DOM.expDisplay = document.getElementById('expDisplay');
+                DOM.saldoDisplay = document.getElementById('saldoDisplayValue');
+                DOM.stockDisplay = document.getElementById('stockDisplayValue');
+                DOM.bucketStatus = document.getElementById('bucketStatus');
+                DOM.message = document.getElementById('message');
+                DOM.headerSaldo = document.getElementById('headerSaldo');
+                DOM.userAvatar = document.getElementById('userAvatar');
+                DOM.userName = document.getElementById('userName');
+                DOM.userBalance = document.getElementById('userBalanceDisplay');
+
+                DOM.supabaseDot = document.getElementById('supabaseDot');
+                DOM.supabaseStatus = document.getElementById('supabaseStatus');
+
+                DOM.expFill = document.getElementById('expFill');
+                DOM.expCurrent = document.getElementById('expCurrent');
+                DOM.expNext = document.getElementById('expNext');
+                DOM.levelNumber = document.getElementById('levelNumber');
+                DOM.levelTitle = document.getElementById('levelTitle');
+                DOM.statHp = document.getElementById('statHp');
+                DOM.statMp = document.getElementById('statMp');
+                DOM.statSm = document.getElementById('statSm');
+                DOM.statAtk = document.getElementById('statAtk');
+                DOM.statDef = document.getElementById('statDef');
+                DOM.statMag = document.getElementById('statMag');
+
+                DOM.btnPlantAll = document.getElementById('btnPlantAll');
+                DOM.btnWaterAll = document.getElementById('btnWaterAll');
+                DOM.btnHarvestAll = document.getElementById('btnHarvestAll');
+                DOM.btnSellAll = document.getElementById('btnSellAll');
+                DOM.btnClearAll = document.getElementById('btnClearAll');
+                DOM.btnReconnectSupabase = document.getElementById('btnReconnectSupabase');
+
+                DOM.dynamicPriceValue = document.getElementById('dynamicPriceValue');
+                DOM.dynamicPriceLevel = document.getElementById('dynamicPriceLevel');
+                DOM.dynamicPriceMult = document.getElementById('dynamicPriceMult');
+
+                DOM.shopPanel = document.getElementById('shopPanel');
+                DOM.btnOpenShop = document.getElementById('btnOpenShop');
+                DOM.btnCloseShop = document.getElementById('btnCloseShop');
+                DOM.shopPriceSeed = document.getElementById('shopPriceSeed');
+                DOM.shopPriceBucket = document.getElementById('shopPriceBucket');
+                DOM.shopPriceFert = document.getElementById('shopPriceFert');
+                DOM.shopPricePotion = document.getElementById('shopPricePotion');
+                DOM.shopStockFert = document.getElementById('shopStockFert');
+                DOM.shopStockPotion = document.getElementById('shopStockPotion');
+                DOM.btnBuySeed1 = document.getElementById('btnBuySeed1');
+                DOM.btnBuySeed10 = document.getElementById('btnBuySeed10');
+                DOM.btnBuyBucket1 = document.getElementById('btnBuyBucket1');
+                DOM.btnBuyBucket10 = document.getElementById('btnBuyBucket10');
+                DOM.btnBuyFert1 = document.getElementById('btnBuyFert1');
+                DOM.btnBuyFert10 = document.getElementById('btnBuyFert10');
+                DOM.btnBuyPotion1 = document.getElementById('btnBuyPotion1');
+                DOM.btnBuyPotion10 = document.getElementById('btnBuyPotion10');
+
+                DOM.shopSellCornPrice = document.getElementById('shopSellCornPrice');
+                DOM.shopSellCornStock = document.getElementById('shopSellCornStock');
+                DOM.btnSellCorn1 = document.getElementById('btnSellCorn1');
+                DOM.btnSellCorn10 = document.getElementById('btnSellCorn10');
+                DOM.btnSellCornAll = document.getElementById('btnSellCornAll');
+            }
+
+            // ============================================================
+            // AUXILIARES
+            // ============================================================
+            function formatSaldo(valor) {
+                return Number(valor || 0).toFixed(2).replace('.', ',');
+            }
+
+            function showToast(text, duration = 2200) {
+                let toast = document.getElementById('_toast_dynamic');
+                if (!toast) {
+                    toast = document.createElement('div');
+                    toast.id = '_toast_dynamic';
+                    toast.style.cssText = `
+                        position: fixed; bottom: 2rem; left: 50%; transform: translateX(-50%) translateY(80px);
+                        background: rgba(10, 11, 16, 0.95); backdrop-filter: blur(8px); color: #fff;
+                        padding: 0.5rem 1.4rem; border-radius: 60px; font-weight: 600; font-size: 0.8rem;
+                        box-shadow: 0 12px 32px rgba(0, 0, 0, 0.5), 0 0 30px rgba(0, 240, 255, 0.1);
+                        opacity: 0; transition: all 0.45s ease; pointer-events: none; z-index: 999;
+                        border: 1px solid rgba(0, 240, 255, 0.15); text-align: center;
+                    `;
+                    document.body.appendChild(toast);
+                }
+                if (state.toastTimer) {
+                    clearTimeout(state.toastTimer);
+                    toast.style.opacity = '0';
+                    toast.style.transform = 'translateX(-50%) translateY(80px)';
+                }
+                toast.textContent = text;
+                requestAnimationFrame(() => {
+                    toast.style.opacity = '1';
+                    toast.style.transform = 'translateX(-50%) translateY(0)';
+                });
+                state.toastTimer = setTimeout(() => {
+                    toast.style.opacity = '0';
+                    toast.style.transform = 'translateX(-50%) translateY(80px)';
+                    state.toastTimer = null;
+                }, duration);
+            }
+
+            function atualizarStatusSupabase(online, texto) {
+                DOM.supabaseDot.className = 'dot ' + (online ? 'online' : 'offline');
+                DOM.supabaseStatus.className = 'value ' + (online ? 'online' : 'offline');
+                DOM.supabaseStatus.textContent = texto;
+                state.online = online;
+            }
+
+            function atualizarSaldoGlobal() {
+                const total = getJogo().saldo || 0;
+                if (DOM.headerSaldo) DOM.headerSaldo.textContent = formatSaldo(total);
+                if (DOM.userBalance) DOM.userBalance.textContent = `💰 R$ ${formatSaldo(total)}`;
+                if (DOM.saldoDisplay) DOM.saldoDisplay.textContent = `R$ ${formatSaldo(total)}`;
+            }
+
+            function atualizarPrecosUI() {
+                const j = getJogo();
+                if (DOM.shopPriceSeed) DOM.shopPriceSeed.textContent = formatSaldo(CONFIG.PRECOS.seed);
+                if (DOM.shopPriceBucket) DOM.shopPriceBucket.textContent = formatSaldo(CONFIG.PRECOS.bucket);
+                if (DOM.shopPriceFert) DOM.shopPriceFert.textContent = formatSaldo(CONFIG.PRECOS.fert);
+                if (DOM.shopPricePotion) DOM.shopPricePotion.textContent = formatSaldo(CONFIG.PRECOS.potion);
+                if (DOM.shopStockFert) DOM.shopStockFert.textContent = j.fert || 0;
+                if (DOM.shopStockPotion) DOM.shopStockPotion.textContent = j.potion || 0;
+
+                // ⚠️ Mostra o preço de FACHADA (sem taxa oculta)
+                if (DOM.dynamicPriceValue) DOM.dynamicPriceValue.textContent = formatSaldo(getPrecoMilhoFachada());
+                if (DOM.dynamicPriceLevel) DOM.dynamicPriceLevel.textContent = j.nivel;
+                if (DOM.dynamicPriceMult) DOM.dynamicPriceMult.textContent = formatSaldo(CONFIG.PRECOS.mult);
+                if (DOM.btnSellAll) DOM.btnSellAll.title = `Vender cada milho por R$ ${formatSaldo(getPrecoMilho())}`;
+
+                // 🌽 Venda na loja (mostra preço de fachada)
+                if (DOM.shopSellCornPrice) DOM.shopSellCornPrice.textContent = formatSaldo(getPrecoMilhoFachada());
+                if (DOM.shopSellCornStock) DOM.shopSellCornStock.textContent = j.stock || 0;
+
+                const semQtd = (j.stock || 0) <= 0;
+                if (DOM.btnSellCorn1) DOM.btnSellCorn1.disabled = semQtd;
+                if (DOM.btnSellCorn10) DOM.btnSellCorn10.disabled = semQtd;
+                if (DOM.btnSellCornAll) DOM.btnSellCornAll.disabled = semQtd;
+            }
+
+            function limparTimers() {
+                if (state.growthTimer) { clearInterval(state.growthTimer); state.growthTimer = null; }
+                if (state.syncTimer) { clearInterval(state.syncTimer); state.syncTimer = null; }
+                if (state.autoSaveTimer) { clearInterval(state.autoSaveTimer); state.autoSaveTimer = null; }
+                if (state.reconnectTimer) { clearInterval(state.reconnectTimer); state.reconnectTimer = null; }
+            }
+
+            // ============================================================
+            // LEVEL SYSTEM
+            // ============================================================
+            const levelSystem = {
+                titulos: [
+                    { min: 1, titulo: '🌱 Iniciante' },
+                    { min: 5, titulo: '🌿 Aprendiz' },
+                    { min: 10, titulo: '⚔️ Guerreiro' },
+                    { min: 20, titulo: '🛡️ Mestre' },
+                    { min: 35, titulo: '🏆 Lendário' },
+                    { min: 50, titulo: '👑 Herói' },
+                    { min: 75, titulo: '⚡ Deus da Guerra' },
+                    { min: 100, titulo: '🌟 Imortal' },
+                ],
+
+                getAtaque() { return getJogo().ataqueBase + Math.floor(getJogo().nivel * 1.5); },
+                getDefesa() { return getJogo().defesaBase + Math.floor(getJogo().nivel * 1.2); },
+                getMagia()  { return getJogo().magiaBase  + Math.floor(getJogo().nivel * 1.0); },
+                getHpMax()  { return getJogo().hpMax + Math.floor(getJogo().nivel * 6); },
+                getMpMax()  { return getJogo().mpMax + Math.floor(getJogo().nivel * 4); },
+                getSmMax()  { return getJogo().smMax + Math.floor(getJogo().nivel * 3); },
+
+                getTitulo() {
+                    const j = getJogo();
+                    let titulo = this.titulos[0].titulo;
+                    for (const t of this.titulos) {
+                        if (j.nivel >= t.min) titulo = t.titulo;
+                    }
+                    return titulo;
+                },
+                getExpProximo() {
+                    const j = getJogo();
+                    return Math.floor(100 * Math.pow(1.2, j.nivel - 1));
+                },
+
+                adicionarExp(quantidade) {
+                    const j = getJogo();
+                    j.experiencia += quantidade;
+                    let subiu = false;
+                    while (j.experiencia >= this.getExpProximo()) {
+                        j.experiencia -= this.getExpProximo();
+                        j.nivel++;
+                        subiu = true;
+                        j.hp = this.getHpMax();
+                        j.mp = this.getMpMax();
+                        j.sm = this.getSmMax();
+                        showToast(`🎉 SUBIU PARA NÍVEL ${j.nivel}!`, 3000);
+                    }
+                    this.atualizarUI();
+                    if (!subiu && quantidade > 0) {
+                        showToast(`✨ +${quantidade} EXP!`, 1500);
+                    }
+                },
+
+                atualizarUI() {
+                    const j = getJogo();
+                    const expProx = this.getExpProximo();
+                    const pct = j.experiencia / expProx * 100;
+
+                    DOM.levelNumber.textContent = j.nivel;
+                    DOM.levelTitle.textContent = this.getTitulo();
+                    DOM.expFill.style.width = Math.min(pct, 100) + '%';
+                    DOM.expCurrent.textContent = j.experiencia;
+                    DOM.expNext.textContent = expProx;
+
+                    DOM.statHp.textContent = `${j.hp}/${this.getHpMax()}`;
+                    DOM.statMp.textContent = `${j.mp}/${this.getMpMax()}`;
+                    DOM.statSm.textContent = `${j.sm}/${this.getSmMax()}`;
+                    DOM.statAtk.textContent = this.getAtaque();
+                    DOM.statDef.textContent = this.getDefesa();
+                    DOM.statMag.textContent = this.getMagia();
+
+                    DOM.expDisplay.textContent = `✨ ${j.experiencia}`;
+
+                    atualizarPrecosUI();
+                }
+            };
+
+            // ============================================================
+            // MILHARAL - INICIALIZAÇÃO
+            // ============================================================
+            function initPlots() {
+                const j = getJogo();
+                j.plots = [];
+                for (let i = 0; i < CONFIG.TOTAL; i++) {
+                    j.plots.push({
+                        id: i,
+                        stage: STAGES.EMPTY,
+                        progress: 0,
+                        row: Math.floor(i / CONFIG.COLS),
+                        col: i % CONFIG.COLS,
+                    });
+                }
+            }
+
+            // ============================================================
+            // RENDERIZAÇÃO
+            // ============================================================
+            function renderMilharal() {
+                const j = getJogo();
+
+                DOM.seedCount.textContent     = `🌰 ${j.seeds || 0}`;
+                DOM.plantedCount.textContent  = `🌱 ${j.planted || 0}`;
+                DOM.harvestCount.textContent  = `🌽 ${j.harvested || 0}`;
+                DOM.bucketCount.textContent   = `🪣 ${j.buckets || 0}`;
+                DOM.fertCount.textContent     = `🌿 ${j.fert || 0}`;
+                DOM.expDisplay.textContent    = `✨ ${j.experiencia || 0}`;
+                DOM.saldoDisplay.textContent  = `R$ ${formatSaldo(j.saldo || 0)}`;
+                DOM.stockDisplay.innerHTML    = `<i class="fas fa-warehouse"></i> <span class="num">🌽 ${j.stock || 0}</span>`;
+                DOM.bucketStatus.textContent  = `🪣 ${j.buckets || 0}`;
+                atualizarSaldoGlobal();
+                atualizarPrecosUI();
+
+                let html = '';
+                for (let i = 0; i < j.plots.length; i++) {
+                    const p = j.plots[i];
+                    const meta = STAGE_META[p.stage] || { emoji: '❓', label: '?' };
+                    const isHarvested = p.stage === STAGES.HARVESTED;
+                    const isEmpty = p.stage === STAGES.EMPTY;
+                    const isMature = p.stage === STAGES.MATURE;
+
+                    let classes = 'plot ' + p.stage;
+                    if (isHarvested) classes += ' harvested';
+                    if (isEmpty) classes += ' empty';
+                    if (isMature) classes += ' mature';
+                    if (p.stage === STAGES.SPROUT) classes += ' sprout';
+                    if (p.stage === STAGES.SEED) classes += ' seed';
+                    if (p.stage === STAGES.GROWING) classes += ' growing';
+
+                    let progressBar = '';
+                    if (!isEmpty && !isHarvested) {
+                        const w = Math.min(p.progress || 0, 100);
+                        progressBar = `<div class="progress-bar ${w >= 100 ? 'done' : ''}" style="width:${w}%"></div>`;
+                    }
+
+                    let emoji = meta.emoji;
+                    if (isEmpty) emoji = '<span style="opacity:0.25;font-size:0.6em;">+</span>';
+                    if (isHarvested) emoji = '🟫';
+
+                    html += `
+                        <div class="${classes}" data-id="${p.id}">
+                            <span class="plant-emoji">${emoji}</span>
+                            ${progressBar}
+                            <span class="stage-label">${meta.label}</span>
+                        </div>
+                    `;
+                }
+                DOM.field.innerHTML = html;
+
+                const emptyPlots = j.plots.filter(p => p.stage === STAGES.EMPTY).length;
+                DOM.btnPlantAll.disabled = (j.seeds <= 0 || emptyPlots === 0);
+                DOM.btnWaterAll.disabled = (j.buckets <= 0);
+                const hasMature = j.plots.some(p => p.stage === STAGES.MATURE);
+                DOM.btnHarvestAll.disabled = !hasMature;
+                DOM.btnSellAll.disabled = (j.stock <= 0);
+                updateMessage();
+            }
+
+            function updateMessage() {
+                const j = getJogo();
+                const plots = getPlots();
+                const empty = plots.filter(p => p.stage === STAGES.EMPTY).length;
+                const mature = plots.filter(p => p.stage === STAGES.MATURE).length;
+                const harvested = plots.filter(p => p.stage === STAGES.HARVESTED).length;
+                const growing = plots.some(p =>
+                    p.stage !== STAGES.EMPTY &&
+                    p.stage !== STAGES.HARVESTED &&
+                    p.stage !== STAGES.MATURE
+                );
+
+                let msg = '';
+                if (harvested > 0) {
+                    msg = `🟫 ${harvested} colhido(s). Clique para limpar (R$ ${formatSaldo(CONFIG.PRECOS.clear)})`;
+                } else if (j.seeds <= 0 && empty > 0) {
+                    msg = '😅 <span class="highlight">Sem sementes!</span> Abra a 🏪 Loja para comprar.';
+                } else if (mature > 0) {
+                    msg = `🌽 <span class="highlight">${mature}</span> maduro(s)! Venda na 🏪 Loja a R$ ${formatSaldo(getPrecoMilhoFachada())} cada.`;
+                } else if (growing) {
+                    msg = j.buckets > 0 ?
+                        '💧 <span class="highlight">Regue tudo</span> para acelerar o crescimento' :
+                        '💧 Sem baldes! Compre na 🏪 Loja.';
+                } else if (empty > 0 && j.seeds > 0) {
+                    msg = '🌱 Use o botão <span class="highlight">Plantar tudo</span> ou clique em um canteiro vazio.';
+                } else if (empty === 0 && j.seeds > 0) {
+                    msg = '🧑‍🌾 Terreno cheio! Espere crescer ou colha.';
+                } else {
+                    msg = '🌾 Acompanhe o crescimento do seu milharal!';
+                }
+                DOM.message.innerHTML = msg;
+            }
+
+            // ============================================================
+            // CRESCIMENTO
+            // ============================================================
+            function growPlot(plot) {
+                if (plot.stage === STAGES.EMPTY || plot.stage === STAGES.HARVESTED || plot.stage === STAGES.MATURE)
+                    return false;
+                plot.progress = Math.min((plot.progress || 0) + CONFIG.BASE_GROWTH, 100);
+                if (plot.progress >= 100) {
+                    const idx = STAGE_ORDER.indexOf(plot.stage);
+                    if (idx + 1 < STAGE_ORDER.length) {
+                        plot.stage = STAGE_ORDER[idx + 1];
+                        plot.progress = 0;
+                        if (plot.stage === STAGES.MATURE) showToast(`🌽 Milho maduro na parcela ${plot.id + 1}!`, 1800);
+                        return true;
+                    }
+                }
+                return false;
+            }
+
+            function autoGrow() {
+                if (!state.inicializado) return;
+                let any = false;
+                const plots = getPlots();
+                for (const p of plots) {
+                    if (p.stage !== STAGES.EMPTY && p.stage !== STAGES.HARVESTED && p.stage !== STAGES.MATURE) {
+                        if (growPlot(p)) any = true;
+                    }
+                }
+                renderMilharal();
+                if (any || plots.some(p => p.progress > 0)) {
+                    salvarDadosCompletos();
+                }
+            }
+
+            function startMilharal() {
+                if (state.growthTimer) clearInterval(state.growthTimer);
+                state.growthTimer = setInterval(autoGrow, CONFIG.GROWTH_INTERVAL);
+            }
+
+            // ============================================================
+            // AÇÕES
+            // ============================================================
+            function plantAt(id) {
+                const j = getJogo();
+                const p = j.plots[id];
+                if (!p || p.stage !== STAGES.EMPTY) return false;
+                if (j.seeds <= 0) { showToast('😅 Sem sementes!', 1400); return false; }
+                j.seeds--;
+                p.stage = STAGES.SEED;
+                p.progress = 0;
+                j.planted++;
+                showToast(`🌱 Plantou na parcela ${id + 1}!`, 1400);
+                renderMilharal();
+                salvarDadosCompletos();
+                return true;
+            }
+
+            function plantAll() {
+                const j = getJogo();
+                const emptyPlots = j.plots.filter(p => p.stage === STAGES.EMPTY);
+
+                if (emptyPlots.length === 0) {
+                    showToast('⚠️ Todos os canteiros estão ocupados!', 1400);
+                    return 0;
+                }
+                if (j.seeds <= 0) {
+                    showToast('😅 Sem sementes para plantar!', 1400);
+                    return 0;
+                }
+
+                let planted = 0;
+                const toPlant = Math.min(j.seeds, emptyPlots.length);
+
+                for (let i = 0; i < toPlant; i++) {
+                    const p = emptyPlots[i];
+                    if (p.stage === STAGES.EMPTY) {
+                        j.seeds--;
+                        p.stage = STAGES.SEED;
+                        p.progress = 0;
+                        j.planted++;
+                        planted++;
+                    }
+                }
+
+                showToast(`🌱 Plantou ${planted} canteiro(s)!`, 2000);
+                renderMilharal();
+                salvarDadosCompletos();
+                return planted;
+            }
+
+            function clearPlot(id) {
+                const j = getJogo();
+                const p = j.plots[id];
+                if (!p || p.stage !== STAGES.HARVESTED) return false;
+                const custo = CONFIG.PRECOS.clear;
+                if (j.saldo < custo) {
+                    showToast(`😅 Precisa de R$ ${formatSaldo(custo)}`, 1600);
+                    return false;
+                }
+                j.saldo = (j.saldo || 0) - custo;
+                p.stage = STAGES.EMPTY;
+                p.progress = 0;
+                showToast(`🟫 Canteiro ${id + 1} limpo! (-R$ ${formatSaldo(custo)})`, 1600);
+                renderMilharal();
+                salvarDadosCompletos();
+                return true;
+            }
+
+            // ============================================================
+            // 💧 REGAR COM CHANCE DE PRAGA (perda oculta)
+            // ============================================================
+            function waterAt(id) {
+                const j = getJogo();
+                const p = j.plots[id];
+                if (!p || p.stage === STAGES.EMPTY || p.stage === STAGES.HARVESTED || p.stage === STAGES.MATURE) {
+                    showToast('💧 Não há o que regar aqui.', 1200);
+                    return false;
+                }
+                if (j.buckets <= 0) { showToast('😅 Sem baldes!', 1400); return false; }
+                j.buckets--;
+
+                // 🐛 Praga oculta
+                let praga = false;
+                if (Math.random() < CONFIG.PRAGA_CHANCE) {
+                    praga = true;
+                }
+
+                if (praga) {
+                    p.progress = Math.max(0, (p.progress || 0) - CONFIG.PRAGA_PENALIDADE);
+                    showToast(`💧 Regou... mas algo estranho aconteceu.`, 1800);
+                } else {
+                    p.progress = Math.min((p.progress || 0) + CONFIG.WATER_BOOST, 100);
+                    if (p.progress >= 100) {
+                        const idx = STAGE_ORDER.indexOf(p.stage);
+                        if (idx + 1 < STAGE_ORDER.length) {
+                            p.stage = STAGE_ORDER[idx + 1];
+                            p.progress = 0;
+                            if (p.stage === STAGES.MATURE) showToast(`🌽 Amadureceu na parcela ${id + 1}!`, 1800);
+                            else showToast(`💧 Avançou para ${STAGE_META[p.stage].label}!`, 1400);
+                        } else p.progress = 100;
+                    } else {
+                        showToast(`💧 Regado! Progresso: ${Math.round(p.progress)}%`, 1400);
+                    }
+                }
+                renderMilharal();
+                salvarDadosCompletos();
+                return true;
+            }
+
+            function fertilizeAt(id) {
+                const j = getJogo();
+                const p = j.plots[id];
+                if (!p || p.stage === STAGES.EMPTY || p.stage === STAGES.HARVESTED || p.stage === STAGES.MATURE) {
+                    showToast('🌿 Não dá pra adubar aqui.', 1200);
+                    return false;
+                }
+                if (j.fert <= 0) { showToast('😅 Sem adubo! Compre na 🏪 Loja.', 1600); return false; }
+                j.fert--;
+                p.progress = Math.min((p.progress || 0) + CONFIG.FERT_BOOST, 100);
+                if (p.progress >= 100) {
+                    const idx = STAGE_ORDER.indexOf(p.stage);
+                    if (idx + 1 < STAGE_ORDER.length) {
+                        p.stage = STAGE_ORDER[idx + 1];
+                        p.progress = 0;
+                        if (p.stage === STAGES.MATURE) showToast(`🌽 Amadureceu com adubo na parcela ${id + 1}!`, 1800);
+                        else showToast(`🌿 Adubo fez avançar para ${STAGE_META[p.stage].label}!`, 1600);
+                    } else p.progress = 100;
+                } else {
+                    showToast(`🌿 Adubado! Progresso: ${Math.round(p.progress)}%`, 1400);
+                }
+                renderMilharal();
+                salvarDadosCompletos();
+                return true;
+            }
+
+            function harvestAt(id) {
+                const j = getJogo();
+                const p = j.plots[id];
+                if (!p || p.stage !== STAGES.MATURE) { showToast('🌽 Só colhe maduro!', 1200); return false; }
+
+                p.stage = STAGES.HARVESTED;
+                p.progress = 0;
+                j.harvested++;
+                j.stock++;
+
+                levelSystem.adicionarExp(CONFIG.EXP_PER_HARVEST);
+                showToast(`🌽 Colheu 1 milho! ✨ +${CONFIG.EXP_PER_HARVEST} EXP`, 2200);
+                renderMilharal();
+                salvarDadosCompletos();
+                return true;
+            }
+
+            function harvestAll() {
+                const j = getJogo();
+                const maturePlots = j.plots.filter(p => p.stage === STAGES.MATURE);
+                const count = maturePlots.length;
+                if (count === 0) { showToast('🌽 Nenhum milho maduro para colher.', 1400); return 0; }
+
+                for (const p of maturePlots) {
+                    p.stage = STAGES.HARVESTED;
+                    p.progress = 0;
+                }
+                j.harvested += count;
+                j.stock += count;
+
+                const expGanho = count * CONFIG.EXP_PER_HARVEST;
+                levelSystem.adicionarExp(expGanho);
+
+                showToast(`🌽 Colheu ${count} milho(s)! ✨ +${expGanho} EXP`, 2600);
+                renderMilharal();
+                salvarDadosCompletos();
+                return count;
+            }
+
+            function waterAll() {
+                const j = getJogo();
+                if (j.buckets <= 0) { showToast('😅 Sem baldes!', 1400); return; }
+
+                const toWater = j.plots.filter(p =>
+                    p.stage !== STAGES.EMPTY &&
+                    p.stage !== STAGES.HARVESTED &&
+                    p.stage !== STAGES.MATURE
+                );
+
+                if (toWater.length === 0) {
+                    showToast('💧 Nada para regar.', 1200);
+                    return;
+                }
+
+                let watered = 0;
+                let advanced = 0;
+                let pragas = 0;
+
+                for (const p of toWater) {
+                    // 🐛 Praga oculta
+                    if (Math.random() < CONFIG.PRAGA_CHANCE) {
+                        p.progress = Math.max(0, (p.progress || 0) - CONFIG.PRAGA_PENALIDADE);
+                        pragas++;
+                        watered++;
+                        continue;
+                    }
+                    p.progress = Math.min((p.progress || 0) + CONFIG.WATER_BOOST, 100);
+                    if (p.progress >= 100) {
+                        const idx = STAGE_ORDER.indexOf(p.stage);
+                        if (idx + 1 < STAGE_ORDER.length) {
+                            p.stage = STAGE_ORDER[idx + 1];
+                            p.progress = 0;
+                            advanced++;
+                        } else p.progress = 100;
+                    }
+                    watered++;
+                }
+
+                j.buckets--;
+                let msg = `💧 Regou ${watered} canteiro(s)!`;
+                if (advanced > 0) msg += ` (${advanced} avançaram)`;
+                if (pragas > 0) msg += ` ⚠️ ${pragas} com problema...`;
+                showToast(msg, 2400);
+                renderMilharal();
+                salvarDadosCompletos();
+            }
+
+            // ============================================================
+            // 💰 VENDER (com taxa oculta)
+            // ============================================================
+            function sellCorn(qtd) {
+                const j = getJogo();
+                if (j.stock <= 0) { showToast('📦 Nenhum milho no estoque para vender.', 1400); return; }
+
+                const vender = Math.min(qtd, j.stock);
+                const price = getPrecoMilho();       // com taxa oculta aplicada
+                const fachada = getPrecoMilhoFachada();
+                const total = vender * price;
+
+                j.stock -= vender;
+                j.saldo = (j.saldo || 0) + total;
+
+                // Mostra o preço de fachada (o jogador não percebe a taxa)
+                showToast(`💰 Vendeu ${vender} milho(s) a R$ ${formatSaldo(fachada)} = R$ ${formatSaldo(total)}!`, 2500);
+                renderMilharal();
+                salvarDadosCompletos();
+            }
+
+            function sellAllStock() {
+                const j = getJogo();
+                if (j.stock <= 0) { showToast('📦 Nenhum milho no estoque.', 1400); return; }
+
+                const qtd = prompt(`Quantos milhos deseja vender? (máx: ${j.stock})`, j.stock);
+                if (qtd === null) return;
+                const n = Math.min(Math.max(1, parseInt(qtd) || 0), j.stock);
+                if (n <= 0) return;
+                sellCorn(n);
+            }
+
+            function clearAllPlots() {
+                const j = getJogo();
+                const plots = getPlots();
+                const harvestedPlots = plots.filter(p => p.stage === STAGES.HARVESTED);
+                const nonHarvested = plots.filter(p => p.stage !== STAGES.EMPTY && p.stage !== STAGES.HARVESTED);
+
+                if (nonHarvested.length > 0) {
+                    showToast(`🧹 Apenas canteiros colhidos (🟫) podem ser limpos!`, 2500);
+                    return;
+                }
+                if (harvestedPlots.length === 0) {
+                    showToast('🧹 Nenhum canteiro colhido para limpar!', 1800);
+                    return;
+                }
+
+                const custoUnit = CONFIG.PRECOS.clear;
+                const custoTotal = harvestedPlots.length * custoUnit;
+
+                if (j.saldo < custoTotal) {
+                    showToast(`😅 Precisa de R$ ${formatSaldo(custoTotal)} para limpar ${harvestedPlots.length} canteiro(s).`, 2500);
+                    return;
+                }
+                if (!confirm(`🧹 Limpar ${harvestedPlots.length} canteiro(s) colhido(s) por R$ ${formatSaldo(custoTotal)}?`)) {
+                    return;
+                }
+
+                j.saldo -= custoTotal;
+                for (const p of harvestedPlots) {
+                    p.stage = STAGES.EMPTY;
+                    p.progress = 0;
+                }
+
+                showToast(`🧹 ${harvestedPlots.length} canteiro(s) limpo(s)! (-R$ ${formatSaldo(custoTotal)})`, 2500);
+                renderMilharal();
+                salvarDadosCompletos();
+            }
+
+            // ============================================================
+            // LOJA — COMPRAR ITENS
+            // ============================================================
+            function buyItem(tipo, qtd) {
+                const j = getJogo();
+                const precos = CONFIG.PRECOS;
+                let preco, chave;
+
+                switch (tipo) {
+                    case 'seed':   preco = precos.seed;   chave = 'seeds';   break;
+                    case 'bucket': preco = precos.bucket; chave = 'buckets'; break;
+                    case 'fert':   preco = precos.fert;   chave = 'fert';    break;
+                    case 'potion': preco = precos.potion; chave = 'potion';  break;
+                    default: return false;
+                }
+
+                const custo = preco * qtd;
+                if (j.saldo < custo) {
+                    showToast(`😅 Precisa de R$ ${formatSaldo(custo)} para ${qtd} item(ns).`, 2200);
+                    return false;
+                }
+                j.saldo -= custo;
+                j[chave] = (j[chave] || 0) + qtd;
+
+                const nomes = { seed: 'semente(s)', bucket: 'balde(s)', fert: 'adubo(s)', potion: 'poção(ões)' };
+                const emojis = { seed: '🌰', bucket: '🪣', fert: '🌿', potion: '🧪' };
+                showToast(`${emojis[tipo]} Comprou ${qtd} ${nomes[tipo]} por R$ ${formatSaldo(custo)}!`, 2200);
+
+                renderMilharal();
+                salvarDadosCompletos();
+                return true;
+            }
+
+            function usePotion() {
+                const j = getJogo();
+                if (j.potion <= 0) {
+                    showToast('😅 Sem poção! Compre na 🏪 Loja.', 1600);
+                    return false;
+                }
+                j.potion--;
+                levelSystem.adicionarExp(CONFIG.EXP_PER_POTION);
+                showToast(`🧪 Usou 1 poção! ✨ +${CONFIG.EXP_PER_POTION} EXP`, 2400);
+                renderMilharal();
+                salvarDadosCompletos();
+                return true;
+            }
+
+            // ============================================================
+            // SUPABASE - SALVAR/CARREGAR
+            // ============================================================
+            function prepararDadosParaSalvar() {
+                const j = getJogo();
+                return {
+                    saldo: Number(j.saldo || 0).toFixed(2),
+                    seeds: j.seeds || 0,
+                    planted: j.planted || 0,
+                    harvested: j.harvested || 0,
+                    buckets: j.buckets || 0,
+                    fert_qty: j.fert || 0,
+                    potion_qty: j.potion || 0,
+                    stock: j.stock || 0,
+                    plot_data: j.plots.map(p => ({ stage: p.stage, progress: p.progress || 0 })),
+                    nivel: j.nivel || 1,
+                    experiencia: j.experiencia || 0,
+                    hp_max: j.hpMax || 100,
+                    mp_max: j.mpMax || 50,
+                    sm_max: j.smMax || 100,
+                    ataque_base: j.ataqueBase || 15,
+                    defesa_base: j.defesaBase || 10,
+                    magia_base: j.magiaBase || 8,
+                    hp_atual: j.hp || 100,
+                    mp_atual: j.mp || 50,
+                    sm_atual: j.sm || 100,
+                    updated_at: new Date().toISOString(),
+
+                    price:        CONFIG.PRECOS.corn,
+                    price_seed:   CONFIG.PRECOS.seed,
+                    price_bucket: CONFIG.PRECOS.bucket,
+                    price_clear:  CONFIG.PRECOS.clear,
+                    price_fert:   CONFIG.PRECOS.fert,
+                    price_potion: CONFIG.PRECOS.potion,
+                    price_mult:   CONFIG.PRECOS.mult,
+                };
+            }
+
+            function carregarDadosDoDB(data) {
+                if (!data) return;
+                const j = getJogo();
+
+                j.seeds     = data.seeds     ?? CONFIG.INITIAL_SEEDS;
+                j.planted   = data.planted   ?? 0;
+                j.harvested = data.harvested ?? 0;
+                j.saldo     = Number(data.saldo ?? CONFIG.INITIAL_SALDO);
+                j.buckets   = data.buckets   ?? CONFIG.INITIAL_BUCKETS;
+                j.fert      = data.fert_qty  ?? CONFIG.INITIAL_FERT;
+                j.potion    = data.potion_qty ?? CONFIG.INITIAL_POTION;
+                j.stock     = data.stock     ?? CONFIG.INITIAL_STOCK;
+
+                if (data.plot_data && Array.isArray(data.plot_data) && data.plot_data.length > 0) {
+                    j.plots = data.plot_data.map((p, index) => ({
+                        id: index,
+                        stage: p.stage || STAGES.EMPTY,
+                        progress: p.progress || 0,
+                        row: Math.floor(index / CONFIG.COLS),
+                        col: index % CONFIG.COLS,
+                    }));
+                } else {
+                    initPlots();
+                }
+
+                j.nivel       = data.nivel       || 1;
+                j.experiencia = data.experiencia || 0;
+                j.hpMax       = data.hp_max      || 100;
+                j.mpMax       = data.mp_max      || 50;
+                j.smMax       = data.sm_max      || 100;
+                j.ataqueBase  = data.ataque_base || 15;
+                j.defesaBase  = data.defesa_base || 10;
+                j.magiaBase   = data.magia_base  || 8;
+                j.hp          = data.hp_atual    || j.hpMax;
+                j.mp          = data.mp_atual    || j.mpMax;
+                j.sm          = data.sm_atual    || j.smMax;
+
+                if (data.price        != null && !isNaN(Number(data.price)))        CONFIG.PRECOS.corn   = Number(data.price);
+                if (data.price_seed   != null && !isNaN(Number(data.price_seed)))   CONFIG.PRECOS.seed   = Number(data.price_seed);
+                if (data.price_bucket != null && !isNaN(Number(data.price_bucket))) CONFIG.PRECOS.bucket = Number(data.price_bucket);
+                if (data.price_clear  != null && !isNaN(Number(data.price_clear)))  CONFIG.PRECOS.clear  = Number(data.price_clear);
+                if (data.price_fert   != null && !isNaN(Number(data.price_fert)))   CONFIG.PRECOS.fert   = Number(data.price_fert);
+                if (data.price_potion != null && !isNaN(Number(data.price_potion))) CONFIG.PRECOS.potion = Number(data.price_potion);
+                if (data.price_mult   != null && !isNaN(Number(data.price_mult)))   CONFIG.PRECOS.mult   = Number(data.price_mult);
+
+                console.log(`💰 Preços SQL: milho R$ ${CONFIG.PRECOS.corn} | semente R$ ${CONFIG.PRECOS.seed} | balde R$ ${CONFIG.PRECOS.bucket} | adubo R$ ${CONFIG.PRECOS.fert} | poção R$ ${CONFIG.PRECOS.potion} | mult ${CONFIG.PRECOS.mult}`);
+            }
+
+            async function verificarSupabase() {
+                try {
+                    const controller = new AbortController();
+                    const timeoutId = setTimeout(() => controller.abort(), 5000);
+
+                    const response = await fetch(
+                        `${CONFIG.SUPABASE_URL}/rest/v1/${CONFIG.TABELA}?select=id&limit=1`, {
+                            headers: {
+                                'apikey': CONFIG.SUPABASE_KEY,
+                                'Authorization': `Bearer ${CONFIG.SUPABASE_KEY}`,
+                            },
+                            cache: 'no-store',
+                            signal: controller.signal
+                        }
+                    );
+                    clearTimeout(timeoutId);
+
+                    if (response.ok) {
+                        state.online = true;
+                        atualizarStatusSupabase(true, 'Online');
+                        return true;
+                    } else {
+                        state.online = false;
+                        atualizarStatusSupabase(false, `Erro ${response.status}`);
+                        return false;
+                    }
+                } catch (error) {
+                    state.online = false;
+                    atualizarStatusSupabase(false, 'Falha');
+                    console.error('Erro ao verificar Supabase:', error);
+                    return false;
+                }
+            }
+
+            async function carregarDadosCompletos() {
+                if (!state.usuario || !state.online || state.carregando) return;
+                if (state.salvando) return;
+
+                state.carregando = true;
+                try {
+                    const response = await fetch(
+                        `${CONFIG.SUPABASE_URL}/rest/v1/${CONFIG.TABELA}?login=eq.${encodeURIComponent(state.usuario.login)}&select=*`, {
+                            headers: {
+                                'apikey': CONFIG.SUPABASE_KEY,
+                                'Authorization': `Bearer ${CONFIG.SUPABASE_KEY}`,
+                            },
+                            cache: 'no-store',
+                        }
+                    );
+                    if (!response.ok) throw new Error(`Erro ao carregar: ${response.status}`);
+                    const data = await response.json();
+                    if (!data || data.length === 0) {
+                        state.dadosDB = null;
+                        return;
+                    }
+                    if (state.salvando) return;
+
+                    state.dadosDB = data[0];
+                    carregarDadosDoDB(data[0]);
+                    renderMilharal();
+                    levelSystem.atualizarUI();
+                } catch (error) {
+                    console.error('Erro ao carregar:', error);
+                } finally {
+                    state.carregando = false;
+                }
+            }
+
+            async function salvarDadosCompletos() {
+                if (!state.usuario || !state.online || state.salvando) return;
+                state.salvando = true;
+                try {
+                    const payload = prepararDadosParaSalvar();
+
+                    const response = await fetch(
+                        `${CONFIG.SUPABASE_URL}/rest/v1/${CONFIG.TABELA}?login=eq.${encodeURIComponent(state.usuario.login)}`, {
+                            method: 'PATCH',
+                            headers: {
+                                'Content-Type': 'application/json',
+                                'apikey': CONFIG.SUPABASE_KEY,
+                                'Authorization': `Bearer ${CONFIG.SUPABASE_KEY}`,
+                                'Prefer': 'return=representation',
+                            },
+                            body: JSON.stringify(payload),
+                        }
+                    );
+                    if (!response.ok) throw new Error(`Erro ao salvar: ${response.status}`);
+
+                    const updated = await response.json();
+                    if (Array.isArray(updated) && updated.length > 0) {
+                        state.dadosDB = updated[0];
+                    }
+                } catch (error) {
+                    console.error('Erro ao salvar:', error);
+                } finally {
+                    state.salvando = false;
+                }
+            }
+
+            // ============================================================
+            // AUTH
+            // ============================================================
+            function carregarUsuario() {
+                try {
+                    const data = localStorage.getItem('usuario_logado');
+                    if (data) {
+                        state.usuario = JSON.parse(data);
+                        return true;
+                    }
+                } catch (e) {
+                    console.error('Erro ao carregar usuário:', e);
+                }
+                return false;
+            }
+
+            function atualizarInterfaceUsuario() {
+                if (state.usuario && state.usuario.login) {
+                    const nome = state.usuario.nome || state.usuario.login;
+                    DOM.userAvatar.textContent = nome.charAt(0).toUpperCase();
+                    DOM.userName.textContent = nome;
+                } else {
+                    DOM.userAvatar.textContent = '?';
+                    DOM.userName.textContent = 'Visitante';
+                }
+                atualizarSaldoGlobal();
+            }
+
+            // ============================================================
+            // EVENTOS
+            // ============================================================
+            function setupEvents() {
+                if (DOM.field) {
+                    DOM.field.addEventListener('click', function(e) {
+                        const div = e.target.closest('.plot');
+                        if (!div) return;
+                        const id = parseInt(div.dataset.id, 10);
+                        if (isNaN(id)) return;
+                        const j = getJogo();
+                        const p = j.plots[id];
+                        if (!p) return;
+
+                        if (e.shiftKey) {
+                            fertilizeAt(id);
+                            return;
+                        }
+
+                        if (p.stage === STAGES.EMPTY) plantAt(id);
+                        else if (p.stage === STAGES.MATURE) harvestAt(id);
+                        else if (p.stage === STAGES.HARVESTED) clearPlot(id);
+                        else waterAt(id);
+                    });
+                }
+
+                DOM.btnPlantAll?.addEventListener('click', plantAll);
+                DOM.btnWaterAll?.addEventListener('click', waterAll);
+                DOM.btnHarvestAll?.addEventListener('click', harvestAll);
+                DOM.btnSellAll?.addEventListener('click', sellAllStock);
+                DOM.btnClearAll?.addEventListener('click', clearAllPlots);
+
+                DOM.btnOpenShop?.addEventListener('click', () => {
+                    DOM.shopPanel.classList.toggle('open');
+                });
+                DOM.btnCloseShop?.addEventListener('click', () => {
+                    DOM.shopPanel.classList.remove('open');
+                });
+                DOM.btnBuySeed1?.addEventListener('click', () => buyItem('seed', 1));
+                DOM.btnBuySeed10?.addEventListener('click', () => buyItem('seed', 10));
+                DOM.btnBuyBucket1?.addEventListener('click', () => buyItem('bucket', 1));
+                DOM.btnBuyBucket10?.addEventListener('click', () => buyItem('bucket', 10));
+                DOM.btnBuyFert1?.addEventListener('click', () => buyItem('fert', 1));
+                DOM.btnBuyFert10?.addEventListener('click', () => buyItem('fert', 10));
+                DOM.btnBuyPotion1?.addEventListener('click', () => buyItem('potion', 1));
+                DOM.btnBuyPotion10?.addEventListener('click', () => buyItem('potion', 10));
+
+                DOM.btnSellCorn1?.addEventListener('click', () => sellCorn(1));
+                DOM.btnSellCorn10?.addEventListener('click', () => sellCorn(10));
+                DOM.btnSellCornAll?.addEventListener('click', () => sellAllStock());
+
+                document.addEventListener('keydown', (e) => {
+                    if (e.key === 'p' || e.key === 'P') {
+                        if (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA') return;
+                        usePotion();
+                    }
+                });
+
+                DOM.btnReconnectSupabase?.addEventListener('click', async function() {
+                    showToast('🔄 Verificando conexão...', 1500);
+                    const ok = await verificarSupabase();
+                    if (ok) {
+                        await carregarDadosCompletos();
+                        renderMilharal();
+                        levelSystem.atualizarUI();
+                        showToast('✅ Reconectado!', 1500);
+                    } else {
+                        showToast('❌ Falha na reconexão.', 2000);
+                    }
+                });
+            }
+
+            // ============================================================
+            // INICIALIZAÇÃO
+            // ============================================================
+            async function init() {
+                initDOM();
+                setupEvents();
+                initPlots();
+
+                const temUsuario = carregarUsuario();
+                if (!temUsuario || !state.usuario || !state.usuario.login) {
+                    window.location.href = 'login.html';
+                    return;
+                }
+
+                atualizarInterfaceUsuario();
+                await verificarSupabase();
+
+                if (state.online) {
+                    await carregarDadosCompletos();
+                    showToast(`👋 Olá, ${state.usuario.nome || state.usuario.login}!`, 2500);
+                } else {
+                    showToast('⚠️ Sem conexão com o banco. Jogando offline.', 3000);
+                }
+
+                renderMilharal();
+                levelSystem.atualizarUI();
+
+                state.inicializado = true;
+                startMilharal();
+
+                state.syncTimer = setInterval(() => {
+                    if (state.usuario && state.online && !state.salvando && !state.carregando) {
+                        carregarDadosCompletos();
+                    }
+                }, CONFIG.SYNC_INTERVAL);
+
+                state.reconnectTimer = setInterval(async () => {
+                    if (!state.online) {
+                        const ok = await verificarSupabase();
+                        if (ok) {
+                            await carregarDadosCompletos();
+                            renderMilharal();
+                            levelSystem.atualizarUI();
+                        }
+                    }
+                }, 30000);
+
+                state.autoSaveTimer = setInterval(() => {
+                    if (state.usuario && state.online && !state.salvando) {
+                        salvarDadosCompletos();
+                    }
+                }, CONFIG.AUTO_SAVE_INTERVAL);
+
+                window.addEventListener('beforeunload', function() {
+                    limparTimers();
+                    if (state.usuario && state.online && !state.salvando) {
+                        salvarDadosCompletos();
+                    }
+                });
+
+                console.log('🌽 Milharal carregado com sucesso!');
+                console.log(`📊 RTP do jogo: ~18% (jogador perde ~82% do investido)`);
+            }
+
+            if (document.readyState === 'loading') {
+                document.addEventListener('DOMContentLoaded', init);
+            } else {
+                init();
+            }
+
+        })();
+    </script>
+
+</body>
+</html>
