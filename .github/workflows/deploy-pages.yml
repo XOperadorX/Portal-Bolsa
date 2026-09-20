@@ -17,6 +17,9 @@ concurrency:
 jobs:
   build-e-publica:
     runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
     steps:
       - name: Baixar arquivos do repositório
         uses: actions/checkout@v4
@@ -56,7 +59,4 @@ jobs:
 
       - name: Publicar no ar
         id: deployment
-        uses: actions/deploy-pages@v5
-        environment:
-          name: github-pages
-          url: ${{ steps.deployment.outputs.page_url }}
+        uses: actions/deploy-pages@v4
