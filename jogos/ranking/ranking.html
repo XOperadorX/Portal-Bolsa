@@ -1,0 +1,384 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Ranking Geral</title>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+    background: #0f172a;
+    color: #e2e8f0;
+    padding: 20px;
+    min-height: 100vh;
+  }
+  .container { max-width: 1400px; margin: 0 auto; }
+  header {
+    display: flex; align-items: center; justify-content: space-between;
+    flex-wrap: wrap; gap: 16px; margin-bottom: 24px;
+  }
+  h1 {
+    font-size: 1.8rem;
+    background: linear-gradient(90deg, #38bdf8, #a78bfa, #f472b6);
+    -webkit-background-clip: text; background-clip: text;
+    -webkit-text-fill-color: transparent;
+  }
+  .status {
+    display: flex; align-items: center; gap: 8px;
+    font-size: 0.85rem; color: #94a3b8;
+    background: #1e293b; padding: 6px 14px; border-radius: 999px;
+    border: 1px solid #334155;
+  }
+  .dot {
+    width: 9px; height: 9px; border-radius: 50%;
+    background: #64748b; transition: all .3s;
+  }
+  .dot.online { background: #22c55e; box-shadow: 0 0 10px #22c55e; animation: pulse 1.5s infinite; }
+  .dot.offline { background: #ef4444; }
+  @keyframes pulse {
+    0%,100% { opacity: 1; } 50% { opacity: .4; }
+  }
+  .controls {
+    display: flex; gap: 10px; flex-wrap: wrap; margin-bottom: 18px;
+  }
+  .controls input, .controls select {
+    background: #1e293b; border: 1px solid #334155; color: #e2e8f0;
+    padding: 9px 14px; border-radius: 8px; font-size: 0.9rem; outline: none;
+  }
+  .controls input:focus, .controls select:focus { border-color: #38bdf8; }
+  .controls input { flex: 1; min-width: 200px; }
+  .table-wrap {
+    overflow-x: auto; border-radius: 12px;
+    border: 1px solid #1e293b; background: #111827;
+  }
+  table { width: 100%; border-collapse: collapse; font-size: 0.9rem; }
+  thead th {
+    background: #1e293b; color: #94a3b8;
+    text-align: left; padding: 12px 14px;
+    font-weight: 600; font-size: 0.78rem;
+    text-transform: uppercase; letter-spacing: .5px;
+    white-space: nowrap; cursor: pointer; user-select: none;
+    position: sticky; top: 0;
+  }
+  thead th:hover { color: #38bdf8; }
+  thead th .arrow { font-size: .7rem; opacity: .5; }
+  tbody tr {
+    border-top: 1px solid #1e293b;
+    transition: background .2s;
+    animation: fadeIn .4s ease;
+  }
+  tbody tr:hover { background: #1e293b88; }
+  tbody td { padding: 10px 14px; white-space: nowrap; }
+  @keyframes fadeIn { from { opacity: 0; transform: translateY(4px); } to { opacity: 1; } }
+  .pos {
+    font-weight: 700; font-size: 1rem; width: 50px; text-align: center;
+  }
+  .pos.gold   { color: #fbbf24; text-shadow: 0 0 12px #fbbf2477; }
+  .pos.silver { color: #cbd5e1; text-shadow: 0 0 12px #cbd5e177; }
+  .pos.bronze { color: #fb923c; text-shadow: 0 0 12px #fb923c77; }
+  .login { font-weight: 600; color: #f1f5f9; }
+  .money { color: #4ade80; font-variant-numeric: tabular-nums; }
+  .btc   { color: #f59e0b; font-variant-numeric: tabular-nums; }
+  .num   { font-variant-numeric: tabular-nums; color: #cbd5e1; }
+  .tag {
+    display: inline-block; padding: 2px 9px; border-radius: 999px;
+    font-size: 0.72rem; font-weight: 600;
+  }
+  .tag.on  { background: #22c55e22; color: #4ade80; border: 1px solid #22c55e44; }
+  .tag.off { background: #64748b22; color: #94a3b8; border: 1px solid #64748b44; }
+  .tag.lock { background: #ef444422; color: #f87171; border: 1px solid #ef444444; }
+  .empty { text-align: center; padding: 40px; color: #64748b; }
+  .row-flash { animation: flash 1.2s ease; }
+  @keyframes flash {
+    0% { background: #38bdf855; } 100% { background: transparent; }
+  }
+  .time { color: #64748b; font-size: 0.82rem; }
+  @media (max-width: 768px) {
+    .hide-sm { display: none; }
+    h1 { font-size: 1.3rem; }
+  }
+
+          .btn-bolsa {
+            background: linear-gradient(135deg, #00f0ff, #7000ff);
+            color: white;
+            border: none;
+            padding: 8px 18px;
+            border-radius: 40px;
+            font-weight: bold;
+            font-size: 0.9rem;
+            cursor: pointer;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            box-shadow: 0 0 12px rgba(0, 240, 255, 0.4);
+            text-decoration: none;
+        }
+
+        .btn-bolsa:hover {
+            transform: translateY(-2px) scale(1.02);
+            box-shadow: 0 0 20px rgba(0, 240, 255, 0.8);
+        }
+</style>
+</head>
+<body>
+<div class="container">
+  <header>
+    <h1>🏆 Ranking Geral</h1>
+
+            <div class="nav-buttons">
+            <button class="btn-bolsa" onclick="window.location.href='../../dashboard.html'">🏠 Voltar</button>
+        </div>
+
+    <div class="status">
+      <span class="dot" id="statusDot"></span>
+      <span id="statusText">Conectando…</span>
+    </div>
+  </header>
+
+  <div class="controls">
+    <input type="text" id="search" placeholder="🔍 Buscar por login…">
+    <select id="sortSelect">
+      <option value="saldo">Ordenar por Saldo</option>
+      <option value="saldo_poupanca">Ordenar por Poupança</option>
+      <option value="btc">Ordenar por BTC</option>
+      <option value="nivel">Ordenar por Nível</option>
+      <option value="mumu">Ordenar por Mumu</option>
+      <option value="created_at">Ordenar por Data de Criação</option>
+      <option value="ultima_vez_online">Ordenar por Última Vez Online</option>
+    </select>
+  </div>
+
+  <div class="table-wrap">
+    <table>
+      <thead>
+        <tr>
+          <th data-sort="pos">#</th>
+          <th data-sort="login">Login</th>
+          <th data-sort="saldo">Saldo</th>
+          <th data-sort="saldo_poupanca">Poupança</th>
+          <th data-sort="btc">BTC</th>
+          <th data-sort="nivel">Nível</th>
+          <th data-sort="mumu">Mumu</th>
+          <th data-sort="created_at" class="hide-sm">Criado em</th>
+          <th data-sort="updated_at" class="hide-sm">Atualizado</th>
+          <th data-sort="ultima_vez_online" class="hide-sm">Última Vez Online</th>
+          <th>Status</th>
+        </tr>
+      </thead>
+      <tbody id="tbody">
+        <tr><td colspan="11" class="empty">Carregando dados…</td></tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<script>
+// ============================================================
+// ⚙️ CONFIGURAÇÃO — troque pelos seus dados do Supabase
+// ============================================================
+const SUPABASE_URL = 'https://xrcxvizzdumcxbylmkvn.supabase.co';
+const SUPABASE_ANON_KEY = 'sb_publishable_E-g3G3wW4EySbCsXLXp8KQ_FnmERMcD';
+// ============================================================
+
+const { createClient } = supabase;
+const sb = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+const COLS = [
+  'id','login','saldo','saldo_poupanca','created_at','updated_at',
+  'nivel','btc','mumu','cadeado','bloqueado','ultima_vez_online'
+];
+
+let dados = [];
+let sortKey = 'saldo';
+let sortDir = 'desc';
+let filtro = '';
+
+const $tbody = document.getElementById('tbody');
+const $dot = document.getElementById('statusDot');
+const $statusText = document.getElementById('statusText');
+const $search = document.getElementById('search');
+const $sortSelect = document.getElementById('sortSelect');
+
+// ---------- Utilidades ----------
+const fmtMoney = v => v == null ? '—' :
+  Number(v).toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+
+const fmtBtc = v => v == null ? '—' :
+  Number(v).toLocaleString('pt-BR', { minimumFractionDigits: 8, maximumFractionDigits: 8 });
+
+const fmtNum = v => v == null ? '—' :
+  Number(v).toLocaleString('pt-BR');
+
+const fmtDate = v => {
+  if (!v) return '—';
+  const d = new Date(v);
+  if (isNaN(d)) return '—';
+  return d.toLocaleString('pt-BR', { dateStyle: 'short', timeStyle: 'short' });
+};
+
+const escapeHtml = s => String(s ?? '')
+  .replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+
+function isOnline(ts) {
+  if (!ts) return false;
+  return (Date.now() - new Date(ts).getTime()) < 5 * 60 * 1000; // 5 min
+}
+
+// ---------- Render ----------
+function render() {
+  let lista = dados.filter(d =>
+    !filtro || (d.login || '').toLowerCase().includes(filtro)
+  );
+
+  lista.sort((a, b) => {
+    let va = a[sortKey], vb = b[sortKey];
+    if (sortKey === 'created_at' || sortKey === 'updated_at' || sortKey === 'ultima_vez_online') {
+      va = va ? new Date(va).getTime() : 0;
+      vb = vb ? new Date(vb).getTime() : 0;
+    } else if (typeof va === 'string' || typeof vb === 'string') {
+      va = (va ?? '').toString().toLowerCase();
+      vb = (vb ?? '').toString().toLowerCase();
+    } else {
+      va = Number(va ?? 0);
+      vb = Number(vb ?? 0);
+    }
+    if (va < vb) return sortDir === 'asc' ? -1 : 1;
+    if (va > vb) return sortDir === 'asc' ? 1 : -1;
+    return 0;
+  });
+
+  if (!lista.length) {
+    $tbody.innerHTML = `<tr><td colspan="11" class="empty">Nenhum registro encontrado.</td></tr>`;
+    return;
+  }
+
+  $tbody.innerHTML = lista.map((d, i) => {
+    const pos = i + 1;
+    const posClass = pos === 1 ? 'gold' : pos === 2 ? 'silver' : pos === 3 ? 'bronze' : '';
+    const online = isOnline(d.ultima_vez_online);
+
+    let statusTags = '';
+    if (d.cadeado)  statusTags += `<span class="tag lock">🔒 Cadeado</span> `;
+    if (d.bloqueado) statusTags += `<span class="tag lock">⛔ Bloqueado</span> `;
+    statusTags += online
+      ? `<span class="tag on">● Online</span>`
+      : `<span class="tag off">○ Offline</span>`;
+
+    return `
+      <tr data-id="${d.id}">
+        <td class="pos ${posClass}">${pos}</td>
+        <td class="login">${escapeHtml(d.login) || '—'}</td>
+        <td class="money">R$ ${fmtMoney(d.saldo)}</td>
+        <td class="money">R$ ${fmtMoney(d.saldo_poupanca)}</td>
+        <td class="btc">${fmtBtc(d.btc)}</td>
+        <td class="num">${fmtNum(d.nivel)}</td>
+        <td class="num">${fmtNum(d.mumu)}</td>
+        <td class="time hide-sm">${fmtDate(d.created_at)}</td>
+        <td class="time hide-sm">${fmtDate(d.updated_at)}</td>
+        <td class="time hide-sm">${fmtDate(d.ultima_vez_online)}</td>
+        <td>${statusTags}</td>
+      </tr>`;
+  }).join('');
+}
+
+// ---------- Carga inicial ----------
+async function carregar() {
+  const { data, error } = await sb
+    .from('Geral')
+    .select(COLS.join(','))
+    .order('saldo', { ascending: false })
+    .limit(1000);
+
+  if (error) {
+    console.error('Erro ao carregar:', error);
+    $tbody.innerHTML = `<tr><td colspan="11" class="empty">Erro ao carregar: ${escapeHtml(error.message)}</td></tr>`;
+    return;
+  }
+  dados = data || [];
+  render();
+}
+
+// ---------- Realtime ----------
+function conectarRealtime() {
+  const channel = sb
+    .channel('ranking-geral')
+    .on('postgres_changes',
+      { event: '*', schema: 'public', table: 'Geral' },
+      payload => {
+        const { eventType, new: novo, old: antigo } = payload;
+
+        if (eventType === 'INSERT') {
+          dados.push(novo);
+        } else if (eventType === 'UPDATE') {
+          const idx = dados.findIndex(d => d.id === novo.id);
+          if (idx >= 0) dados[idx] = novo;
+          else dados.push(novo);
+        } else if (eventType === 'DELETE') {
+          dados = dados.filter(d => d.id !== antigo.id);
+        }
+        render();
+        flashRow(novo?.id);
+      }
+    )
+    .subscribe(status => {
+      if (status === 'SUBSCRIBED') {
+        $dot.className = 'dot online';
+        $statusText.textContent = 'Tempo real ativo';
+      } else if (status === 'CHANNEL_ERROR' || status === 'TIMED_OUT' || status === 'CLOSED') {
+        $dot.className = 'dot offline';
+        $statusText.textContent = 'Reconectando…';
+        setTimeout(conectarRealtime, 3000);
+      } else {
+        $dot.className = 'dot';
+        $statusText.textContent = 'Conectando…';
+      }
+    });
+
+  return channel;
+}
+
+function flashRow(id) {
+  if (!id) return;
+  requestAnimationFrame(() => {
+    const tr = document.querySelector(`tr[data-id="${id}"]`);
+    if (tr) {
+      tr.classList.add('row-flash');
+      setTimeout(() => tr.classList.remove('row-flash'), 1200);
+    }
+  });
+}
+
+// ---------- Eventos ----------
+$search.addEventListener('input', e => {
+  filtro = e.target.value.trim().toLowerCase();
+  render();
+});
+
+$sortSelect.addEventListener('change', e => {
+  sortKey = e.target.value;
+  sortDir = 'desc';
+  render();
+});
+
+document.querySelectorAll('thead th[data-sort]').forEach(th => {
+  th.addEventListener('click', () => {
+    const key = th.dataset.sort;
+    if (key === 'pos') return;
+    if (sortKey === key) sortDir = sortDir === 'asc' ? 'desc' : 'asc';
+    else { sortKey = key; sortDir = 'desc'; }
+    $sortSelect.value = key;
+    render();
+  });
+});
+
+// Atualiza status online/offline a cada 30s
+setInterval(render, 30000);
+
+// ---------- Início ----------
+carregar().then(conectarRealtime);
+</script>
+</body>
+</html>

@@ -1,0 +1,276 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Painel ADM - BAEP Investimentos</title>
+
+    <!-- 🔐 PROTEÇÃO: bloqueia acesso direto se cadeado !== true -->
+    <script>
+    (async function protegerAdmin() {
+        const usuarioData = localStorage.getItem('usuario_logado');
+
+        if (!usuarioData) {
+            alert('⛔ Você precisa estar logado.');
+            window.location.href = '/dashboard.html';
+            return;
+        }
+
+        let login;
+        try {
+            login = JSON.parse(usuarioData).login;
+        } catch (e) {
+            window.location.href = '/dashboard.html';
+            return;
+        }
+
+        if (!login) {
+            window.location.href = '/dashboard.html';
+            return;
+        }
+
+        const script = document.createElement('script');
+        script.src = 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2';
+        script.onload = async () => {
+            const sb = window.supabase.createClient(
+                'https://xrcxvizzdumcxbylmkvn.supabase.co',
+                'sb_publishable_E-g3G3wW4EySbCsXLXp8KQ_FnmERMcD'
+            );
+
+            const { data, error } = await sb
+                .from('Geral')
+                .select('cadeado')
+                .eq('login', login)
+                .maybeSingle();
+
+            if (error || !data || data.cadeado !== true) {
+                alert('⛔ Acesso negado. Você não é admin.');
+                window.location.href = '/dashboard.html';
+            } else {
+                console.log('👑 Bem-vindo, admin!');
+            }
+        };
+        document.head.appendChild(script);
+    })();
+    </script>
+
+    <link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@400;600;700&family=Orbitron:wght@400;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style/admin.css">
+</head>
+<body>
+    <!-- BARRA DE NAVEGAÇÃO ESTILIZADA (TEMA CYBERPUNK) -->
+    <div class="nav-bar">
+        <div class="nav-links">
+            <a href="./sys.html" class="active">⚡ ADMIN</a>
+        </div>
+        <div class="user-profile">
+            <div class="user-avatar">👑</div>
+            <div class="user-info">
+                <span class="user-nick" id="usuarioLogadoNav">ADM</span>
+                <span class="user-balance">Supabase <span id="statusSupabaseTextoNav">Online</span></span>
+            </div>
+        </div>
+        <div class="nav-buttons">
+            <button class="btn-bolsa" onclick="window.location.href='../../dashboard.html'">🏠 Voltar</button>
+        </div>
+    </div>
+
+    <div class="container">
+        <!-- Mensagens -->
+        <div id="mensagem" class="mensagem"></div>
+
+        <!-- ==================== SELIC - CONTROLE ==================== -->
+        <div class="card selic-card">
+            <h2>📈 TAXA SELIC - CONTROLE</h2>
+            <p style="color: #8a99ad; margin-bottom: 16px; font-size: 0.9rem;">
+                Ajuste a taxa SELIC para influenciar o mercado de FIIs. 
+                <strong style="color:var(--neon-blue);">SELIC alta</strong> → FIIs caem (oportunidade de compra) | 
+                <strong style="color:var(--neon-green);">SELIC baixa</strong> → FIIs sobem (momento de vender/colher)
+            </p>
+            
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="selicInput">Taxa SELIC Atual (% a.a.)</label>
+                    <input type="number" id="selicInput" step="0.25" min="0" max="25" value="10.75">
+                </div>
+                <div class="form-group" style="display: flex; align-items: flex-end; gap: 10px; flex-wrap: wrap;">
+                    <button class="btn btn-primary" id="btnAtualizarSelic">🔄 Atualizar SELIC</button>
+                    <button class="btn btn-secondary" id="btnSelicPadrao">↩️ Restaurar Padrão</button>
+                </div>
+            </div>
+
+            <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 20px; margin-top: 20px;">
+                <div class="stat-box">
+                    <h3>SELIC Atual</h3>
+                    <p class="selic-atual" id="selicDisplay">10,75%</p>
+                    <span class="selic-indicador" id="selicIndicador">Média</span>
+                </div>
+                <div class="stat-box">
+                    <h3>Impacto nos FIIs</h3>
+                    <p style="font-size: 1.2rem; font-weight: 700; color: #fff;" id="selicImpactoTexto">📊 Impacto Neutro</p>
+                    <div id="selicImpactoDetalhe" class="selic-impacto impacto-neutral" style="font-size: 0.85rem;">
+                        ⚖️ Mercado estável
+                    </div>
+                </div>
+                <div class="stat-box">
+                    <h3>Estratégia Recomendada</h3>
+                    <p style="font-size: 1rem; font-weight: 700; color: #fff;" id="selicEstrategia">🔍 Aguardar</p>
+                    <p style="font-size: 0.75rem; color: #8a99ad;" id="selicEstrategiaDetalhe">Analise o mercado</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- ==================== CÓDIGOS DE RESGATE ==================== -->
+        <div class="card codigos-card">
+            <h2>🎁 CÓDIGOS DE RESGATE</h2>
+            <p style="color: #8a99ad; margin-bottom: 16px; font-size: 0.9rem;">
+                Crie códigos que os usuários podem resgatar na página de saldo.
+                Você pode dar <strong style="color:var(--neon-green);">Mumu</strong> e/ou
+                <strong style="color:var(--neon-blue);">Saldo R$</strong>.
+            </p>
+
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="codigoInput">Código (ex: BEMVINDO2024)</label>
+                    <input type="text" id="codigoInput" placeholder="Digite o código" maxlength="30" style="text-transform: uppercase;">
+                </div>
+                <div class="form-group">
+                    <label for="codigoMumu">Recompensa Mumu (opcional)</label>
+                    <input type="number" id="codigoMumu" placeholder="0.00" step="0.01" min="0" value="0">
+                </div>
+            </div>
+
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="codigoSaldo">Recompensa Saldo R$ (opcional)</label>
+                    <input type="number" id="codigoSaldo" placeholder="0.00" step="0.01" min="0" value="0">
+                </div>
+                <div class="form-group">
+                    <label for="codigoLimite">Limite de usos (0 = ilimitado)</label>
+                    <input type="number" id="codigoLimite" placeholder="0" min="0" value="0">
+                </div>
+            </div>
+
+            <div style="display: flex; gap: 10px; flex-wrap: wrap; margin-bottom: 20px;">
+                <button class="btn btn-success" id="btnCriarCodigo">➕ Criar Código</button>
+                <button class="btn btn-secondary" id="btnRecarregarCodigos">🔄 Recarregar Lista</button>
+            </div>
+
+            <h3 style="color: #fff; font-size: 1rem; margin-bottom: 12px;">📋 Códigos Existentes</h3>
+            <div class="table-wrapper">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Código</th>
+                            <th>Mumu</th>
+                            <th>Saldo R$</th>
+                            <th>Usos</th>
+                            <th>Limite</th>
+                            <th>Status</th>
+                            <th>Ações</th>
+                        </tr>
+                    </thead>
+                    <tbody id="tabelaCodigos"></tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- Buscar Usuário -->
+        <div class="card">
+            <h2>🔍 Buscar Usuário</h2>
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="buscaUsuario">Login ou Nome</label>
+                    <input type="text" id="buscaUsuario" placeholder="Digite o login ou nome do usuário">
+                </div>
+                <div class="form-group" style="display: flex; align-items: flex-end; gap: 10px; flex-wrap: wrap;">
+                    <button class="btn btn-primary" id="btnBuscar">🔍 Buscar</button>
+                    <button class="btn btn-secondary" id="btnListarTodos">📋 Listar Todos</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Resultados da Busca -->
+        <div class="card" id="cardResultados" style="display: none;">
+            <h2>👤 Usuário Encontrado</h2>
+            <div id="detalhesUsuario"></div>
+        </div>
+
+        <!-- Lista de Usuários -->
+        <div class="card" id="cardLista" style="display: none;">
+            <h2>📋 Todos os Usuários</h2>
+            <div class="table-wrapper">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Nome</th>
+                            <th>Login</th>
+                            <th>Senha</th>
+                            <th>Saldo (Mumu)</th>
+                            <th>Poupança (Mumu)</th>
+                            <th>SM Atual</th>
+                            <th>Status</th>
+                            <th>Ações</th>
+                        </tr>
+                    </thead>
+                    <tbody id="tabelaUsuarios"></tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- Ações Rápidas -->
+        <div class="card">
+            <h2>⚡ Ações Rápidas</h2>
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="usuarioId">ID do Usuário</label>
+                    <input type="number" id="usuarioId" placeholder="Digite o ID do usuário">
+                </div>
+                <div class="form-group">
+                    <label for="valorAcao">Valor (Mumu)</label>
+                    <input type="number" id="valorAcao" placeholder="0.00" step="0.01" min="0.01">
+                </div>
+            </div>
+            <div style="display: flex; gap: 10px; flex-wrap: wrap; margin-top: 10px;">
+                <button class="btn btn-success" id="btnAdicionarSaldo">➕ Adicionar Saldo</button>
+                <button class="btn btn-danger" id="btnRemoverSaldo">➖ Remover Saldo</button>
+                <button class="btn btn-warning" id="btnDefinirSaldo">🎯 Definir Saldo</button>
+            </div>
+        </div>
+
+        <!-- Estatísticas -->
+        <div class="card">
+            <h2>📊 Estatísticas</h2>
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 20px;">
+                <div class="stat-box">
+                    <h3>Total de Usuários</h3>
+                    <p class="stat-blue" id="totalUsuarios">0</p>
+                </div>
+                <div class="stat-box">
+                    <h3>Total em Circulação</h3>
+                    <p class="stat-green" id="totalCirculacao">0,00 <span class="moeda-simbolo">Mumu</span></p>
+                </div>
+                <div class="stat-box">
+                    <h3>Total na Poupança</h3>
+                    <p class="stat-gold" id="totalPoupanca">0,00 <span class="moeda-simbolo">Mumu</span></p>
+                </div>
+                <div class="stat-box">
+                    <h3>Usuários Bloqueados</h3>
+                    <p class="stat-red" id="totalBloqueados">0</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script type="importmap">
+    {
+        "imports": {
+            "@supabase/supabase-js": "https://esm.sh/@supabase/supabase-js@2"
+        }
+    }
+    </script>
+
+    <script type="module" src="script/admin.js"></script>
+</body>
+</html>
