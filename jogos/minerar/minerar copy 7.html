@@ -676,7 +676,7 @@
                 <div class="stat-box"><label>⛏️ BTC acumulado</label><div class="value btc" id="btcTotal">0.00000000</div></div>
                 <div class="stat-box"><label>⚡ Poder ativo</label><div class="value hash" id="poderMineracao">1.0 MH/s</div></div>
                 <div class="stat-box"><label>⏱️ Mineração passiva</label><div class="value" id="mineracaoPassiva">0.00000000 BTC/s</div></div>
-                <div class="stat-box"><label>📈 Ganho por clique</label><div class="value hash" id="ganhoClique">0.0000000025</div></div>
+                <div class="stat-box"><label>📈 Ganho por clique</label><div class="value hash" id="ganhoClique">0.00000000</div></div>
             </div>
             <div class="grid-2 mt-2">
                 <div class="stat-box"><label>🔒 Poder base (permanente)</label><div class="value hash" id="poderBase">1.0 MH/s</div></div>
@@ -812,12 +812,6 @@
     const MAX_LOG_LINHAS = 20;
     const CUSTO_UPGRADE = 10;
 
-    // ===== GANHO POR CLIQUE =====
-    // 1000 cliques em 1 MH/s = 0.00000247 BTC
-    // → 0.00000000247 BTC por clique por MH/s
-    const GANHO_CLIQUE_BASE = 0.00000000247;
-    const VARIACAO_CLIQUE = 0.4; // ±20%
-
     // ===== MERCADO =====
     const PRECO_COMPRA_BTC      = 0.001;    // compra: 1 MH/s = 0.001 BTC
     const PRECO_VENDA_MERCADO   = 0.0008;   // venda mercado: 20% taxa
@@ -867,14 +861,6 @@
     }
 
     function formatarBTC(valor) { return Number(valor).toFixed(8); }
-
-    // Formata BTC com mais casas para valores muito pequenos (ganho por clique)
-    function formatarBTCPreciso(valor) {
-        const n = Number(valor);
-        if (n === 0) return '0.0000000000';
-        if (Math.abs(n) < 0.00000001) return n.toFixed(10);
-        return n.toFixed(8);
-    }
 
     function formatarDuracao(segundos) {
         if (segundos < 60) return `${Math.floor(segundos)}s`;
@@ -930,20 +916,6 @@
     function mercadoAtivo() {
         if (estado.poderMercado <= 0 || !estado.poderMercadoExpiraEm) return false;
         return new Date(estado.poderMercadoExpiraEm).getTime() > Date.now();
-    }
-
-    // ============================================================
-    // GANHO POR CLIQUE (fonte única da verdade no front-end)
-    // 1000 cliques em 1 MH/s = 0.00000247 BTC
-    // ============================================================
-    function calcularGanhoClique() {
-        const variacao = 1 - VARIACAO_CLIQUE / 2 + Math.random() * VARIACAO_CLIQUE;
-        return GANHO_CLIQUE_BASE * poderAtivo() * variacao;
-    }
-
-    // Ganho médio (sem random) — usado para exibir na UI
-    function ganhoCliqueMedio() {
-        return GANHO_CLIQUE_BASE * poderAtivo();
     }
 
     // ============================================================
@@ -1037,9 +1009,8 @@
         const passivaEl = document.getElementById('mineracaoPassiva');
         if (passivaEl) passivaEl.textContent = (ativo * TAXA_BASE).toFixed(8) + ' BTC/s';
 
-        // Ganho por clique: média exata (0.00000000247 * MH/s)
         const ganhoCliqueEl = document.getElementById('ganhoClique');
-        if (ganhoCliqueEl) ganhoCliqueEl.textContent = formatarBTCPreciso(ganhoCliqueMedio());
+        if (ganhoCliqueEl) ganhoCliqueEl.textContent = ((0.0000001 + 0.0000005) * ativo).toFixed(8);
 
         const baseEl = document.getElementById('poderBase');
         if (baseEl) baseEl.textContent = estado.poderHash.toFixed(1) + ' MH/s';
@@ -1107,6 +1078,7 @@
             }
         }
 
+        // Toast de alerta (uma vez por ciclo)
         if (restante < limiteAlerta && restante > 0 && !alertaDisparado) {
             alertaDisparado = true;
             showToast(`⚠️ Seu poder do mercado expira em menos de 1 hora!`, true);
@@ -1129,6 +1101,7 @@
 
         const qtd = parseFloat(input.value) || 0;
         const custo = arredondar(qtd * PRECO_COMPRA_BTC, 8);
+        // Novo poder ativo = substitui base pelo mercado (soma se já tem mercado)
         const novoMkt = mercadoAtivo() ? estado.poderMercado + qtd : qtd;
         const novoAtivo = Math.max(estado.poderHash, novoMkt);
 
@@ -1209,6 +1182,7 @@
         tipoVenda = tipo;
         document.getElementById('tipoMercado').classList.toggle('ativo', tipo === 'mercado');
         document.getElementById('tipoBase').classList.toggle('ativo', tipo === 'base');
+        // Ajusta o botão
         const btn = document.getElementById('btnVender');
         btn.className = tipo === 'mercado' ? 'btn btn-red' : 'btn btn-gold';
         atualizarResumoVenda();
@@ -1230,6 +1204,7 @@
         const taxa = bruto * taxaPct;
         const liquido = bruto - taxa;
 
+        // Disponível
         let disponivel = 0;
         if (tipoVenda === 'mercado') {
             disponivel = mercadoAtivo() ? estado.poderMercado : 0;
@@ -1273,6 +1248,7 @@
         const preco = tipoVenda === 'mercado' ? PRECO_VENDA_MERCADO : PRECO_VENDA_BASE;
         const taxaPct = tipoVenda === 'mercado' ? TAXA_VENDA_MERCADO : TAXA_VENDA_BASE;
 
+        // Verificação local
         if (tipoVenda === 'mercado') {
             if (!mercadoAtivo() || qtd > estado.poderMercado) {
                 showToast(`❌ Sem poder de mercado ativo suficiente (${estado.poderMercado.toFixed(1)} MH/s).`, true);
@@ -1298,7 +1274,7 @@
             const { data, error } = await supabase.rpc('vender_poder', {
                 p_login: estado.login,
                 p_hash: qtd,
-                p_tipo: tipoVenda
+                p_tipo: tipoVenda   // 'mercado' ou 'base'
             });
             if (error) throw error;
             if (!data || !data.ok) { showToast('❌ ' + (data?.erro || 'erro na venda'), true); return; }
@@ -1364,7 +1340,7 @@
         if (rpcEmAndamento) return;
 
         const ativo = poderAtivo();
-        const ganhoPreview = calcularGanhoClique();
+        const ganhoPreview = (0.0000001 + Math.random() * 0.000001) * ativo;
         estado.btc += ganhoPreview;
         atualizarUI();
 
@@ -1380,7 +1356,7 @@
             }
             estado.btc = parseFloat(data.btc) || estado.btc;
             atualizarUI();
-            adicionarLog(`⛏️ +${formatarBTCPreciso(data.ganho)} BTC`);
+            adicionarLog(`⛏️ +${formatarBTC(data.ganho)} BTC`);
 
             inserirHistoricoLocal({
                 tipo: 'clique',
@@ -1584,7 +1560,7 @@
                         <span class="hist-tipo">${meta.label}${detalhe}</span>
                         <span class="hist-data">📅 ${dataHora}</span>
                     </div>
-                    <div class="${classe}">${sinal}${formatarBTCPreciso(ganho)}</div>
+                    <div class="${classe}">${sinal}${formatarBTC(ganho)}</div>
                 </div>
             `;
         }).join('');
