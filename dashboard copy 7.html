@@ -1024,6 +1024,7 @@
             async iniciarOfflineRegen() {
                 if (!this.usuario || !this.usuario.login) return;
 
+                // Se já existe, destrói antes de recriar
                 if (this.offlineRegen) {
                     this.offlineRegen.destroy();
                     this.offlineRegen = null;
@@ -1035,6 +1036,7 @@
                     login: this.usuario.login,
                     container: document.getElementById('offlineRegenSlot'),
                     onApply: (dados) => {
+                        // Sincroniza estado local quando o módulo aplica mudanças
                         this.sm = dados.sm;
                         this.hp = dados.hp;
                         this.mp = dados.mp;
@@ -1045,6 +1047,7 @@
                 await this.offlineRegen.init();
                 this.offlineRegen.startAutoTick();
 
+                // Sincroniza estado local inicial
                 const snap = this.offlineRegen._snapshot();
                 this.sm = snap.sm;
                 this.hp = snap.hp;
@@ -1217,6 +1220,7 @@
 
                 this.addLog(`🏋️ Treinou +${ganho} EXP (Nível ${this.nivel})`, 'info');
 
+                // Notifica o módulo de regen (SM reduzida)
                 if (this.offlineRegen) this.offlineRegen.onSmReduzida(this.sm, this.getSmMax());
 
                 this.salvarComDelay();
@@ -1237,6 +1241,7 @@
                 this.mostrarToast(`🛌 Descansou! +${hpRestaurado} HP, +${mpRestaurado} MP, +${smRestaurado} SM`, 'sucesso');
                 this.addLog(`🛌 Descansou (+${hpRestaurado} HP, +${mpRestaurado} MP, +${smRestaurado} SM)`, 'info');
 
+                // Notifica o módulo de regen (SM aumentada)
                 if (this.offlineRegen) this.offlineRegen.onSmAumentada(this.sm);
 
                 this.salvarComDelay();
@@ -1275,7 +1280,7 @@
             }
 
             // ============================================================
-            // 🎮 CLIQUE EM JOGO — BLOQUEIO SE STAMINA < 10
+            // 🎮 CLIQUE EM JOGO — DESCONTO DE 10% DA STAMINA ATUAL
             // ============================================================
             async gastarStaminaParaJogar(event) {
                 event.preventDefault();
@@ -1291,18 +1296,9 @@
                 if (this._processandoJogo) return;
                 this._processandoJogo = true;
 
-                // ✅ CORREÇÃO PRINCIPAL: BLOQUEIA SE STAMINA ATUAL < 10
-                if (this.sm < 10) {
-                    this.mostrarToast('⚡ Stamina insuficiente! Mínimo de 10 para entrar. Descanse ou aguarde a regeneração.', 'erro');
-                    this.addLog(`❌ Tentou entrar em ${gameName} com stamina ${this.sm} (< 10)`, 'erro');
-                    this._processandoJogo = false;
-                    return;
-                }
-
                 // ✅ Custo = 10% da stamina ATUAL (mínimo 1 para nunca travar em 0)
                 const custoStamina = Math.max(1, Math.floor(this.sm * 0.50));
 
-                // Verificação extra de segurança (não deve ocorrer se sm >= 10)
                 if (this.sm < custoStamina || this.sm <= 0) {
                     this.mostrarToast('⚠️ Stamina insuficiente! Descanse primeiro.', 'erro');
                     this._processandoJogo = false;
@@ -1345,8 +1341,10 @@
                 this.sm -= custoStamina;
                 this.ultimaVezOnline = Date.now();
 
+                // ✅ Atualiza UI em tempo real (barra, número, cor)
                 this.atualizarUI();
 
+                // ✅ Notifica o módulo compartilhado + re-renderiza o widget de regen
                 if (this.offlineRegen) {
                     this.offlineRegen.onSmReduzida(this.sm, this.getSmMax());
                     if (typeof this.offlineRegen.render === 'function') {
@@ -1412,6 +1410,7 @@
                 try {
                     this.ultimaVezOnline = Date.now();
 
+                    // ⚠️ NÃO sobrescrever offline_regen_start — o módulo OfflineRegen cuida disso
                     const payload = {
                         nivel: this.nivel,
                         experiencia: this.experiencia,
@@ -1494,6 +1493,8 @@
                         this.atualizarUI();
                         await this.carregarLogs(usuario.login);
 
+                        // ✅ Inicializa o módulo compartilhado de regeneração offline
+                        // (lê offline_regen_start do banco, aplica regen, renderiza widget)
                         await this.iniciarOfflineRegen();
 
                         this.salvarComDelay();
@@ -1708,7 +1709,7 @@
                     card.removeEventListener('click', this.gastarStaminaParaJogar);
                     card.addEventListener('click', this.gastarStaminaParaJogar);
                 });
-                console.log(`🎮 ${gameCards.length} jogos configurados (bloqueio se stamina < 10)`);
+                console.log(`🎮 ${gameCards.length} jogos configurados com consumo de 10% de stamina`);
             }
 
             iniciarRecuperacaoStamina() {
@@ -1720,6 +1721,7 @@
                         this.ultimaVezOnline = Date.now();
                         this.atualizarUI();
 
+                        // Sincroniza com o módulo de regen
                         if (this.offlineRegen) this.offlineRegen.onSmAumentada(this.sm);
 
                         if (this.usuario && this.supabaseOnline) this.salvar();
@@ -1877,6 +1879,7 @@
             iniciarSalvamentoAutomatico();
             levelSystem.iniciarRecuperacaoStamina();
 
+            // Botões
             const btnSair = document.getElementById('btnSair');
             const btnReconnect = document.getElementById('btnReconnectSupabase');
 
@@ -1938,7 +1941,7 @@
         window.levelSystem = levelSystem;
 
         console.log('📊 Dashboard integrado com OfflineRegen compartilhado + login direto na tabela "Geral" + sessão 24h!');
-        console.log('🎮 Bloqueio de entrada: stamina < 10 | Consumo: 50% do valor ATUAL por clique');
+        console.log('🎮 Consumo de stamina: 10% do valor ATUAL por clique em jogo');
     </script>
 </body>
 </html>
