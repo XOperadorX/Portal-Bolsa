@@ -1,0 +1,1129 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+<title>Shangri-La Frontier - Venda de Itens</title>
+
+<style>
+* {
+    box-sizing: border-box;
+}
+
+body {
+    background: #0a0a0a;
+    color: #eee;
+    font-family: 'Segoe UI', Arial, sans-serif;
+    margin: 0;
+    padding: 10px;
+    min-height: 100vh;
+}
+
+.container {
+    max-width: 1200px;
+    margin: auto;
+    padding: 15px;
+}
+
+.login-screen {
+    background: #1a1a2e;
+    max-width: 450px;
+    margin: 50px auto;
+    padding: 30px;
+    border-radius: 20px;
+    text-align: center;
+    border: 1px solid gold;
+}
+
+.login-screen h1 {
+    color: gold;
+    margin-bottom: 30px;
+}
+
+.login-screen input {
+    width: 100%;
+    padding: 12px;
+    margin: 10px 0;
+    border-radius: 8px;
+    border: none;
+    background: #2a2a3e;
+    color: white;
+}
+
+.game-dashboard {
+    display: none;
+    background: #111;
+    border-radius: 15px;
+    overflow: hidden;
+}
+
+.top-bar {
+    background: #1a1a1a;
+    padding: 12px 20px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 10px;
+    border-bottom: 2px solid gold;
+}
+
+.top-bar h2 {
+    margin: 0;
+    color: gold;
+    font-size: 1.2rem;
+}
+
+.logout-btn {
+    background: #dc3545;
+    color: white;
+    padding: 6px 15px;
+    font-size: 14px;
+}
+
+.logout-btn:hover {
+    background: #c82333;
+}
+
+.main-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 15px;
+    padding: 20px;
+}
+
+.card {
+    background: #1e1e2a;
+    border-radius: 12px;
+    padding: 15px;
+    border: 1px solid #333;
+}
+
+.card h3 {
+    color: gold;
+    margin-top: 0;
+    border-bottom: 1px solid #444;
+    padding-bottom: 8px;
+}
+
+.stat-row {
+    display: flex;
+    justify-content: space-between;
+    padding: 6px 0;
+    border-bottom: 1px solid #2a2a2a;
+}
+
+.inventory-item {
+    background: #2a2a3a;
+    margin: 5px 0;
+    padding: 8px;
+    border-radius: 6px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 8px;
+    flex-wrap: wrap;
+}
+
+.item-name {
+    font-weight: bold;
+    flex: 1;
+}
+
+.item-qty {
+    color: gold;
+    min-width: 50px;
+}
+
+.sell-btn {
+    background: #28a745;
+    color: white;
+    padding: 4px 12px;
+    font-size: 12px;
+    border-radius: 5px;
+}
+
+.sell-btn:hover {
+    background: #218838;
+    transform: scale(1.02);
+}
+
+.use-btn {
+    background: #17a2b8;
+    color: white;
+    padding: 4px 12px;
+    font-size: 12px;
+    border-radius: 5px;
+}
+
+.use-btn:hover {
+    background: #138496;
+    transform: scale(1.02);
+}
+
+button {
+    background: gold;
+    color: black;
+    border: none;
+    padding: 8px 16px;
+    border-radius: 6px;
+    cursor: pointer;
+    font-weight: bold;
+    transition: 0.2s;
+}
+
+button:hover {
+    transform: scale(1.02);
+    background: #ffc107;
+}
+
+button:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+    transform: none;
+}
+
+.action-buttons {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+    margin-top: 10px;
+}
+
+.action-btn {
+    flex: 1;
+    background: #3a6ea5;
+    color: white;
+    min-width: 80px;
+}
+
+.action-btn:hover {
+    background: #2c5a8c;
+}
+
+.shop-item {
+    background: #252530;
+    margin: 10px 0;
+    padding: 10px;
+    border-radius: 8px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 10px;
+    flex-wrap: wrap;
+}
+
+.shop-buy-btn {
+    background: gold;
+    color: black;
+    padding: 5px 12px;
+    font-size: 12px;
+}
+
+.battle-log {
+    background: #0a0a0f;
+    height: 150px;
+    overflow-y: auto;
+    padding: 10px;
+    border-radius: 8px;
+    font-family: monospace;
+    font-size: 13px;
+}
+
+.battle-log p {
+    margin: 5px 0;
+    color: #aaa;
+}
+
+.hp-bar {
+    background: #333;
+    border-radius: 10px;
+    overflow: hidden;
+    margin: 5px 0;
+}
+
+.hp-fill {
+    background: #28a745;
+    height: 20px;
+    width: 100%;
+    transition: width 0.3s;
+}
+
+.enemy-hp-fill {
+    background: #dc3545;
+}
+
+.boss-tag {
+    background: #ff4444;
+    color: gold;
+    font-size: 11px;
+    padding: 2px 6px;
+    border-radius: 10px;
+    margin-left: 8px;
+    display: inline-block;
+}
+
+.unique-tag {
+    background: #9b59b6;
+    color: white;
+    font-size: 11px;
+    padding: 2px 6px;
+    border-radius: 10px;
+    margin-left: 8px;
+    display: inline-block;
+}
+
+.legendary-tag {
+    background: #e67e22;
+    color: white;
+    font-size: 11px;
+    padding: 2px 6px;
+    border-radius: 10px;
+    margin-left: 8px;
+    display: inline-block;
+}
+
+.mythic-tag {
+    background: linear-gradient(45deg, #ff0066, #ff6600);
+    color: gold;
+    font-size: 12px;
+    padding: 3px 10px;
+    border-radius: 15px;
+    margin-left: 8px;
+    display: inline-block;
+    font-weight: bold;
+    text-shadow: 0 0 3px black;
+}
+
+.clue-item {
+    background: #2a2a3a;
+    margin: 8px 0;
+    padding: 8px;
+    border-radius: 6px;
+    border-left: 3px solid gold;
+    font-size: 12px;
+}
+
+.work-timer {
+    background: #1a1a2e;
+    border: 1px solid #ffaa00;
+    border-radius: 8px;
+    padding: 10px;
+    margin-top: 8px;
+    text-align: center;
+    color: #ffaa00;
+    font-size: 14px;
+}
+
+.work-timer .time-display {
+    font-size: 24px;
+    font-weight: bold;
+    font-family: monospace;
+    color: #ffdd44;
+}
+
+.cost-tag {
+    font-size: 11px;
+    color: #ffaa66;
+    display: block;
+}
+
+.item-buttons {
+    display: flex;
+    gap: 4px;
+    flex-wrap: wrap;
+}
+
+.combat-stats {
+    background: #1a1a2e;
+    padding: 8px;
+    border-radius: 6px;
+    margin-top: 5px;
+    font-size: 12px;
+    color: #aaa;
+}
+
+.combat-stats span {
+    color: #eee;
+}
+
+@media (max-width: 700px) {
+    .main-grid {
+        grid-template-columns: 1fr;
+    }
+    .top-bar {
+        flex-direction: column;
+        text-align: center;
+    }
+    .inventory-item {
+        flex-direction: column;
+        align-items: stretch;
+    }
+    .sell-btn, .use-btn {
+        margin-top: 3px;
+    }
+    .work-timer .time-display {
+        font-size: 18px;
+    }
+}
+</style>
+
+</head>
+<body>
+
+<!-- TELA DE LOGIN -->
+<div id="loginScreen" class="login-screen">
+    <h1>🏰 SHANGRI-LA FRONTIER 🏰</h1>
+    <h3 style="color:#ffaa00;">⭐ VENDA SEUS ITENS NA LOJA ⭐</h3>
+    <input type="text" id="loginUser" placeholder="Usuário" value="sunraku">
+    <input type="password" id="loginPass" placeholder="Senha" value="123">
+    <button id="loginBtn">▶ ENTRAR NO MUNDO</button>
+    <p style="margin-top: 15px; font-size: 12px;">🔐 Contas: sunraku/123 | aria/456 | weiss/789</p>
+    <p style="font-size: 11px; color: #888;">💰 Venda itens excedentes na Loja do Viajante!</p>
+</div>
+
+<!-- DASHBOARD DO JOGO -->
+<div id="gameDashboard" class="game-dashboard">
+    <div class="top-bar">
+        <h2>⚔️ SHANGRI-LA FRONTIER - LOJA COM VENDA ⚔️</h2>
+        <div>
+            <span id="playerNameDisplay" style="margin-right: 15px;">👤 sunraku</span>
+            <span id="playerCoinsDisplay">🪙 0</span>
+            <button id="logoutBtn" class="logout-btn" style="margin-left: 15px;">🚪 Sair</button>
+        </div>
+    </div>
+
+    <div class="main-grid">
+        <!-- STATUS -->
+        <div class="card">
+            <h3>📊 STATUS DO PERSONAGEM</h3>
+            <div class="stat-row"><span>❤️ HP</span><span id="statHp">100</span></div>
+            <div class="stat-row"><span>💙 MP</span><span id="statMp">30</span></div>
+            <div class="stat-row"><span>💪 Força</span><span id="statStr">12</span></div>
+            <div class="stat-row"><span>⚡ Agilidade</span><span id="statAgi">18</span></div>
+            <div class="stat-row"><span>🛡️ Vitalidade</span><span id="statVit">8</span></div>
+            <div class="stat-row"><span>🧠 Inteligência</span><span id="statInt">7</span></div>
+            <div class="stat-row"><span>🍀 Sorte</span><span id="statLck">25</span></div>
+            <div class="stat-row"><span>💥 Crítico</span><span id="statCrit">12%</span></div>
+            <div class="stat-row"><span>💨 Esquiva</span><span id="statDodge">15%</span></div>
+            <div class="stat-row"><span>📦 Drop Extra</span><span id="statDrop">+20%</span></div>
+            <div class="stat-row"><span>📈 Nível</span><span id="statLevel">1</span></div>
+            <div class="stat-row"><span>✨ EXP</span><span id="statExp">0/100</span></div>
+            <div class="stat-row"><span>🏆 Boss Kills</span><span id="statBossKills">0</span></div>
+            <div class="stat-row"><span>🔮 Sorte Bônus</span><span id="statLuckBonus">+0%</span></div>
+        </div>
+
+        <!-- INVENTÁRIO COM VENDA E USO -->
+        <div class="card">
+            <h3>🎒 INVENTÁRIO <span style="font-size:12px;">(Vender/Usar)</span></h3>
+            <div id="inventoryList"></div>
+        </div>
+
+        <!-- EQUIPAMENTOS -->
+        <div class="card">
+            <h3>⚔️ EQUIPAMENTOS</h3>
+            <div id="equipList"></div>
+        </div>
+
+        <!-- PISTAS E EVENTOS -->
+        <div class="card">
+            <h3>🔍 PISTAS DOS LENDÁRIOS</h3>
+            <div id="cluesList"></div>
+            <button id="searchClueBtn" class="action-btn" style="background:#6c3483;">
+                📜 Procurar Pistas
+                <span class="cost-tag">💰 -100 moedas</span>
+            </button>
+        </div>
+
+        <!-- LOJA -->
+        <div class="card">
+            <h3>🏪 LOJA DO VIAJANTE</h3>
+            <div id="shopList"></div>
+            <div style="margin-top: 10px; padding: 8px; background: #252530; border-radius: 8px;">
+                <span style="color:#ffaa66;">💰 Venda no inventário por METADE do preço da loja!</span>
+            </div>
+            <button id="workBtn" class="action-btn" style="background: #6c757d; margin-top: 10px;">💼 Trabalhar (+100 moedas)</button>
+            <div id="workTimerContainer" style="display: none;">
+                <div class="work-timer">
+                    ⏳ TRABALHANDO...<br>
+                    <span class="time-display" id="workTimerDisplay">01:00:00</span><br>
+                    <span style="font-size: 11px; color: #888;">Aguarde para receber o pagamento</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- BATALHA -->
+        <div class="card">
+            <h3>🐉 COMBATE - CHEFES ÚNICOS</h3>
+            <div id="enemyArea">
+                <div><strong>🗡️ INIMIGO:</strong> <span id="enemyName">Nenhum</span></div>
+                <div class="hp-bar"><div id="enemyHpBar" class="hp-fill enemy-hp-fill" style="width: 0%"></div></div>
+                <div id="enemyHpText">HP: 0/0</div>
+                <div id="enemyRarityTag" style="margin-top: 5px; font-size: 12px;"></div>
+                <div class="combat-stats" id="combatStats">
+                    ⚔️ Dano: <span id="combatDmg">0</span> | 
+                    💥 Crítico: <span id="combatCrit">0%</span> | 
+                    💨 Esquiva: <span id="combatDodge">0%</span>
+                </div>
+            </div>
+            <div class="action-buttons">
+                <button id="findEnemyBtn" class="action-btn">🔍 Procurar</button>
+                <button id="attackBtn" class="action-btn" disabled>⚔️ Atacar</button>
+            </div>
+            <div class="battle-log" id="battleLog">
+                <p>✨ Bem-vindo ao mundo de Shangri-La Frontier!</p>
+                <p>💰 Venda itens na loja para acumular moedas!</p>
+            </div>
+        </div>
+
+        <!-- AÇÕES ESPECIAIS -->
+        <div class="card">
+            <h3>🌟 AÇÕES ESPECIAIS</h3>
+            <div class="action-buttons">
+                <button id="exploreBtn" class="action-btn">
+                    🗺️ Explorar
+                    <span class="cost-tag">💰 -100 moedas</span>
+                </button>
+                <button id="searchRareBtn" class="action-btn">
+                    🔮 Item Raro
+                    <span class="cost-tag">💰 -500 moedas</span>
+                </button>
+                <button id="healBtn" class="action-btn">
+                    🏥 Descansar
+                    <span class="cost-tag">💰 -50 moedas</span>
+                </button>
+                <button id="summonLegendaryBtn" class="action-btn" style="background:#8b0000;">👑 INVOCAR (1%)</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    // ==================== CHEFES ÚNICOS LENDÁRIOS ====================
+    const LEGENDARY_BOSSES = {
+        lycagon: { name: "🐺 LYCAGON - O Lobo das Sombras", hp: 5000000, maxHp: 5000000, atk: 8500, exp: 500000, coins: 1000000, drop: "Máscara de Lycagon", rarity: "lendário", isLegendary: true, baseChance: 0.01 },
+        wethermon: { name: "🌩️ WETHERMON - Devorador de Tempestades", hp: 8000000, maxHp: 8000000, atk: 12000, exp: 800000, coins: 1500000, drop: "Coração da Tempestade", rarity: "lendário", isLegendary: true, baseChance: 0.005 },
+        ctarnidd: { name: "🐙 CTARNIDD - O Antigo do Abismo", hp: 12000000, maxHp: 12000000, atk: 15000, exp: 1200000, coins: 2000000, drop: "Olho de Ctarnidd", rarity: "lendário", isLegendary: true, baseChance: 0.003 },
+        bahamut: { name: "🐉 BAHAMUT - Rei dos Dragões", hp: 25000000, maxHp: 25000000, atk: 22000, exp: 2000000, coins: 5000000, drop: "Escama de Bahamut", rarity: "lendário", isLegendary: true, baseChance: 0.001 },
+        yggdrasil: { name: "🌳 YGGDRASIL - Árvore do Mundo", hp: 50000000, maxHp: 50000000, atk: 18000, exp: 5000000, coins: 10000000, drop: "Fruto de Yggdrasil", rarity: "lendário", isLegendary: true, baseChance: 0.0005 },
+        vorpal: { name: "🐇 VORPAL EMPEROR - Coelho Rei Assassino", hp: 500000000, maxHp: 500000000, atk: 45000, exp: 25000000, coins: 50000000, drop: "Máscara do Coelho Vorpal", rarity: "mítico", isMythic: true, baseChance: 0.0001, special: "Golpe Vorpal | Corte Dimensional" },
+        ashura: { name: "⚔️ ASHURA - Deus das Seis Lâminas", hp: 999999999, maxHp: 999999999, atk: 99999, exp: 100000000, coins: 99999999, drop: "Espada Divina Ashura", rarity: "mítico", isMythic: true, baseChance: 0.00005, special: "Seis Espadas Simultâneas" }
+    };
+    
+    const LEGENDARY_LIST = Object.values(LEGENDARY_BOSSES);
+    
+    // Inimigos comuns
+    const commonEnemies = [
+        { name: "🐺 Lobo da Névoa", hp: 45, maxHp: 45, atk: 12, exp: 25, coins: 40, drop: "Poção", rarity: "comum" },
+        { name: "🍄 Cogumelo Gigante", hp: 30, maxHp: 30, atk: 8, exp: 15, coins: 25, drop: "Poção", rarity: "comum" },
+        { name: "🗡️ Esqueleto Guerreiro", hp: 60, maxHp: 60, atk: 15, exp: 40, coins: 60, drop: "Poção Maior", rarity: "comum" },
+        { name: "🐉 Dragão Jovem", hp: 120, maxHp: 120, atk: 22, exp: 80, coins: 150, drop: "Elixir", rarity: "raro" },
+        { name: "🔥 Fênix Jovem", hp: 95, maxHp: 95, atk: 18, exp: 65, coins: 100, drop: "Elixir", rarity: "raro" },
+        { name: "👹 Troll da Montanha", hp: 150, maxHp: 150, atk: 25, exp: 100, coins: 180, drop: "Poção Maior", rarity: "épico" }
+    ];
+    
+    // ==================== PREÇOS ====================
+    const BUY_PRICES = {
+        "Poção": 50,
+        "Poção Maior": 120,
+        "Elixir": 300,
+        "Gema Rara": 500
+    };
+    
+    const SELL_PRICES = {};
+    for (let [item, price] of Object.entries(BUY_PRICES)) {
+        SELL_PRICES[item] = Math.floor(price / 2);
+    }
+    
+    const LEGENDARY_SELL_PRICES = {
+        "Máscara de Lycagon": 50000,
+        "Coração da Tempestade": 75000,
+        "Olho de Ctarnidd": 100000,
+        "Escama de Bahamut": 250000,
+        "Fruto de Yggdrasil": 500000,
+        "Máscara do Coelho Vorpal": 2500000,
+        "Espada Divina Ashura": 5000000
+    };
+    
+    for (let [item, price] of Object.entries(LEGENDARY_SELL_PRICES)) {
+        SELL_PRICES[item] = price;
+    }
+    
+    // ==================== ITENS USÁVEIS ====================
+    const ITEM_EFFECTS = {
+        "Poção": { heal: 30, desc: "Cura 30 HP" },
+        "Poção Maior": { heal: 70, desc: "Cura 70 HP" },
+        "Elixir": { heal: 150, desc: "Cura 150 HP" }
+    };
+    
+    // ==================== SISTEMA DE TRABALHO ====================
+    const WORK_TIME = 3600;
+    let workEndTime = null;
+    let workTimerInterval = null;
+    
+    function startWork() {
+        if (!currentPlayer || workEndTime) return;
+        
+        workEndTime = Date.now() + (WORK_TIME * 1000);
+        localStorage.setItem('slf_work_' + currentPlayer.nome, workEndTime.toString());
+        
+        document.getElementById('workBtn').disabled = true;
+        document.getElementById('workBtn').textContent = '⏳ Trabalhando...';
+        document.getElementById('workTimerContainer').style.display = 'block';
+        
+        addLog('💼 Começou a trabalhar! Volte em 1 hora para receber 100 moedas.');
+        updateWorkTimer();
+        workTimerInterval = setInterval(updateWorkTimer, 1000);
+    }
+    
+    function updateWorkTimer() {
+        if (!workEndTime) { checkSavedWork(); return; }
+        const remaining = Math.max(0, Math.floor((workEndTime - Date.now()) / 1000));
+        if (remaining <= 0) { completeWork(); return; }
+        const hours = String(Math.floor(remaining / 3600)).padStart(2, '0');
+        const minutes = String(Math.floor((remaining % 3600) / 60)).padStart(2, '0');
+        const seconds = String(remaining % 60).padStart(2, '0');
+        document.getElementById('workTimerDisplay').textContent = `${hours}:${minutes}:${seconds}`;
+    }
+    
+    function completeWork() {
+        if (!currentPlayer) return;
+        if (workTimerInterval) clearInterval(workTimerInterval);
+        workTimerInterval = null;
+        localStorage.removeItem('slf_work_' + currentPlayer.nome);
+        currentPlayer.coins += 100;
+        addLog('💰🎉 Trabalho concluído! Recebeu 100 moedas!');
+        workEndTime = null;
+        document.getElementById('workBtn').disabled = false;
+        document.getElementById('workBtn').textContent = '💼 Trabalhar (+100 moedas)';
+        document.getElementById('workTimerContainer').style.display = 'none';
+        updateUI();
+        saveDB();
+    }
+    
+    function checkSavedWork() {
+        if (!currentPlayer) return;
+        const saved = localStorage.getItem('slf_work_' + currentPlayer.nome);
+        if (saved) {
+            const savedTime = parseInt(saved);
+            if (isNaN(savedTime) || savedTime <= Date.now()) {
+                localStorage.removeItem('slf_work_' + currentPlayer.nome);
+                return;
+            }
+            workEndTime = savedTime;
+            document.getElementById('workBtn').disabled = true;
+            document.getElementById('workBtn').textContent = '⏳ Trabalhando...';
+            document.getElementById('workTimerContainer').style.display = 'block';
+            updateWorkTimer();
+            if (workTimerInterval) clearInterval(workTimerInterval);
+            workTimerInterval = setInterval(updateWorkTimer, 1000);
+            addLog('⏳ Continuando trabalho de antes...');
+        }
+    }
+    
+    function cancelWork() {
+        if (workTimerInterval) clearInterval(workTimerInterval);
+        workTimerInterval = null;
+        if (currentPlayer) localStorage.removeItem('slf_work_' + currentPlayer.nome);
+        workEndTime = null;
+        document.getElementById('workBtn').disabled = false;
+        document.getElementById('workBtn').textContent = '💼 Trabalhar (+100 moedas)';
+        document.getElementById('workTimerContainer').style.display = 'none';
+    }
+    
+    let playersDB = JSON.parse(localStorage.getItem('slf_players')) || {
+        sunraku: { password: '123', nome: 'sunraku', level: 1, exp: 0, hp: 100, maxHp: 100, mp: 30, maxMp: 30, coins: 1500, bossKills: 0, luckBonus: 0,
+                   str: 12, agi: 18, vit: 8, int: 7, lck: 25, crit: 12, dodge: 15, dropBonus: 20, clues: [],
+                   inventory: { "Poção": 5, "Poção Maior": 1, "Elixir": 0, "Gema Rara": 0 },
+                   equip: { arma: "Lâmina Gêmea", cabeca: "Máscara do Pássaro", corpo: "Nenhum", bota: "Nenhum" } },
+        aria: { password: '456', nome: 'aria', level: 1, exp: 0, hp: 100, maxHp: 100, mp: 30, maxMp: 30, coins: 1500, bossKills: 0, luckBonus: 0,
+                str: 12, agi: 18, vit: 8, int: 7, lck: 25, crit: 12, dodge: 15, dropBonus: 20, clues: [],
+                inventory: { "Poção": 5, "Poção Maior": 1, "Elixir": 0, "Gema Rara": 0 },
+                equip: { arma: "Lâmina Gêmea", cabeca: "Máscara do Pássaro", corpo: "Nenhum", bota: "Nenhum" } }
+    };
+    
+    let currentPlayer = null;
+    let currentEnemy = null;
+    
+    const possibleClues = [
+        "📜 Sussurros na floresta falam de LYCAGON, o Lobo das Sombras...",
+        "🌩️ Pergaminhos antigos mencionam WETHERMON, a besta das tempestades.",
+        "🌊 Nas profundezas, CTARNIDD espera em seu templo esquecido.",
+        "🐉 Dragões anciãos temem o nome BAHAMUT, o Rei dos Céus.",
+        "🌳 Dizem que YGGDRASIL conecta todos os mundos...",
+        "🐇 Um coelho com poder absurdo... VORPAL EMPEROR existe?",
+        "⚔️ Seis lâminas brilham quando ASHURA desperta."
+    ];
+    
+    function saveDB() { localStorage.setItem('slf_players', JSON.stringify(playersDB)); }
+    
+    function addLog(msg) {
+        const logDiv = document.getElementById('battleLog');
+        const p = document.createElement('p');
+        p.innerHTML = msg;
+        logDiv.appendChild(p);
+        logDiv.scrollTop = logDiv.scrollHeight;
+        if(logDiv.children.length > 25) logDiv.removeChild(logDiv.children[0]);
+    }
+    
+    function calculateLuckChanceMultiplier() {
+        if(!currentPlayer) return 1;
+        let luck = currentPlayer.lck + (currentPlayer.luckBonus || 0);
+        return 1 + (luck / 200);
+    }
+    
+    function sellItem(itemName, currentQty) {
+        if(!currentPlayer) return;
+        let sellPrice = SELL_PRICES[itemName];
+        if(!sellPrice) { addLog(`❌ ${itemName} não pode ser vendido!`); return; }
+        if(currentQty <= 0) { addLog(`❌ Você não possui ${itemName}!`); return; }
+        
+        currentPlayer.inventory[itemName]--;
+        if(currentPlayer.inventory[itemName] === 0) delete currentPlayer.inventory[itemName];
+        currentPlayer.coins += sellPrice;
+        addLog(`💰 Vendeu ${itemName} por ${sellPrice} moedas!`);
+        updateUI();
+        saveDB();
+    }
+    
+    function useItem(itemName) {
+        if(!currentPlayer) return;
+        if(!currentPlayer.inventory[itemName] || currentPlayer.inventory[itemName] <= 0) {
+            addLog(`❌ Você não possui ${itemName}!`);
+            return;
+        }
+        const effect = ITEM_EFFECTS[itemName];
+        if(!effect) { addLog(`❌ ${itemName} não pode ser usado!`); return; }
+        if(currentPlayer.hp >= currentPlayer.maxHp) {
+            addLog(`❤️ HP já está cheio!`);
+            return;
+        }
+        
+        let actualHeal = Math.min(effect.heal, currentPlayer.maxHp - currentPlayer.hp);
+        currentPlayer.inventory[itemName]--;
+        if(currentPlayer.inventory[itemName] === 0) delete currentPlayer.inventory[itemName];
+        currentPlayer.hp += actualHeal;
+        addLog(`💚 Usou ${itemName}! Curou ${actualHeal} HP.`);
+        updateUI();
+        saveDB();
+    }
+    
+    window.useItemHandler = function(itemName) { useItem(itemName); };
+    window.sellItemHandler = function(itemName, qty) { sellItem(itemName, qty); };
+    
+    function findEnemyWithLegendaryChance() {
+        let luckMult = calculateLuckChanceMultiplier();
+        let legendarySpawns = LEGENDARY_LIST.map(boss => ({ boss, chance: boss.baseChance * luckMult }));
+        let roll = Math.random() * 100;
+        let cumulative = 0;
+        for(let ls of legendarySpawns) {
+            cumulative += ls.chance;
+            if(roll < cumulative) {
+                let boss = JSON.parse(JSON.stringify(ls.boss));
+                boss.hp = boss.maxHp;
+                return { enemy: boss, isLegendary: true };
+            }
+        }
+        let idx = Math.floor(Math.random() * commonEnemies.length);
+        let common = JSON.parse(JSON.stringify(commonEnemies[idx]));
+        common.hp = common.maxHp;
+        return { enemy: common, isLegendary: false };
+    }
+    
+    // ==================== CALCULAR DANO COM STATUS ====================
+    function calculatePlayerDamage() {
+        if(!currentPlayer) return { damage: 0, isCrit: false };
+        let p = currentPlayer;
+        // Dano base = Força + bônus aleatório (0 a 15)
+        let baseDmg = p.str + Math.floor(Math.random() * 16);
+        // Chance de crítico baseada no atributo Crítico
+        let critChance = p.crit;
+        let isCrit = Math.random() * 100 < critChance;
+        let damage = isCrit ? Math.floor(baseDmg * 2.5) : baseDmg;
+        // Bônus de agilidade para dano extra (pequeno)
+        damage += Math.floor(p.agi / 5);
+        return { damage, isCrit };
+    }
+    
+    function calculateEnemyDamage() {
+        if(!currentPlayer || !currentEnemy) return 0;
+        let p = currentPlayer;
+        let enemyAtk = currentEnemy.atk;
+        // Redução de dano baseada na Vitalidade
+        let defense = Math.floor(p.vit * 1.2);
+        let damage = Math.max(1, enemyAtk - defense + Math.floor(Math.random() * 6));
+        // Bônus de esquiva
+        let dodgeChance = p.dodge;
+        if(Math.random() * 100 < dodgeChance) {
+            return { damage: 0, dodged: true };
+        }
+        return { damage: Math.max(1, damage), dodged: false };
+    }
+    
+    function updateCombatStats() {
+        if(!currentPlayer) return;
+        let p = currentPlayer;
+        document.getElementById('combatDmg').textContent = `${p.str} + 0-15 (${p.crit}% crítico)`;
+        document.getElementById('combatCrit').textContent = `${p.crit}%`;
+        document.getElementById('combatDodge').textContent = `${p.dodge}%`;
+    }
+    
+    function updateUI() {
+        if(!currentPlayer) return;
+        const p = currentPlayer;
+        document.getElementById('playerNameDisplay').innerHTML = `👤 ${p.nome}`;
+        document.getElementById('playerCoinsDisplay').innerHTML = `🪙 ${p.coins}`;
+        document.getElementById('statHp').innerHTML = `${p.hp}/${p.maxHp}`;
+        document.getElementById('statMp').innerHTML = `${p.mp}/${p.maxMp}`;
+        document.getElementById('statStr').innerHTML = p.str;
+        document.getElementById('statAgi').innerHTML = p.agi;
+        document.getElementById('statVit').innerHTML = p.vit;
+        document.getElementById('statInt').innerHTML = p.int;
+        document.getElementById('statLck').innerHTML = p.lck;
+        document.getElementById('statCrit').innerHTML = p.crit + '%';
+        document.getElementById('statDodge').innerHTML = p.dodge + '%';
+        document.getElementById('statDrop').innerHTML = '+' + p.dropBonus + '%';
+        document.getElementById('statLevel').innerHTML = p.level;
+        let nextExp = p.level * 100;
+        document.getElementById('statExp').innerHTML = `${p.exp}/${nextExp}`;
+        document.getElementById('statBossKills').innerHTML = p.bossKills || 0;
+        let luckBonusPercent = ((calculateLuckChanceMultiplier() - 1) * 100).toFixed(1);
+        document.getElementById('statLuckBonus').innerHTML = `+${luckBonusPercent}%`;
+        
+        // Inventário
+        const invDiv = document.getElementById('inventoryList');
+        invDiv.innerHTML = '';
+        for(let [item, qty] of Object.entries(p.inventory)) {
+            if(qty > 0) {
+                let sellPrice = SELL_PRICES[item] || 0;
+                let buyPrice = BUY_PRICES[item] || 0;
+                let isUsable = ITEM_EFFECTS[item] !== undefined;
+                let buttonsHtml = '';
+                if(isUsable) {
+                    buttonsHtml += `<button class="use-btn" onclick="window.useItemHandler('${item}')">💊 Usar</button>`;
+                }
+                if(sellPrice > 0) {
+                    let priceDisplay = `💰 ${sellPrice}🪙`;
+                    if(buyPrice > 0) priceDisplay += ` [↗${buyPrice}🪙]`;
+                    buttonsHtml += `<button class="sell-btn" onclick="window.sellItemHandler('${item}', ${qty})">${priceDisplay}</button>`;
+                } else {
+                    buttonsHtml += `<span style="color:#888; font-size:11px;">🚫 não vende</span>`;
+                }
+                invDiv.innerHTML += `<div class="inventory-item">
+                    <span class="item-name">${item}</span>
+                    <span class="item-qty">x${qty}</span>
+                    <div class="item-buttons">${buttonsHtml}</div>
+                </div>`;
+            }
+        }
+        if(invDiv.innerHTML === '') invDiv.innerHTML = '<p style="color:#888;">Vazio</p>';
+        
+        // Equipamentos
+        document.getElementById('equipList').innerHTML = `
+            <div class="stat-row"><span>⚔️ Arma</span><span>${p.equip.arma}</span></div>
+            <div class="stat-row"><span>🎭 Cabeça</span><span>${p.equip.cabeca}</span></div>
+            <div class="stat-row"><span>🛡️ Corpo</span><span>${p.equip.corpo}</span></div>
+            <div class="stat-row"><span>👢 Botas</span><span>${p.equip.bota}</span></div>
+        `;
+        
+        // Pistas
+        const cluesDiv = document.getElementById('cluesList');
+        if(p.clues && p.clues.length > 0) {
+            cluesDiv.innerHTML = p.clues.map(c => `<div class="clue-item">🔎 ${c}</div>`).join('');
+        } else {
+            cluesDiv.innerHTML = '<p style="color:#888;">Nenhuma pista encontrada.</p>';
+        }
+        
+        // Batalha
+        const attackBtn = document.getElementById('attackBtn');
+        attackBtn.disabled = !currentEnemy;
+        if(currentEnemy) {
+            document.getElementById('enemyName').innerHTML = currentEnemy.name;
+            document.getElementById('enemyHpText').innerHTML = `HP: ${currentEnemy.hp}/${currentEnemy.maxHp}`;
+            let percent = (currentEnemy.hp / currentEnemy.maxHp) * 100;
+            document.getElementById('enemyHpBar').style.width = Math.min(100, percent) + '%';
+            
+            let rarityHtml = '';
+            if(currentEnemy.isMythic) rarityHtml = '<span class="mythic-tag">🌟 MÍTICO LENDÁRIO 🌟</span>';
+            else if(currentEnemy.isLegendary) rarityHtml = '<span class="legendary-tag">⭐ LENDÁRIO ⭐</span>';
+            else if(currentEnemy.rarity === 'épico') rarityHtml = '<span class="unique-tag">✨ ÉPICO ✨</span>';
+            else rarityHtml = '<span style="color:#aaa;">🐾 Comum</span>';
+            document.getElementById('enemyRarityTag').innerHTML = rarityHtml;
+        } else {
+            document.getElementById('enemyName').innerHTML = 'Nenhum';
+            document.getElementById('enemyHpText').innerHTML = 'HP: 0/0';
+            document.getElementById('enemyHpBar').style.width = '0%';
+            document.getElementById('enemyRarityTag').innerHTML = '';
+        }
+        
+        updateCombatStats();
+    }
+    
+    function gainExp(amount) {
+        let p = currentPlayer;
+        p.exp += amount;
+        let nextExp = p.level * 100;
+        while(p.exp >= nextExp) {
+            p.exp -= nextExp;
+            p.level++;
+            p.maxHp += 15;
+            p.hp = p.maxHp;
+            p.str += 2;
+            p.agi += 2;
+            p.vit += 1;
+            p.lck += 1;
+            p.crit += 0.5;
+            p.dodge += 0.5;
+            addLog(`🎉 <span style="color:gold;">SUBIU PARA NÍVEL ${p.level}!</span>`);
+            nextExp = p.level * 100;
+        }
+        updateUI();
+        saveDB();
+    }
+    
+    function addCoin(amount) { currentPlayer.coins += amount; updateUI(); saveDB(); }
+    function addItem(itemName, qty = 1) {
+        if(!currentPlayer.inventory[itemName]) currentPlayer.inventory[itemName] = 0;
+        currentPlayer.inventory[itemName] += qty;
+        updateUI();
+        saveDB();
+        addLog(`📦 Obteve ${itemName} x${qty}!`);
+    }
+    
+    function hasEnoughCoins(cost) {
+        if (!currentPlayer) return false;
+        if (currentPlayer.coins < cost) {
+            addLog(`❌ Moedas insuficientes! Precisa de ${cost}🪙 (tem ${currentPlayer.coins}🪙)`);
+            return false;
+        }
+        return true;
+    }
+    
+    function spendCoins(cost) {
+        if (!hasEnoughCoins(cost)) return false;
+        currentPlayer.coins -= cost;
+        updateUI();
+        saveDB();
+        return true;
+    }
+    
+    window.buyItem = function(item, price) {
+        if(currentPlayer.coins >= price) {
+            currentPlayer.coins -= price;
+            addItem(item, 1);
+            addLog(`🛒 Comprou ${item} por ${price} moedas.`);
+        } else addLog(`💰 Moedas insuficientes!`);
+    };
+    
+    function setupEventListeners() {
+        document.getElementById('findEnemyBtn').onclick = () => {
+            if(currentEnemy) { addLog(`⚠️ Já há um inimigo: ${currentEnemy.name}!`); return; }
+            let result = findEnemyWithLegendaryChance();
+            currentEnemy = result.enemy;
+            if(result.isLegendary) {
+                addLog(`🌠✨🌟 UM CHEFE LENDÁRIO APARECEU! 🌟✨🌠`);
+                addLog(`⚠️ ${currentEnemy.name} (HP: ${currentEnemy.hp.toLocaleString()})`);
+                if(currentEnemy.special) addLog(`⚔️ Habilidades: ${currentEnemy.special}`);
+            } else {
+                addLog(`🐉 Apareceu um ${currentEnemy.name}! (HP: ${currentEnemy.hp})`);
+            }
+            updateUI();
+        };
+        
+        document.getElementById('attackBtn').onclick = () => {
+            if(!currentEnemy) return;
+            let p = currentPlayer;
+            
+            // Calcula dano do jogador baseado nos status
+            let { damage, isCrit } = calculatePlayerDamage();
+            
+            // Reduz dano contra chefes lendários
+            if(currentEnemy.isLegendary || currentEnemy.isMythic) {
+                damage = Math.max(1, Math.floor(damage / 50));
+            }
+            
+            currentEnemy.hp -= damage;
+            addLog(`⚔️ Causou ${damage} de dano${isCrit ? ' (💥 CRÍTICO!)' : ''} em ${currentEnemy.name}.`);
+            
+            // Verifica se o inimigo morreu
+            if(currentEnemy.hp <= 0) {
+                let gainedExp = currentEnemy.exp;
+                let gainedCoins = currentEnemy.coins;
+                addLog(`🏆 DERROTOU ${currentEnemy.name}! +${gainedExp.toLocaleString()} EXP, +${gainedCoins.toLocaleString()} moedas!`);
+                gainExp(gainedExp);
+                addCoin(gainedCoins);
+                
+                if(currentEnemy.isLegendary || currentEnemy.isMythic) {
+                    currentPlayer.bossKills = (currentPlayer.bossKills || 0) + 1;
+                    addLog(`🎖️ CONQUISTA ÉPICA: ${currentEnemy.name} derrotado!`);
+                    addItem(currentEnemy.drop, 1);
+                    addCoin(currentEnemy.coins * 2);
+                } else {
+                    let dropChance = 50 + p.lck / 2;
+                    if(Math.random() * 100 < dropChance) addItem(currentEnemy.drop, 1);
+                }
+                currentEnemy = null;
+                updateUI(); saveDB();
+                return;
+            }
+            
+            // Ataque do inimigo baseado no status do jogador
+            let enemyResult = calculateEnemyDamage();
+            if(enemyResult.dodged) {
+                addLog(`💨 Desviou do ataque de ${currentEnemy.name}! (${p.dodge}% esquiva)`);
+            } else {
+                let enemyDmg = enemyResult.damage;
+                p.hp -= enemyDmg;
+                addLog(`💥 ${currentEnemy.name} causou ${enemyDmg} de dano.`);
+                if(p.hp <= 0) {
+                    p.hp = p.maxHp;
+                    p.coins = Math.max(0, p.coins - 500);
+                    addLog(`💀 DERROTA! Perdeu 500 moedas.`);
+                    currentEnemy = null;
+                    saveDB();
+                }
+            }
+            updateUI(); saveDB();
+        };
+        
+        document.getElementById('searchClueBtn').onclick = () => {
+            if (!spendCoins(100)) return;
+            let luck = currentPlayer.lck + (currentPlayer.luckBonus || 0);
+            let clueChance = 20 + (luck / 2);
+            if(Math.random() * 100 < clueChance) {
+                let newClue = possibleClues[Math.floor(Math.random() * possibleClues.length)];
+                if(!currentPlayer.clues) currentPlayer.clues = [];
+                if(!currentPlayer.clues.includes(newClue)) {
+                    currentPlayer.clues.push(newClue);
+                    addLog(`🔍 Pista encontrada: "${newClue}"`);
+                } else {
+                    addLog(`🔍 Já possui esta pista.`);
+                }
+            } else {
+                addLog(`🔍 Não encontrou pistas... (Sorte: ${luck})`);
+            }
+            updateUI(); saveDB();
+        };
+        
+        document.getElementById('workBtn').onclick = startWork;
+        
+        document.getElementById('exploreBtn').onclick = () => {
+            if (!spendCoins(100)) return;
+            let rand = Math.random();
+            if(rand < 0.4) { 
+                let achado = Math.floor(Math.random() * 80) + 30; 
+                addCoin(achado); 
+                addLog(`🗺️ Encontrou ${achado} moedas!`); 
+            } else if(rand < 0.7) { 
+                addItem("Poção", 1); 
+                addLog(`🗺️ Encontrou uma Poção!`); 
+            } else {
+                addLog(`🗺️ Não encontrou nada...`);
+            }
+        };
+        
+        document.getElementById('searchRareBtn').onclick = () => {
+            if (!spendCoins(500)) return;
+            let sorte = currentPlayer.lck;
+            let chance = 15 + sorte/3;
+            if(Math.random() * 100 < chance) {
+                let rareItems = ["Elixir", "Poção Maior", "Gema Rara"];
+                let item = rareItems[Math.floor(Math.random() * rareItems.length)];
+                addItem(item, 1);
+                addLog(`🔮 Sorte ${sorte}! Encontrou ${item}!`);
+            } else {
+                addLog(`🔮 Não achou nada...`);
+            }
+        };
+        
+        // ==================== DESCANSAR (CORRIGIDO) ====================
+        document.getElementById('healBtn').onclick = () => {
+            if (!currentPlayer) return;
+            
+            // Verifica se HP já está cheio ANTES de gastar moedas
+            if (currentPlayer.hp >= currentPlayer.maxHp) {
+                addLog(`❤️ HP já está cheio! Não precisa descansar.`);
+                return;
+            }
+            
+            // Agora sim, cobra as moedas
+            if (!spendCoins(50)) return;
+            
+            let cura = 20 + Math.floor(currentPlayer.vit * 1.5);
+            let curaReal = Math.min(cura, currentPlayer.maxHp - currentPlayer.hp);
+            currentPlayer.hp = Math.min(currentPlayer.maxHp, currentPlayer.hp + curaReal);
+            updateUI(); saveDB();
+            addLog(`🏥 Descansou e recuperou ${curaReal} HP. (${50}🪙 gastos)`);
+        };
+        
+        document.getElementById('summonLegendaryBtn').onclick = () => {
+            if(currentEnemy) { addLog(`⚠️ Derrote o inimigo atual primeiro!`); return; }
+            let luckMult = calculateLuckChanceMultiplier();
+            let chance = 1 * luckMult;
+            if(Math.random() * 100 < chance) {
+                let legendaryBosses = LEGENDARY_LIST.filter(b => !b.isMythic);
+                let boss = JSON.parse(JSON.stringify(legendaryBosses[Math.floor(Math.random() * legendaryBosses.length)]));
+                boss.hp = boss.maxHp;
+                currentEnemy = boss;
+                addLog(`✨✨✨ INVOCAÇÃO: ${boss.name}! ✨✨✨`);
+            } else {
+                addLog(`🌀 O ritual falhou... (Chance: ${chance.toFixed(3)}%)`);
+            }
+            updateUI();
+        };
+        
+        function updateShop() {
+            const shopDiv = document.getElementById('shopList');
+            if(shopDiv) shopDiv.innerHTML = `
+                <div class="shop-item"><span>💊 Poção <span style="font-size:11px; color:#ffaa66;">(venda: ${SELL_PRICES['Poção']}🪙)</span></span><button class="shop-buy-btn" onclick="buyItem('Poção', ${BUY_PRICES['Poção']})">Comprar ${BUY_PRICES['Poção']}🪙</button></div>
+                <div class="shop-item"><span>💪 Poção Maior <span style="font-size:11px; color:#ffaa66;">(venda: ${SELL_PRICES['Poção Maior']}🪙)</span></span><button class="shop-buy-btn" onclick="buyItem('Poção Maior', ${BUY_PRICES['Poção Maior']})">Comprar ${BUY_PRICES['Poção Maior']}🪙</button></div>
+                <div class="shop-item"><span>✨ Elixir <span style="font-size:11px; color:#ffaa66;">(venda: ${SELL_PRICES['Elixir']}🪙)</span></span><button class="shop-buy-btn" onclick="buyItem('Elixir', ${BUY_PRICES['Elixir']})">Comprar ${BUY_PRICES['Elixir']}🪙</button></div>
+                <div class="shop-item"><span>💎 Gema Rara <span style="font-size:11px; color:#ffaa66;">(venda: ${SELL_PRICES['Gema Rara']}🪙)</span></span><button class="shop-buy-btn" onclick="buyItem('Gema Rara', ${BUY_PRICES['Gema Rara']})">Comprar ${BUY_PRICES['Gema Rara']}🪙</button></div>
+            `;
+        }
+        updateShop();
+    }
+    
+    // LOGIN
+    document.getElementById('loginBtn').onclick = () => {
+        let user = document.getElementById('loginUser').value.trim().toLowerCase();
+        let pass = document.getElementById('loginPass').value;
+        if(playersDB[user] && playersDB[user].password === pass) {
+            currentPlayer = playersDB[user];
+            if(!currentPlayer.clues) currentPlayer.clues = [];
+            if(!currentPlayer.luckBonus) currentPlayer.luckBonus = 0;
+            document.getElementById('loginScreen').style.display = 'none';
+            document.getElementById('gameDashboard').style.display = 'block';
+            currentPlayer.hp = currentPlayer.maxHp;
+            setupEventListeners();
+            updateUI();
+            addLog(`🎮 Bem-vindo, ${currentPlayer.nome}!`);
+            addLog(`💰 Venda itens por METADE do preço da loja!`);
+            addLog(`💊 Use itens clicando em "Usar" no inventário!`);
+            addLog(`⚔️ Combate usa seus STATUS (Força, Vitalidade, etc!)`);
+            checkSavedWork();
+            saveDB();
+        } else {
+            let criar = confirm(`❌ Conta não existe! Criar "${user}"?`);
+            if(criar && user !== "") {
+                playersDB[user] = { password: pass, nome: user, level: 1, exp: 0, hp: 100, maxHp: 100, mp: 30, maxMp: 30, coins: 1500, bossKills: 0, luckBonus: 0,
+                    str: 12, agi: 18, vit: 8, int: 7, lck: 25, crit: 12, dodge: 15, dropBonus: 20, clues: [],
+                    inventory: { "Poção": 3, "Poção Maior": 0, "Elixir": 0, "Gema Rara": 0 },
+                    equip: { arma: "Lâmina Gêmea", cabeca: "Máscara do Pássaro", corpo: "Nenhum", bota: "Nenhum" } };
+                saveDB();
+                alert(`✅ Conta criada! Faça login.`);
+                location.reload();
+            }
+        }
+    };
+    
+    document.getElementById('logoutBtn').onclick = () => {
+        cancelWork();
+        currentPlayer = null; currentEnemy = null;
+        document.getElementById('gameDashboard').style.display = 'none';
+        document.getElementById('loginScreen').style.display = 'block';
+    };
+</script>
+
+</body>
+</html>

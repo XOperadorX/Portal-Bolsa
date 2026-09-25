@@ -1,0 +1,416 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Explorador das Águas e Matas</title>
+    <script src="https://cdn.tailwindcss.com">
+    </script>
+    <link href="https://cdn.jsdelivr.net/npm/font-awesome@4.7.0/css/font-awesome.min.css" rel="stylesheet">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        nature: {
+                            light: '#E6F4EA',
+                            main: '#2E7D32',
+                            dark: '#1B5E20',
+                            water: '#0288D1',
+                            stone: '#795548'
+                        }
+                    },
+                    fontFamily: {
+                        sans: ['Inter', 'system-ui', 'sans-serif'],
+                    },
+                }
+            }
+        }
+    </script>
+    <style type="text/tailwindcss">
+        @layer utilities {
+            .content-auto {
+                content-visibility: auto;
+            }
+            .touch-action-none {
+                touch-action: none;
+            }
+            .analog-base {
+                @apply absolute w-24 h-24 rounded-full bg-black/20 border-2 border-white/40 backdrop-blur-sm;
+            }
+            .analog-stick {
+                @apply absolute w-12 h-12 rounded-full bg-white/70 shadow-lg;
+            }
+            .game-canvas {
+                @apply w-full h-full bg-gradient-to-b from-nature-water/30 via-nature-light to-nature-main/20;
+            }
+        }
+    </style>
+</head>
+<body class="bg-gray-900 overflow-hidden touch-action-none select-none">
+    <!-- Tela Inicial -->
+    <div id="telaInicial" class="absolute inset-0 z-50 flex flex-col items-center justify-center bg-gradient-to-b from-nature-water/90 to-nature-dark/90 text-white">
+        <h1 class="text-[clamp(2rem,8vw,4rem)] font-bold mb-3 drop-shadow-lg">Explorador das Águas e Matas</h1>
+        <p class="text-lg md:text-xl mb-8 text-center max-w-md px-4">Explore paisagens naturais, planeje seus movimentos e descubra tesouros com calma e estratégia!</p>
+        <div class="flex gap-4 mb-6 text-sm">
+            <span class="bg-white/20 px-3 py-1 rounded-full">✅ Para todas as idades</span>
+            <span class="bg-white/20 px-3 py-1 rounded-full">🎮 Controle fácil</span>
+            <span class="bg-white/20 px-3 py-1 rounded-full">🧠 Raciocínio leve</span>
+        </div>
+        <button onclick="iniciarJogo()" class="bg-white text-nature-main font-bold px-8 py-4 rounded-full text-xl shadow-xl hover:scale-105 transition-transform active:scale-95">
+            COMEÇAR EXPLORAÇÃO
+        </button>
+        <p class="mt-6 text-white/70 text-sm">Use o controle analógico na parte inferior esquerda</p>
+    </div>
+
+    <!-- Área do Jogo -->
+    <div id="telaJogo" class="hidden absolute inset-0 overflow-hidden">
+        <!-- Interface Superior -->
+        <div class="absolute top-0 left-0 right-0 z-20 p-3 flex justify-between items-center bg-black/20 backdrop-blur-sm">
+            <div class="flex gap-4 text-white font-bold">
+                <span><i class="fa fa-star text-yellow-300"></i> <span id="pontos">0</span></span>
+                <span><i class="fa fa-leaf text-green-300"></i> <span id="nivel">1</span></span>
+            </div>
+            <div class="text-white font-medium px-3 py-1 bg-black/20 rounded-full text-sm">Explore com calma</div>
+        </div>
+
+        <!-- Tela de Desenho -->
+        <canvas id="telaCanvas" class="game-canvas"></canvas>
+
+        <!-- Controle Analógico Virtual -->
+        <div id="controleAnalogico" class="absolute bottom-8 left-8 z-30 analog-base">
+            <div id="alavancaAnalogica" class="analog-stick top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2"></div>
+        </div>
+
+        <!-- Dica Rápida -->
+        <div id="dicaTexto" class="absolute bottom-8 right-4 z-30 text-white/90 text-sm max-w-[45%] text-right drop-shadow">
+            Toque e mova o círculo branco para andar
+        </div>
+    </div>
+
+    <script>
+        // === CONFIGURAÇÕES ===
+        const canvas = document.getElementById('telaCanvas');
+        const ctx = canvas.getContext('2d');
+        let larguraTela, alturaTela;
+        let jogador = { x: 0, y: 0, tam: 28, velBase: 2.5, velX: 0, velY: 0, angulo: 0 };
+        let recursos = [];
+        let obstaculos = [];
+        let decoracoes = [];
+        let pontos = 0;
+        let nivel = 1;
+        let andando = false;
+
+        // Controle analógico
+        const baseAnalog = document.getElementById('controleAnalogico');
+        const alavancaAnalog = document.getElementById('alavancaAnalogica');
+        let centroAnalog = { x: 0, y: 0 };
+        let raioMaxAnalog = 40;
+        let arrastando = false;
+
+        // === AJUSTE DE TAMANHO ===
+        function ajustarTamanho() {
+            larguraTela = canvas.width = window.innerWidth;
+            alturaTela = canvas.height = window.innerHeight;
+            jogador.x = larguraTela / 2;
+            jogador.y = alturaTela / 2;
+            // Atualiza centro do analógico baseado na posição real
+            const rect = baseAnalog.getBoundingClientRect();
+            centroAnalog.x = rect.left + rect.width / 2;
+            centroAnalog.y = rect.top + rect.height / 2;
+            gerarCenario();
+        }
+
+        // === GERAR CENÁRIO SEGURO E ESTRATÉGICO ===
+        function gerarCenario() {
+            recursos = [];
+            obstaculos = [];
+            decoracoes = [];
+
+            // Elementos decorativos naturais
+            for (let i = 0; i < 25 + nivel * 3; i++) {
+                decoracoes.push({
+                    x: Math.random() * larguraTela,
+                    y: Math.random() * alturaTela,
+                    tipo: Math.random() > 0.6 ? 'arvore' : Math.random() > 0.5 ? 'flor' : 'pedra',
+                    tam: 12 + Math.random() * 20
+                });
+            }
+
+            // Obstáculos: passáveis com cuidado, obrigam planejar caminho
+            for (let i = 0; i < 6 + nivel * 2; i++) {
+                obstaculos.push({
+                    x: 120 + Math.random() * (larguraTela - 240),
+                    y: 120 + Math.random() * (alturaTela - 240),
+                    larg: 40 + Math.random() * 50,
+                    alt: 40 + Math.random() * 50,
+                    tipo: Math.random() > 0.5 ? 'agua' : 'mata_fechada'
+                });
+            }
+
+            // Recursos: objetivos de coleta
+            for (let i = 0; i < 8 + nivel * 2; i++) {
+                recursos.push({
+                    x: 80 + Math.random() * (larguraTela - 160),
+                    y: 80 + Math.random() * (alturaTela - 160),
+                    tam: 18,
+                    valor: 10 + nivel * 2,
+                    brilho: 0
+                });
+            }
+        }
+
+        // === LÓGICA DO CONTROLE ANALÓGICO ===
+        function pegarPosicaoToque(e) {
+            const toque = e.touches ? e.touches[0] : e;
+            return { x: toque.clientX, y: toque.clientY };
+        }
+
+        function iniciarArrasto(e) {
+            e.preventDefault(); // Evita rolagem da página
+            arrastando = true;
+            atualizarAnalogico(pegarPosicaoToque(e));
+        }
+
+        function moverArrasto(e) {
+            e.preventDefault();
+            if (!arrastando) return;
+            atualizarAnalogico(pegarPosicaoToque(e));
+        }
+
+        function pararArrasto(e) {
+            e.preventDefault();
+            arrastando = false;
+            alavancaAnalog.style.transform = `translate(-50%, -50%)`;
+            jogador.velX *= 0.9;
+            jogador.velY *= 0.9;
+            andando = false;
+        }
+
+        function atualizarAnalogico(pos) {
+            let dx = pos.x - centroAnalog.x;
+            let dy = pos.y - centroAnalog.y;
+            let dist = Math.hypot(dx, dy);
+
+            if (dist > raioMaxAnalog) {
+                dx *= raioMaxAnalog / dist;
+                dy *= raioMaxAnalog / dist;
+            }
+
+            alavancaAnalog.style.transform = `translate(calc(-50% + ${dx}px), calc(-50% + ${dy}px))`;
+
+            const forca = Math.min(dist / raioMaxAnalog, 1);
+            jogador.velX = (dx / raioMaxAnalog) * jogador.velBase * forca;
+            jogador.velY = (dy / raioMaxAnalog) * jogador.velBase * forca;
+            jogador.angulo = Math.atan2(dy, dx);
+            andando = dist > 8;
+        }
+
+        // === MOVIMENTO E COLISÕES ===
+        function atualizarJogo() {
+            // Movimento com limites de tela
+            let novoX = jogador.x + jogador.velX;
+            let novoY = jogador.y + jogador.velY;
+
+            // Colisão com obstáculos — desacelera e desvia, não bloqueia totalmente
+            for (let obs of obstaculos) {
+                if (novoX + 14 > obs.x && novoX - 14 < obs.x + obs.larg &&
+                    novoY + 14 > obs.y && novoY - 14 < obs.y + obs.alt) {
+                    const centroObsX = obs.x + obs.larg / 2;
+                    const centroObsY = obs.y + obs.alt / 2;
+                    const anguloDesvio = Math.atan2(jogador.y - centroObsY, jogador.x - centroObsX);
+                    novoX = jogador.x + Math.cos(anguloDesvio) * 3;
+                    novoY = jogador.y + Math.sin(anguloDesvio) * 3;
+                    jogador.velX *= 0.4;
+                    jogador.velY *= 0.4;
+                }
+            }
+
+            jogador.x = Math.max(20, Math.min(larguraTela - 20, novoX));
+            jogador.y = Math.max(20, Math.min(alturaTela - 20, novoY));
+
+            // Coleta de recursos
+            recursos = recursos.filter(r => {
+                r.brilho = (r.brilho + 0.12) % (Math.PI * 2);
+                if (Math.hypot(jogador.x - r.x, jogador.y - r.y) < jogador.tam / 2 + r.tam / 2) {
+                    pontos += r.valor;
+                    document.getElementById('pontos').textContent = pontos;
+                    verificarNivel();
+                    return false;
+                }
+                return true;
+            });
+
+            // Regenera recursos se poucos restarem
+            if (recursos.length < 3) gerarMaisRecursos();
+        }
+
+        function verificarNivel() {
+            if (pontos >= nivel * 120) {
+                nivel++;
+                document.getElementById('nivel').textContent = nivel;
+                document.getElementById('dicaTexto').textContent = `Nível ${nivel}! Mais caminhos para explorar.`;
+                setTimeout(() => document.getElementById('dicaTexto').textContent = "Mova com calma para achar tudo", 3000);
+            }
+        }
+
+        function gerarMaisRecursos() {
+            for (let i = 0; i < 4; i++) {
+                recursos.push({
+                    x: 80 + Math.random() * (larguraTela - 160),
+                    y: 80 + Math.random() * (alturaTela - 160),
+                    tam: 18,
+                    valor: 10 + nivel * 2,
+                    brilho: 0
+                });
+            }
+        }
+
+        // === DESENHO COM VISUAL REALISTA SUAVE ===
+        function desenharCenario() {
+            // Fundo com gradiente natural
+            const grad = ctx.createLinearGradient(0, 0, 0, alturaTela);
+            grad.addColorStop(0, '#81D4FA');
+            grad.addColorStop(0.5, '#C8E6C9');
+            grad.addColorStop(1, '#4CAF50');
+            ctx.fillStyle = grad;
+            ctx.fillRect(0, 0, larguraTela, alturaTela);
+
+            // Decorações ao fundo
+            for (let d of decoracoes) {
+                ctx.globalAlpha = 0.6;
+                if (d.tipo === 'arvore') {
+                    ctx.fillStyle = '#5D4037';
+                    ctx.fillRect(d.x - 4, d.y, d.tam * 0.25, d.tam * 0.7);
+                    ctx.fillStyle = '#2E7D32';
+                    ctx.beginPath();
+                    ctx.arc(d.x, d.y - d.tam * 0.3, d.tam * 0.45, 0, Math.PI * 2);
+                    ctx.fill();
+                } else if (d.tipo === 'flor') {
+                    ctx.fillStyle = '#F06292';
+                    ctx.beginPath();
+                    ctx.arc(d.x, d.y, d.tam * 0.25, 0, Math.PI * 2);
+                    ctx.fill();
+                } else {
+                    ctx.fillStyle = '#795548';
+                    ctx.beginPath();
+                    ctx.ellipse(d.x, d.y, d.tam * 0.35, d.tam * 0.25, 0, 0, Math.PI * 2);
+                    ctx.fill();
+                }
+                ctx.globalAlpha = 1;
+            }
+
+            // Obstáculos
+            for (let obs of obstaculos) {
+                if (obs.tipo === 'agua') {
+                    const gradAgua = ctx.createLinearGradient(obs.x, obs.y, obs.x + obs.larg, obs.y + obs.alt);
+                    gradAgua.addColorStop(0, '#039BE5');
+                    gradAgua.addColorStop(1, '#0277BD');
+                    ctx.fillStyle = gradAgua;
+                    ctx.globalAlpha = 0.85;
+                    ctx.beginPath();
+                    ctx.roundRect(obs.x, obs.y, obs.larg, obs.alt, 12);
+                    ctx.fill();
+                } else {
+                    ctx.fillStyle = '#33691E';
+                    ctx.globalAlpha = 0.8;
+                    ctx.beginPath();
+                    ctx.roundRect(obs.x, obs.y, obs.larg, obs.alt, 8);
+                    ctx.fill();
+                    ctx.fillStyle = '#2E7D32';
+                    for (let p = 0; p < 5; p++) {
+                        ctx.beginPath();
+                        ctx.arc(obs.x + 10 + p * 10, obs.y + 10 + p * 8, 5, 0, Math.PI * 2);
+                        ctx.fill();
+                    }
+                }
+                ctx.globalAlpha = 1;
+            }
+
+            // Recursos brilhantes
+            for (let r of recursos) {
+                const brilhoExt = 0.6 + Math.sin(r.brilho) * 0.3;
+                ctx.shadowColor = '#FFD700';
+                ctx.shadowBlur = 12 * brilhoExt;
+                ctx.fillStyle = '#FFC107';
+                ctx.beginPath();
+                ctx.arc(r.x, r.y, r.tam / 2, 0, Math.PI * 2);
+                ctx.fill();
+                ctx.fillStyle = '#FFEB3B';
+                ctx.beginPath();
+                ctx.arc(r.x - 2, r.y - 2, r.tam / 4, 0, Math.PI * 2);
+                ctx.fill();
+                ctx.shadowBlur = 0;
+            }
+
+            // Jogador com sombra e direção
+            ctx.shadowColor = 'rgba(0,0,0,0.3)';
+            ctx.shadowBlur = 8;
+            ctx.shadowOffsetX = 3;
+            ctx.shadowOffsetY = 4;
+            ctx.fillStyle = '#FF7043';
+            ctx.beginPath();
+            ctx.arc(jogador.x, jogador.y, jogador.tam / 2, 0, Math.PI * 2);
+            ctx.fill();
+            ctx.fillStyle = '#FFAB91';
+            ctx.beginPath();
+            ctx.arc(jogador.x - 3, jogador.y - 3, jogador.tam / 4, 0, Math.PI * 2);
+            ctx.fill();
+            // Direção de movimento
+            if (andando) {
+                ctx.strokeStyle = '#FFFFFF';
+                ctx.lineWidth = 3;
+                ctx.beginPath();
+                ctx.moveTo(jogador.x, jogador.y);
+                ctx.lineTo(jogador.x + Math.cos(jogador.angulo) * jogador.tam * 1.1, jogador.y + Math.sin(jogador.angulo) * jogador.tam * 1.1);
+                ctx.stroke();
+            }
+            ctx.shadowBlur = 0;
+            ctx.shadowOffsetX = 0;
+            ctx.shadowOffsetY = 0;
+        }
+
+        // === LOOP PRINCIPAL ===
+        function loopJogo() {
+            atualizarJogo();
+            desenharCenario();
+            requestAnimationFrame(loopJogo);
+        }
+
+        // === INICIALIZAÇÃO ===
+        function iniciarJogo() {
+            document.getElementById('telaInicial').classList.add('hidden');
+            document.getElementById('telaJogo').classList.remove('hidden');
+            ajustarTamanho();
+            loopJogo();
+        }
+
+        // Eventos do controle - compatível com Android
+        baseAnalog.addEventListener('touchstart', iniciarArrasto, { passive: false });
+        baseAnalog.addEventListener('touchmove', moverArrasto, { passive: false });
+        baseAnalog.addEventListener('touchend', pararArrasto);
+        baseAnalog.addEventListener('touchcancel', pararArrasto);
+
+        // Suporte a mouse para teste em desktop
+        baseAnalog.addEventListener('mousedown', iniciarArrasto);
+        window.addEventListener('mousemove', moverArrasto);
+        window.addEventListener('mouseup', pararArrasto);
+
+        window.addEventListener('resize', ajustarTamanho);
+
+        // Fallback para método roundRect no canvas (para navegadores mais antigos)
+        if (!CanvasRenderingContext2D.prototype.roundRect) {
+            CanvasRenderingContext2D.prototype.roundRect = function(x, y, w, h, r) {
+                if (r > w / 2) r = w / 2;
+                if (r > h / 2) r = h / 2;
+                this.moveTo(x + r, y);
+                this.arcTo(x + w, y, x + w, y + h, r);
+                this.arcTo(x + w, y + h, x, y + h, r);
+                this.arcTo(x, y + h, x, y, r);
+                this.arcTo(x, y, x + w, y, r);
+                return this;
+            };
+        }
+    </script>
+</body>
+</html>

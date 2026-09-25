@@ -1,0 +1,594 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <title>Caminho da Natureza — Jogo Lento</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdn.jsdelivr.net/npm/font-awesome@4.7.0/css/font-awesome.min.css" rel="stylesheet">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; user-select: none; -webkit-user-select: none; }
+        body { overflow: hidden; font-family: 'Segoe UI', sans-serif; background: #1e4a2a; touch-action: none; }
+        canvas { display: block; touch-action: none; width: 100vw; height: 100vh; }
+
+        /* Controle analógico grande e fácil */
+        #analog-stick {
+            position: fixed;
+            bottom: 30px;
+            left: 30px;
+            width: 140px;
+            height: 140px;
+            border-radius: 50%;
+            background: rgba(255,255,255,0.2);
+            backdrop-filter: blur(10px);
+            box-shadow: 0 8px 32px rgba(0,0,0,0.5);
+            touch-action: none;
+            z-index: 30;
+            border: 3px solid rgba(255,255,255,0.3);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        #analog-knob {
+            width: 65px;
+            height: 65px;
+            border-radius: 50%;
+            background: radial-gradient(circle, #7ddf9a, #1e7a30);
+            box-shadow: 0 4px 20px rgba(0,0,0,0.6);
+            transition: none;
+            touch-action: none;
+            pointer-events: none;
+            border: 3px solid rgba(255,255,255,0.6);
+        }
+
+        /* Botão de ajuda (pulo suave) */
+        #action-btn {
+            position: fixed;
+            bottom: 50px;
+            right: 30px;
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            background: radial-gradient(circle, #f5b041, #d68910);
+            box-shadow: 0 8px 28px rgba(0,0,0,0.5);
+            border: 3px solid rgba(255,255,255,0.4);
+            color: white;
+            font-size: 32px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 30;
+            touch-action: none;
+        }
+        #action-btn:active { transform: scale(0.92); }
+
+        /* HUD grande e legível */
+        #hud {
+            position: fixed;
+            top: 20px;
+            left: 20px;
+            z-index: 40;
+            display: flex;
+            gap: 20px;
+            background: rgba(0,0,0,0.4);
+            backdrop-filter: blur(6px);
+            padding: 12px 24px;
+            border-radius: 50px;
+            color: white;
+            font-weight: bold;
+            font-size: 18px;
+            box-shadow: 0 4px 16px rgba(0,0,0,0.4);
+        }
+        #hud span { margin: 0 4px; }
+
+        #pause-btn {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: rgba(0,0,0,0.4);
+            backdrop-filter: blur(6px);
+            color: white;
+            border: none;
+            border-radius: 50px;
+            padding: 10px 20px;
+            font-size: 20px;
+            font-weight: bold;
+            z-index: 40;
+            touch-action: manipulation;
+            box-shadow: 0 4px 16px rgba(0,0,0,0.4);
+        }
+
+        /* Telas modais com fontes grandes */
+        .modal-overlay {
+            position: fixed;
+            inset: 0;
+            z-index: 60;
+            background: rgba(0,0,0,0.75);
+            backdrop-filter: blur(8px);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 24px;
+        }
+        .modal-card {
+            background: white;
+            border-radius: 40px;
+            padding: 32px 28px;
+            max-width: 380px;
+            width: 100%;
+            text-align: center;
+            box-shadow: 0 32px 80px rgba(0,0,0,0.6);
+        }
+        .modal-card h2 { font-size: 32px; font-weight: 700; color: #1e7a30; margin-bottom: 12px; }
+        .modal-card p { font-size: 18px; color: #333; line-height: 1.6; margin-bottom: 16px; }
+        .btn-grande {
+            background: #2F9E44;
+            color: white;
+            font-weight: bold;
+            padding: 16px 0;
+            border-radius: 60px;
+            width: 100%;
+            border: none;
+            font-size: 22px;
+            transition: 0.15s;
+            margin-top: 6px;
+            touch-action: manipulation;
+        }
+        .btn-grande:active { transform: scale(0.96); background: #1e7a30; }
+        .btn-cinza {
+            background: rgba(0,0,0,0.08);
+            color: #1a1a1a;
+            font-weight: 600;
+            padding: 14px 0;
+            border-radius: 60px;
+            width: 100%;
+            border: none;
+            font-size: 19px;
+            margin-top: 10px;
+            touch-action: manipulation;
+        }
+        .btn-cinza:active { background: rgba(0,0,0,0.18); }
+        .btn-perigo {
+            background: #e74c3c;
+            color: white;
+        }
+        .btn-perigo:active { background: #c0392b; }
+        .hidden { display: none !important; }
+    </style>
+</head>
+<body>
+
+    <!-- TELA INICIAL -->
+    <div id="telaInicio" class="modal-overlay" style="z-index:80;">
+        <div class="modal-card">
+            <h1 style="font-size: 42px;">🌿 Caminho</h1>
+            <p style="font-size: 26px; font-weight: 300; margin-top: -8px;">da Natureza</p>
+            <p style="font-size: 18px; margin: 12px 0 18px; color: #444;">Um passeio tranquilo pela floresta. Colete itens e relaxe.</p>
+            <button onclick="iniciarJogo()" class="btn-grande"><i class="fa fa-play" style="margin-right:12px;"></i>INICIAR</button>
+            <button onclick="mostrarRegras()" class="btn-cinza"><i class="fa fa-book" style="margin-right:10px;"></i>Como jogar</button>
+            <p style="font-size: 14px; color: #999; margin-top: 16px;">Sem pressa • Sem anúncios</p>
+        </div>
+    </div>
+
+    <!-- TELA DE REGRAS -->
+    <div id="telaRegras" class="modal-overlay hidden" style="z-index:85;">
+        <div class="modal-card" style="text-align:left;">
+            <h2 style="text-align:center;">📖 Regras</h2>
+            <ul style="list-style:none; padding:0; margin:12px 0; font-size:17px; color:#222;">
+                <li style="margin-bottom:14px;">🌳 <strong>Objetivo:</strong> caminhe pela floresta, colete frutas e cristais.</li>
+                <li style="margin-bottom:14px;">🕹️ <strong>Controle:</strong> use o <strong>joystick</strong> grande no canto inferior esquerdo para se movimentar com calma.</li>
+                <li style="margin-bottom:14px;">✨ <strong>Colete:</strong> itens brilhantes para ganhar pontos.</li>
+                <li style="margin-bottom:14px;">⚠️ <strong>Cuidado:</strong> apenas desvie dos obstáculos escuros.</li>
+                <li style="margin-bottom:14px;">🏆 <strong>Progresso:</strong> a cada 1000 pontos o nível aumenta e o cenário muda um pouco.</li>
+            </ul>
+            <button onclick="fecharRegras()" class="btn-grande" style="margin-top:4px;">Entendido!</button>
+        </div>
+    </div>
+
+    <!-- HUD -->
+    <div id="hud">
+        <span>⭐ <span id="pontos">0</span></span>
+        <span>📦 <span id="itens">0</span></span>
+        <span>🏔️ <span id="nivel">1</span></span>
+    </div>
+    <button id="pause-btn" onclick="pausarJogo()"><i class="fa fa-pause"></i> Pausa</button>
+
+    <!-- JOYSTICK -->
+    <div id="analog-stick">
+        <div id="analog-knob"></div>
+    </div>
+
+    <!-- BOTÃO DE AJUDA (PULO SUAVE) -->
+    <div id="action-btn"><i class="fa fa-arrow-up"></i></div>
+
+    <!-- CANVAS -->
+    <canvas id="telaCanvas"></canvas>
+
+    <!-- PAUSA -->
+    <div id="telaPausa" class="modal-overlay hidden" style="z-index:70;">
+        <div class="modal-card">
+            <h2>⏸️ Pausa</h2>
+            <p>Descanse um pouco, volte quando quiser.</p>
+            <button onclick="continuarJogo()" class="btn-grande">Continuar</button>
+            <button onclick="reiniciarJogo()" class="btn-cinza">🔄 Recomeçar</button>
+            <button onclick="voltarInicio()" class="btn-cinza btn-perigo">🏠 Sair</button>
+        </div>
+    </div>
+
+    <!-- FIM -->
+    <div id="telaFim" class="modal-overlay hidden" style="z-index:75;">
+        <div class="modal-card">
+            <h2>🎉 Fim</h2>
+            <p style="font-size:20px;">Que caminhada boa!</p>
+            <div style="background:#f0f7f0; border-radius:24px; padding:16px; margin:16px 0;">
+                <p style="font-size:20px;"><strong>⭐ Pontos:</strong> <span id="pontosFim">0</span></p>
+                <p style="font-size:20px;"><strong>📦 Itens:</strong> <span id="itensFim">0</span></p>
+                <p style="font-size:20px;"><strong>🏔️ Nível:</strong> <span id="nivelFim">0</span></p>
+            </div>
+            <button onclick="reiniciarJogo()" class="btn-grande">🔄 Jogar de novo</button>
+            <button onclick="voltarInicio()" class="btn-cinza">🏠 Início</button>
+        </div>
+    </div>
+
+    <script>
+        // ===== CONFIGURAÇÕES =====
+        const canvas = document.getElementById('telaCanvas');
+        const ctx = canvas.getContext('2d');
+        let jogoRodando = false, pausado = false, animId;
+
+        // Jogador mais lento e estável
+        let jogador = { x: 0, y: 0, tam: 26, vel: 3.2, cor: '#2b8a3e' };
+        let pontos = 0, itensColetados = 0, nivel = 1;
+        let velocidadeMundo = 1.8; // mais lento
+        let distanciaTotal = 0;
+        let caminho = [], obstaculos = [], itens = [];
+
+        // Controle analógico
+        let stickAtivo = false, stickDX = 0, stickDY = 0;
+        const stickBase = document.getElementById('analog-stick');
+        const knob = document.getElementById('analog-knob');
+        let stickTouchId = null;
+
+        function resizeCanvas() {
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+        }
+        window.addEventListener('resize', resizeCanvas);
+        resizeCanvas();
+
+        // ===== JOYSTICK =====
+        stickBase.addEventListener('touchstart', (e) => {
+            e.preventDefault();
+            const t = e.changedTouches[0];
+            stickTouchId = t.identifier;
+            stickAtivo = true;
+            atualizarStick(t.clientX, t.clientY);
+        }, { passive: false });
+
+        stickBase.addEventListener('touchmove', (e) => {
+            e.preventDefault();
+            for (let t of e.changedTouches) {
+                if (t.identifier === stickTouchId) atualizarStick(t.clientX, t.clientY);
+            }
+        }, { passive: false });
+
+        stickBase.addEventListener('touchend', (e) => {
+            for (let t of e.changedTouches) {
+                if (t.identifier === stickTouchId) {
+                    stickAtivo = false;
+                    stickTouchId = null;
+                    stickDX = 0; stickDY = 0;
+                    knob.style.transform = 'translate(0px, 0px)';
+                }
+            }
+        }, { passive: false });
+
+        stickBase.addEventListener('touchcancel', () => {
+            stickAtivo = false;
+            stickTouchId = null;
+            stickDX = 0; stickDY = 0;
+            knob.style.transform = 'translate(0px, 0px)';
+        }, { passive: false });
+
+        function atualizarStick(cx, cy) {
+            const rect = stickBase.getBoundingClientRect();
+            const centerX = rect.left + rect.width/2;
+            const centerY = rect.top + rect.height/2;
+            let dx = cx - centerX;
+            let dy = cy - centerY;
+            const maxDist = rect.width/2 - 12;
+            const dist = Math.hypot(dx, dy);
+            let limitado = Math.min(dist, maxDist);
+            if (dist > 0) { dx = (dx/dist)*limitado; dy = (dy/dist)*limitado; }
+            const normX = dx / maxDist;
+            const normY = dy / maxDist;
+            stickDX = Math.min(1, Math.max(-1, normX));
+            stickDY = Math.min(1, Math.max(-1, normY));
+            knob.style.transform = `translate(${dx}px, ${dy}px)`;
+        }
+
+        // Botão de pulo suave (aumenta velocidade temporariamente)
+        document.getElementById('action-btn').addEventListener('touchstart', (e) => {
+            e.preventDefault();
+            jogador.vel = 5.0;
+            setTimeout(() => { jogador.vel = 3.2; }, 200);
+        }, { passive: false });
+
+        // ===== JOGO =====
+        function iniciarJogo() {
+            document.getElementById('telaInicio').classList.add('hidden');
+            document.getElementById('telaRegras').classList.add('hidden');
+            reiniciarValores();
+            jogoRodando = true;
+            pausado = false;
+            if (animId) cancelAnimationFrame(animId);
+            loopPrincipal();
+        }
+
+        function reiniciarValores() {
+            jogador.x = canvas.width / 2;
+            jogador.y = canvas.height - 140;
+            pontos = 0; itensColetados = 0; nivel = 1;
+            velocidadeMundo = 1.8;
+            distanciaTotal = 0;
+            caminho = []; obstaculos = []; itens = [];
+            gerarCaminhoInicial();
+            atualizarInterface();
+            document.getElementById('telaFim').classList.add('hidden');
+            document.getElementById('telaPausa').classList.add('hidden');
+        }
+
+        function gerarCaminhoInicial() {
+            let cx = canvas.width / 2;
+            for (let y = canvas.height + 120; y > -300; y -= 75) {
+                caminho.push({
+                    y: y,
+                    largura: 160 + Math.sin(y * 0.008) * 50,
+                    centroX: cx
+                });
+                cx += (Math.random() - 0.5) * 100;
+                cx = Math.max(80, Math.min(canvas.width - 80, cx));
+            }
+        }
+
+        function atualizarMundo() {
+            distanciaTotal += velocidadeMundo;
+            const novoNivel = Math.floor(distanciaTotal / 1800) + 1;
+            if (novoNivel !== nivel) {
+                nivel = novoNivel;
+                velocidadeMundo = Math.min(4.0, 1.8 + nivel * 0.25);
+                atualizarInterface();
+            }
+
+            caminho.forEach(p => p.y += velocidadeMundo);
+            caminho = caminho.filter(p => p.y < canvas.height + 200);
+            const ultimo = caminho[0] || { centroX: canvas.width/2, y: 0 };
+            let nc = ultimo.centroX + (Math.random() - 0.5) * 110;
+            nc = Math.max(80, Math.min(canvas.width - 80, nc));
+            caminho.unshift({
+                y: ultimo.y - 75,
+                largura: Math.max(130, 180 - nivel * 5) + Math.sin(distanciaTotal * 0.003) * 30,
+                centroX: nc
+            });
+
+            // Obstáculos (menos frequentes)
+            obstaculos.forEach(o => o.y += velocidadeMundo);
+            obstaculos = obstaculos.filter(o => o.y < canvas.height + 60);
+            if (Math.random() < 0.015 + nivel * 0.003) {
+                const t = caminho[Math.floor(Math.random() * caminho.length)];
+                obstaculos.push({
+                    x: t.centroX + (Math.random() - 0.5) * t.largura * 0.6,
+                    y: -40,
+                    tam: 20 + Math.random() * 14,
+                    tipo: Math.floor(Math.random() * 3)
+                });
+            }
+
+            // Itens (frequentes e generosos)
+            itens.forEach(i => i.y += velocidadeMundo);
+            itens = itens.filter(i => i.y < canvas.height + 40);
+            if (Math.random() < 0.06) {
+                const t = caminho[Math.floor(Math.random() * caminho.length)];
+                const cores = ['#ffd43b', '#ff6b6b', '#4dabf7', '#be4bdb', '#fcc419', '#20c997'];
+                itens.push({
+                    x: t.centroX + (Math.random() - 0.5) * t.largura * 0.75,
+                    y: -15,
+                    tam: 18,
+                    valor: [10, 20, 40, 80][Math.floor(Math.random() * 4)],
+                    cor: cores[Math.floor(Math.random() * cores.length)]
+                });
+            }
+        }
+
+        function atualizarJogador() {
+            let vx = 0, vy = 0;
+            if (stickAtivo) {
+                const sens = jogador.vel;
+                vx = stickDX * sens;
+                vy = stickDY * sens;
+            }
+
+            jogador.x = Math.max(30, Math.min(canvas.width - 30, jogador.x + vx));
+            jogador.y = Math.max(80, Math.min(canvas.height - 30, jogador.y + vy));
+
+            // Verifica trilha (mais tolerante)
+            let naTrilha = false;
+            for (let p of caminho) {
+                if (jogador.y > p.y - 50 && jogador.y < p.y + 50) {
+                    const esq = p.centroX - p.largura / 2 - 10;
+                    const dir = p.centroX + p.largura / 2 + 10;
+                    if (jogador.x > esq && jogador.x < dir) { naTrilha = true; break; }
+                }
+            }
+            if (!naTrilha) { fimDeJogo(); return; }
+
+            // Colisão obstáculos (mais perdoável)
+            for (let obs of obstaculos) {
+                if (Math.hypot(jogador.x - obs.x, jogador.y - obs.y) < jogador.tam/2 + obs.tam/2 - 8) {
+                    fimDeJogo(); return;
+                }
+            }
+
+            // Coleta
+            for (let i = itens.length - 1; i >= 0; i--) {
+                if (Math.hypot(jogador.x - itens[i].x, jogador.y - itens[i].y) < jogador.tam/2 + itens[i].tam/2 - 4) {
+                    pontos += itens[i].valor;
+                    itensColetados++;
+                    itens.splice(i, 1);
+                    atualizarInterface();
+                }
+            }
+        }
+
+        function desenharTudo() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            // Céu
+            const grad = ctx.createLinearGradient(0, 0, 0, canvas.height);
+            grad.addColorStop(0, '#74C0FC');
+            grad.addColorStop(0.5, '#a5d8ff');
+            grad.addColorStop(1, '#b2f2bb');
+            ctx.fillStyle = grad;
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+            // Montanhas
+            ctx.fillStyle = 'rgba(134, 142, 150, 0.2)';
+            ctx.beginPath();
+            ctx.moveTo(0, canvas.height);
+            for (let x = 0; x <= canvas.width; x += 40) {
+                const alt = 80 + Math.sin(x * 0.025 + distanciaTotal * 0.0006) * 50 + Math.sin(x * 0.05 + distanciaTotal * 0.0009) * 25;
+                ctx.lineTo(x, canvas.height - alt);
+            }
+            ctx.lineTo(canvas.width, canvas.height);
+            ctx.fill();
+
+            // Caminho
+            for (let p of caminho) {
+                const esq = p.centroX - p.largura / 2;
+                const dir = p.centroX + p.largura / 2;
+                ctx.fillStyle = '#a0522d';
+                ctx.beginPath();
+                ctx.moveTo(esq - 4, p.y - 40);
+                ctx.lineTo(esq, p.y);
+                ctx.lineTo(dir, p.y);
+                ctx.lineTo(dir + 4, p.y - 40);
+                ctx.closePath();
+                ctx.fill();
+                ctx.strokeStyle = '#d4a373';
+                ctx.lineWidth = 2.5;
+                ctx.stroke();
+                // Grama
+                ctx.fillStyle = '#2F9E44';
+                for (let lado = -1; lado <= 1; lado += 2) {
+                    for (let d = 0; d < 4; d++) {
+                        const gx = p.centroX + lado * (p.largura / 2 + 6 + d * 8);
+                        const gy = p.y - 6 + d * 12;
+                        ctx.beginPath();
+                        ctx.moveTo(gx, gy);
+                        ctx.lineTo(gx - 5, gy - 14);
+                        ctx.lineTo(gx + 5, gy - 14);
+                        ctx.fill();
+                    }
+                }
+            }
+
+            // Obstáculos
+            for (let o of obstaculos) {
+                ctx.fillStyle = ['#868E96', '#6c757d', '#495057'][o.tipo] || '#868E96';
+                ctx.beginPath();
+                ctx.arc(o.x, o.y, o.tam, 0, Math.PI * 2);
+                ctx.fill();
+                ctx.strokeStyle = '#343a40';
+                ctx.lineWidth = 2;
+                ctx.stroke();
+            }
+
+            // Itens
+            for (let i of itens) {
+                ctx.shadowColor = i.cor;
+                ctx.shadowBlur = 18;
+                ctx.fillStyle = i.cor;
+                ctx.beginPath();
+                ctx.arc(i.x, i.y, i.tam, 0, Math.PI * 2);
+                ctx.fill();
+                ctx.shadowBlur = 0;
+            }
+
+            // Jogador
+            ctx.fillStyle = '#2b8a3e';
+            ctx.shadowColor = '#2b8a3e';
+            ctx.shadowBlur = 14;
+            ctx.beginPath();
+            ctx.arc(jogador.x, jogador.y, jogador.tam / 2, 0, Math.PI * 2);
+            ctx.fill();
+            ctx.shadowBlur = 0;
+            ctx.fillStyle = '#fff';
+            ctx.beginPath();
+            ctx.arc(jogador.x - 6, jogador.y - 5, 5, 0, Math.PI * 2);
+            ctx.arc(jogador.x + 6, jogador.y - 5, 5, 0, Math.PI * 2);
+            ctx.fill();
+            ctx.fillStyle = '#111';
+            ctx.beginPath();
+            ctx.arc(jogador.x - 6, jogador.y - 4, 2.5, 0, Math.PI * 2);
+            ctx.arc(jogador.x + 6, jogador.y - 4, 2.5, 0, Math.PI * 2);
+            ctx.fill();
+        }
+
+        function atualizarInterface() {
+            document.getElementById('pontos').textContent = pontos;
+            document.getElementById('itens').textContent = itensColetados;
+            document.getElementById('nivel').textContent = nivel;
+        }
+
+        function fimDeJogo() {
+            jogoRodando = false;
+            document.getElementById('pontosFim').textContent = pontos;
+            document.getElementById('itensFim').textContent = itensColetados;
+            document.getElementById('nivelFim').textContent = nivel;
+            document.getElementById('telaFim').classList.remove('hidden');
+            if (animId) cancelAnimationFrame(animId);
+        }
+
+        function loopPrincipal() {
+            if (!jogoRodando || pausado) { animId = requestAnimationFrame(loopPrincipal); return; }
+            atualizarMundo();
+            atualizarJogador();
+            desenharTudo();
+            animId = requestAnimationFrame(loopPrincipal);
+        }
+
+        // ===== CONTROLES UI =====
+        function mostrarRegras() { document.getElementById('telaRegras').classList.remove('hidden'); }
+        function fecharRegras() { document.getElementById('telaRegras').classList.add('hidden'); }
+        function pausarJogo() {
+            if (!jogoRodando) return;
+            pausado = true;
+            document.getElementById('telaPausa').classList.remove('hidden');
+        }
+        function continuarJogo() {
+            pausado = false;
+            document.getElementById('telaPausa').classList.add('hidden');
+        }
+        function reiniciarJogo() {
+            document.getElementById('telaPausa').classList.add('hidden');
+            document.getElementById('telaFim').classList.add('hidden');
+            reiniciarValores();
+            jogoRodando = true;
+            pausado = false;
+            if (animId) cancelAnimationFrame(animId);
+            loopPrincipal();
+        }
+        function voltarInicio() {
+            jogoRodando = false; pausado = false;
+            if (animId) cancelAnimationFrame(animId);
+            document.getElementById('telaPausa').classList.add('hidden');
+            document.getElementById('telaFim').classList.add('hidden');
+            document.getElementById('telaInicio').classList.remove('hidden');
+        }
+
+        window.addEventListener('load', () => {
+            resizeCanvas();
+            jogoRodando = false;
+        });
+    </script>
+</body>
+</html>

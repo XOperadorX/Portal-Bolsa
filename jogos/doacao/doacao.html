@@ -1,0 +1,580 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Coleta MuMu - Economia</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+    <style>
+        * { margin:0; padding:0; box-sizing:border-box; }
+        body {
+            font-family: 'Inter', sans-serif;
+            background: #0b0e14;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+            background-image: radial-gradient(circle at 20% 30%, #1e293b 0%, #0b0e14 80%);
+        }
+        .game-container {
+            max-width: 560px;
+            width: 100%;
+            background: #141a24;
+            border-radius: 32px;
+            padding: 32px 28px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.8), 0 0 0 1px rgba(255,215,0,0.15);
+            border: 1px solid rgba(255,215,0,0.08);
+        }
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 24px;
+        }
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .logo h1 {
+            font-size: 22px;
+            font-weight: 900;
+            background: linear-gradient(135deg, #fbbf24, #f59e0b);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        .balance-box {
+            background: #1e293b;
+            padding: 8px 16px;
+            border-radius: 40px;
+            border: 1px solid #334155;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-weight: 700;
+            font-size: 16px;
+            color: #facc15;
+        }
+        .balance-box span { color: #94a3b8; font-weight:400; font-size:13px; }
+
+        /* Indicadores globais */
+        .global-stats {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+            margin-bottom: 24px;
+        }
+        .global-stat {
+            background: #1e293b;
+            border-radius: 16px;
+            padding: 14px 16px;
+            border: 1px solid #2d3a4f;
+            text-align: center;
+        }
+        .global-stat .label {
+            color: #94a3b8;
+            font-size: 12px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.3px;
+        }
+        .global-stat .value {
+            font-size: 20px;
+            font-weight: 800;
+            margin-top: 4px;
+        }
+        .global-stat .value.gold { color: #facc15; }
+        .global-stat .value.green { color: #4ade80; }
+
+        .welcome-text {
+            color: #e2e8f0;
+            font-size: 15px;
+            font-weight: 400;
+            margin-bottom: 24px;
+            line-height: 1.5;
+            background: #1e293b;
+            padding: 12px 16px;
+            border-radius: 16px;
+            border-left: 4px solid #facc15;
+        }
+        .welcome-text strong { color: #facc15; }
+
+        /* Bloco descritivo da Moeda MuMu */
+        .mumu-info {
+            background: #0f172a;
+            border-radius: 16px;
+            padding: 18px 20px;
+            margin-bottom: 20px;
+            border-left: 4px solid #facc15;
+        }
+        .mumu-info h3 {
+            color: #facc15;
+            font-size: 16px;
+            font-weight: 700;
+            margin-bottom: 8px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .mumu-info p {
+            color: #cbd5e1;
+            font-size: 14px;
+            line-height: 1.6;
+        }
+        .mumu-info strong { color: #facc15; }
+
+        .package-box {
+            background: linear-gradient(145deg, #1e293b, #0f172a);
+            border-radius: 24px;
+            padding: 24px 20px;
+            margin-bottom: 24px;
+            border: 1px solid #334155;
+            position: relative;
+            overflow: hidden;
+        }
+        .package-box::before {
+            content: '⭐ RECOMENDADO';
+            position: absolute;
+            top: 12px;
+            right: -28px;
+            background: #facc15;
+            color: #0b0e14;
+            font-size: 10px;
+            font-weight: 800;
+            padding: 4px 32px;
+            transform: rotate(45deg);
+            box-shadow: 0 2px 8px rgba(250,204,21,0.3);
+        }
+        .package-title {
+            font-size: 20px;
+            font-weight: 800;
+            color: #f8fafc;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-bottom: 6px;
+        }
+        .package-sub {
+            font-size: 28px;
+            font-weight: 900;
+            color: #facc15;
+            margin-bottom: 16px;
+        }
+        .package-sub small { font-size:16px; font-weight:600; color:#94a3b8; }
+        .features {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            margin: 16px 0 20px 0;
+        }
+        .features li {
+            list-style: none;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            color: #cbd5e1;
+            font-size: 15px;
+            font-weight: 500;
+        }
+        .features li::before { content: '✅'; font-size:18px; }
+
+        .btn-donate {
+            width: 100%;
+            padding: 18px;
+            background: linear-gradient(135deg, #f7971e, #ffd200);
+            border: none;
+            border-radius: 16px;
+            font-weight: 800;
+            font-size: 18px;
+            color: #0b0e14;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            box-shadow: 0 4px 15px rgba(247,151,30,0.35);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+        }
+        .btn-donate:hover { transform:scale(1.02); box-shadow:0 8px 25px rgba(247,151,30,0.5); }
+        .btn-donate:active { transform:scale(0.97); }
+        .btn-donate:disabled { opacity:0.6; filter:grayscale(0.5); cursor:not-allowed; transform:none; }
+
+        .disclaimer {
+            margin-top: 20px;
+            padding: 14px 16px;
+            background: #1e293b;
+            border-radius: 14px;
+            border-left: 3px solid #64748b;
+        }
+        .disclaimer p { color:#94a3b8; font-size:13px; line-height:1.6; }
+        .disclaimer strong { color:#facc15; }
+        .link-transparent {
+            background: none;
+            border: none;
+            color: #60a5fa;
+            font-weight: 600;
+            font-size: 13px;
+            cursor: pointer;
+            padding: 6px 0;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            transition: color 0.2s;
+            margin-top: 4px;
+        }
+        .link-transparent:hover { color:#93c5fd; text-decoration:underline; }
+
+        .game-stats {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+            margin: 20px 0 10px 0;
+        }
+        .stat-item {
+            background: #1e293b;
+            padding: 12px 14px;
+            border-radius: 14px;
+            border: 1px solid #2d3a4f;
+            text-align: center;
+        }
+        .stat-item .label { color:#94a3b8; font-size:11px; font-weight:600; text-transform:uppercase; letter-spacing:0.5px; }
+        .stat-item .value { color:#e2e8f0; font-size:16px; font-weight:700; margin-top:4px; }
+        .stat-item .value.gold { color:#facc15; }
+
+        /* Modal */
+        .modal-overlay {
+            position: fixed;
+            top:0; left:0; width:100%; height:100%;
+            background: rgba(0,0,0,0.8);
+            backdrop-filter: blur(6px);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            z-index: 999;
+            padding: 20px;
+        }
+        .modal-overlay.active { display: flex; }
+        .modal-content {
+            background: #1a1f2b;
+            max-width: 420px;
+            width: 100%;
+            border-radius: 28px;
+            padding: 32px 28px;
+            border: 1px solid #334155;
+            box-shadow: 0 30px 80px rgba(0,0,0,0.9);
+            animation: fadeSlideUp 0.3s ease;
+        }
+        @keyframes fadeSlideUp {
+            from { opacity:0; transform:translateY(30px) scale(0.95); }
+            to { opacity:1; transform:translateY(0) scale(1); }
+        }
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+        .modal-header h2 { color:#f8fafc; font-size:22px; font-weight:800; }
+        .modal-close {
+            background: #2d3a4f;
+            border: none;
+            color: #94a3b8;
+            width: 36px; height: 36px;
+            border-radius: 40px;
+            font-size: 20px;
+            cursor: pointer;
+            transition: 0.2s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .modal-close:hover { background:#475569; color:#f1f5f9; }
+        .transparency-list {
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+            margin: 16px 0 8px 0;
+        }
+        .transparency-item {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            background: #0f172a;
+            padding: 14px 18px;
+            border-radius: 16px;
+        }
+        .transparency-item .perc {
+            font-size: 24px;
+            font-weight: 900;
+            color: #facc15;
+            min-width: 60px;
+        }
+        .transparency-item .desc {
+            color: #cbd5e1;
+            font-weight: 500;
+            font-size: 15px;
+        }
+        .transparency-item .desc small {
+            display: block;
+            color: #64748b;
+            font-weight: 400;
+            font-size: 13px;
+        }
+
+        /* Toast */
+        .toast {
+            position: fixed;
+            bottom: 30px;
+            left: 50%;
+            transform: translateX(-50%) translateY(100px);
+            background: #1e293b;
+            color: #f8fafc;
+            padding: 16px 28px;
+            border-radius: 60px;
+            border: 1px solid #facc15;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.7);
+            font-weight: 600;
+            font-size: 15px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            opacity: 0;
+            transition: all 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+            z-index: 1000;
+            white-space: nowrap;
+            pointer-events: none;
+        }
+        .toast.show { opacity:1; transform:translateX(-50%) translateY(0); }
+        .toast .emoji { font-size:22px; }
+
+        @media (max-width: 480px) {
+            .game-container { padding:20px 16px; }
+            .logo h1 { font-size:18px; }
+            .balance-box { font-size:14px; padding:6px 12px; }
+            .package-sub { font-size:24px; }
+            .game-stats { grid-template-columns:1fr 1fr; }
+            .toast { white-space:normal; text-align:center; padding:14px 20px; max-width:90%; }
+            .global-stats { grid-template-columns:1fr; }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- TOAST -->
+    <div id="toast" class="toast">
+        <span class="emoji">🎉</span>
+        <span id="toastMessage">Doação recebida!</span>
+    </div>
+
+    <!-- MODAL TRANSPARÊNCIA -->
+    <div id="modalTransparencia" class="modal-overlay">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>🔍 Para onde vai sua doação?</h2>
+                <button class="modal-close" id="closeModalBtn">✕</button>
+            </div>
+            <p style="color:#94a3b8; margin-bottom:16px; font-size:14px;">Transparência total com a comunidade MuMu.</p>
+            <div class="transparency-list">
+                <div class="transparency-item">
+                    <span class="perc">70%</span>
+                    <span class="desc">Infraestrutura <small>Servidores, manutenção e segurança</small></span>
+                </div>
+                <div class="transparency-item">
+                    <span class="perc">20%</span>
+                    <span class="desc">Novos Conteúdos <small>Criação de mapas, skins e itens</small></span>
+                </div>
+                <div class="transparency-item">
+                    <span class="perc">10%</span>
+                    <span class="desc">Equipe Dev <small>Café, energia e boas risadas</small></span>
+                </div>
+            </div>
+            <div style="margin-top:20px; padding-top:16px; border-top:1px solid #2d3a4f; text-align:center; color:#64748b; font-size:13px;">
+                ❤️ Cada doação faz o MuMu crescer!
+            </div>
+        </div>
+    </div>
+
+    <!-- PRINCIPAL -->
+    <div class="game-container">
+        <!-- Header -->
+        <div class="header">
+            <div class="logo">
+                <span style="font-size:28px;">🪙</span>
+                <h1>MuMu</h1>
+            </div>
+            <div class="balance-box">
+                <span>💰 Saldo</span>
+                <span id="balanceDisplay">0</span>
+            </div>
+        </div>
+
+        <!-- Indicadores Globais: Arrecadação e Total de MuMu em Circulação -->
+        <div class="global-stats">
+            <div class="global-stat">
+                <div class="label">📊 Total Arrecadado</div>
+                <div class="value green" id="totalRaisedDisplay">R$ 0,00</div>
+            </div>
+            <div class="global-stat">
+                <div class="label">🪙 MuMu em Circulação</div>
+                <div class="value gold" id="totalMumuDisplay">0</div>
+            </div>
+        </div>
+
+        <!-- Welcome -->
+        <div class="welcome-text">
+            🎮 <strong>BEM-VINDO AO COLETA MUMU</strong><br>
+            Para jogar você precisa de saldo em Moedas MuMu.
+        </div>
+
+        <!-- BLOCO DESCRITIVO SOBRE A MOEDA MUMU (NOVO) -->
+        <div class="mumu-info">
+            <h3>🪙 O que é a Moeda MuMu?</h3>
+            <p>
+                A <strong>MuMu</strong> é a moeda oficial do jogo. Você ganha ela ao fazer uma <strong>doação de apoio</strong> 
+                aos desenvolvedores – não é uma compra, mas um agradecimento pelo seu suporte. 
+                Com MuMu você <strong>paga a entrada das partidas</strong> (100 MuMu por jogo), compra 
+                <strong>power-ups</strong>, <strong>skins exclusivas</strong> e até participa de sorteios. 
+                Quanto mais MuMu em circulação, mais vivo e repleto de conteúdo o jogo fica!
+            </p>
+            <p style="margin-top:10px; color:#94a3b8; font-size:13px;">
+                💡 <strong>Dica:</strong> Guarde um saldo mínimo de 500 MuMu para render <strong>1% ao dia</strong> (até 50 MuMu/dia) – é o nosso "FII" gamer!
+            </p>
+        </div>
+
+        <!-- Package -->
+        <div class="package-box">
+            <div class="package-title">📦 PACOTE DE APOIO</div>
+            <div class="package-sub">
+                R$ 10,00 <small>→</small> 1.000 MuMu
+            </div>
+            <ul class="features">
+                <li>10 partidas garantidas</li>
+                <li>Skin exclusiva <strong>"Apoiador"</strong></li>
+                <li>Entrada imediata via Pix</li>
+            </ul>
+            <button class="btn-donate" id="donateBtn">
+                💳 DOAR R$10 E JOGAR AGORA
+            </button>
+        </div>
+
+        <!-- Stats / Economia -->
+        <div class="game-stats">
+            <div class="stat-item">
+                <div class="label">🎯 Custo por partida</div>
+                <div class="value gold">-100 MuMu</div>
+            </div>
+            <div class="stat-item">
+                <div class="label">📈 Rendimento Diário</div>
+                <div class="value gold">+1% (até 50/dia)</div>
+            </div>
+        </div>
+
+        <!-- Disclaimer -->
+        <div class="disclaimer">
+            <p>
+                ⚠️ <strong>Importante:</strong> Esse valor é uma doação voluntária para apoiar os desenvolvedores 
+                e manter os servidores. As MuMu são um bônus de agradecimento, não moeda real.
+            </p>
+            <button class="link-transparent" id="openModalBtn">
+                ❓ Para onde vai minha doação?
+            </button>
+        </div>
+    </div>
+
+    <script>
+        (function() {
+            // DOM
+            const balanceSpan = document.getElementById('balanceDisplay');
+            const totalRaisedSpan = document.getElementById('totalRaisedDisplay');
+            const totalMumuSpan = document.getElementById('totalMumuDisplay');
+            const donateBtn = document.getElementById('donateBtn');
+            const modal = document.getElementById('modalTransparencia');
+            const openModalBtn = document.getElementById('openModalBtn');
+            const closeModalBtn = document.getElementById('closeModalBtn');
+            const toast = document.getElementById('toast');
+            const toastMessage = document.getElementById('toastMessage');
+
+            // Estado
+            let balance = 0;
+            let totalRaised = 0;        // em reais
+            let totalMumu = 0;          // total de moedas em circulação
+            let hasDonatedToday = false;
+
+            // Atualiza UI
+            function updateUI() {
+                balanceSpan.textContent = balance.toLocaleString('pt-BR');
+                totalRaisedSpan.textContent = `R$ ${totalRaised.toFixed(2).replace('.', ',')}`;
+                totalMumuSpan.textContent = totalMumu.toLocaleString('pt-BR');
+            }
+
+            function showToast(message, emoji = '🎉') {
+                toastMessage.textContent = message;
+                document.querySelector('.toast .emoji').textContent = emoji;
+                toast.classList.add('show');
+                clearTimeout(toast._timeout);
+                toast._timeout = setTimeout(() => toast.classList.remove('show'), 4000);
+            }
+
+            function handleDonation() {
+                if (hasDonatedToday) {
+                    showToast('Você já apoiou hoje! Volte amanhã.', '🙏');
+                    return;
+                }
+
+                donateBtn.disabled = true;
+                donateBtn.innerHTML = '⏳ Processando Pix...';
+
+                setTimeout(() => {
+                    // Sucesso
+                    balance += 1000;
+                    totalRaised += 10;
+                    totalMumu += 1000;   // cada doação injeta 1000 MuMu na economia
+                    updateUI();
+                    hasDonatedToday = true;
+
+                    donateBtn.innerHTML = '✅ DOAÇÃO CONFIRMADA!';
+                    donateBtn.style.background = 'linear-gradient(135deg, #22c55e, #16a34a)';
+                    donateBtn.style.color = 'white';
+
+                    showToast(`R$10 recebido! +1000 MuMu. Total em circulação: ${totalMumu.toLocaleString()}`, '🪙');
+
+                    setTimeout(() => {
+                        donateBtn.disabled = false;
+                        donateBtn.innerHTML = '💳 JOGAR COM 1000 MuMu';
+                        donateBtn.style.background = 'linear-gradient(135deg, #f7971e, #ffd200)';
+                        donateBtn.style.color = '#0b0e14';
+                    }, 2500);
+
+                }, 2000);
+            }
+
+            // Modal
+            function openModal() {
+                modal.classList.add('active');
+                document.body.style.overflow = 'hidden';
+            }
+            function closeModal() {
+                modal.classList.remove('active');
+                document.body.style.overflow = '';
+            }
+
+            donateBtn.addEventListener('click', handleDonation);
+            openModalBtn.addEventListener('click', openModal);
+            closeModalBtn.addEventListener('click', closeModal);
+            modal.addEventListener('click', (e) => { if (e.target === modal) closeModal(); });
+            document.addEventListener('keydown', (e) => { if (e.key === 'Escape' && modal.classList.contains('active')) closeModal(); });
+
+            // Inicializa
+            updateUI();
+
+            // Exemplo: se quiser iniciar com alguns valores para teste, descomente:
+            // totalRaised = 250.00;
+            // totalMumu = 25000;
+            // updateUI();
+
+            console.log('🪙 Coleta MuMu carregado.');
+        })();
+    </script>
+</body>
+</html>

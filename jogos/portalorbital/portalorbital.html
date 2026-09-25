@@ -1,0 +1,615 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <title>⭐ ORBITAL · sobreviva e conquiste</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            user-select: none;
+            -webkit-tap-highlight-color: transparent;
+            font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+        }
+        body {
+            background: #0c0f1e;
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            touch-action: pan-y;
+        }
+        #game-wrapper {
+            background: #13172b;
+            border-radius: 48px 48px 32px 32px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.8), 0 0 0 2px #3d4b7a inset;
+            padding: 16px 12px 20px;
+            max-width: 460px;
+            width: 100%;
+            margin: 12px;
+            transition: all 0.1s;
+        }
+        #header {
+            display: flex;
+            justify-content: space-between;
+            padding: 0 8px 12px 8px;
+            color: #b7d0ff;
+            text-shadow: 0 0 8px #3f6ac0;
+            font-weight: 600;
+            font-size: 1.1rem;
+            letter-spacing: 1px;
+        }
+        #header span {
+            background: #1e2542;
+            padding: 6px 18px;
+            border-radius: 60px;
+            box-shadow: inset 0 2px 6px #0a0d1a, 0 2px 0 #3f5a9e;
+            backdrop-filter: blur(2px);
+        }
+        #canvas-container {
+            background: #0d1022;
+            border-radius: 36px;
+            padding: 8px;
+            box-shadow: inset 0 0 30px #02030a, 0 10px 20px rgba(0,0,0,0.7);
+        }
+        canvas {
+            display: block;
+            width: 100%;
+            height: auto;
+            aspect-ratio: 360 / 600;
+            background: radial-gradient(circle at 20% 20%, #1b2345, #070a18);
+            border-radius: 28px;
+            touch-action: none;
+            cursor: grab;
+            box-shadow: 0 0 0 1px #33447a;
+        }
+        #control-panel {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: 18px;
+            padding: 0 6px;
+        }
+        .ctrl-btn {
+            background: #1f284f;
+            border: none;
+            border-radius: 60px;
+            padding: 12px 24px;
+            font-weight: 700;
+            font-size: 1.2rem;
+            color: #d7e6ff;
+            box-shadow: 0 6px 0 #0d122b, 0 8px 16px #00000055;
+            transition: all 0.07s ease;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            touch-action: manipulation;
+            flex: 1;
+            justify-content: center;
+        }
+        .ctrl-btn:active {
+            transform: translateY(5px);
+            box-shadow: 0 1px 0 #0d122b;
+        }
+        .ctrl-btn.reset {
+            background: #3a2c4a;
+            flex: 0.5;
+            padding: 12px 10px;
+            font-size: 1rem;
+        }
+        #joystick-area {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            margin: 6px 0 4px;
+        }
+        .joystick {
+            background: #1e264a;
+            border-radius: 80px;
+            padding: 8px 20px;
+            box-shadow: inset 0 4px 10px #040714, 0 6px 0 #0f142e;
+            color: #aac1ff;
+            font-weight: 500;
+            font-size: 0.9rem;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            flex: 1;
+            justify-content: center;
+        }
+        .joystick i {
+            font-size: 1.6rem;
+            line-height: 1;
+            filter: drop-shadow(0 0 6px #5f7edb);
+        }
+        .badge {
+            background: #ffd966;
+            color: #1a1f3a;
+            padding: 4px 14px;
+            border-radius: 40px;
+            font-weight: 700;
+            font-size: 0.8rem;
+            letter-spacing: 0.5px;
+        }
+        @media (max-width: 440px) {
+            .ctrl-btn { padding: 10px 14px; font-size: 1rem; }
+            .joystick { padding: 6px 12px; font-size: 0.8rem; }
+            #header span { font-size: 0.9rem; padding: 4px 14px; }
+        }
+        .glow-text {
+            color: #b3d0ff;
+            text-shadow: 0 0 12px #3b6eff;
+        }
+        /* ícones simulados com caracteres */
+        .icon-rocket::before { content: "🚀"; margin-right: 6px; }
+        .icon-rotate::before { content: "🔄"; margin-right: 4px; }
+    </style>
+</head>
+<body>
+<div id="game-wrapper">
+    <div id="header">
+        <span>⭐ ORBITAL</span>
+        <span id="scoreDisplay">🌀 0</span>
+    </div>
+    <div id="canvas-container">
+        <canvas id="gameCanvas" width="360" height="600"></canvas>
+    </div>
+
+    <!-- painel de controle estilo analógico + botões -->
+    <div id="control-panel">
+        <button class="ctrl-btn" id="leftBtn">◀</button>
+        <button class="ctrl-btn reset" id="resetBtn">↺</button>
+        <button class="ctrl-btn" id="rightBtn">▶</button>
+    </div>
+    <div id="joystick-area">
+        <div class="joystick"><i>⬆</i> <span class="badge">empurre</span> <i>⬇</i></div>
+        <div class="joystick"><i>⏺</i> raciocine <i>⏺</i></div>
+    </div>
+    <div style="text-align: center; margin-top: 10px; color: #6a7fc0; font-size: 0.8rem; letter-spacing: 0.5px;">
+        ⚡ deslize · pense · sobreviva ⚡
+    </div>
+</div>
+
+<script>
+    (function() {
+        const canvas = document.getElementById('gameCanvas');
+        const ctx = canvas.getContext('2d');
+        const scoreSpan = document.getElementById('scoreDisplay');
+
+        // ---------- CONFIGURAÇÕES DO JOGO ----------
+        const W = 360, H = 600;
+        const PLAYER_RADIUS = 16;
+        const OBSTACLE_RADIUS = 14;
+        const COLLECTIBLE_RADIUS = 10;
+        const MAX_OBSTACLES = 9;
+        const SPAWN_RATE = 22;      // frames entre spawns
+        const BASE_SPEED = 1.7;
+
+        // ---------- ESTADO DO JOGO ----------
+        let player = { x: W/2, y: H - 80, vx: 0, vy: 0 };
+        let obstacles = [];
+        let collectibles = [];
+        let particles = [];
+        let score = 0;
+        let gameOver = false;
+        let frame = 0;
+        let difficulty = 1;
+
+        // Controle analógico (toque / arraste)
+        let touchX = null, touchY = null;
+        let isDragging = false;
+
+        // Botões físicos
+        let leftPressed = false, rightPressed = false;
+
+        // ---------- FUNÇÕES AUXILIARES ----------
+        function resetGame() {
+            player = { x: W/2, y: H - 80, vx: 0, vy: 0 };
+            obstacles = [];
+            collectibles = [];
+            particles = [];
+            score = 0;
+            gameOver = false;
+            frame = 0;
+            difficulty = 1;
+            touchX = null; touchY = null;
+            leftPressed = false; rightPressed = false;
+            updateScore();
+        }
+
+        function updateScore() {
+            scoreSpan.innerText = '🌀 ' + score;
+        }
+
+        // ---------- SPAWN DE OBJETOS E COLETÁVEIS ----------
+        function spawnObstacle() {
+            if (obstacles.length >= MAX_OBSTACLES) return;
+            const side = Math.floor(Math.random() * 4);
+            let x, y;
+            const pad = 30;
+            if (side === 0) { x = Math.random() * W; y = -pad; }
+            else if (side === 1) { x = W + pad; y = Math.random() * H; }
+            else if (side === 2) { x = Math.random() * W; y = H + pad; }
+            else { x = -pad; y = Math.random() * H; }
+
+            // evita spawn em cima do player
+            if (Math.hypot(x - player.x, y - player.y) < 100) {
+                x = Math.random() * W;
+                y = Math.random() * H * 0.4;
+            }
+            obstacles.push({
+                x, y,
+                vx: (Math.random() - 0.5) * 0.8,
+                vy: (Math.random() - 0.5) * 0.8,
+                radius: OBSTACLE_RADIUS + (Math.random() * 6 - 3)
+            });
+        }
+
+        function spawnCollectible() {
+            if (collectibles.length >= 4) return;
+            let x = 30 + Math.random() * (W - 60);
+            let y = 30 + Math.random() * (H - 120);
+            // não spawnar muito perto do player
+            if (Math.hypot(x - player.x, y - player.y) < 70) {
+                x = Math.min(W-30, Math.max(30, x + 80));
+                y = Math.min(H-80, Math.max(30, y + 80));
+            }
+            collectibles.push({
+                x, y,
+                radius: COLLECTIBLE_RADIUS,
+                type: 'energy',
+                pulse: 0
+            });
+        }
+
+        // ---------- FÍSICA E COLISÕES ----------
+        function updateGame() {
+            if (gameOver) return;
+
+            // Controle analógico (toque) + botões
+            let moveX = 0, moveY = 0;
+            if (isDragging && touchX !== null && touchY !== null) {
+                // deadzone 12px
+                const dx = touchX - player.x;
+                const dy = touchY - player.y;
+                const dist = Math.hypot(dx, dy);
+                if (dist > 12) {
+                    const maxSpeed = 6.2;
+                    const factor = Math.min(1, dist / 80);
+                    moveX = (dx / dist) * Math.min(maxSpeed, 2.8 + factor * 3.2);
+                    moveY = (dy / dist) * Math.min(maxSpeed, 2.8 + factor * 3.2);
+                }
+            }
+            // botões laterais (esquerda/direita)
+            if (leftPressed) moveX = -4.8;
+            if (rightPressed) moveX = 4.8;
+            // limitar diagonal
+            if (leftPressed && rightPressed) moveX = 0;
+
+            // Aplicar movimento com inércia suave
+            player.vx += (moveX - player.vx) * 0.18;
+            player.vy += (moveY - player.vy) * 0.18;
+            player.x += player.vx;
+            player.y += player.vy;
+
+            // Limites da tela com bounce suave
+            const margin = PLAYER_RADIUS + 2;
+            if (player.x < margin) { player.x = margin; player.vx *= -0.3; }
+            if (player.x > W - margin) { player.x = W - margin; player.vx *= -0.3; }
+            if (player.y < margin) { player.y = margin; player.vy *= -0.3; }
+            if (player.y > H - margin) { player.y = H - margin; player.vy *= -0.3; }
+
+            // --- Atualizar obstáculos ---
+            for (let i = obstacles.length - 1; i >= 0; i--) {
+                const o = obstacles[i];
+                o.x += o.vx + (Math.sin(frame * 0.02 + i) * 0.2);
+                o.y += o.vy + (Math.cos(frame * 0.025 + i * 2) * 0.2);
+                // repulsão das bordas (mantém dentro)
+                if (o.x < 10) { o.x = 10; o.vx *= -0.5; }
+                if (o.x > W - 10) { o.x = W - 10; o.vx *= -0.5; }
+                if (o.y < 10) { o.y = 10; o.vy *= -0.5; }
+                if (o.y > H - 10) { o.y = H - 10; o.vy *= -0.5; }
+
+                // colisão com player
+                const dx = player.x - o.x;
+                const dy = player.y - o.y;
+                const dist = Math.hypot(dx, dy);
+                if (dist < PLAYER_RADIUS + o.radius) {
+                    gameOver = true;
+                    // explosão de partículas
+                    for (let k = 0; k < 18; k++) {
+                        const angle = Math.random() * 2 * Math.PI;
+                        const speed = 2 + Math.random() * 4;
+                        particles.push({
+                            x: player.x, y: player.y,
+                            vx: Math.cos(angle) * speed,
+                            vy: Math.sin(angle) * speed,
+                            life: 40 + Math.random() * 30,
+                            radius: 4 + Math.random() * 8,
+                            color: `hsl(${Math.floor(Math.random() * 60 + 340)}, 80%, 60%)`
+                        });
+                    }
+                    return;
+                }
+                // colisão com coletáveis (remove obstáculo se colidir com coletável)
+                for (let j = collectibles.length - 1; j >= 0; j--) {
+                    const c = collectibles[j];
+                    if (Math.hypot(o.x - c.x, o.y - c.y) < o.radius + c.radius) {
+                        // obstáculo e coletável se aniquilam -> gera pontos
+                        obstacles.splice(i, 1);
+                        collectibles.splice(j, 1);
+                        score += 3;
+                        updateScore();
+                        // partículas de aniquilação
+                        for (let k = 0; k < 10; k++) {
+                            const angle = Math.random() * 2 * Math.PI;
+                            const speed = 1 + Math.random() * 3;
+                            particles.push({
+                                x: o.x, y: o.y,
+                                vx: Math.cos(angle) * speed,
+                                vy: Math.sin(angle) * speed,
+                                life: 25 + Math.random() * 20,
+                                radius: 3 + Math.random() * 6,
+                                color: `hsl(${Math.floor(Math.random() * 80 + 40)}, 90%, 65%)`
+                            });
+                        }
+                        break;
+                    }
+                }
+            }
+
+            // --- Atualizar coletáveis ---
+            for (let i = collectibles.length - 1; i >= 0; i--) {
+                const c = collectibles[i];
+                c.pulse += 0.06;
+                // flutuação suave
+                c.y += Math.sin(frame * 0.04 + i) * 0.15;
+                // coleta pelo player
+                if (Math.hypot(player.x - c.x, player.y - c.y) < PLAYER_RADIUS + c.radius) {
+                    score += 5;
+                    updateScore();
+                    // partículas de coleta
+                    for (let k = 0; k < 12; k++) {
+                        const angle = Math.random() * 2 * Math.PI;
+                        const speed = 1.5 + Math.random() * 3;
+                        particles.push({
+                            x: c.x, y: c.y,
+                            vx: Math.cos(angle) * speed,
+                            vy: Math.sin(angle) * speed,
+                            life: 30 + Math.random() * 20,
+                            radius: 4 + Math.random() * 5,
+                            color: `hsl(${Math.floor(Math.random() * 60 + 180)}, 90%, 70%)`
+                        });
+                    }
+                    collectibles.splice(i, 1);
+                    continue;
+                }
+                // se coletável sair da tela, reposiciona
+                if (c.x < -20 || c.x > W+20 || c.y < -20 || c.y > H+20) {
+                    collectibles.splice(i, 1);
+                }
+            }
+
+            // --- Spawns baseados em dificuldade e frame ---
+            if (frame % Math.max(12, Math.floor(SPAWN_RATE - difficulty * 1.2)) === 0 && !gameOver) {
+                spawnObstacle();
+            }
+            if (frame % 35 === 0 && collectibles.length < 4 && !gameOver) {
+                spawnCollectible();
+            }
+
+            // --- Atualizar partículas ---
+            for (let i = particles.length - 1; i >= 0; i--) {
+                const p = particles[i];
+                p.x += p.vx;
+                p.y += p.vy;
+                p.vx *= 0.97;
+                p.vy *= 0.97;
+                p.life--;
+                if (p.life <= 0) particles.splice(i, 1);
+            }
+
+            // Aumento gradual de dificuldade
+            difficulty = 1 + Math.floor(score / 25) * 0.35;
+
+            frame++;
+        }
+
+        // ---------- RENDERIZAÇÃO ----------
+        function draw() {
+            ctx.clearRect(0, 0, W, H);
+            // fundo com efeito estelar
+            ctx.shadowBlur = 0;
+            for (let i=0; i<35; i++) {
+                if (i%2===0) continue;
+                ctx.beginPath();
+                ctx.arc((i*19 + frame*0.2) % W, (i*13 + frame*0.3) % H, 1+ i%3, 0, Math.PI*2);
+                ctx.fillStyle = `rgba(255,240,200,${0.15 + Math.sin(frame*0.01+i)*0.1})`;
+                ctx.fill();
+            }
+
+            // ----- desenhar coletáveis (brilho) -----
+            for (const c of collectibles) {
+                const glow = 0.7 + Math.sin(c.pulse) * 0.2;
+                ctx.shadowColor = '#8effb0';
+                ctx.shadowBlur = 28;
+                ctx.beginPath();
+                ctx.arc(c.x, c.y, c.radius * (0.9 + Math.sin(c.pulse)*0.1), 0, Math.PI*2);
+                ctx.fillStyle = `rgba(100, 255, 180, ${glow})`;
+                ctx.fill();
+                ctx.shadowBlur = 0;
+                ctx.beginPath();
+                ctx.arc(c.x, c.y, c.radius * 0.5, 0, Math.PI*2);
+                ctx.fillStyle = '#fffbe3';
+                ctx.fill();
+            }
+
+            // ----- desenhar obstáculos (ameaças) -----
+            for (const o of obstacles) {
+                ctx.shadowColor = '#ff5e7a';
+                ctx.shadowBlur = 32;
+                ctx.beginPath();
+                ctx.arc(o.x, o.y, o.radius, 0, Math.PI*2);
+                const grad = ctx.createRadialGradient(o.x-4, o.y-4, 2, o.x, o.y, o.radius+4);
+                grad.addColorStop(0, '#ff7b8f');
+                grad.addColorStop(0.7, '#c92a4a');
+                ctx.fillStyle = grad;
+                ctx.fill();
+                ctx.shadowBlur = 0;
+                // olhos malvados
+                ctx.fillStyle = '#f0f4ff';
+                ctx.beginPath();
+                ctx.arc(o.x-5, o.y-4, 4, 0, Math.PI*2);
+                ctx.fill();
+                ctx.beginPath();
+                ctx.arc(o.x+5, o.y-4, 4, 0, Math.PI*2);
+                ctx.fill();
+                ctx.fillStyle = '#1a1120';
+                ctx.beginPath();
+                ctx.arc(o.x-6, o.y-2, 2, 0, Math.PI*2);
+                ctx.fill();
+                ctx.beginPath();
+                ctx.arc(o.x+4, o.y-2, 2, 0, Math.PI*2);
+                ctx.fill();
+            }
+
+            // ----- player (nave) -----
+            ctx.shadowColor = '#7aa9ff';
+            ctx.shadowBlur = 45;
+            ctx.beginPath();
+            ctx.arc(player.x, player.y, PLAYER_RADIUS, 0, Math.PI*2);
+            const gradP = ctx.createRadialGradient(player.x-5, player.y-6, 4, player.x, player.y, PLAYER_RADIUS+6);
+            gradP.addColorStop(0, '#b8dbff');
+            gradP.addColorStop(0.5, '#3c7eff');
+            gradP.addColorStop(1, '#0b2f7a');
+            ctx.fillStyle = gradP;
+            ctx.fill();
+            ctx.shadowBlur = 0;
+            // detalhe olhos / cockpit
+            ctx.fillStyle = '#d6eeff';
+            ctx.beginPath();
+            ctx.arc(player.x-4, player.y-6, 5, 0, Math.PI*2);
+            ctx.fill();
+            ctx.fillStyle = '#1e3260';
+            ctx.beginPath();
+            ctx.arc(player.x-2, player.y-8, 2.5, 0, Math.PI*2);
+            ctx.fill();
+
+            // ----- partículas -----
+            for (const p of particles) {
+                ctx.shadowBlur = 20;
+                ctx.shadowColor = p.color || '#ffbb88';
+                ctx.beginPath();
+                ctx.arc(p.x, p.y, p.radius * (p.life / 40), 0, Math.PI*2);
+                ctx.fillStyle = p.color || '#ffb07c';
+                ctx.fill();
+            }
+            ctx.shadowBlur = 0;
+
+            // game over overlay
+            if (gameOver) {
+                ctx.fillStyle = 'rgba(0,0,0,0.6)';
+                ctx.fillRect(0, 0, W, H);
+                ctx.font = 'bold 32px system-ui, sans-serif';
+                ctx.fillStyle = '#ffb0b0';
+                ctx.shadowBlur = 40;
+                ctx.shadowColor = '#ff3a5e';
+                ctx.textAlign = 'center';
+                ctx.fillText('💥 FIM', W/2, H/2 - 30);
+                ctx.font = '18px system-ui';
+                ctx.fillStyle = '#e0e9ff';
+                ctx.fillText('toque em "↺" para recomeçar', W/2, H/2 + 40);
+                ctx.shadowBlur = 0;
+            }
+
+            // indicador de dificuldade
+            ctx.font = 'bold 12px monospace';
+            ctx.fillStyle = '#b7ceff';
+            ctx.textAlign = 'right';
+            ctx.fillText('⚡' + Math.floor(difficulty * 10) / 10, W-16, 30);
+        }
+
+        // ---------- LOOP PRINCIPAL ----------
+        function gameLoop() {
+            if (!gameOver) updateGame();
+            draw();
+            requestAnimationFrame(gameLoop);
+        }
+
+        // ---------- EVENTOS DE TOQUE / MOUSE (controle analógico) ----------
+        function handleTouchStart(e) {
+            e.preventDefault();
+            const rect = canvas.getBoundingClientRect();
+            const scaleX = canvas.width / rect.width;
+            const scaleY = canvas.height / rect.height;
+            const touch = e.touches[0];
+            const canvasX = (touch.clientX - rect.left) * scaleX;
+            const canvasY = (touch.clientY - rect.top) * scaleY;
+            touchX = Math.min(W, Math.max(0, canvasX));
+            touchY = Math.min(H, Math.max(0, canvasY));
+            isDragging = true;
+        }
+
+        function handleTouchMove(e) {
+            e.preventDefault();
+            if (!isDragging || gameOver) return;
+            const rect = canvas.getBoundingClientRect();
+            const scaleX = canvas.width / rect.width;
+            const scaleY = canvas.height / rect.height;
+            const touch = e.touches[0];
+            const canvasX = (touch.clientX - rect.left) * scaleX;
+            const canvasY = (touch.clientY - rect.top) * scaleY;
+            touchX = Math.min(W, Math.max(0, canvasX));
+            touchY = Math.min(H, Math.max(0, canvasY));
+        }
+
+        function handleTouchEnd(e) {
+            e.preventDefault();
+            isDragging = false;
+            touchX = null; touchY = null;
+        }
+
+        // Previne eventos de contexto
+        canvas.addEventListener('contextmenu', (e) => e.preventDefault());
+        canvas.addEventListener('touchstart', handleTouchStart, { passive: false });
+        canvas.addEventListener('touchmove', handleTouchMove, { passive: false });
+        canvas.addEventListener('touchend', handleTouchEnd, { passive: false });
+        canvas.addEventListener('touchcancel', handleTouchEnd, { passive: false });
+
+        // Botões físicos (press)
+        document.getElementById('leftBtn').addEventListener('touchstart', (e) => { e.preventDefault(); leftPressed = true; });
+        document.getElementById('leftBtn').addEventListener('touchend', (e) => { e.preventDefault(); leftPressed = false; });
+        document.getElementById('leftBtn').addEventListener('mousedown', () => leftPressed = true);
+        document.getElementById('leftBtn').addEventListener('mouseup', () => leftPressed = false);
+        document.getElementById('leftBtn').addEventListener('mouseleave', () => leftPressed = false);
+
+        document.getElementById('rightBtn').addEventListener('touchstart', (e) => { e.preventDefault(); rightPressed = true; });
+        document.getElementById('rightBtn').addEventListener('touchend', (e) => { e.preventDefault(); rightPressed = false; });
+        document.getElementById('rightBtn').addEventListener('mousedown', () => rightPressed = true);
+        document.getElementById('rightBtn').addEventListener('mouseup', () => rightPressed = false);
+        document.getElementById('rightBtn').addEventListener('mouseleave', () => rightPressed = false);
+
+        // Reset
+        document.getElementById('resetBtn').addEventListener('click', (e) => {
+            e.preventDefault();
+            resetGame();
+        });
+        document.getElementById('resetBtn').addEventListener('touchstart', (e) => {
+            e.preventDefault();
+            resetGame();
+        });
+
+        // Iniciar
+        resetGame();
+        gameLoop();
+
+        // Ajuste extra para safe area
+        window.addEventListener('resize', ()=> {});
+    })();
+</script>
+</body>
+</html>

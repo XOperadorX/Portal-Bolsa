@@ -1,0 +1,2105 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🌽 Milharal + 🐔 Galinheiro</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        /* ---------- RESET + VARIÁVEIS ---------- */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --primary: #2d7d3a;
+            --primary-light: #4caf50;
+            --primary-dark: #1b5e20;
+            --soil: #8d6e63;
+            --soil-light: #a1887f;
+            --bg: #f0f7e6;
+            --card-bg: #ffffff;
+            --text-dark: #2e3b2e;
+            --text-muted: #5d6d5d;
+            --shadow: 0 12px 32px rgba(0, 30, 0, 0.15);
+            --radius: 24px;
+            --transition: 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+            --gold: #f9a825;
+            --gold-dark: #f57f17;
+            --coin-color: #ffd54f;
+            --water-blue: #42a5f5;
+            --chicken-color: #e67e22;
+        }
+
+        body {
+            font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+            background: var(--bg);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 1.2rem;
+            background-image:
+                radial-gradient(circle at 20% 30%, rgba(76, 175, 80, 0.06) 0%, transparent 50%),
+                radial-gradient(circle at 80% 70%, rgba(139, 195, 74, 0.08) 0%, transparent 50%);
+        }
+
+        /* ---------- CARTÃO PRINCIPAL ---------- */
+        .card {
+            background: var(--card-bg);
+            max-width: 720px;
+            width: 100%;
+            padding: 1.6rem 1.4rem 1.4rem;
+            border-radius: var(--radius);
+            box-shadow: var(--shadow);
+            border: 1px solid rgba(255, 255, 255, 0.6);
+            backdrop-filter: blur(2px);
+            transition: transform var(--transition);
+        }
+
+        .card:hover {
+            transform: translateY(-3px);
+        }
+
+        /* ---------- TOPO ---------- */
+        .header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+            margin-bottom: 0.8rem;
+        }
+
+        .header h1 {
+            font-size: 1.6rem;
+            font-weight: 700;
+            color: var(--text-dark);
+            letter-spacing: -0.5px;
+            display: flex;
+            align-items: center;
+            gap: 0.3rem;
+        }
+
+        .header h1 i {
+            color: var(--primary);
+            margin-right: 4px;
+        }
+
+        .header .sub {
+            font-size: 0.8rem;
+            color: var(--text-muted);
+            background: var(--bg);
+            padding: 0.2rem 0.9rem;
+            border-radius: 40px;
+            font-weight: 500;
+        }
+
+        .supporter-badge {
+            font-size: 0.7rem;
+            background: var(--gold);
+            color: #fff;
+            padding: 0.1rem 0.7rem;
+            border-radius: 30px;
+            font-weight: 700;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.2rem;
+            margin-left: 0.5rem;
+            box-shadow: 0 2px 8px rgba(249, 168, 37, 0.3);
+        }
+
+        /* ---------- ESTATÍSTICAS ---------- */
+        .stats-row {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.3rem;
+            margin-bottom: 0.8rem;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .stats {
+            display: flex;
+            gap: 0.3rem;
+            flex-wrap: wrap;
+            background: var(--bg);
+            border-radius: 60px;
+            padding: 0.3rem 0.6rem;
+            flex: 1 1 auto;
+        }
+
+        .stat-item {
+            display: flex;
+            align-items: center;
+            gap: 0.2rem;
+            font-size: 0.8rem;
+            font-weight: 600;
+            color: var(--text-dark);
+            padding: 0.1rem 0.4rem;
+            border-radius: 40px;
+            position: relative;
+            cursor: help;
+        }
+
+        .stat-item i {
+            font-size: 0.9rem;
+            color: var(--primary);
+        }
+
+        .stat-item .num {
+            min-width: 1.2rem;
+            text-align: center;
+            background: white;
+            padding: 0 0.2rem;
+            border-radius: 30px;
+            font-size: 0.75rem;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.15rem;
+            transition: all 0.2s;
+        }
+
+        .stat-item .num .icon-num {
+            font-size: 0.6rem;
+        }
+
+        .stat-item .label {
+            font-weight: 400;
+            color: var(--text-muted);
+            font-size: 0.6rem;
+            margin-left: 0.1rem;
+        }
+
+        .stat-item .num.flash {
+            animation: flashNumber 0.5s ease;
+        }
+
+        @keyframes flashNumber {
+            0% {
+                transform: scale(1);
+                background: white;
+            }
+            30% {
+                transform: scale(1.3);
+                background: #fff3cd;
+                box-shadow: 0 0 12px rgba(255, 193, 7, 0.4);
+            }
+            70% {
+                transform: scale(0.95);
+            }
+            100% {
+                transform: scale(1);
+                background: white;
+            }
+        }
+
+        .coins-display .num.flash {
+            animation: flashCoins 0.5s ease;
+        }
+
+        @keyframes flashCoins {
+            0% {
+                transform: scale(1);
+            }
+            30% {
+                transform: scale(1.4);
+                color: #f57f17;
+                text-shadow: 0 0 20px rgba(249, 168, 37, 0.6);
+            }
+            100% {
+                transform: scale(1);
+            }
+        }
+
+        .stat-item .tooltip {
+            display: none;
+            position: absolute;
+            bottom: calc(100% + 8px);
+            left: 50%;
+            transform: translateX(-50%);
+            background: rgba(30, 40, 30, 0.92);
+            color: #fff;
+            padding: 0.4rem 0.8rem;
+            border-radius: 12px;
+            font-size: 0.65rem;
+            font-weight: 400;
+            white-space: nowrap;
+            backdrop-filter: blur(4px);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+            pointer-events: none;
+            z-index: 10;
+        }
+
+        .stat-item:hover .tooltip {
+            display: block;
+        }
+
+        .coins-display {
+            display: flex;
+            align-items: center;
+            gap: 0.3rem;
+            background: #fff8e1;
+            border: 1px solid var(--gold);
+            padding: 0.1rem 0.8rem 0.1rem 0.4rem;
+            border-radius: 40px;
+            font-weight: 700;
+            font-size: 0.9rem;
+            color: var(--gold-dark);
+            box-shadow: 0 2px 8px rgba(249, 168, 37, 0.15);
+            cursor: help;
+            position: relative;
+            flex-shrink: 0;
+        }
+
+        .coins-display i {
+            font-size: 1rem;
+            color: var(--gold);
+        }
+
+        .coins-display .num {
+            transition: all 0.2s;
+        }
+
+        .coins-display .tooltip {
+            display: none;
+            position: absolute;
+            bottom: calc(100% + 8px);
+            right: 0;
+            background: rgba(30, 40, 30, 0.92);
+            color: #fff;
+            padding: 0.4rem 0.8rem;
+            border-radius: 12px;
+            font-size: 0.65rem;
+            font-weight: 400;
+            white-space: nowrap;
+            backdrop-filter: blur(4px);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+            pointer-events: none;
+            z-index: 10;
+        }
+
+        .coins-display:hover .tooltip {
+            display: block;
+        }
+
+        .bucket-icon {
+            font-size: 0.8rem;
+            color: var(--water-blue);
+            margin-left: 0.2rem;
+        }
+
+        /* ---------- TERRENO ---------- */
+        .field {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 10px;
+            margin-bottom: 0.8rem;
+            aspect-ratio: 1 / 1;
+        }
+
+        .plot {
+            background: var(--soil);
+            border-radius: 16px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            font-size: 2rem;
+            cursor: pointer;
+            transition: all var(--transition);
+            box-shadow: inset 0 -4px 0 rgba(0, 0, 0, 0.1), 0 2px 6px rgba(0, 0, 0, 0.06);
+            position: relative;
+            min-height: 70px;
+            user-select: none;
+            border: 2px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .plot:hover {
+            transform: scale(1.03);
+            box-shadow: 0 6px 16px rgba(0, 30, 0, 0.15);
+            z-index: 2;
+        }
+
+        .plot:active {
+            transform: scale(0.94);
+        }
+
+        .plot.empty {
+            background: #8d6e63;
+        }
+        .plot.harvested {
+            background: #a1887f;
+            border-color: rgba(200, 180, 160, 0.5);
+        }
+        .plot.harvested:hover {
+            background: #bcaaa4;
+            border-color: var(--primary);
+        }
+        .plot:not(.empty):not(.harvested) {
+            background: #6d8f6d;
+        }
+
+        .plot .stage-label {
+            position: absolute;
+            bottom: 2px;
+            font-size: 0.4rem;
+            background: rgba(0, 0, 0, 0.5);
+            color: #fff;
+            padding: 0 4px;
+            border-radius: 8px;
+            letter-spacing: 0.2px;
+            backdrop-filter: blur(4px);
+            white-space: nowrap;
+            opacity: 0.7;
+            pointer-events: none;
+        }
+
+        .plot .progress-bar {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            height: 3px;
+            background: rgba(255, 215, 0, 0.7);
+            border-radius: 0 0 16px 16px;
+            transition: width 0.4s ease;
+            width: 0%;
+            pointer-events: none;
+        }
+
+        .plot .progress-bar.done {
+            background: #ffd700;
+            box-shadow: 0 0 8px #ffd700;
+        }
+
+        .plot .plant-emoji {
+            line-height: 1;
+            transition: transform 0.5s ease;
+            filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.1));
+        }
+
+        .plot.growing .plant-emoji {
+            animation: sway 2.5s ease-in-out infinite;
+        }
+        .plot.mature .plant-emoji {
+            animation: glow 1.2s ease-in-out infinite alternate;
+        }
+        .plot.sprout .plant-emoji {
+            animation: pop 1s ease-out;
+        }
+        .plot.seed .plant-emoji {
+            animation: pulse 1.6s ease-in-out infinite;
+        }
+        .plot.harvested .plant-emoji {
+            opacity: 0.7;
+        }
+
+        @keyframes sway {
+            0%,
+            100% {
+                transform: rotate(-3deg) scale(1);
+            }
+            50% {
+                transform: rotate(3deg) scale(1.02);
+            }
+        }
+        @keyframes glow {
+            0% {
+                filter: drop-shadow(0 0 2px gold);
+                transform: scale(1);
+            }
+            100% {
+                filter: drop-shadow(0 0 16px #ffd700);
+                transform: scale(1.06);
+            }
+        }
+        @keyframes pop {
+            0% {
+                transform: scale(0);
+                opacity: 0;
+            }
+            60% {
+                transform: scale(1.2);
+                opacity: 1;
+            }
+            100% {
+                transform: scale(1);
+            }
+        }
+        @keyframes pulse {
+            0%,
+            100% {
+                transform: scale(1);
+            }
+            50% {
+                transform: scale(0.92);
+            }
+        }
+
+        /* ---------- GALINHEIRO ---------- */
+        .chicken-coop {
+            background: #fdf6ec;
+            border-radius: 20px;
+            padding: 0.6rem 1rem;
+            margin-bottom: 0.8rem;
+            border: 1px solid #f0d5b0;
+            display: flex;
+            flex-wrap: wrap;
+            align-items: center;
+            justify-content: space-between;
+            gap: 0.5rem;
+        }
+
+        .coop-info {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            flex-wrap: wrap;
+        }
+
+        .coop-item {
+            display: flex;
+            align-items: center;
+            gap: 0.3rem;
+            font-size: 0.85rem;
+            font-weight: 600;
+            color: var(--text-dark);
+        }
+
+        .coop-item i {
+            font-size: 1.1rem;
+        }
+
+        .coop-item .num {
+            background: white;
+            padding: 0 0.3rem;
+            border-radius: 30px;
+            min-width: 1.4rem;
+            text-align: center;
+            font-size: 0.8rem;
+        }
+
+        .coop-item .num.flash {
+            animation: flashNumber 0.5s ease;
+        }
+
+        .coop-actions {
+            display: flex;
+            gap: 0.4rem;
+            flex-wrap: wrap;
+        }
+
+        .btn-sm-coop {
+            padding: 0.15rem 0.7rem;
+            font-size: 0.7rem;
+            border-radius: 30px;
+            border: none;
+            background: var(--bg);
+            color: var(--text-dark);
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.2s;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.2rem;
+        }
+
+        .btn-sm-coop:hover {
+            background: var(--primary-light);
+            color: #fff;
+        }
+        .btn-sm-coop.buy:hover {
+            background: var(--primary);
+            color: #fff;
+        }
+        .btn-sm-coop.sell:hover {
+            background: #e53935;
+            color: #fff;
+        }
+        .btn-sm-coop:disabled {
+            opacity: 0.3;
+            pointer-events: none;
+        }
+
+        .btn-sm-coop .tooltip {
+            display: none;
+            position: absolute;
+            bottom: calc(100% + 6px);
+            left: 50%;
+            transform: translateX(-50%);
+            background: rgba(30, 40, 30, 0.92);
+            color: #fff;
+            padding: 0.2rem 0.6rem;
+            border-radius: 8px;
+            font-size: 0.6rem;
+            white-space: nowrap;
+            backdrop-filter: blur(4px);
+            pointer-events: none;
+            z-index: 10;
+        }
+
+        .btn-sm-coop:hover .tooltip {
+            display: block;
+        }
+
+        /* ---------- BOTÕES DE AÇÃO ---------- */
+        .actions {
+            display: flex;
+            gap: 0.5rem;
+            flex-wrap: wrap;
+            justify-content: center;
+            margin-bottom: 0.8rem;
+        }
+
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.4rem;
+            padding: 0.4rem 1rem;
+            border: none;
+            border-radius: 60px;
+            font-weight: 600;
+            font-size: 0.8rem;
+            background: var(--bg);
+            color: var(--text-dark);
+            cursor: pointer;
+            transition: all var(--transition);
+            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.04);
+            flex: 1 1 auto;
+            justify-content: center;
+            position: relative;
+        }
+
+        .btn i {
+            font-size: 0.85rem;
+        }
+
+        .btn-primary {
+            background: var(--primary);
+            color: #fff;
+            box-shadow: 0 4px 12px rgba(45, 125, 58, 0.3);
+        }
+        .btn-primary:hover {
+            background: var(--primary-dark);
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(45, 125, 58, 0.35);
+        }
+
+        .btn-secondary {
+            background: #42a5f5;
+            color: #fff;
+            box-shadow: 0 4px 12px rgba(66, 165, 245, 0.25);
+        }
+        .btn-secondary:hover {
+            background: #1e88e5;
+            transform: translateY(-2px);
+        }
+
+        .btn-gold {
+            background: var(--gold);
+            color: #fff;
+            box-shadow: 0 4px 12px rgba(249, 168, 37, 0.3);
+        }
+        .btn-gold:hover {
+            background: var(--gold-dark);
+            transform: translateY(-2px);
+        }
+
+        .btn-market {
+            background: #7e57c2;
+            color: #fff;
+            box-shadow: 0 4px 12px rgba(126, 87, 194, 0.25);
+        }
+        .btn-market:hover {
+            background: #5c3a9e;
+            transform: translateY(-2px);
+        }
+
+        .btn-reset {
+            background: #e53935;
+            color: #fff;
+            box-shadow: 0 4px 12px rgba(229, 57, 53, 0.25);
+        }
+        .btn-reset:hover {
+            background: #b71c1c;
+            transform: translateY(-2px);
+        }
+
+        .btn-support {
+            background: #ff6f00;
+            color: #fff;
+            box-shadow: 0 4px 12px rgba(255, 111, 0, 0.3);
+        }
+        .btn-support:hover {
+            background: #e65100;
+            transform: translateY(-2px);
+        }
+
+        .btn:disabled {
+            opacity: 0.4;
+            cursor: not-allowed;
+            transform: none !important;
+            box-shadow: none !important;
+        }
+
+        .btn:active:not(:disabled) {
+            transform: scale(0.94) !important;
+        }
+
+        .btn .tooltip {
+            display: none;
+            position: absolute;
+            bottom: calc(100% + 10px);
+            left: 50%;
+            transform: translateX(-50%);
+            background: rgba(30, 40, 30, 0.92);
+            color: #fff;
+            padding: 0.3rem 0.7rem;
+            border-radius: 12px;
+            font-size: 0.65rem;
+            font-weight: 400;
+            white-space: nowrap;
+            backdrop-filter: blur(4px);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+            pointer-events: none;
+            z-index: 10;
+        }
+
+        .btn:hover .tooltip {
+            display: block;
+        }
+
+        /* ---------- MERCADO ---------- */
+        .market-panel {
+            background: #fafafa;
+            border-radius: 20px;
+            padding: 0.8rem 1rem;
+            margin-bottom: 0.8rem;
+            border: 1px solid rgba(0, 0, 0, 0.05);
+            box-shadow: inset 0 2px 6px rgba(0, 0, 0, 0.02);
+            transition: all 0.3s ease;
+            overflow: hidden;
+            max-height: 0;
+            padding: 0 1rem;
+            opacity: 0;
+            transform: scaleY(0.9);
+            transform-origin: top;
+        }
+
+        .market-panel.open {
+            max-height: 700px;
+            padding: 0.8rem 1rem;
+            opacity: 1;
+            transform: scaleY(1);
+        }
+
+        .market-title {
+            font-weight: 600;
+            color: var(--text-dark);
+            margin-bottom: 0.5rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-size: 0.95rem;
+        }
+
+        .market-title i {
+            color: var(--gold-dark);
+        }
+
+        .market-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 0.6rem;
+        }
+
+        .market-item {
+            background: white;
+            border-radius: 14px;
+            padding: 0.5rem 0.7rem;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+            border: 1px solid #eee;
+            position: relative;
+        }
+
+        .market-item .item-header {
+            display: flex;
+            align-items: center;
+            gap: 0.3rem;
+            font-weight: 600;
+            font-size: 0.8rem;
+            margin-bottom: 0.2rem;
+        }
+
+        .market-item .price {
+            font-size: 0.7rem;
+            color: var(--text-muted);
+            margin-bottom: 0.3rem;
+        }
+
+        .market-item .price span {
+            font-weight: 700;
+            color: var(--gold-dark);
+        }
+
+        .market-item .qty-btns {
+            display: flex;
+            gap: 0.2rem;
+            flex-wrap: wrap;
+        }
+
+        .market-item .qty-btns .btn-sm {
+            padding: 0.1rem 0.5rem;
+            font-size: 0.6rem;
+            border-radius: 30px;
+            border: none;
+            background: var(--bg);
+            color: var(--text-dark);
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.2s;
+            position: relative;
+        }
+
+        .market-item .qty-btns .btn-sm:hover {
+            background: var(--primary-light);
+            color: #fff;
+        }
+        .market-item .qty-btns .btn-sm.sell:hover {
+            background: #e53935;
+            color: #fff;
+        }
+        .market-item .qty-btns .btn-sm.buy:hover {
+            background: var(--primary);
+            color: #fff;
+        }
+        .market-item .qty-btns .btn-sm:disabled {
+            opacity: 0.3;
+            pointer-events: none;
+        }
+
+        .market-item .qty-btns .btn-sm.buy {
+            background: #c8e6c9;
+        }
+        .market-item .qty-btns .btn-sm.sell {
+            background: #ffcdd2;
+        }
+
+        .market-item .qty-btns .btn-sm .tooltip {
+            display: none;
+            position: absolute;
+            bottom: calc(100% + 4px);
+            left: 50%;
+            transform: translateX(-50%);
+            background: rgba(30, 40, 30, 0.92);
+            color: #fff;
+            padding: 0.15rem 0.5rem;
+            border-radius: 8px;
+            font-size: 0.55rem;
+            white-space: nowrap;
+            backdrop-filter: blur(4px);
+            pointer-events: none;
+            z-index: 10;
+        }
+
+        .market-item .qty-btns .btn-sm:hover .tooltip {
+            display: block;
+        }
+
+        /* ---------- MENSAGEM ---------- */
+        .message {
+            background: var(--bg);
+            border-radius: 40px;
+            padding: 0.4rem 1rem;
+            font-size: 0.75rem;
+            color: var(--text-muted);
+            text-align: center;
+            min-height: 2.2rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.4rem;
+            transition: all 0.3s;
+            border: 1px solid rgba(0, 0, 0, 0.03);
+            flex-wrap: wrap;
+        }
+
+        .message .highlight {
+            color: var(--primary);
+            font-weight: 600;
+        }
+
+        .message .click-hint {
+            background: rgba(45, 125, 58, 0.1);
+            padding: 0.1rem 0.5rem;
+            border-radius: 30px;
+            font-size: 0.65rem;
+        }
+
+        /* ---------- TOAST ---------- */
+        .toast {
+            position: fixed;
+            bottom: 2rem;
+            left: 50%;
+            transform: translateX(-50%) translateY(80px);
+            background: rgba(30, 40, 30, 0.92);
+            backdrop-filter: blur(8px);
+            color: #fff;
+            padding: 0.5rem 1.4rem;
+            border-radius: 60px;
+            font-weight: 500;
+            font-size: 0.85rem;
+            box-shadow: 0 12px 32px rgba(0, 0, 0, 0.25);
+            opacity: 0;
+            transition: all 0.45s ease;
+            pointer-events: none;
+            z-index: 999;
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            text-align: center;
+        }
+
+        .toast.show {
+            opacity: 1;
+            transform: translateX(-50%) translateY(0);
+        }
+
+        /* ---------- MODAL APOIADOR ---------- */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            backdrop-filter: blur(4px);
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+            animation: fadeIn 0.3s ease;
+        }
+
+        .modal.open {
+            display: flex;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: scale(0.95);
+            }
+            to {
+                opacity: 1;
+                transform: scale(1);
+            }
+        }
+
+        .modal-content {
+            background: #fff;
+            max-width: 420px;
+            width: 90%;
+            padding: 2rem 1.8rem;
+            border-radius: 28px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            text-align: center;
+            position: relative;
+        }
+
+        .modal-content h2 {
+            font-size: 1.5rem;
+            color: var(--text-dark);
+            margin-bottom: 0.8rem;
+        }
+
+        .modal-content p {
+            font-size: 0.95rem;
+            color: var(--text-muted);
+            margin-bottom: 1rem;
+            line-height: 1.5;
+        }
+
+        .modal-content ul {
+            list-style: none;
+            padding: 0;
+            margin: 1rem 0;
+            text-align: left;
+            font-size: 0.9rem;
+        }
+
+        .modal-content ul li {
+            padding: 0.4rem 0;
+            border-bottom: 1px solid #f0f0f0;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .modal-content ul li::before {
+            content: "✅";
+            color: var(--primary);
+        }
+
+        .modal-content button {
+            background: var(--gold);
+            border: none;
+            color: #fff;
+            font-weight: 700;
+            padding: 0.6rem 1.8rem;
+            border-radius: 60px;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: all 0.2s;
+            margin: 0.3rem;
+            box-shadow: 0 4px 12px rgba(249, 168, 37, 0.3);
+        }
+
+        .modal-content button:hover {
+            transform: scale(1.03);
+            background: var(--gold-dark);
+        }
+
+        .modal-content button#fecharModal {
+            background: #ccc;
+            color: #333;
+            box-shadow: none;
+        }
+
+        .modal-content button#fecharModal:hover {
+            background: #bbb;
+        }
+
+        /* ---------- RESPONSIVO ---------- */
+        @media (max-width: 680px) {
+            .market-grid {
+                grid-template-columns: 1fr 1fr;
+            }
+        }
+
+        @media (max-width: 520px) {
+            .card {
+                padding: 1rem 0.7rem 1rem;
+            }
+            .header h1 {
+                font-size: 1.2rem;
+            }
+            .stats {
+                gap: 0.1rem;
+                padding: 0.2rem 0.3rem;
+            }
+            .stat-item {
+                font-size: 0.65rem;
+                padding: 0.1rem 0.2rem;
+            }
+            .stat-item i {
+                font-size: 0.7rem;
+            }
+            .stat-item .num {
+                font-size: 0.65rem;
+                min-width: 1rem;
+            }
+            .coins-display {
+                font-size: 0.75rem;
+                padding: 0.1rem 0.6rem 0.1rem 0.3rem;
+            }
+            .field {
+                gap: 6px;
+            }
+            .plot {
+                font-size: 1.6rem;
+                min-height: 56px;
+                border-radius: 12px;
+            }
+            .plot .stage-label {
+                font-size: 0.35rem;
+                bottom: 1px;
+            }
+            .btn {
+                font-size: 0.65rem;
+                padding: 0.35rem 0.7rem;
+                gap: 0.15rem;
+            }
+            .market-grid {
+                grid-template-columns: 1fr;
+                gap: 0.4rem;
+            }
+            .message {
+                font-size: 0.65rem;
+                padding: 0.3rem 0.6rem;
+                min-height: 1.8rem;
+            }
+            .toast {
+                font-size: 0.7rem;
+                padding: 0.35rem 1rem;
+                bottom: 1rem;
+            }
+            .chicken-coop {
+                padding: 0.4rem 0.6rem;
+                flex-direction: column;
+                align-items: stretch;
+            }
+            .coop-info {
+                justify-content: center;
+            }
+            .coop-actions {
+                justify-content: center;
+            }
+            .stat-item .tooltip,
+            .coins-display .tooltip,
+            .btn .tooltip,
+            .market-item .qty-btns .btn-sm .tooltip,
+            .btn-sm-coop .tooltip {
+                display: none !important;
+            }
+            .modal-content {
+                padding: 1.5rem 1rem;
+            }
+        }
+
+        @media (max-width: 400px) {
+            .plot {
+                font-size: 1.3rem;
+                min-height: 46px;
+            }
+            .stats .label {
+                display: none;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="card">
+
+        <!-- HEADER -->
+        <div class="header">
+            <h1>
+                <i class="fas fa-seedling"></i> Milharal
+                <span id="supporterBadge" style="display:none;" class="supporter-badge">
+                    <i class="fas fa-crown"></i> Apoiador
+                </span>
+            </h1>
+            <span class="sub"><i class="far fa-clock"></i> simulação</span>
+        </div>
+
+        <!-- STATS + MOEDAS -->
+        <div class="stats-row">
+            <div class="stats">
+                <div class="stat-item">
+                    <i class="fas fa-seedling"></i>
+                    <span class="label">Sementes</span>
+                    <span class="num" id="seedCount"><span class="icon-num">🌰</span> 0</span>
+                    <span class="tooltip">Sementes para plantar.</span>
+                </div>
+                <div class="stat-item">
+                    <i class="fas fa-trowel"></i>
+                    <span class="label">Plantados</span>
+                    <span class="num" id="plantedCount"><span class="icon-num">🌱</span> 0</span>
+                    <span class="tooltip">Total plantado.</span>
+                </div>
+                <div class="stat-item">
+                    <i class="fas fa-corn"></i>
+                    <span class="label">Colhidos</span>
+                    <span class="num" id="harvestCount"><span class="icon-num">🌽</span> 0</span>
+                    <span class="tooltip">Milhos colhidos/vendidos.</span>
+                </div>
+                <div class="stat-item">
+                    <i class="fas fa-water" style="color:var(--water-blue);"></i>
+                    <span class="label">Baldes</span>
+                    <span class="num" id="bucketCount"><span class="icon-num">🪣</span> 0</span>
+                    <span class="tooltip">Baldes de água.</span>
+                </div>
+                <div class="stat-item">
+                    <i class="fas fa-drumstick-bite" style="color:var(--chicken-color);"></i>
+                    <span class="label">Galinhas</span>
+                    <span class="num" id="chickenCount"><span class="icon-num">🐔</span> 0</span>
+                    <span class="tooltip">Galinhas adultas.</span>
+                </div>
+            </div>
+            <div class="coins-display">
+                <i class="fas fa-coins"></i>
+                <span class="num" id="coinDisplay"><span class="icon-num">💰</span> 50</span>
+                <span class="tooltip">Suas moedas.</span>
+            </div>
+        </div>
+
+        <!-- GALINHEIRO -->
+        <div class="chicken-coop">
+            <div class="coop-info">
+                <div class="coop-item">
+                    <i class="fas fa-egg" style="color:#f39c12;"></i>
+                    <span>Pintinhos</span>
+                    <span class="num" id="chickCount">0</span>
+                </div>
+                <div class="coop-item">
+                    <i class="fas fa-drumstick-bite" style="color:var(--chicken-color);"></i>
+                    <span>Galinhas</span>
+                    <span class="num" id="chickenCoopCount">0</span>
+                </div>
+                <div class="coop-item" style="font-size:0.75rem;color:var(--text-muted);">
+                    <i class="fas fa-corn"></i> para crescer: <span id="cornPerChick">5</span>
+                </div>
+            </div>
+            <div class="coop-actions">
+                <button class="btn-sm-coop buy" id="buyChickBtn"><i class="fas fa-egg"></i> Comprar pintinho (3💰)</button>
+                <button class="btn-sm-coop sell" id="sellChickenBtn"><i class="fas fa-drumstick-bite"></i> Vender galinha (8💰)</button>
+            </div>
+        </div>
+
+        <!-- TERRENO -->
+        <div class="field" id="field"></div>
+
+        <!-- AÇÕES -->
+        <div class="actions">
+            <button class="btn btn-primary" id="btnPlant">
+                <i class="fas fa-seedling"></i> Plantar
+                <span class="tooltip">Planta uma semente.</span>
+            </button>
+            <button class="btn btn-secondary" id="btnWater">
+                <i class="fas fa-tint"></i> Regar <span class="bucket-icon" id="bucketStatus">🪣 0</span>
+                <span class="tooltip">Rega todas (consome 1 balde).</span>
+            </button>
+            <button class="btn btn-gold" id="btnHarvestAll">
+                <i class="fas fa-corn"></i> Colher tudo
+                <span class="tooltip">Colhe e vende todos os milhos maduros.</span>
+            </button>
+            <button class="btn btn-market" id="btnToggleMarket">
+                <i class="fas fa-store"></i> Mercado
+                <span class="tooltip">Abre/fecha o mercado.</span>
+            </button>
+            <button class="btn btn-support" id="btnApoiar">
+                ❤️ Apoiar
+                <span class="tooltip">Contribua com os desenvolvedores.</span>
+            </button>
+            <button class="btn btn-reset" id="btnReset">
+                <i class="fas fa-undo-alt"></i> Reiniciar
+                <span class="tooltip">Reinicia tudo.</span>
+            </button>
+        </div>
+
+        <!-- MERCADO -->
+        <div class="market-panel" id="marketPanel">
+            <div class="market-title">
+                <i class="fas fa-store-alt"></i> Mercado
+                <span style="font-size:0.7rem;font-weight:400;color:var(--text-muted);margin-left:auto;">
+                    preços dinâmicos
+                </span>
+            </div>
+            <div class="market-grid">
+                <!-- VENDER MILHO -->
+                <div class="market-item">
+                    <div class="item-header">
+                        <i class="fas fa-corn" style="color:var(--gold-dark);"></i> Vender milho
+                        <span style="font-size:0.55rem;font-weight:400;color:var(--text-muted);margin-left:auto;">oferta</span>
+                    </div>
+                    <div class="price">Preço unitário: <span id="sellPrice">10</span> <i class="fas fa-coins" style="font-size:0.6rem;"></i></div>
+                    <div class="qty-btns">
+                        <button class="btn-sm sell" data-action="sell" data-qty="1">1</button>
+                        <button class="btn-sm sell" data-action="sell" data-qty="5">5</button>
+                        <button class="btn-sm sell" data-action="sell" data-qty="10">10</button>
+                        <button class="btn-sm sell" data-action="sell" data-qty="all">todos</button>
+                    </div>
+                </div>
+
+                <!-- COMPRAR SEMENTES -->
+                <div class="market-item">
+                    <div class="item-header">
+                        <i class="fas fa-seedling" style="color:var(--primary);"></i> Comprar sementes
+                        <span style="font-size:0.55rem;font-weight:400;color:var(--text-muted);margin-left:auto;">demanda</span>
+                    </div>
+                    <div class="price">Preço unitário: <span id="buyPrice">5</span> <i class="fas fa-coins" style="font-size:0.6rem;"></i></div>
+                    <div class="qty-btns">
+                        <button class="btn-sm buy" data-action="buy" data-qty="1">1</button>
+                        <button class="btn-sm buy" data-action="buy" data-qty="5">5</button>
+                        <button class="btn-sm buy" data-action="buy" data-qty="10">10</button>
+                        <button class="btn-sm buy" data-action="buy" data-qty="all">máximo</button>
+                    </div>
+                </div>
+
+                <!-- COMPRAR BALDES -->
+                <div class="market-item">
+                    <div class="item-header">
+                        <i class="fas fa-water" style="color:var(--water-blue);"></i> Comprar baldes
+                        <span style="font-size:0.55rem;font-weight:400;color:var(--text-muted);margin-left:auto;">fixo</span>
+                    </div>
+                    <div class="price">Preço unitário: <span id="bucketPrice">8</span> <i class="fas fa-coins" style="font-size:0.6rem;"></i></div>
+                    <div class="qty-btns">
+                        <button class="btn-sm buy" data-action="buyBucket" data-qty="1">1</button>
+                        <button class="btn-sm buy" data-action="buyBucket" data-qty="3">3</button>
+                        <button class="btn-sm buy" data-action="buyBucket" data-qty="5">5</button>
+                        <button class="btn-sm buy" data-action="buyBucket" data-qty="all">máximo</button>
+                    </div>
+                </div>
+
+                <!-- VENDER SEMENTES -->
+                <div class="market-item">
+                    <div class="item-header">
+                        <i class="fas fa-seedling" style="color:#e53935;"></i> Vender sementes
+                        <span style="font-size:0.55rem;font-weight:400;color:var(--text-muted);margin-left:auto;">metade</span>
+                    </div>
+                    <div class="price">Preço unitário: <span id="sellSeedPrice">2</span> <i class="fas fa-coins" style="font-size:0.6rem;"></i></div>
+                    <div class="qty-btns">
+                        <button class="btn-sm sell" data-action="sellSeed" data-qty="1">1</button>
+                        <button class="btn-sm sell" data-action="sellSeed" data-qty="5">5</button>
+                        <button class="btn-sm sell" data-action="sellSeed" data-qty="10">10</button>
+                        <button class="btn-sm sell" data-action="sellSeed" data-qty="all">todas</button>
+                    </div>
+                </div>
+
+                <!-- VENDER BALDES -->
+                <div class="market-item">
+                    <div class="item-header">
+                        <i class="fas fa-water" style="color:#e53935;"></i> Vender baldes
+                        <span style="font-size:0.55rem;font-weight:400;color:var(--text-muted);margin-left:auto;">metade</span>
+                    </div>
+                    <div class="price">Preço unitário: <span id="sellBucketPrice">4</span> <i class="fas fa-coins" style="font-size:0.6rem;"></i></div>
+                    <div class="qty-btns">
+                        <button class="btn-sm sell" data-action="sellBucket" data-qty="1">1</button>
+                        <button class="btn-sm sell" data-action="sellBucket" data-qty="3">3</button>
+                        <button class="btn-sm sell" data-action="sellBucket" data-qty="5">5</button>
+                        <button class="btn-sm sell" data-action="sellBucket" data-qty="all">todos</button>
+                    </div>
+                </div>
+
+                <!-- COMPRAR PINTINHO (via mercado também) -->
+                <div class="market-item">
+                    <div class="item-header">
+                        <i class="fas fa-egg" style="color:#f39c12;"></i> Comprar pintinho
+                        <span style="font-size:0.55rem;font-weight:400;color:var(--text-muted);margin-left:auto;">fixo</span>
+                    </div>
+                    <div class="price">Preço unitário: <span id="buyChickPrice">3</span> <i class="fas fa-coins" style="font-size:0.6rem;"></i></div>
+                    <div class="qty-btns">
+                        <button class="btn-sm buy" data-action="buyChick" data-qty="1">1</button>
+                        <button class="btn-sm buy" data-action="buyChick" data-qty="3">3</button>
+                        <button class="btn-sm buy" data-action="buyChick" data-qty="5">5</button>
+                        <button class="btn-sm buy" data-action="buyChick" data-qty="all">máximo</button>
+                    </div>
+                </div>
+
+                <!-- VENDER GALINHA (via mercado) -->
+                <div class="market-item">
+                    <div class="item-header">
+                        <i class="fas fa-drumstick-bite" style="color:#e53935;"></i> Vender galinha
+                        <span style="font-size:0.55rem;font-weight:400;color:var(--text-muted);margin-left:auto;">fixo</span>
+                    </div>
+                    <div class="price">Preço unitário: <span id="sellChickenPrice">8</span> <i class="fas fa-coins" style="font-size:0.6rem;"></i></div>
+                    <div class="qty-btns">
+                        <button class="btn-sm sell" data-action="sellChicken" data-qty="1">1</button>
+                        <button class="btn-sm sell" data-action="sellChicken" data-qty="3">3</button>
+                        <button class="btn-sm sell" data-action="sellChicken" data-qty="5">5</button>
+                        <button class="btn-sm sell" data-action="sellChicken" data-qty="all">todas</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- MENSAGEM -->
+        <div class="message" id="message">
+            <i class="fas fa-hand-pointer"></i>
+            Clique em um <span class="highlight">canteiro vazio</span> para plantar.
+            <span class="click-hint">Compre pintinhos e alimente com milho!</span>
+        </div>
+    </div>
+
+    <!-- MODAL APOIADOR -->
+    <div id="apoioModal" class="modal">
+        <div class="modal-content">
+            <h2>❤️ Apoie os Desenvolvedores</h2>
+            <p>
+                Faça uma contribuição única de <b>R$ 10,00</b>.
+            </p>
+            <ul>
+                <li>✅ 100 MuMu</li>
+                <li>✅ Selo de Apoiador</li>
+                <li>✅ Item Exclusivo</li>
+                <li>✅ Bônus mensal de 0,05 MuMu</li>
+            </ul>
+            <button id="pixBtn">Pagar com PIX</button>
+            <button id="fecharModal">Fechar</button>
+        </div>
+    </div>
+
+    <!-- TOAST -->
+    <div class="toast" id="toast"></div>
+
+    <script>
+        (function() {
+            'use strict';
+
+            // ---------- CONFIG ----------
+            const COLS = 4,
+                ROWS = 4,
+                TOTAL = COLS * ROWS;
+            const GROWTH_INTERVAL = 1200,
+                WATER_BOOST = 30,
+                BASE_GROWTH = 8;
+            const INITIAL_SEEDS = 0,
+                INITIAL_COINS = 50,
+                INITIAL_BUCKETS = 0,
+                INITIAL_CHICKS = 0,
+                INITIAL_CHICKENS = 0;
+            const BUCKET_PRICE = 8,
+                CLEAR_COST = 5;
+            const BASE_SELL = 10,
+                BASE_BUY = 5;
+            const CHICK_PRICE = 3,
+                CHICKEN_SELL_PRICE = 8;
+            const CORN_PER_CHICK = 5;
+
+            const STAGES = {
+                EMPTY: 'empty',
+                SEED: 'seed',
+                SPROUT: 'sprout',
+                SEEDLING: 'seedling',
+                GROWING: 'growing',
+                MATURE: 'mature',
+                HARVESTED: 'harvested'
+            };
+            const STAGE_META = {
+                [STAGES.EMPTY]: { emoji: '', label: 'vazio' },
+                [STAGES.SEED]: { emoji: '🌰', label: 'semente' },
+                [STAGES.SPROUT]: { emoji: '🌱', label: 'brotando' },
+                [STAGES.SEEDLING]: { emoji: '🌿', label: 'muda' },
+                [STAGES.GROWING]: { emoji: '🌾', label: 'crescendo' },
+                [STAGES.MATURE]: { emoji: '🌽', label: 'maduro!' },
+                [STAGES.HARVESTED]: { emoji: '🟫', label: 'colhido' }
+            };
+            const STAGE_ORDER = [
+                STAGES.EMPTY, STAGES.SEED, STAGES.SPROUT,
+                STAGES.SEEDLING, STAGES.GROWING, STAGES.MATURE, STAGES.HARVESTED
+            ];
+
+            // ---------- ESTADO ----------
+            let plots = [];
+            let seeds = INITIAL_SEEDS,
+                harvested = 0,
+                planted = 0,
+                coins = INITIAL_COINS,
+                buckets = INITIAL_BUCKETS;
+            let chicks = INITIAL_CHICKS,
+                chickens = INITIAL_CHICKENS;
+            let apoiador = false,
+                ultimoBonus = null;
+            let growthTimer = null,
+                toastTimeout = null,
+                marketOpen = false;
+
+            // ---------- DOM refs ----------
+            const fieldEl = document.getElementById('field');
+            const seedCountEl = document.getElementById('seedCount');
+            const plantedCountEl = document.getElementById('plantedCount');
+            const harvestCountEl = document.getElementById('harvestCount');
+            const bucketCountEl = document.getElementById('bucketCount');
+            const coinDisplayEl = document.getElementById('coinDisplay');
+            const bucketStatusEl = document.getElementById('bucketStatus');
+            const chickCountEl = document.getElementById('chickCount');
+            const chickenCoopCountEl = document.getElementById('chickenCoopCount');
+            const cornPerChickEl = document.getElementById('cornPerChick');
+            const messageEl = document.getElementById('message');
+            const toastEl = document.getElementById('toast');
+            const marketPanel = document.getElementById('marketPanel');
+            const btnToggleMarket = document.getElementById('btnToggleMarket');
+            const sellPriceEl = document.getElementById('sellPrice');
+            const buyPriceEl = document.getElementById('buyPrice');
+            const bucketPriceEl = document.getElementById('bucketPrice');
+            const sellSeedPriceEl = document.getElementById('sellSeedPrice');
+            const sellBucketPriceEl = document.getElementById('sellBucketPrice');
+            const buyChickPriceEl = document.getElementById('buyChickPrice');
+            const sellChickenPriceEl = document.getElementById('sellChickenPrice');
+            const btnPlant = document.getElementById('btnPlant');
+            const btnWater = document.getElementById('btnWater');
+            const btnHarvestAll = document.getElementById('btnHarvestAll');
+            const btnReset = document.getElementById('btnReset');
+            const buyChickBtn = document.getElementById('buyChickBtn');
+            const sellChickenBtn = document.getElementById('sellChickenBtn');
+            const btnApoiar = document.getElementById('btnApoiar');
+            const apoioModal = document.getElementById('apoioModal');
+            const pixBtn = document.getElementById('pixBtn');
+            const fecharModal = document.getElementById('fecharModal');
+            const supporterBadge = document.getElementById('supporterBadge');
+
+            // ---------- PERSISTÊNCIA ----------
+            function saveGame() {
+                const state = {
+                    plots,
+                    seeds,
+                    harvested,
+                    planted,
+                    coins,
+                    buckets,
+                    chicks,
+                    chickens,
+                    apoiador,
+                    ultimoBonus,
+                    marketOpen // opcional
+                };
+                try {
+                    localStorage.setItem('milharalGame', JSON.stringify(state));
+                } catch (e) { /* ignore */ }
+            }
+
+            function loadGame() {
+                try {
+                    const raw = localStorage.getItem('milharalGame');
+                    if (!raw) return false;
+                    const state = JSON.parse(raw);
+                    plots = state.plots || [];
+                    seeds = state.seeds ?? INITIAL_SEEDS;
+                    harvested = state.harvested ?? 0;
+                    planted = state.planted ?? 0;
+                    coins = state.coins ?? INITIAL_COINS;
+                    buckets = state.buckets ?? INITIAL_BUCKETS;
+                    chicks = state.chicks ?? INITIAL_CHICKS;
+                    chickens = state.chickens ?? INITIAL_CHICKENS;
+                    apoiador = state.apoiador ?? false;
+                    ultimoBonus = state.ultimoBonus ?? null;
+                    marketOpen = state.marketOpen ?? false;
+                    return true;
+                } catch (e) { return false; }
+            }
+
+            // ---------- BÔNUS MENSAL ----------
+            function checkMonthlyBonus() {
+                if (!apoiador) return;
+                const hoje = new Date();
+                const mesAno = hoje.getMonth() + '-' + hoje.getFullYear();
+                if (ultimoBonus !== mesAno) {
+                    // Adiciona 0.05 (arredondamos para 2 casas)
+                    coins = Math.round((coins + 0.05) * 100) / 100;
+                    ultimoBonus = mesAno;
+                    showToast('🎁 Bônus mensal de 0.05 MuMu recebido!', 2500);
+                    saveGame();
+                    render();
+                }
+            }
+
+            // ---------- FUNÇÕES DE PREÇO ----------
+            function getSellPrice() {
+                const mature = plots.filter(p => p.stage === STAGES.MATURE).length;
+                let price = BASE_SELL / (1 + (mature / 10));
+                return Math.max(2, Math.round(price));
+            }
+
+            function getBuyPrice() {
+                let price = BASE_BUY * (1 + (seeds / 10));
+                return Math.min(15, Math.round(price));
+            }
+
+            function getSellSeedPrice() {
+                return Math.max(1, Math.floor(getBuyPrice() / 2));
+            }
+
+            function getSellBucketPrice() {
+                return Math.floor(BUCKET_PRICE / 2);
+            }
+
+            // ---------- RENDER com flash e salvamento ----------
+            function render(flashItems = []) {
+                const updateEl = (el, value, icon) => {
+                    el.innerHTML = `<span class="icon-num">${icon}</span> ${typeof value === 'number' ? value.toFixed(2) : value}`;
+                };
+                updateEl(seedCountEl, seeds, '🌰');
+                updateEl(plantedCountEl, planted, '🌱');
+                updateEl(harvestCountEl, harvested, '🌽');
+                updateEl(bucketCountEl, buckets, '🪣');
+                coinDisplayEl.innerHTML = `<span class="icon-num">💰</span> ${coins.toFixed(2)}`;
+                bucketStatusEl.textContent = `🪣 ${buckets}`;
+                chickCountEl.textContent = chicks;
+                chickenCoopCountEl.textContent = chickens;
+                cornPerChickEl.textContent = CORN_PER_CHICK;
+
+                // Selo apoiador
+                if (apoiador) {
+                    supporterBadge.style.display = 'inline-flex';
+                } else {
+                    supporterBadge.style.display = 'none';
+                }
+
+                // Preços do mercado
+                sellPriceEl.textContent = getSellPrice();
+                buyPriceEl.textContent = getBuyPrice();
+                bucketPriceEl.textContent = BUCKET_PRICE;
+                sellSeedPriceEl.textContent = getSellSeedPrice();
+                sellBucketPriceEl.textContent = getSellBucketPrice();
+                buyChickPriceEl.textContent = CHICK_PRICE;
+                sellChickenPriceEl.textContent = CHICKEN_SELL_PRICE;
+
+                // Flash
+                const map = {
+                    'seeds': seedCountEl,
+                    'planted': plantedCountEl,
+                    'harvested': harvestCountEl,
+                    'buckets': bucketCountEl,
+                    'coins': coinDisplayEl,
+                    'chicks': chickCountEl,
+                    'chickens': chickenCoopCountEl
+                };
+                flashItems.forEach(key => {
+                    const el = map[key];
+                    if (el) {
+                        el.classList.remove('flash');
+                        void el.offsetWidth;
+                        el.classList.add('flash');
+                    }
+                });
+
+                // Campo
+                let html = '';
+                for (let i = 0; i < plots.length; i++) {
+                    const p = plots[i];
+                    const meta = STAGE_META[p.stage] || { emoji: '❓', label: '?' };
+                    const isHarvested = p.stage === STAGES.HARVESTED;
+                    const isEmpty = p.stage === STAGES.EMPTY;
+                    const isMature = p.stage === STAGES.MATURE;
+
+                    let classes = 'plot ' + p.stage;
+                    if (isHarvested) classes += ' harvested';
+                    if (isEmpty) classes += ' empty';
+                    if (isMature) classes += ' mature';
+                    if (p.stage === STAGES.SPROUT) classes += ' sprout';
+                    if (p.stage === STAGES.SEED) classes += ' seed';
+                    if (p.stage === STAGES.GROWING) classes += ' growing';
+
+                    let progressBar = '';
+                    if (!isEmpty && !isHarvested) {
+                        const w = Math.min(p.progress, 100);
+                        progressBar = `<div class="progress-bar ${w>=100?'done':''}" style="width:${w}%"></div>`;
+                    }
+
+                    let emoji = meta.emoji;
+                    if (isEmpty) emoji = '<span style="opacity:0.25;font-size:0.6em;">+</span>';
+                    if (isHarvested) emoji = '🟫';
+
+                    html += `
+                        <div class="${classes}" data-id="${p.id}">
+                            <span class="plant-emoji">${emoji}</span>
+                            ${progressBar}
+                            <span class="stage-label">${meta.label}</span>
+                        </div>
+                    `;
+                }
+                fieldEl.innerHTML = html;
+
+                // Botões
+                btnPlant.disabled = (seeds <= 0);
+                btnWater.disabled = (buckets <= 0);
+                buyChickBtn.disabled = (coins < CHICK_PRICE);
+                sellChickenBtn.disabled = (chickens <= 0);
+
+                updateMarketButtons();
+                updateMessage();
+
+                // Salvar automaticamente
+                saveGame();
+            }
+
+            // ---------- MERCADO: ATUALIZAR BOTÕES ----------
+            function updateMarketButtons() {
+                const mature = plots.filter(p => p.stage === STAGES.MATURE).length;
+                const buyPrice = getBuyPrice();
+
+                document.querySelectorAll('.btn-sm[data-action="sell"]').forEach(btn => {
+                    const qty = btn.dataset.qty;
+                    const avail = (qty === 'all') ? mature : parseInt(qty, 10);
+                    btn.disabled = (mature < avail);
+                });
+
+                document.querySelectorAll('.btn-sm[data-action="buy"]').forEach(btn => {
+                    const qty = btn.dataset.qty;
+                    let max = Math.floor(coins / buyPrice);
+                    if (qty === 'all') btn.disabled = (max === 0);
+                    else btn.disabled = (max < parseInt(qty, 10));
+                });
+
+                document.querySelectorAll('.btn-sm[data-action="buyBucket"]').forEach(btn => {
+                    const qty = btn.dataset.qty;
+                    let max = Math.floor(coins / BUCKET_PRICE);
+                    if (qty === 'all') btn.disabled = (max === 0);
+                    else btn.disabled = (max < parseInt(qty, 10));
+                });
+
+                document.querySelectorAll('.btn-sm[data-action="sellSeed"]').forEach(btn => {
+                    const qty = btn.dataset.qty;
+                    const avail = (qty === 'all') ? seeds : parseInt(qty, 10);
+                    btn.disabled = (seeds < avail);
+                });
+
+                document.querySelectorAll('.btn-sm[data-action="sellBucket"]').forEach(btn => {
+                    const qty = btn.dataset.qty;
+                    const avail = (qty === 'all') ? buckets : parseInt(qty, 10);
+                    btn.disabled = (buckets < avail);
+                });
+
+                document.querySelectorAll('.btn-sm[data-action="buyChick"]').forEach(btn => {
+                    const qty = btn.dataset.qty;
+                    let max = Math.floor(coins / CHICK_PRICE);
+                    if (qty === 'all') btn.disabled = (max === 0);
+                    else btn.disabled = (max < parseInt(qty, 10));
+                });
+
+                document.querySelectorAll('.btn-sm[data-action="sellChicken"]').forEach(btn => {
+                    const qty = btn.dataset.qty;
+                    const avail = (qty === 'all') ? chickens : parseInt(qty, 10);
+                    btn.disabled = (chickens < avail);
+                });
+            }
+
+            // ---------- MENSAGEM ----------
+            function updateMessage() {
+                const empty = plots.filter(p => p.stage === STAGES.EMPTY).length;
+                const mature = plots.filter(p => p.stage === STAGES.MATURE).length;
+                const harvestedCount = plots.filter(p => p.stage === STAGES.HARVESTED).length;
+                const growing = plots.some(p => p.stage !== STAGES.EMPTY && p.stage !== STAGES.HARVESTED && p.stage !==
+                    STAGES.MATURE);
+
+                let msg = '';
+                if (harvestedCount > 0)
+                    msg =
+                    `🟫 <span class="highlight">${harvestedCount}</span> colhido(s). Clique para limpar (${CLEAR_COST} moedas).`;
+                else if (seeds <= 0 && empty > 0)
+                    msg = '😅 <span class="highlight">Sem sementes!</span> Compre ou colha.';
+                else if (mature > 0)
+                    msg = `🌽 <span class="highlight">${mature}</span> maduro(s)! Clique para colher ou "Colher tudo" para vender.`;
+                else if (growing)
+                    msg = buckets > 0 ? '💧 <span class="highlight">Regue</span> (consome 1 balde).' :
+                    '💧 Sem baldes! Compre no mercado.';
+                else if (empty > 0 && seeds > 0)
+                    msg = '🌱 Clique em um <span class="highlight">canteiro vazio</span> para plantar.';
+                else if (empty === 0 && seeds > 0)
+                    msg = '🧑‍🌾 Terreno cheio! Espere crescer ou colha.';
+                else if (chicks > 0)
+                    msg = `🐤 ${chicks} pintinho(s) precisam de ${CORN_PER_CHICK} milho cada para crescer.`;
+                else
+                    msg = '🌾 Acompanhe sua fazenda!';
+                messageEl.innerHTML = msg;
+            }
+
+            // ---------- TOAST ----------
+            function showToast(text, duration = 2200) {
+                if (toastTimeout) { clearTimeout(toastTimeout);
+                    toastEl.classList.remove('show'); }
+                toastEl.textContent = text;
+                toastEl.classList.add('show');
+                toastTimeout = setTimeout(() => { toastEl.classList.remove('show');
+                    toastTimeout = null; }, duration);
+            }
+
+            // ---------- CRESCIMENTO DAS PLANTAS ----------
+            function growPlot(plot) {
+                if (plot.stage === STAGES.EMPTY || plot.stage === STAGES.HARVESTED || plot.stage === STAGES.MATURE)
+                    return false;
+                plot.progress = Math.min(plot.progress + BASE_GROWTH, 100);
+                if (plot.progress >= 100) {
+                    const idx = STAGE_ORDER.indexOf(plot.stage);
+                    if (idx + 1 < STAGE_ORDER.length) {
+                        plot.stage = STAGE_ORDER[idx + 1];
+                        plot.progress = 0;
+                        if (plot.stage === STAGES.MATURE)
+                            showToast(`🌽 Milho maduro na parcela ${plot.id+1}!`, 1800);
+                        return true;
+                    }
+                }
+                return false;
+            }
+
+            function autoGrow() {
+                let any = false;
+                for (const p of plots) {
+                    if (p.stage !== STAGES.EMPTY && p.stage !== STAGES.HARVESTED && p.stage !== STAGES.MATURE) {
+                        if (growPlot(p)) any = true;
+                    }
+                }
+                if (any) render([]);
+                else render([]);
+            }
+
+            // ---------- CRESCIMENTO DOS PINTINHOS ----------
+            function growChicks() {
+                if (chicks === 0 || harvested < CORN_PER_CHICK) return false;
+                const maxGrow = Math.min(chicks, Math.floor(harvested / CORN_PER_CHICK));
+                if (maxGrow === 0) return false;
+                const used = maxGrow * CORN_PER_CHICK;
+                harvested -= used;
+                chicks -= maxGrow;
+                chickens += maxGrow;
+                showToast(`🐔 ${maxGrow} pintinho(s) cresceram e viraram galinha(s)!`, 2000);
+                render(['chicks', 'chickens', 'harvested']);
+                return true;
+            }
+
+            // ---------- AÇÕES DAS PLANTAS ----------
+            function plantAt(id) {
+                const p = plots[id];
+                if (!p || p.stage !== STAGES.EMPTY) return false;
+                if (seeds <= 0) { showToast('😅 Sem sementes!', 1400); return false; }
+                seeds--;
+                p.stage = STAGES.SEED;
+                p.progress = 0;
+                planted++;
+                showToast(`🌱 Plantou na parcela ${id+1}!`, 1400);
+                render(['seeds', 'planted']);
+                return true;
+            }
+
+            function clearPlot(id) {
+                const p = plots[id];
+                if (!p || p.stage !== STAGES.HARVESTED) return false;
+                if (coins < CLEAR_COST) { showToast(`😅 Precisa de ${CLEAR_COST} moedas.`, 1600); return false; }
+                coins -= CLEAR_COST;
+                p.stage = STAGES.EMPTY;
+                p.progress = 0;
+                showToast(`🟫 Canteiro ${id+1} limpo! (-${CLEAR_COST} moedas)`, 1600);
+                render(['coins']);
+                return true;
+            }
+
+            function waterAt(id) {
+                const p = plots[id];
+                if (!p || p.stage === STAGES.EMPTY || p.stage === STAGES.HARVESTED || p.stage === STAGES.MATURE) {
+                    showToast('💧 Não há o que regar aqui.', 1200);
+                    return false;
+                }
+                if (buckets <= 0) { showToast('😅 Sem baldes!', 1400); return false; }
+                buckets--;
+                p.progress = Math.min(p.progress + WATER_BOOST, 100);
+                if (p.progress >= 100) {
+                    const idx = STAGE_ORDER.indexOf(p.stage);
+                    if (idx + 1 < STAGE_ORDER.length) {
+                        p.stage = STAGE_ORDER[idx + 1];
+                        p.progress = 0;
+                        if (p.stage === STAGES.MATURE) showToast(`🌽 Amadureceu na parcela ${id+1}!`, 1800);
+                        else showToast(`💧 Avançou para ${STAGE_META[p.stage].label}!`, 1400);
+                    } else p.progress = 100;
+                } else {
+                    showToast(`💧 Regado! Progresso: ${Math.round(p.progress)}%`, 1400);
+                }
+                render(['buckets']);
+                return true;
+            }
+
+            function harvestAt(id) {
+                const p = plots[id];
+                if (!p || p.stage !== STAGES.MATURE) { showToast('🌽 Só colhe maduro!', 1200); return false; }
+                p.stage = STAGES.HARVESTED;
+                p.progress = 0;
+                harvested++;
+                seeds += 2;
+                showToast(`🌽 Colheu 1 milho! Ganhou 2 sementes.`, 1600);
+                render(['harvested', 'seeds']);
+                growChicks();
+                return true;
+            }
+
+            // ---------- COLHER TUDO E VENDER ----------
+            function harvestAllAndSell() {
+                const maturePlots = plots.filter(p => p.stage === STAGES.MATURE);
+                const count = maturePlots.length;
+                if (count === 0) {
+                    showToast('🌽 Nenhum milho maduro.', 1400);
+                    return 0;
+                }
+                const price = getSellPrice();
+                const total = count * price;
+                for (const p of maturePlots) {
+                    p.stage = STAGES.HARVESTED;
+                    p.progress = 0;
+                }
+                harvested += count;
+                coins += total;
+                showToast(`💰 Colheu e vendeu ${count} milho(s) por ${total} moedas!`, 2500);
+                render(['harvested', 'coins']);
+                growChicks();
+                return count;
+            }
+
+            const harvestAll = harvestAllAndSell;
+
+            // ---------- GALINHEIRO: COMPRAR/VENDER ----------
+            function buyChick(qty) {
+                let max = Math.floor(coins / CHICK_PRICE);
+                if (max === 0) { showToast('😅 Moedas insuficientes.', 1400); return; }
+                let buyQty = (qty === 'all') ? max : Math.min(qty, max);
+                if (buyQty <= 0) return;
+                const total = buyQty * CHICK_PRICE;
+                coins -= total;
+                chicks += buyQty;
+                showToast(`🐤 Comprou ${buyQty} pintinho(s) por ${total} moedas.`, 2000);
+                render(['coins', 'chicks']);
+            }
+
+            function sellChicken(qty) {
+                if (chickens === 0) { showToast('🐔 Nenhuma galinha para vender.', 1400); return; }
+                let sellQty = (qty === 'all') ? chickens : Math.min(qty, chickens);
+                if (sellQty <= 0) return;
+                const total = sellQty * CHICKEN_SELL_PRICE;
+                chickens -= sellQty;
+                coins += total;
+                showToast(`💰 Vendeu ${sellQty} galinha(s) por ${total} moedas.`, 2000);
+                render(['coins', 'chickens']);
+            }
+
+            // ---------- MERCADO: VENDER/COMPRAR ----------
+            function sellCorn(qty) {
+                const mature = plots.filter(p => p.stage === STAGES.MATURE);
+                const avail = mature.length;
+                if (avail === 0) { showToast('🌽 Nenhum milho maduro.', 1400); return; }
+                let sellQty = (qty === 'all') ? avail : Math.min(qty, avail);
+                if (sellQty <= 0) return;
+                const price = getSellPrice();
+                const total = sellQty * price;
+                let removed = 0;
+                for (const p of plots) {
+                    if (removed >= sellQty) break;
+                    if (p.stage === STAGES.MATURE) {
+                        p.stage = STAGES.HARVESTED;
+                        p.progress = 0;
+                        harvested++;
+                        removed++;
+                    }
+                }
+                coins += total;
+                showToast(`💰 Vendeu ${sellQty} milho(s) por ${total} moedas.`, 2000);
+                render(['coins', 'harvested']);
+                growChicks();
+            }
+
+            function buySeeds(qty) {
+                const price = getBuyPrice();
+                let max = Math.floor(coins / price);
+                if (max === 0) { showToast('😅 Moedas insuficientes.', 1400); return; }
+                let buyQty = (qty === 'all') ? max : Math.min(qty, max);
+                if (buyQty <= 0) return;
+                const total = buyQty * price;
+                coins -= total;
+                seeds += buyQty;
+                showToast(`🌱 Comprou ${buyQty} semente(s) por ${total} moedas.`, 2000);
+                render(['coins', 'seeds']);
+            }
+
+            function buyBuckets(qty) {
+                let max = Math.floor(coins / BUCKET_PRICE);
+                if (max === 0) { showToast('😅 Moedas insuficientes.', 1400); return; }
+                let buyQty = (qty === 'all') ? max : Math.min(qty, max);
+                if (buyQty <= 0) return;
+                const total = buyQty * BUCKET_PRICE;
+                coins -= total;
+                buckets += buyQty;
+                showToast(`🪣 Comprou ${buyQty} balde(s) por ${total} moedas.`, 2000);
+                render(['coins', 'buckets']);
+            }
+
+            function sellSeeds(qty) {
+                if (seeds === 0) { showToast('🌰 Nenhuma semente.', 1400); return; }
+                let sellQty = (qty === 'all') ? seeds : Math.min(qty, seeds);
+                if (sellQty <= 0) return;
+                const price = getSellSeedPrice();
+                const total = sellQty * price;
+                seeds -= sellQty;
+                coins += total;
+                showToast(`💰 Vendeu ${sellQty} semente(s) por ${total} moedas.`, 2000);
+                render(['coins', 'seeds']);
+            }
+
+            function sellBuckets(qty) {
+                if (buckets === 0) { showToast('🪣 Nenhum balde.', 1400); return; }
+                let sellQty = (qty === 'all') ? buckets : Math.min(qty, buckets);
+                if (sellQty <= 0) return;
+                const price = getSellBucketPrice();
+                const total = sellQty * price;
+                buckets -= sellQty;
+                coins += total;
+                showToast(`💰 Vendeu ${sellQty} balde(s) por ${total} moedas.`, 2000);
+                render(['coins', 'buckets']);
+            }
+
+            // ---------- APOIADOR ----------
+            function ativarApoiador() {
+                if (apoiador) {
+                    showToast('❤️ Você já é apoiador! Obrigado!', 2000);
+                    return;
+                }
+                // Simula pagamento
+                apoiador = true;
+                coins += 100;
+                // Bônus do mês atual
+                const hoje = new Date();
+                ultimoBonus = hoje.getMonth() + '-' + hoje.getFullYear();
+                showToast('🎉 Obrigado por apoiar! +100 MuMu e selo de apoiador!', 3000);
+                render(['coins']);
+                apoioModal.classList.remove('open');
+                saveGame();
+            }
+
+            // ---------- RESET ----------
+            function resetGame() {
+                if (growthTimer) clearInterval(growthTimer);
+                seeds = INITIAL_SEEDS;
+                harvested = 0;
+                planted = 0;
+                coins = INITIAL_COINS;
+                buckets = INITIAL_BUCKETS;
+                chicks = INITIAL_CHICKS;
+                chickens = INITIAL_CHICKENS;
+                apoiador = false;
+                ultimoBonus = null;
+                initPlots();
+                render(['seeds', 'planted', 'harvested', 'buckets', 'coins', 'chicks', 'chickens']);
+                startSimulation();
+                showToast('🔄 Jogo reiniciado!', 2200);
+                saveGame();
+            }
+
+            // ---------- INICIALIZAR ----------
+            function initPlots() {
+                plots = [];
+                for (let i = 0; i < TOTAL; i++) {
+                    plots.push({ id: i, stage: STAGES.EMPTY, progress: 0, row: Math.floor(i / COLS), col: i % COLS });
+                }
+            }
+
+            function startSimulation() {
+                if (growthTimer) clearInterval(growthTimer);
+                growthTimer = setInterval(autoGrow, GROWTH_INTERVAL);
+            }
+
+            // ---------- EVENTOS ----------
+            fieldEl.addEventListener('click', function(e) {
+                const div = e.target.closest('.plot');
+                if (!div) return;
+                const id = parseInt(div.dataset.id, 10);
+                if (isNaN(id)) return;
+                const p = plots[id];
+                if (!p) return;
+                if (p.stage === STAGES.EMPTY) plantAt(id);
+                else if (p.stage === STAGES.MATURE) harvestAt(id);
+                else if (p.stage === STAGES.HARVESTED) clearPlot(id);
+                else waterAt(id);
+            });
+
+            btnPlant.addEventListener('click', function() {
+                const idx = plots.findIndex(p => p.stage === STAGES.EMPTY);
+                if (idx === -1) { showToast('⚠️ Todos ocupados!', 1400); return; }
+                plantAt(idx);
+            });
+
+            btnWater.addEventListener('click', function() {
+                if (buckets <= 0) { showToast('😅 Sem baldes!', 1400); return; }
+                let watered = 0;
+                for (const p of plots) {
+                    if (p.stage !== STAGES.EMPTY && p.stage !== STAGES.HARVESTED && p.stage !== STAGES.MATURE) {
+                        p.progress = Math.min(p.progress + WATER_BOOST, 100);
+                        if (p.progress >= 100) {
+                            const idx = STAGE_ORDER.indexOf(p.stage);
+                            if (idx + 1 < STAGE_ORDER.length) { p.stage = STAGE_ORDER[idx + 1];
+                                p.progress = 0; } else p.progress = 100;
+                        }
+                        watered++;
+                    }
+                }
+                if (watered > 0) {
+                    buckets--;
+                    showToast(`💧 Regou ${watered} canteiro(s)!`, 1500);
+                    render(['buckets']);
+                    const mature = plots.filter(p => p.stage === STAGES.MATURE).length;
+                    if (mature > 0) setTimeout(() => showToast(`🌽 ${mature} amadureceu(ram)!`, 1600), 400);
+                } else showToast('💧 Nada para regar.', 1200);
+            });
+
+            btnHarvestAll.addEventListener('click', harvestAll);
+
+            buyChickBtn.addEventListener('click', function() { buyChick(1); });
+            sellChickenBtn.addEventListener('click', function() { sellChicken(1); });
+
+            btnReset.addEventListener('click', function() {
+                if (confirm('Reiniciar tudo?')) resetGame();
+            });
+
+            btnToggleMarket.addEventListener('click', function() {
+                marketOpen = !marketOpen;
+                marketPanel.classList.toggle('open', marketOpen);
+                this.innerHTML = marketOpen ?
+                    '<i class="fas fa-times"></i> Fechar mercado' :
+                    '<i class="fas fa-store"></i> Mercado';
+                if (marketOpen) updateMarketButtons();
+            });
+
+            // ---------- MODAL APOIADOR ----------
+            btnApoiar.addEventListener('click', function() {
+                apoioModal.classList.add('open');
+            });
+
+            fecharModal.addEventListener('click', function() {
+                apoioModal.classList.remove('open');
+            });
+
+            apoioModal.addEventListener('click', function(e) {
+                if (e.target === apoioModal) apoioModal.classList.remove('open');
+            });
+
+            pixBtn.addEventListener('click', function() {
+                // Simula pagamento com PIX
+                ativarApoiador();
+            });
+
+            // ---------- MERCADO: DELEGAÇÃO ----------
+            document.querySelector('.market-grid').addEventListener('click', function(e) {
+                const btn = e.target.closest('.btn-sm');
+                if (!btn) return;
+                const action = btn.dataset.action;
+                const qty = btn.dataset.qty;
+                switch (action) {
+                    case 'sell':
+                        sellCorn(qty);
+                        break;
+                    case 'buy':
+                        buySeeds(qty);
+                        break;
+                    case 'buyBucket':
+                        buyBuckets(qty);
+                        break;
+                    case 'sellSeed':
+                        sellSeeds(qty);
+                        break;
+                    case 'sellBucket':
+                        sellBuckets(qty);
+                        break;
+                    case 'buyChick':
+                        buyChick(qty);
+                        break;
+                    case 'sellChicken':
+                        sellChicken(qty);
+                        break;
+                }
+                setTimeout(updateMarketButtons, 100);
+            });
+
+            // ---------- CARREGAR E INICIAR ----------
+            const loaded = loadGame();
+            if (!loaded || !plots || plots.length === 0) {
+                initPlots();
+            }
+            // Se carregou, as plots já estão definidas, mas verifica se tem tamanho correto
+            if (plots.length !== TOTAL) {
+                initPlots();
+            }
+            render(['seeds', 'planted', 'harvested', 'buckets', 'coins', 'chicks', 'chickens']);
+            startSimulation();
+
+            // Verificar bônus mensal
+            checkMonthlyBonus();
+
+            // Boas-vindas
+            setTimeout(() => showToast(
+                '🌽🐔 Bem-vindo! Plante milho, venda, compre pintinhos e alimente-os com milho para crescerem!', 3500),
+            400);
+
+            window.addEventListener('beforeunload', function() { if (growthTimer) clearInterval(growthTimer); });
+        })();
+    </script>
+
+</body>
+
+</html>

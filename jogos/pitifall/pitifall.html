@@ -1,0 +1,747 @@
+Aqui está o jogo Pitfall! adaptado para celular com velocidade reduzida e controle de movimento por arrasto (drag) dentro de um círculo.
+
+```html
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <title>Pitfall! - Controle por Deslize Circular</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            user-select: none;
+            -webkit-tap-highlight-color: transparent;
+        }
+        body {
+            background: linear-gradient(145deg, #0a0a1a 0%, #000000 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-family: 'Courier New', 'VT323', monospace;
+            padding: 12px;
+            touch-action: none;
+        }
+        .game-wrapper {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            max-width: 100%;
+        }
+        .game-container {
+            background: #2a1f0e;
+            padding: 12px;
+            border-radius: 28px;
+            box-shadow: 0 20px 35px rgba(0,0,0,0.6), inset 0 1px 2px rgba(255,255,255,0.1);
+            border: 1px solid #5c3e1a;
+        }
+        canvas {
+            display: block;
+            margin: 0 auto;
+            box-shadow: 0 0 0 4px #1e1408, 0 0 0 8px #0f0b04;
+            image-rendering: crisp-edges;
+            image-rendering: pixelated;
+            width: 100%;
+            height: auto;
+            cursor: pointer;
+        }
+        .info-panel {
+            margin-top: 14px;
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: space-between;
+            align-items: center;
+            gap: 10px;
+            background: #1a150c;
+            padding: 10px 16px;
+            border-radius: 40px;
+            border: 1px solid #5f4c2b;
+        }
+        .score-box, .time-box, .lives-box {
+            background: #000000;
+            padding: 4px 12px;
+            border-radius: 20px;
+            color: #3eff5e;
+            text-shadow: 0 0 3px #1eff00;
+            font-size: 22px;
+            letter-spacing: 2px;
+            font-weight: bold;
+            font-family: 'Courier New', monospace;
+            border: 1px solid #3e5a2b;
+            text-align: center;
+            min-width: 85px;
+        }
+        .label {
+            font-size: 10px;
+            color: #d4b87a;
+            letter-spacing: 1px;
+            margin-bottom: 2px;
+        }
+        
+        /* Controle Circular de Deslize */
+        .joystick-container {
+            margin-top: 18px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex-direction: column;
+        }
+        .circle-joystick {
+            background: rgba(0,0,0,0.65);
+            backdrop-filter: blur(8px);
+            border-radius: 50%;
+            width: 140px;
+            height: 140px;
+            border: 3px solid #d4a259;
+            box-shadow: 0 0 0 3px #2a2418, inset 0 0 15px rgba(0,0,0,0.5);
+            position: relative;
+            touch-action: none;
+            cursor: pointer;
+        }
+        .thumb-stick {
+            position: absolute;
+            width: 55px;
+            height: 55px;
+            background: radial-gradient(circle at 30% 30%, #ffda88, #b57c2c);
+            border-radius: 50%;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            box-shadow: 0 4px 10px black;
+            border: 1px solid #ffe2a4;
+            pointer-events: none;
+            transition: 0.02s linear;
+        }
+        .joystick-label {
+            margin-top: 10px;
+            color: #efcd82;
+            font-size: 12px;
+            font-weight: bold;
+            text-align: center;
+            background: #1f1a0eaa;
+            padding: 4px 12px;
+            border-radius: 40px;
+            backdrop-filter: blur(4px);
+        }
+        .action-buttons {
+            margin-top: 15px;
+            display: flex;
+            gap: 20px;
+            justify-content: center;
+        }
+        .action-btn {
+            background: #2b2112;
+            border: none;
+            color: #ffdd99;
+            font-family: monospace;
+            font-weight: bold;
+            font-size: 26px;
+            padding: 10px 24px;
+            border-radius: 60px;
+            box-shadow: 0 5px 0 #4f3216;
+            cursor: pointer;
+            transition: 0.05s linear;
+            touch-action: manipulation;
+        }
+        .action-btn:active {
+            transform: translateY(3px);
+            box-shadow: 0 2px 0 #4f3216;
+        }
+        .restart-btn {
+            background: #a57c3c;
+            color: #1f1a0e;
+            font-size: 20px;
+        }
+        .status-tip {
+            font-size: 10px;
+            text-align: center;
+            color: #dbb86b;
+            margin-top: 12px;
+            background: #00000066;
+            padding: 5px 12px;
+            border-radius: 30px;
+        }
+        @media (max-width: 600px) {
+            .circle-joystick { width: 120px; height: 120px; }
+            .thumb-stick { width: 48px; height: 48px; }
+            .action-btn { font-size: 22px; padding: 8px 18px; }
+            .score-box, .lives-box, .time-box { font-size: 18px; min-width: 70px; }
+        }
+    </style>
+</head>
+<body>
+<div class="game-wrapper">
+    <div class="game-container">
+        <canvas id="gameCanvas" width="640" height="400"></canvas>
+        <div class="info-panel">
+            <div class="score-box">
+                <div class="label">SCORE</div>
+                <span id="scoreValue">00000</span>
+            </div>
+            <div class="lives-box">
+                <div class="label">LIVES</div>
+                <span id="livesValue">3</span>
+            </div>
+            <div class="time-box">
+                <div class="label">TREASURE</div>
+                <span id="treasureValue">0/8</span>
+            </div>
+        </div>
+        
+        <!-- CONTROLE CIRCULAR POR DESLIZE -->
+        <div class="joystick-container">
+            <div id="joystickBase" class="circle-joystick">
+                <div id="thumb" class="thumb-stick"></div>
+            </div>
+            <div class="joystick-label">⬅️ DESLIZE O DEDO NO CÍRCULO ➡️</div>
+        </div>
+        
+        <div class="action-buttons">
+            <button class="action-btn" id="btnJump">▲ PULAR</button>
+            <button class="action-btn restart-btn" id="btnRestart">🔁 REINICIAR</button>
+        </div>
+        <div class="status-tip">
+            🐊 EVITE TRONCOS, JACARÉS E BURACOS | COLETE TESOUROS
+        </div>
+    </div>
+</div>
+
+<script>
+    (function(){
+        // ---------- CANVAS E CONTEXTO ----------
+        const canvas = document.getElementById("gameCanvas");
+        const ctx = canvas.getContext("2d");
+        
+        // ---------- CONSTANTES DO JOGO (velocidade reduzida) ----------
+        const GROUND_BASE = 320;      
+        const PLAYER_WIDTH = 16;
+        const PLAYER_HEIGHT = 24;
+        
+        // Player physics (MAIS DEVAGAR: velocidade reduzida e pulo mais leve)
+        let player = {
+            x: 70,
+            y: GROUND_BASE - PLAYER_HEIGHT,
+            width: PLAYER_WIDTH,
+            height: PLAYER_HEIGHT,
+            vx: 0,
+            vy: 0,
+            grounded: true,
+            facingRight: true,
+            invincibleTimer: 0,
+        };
+        
+        // Game state
+        let score = 0;
+        let lives = 3;
+        let treasuresCollected = 0;
+        let gameActive = true;
+        let gameOverFlag = false;
+        
+        // Controle de movimento via joystick (valor entre -1 e 1)
+        let moveDirection = 0;   // -1 esquerda, 1 direita, 0 neutro
+        
+        // Variáveis do mundo
+        let rollingLogs = [];
+        let pitfalls = [];
+        let treasures = [];
+        let crocks = [];
+        
+        // Auxiliares visuais
+        let frameCounter = 0;
+        let backgroundOffset = 0;
+        let cameraX = 0;
+        
+        // ---------- UI Elements ----------
+        const scoreSpan = document.getElementById("scoreValue");
+        const livesSpan = document.getElementById("livesValue");
+        const treasureSpan = document.getElementById("treasureValue");
+        
+        function updateUI() {
+            scoreSpan.innerText = String(Math.floor(score)).padStart(5, '0').slice(0,6);
+            livesSpan.innerText = lives;
+            const totalTreasures = treasures.length;
+            treasureSpan.innerText = treasuresCollected + "/" + totalTreasures;
+        }
+        
+        // ---------- GERADOR DE MUNDO (Pitfall Clássico) ----------
+        function generateWorld() {
+            rollingLogs = [];
+            pitfalls = [];
+            treasures = [];
+            crocks = [];
+            
+            // Troncos rolantes (velocidade reduzida para ficar mais fácil)
+            rollingLogs.push({ x: 520, y: GROUND_BASE - 18, w: 52, h: 14, speed: 1.3, dir: -1 });
+            rollingLogs.push({ x: 880, y: GROUND_BASE - 18, w: 60, h: 14, speed: 1.5, dir: -1 });
+            rollingLogs.push({ x: 1280, y: GROUND_BASE - 18, w: 45, h: 14, speed: 1.7, dir: -1 });
+            rollingLogs.push({ x: 1720, y: GROUND_BASE - 18, w: 58, h: 14, speed: 1.2, dir: -1 });
+            rollingLogs.push({ x: 2250, y: GROUND_BASE - 18, w: 55, h: 14, speed: 1.8, dir: -1 });
+            rollingLogs.push({ x: 2650, y: GROUND_BASE - 18, w: 48, h: 14, speed: 1.5, dir: -1 });
+            
+            // Poços (armadilhas)
+            pitfalls.push({ x: 280, w: 45, y: GROUND_BASE-8, h: 12 });
+            pitfalls.push({ x: 650, w: 52, y: GROUND_BASE-8, h: 12 });
+            pitfalls.push({ x: 1050, w: 48, y: GROUND_BASE-8, h: 12 });
+            pitfalls.push({ x: 1420, w: 55, y: GROUND_BASE-8, h: 12 });
+            pitfalls.push({ x: 1960, w: 60, y: GROUND_BASE-8, h: 12 });
+            pitfalls.push({ x: 2380, w: 50, y: GROUND_BASE-8, h: 12 });
+            
+            // Jacarés
+            crocks.push({ x: 410, y: GROUND_BASE-12, w: 36, h: 16, openMouth: true });
+            crocks.push({ x: 890, y: GROUND_BASE-12, w: 38, h: 16, openMouth: true });
+            crocks.push({ x: 1310, y: GROUND_BASE-12, w: 40, h: 16, openMouth: true });
+            crocks.push({ x: 1750, y: GROUND_BASE-12, w: 36, h: 16, openMouth: true });
+            crocks.push({ x: 2450, y: GROUND_BASE-12, w: 38, h: 16, openMouth: true });
+            
+            // Tesouros
+            treasures.push({ x: 180, y: GROUND_BASE - 28, w: 12, h: 14, collected: false, value: 500 });
+            treasures.push({ x: 520, y: GROUND_BASE - 28, w: 12, h: 14, collected: false, value: 500 });
+            treasures.push({ x: 790, y: GROUND_BASE - 32, w: 12, h: 14, collected: false, value: 700 });
+            treasures.push({ x: 1160, y: GROUND_BASE - 30, w: 12, h: 14, collected: false, value: 500 });
+            treasures.push({ x: 1560, y: GROUND_BASE - 28, w: 12, h: 14, collected: false, value: 800 });
+            treasures.push({ x: 2020, y: GROUND_BASE - 32, w: 12, h: 14, collected: false, value: 1000 });
+            treasures.push({ x: 2330, y: GROUND_BASE - 30, w: 12, h: 14, collected: false, value: 600 });
+            treasures.push({ x: 2750, y: GROUND_BASE - 34, w: 12, h: 14, collected: false, value: 1200 });
+        }
+        
+        // ---------- MECÂNICAS DE MORTE E RESPAWN ----------
+        function killPlayer() {
+            if (!gameActive) return;
+            if (player.invincibleTimer > 0) return;
+            
+            lives--;
+            updateUI();
+            
+            if (lives <= 0) {
+                gameActive = false;
+                gameOverFlag = true;
+                updateUI();
+                return;
+            }
+            
+            // Respawn com invencibilidade
+            player.invincibleTimer = 55;
+            player.x = 70;
+            player.y = GROUND_BASE - PLAYER_HEIGHT;
+            player.vx = 0;
+            player.vy = 0;
+            player.grounded = true;
+            moveDirection = 0;
+        }
+        
+        function collectTreasure(treasure) {
+            if (treasure.collected) return;
+            treasure.collected = true;
+            score += treasure.value;
+            treasuresCollected++;
+            updateUI();
+        }
+        
+        // ---------- LÓGICA DE UPDATE (Velocidade reduzida e movimentos suaves) ----------
+        function updateGame() {
+            if (!gameActive) return;
+            
+            if (player.invincibleTimer > 0) {
+                player.invincibleTimer--;
+            }
+            
+            // Controle por deslize: velocidade BASE reduzida (2.4 ao invés de 3.6)
+            let targetSpeed = moveDirection * 2.4;
+            // Suavidade para não ser abrupto (aceleração gradual)
+            player.vx = player.vx * 0.92 + targetSpeed * 0.08;
+            // Limitar velocidade máxima
+            if (player.vx > 2.6) player.vx = 2.6;
+            if (player.vx < -2.6) player.vx = -2.6;
+            
+            if (moveDirection !== 0) player.facingRight = (moveDirection > 0);
+            
+            // Pulo (botão separado)
+            // O pulo será acionado pelo botão; controle de pulo variavel
+            // Gravidade reduzida para tornar pulo mais leve e jogo mais lento
+            player.vy += 0.38;  // gravidade menor que antes (era 0.48)
+            player.x += player.vx;
+            player.y += player.vy;
+            
+            // Colisão com chão
+            if (player.y + player.height >= GROUND_BASE) {
+                player.y = GROUND_BASE - player.height;
+                player.vy = 0;
+                player.grounded = true;
+            } else {
+                player.grounded = false;
+            }
+            
+            // Limites laterais do mundo
+            if (player.x < 30) player.x = 30;
+            if (player.x > 2950) player.x = 2950;
+            
+            // 1) Troncos rolantes + colisão
+            for (let log of rollingLogs) {
+                log.x += log.speed * log.dir;
+                if (log.x + log.w < -100) log.x = canvas.width + 200 + Math.random() * 400;
+                if (log.x > canvas.width + 500) log.x = -150 - Math.random() * 200;
+                
+                if (player.invincibleTimer <= 0) {
+                    if (player.x < log.x + log.w &&
+                        player.x + player.width > log.x &&
+                        player.y + player.height > log.y &&
+                        player.y < log.y + log.h) {
+                        killPlayer();
+                    }
+                }
+            }
+            
+            // 2) Poços
+            for (let pit of pitfalls) {
+                if (player.invincibleTimer <= 0 && player.grounded && 
+                    player.x + player.width > pit.x &&
+                    player.x < pit.x + pit.w &&
+                    player.y + player.height >= GROUND_BASE - 4) {
+                    killPlayer();
+                }
+            }
+            
+            // 3) Jacarés
+            for (let croc of crocks) {
+                if (frameCounter % 48 < 22) croc.openMouth = true;
+                else croc.openMouth = false;
+                
+                if (player.invincibleTimer <= 0) {
+                    if (player.x < croc.x + croc.w &&
+                        player.x + player.width > croc.x &&
+                        player.y + player.height > croc.y &&
+                        player.y < croc.y + croc.h) {
+                        killPlayer();
+                    }
+                }
+            }
+            
+            // 4) Tesouros
+            for (let tres of treasures) {
+                if (!tres.collected) {
+                    if (player.x < tres.x + tres.w &&
+                        player.x + player.width > tres.x &&
+                        player.y + player.height > tres.y &&
+                        player.y < tres.y + tres.h) {
+                        collectTreasure(tres);
+                    }
+                }
+            }
+            
+            // Verificar game over
+            if (lives <= 0) {
+                gameActive = false;
+                gameOverFlag = true;
+                updateUI();
+            }
+        }
+        
+        // ---------- RENDER (PITFALL PIXEL ART) ----------
+        function draw() {
+            cameraX = player.x - canvas.width / 2 + 20;
+            cameraX = Math.max(0, Math.min(cameraX, 2950 - canvas.width));
+            
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            
+            // Céu gradiente
+            const gradSky = ctx.createLinearGradient(0, 0, 0, 150);
+            gradSky.addColorStop(0, "#152638");
+            gradSky.addColorStop(1, "#2d5435");
+            ctx.fillStyle = gradSky;
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+            
+            // Nuvens
+            ctx.fillStyle = "#8cb56c";
+            for (let i = 0; i < 6; i++) {
+                let cloudX = (i * 210 + backgroundOffset * 0.4) % (canvas.width + 300) - 150;
+                ctx.fillRect(cloudX, 42, 58, 28);
+                ctx.fillRect(cloudX+22, 28, 40, 22);
+            }
+            
+            // Chão
+            ctx.fillStyle = "#6e3c1a";
+            ctx.fillRect(0, GROUND_BASE - 8, canvas.width, 14);
+            ctx.fillStyle = "#996633";
+            ctx.fillRect(0, GROUND_BASE - 4, canvas.width, 6);
+            for (let g=0; g<25; g++) {
+                ctx.fillStyle = "#d48c44";
+                ctx.fillRect((g*37 + cameraX) % canvas.width, GROUND_BASE-6, 4, 5);
+            }
+            
+            // Arbustos
+            ctx.fillStyle = "#3f7840";
+            for (let bush=0; bush<14; bush++) {
+                ctx.fillRect((bush*72 + cameraX*0.2) % canvas.width, GROUND_BASE-24, 32, 16);
+            }
+            
+            // Poços
+            for (let pit of pitfalls) {
+                let screenX = pit.x - cameraX;
+                if (screenX + pit.w > 0 && screenX < canvas.width) {
+                    ctx.fillStyle = "#1f0f00";
+                    ctx.fillRect(screenX, GROUND_BASE-10, pit.w, 16);
+                    ctx.fillStyle = "#633a1a";
+                    ctx.fillRect(screenX+3, GROUND_BASE-8, pit.w-6, 8);
+                    ctx.fillStyle = "#aa5533";
+                    for(let s=0;s<4;s++) ctx.fillRect(screenX+5+s*11, GROUND_BASE-8, 3, 7);
+                }
+            }
+            
+            // Jacarés
+            for (let croc of crocks) {
+                let screenX = croc.x - cameraX;
+                if (screenX + croc.w > 0 && screenX < canvas.width) {
+                    ctx.fillStyle = "#346f34";
+                    ctx.fillRect(screenX, croc.y, croc.w, croc.h);
+                    ctx.fillStyle = "#739a47";
+                    ctx.fillRect(screenX+4, croc.y+4, croc.w-8, croc.h-6);
+                    ctx.fillStyle = "#FFFFCC";
+                    ctx.fillRect(screenX+6, croc.y+3, 6, 5);
+                    ctx.fillRect(screenX+croc.w-12, croc.y+3, 6, 5);
+                    ctx.fillStyle = "#000";
+                    ctx.fillRect(screenX+7, croc.y+4, 3, 3);
+                    ctx.fillRect(screenX+croc.w-11, croc.y+4, 3, 3);
+                    
+                    if (croc.openMouth) {
+                        ctx.fillStyle = "#c2522c";
+                        ctx.fillRect(screenX+12, croc.y+10, croc.w-24, 8);
+                        ctx.fillStyle = "#ff7959";
+                        ctx.fillRect(screenX+14, croc.y+11, croc.w-28, 5);
+                    } else {
+                        ctx.fillStyle = "#4f864f";
+                        ctx.fillRect(screenX+12, croc.y+9, croc.w-24, 5);
+                    }
+                }
+            }
+            
+            // Troncos
+            for (let log of rollingLogs) {
+                let screenX = log.x - cameraX;
+                if (screenX + log.w > 0 && screenX < canvas.width) {
+                    ctx.fillStyle = "#9b6e42";
+                    ctx.fillRect(screenX, log.y, log.w, log.h);
+                    ctx.fillStyle = "#cb904a";
+                    for(let i=0;i<4;i++) ctx.fillRect(screenX+6+i*12, log.y+4, 6, 6);
+                    ctx.fillStyle = "#553a1a";
+                    ctx.fillRect(screenX+2, log.y+2, log.w-4, 4);
+                }
+            }
+            
+            // Tesouros
+            for (let tres of treasures) {
+                if (!tres.collected) {
+                    let screenX = tres.x - cameraX;
+                    if (screenX + tres.w > 0 && screenX < canvas.width) {
+                        ctx.fillStyle = "#e5b813";
+                        ctx.fillRect(screenX, tres.y, tres.w, tres.h);
+                        ctx.fillStyle = "#ffea80";
+                        ctx.fillRect(screenX+2, tres.y+2, tres.w-4, tres.h-4);
+                        ctx.fillStyle = "#cc9900";
+                        ctx.fillRect(screenX+4, tres.y+5, 4, 5);
+                        if (frameCounter % 18 < 9) {
+                            ctx.fillStyle = "white";
+                            ctx.fillRect(screenX+6, tres.y+3, 2, 2);
+                        }
+                    }
+                }
+            }
+            
+            // Jogador (Harry)
+            let playerScreenX = player.x - cameraX;
+            let blink = (player.invincibleTimer > 0) && (Math.floor(Date.now() / 50) % 2 === 0);
+            if (!blink || player.invincibleTimer <= 0) {
+                ctx.fillStyle = "#f5bc5c";
+                ctx.fillRect(playerScreenX, player.y, PLAYER_WIDTH, PLAYER_HEIGHT);
+                ctx.fillStyle = "#cd7a32";
+                ctx.fillRect(playerScreenX+3, player.y+6, 10, 12);
+                ctx.fillStyle = "#b55a1a";
+                ctx.fillRect(playerScreenX+4, player.y-4, 10, 8);
+                ctx.fillStyle = "#ffd966";
+                ctx.fillRect(playerScreenX+5, player.y-2, 8, 6);
+                ctx.fillStyle = "#2f2218";
+                if(player.facingRight) ctx.fillRect(playerScreenX+12, player.y+8, 2, 2);
+                else ctx.fillRect(playerScreenX+2, player.y+8, 2, 2);
+                ctx.fillStyle = "#bc762a";
+                ctx.fillRect(playerScreenX+4, player.y+18, 8, 4);
+                let legAnim = Math.sin(frameCounter * 0.25) * 2;
+                if (player.vx !== 0 && player.grounded) {
+                    ctx.fillRect(playerScreenX+3, player.y+20, 4, 6+legAnim);
+                    ctx.fillRect(playerScreenX+9, player.y+20, 4, 6-legAnim);
+                } else {
+                    ctx.fillRect(playerScreenX+3, player.y+20, 4, 6);
+                    ctx.fillRect(playerScreenX+9, player.y+20, 4, 6);
+                }
+            } else {
+                ctx.globalAlpha = 0.6;
+                ctx.fillStyle = "#ccaa77";
+                ctx.fillRect(playerScreenX, player.y, PLAYER_WIDTH, PLAYER_HEIGHT);
+                ctx.globalAlpha = 1;
+            }
+            
+            // Game Over
+            if (!gameActive && gameOverFlag) {
+                ctx.font = "bold 28px 'Courier New', monospace";
+                ctx.fillStyle = "#ff4444";
+                ctx.fillText("GAME OVER", canvas.width/2-85, 160);
+                ctx.font = "14px monospace";
+                ctx.fillStyle = "#ffcc88";
+                ctx.fillText("APERTE REINICIAR", canvas.width/2-70, 210);
+            }
+            
+            ctx.font = "bold 16px monospace";
+            ctx.fillStyle = "#f0b87a";
+            ctx.fillText("PITFALL!", 12, 38);
+            frameCounter++;
+        }
+        
+        // ---------- RESET DO JOGO ----------
+        function resetGame() {
+            score = 0;
+            lives = 3;
+            treasuresCollected = 0;
+            gameActive = true;
+            gameOverFlag = false;
+            player.invincibleTimer = 0;
+            player.x = 70;
+            player.y = GROUND_BASE - PLAYER_HEIGHT;
+            player.vx = 0;
+            player.vy = 0;
+            player.grounded = true;
+            moveDirection = 0;
+            generateWorld();
+            updateUI();
+        }
+        
+        // ---------- JOYSTICK CIRCULAR POR DESLIZE (TOUCH DRAG) ----------
+        const joystickBase = document.getElementById("joystickBase");
+        const thumb = document.getElementById("thumb");
+        let activeTouch = false;
+        const maxRadius = 45;  // raio máximo de deslocamento do thumb
+        
+        function updateJoystickPosition(clientX, clientY) {
+            const rect = joystickBase.getBoundingClientRect();
+            const centerX = rect.left + rect.width / 2;
+            const centerY = rect.top + rect.height / 2;
+            let dx = clientX - centerX;
+            let dy = clientY - centerY;
+            const distance = Math.hypot(dx, dy);
+            let limitedDistance = Math.min(distance, maxRadius);
+            let angle = Math.atan2(dy, dx);
+            let thumbX = Math.cos(angle) * limitedDistance;
+            let thumbY = Math.sin(angle) * limitedDistance;
+            
+            thumb.style.transform = `translate(calc(-50% + ${thumbX}px), calc(-50% + ${thumbY}px))`;
+            
+            // Direção horizontal (-1 a 1) baseada no ângulo, apenas eixo X para movimento do personagem
+            let rawX = (distance > 0 ? dx / distance : 0);
+            let intensity = Math.min(1, distance / maxRadius);
+            moveDirection = rawX * intensity;
+            // Pequena zona morta
+            if (Math.abs(moveDirection) < 0.08) moveDirection = 0;
+        }
+        
+        function resetJoystick() {
+            thumb.style.transform = "translate(-50%, -50%)";
+            moveDirection = 0;
+            activeTouch = false;
+        }
+        
+        function handleTouchStart(e) {
+            e.preventDefault();
+            const touch = e.touches[0];
+            activeTouch = true;
+            updateJoystickPosition(touch.clientX, touch.clientY);
+        }
+        
+        function handleTouchMove(e) {
+            e.preventDefault();
+            if (!activeTouch) return;
+            const touch = e.touches[0];
+            updateJoystickPosition(touch.clientX, touch.clientY);
+        }
+        
+        function handleTouchEnd(e) {
+            e.preventDefault();
+            resetJoystick();
+        }
+        
+        joystickBase.addEventListener("touchstart", handleTouchStart);
+        joystickBase.addEventListener("touchmove", handleTouchMove);
+        joystickBase.addEventListener("touchend", handleTouchEnd);
+        joystickBase.addEventListener("touchcancel", handleTouchEnd);
+        
+        // Suporte para mouse (para testes em desktop também)
+        let mouseActive = false;
+        joystickBase.addEventListener("mousedown", (e) => {
+            e.preventDefault();
+            mouseActive = true;
+            updateJoystickPosition(e.clientX, e.clientY);
+        });
+        window.addEventListener("mousemove", (e) => {
+            if (mouseActive) {
+                updateJoystickPosition(e.clientX, e.clientY);
+            }
+        });
+        window.addEventListener("mouseup", () => {
+            mouseActive = false;
+            resetJoystick();
+        });
+        
+        // Botão de pulo
+        const jumpBtn = document.getElementById("btnJump");
+        let jumpRequest = false;
+        jumpBtn.addEventListener("touchstart", (e) => {
+            e.preventDefault();
+            if (player.grounded && gameActive && player.invincibleTimer <= 0) {
+                player.vy = -6.2; // pulo mais suave e devagar
+                player.grounded = false;
+            }
+        });
+        jumpBtn.addEventListener("mousedown", (e) => {
+            e.preventDefault();
+            if (player.grounded && gameActive && player.invincibleTimer <= 0) {
+                player.vy = -6.2;
+                player.grounded = false;
+            }
+        });
+        
+        // Botão reiniciar
+        const restartBtn = document.getElementById("btnRestart");
+        restartBtn.addEventListener("click", (e) => {
+            e.preventDefault();
+            resetGame();
+        });
+        restartBtn.addEventListener("touchstart", (e) => {
+            e.preventDefault();
+            resetGame();
+        });
+        
+        // Prevenir scroll na tela toda
+        document.body.addEventListener("touchmove", (e) => {
+            if (e.target === joystickBase || joystickBase.contains(e.target) || e.target === jumpBtn || e.target === restartBtn) {
+                e.preventDefault();
+            }
+        }, { passive: false });
+        
+        // Inicializar
+        generateWorld();
+        updateUI();
+        
+        // Game Loop
+        function mainLoop() {
+            updateGame();
+            draw();
+            requestAnimationFrame(mainLoop);
+        }
+        mainLoop();
+        
+        setInterval(() => { backgroundOffset = (backgroundOffset + 1) % 360; }, 60);
+    })();
+</script>
+</body>
+</html>
+```

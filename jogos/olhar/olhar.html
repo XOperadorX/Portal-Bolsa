@@ -1,0 +1,473 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Aetheria · RPG de Mundo Aberto</title>
+    <!-- Estilo Fantasy Futurista -->
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', 'Poppins', system-ui, sans-serif;
+        }
+        body {
+            background: #0b0a0c;
+            color: #eee;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            background-image: radial-gradient(circle at 20% 30%, #1e1a2b 0%, #0a080e 90%);
+            padding: 1.5rem;
+        }
+        .game-container {
+            max-width: 1280px;
+            width: 100%;
+            background: rgba(18, 16, 24, 0.7);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 215, 150, 0.2);
+            border-radius: 2.5rem;
+            padding: 1.8rem 2.2rem;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.8), 0 0 0 1px rgba(180, 140, 255, 0.15);
+            transition: all 0.2s ease;
+        }
+        /* cabeçalho com a personagem */
+        .hero-header {
+            display: flex;
+            flex-wrap: wrap;
+            align-items: center;
+            gap: 1.5rem;
+            border-bottom: 1px solid rgba(255, 200, 140, 0.2);
+            padding-bottom: 1.2rem;
+            margin-bottom: 2rem;
+        }
+        .avatar-area {
+            display: flex;
+            align-items: center;
+            gap: 1.2rem;
+        }
+        .avatar-frame {
+            width: 90px;
+            height: 90px;
+            border-radius: 50%;
+            background: linear-gradient(145deg, #3a2f4a, #1c1625);
+            border: 2px solid #b894e8;
+            box-shadow: 0 0 20px #7f5fbf60;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+            position: relative;
+        }
+        .avatar-frame svg {
+            width: 100%;
+            height: 100%;
+            display: block;
+        }
+        .hero-name {
+            font-size: 2.2rem;
+            font-weight: 700;
+            background: linear-gradient(135deg, #f2e3b3, #dbbd7a);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            letter-spacing: 2px;
+            text-shadow: 0 0 25px #b5945c40;
+        }
+        .hero-title {
+            font-size: 0.9rem;
+            color: #b6a7d9;
+            background: #29213a;
+            padding: 0.2rem 1rem;
+            border-radius: 30px;
+            border: 1px solid #56477a;
+            display: inline-block;
+            letter-spacing: 1px;
+        }
+        .class-badge {
+            background: #1e1730;
+            border-radius: 40px;
+            padding: 0.4rem 1.4rem;
+            border-left: 3px solid #b28aff;
+            color: #d2c0f5;
+            font-weight: 500;
+        }
+        .stats-mini {
+            display: flex;
+            gap: 1.8rem;
+            margin-left: auto;
+            flex-wrap: wrap;
+        }
+        .stat-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            background: rgba(0,0,0,0.3);
+            padding: 0.3rem 1rem;
+            border-radius: 30px;
+            border: 1px solid #3b314b;
+        }
+        .stat-val {
+            font-size: 1.2rem;
+            font-weight: 600;
+            color: #f2e2b0;
+        }
+        .stat-label {
+            font-size: 0.6rem;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            color: #9b8ab3;
+        }
+
+        /* Grid principal - estilo HUD */
+        .dashboard-grid {
+            display: grid;
+            grid-template-columns: 1.2fr 2fr 1.2fr;
+            gap: 1.8rem;
+            margin-top: 0.5rem;
+        }
+        @media (max-width: 900px) {
+            .dashboard-grid {
+                grid-template-columns: 1fr;
+                gap: 2rem;
+            }
+            .hero-header {
+                flex-direction: column;
+                align-items: start;
+            }
+            .stats-mini {
+                margin-left: 0;
+                width: 100%;
+                justify-content: space-between;
+            }
+        }
+
+        /* Painéis */
+        .panel {
+            background: rgba(10, 8, 14, 0.6);
+            backdrop-filter: blur(4px);
+            -webkit-backdrop-filter: blur(4px);
+            border-radius: 24px;
+            padding: 1.2rem 1.2rem 1.5rem;
+            border: 1px solid #3a2d4e;
+            box-shadow: inset 0 0 30px #00000055, 0 8px 20px #00000077;
+            transition: 0.2s;
+        }
+        .panel h3 {
+            font-size: 0.9rem;
+            text-transform: uppercase;
+            letter-spacing: 3px;
+            color: #beaae2;
+            border-bottom: 1px solid #332a44;
+            padding-bottom: 0.6rem;
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        .panel h3 i {
+            font-size: 1.2rem;
+            color: #d8b4ff;
+        }
+
+        /* mapa */
+        .map-preview {
+            background: #13101b;
+            border-radius: 20px;
+            height: 180px;
+            background-image: radial-gradient(circle at 30% 40%, #3b2d4b 0%, #0d0a12 90%);
+            border: 1px solid #4d3d62;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            overflow: hidden;
+        }
+        .map-preview .label {
+            color: #b8a2d9;
+            font-weight: 300;
+            letter-spacing: 4px;
+            background: #1f192bcc;
+            padding: 0.4rem 1.6rem;
+            border-radius: 40px;
+            border: 1px solid #78629e;
+        }
+        .mini-biomes {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.3rem 0.6rem;
+            margin: 0.8rem 0 0.2rem;
+            font-size: 0.65rem;
+            color: #a58cc2;
+        }
+        .mini-biomes span {
+            background: #1f1a2b;
+            padding: 0.2rem 0.8rem;
+            border-radius: 20px;
+            border: 1px solid #3e3153;
+        }
+
+        /* lista de missões */
+        .quest-list {
+            list-style: none;
+            margin-top: 0.5rem;
+        }
+        .quest-list li {
+            display: flex;
+            align-items: center;
+            gap: 0.7rem;
+            padding: 0.6rem 0.2rem;
+            border-bottom: 1px solid #29213b;
+            font-size: 0.9rem;
+        }
+        .quest-list li .marker {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            background: #c9af6e;
+            flex-shrink: 0;
+        }
+        .quest-list li .qinfo {
+            flex: 1;
+        }
+        .quest-list li .qinfo small {
+            color: #9580b0;
+            font-size: 0.7rem;
+            display: block;
+        }
+
+        /* habilidades */
+        .skill-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 0.6rem;
+            margin: 0.8rem 0;
+        }
+        .skill-item {
+            background: #19142a;
+            padding: 0.3rem 0.6rem;
+            border-radius: 16px;
+            border-left: 4px solid #b38edb;
+            font-size: 0.8rem;
+            display: flex;
+            justify-content: space-between;
+        }
+        .skill-item .key {
+            color: #b396d6;
+            font-weight: 300;
+        }
+
+        .btn-primary {
+            background: linear-gradient(145deg, #624a8a, #3e2d5e);
+            border: none;
+            border-radius: 40px;
+            padding: 0.6rem 1.6rem;
+            color: white;
+            font-weight: 600;
+            letter-spacing: 1px;
+            border: 1px solid #947bc0;
+            box-shadow: 0 4px 12px #2f1f4b;
+            cursor: pointer;
+            transition: 0.15s;
+            width: 100%;
+            margin-top: 0.6rem;
+        }
+        .btn-primary:hover {
+            background: #7b5ea3;
+            transform: scale(1.01);
+            border-color: #b893f0;
+        }
+
+        .professions {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.3rem 0.8rem;
+            font-size: 0.7rem;
+            color: #bfaddb;
+            margin: 0.8rem 0 0.2rem;
+        }
+
+        .badge-multi {
+            background: #2e2345;
+            border-radius: 30px;
+            padding: 0.1rem 0.8rem;
+            font-size: 0.6rem;
+            border: 1px solid #6a518b;
+        }
+
+        .footer-info {
+            margin-top: 2rem;
+            display: flex;
+            justify-content: space-between;
+            border-top: 1px solid #2d2340;
+            padding-top: 1.2rem;
+            font-size: 0.75rem;
+            color: #7b6a93;
+            flex-wrap: wrap;
+        }
+        .footer-info span {
+            background: #181424;
+            padding: 0.2rem 1rem;
+            border-radius: 30px;
+        }
+        .icon-symbol {
+            color: #cfb5f0;
+        }
+
+        /* responsivo */
+        @media (max-width: 600px) {
+            .game-container { padding: 1rem; }
+            .hero-name { font-size: 1.6rem; }
+        }
+    </style>
+</head>
+<body>
+<div class="game-container">
+    <!-- cabeçalho com Lyra Azure -->
+    <header class="hero-header">
+        <div class="avatar-area">
+            <div class="avatar-frame">
+                <!-- SVG estilizado da personagem (cabelo azul, olhos grandes, estilo anime) -->
+                <svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+                    <circle cx="50" cy="40" r="28" fill="#2f2542" stroke="#b28aff" stroke-width="1.5"/>
+                    <circle cx="38" cy="34" r="7" fill="#f0e8ff" stroke="#a58bd6" stroke-width="0.8"/>
+                    <circle cx="62" cy="34" r="7" fill="#f0e8ff" stroke="#a58bd6" stroke-width="0.8"/>
+                    <circle cx="36" cy="32" r="3.5" fill="#2f1d4a"/>
+                    <circle cx="60" cy="32" r="3.5" fill="#2f1d4a"/>
+                    <ellipse cx="50" cy="42" rx="6" ry="3" fill="#b49ad9"/>
+                    <path d="M30 28 Q25 35 18 30 Q12 22 22 18 Q30 14 38 18 Q44 22 44 28 Z" fill="#3f7ab8" stroke="#2f5f94" stroke-width="0.6"/>
+                    <path d="M70 28 Q75 35 82 30 Q88 22 78 18 Q70 14 62 18 Q56 22 56 28 Z" fill="#3f7ab8" stroke="#2f5f94" stroke-width="0.6"/>
+                    <path d="M30 18 Q40 6 56 8 Q68 12 72 22 Q60 18 44 20 Q32 22 30 18" fill="#2266b0" stroke="#1e4a7e" stroke-width="0.8"/>
+                    <path d="M20 65 Q30 72 50 74 Q70 72 80 65 Q74 80 50 82 Q26 80 20 65" fill="#1e162b"/>
+                    <circle cx="50" cy="78" r="2.5" fill="#c9b0e8"/>
+                    <path d="M40 88 L45 95 L55 95 L60 88 Z" fill="#9575b0"/>
+                </svg>
+            </div>
+            <div>
+                <div class="hero-name">Lyra Azure</div>
+                <div><span class="hero-title">Exploradora Arcana</span> <span class="class-badge">Nv. 42</span></div>
+            </div>
+        </div>
+        <div class="stats-mini">
+            <div class="stat-item"><span class="stat-val">❤️ 680</span><span class="stat-label">Vitalidade</span></div>
+            <div class="stat-item"><span class="stat-val">⚡ 320</span><span class="stat-label">Energia</span></div>
+            <div class="stat-item"><span class="stat-val">🏹 94</span><span class="stat-label">Destreza</span></div>
+            <div class="stat-item"><span class="stat-val">🧠 128</span><span class="stat-label">Inteligência</span></div>
+        </div>
+    </header>
+
+    <!-- Dashboard principal -->
+    <div class="dashboard-grid">
+        <!-- Painel esquerdo: Mapa / Mundo -->
+        <section class="panel">
+            <h3><i>🗺️</i> Aetheria · 100km²</h3>
+            <div class="map-preview">
+                <span class="label">🌍 MUNDO ABERTO</span>
+            </div>
+            <div class="mini-biomes">
+                <span>🌲 Floresta Encantada</span> <span>🏜️ Deserto Vermelho</span> <span>❄️ Montanhas Congeladas</span>
+                <span>🌫️ Pântano Sombrio</span> <span>☁️ Ilhas Flutuantes</span> <span>⚙️ Cidade Tecnomágica</span>
+                <span>🕳️ Reino Subterrâneo</span> <span>🏴‍☠️ Costa Pirata</span>
+            </div>
+            <div style="display:flex; gap:0.3rem; margin:0.7rem 0 0.2rem; font-size:0.7rem; color:#b6a1d0;">
+                <span>🌞 Dia/🌙 Noite</span> <span>⛅ Clima dinâmico</span> <span>🏰 Sem loading</span>
+            </div>
+            <button class="btn-primary">🌐 Abrir Mapa</button>
+        </section>
+
+        <!-- Painel central: Missões e Progresso -->
+        <section class="panel">
+            <h3><i>📜</i> Jornada · Campanha 100h</h3>
+            <ul class="quest-list">
+                <li><span class="marker" style="background:#e6c87a;"></span><span class="qinfo"><strong>O Despertar</strong> <small>Encontrar o 1º Cristal Primordial · Floresta Encantada</small></span></li>
+                <li><span class="marker" style="background:#b28aff;"></span><span class="qinfo"><strong>Ecos do Devorador</strong> <small>Investigar as ruínas · Deserto Vermelho</small></span></li>
+                <li><span class="marker" style="background:#5fc1e0;"></span><span class="qinfo"><strong>Aliança dos Clãs</strong> <small>Reunir as facções · Cidade Tecnomágica</small></span></li>
+                <li><span class="marker" style="background:#d97a9b;"></span><span class="qinfo"><strong>O Selo de Gelo</strong> <small>Montanhas Congeladas · Cristal do Gelo</small></span></li>
+            </ul>
+            <div style="display:flex; gap:0.8rem; font-size:0.7rem; color:#ab95c7; margin-top:0.2rem;">
+                <span>✔️ 7 cristais</span> <span>⚔️ 200+ missões principais</span> <span>🌀 500 eventos</span>
+            </div>
+            <button class="btn-primary">📖 Ver todas as missões</button>
+        </section>
+
+        <!-- Painel direito: Habilidades / Classes / Multi -->
+        <section class="panel">
+            <h3><i>⚡</i> Habilidades · Classe</h3>
+            <div class="skill-grid">
+                <div class="skill-item"><span>🔥 Fogo</span><span class="key">E</span></div>
+                <div class="skill-item"><span>❄️ Gelo</span><span class="key">Q</span></div>
+                <div class="skill-item"><span>⚡ Raio</span><span class="key">R</span></div>
+                <div class="skill-item"><span>🌪️ Ar</span><span class="key">F</span></div>
+                <div class="skill-item"><span>💀 Trevas</span><span class="key">T</span></div>
+                <div class="skill-item"><span>✨ Luz</span><span class="key">G</span></div>
+            </div>
+            <div style="display: flex; flex-wrap:wrap; gap:0.3rem; margin:0.5rem 0; font-size:0.7rem;">
+                <span class="badge-multi">Maga Elemental</span> <span class="badge-multi">Assassina das Sombras</span>
+                <span class="badge-multi">Cavaleira Celestial</span> <span class="badge-multi">Necromante</span>
+                <span class="badge-multi">+ multiclasse</span>
+            </div>
+            <div style="font-size:0.75rem; background:#1b142b; padding:0.3rem 0.8rem; border-radius:40px; display:inline-block; margin:0.3rem 0;">
+                🌀 500+ habilidades · Combinações elementais
+            </div>
+            <button class="btn-primary">🌀 Árvore de Habilidades</button>
+        </section>
+    </div>
+
+    <!-- Segunda linha: facções, crafting, montarias, multiplayer -->
+    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 1.2rem; margin-top: 1.8rem;">
+        <div class="panel" style="padding:0.8rem 1rem;">
+            <h3 style="font-size:0.8rem;">🏛️ Facções</h3>
+            <div style="display:flex; flex-wrap:wrap; gap:0.2rem 0.8rem; font-size:0.7rem; color:#cbb5e6;">
+                <span>🌞 Império Solar</span> <span>🧙 Guilda dos Magos</span> <span>⚔️ Ordem dos Caçadores</span>
+                <span>🌑 Clã das Sombras</span> <span>🏴‍☠️ Piratas Celestes</span>
+            </div>
+            <div style="font-size:0.65rem; margin-top:0.3rem;">Reputação · influência</div>
+        </div>
+        <div class="panel" style="padding:0.8rem 1rem;">
+            <h3 style="font-size:0.8rem;">⚒️ Profissões · Craft</h3>
+            <div class="professions">
+                <span>🔨 Ferreiro</span> <span>🧪 Alquimista</span> <span>🎣 Pescador</span>
+                <span>🪓 Lenhador</span> <span>⛏️ Minerador</span> <span>🍳 Cozinheiro</span>
+            </div>
+            <div style="font-size:0.65rem; color:#b09bc9;">1000+ armas · 500 armaduras · 2000 itens</div>
+        </div>
+        <div class="panel" style="padding:0.8rem 1rem;">
+            <h3 style="font-size:0.8rem;">🐉 Montarias & Pets</h3>
+            <div style="display:flex; gap:0.5rem; font-size:1.2rem;">🐴🐺🐉🦅🔥</div>
+            <div style="font-size:0.65rem;">Cavalos · Lobos · Dragões · Grifos · Fênix · voo</div>
+            <div style="font-size:0.65rem; margin-top:0.2rem;">Pets: fadas, espíritos, evolução</div>
+        </div>
+        <div class="panel" style="padding:0.8rem 1rem;">
+            <h3 style="font-size:0.8rem;">👥 Multiplayer</h3>
+            <div style="font-size:0.75rem;">Coop 4 jogadores · Trocas · Guildas</div>
+            <div style="font-size:0.65rem; color:#b8a3d0;">Chat global · Eventos mundiais</div>
+            <div style="margin-top:0.3rem;"><span class="badge-multi">online opcional</span></div>
+        </div>
+    </div>
+
+    <!-- Terceira linha: economia, inimigos, chefes, sistema de casas -->
+    <div style="display: flex; flex-wrap: wrap; gap: 1rem; margin-top: 1.2rem; justify-content: space-between; background: #14101e; padding:0.8rem 1.2rem; border-radius: 30px; border:1px solid #342a48;">
+        <div><span style="color:#dbbd7a;">💰 Ouro 12.4k</span> <span style="color:#b6b0b0;">Prata 800</span> <span style="color:#b87333;">Cobre 2.3k</span></div>
+        <div><span>🏠 Casas · Castelos · Fazendas</span></div>
+        <div><span>👹 300 monstros · 100 chefes · 5 divinos</span></div>
+        <div><span>📦 Raridade: Comum → Divino</span></div>
+    </div>
+
+    <!-- rodapé com documentação, roadmap, etc -->
+    <div class="footer-info">
+        <span>📄 Game Design Document · Arquitetura Unity</span>
+        <span>🛠️ Scripts: Save · Quests · Inventário · Combate · IA · Multiplayer · Crafting</span>
+        <span>📅 Roadmap 24 meses · Assets AAA · PBR · HDR · Ray Tracing</span>
+        <span>🎵 200 músicas · Dublagem · Áudio 3D</span>
+    </div>
+    <div style="margin-top: 1.5rem; text-align: center; font-size: 0.7rem; color: #5e4d73; letter-spacing: 2px; border-top: 1px solid #2d2342; padding-top: 1rem;">
+        ⚡ Aetheria · 100 km² · sem loading · ciclo dia/noite · clima dinâmico · IA avançada · facções · economia · montarias · pets · multiclasse · 999 níveis
+    </div>
+</div>
+<!-- fim container -->
+</body>
+</html>

@@ -1,0 +1,753 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, viewport-fit=cover">
+<title>Portal Sandbox</title>
+<style>
+* {
+    user-select: none;
+    touch-action: none;
+    box-sizing: border-box;
+}
+
+body {
+    margin: 0;
+    background: #0a0f1e;
+    color: #e6d5b8;
+    font-family: 'Segoe UI', 'Roboto', system-ui, -apple-system;
+    overflow: hidden;
+    position: fixed;
+    width: 100%;
+    height: 100%;
+}
+
+#game-container {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    background: #1a2a1f;
+}
+
+canvas {
+    display: block;
+    width: 100%;
+    height: auto;
+    background: #2b4a2c;
+    touch-action: none;
+    box-shadow: 0 0 0 3px #c9a87b, inset 0 0 20px rgba(0,0,0,0.5);
+    cursor: crosshair;
+    flex: 1;
+}
+
+#hud {
+    background: linear-gradient(135deg, #1e1a10, #0f0c07);
+    padding: 8px 12px;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    align-items: center;
+    gap: 8px;
+    font-weight: bold;
+    text-shadow: 0 1px 2px black;
+    border-bottom: 2px solid #b88b4a;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.6);
+    backdrop-filter: blur(2px);
+    z-index: 5;
+}
+
+.stat {
+    background: #2c2418;
+    padding: 4px 10px;
+    border-radius: 40px;
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    font-size: 0.75rem;
+    letter-spacing: 0.5px;
+    border: 1px solid #c9a15b;
+    box-shadow: inset 0 1px 1px rgba(255,255,255,0.1), 0 2px 4px black;
+}
+
+/* JOYSTICK ANALÓGICO */
+.joystick-container {
+    position: fixed;
+    bottom: 90px;
+    left: 20px;
+    width: 130px;
+    height: 130px;
+    border-radius: 50%;
+    background: rgba(0,0,0,0.55);
+    backdrop-filter: blur(12px);
+    border: 2px solid #c9a87b;
+    box-shadow: 0 0 0 3px rgba(0,0,0,0.3), inset 0 0 15px rgba(0,0,0,0.5);
+    z-index: 20;
+    touch-action: none;
+}
+
+.joystick-base {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 100%;
+    height: 100%;
+    transform: translate(-50%, -50%);
+    border-radius: 50%;
+    background: rgba(30,25,18,0.8);
+}
+
+.joystick-thumb {
+    position: absolute;
+    width: 55px;
+    height: 55px;
+    background: radial-gradient(circle at 30% 30%, #e6c78e, #b88b4a);
+    border-radius: 50%;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    box-shadow: 0 3px 10px black;
+    border: 2px solid #ffdfaa;
+    transition: 0.02s linear;
+    pointer-events: none;
+}
+
+.joystick-label {
+    position: absolute;
+    bottom: -28px;
+    left: 50%;
+    transform: translateX(-50%);
+    font-size: 11px;
+    background: #000000aa;
+    padding: 2px 8px;
+    border-radius: 20px;
+    white-space: nowrap;
+    color: #eedd99;
+    font-weight: bold;
+}
+
+/* Botões de ação menores */
+.action-buttons {
+    position: fixed;
+    bottom: 95px;
+    right: 15px;
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+    z-index: 20;
+}
+
+.action-btn {
+    background: linear-gradient(145deg, #2a1f14, #1a120a);
+    border: 2px solid #e6bc7e;
+    border-radius: 50px;
+    padding: 8px 18px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-weight: bold;
+    color: #ffefcf;
+    text-shadow: 0 1px 1px black;
+    transition: 0.05s linear;
+    touch-action: manipulation;
+    cursor: pointer;
+    box-shadow: 0 4px 0 #3a2a1a;
+    backdrop-filter: blur(4px);
+}
+
+.action-btn:active {
+    transform: translateY(2px);
+    box-shadow: 0 1px 0 #3a2a1a;
+}
+
+.action-icon {
+    font-size: 1.4rem;
+}
+
+.action-label {
+    font-size: 0.75rem;
+    font-weight: bold;
+    letter-spacing: 1px;
+}
+
+#attackBtn {
+    border-color: #e68a2e;
+    background: linear-gradient(145deg, #5a2a2a, #3e1c1c);
+}
+
+#collectBtn {
+    border-color: #7cb84a;
+    background: linear-gradient(145deg, #2d5a2a, #1e3e1c);
+}
+
+#info-text {
+    position: fixed;
+    bottom: 5px;
+    left: 0;
+    right: 0;
+    text-align: center;
+    font-size: 0.6rem;
+    background: #000000aa;
+    padding: 4px;
+    z-index: 15;
+    pointer-events: none;
+}
+
+@media (max-width: 600px) {
+    .joystick-container { width: 110px; height: 110px; bottom: 75px; left: 12px; }
+    .joystick-thumb { width: 45px; height: 45px; }
+    .action-btn { padding: 5px 12px; }
+    .action-icon { font-size: 1.2rem; }
+    .action-label { font-size: 0.65rem; }
+    .stat { font-size: 0.65rem; padding: 3px 7px; }
+}
+</style>
+</head>
+<body>
+<div id="game-container">
+    <div id="hud">
+        <div class="stat"><span>❤️</span> <span id="vida">100</span></div>
+        <div class="stat"><span>⭐</span> <span id="xp">0</span></div>
+        <div class="stat"><span>🏆</span> <span id="lvl">1</span></div>
+        <div class="stat"><span>📊</span> <span id="nextXp">Next: 50</span></div>
+        <div class="stat"><span>🪵</span> <span id="wood">0</span></div>
+        <div class="stat"><span>🪨</span> <span id="stone">0</span></div>
+    </div>
+    <canvas id="gameCanvas" width="1200" height="700" style="width:100%; height:auto; aspect-ratio:1200/700"></canvas>
+    
+    <!-- JOYSTICK ARRASTÁVEL -->
+    <div class="joystick-container" id="joystickContainer">
+        <div class="joystick-base"></div>
+        <div class="joystick-thumb" id="joystickThumb"></div>
+        <div class="joystick-label">⬤ ARRASTE</div>
+    </div>
+    
+    <!-- BOTÕES DE AÇÃO -->
+    <div class="action-buttons">
+        <div class="action-btn" id="collectBtn">
+            <span class="action-icon">🪓</span>
+            <span class="action-label">COLETAR</span>
+        </div>
+        <div class="action-btn" id="attackBtn">
+            <span class="action-icon">⚔️</span>
+            <span class="action-label">ATACAR</span>
+        </div>
+    </div>
+    <div id="info-text">🎮 mm quase tudo</div>
+</div>
+
+<script>
+    (function(){
+        // ---------- CONFIGURAÇÕES DO MUNDO ----------
+        const canvas = document.getElementById('gameCanvas');
+        const ctx = canvas.getContext('2d');
+        canvas.width = 1200;
+        canvas.height = 700;
+        
+        // ----- HP BASE E FÓRMULA: cada nível aumenta HP máximo em 10% do BASE (100) -----
+        // HP máximo = 100 * (1 + 0.1 * (nível - 1))  ou seja, nivel 1 = 100, nivel 2 = 110, nivel 3 = 120...
+        function getMaxHpForLevel(level) {
+            return Math.floor(100 * (1 + 0.1 * (level - 1)));
+        }
+        
+        // Tabela de XP por nível (progressão lenta)
+        function getXpNeededForLevel(level) {
+            return Math.floor(40 + level * 11);
+        }
+        
+        let player = {
+            x: 1800, y: 1800,
+            size: 28,
+            hp: 100,
+            lvl: 1,
+            xp: 0,
+            wood: 0,
+            stone: 0,
+            attackDamage: 14,
+            attackCooldown: 0,
+            invincibleTimer: 0,
+            collisionCooldown: 0
+        };
+        
+        // Propriedade computada para maxHp (sincronizada com nível)
+        Object.defineProperty(player, 'maxHp', {
+            get: function() { return getMaxHpForLevel(this.lvl); }
+        });
+        
+        const WORLD_SIZE = 3600;
+        let trees = [];
+        let rocks = [];
+        let mobs = [];
+        let particles = [];
+        let floatingTexts = [];
+        
+        // XP ganhos por ação
+        const XP_PER_WOOD = 5;
+        const XP_PER_STONE = 5;
+        const XP_PER_KILL = 20;
+        
+        // ---------- FUNÇÕES DE NÍVEL E XP ----------
+        function addXP(amount) {
+            player.xp += amount;
+            addFloatingText(player.x, player.y-30, `+${amount} XP`, '#c9ffa0');
+            checkLevelUp();
+            updateUI();
+        }
+        
+        function checkLevelUp() {
+            let neededXp = getXpNeededForLevel(player.lvl);
+            let leveledUp = false;
+            while(player.xp >= neededXp) {
+                player.xp -= neededXp;
+                player.lvl++;
+                // ATUALIZA HP: Ao subir nível, o HP máximo aumenta 10% do base, porém o HP atual NÃO regenera!
+                // O jogador continua com o mesmo HP que tinha (não ganha cura automática)
+                // Se o HP atual for maior que o novo máximo, ajusta para o máximo (mas isso não ocorre porque maxHp só aumenta)
+                if(player.hp > player.maxHp) player.hp = player.maxHp;
+                // Aumenta dano de ataque conforme nível
+                player.attackDamage = 14 + Math.floor(player.lvl * 0.9);
+                neededXp = getXpNeededForLevel(player.lvl);
+                leveledUp = true;
+                addFloatingText(player.x, player.y-45, `✨ NÍVEL ${player.lvl}! +10% HP Max ✨`, '#ffdd99');
+                addParticles(player.x, player.y, 'level');
+                addFloatingText(player.x, player.y-60, `❤️ HP Max: ${player.maxHp} (HP atual: ${player.hp})`, '#aaffaa');
+            }
+            if(leveledUp) {
+                updateUI();
+            }
+            if(player.hp > player.maxHp) player.hp = player.maxHp;
+        }
+        
+        // ---------- MORTE E RESPAWN (recupera HP total) ----------
+        function respawnPlayer() {
+            // MORREU: recupera HP total, mas perde um pouco de XP (penalidade leve) e recursos? Mantém recursos e nível
+            // mas reinicia posição e HP cheio.
+            player.hp = player.maxHp;
+            player.x = 1800;
+            player.y = 1800;
+            // Penalidade: perde 15% do XP atual, mas sem perder nível (não pode descer de nível)
+            let xpLoss = Math.floor(player.xp * 0.15);
+            player.xp = Math.max(0, player.xp - xpLoss);
+            // Reseta cooldowns
+            player.attackCooldown = 0;
+            player.invincibleTimer = 0;
+            player.collisionCooldown = 0;
+            addFloatingText(player.x, player.y-50, '💀 VOCÊ MORREU! REVIVEU COM HP CHEIO 💀', '#ffaa66');
+            addFloatingText(player.x, player.y-70, `Perdeu ${xpLoss} XP`, '#ff8888');
+            for(let i=0;i<15;i++) addParticles(player.x, player.y, 'death');
+            // Não regenera recursos do mundo, apenas revive
+            updateUI();
+        }
+        
+        // ---------- GERAR MUNDO ----------
+        function generateWorld() {
+            trees = [];
+            rocks = [];
+            for(let i=0; i<180; i++) {
+                trees.push({
+                    x: Math.random() * WORLD_SIZE,
+                    y: Math.random() * WORLD_SIZE,
+                    size: 12 + Math.random() * 12,
+                    variant: Math.floor(Math.random() * 3)
+                });
+            }
+            for(let i=0; i<140; i++) {
+                rocks.push({
+                    x: Math.random() * WORLD_SIZE,
+                    y: Math.random() * WORLD_SIZE,
+                    size: 14 + Math.random() * 10,
+                });
+            }
+            for(let i=0; i<65; i++) {
+                mobs.push({
+                    x: Math.random() * WORLD_SIZE,
+                    y: Math.random() * WORLD_SIZE,
+                    hp: 44,
+                    maxHp: 44,
+                    type: Math.random() > 0.6 ? 'skeleton' : 'orc',
+                    size: 28,
+                    attackTimer: 0,
+                    xpReward: XP_PER_KILL
+                });
+            }
+        }
+        
+        // UI Elements
+        const vidaSpan = document.getElementById('vida');
+        const xpSpan = document.getElementById('xp');
+        const lvlSpan = document.getElementById('lvl');
+        const woodSpan = document.getElementById('wood');
+        const stoneSpan = document.getElementById('stone');
+        const nextXpSpan = document.getElementById('nextXp');
+        
+        function distance(a,b) { return Math.hypot(a.x - b.x, a.y - b.y); }
+        
+        function updateUI() {
+            vidaSpan.innerText = `${Math.floor(player.hp)}/${player.maxHp}`;
+            xpSpan.innerText = player.xp;
+            lvlSpan.innerText = player.lvl;
+            woodSpan.innerText = player.wood;
+            stoneSpan.innerText = player.stone;
+            const nextNeeded = getXpNeededForLevel(player.lvl);
+            nextXpSpan.innerText = `${nextNeeded}`;
+        }
+        
+        function addFloatingText(x, y, text, color = '#ffaa66') {
+            floatingTexts.push({ x, y, text, life: 1.0, color });
+        }
+        
+        function addParticles(x, y, type) {
+            let count = 8;
+            for(let i=0;i<count;i++) {
+                particles.push({
+                    x: x + (Math.random() - 0.5)*20,
+                    y: y + (Math.random() - 0.5)*20,
+                    vx: (Math.random() - 0.5)*3,
+                    vy: (Math.random() - 0.5)*3 - 1,
+                    life: 0.7,
+                    color: type === 'wood' ? '#8b5a2b' : (type === 'stone' ? '#9a9c7a' : '#e55')
+                });
+            }
+        }
+        
+        // COLETA (ganha XP, NÃO regenera HP)
+        function collectResources() {
+            let anyCollect = false;
+            for(let i=0; i<trees.length; i++) {
+                if(distance(player, trees[i]) < 58) {
+                    player.wood++;
+                    addXP(XP_PER_WOOD);
+                    addParticles(trees[i].x, trees[i].y, 'wood');
+                    addFloatingText(trees[i].x, trees[i].y-18, '+1 madeira', '#e6c97e');
+                    trees.splice(i,1);
+                    anyCollect = true;
+                    break;
+                }
+            }
+            if(!anyCollect) {
+                for(let i=0; i<rocks.length; i++) {
+                    if(distance(player, rocks[i]) < 58) {
+                        player.stone++;
+                        addXP(XP_PER_STONE);
+                        addParticles(rocks[i].x, rocks[i].y, 'stone');
+                        addFloatingText(rocks[i].x, rocks[i].y-18, '+1 pedra', '#bcae82');
+                        rocks.splice(i,1);
+                        anyCollect = true;
+                        break;
+                    }
+                }
+            }
+            
+            if(!anyCollect) {
+                addFloatingText(player.x, player.y-25, "❌ Nada para coletar!", "#dd8888");
+            }
+            
+            // Reposição suave do mundo
+            if(trees.length < 100) {
+                trees.push({
+                    x: Math.random() * WORLD_SIZE,
+                    y: Math.random() * WORLD_SIZE,
+                    size: 12 + Math.random()*12,
+                    variant: Math.floor(Math.random()*3)
+                });
+            }
+            if(rocks.length < 80) {
+                rocks.push({
+                    x: Math.random() * WORLD_SIZE,
+                    y: Math.random() * WORLD_SIZE,
+                    size: 14+Math.random()*10,
+                });
+            }
+            updateUI();
+        }
+        
+        // ATAQUE (ganha XP ao matar)
+        function performAttack() {
+            if(player.attackCooldown > 0) {
+                addFloatingText(player.x, player.y-20, "⏳ Cooldown", "#aa8866");
+                return;
+            }
+            player.attackCooldown = 20;
+            let hitCount = 0;
+            for(let i=0; i<mobs.length; i++) {
+                const m = mobs[i];
+                if(m.hp > 0 && distance(player, m) < 72) {
+                    const dmg = player.attackDamage + Math.floor(Math.random() * 9);
+                    m.hp -= dmg;
+                    addFloatingText(m.x, m.y-22, `-${dmg}`, '#ffaa77');
+                    addParticles(m.x, m.y, 'hit');
+                    if(m.hp <= 0) {
+                        addXP(m.xpReward);
+                        addFloatingText(m.x, m.y-38, `+${m.xpReward} XP`, '#ffdd99');
+                        addParticles(m.x, m.y, 'death');
+                        mobs.splice(i,1);
+                        setTimeout(() => {
+                            if(mobs.length < 40) {
+                                mobs.push({
+                                    x: player.x + (Math.random() - 0.5)*700,
+                                    y: player.y + (Math.random() - 0.5)*700,
+                                    hp: 38 + player.lvl*2,
+                                    maxHp: 38 + player.lvl*2,
+                                    type: Math.random() > 0.5 ? 'orc' : 'skeleton',
+                                    size: 28,
+                                    attackTimer: 0,
+                                    xpReward: XP_PER_KILL
+                                });
+                            }
+                        }, 100);
+                        hitCount++;
+                    } else {
+                        // Contra-ataque do mob (dano sem regeneração)
+                        if(m.attackTimer <= 0 && player.invincibleTimer <= 0) {
+                            let dmgMob = 8 + Math.floor(player.lvl/3);
+                            player.hp = Math.max(0, player.hp - dmgMob);
+                            player.invincibleTimer = 22;
+                            addFloatingText(player.x, player.y-20, `-${dmgMob}`, '#ff7777');
+                            m.attackTimer = 45;
+                            if(player.hp <= 0) {
+                                respawnPlayer();
+                                return;
+                            }
+                        }
+                    }
+                }
+            }
+            if(hitCount === 0) {
+                addFloatingText(player.x, player.y-25, "⚔️ Nenhum inimigo!", "#c9a87b");
+            }
+            updateUI();
+        }
+        
+        // ---------- JOYSTICK ANALÓGICO ----------
+        const joystickContainer = document.getElementById('joystickContainer');
+        const joystickThumb = document.getElementById('joystickThumb');
+        let activeTouch = false;
+        let joyVector = { x: 0, y: 0 };
+        let maxRadius = 40;
+        
+        function updateJoystickPosition(clientX, clientY) {
+            const rect = joystickContainer.getBoundingClientRect();
+            const centerX = rect.left + rect.width / 2;
+            const centerY = rect.top + rect.height / 2;
+            let dx = clientX - centerX;
+            let dy = clientY - centerY;
+            const distance = Math.hypot(dx, dy);
+            if (distance > maxRadius) {
+                dx = dx / distance * maxRadius;
+                dy = dy / distance * maxRadius;
+            }
+            joystickThumb.style.transform = `translate(calc(-50% + ${dx}px), calc(-50% + ${dy}px))`;
+            joyVector.x = dx / maxRadius;
+            joyVector.y = dy / maxRadius;
+            if (distance < 0.01) joyVector = { x: 0, y: 0 };
+        }
+        
+        function resetJoystick() {
+            joystickThumb.style.transform = `translate(-50%, -50%)`;
+            joyVector = { x: 0, y: 0 };
+        }
+        
+        function handleTouchStart(e) {
+            e.preventDefault();
+            const touch = e.touches[0];
+            const rect = joystickContainer.getBoundingClientRect();
+            if (touch.clientX >= rect.left && touch.clientX <= rect.right && touch.clientY >= rect.top && touch.clientY <= rect.bottom) {
+                activeTouch = true;
+                updateJoystickPosition(touch.clientX, touch.clientY);
+            }
+        }
+        function handleTouchMove(e) {
+            if (!activeTouch) return;
+            e.preventDefault();
+            updateJoystickPosition(e.touches[0].clientX, e.touches[0].clientY);
+        }
+        function handleTouchEnd(e) { e.preventDefault(); activeTouch = false; resetJoystick(); }
+        joystickContainer.addEventListener('touchstart', handleTouchStart);
+        window.addEventListener('touchmove', handleTouchMove);
+        window.addEventListener('touchend', handleTouchEnd);
+        
+        let mouseActive = false;
+        joystickContainer.addEventListener('mousedown', (e) => {
+            e.preventDefault(); mouseActive = true;
+            updateJoystickPosition(e.clientX, e.clientY);
+        });
+        window.addEventListener('mousemove', (e) => { if(mouseActive) updateJoystickPosition(e.clientX, e.clientY); });
+        window.addEventListener('mouseup', () => { mouseActive = false; resetJoystick(); });
+        
+        function updateMovementByJoystick() {
+            if (joyVector.x !== 0 || joyVector.y !== 0) {
+                const speed = 5.2;
+                player.x += joyVector.x * speed;
+                player.y += joyVector.y * speed;
+                player.x = Math.min(Math.max(player.x, 60), WORLD_SIZE - 60);
+                player.y = Math.min(Math.max(player.y, 60), WORLD_SIZE - 60);
+            }
+        }
+        
+        // ---------- SISTEMA DE COLISÃO (perde 1 HP por toque, SEM REGENERAÇÃO) ----------
+        function applyCollisionDamage() {
+            if(player.collisionCooldown > 0) {
+                player.collisionCooldown--;
+                return;
+            }
+            for(let i=0; i<mobs.length; i++) {
+                const m = mobs[i];
+                if(m.hp <= 0) continue;
+                const distToMob = distance(player, m);
+                if(distToMob < 38) {
+                    player.hp = Math.max(0, player.hp - 1);
+                    player.collisionCooldown = 12;
+                    addFloatingText(player.x, player.y-10, "-1 HP (colisão)", "#ff9999");
+                    if(player.hp <= 0) {
+                        respawnPlayer();
+                        return;
+                    }
+                    updateUI();
+                    break;
+                }
+            }
+        }
+        
+        // ---------- UPDATE GERAL (sem regeneração natural de HP) ----------
+        function updateGameLogic() {
+            updateMovementByJoystick();
+            
+            if(player.attackCooldown > 0) player.attackCooldown--;
+            if(player.invincibleTimer > 0) player.invincibleTimer--;
+            
+            // Dano por colisão
+            applyCollisionDamage();
+            
+            // IA dos mobs: perseguem
+            for(let m of mobs) {
+                if(m.attackTimer > 0) m.attackTimer--;
+                const distToPlayer = distance(player, m);
+                if(distToPlayer < 210) {
+                    const dx = player.x - m.x;
+                    const dy = player.y - m.y;
+                    const len = Math.hypot(dx,dy);
+                    if(len > 0.01) {
+                        const move = 1.3;
+                        m.x += (dx/len) * move;
+                        m.y += (dy/len) * move;
+                    }
+                }
+                // Ataque corpo a corpo do mob (dano adicional)
+                if(distToPlayer < 56 && m.attackTimer <= 0 && m.hp > 0 && player.invincibleTimer <= 0) {
+                    let dmgMob = 6 + Math.floor(player.lvl/3);
+                    player.hp = Math.max(0, player.hp - dmgMob);
+                    player.invincibleTimer = 20;
+                    addFloatingText(player.x, player.y-18, `-${dmgMob} (ataque)`, '#ff8866');
+                    m.attackTimer = 45;
+                    if(player.hp <= 0) {
+                        respawnPlayer();
+                        return;
+                    }
+                }
+            }
+            
+            updateUI();
+        }
+        
+        function updateEffects() {
+            for(let i=0;i<particles.length;i++) {
+                particles[i].x += particles[i].vx;
+                particles[i].y += particles[i].vy;
+                particles[i].life -= 0.02;
+                if(particles[i].life <= 0) { particles.splice(i,1); i--; }
+            }
+            for(let i=0;i<floatingTexts.length;i++) {
+                floatingTexts[i].life -= 0.02;
+                floatingTexts[i].y -= 1.0;
+                if(floatingTexts[i].life <= 0) { floatingTexts.splice(i,1); i--; }
+            }
+        }
+        
+        // ---------- RENDERIZAÇÃO ----------
+        function draw() {
+            const camX = player.x - canvas.width/2;
+            const camY = player.y - canvas.height/2;
+            ctx.clearRect(0,0,canvas.width,canvas.height);
+            ctx.fillStyle = '#2f6a2a';
+            ctx.fillRect(0,0,canvas.width,canvas.height);
+            for(let i=0;i<300;i++) {
+                ctx.fillStyle = `rgba(100, 140, 70, ${Math.random() * 0.4})`;
+                ctx.beginPath();
+                ctx.arc((Math.random()*canvas.width), (Math.random()*canvas.height), 2, 0, Math.PI*2);
+                ctx.fill();
+            }
+            // Árvores
+            trees.forEach(t => {
+                const sx = t.x - camX, sy = t.y - camY;
+                if(sx+50>0 && sx-50<canvas.width && sy+50>0 && sy-50<canvas.height){
+                    ctx.shadowBlur = 6;
+                    ctx.fillStyle = '#6f8c4a';
+                    ctx.beginPath(); ctx.ellipse(sx+3,sy+12,t.size*0.7,t.size*0.4,0,0,Math.PI*2); ctx.fill();
+                    ctx.fillStyle = t.variant===0?'#427a3e':(t.variant===1?'#2d6e35':'#598a48');
+                    ctx.fillRect(sx-7,sy-2,14,22);
+                    ctx.fillStyle='#3f8746'; ctx.beginPath(); ctx.arc(sx,sy-6,t.size*0.7,0,Math.PI*2); ctx.fill();
+                    ctx.fillStyle='#7bc462'; ctx.beginPath(); ctx.arc(sx-3,sy-11,t.size*0.45,0,Math.PI*2); ctx.fill();
+                }
+            });
+            // Pedras
+            rocks.forEach(r => {
+                const sx=r.x-camX, sy=r.y-camY;
+                if(sx+35>0 && sx-35<canvas.width && sy+35>0 && sy-35<canvas.height){
+                    ctx.fillStyle='#6b6b5c'; ctx.beginPath(); ctx.ellipse(sx,sy,r.size*0.8,r.size*0.6,0,0,Math.PI*2); ctx.fill();
+                    ctx.fillStyle='#929279'; ctx.fillRect(sx-5,sy-4,10,8);
+                    ctx.fillStyle='#c4c4a4';
+                    for(let i=0;i<3;i++) ctx.fillRect(sx-4+i*4,sy-1,2,5);
+                }
+            });
+            // Mobs
+            mobs.forEach(m => {
+                if(m.hp<=0) return;
+                const sx=m.x-camX, sy=m.y-camY;
+                if(sx+45>0 && sx-45<canvas.width && sy+45>0 && sy-45<canvas.height){
+                    ctx.fillStyle=m.type==='orc'?'#5a2e1c':'#5f6b6b';
+                    ctx.beginPath(); ctx.ellipse(sx,sy-6,16,20,0,0,Math.PI*2); ctx.fill();
+                    ctx.fillStyle=m.type==='orc'?'#b47244':'#9aaba8';
+                    ctx.fillRect(sx-12,sy-14,24,12);
+                    ctx.fillStyle='#1a1a1a'; ctx.fillRect(sx-7,sy-16,5,6); ctx.fillRect(sx+3,sy-16,5,6);
+                    let percent=m.hp/m.maxHp;
+                    ctx.fillStyle='#6e2c2c'; ctx.fillRect(sx-18,sy-28,36,6);
+                    ctx.fillStyle='#5bc45b'; ctx.fillRect(sx-18,sy-28,36*percent,5);
+                    ctx.fillStyle='#eeb422'; ctx.beginPath(); ctx.arc(sx-6,sy-11,3,0,Math.PI*2); ctx.arc(sx+6,sy-11,3,0,Math.PI*2); ctx.fill();
+                }
+            });
+            // Jogador
+            ctx.fillStyle='#2f4b6e'; ctx.beginPath(); ctx.ellipse(canvas.width/2,canvas.height/2-5,16,19,0,0,Math.PI*2); ctx.fill();
+            ctx.fillStyle='#6c8eb0'; ctx.fillRect(canvas.width/2-13,canvas.height/2-17,26,24);
+            ctx.fillStyle='#dbb45c'; ctx.beginPath(); ctx.arc(canvas.width/2-6,canvas.height/2-9,3.2,0,Math.PI*2); ctx.fill(); ctx.beginPath(); ctx.arc(canvas.width/2+6,canvas.height/2-9,3.2,0,Math.PI*2); ctx.fill();
+            ctx.fillStyle='#bc9a6a'; ctx.fillRect(canvas.width/2-10,canvas.height/2+3,20,10);
+            ctx.fillStyle='#e6cd91'; ctx.font='26px monospace'; ctx.fillText('⚔️', canvas.width/2-15, canvas.height/2-12);
+            // Partículas e textos
+            particles.forEach(p=>{ ctx.globalAlpha=p.life; ctx.fillStyle=p.color; ctx.beginPath(); ctx.arc(p.x-camX,p.y-camY,4,0,Math.PI*2); ctx.fill(); });
+            floatingTexts.forEach(t=>{ ctx.globalAlpha=t.life; ctx.font=`bold ${Math.floor(18*t.life)}px "Segoe UI"`; ctx.fillStyle=t.color; ctx.fillText(t.text,t.x-camX,t.y-camY); });
+            ctx.globalAlpha=1;
+        }
+        
+        function attachActionButtons() {
+            document.getElementById('collectBtn').addEventListener('click', (e) => { e.preventDefault(); collectResources(); });
+            document.getElementById('collectBtn').addEventListener('touchstart', (e) => { e.preventDefault(); collectResources(); });
+            document.getElementById('attackBtn').addEventListener('click', (e) => { e.preventDefault(); performAttack(); });
+            document.getElementById('attackBtn').addEventListener('touchstart', (e) => { e.preventDefault(); performAttack(); });
+            window.addEventListener('keydown', (e) => { if(e.key.toLowerCase()==='e'){ e.preventDefault(); collectResources(); } if(e.key===' '){ e.preventDefault(); performAttack(); } });
+        }
+        
+        function gameLoop() {
+            updateGameLogic();
+            updateEffects();
+            draw();
+            requestAnimationFrame(gameLoop);
+        }
+        
+        generateWorld();
+        attachActionButtons();
+        updateUI();
+        gameLoop();
+    })();
+</script>
+</body>
+</html>

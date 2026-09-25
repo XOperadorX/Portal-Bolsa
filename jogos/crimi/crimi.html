@@ -1,0 +1,924 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>The Crims - Jogo de Máfia Online</title>
+    <style>
+        /* Reset e base */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background-color: #0d0d0d;
+            background-image: radial-gradient(circle at 20% 20%, #1a1a1a 0%, #0a0a0a 100%);
+            font-family: 'Open Sans', 'Segoe UI', Arial, sans-serif;
+            color: #ccc;
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1100px;
+            width: 100%;
+            background: #111;
+            border: 1px solid #2a2a2a;
+            border-radius: 12px;
+            box-shadow: 0 0 40px rgba(0, 0, 0, 0.9);
+            overflow: hidden;
+            padding: 20px 30px 30px;
+        }
+
+        /* Cabeçalho */
+        .header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            border-bottom: 2px solid #2a2a2a;
+            padding-bottom: 15px;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+
+        .logo-area {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .logo {
+            font-size: 28px;
+            font-weight: 700;
+            color: #e0e0e0;
+            letter-spacing: 1px;
+            background: linear-gradient(135deg, #d4af37, #b8860b);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            text-shadow: 0 0 20px rgba(184, 134, 11, 0.3);
+        }
+
+        .logo small {
+            font-size: 14px;
+            font-weight: 400;
+            -webkit-text-fill-color: #888;
+            background: none;
+            margin-left: 6px;
+        }
+
+        .header-right {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            flex-wrap: wrap;
+        }
+
+        .header-right a {
+            color: #aaa;
+            text-decoration: none;
+            font-size: 14px;
+            transition: color 0.2s;
+        }
+
+        .header-right a:hover {
+            color: #d4af37;
+        }
+
+        .badge-round {
+            background: #1e1e1e;
+            border: 1px solid #333;
+            border-radius: 20px;
+            padding: 4px 14px;
+            font-size: 13px;
+            color: #d4af37;
+            font-weight: 600;
+        }
+
+        /* Menu */
+        .menu {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px 20px;
+            background: #1a1a1a;
+            padding: 10px 18px;
+            border-radius: 8px;
+            margin-bottom: 25px;
+            border: 1px solid #282828;
+        }
+
+        .menu a {
+            color: #bbb;
+            text-decoration: none;
+            font-size: 14px;
+            font-weight: 500;
+            transition: color 0.2s;
+            padding: 4px 0;
+            cursor: pointer;
+        }
+
+        .menu a:hover {
+            color: #d4af37;
+        }
+
+        .menu .highlight {
+            color: #d4af37;
+        }
+
+        /* Grid principal */
+        .main-grid {
+            display: grid;
+            grid-template-columns: 1fr 280px;
+            gap: 30px;
+        }
+
+        @media (max-width: 800px) {
+            .main-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        /* Coluna esquerda */
+        .left-col {
+            display: flex;
+            flex-direction: column;
+            gap: 25px;
+        }
+
+        .welcome-box {
+            background: #1a1a1a;
+            border: 1px solid #2a2a2a;
+            border-radius: 10px;
+            padding: 25px 30px;
+        }
+
+        .welcome-box h2 {
+            font-size: 22px;
+            font-weight: 600;
+            color: #eee;
+            margin-bottom: 8px;
+        }
+
+        .welcome-box h2 span {
+            color: #d4af37;
+        }
+
+        .welcome-box p {
+            color: #999;
+            font-size: 14px;
+            line-height: 1.6;
+            margin-bottom: 18px;
+        }
+
+        .btn-group {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 12px;
+        }
+
+        .btn {
+            display: inline-block;
+            padding: 10px 28px;
+            border-radius: 6px;
+            font-weight: 600;
+            font-size: 14px;
+            text-decoration: none;
+            transition: all 0.25s;
+            cursor: pointer;
+            border: none;
+        }
+
+        .btn-primary {
+            background: #d4af37;
+            color: #111;
+            box-shadow: 0 0 15px rgba(212, 175, 55, 0.2);
+        }
+
+        .btn-primary:hover {
+            background: #e6c44a;
+            transform: scale(1.02);
+            box-shadow: 0 0 25px rgba(212, 175, 55, 0.35);
+        }
+
+        .btn-secondary {
+            background: #2a2a2a;
+            color: #ddd;
+            border: 1px solid #444;
+        }
+
+        .btn-secondary:hover {
+            background: #333;
+            border-color: #666;
+        }
+
+        .btn-danger {
+            background: #8b0000;
+            color: #fff;
+            border: 1px solid #660000;
+        }
+
+        .btn-danger:hover {
+            background: #a00000;
+        }
+
+        .btn-google {
+            background: #2a2a2a;
+            color: #ddd;
+            border: 1px solid #444;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .btn-google:hover {
+            background: #333;
+        }
+
+        .btn-facebook {
+            background: #2a2a2a;
+            color: #ddd;
+            border: 1px solid #444;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .btn-facebook:hover {
+            background: #333;
+        }
+
+        .login-links {
+            margin-top: 12px;
+            font-size: 13px;
+            color: #888;
+        }
+
+        .login-links a {
+            color: #aaa;
+            text-decoration: none;
+        }
+
+        .login-links a:hover {
+            color: #d4af37;
+            text-decoration: underline;
+        }
+
+        /* Stats */
+        .stats-box {
+            background: #1a1a1a;
+            border: 1px solid #2a2a2a;
+            border-radius: 10px;
+            padding: 20px 25px;
+        }
+
+        .stats-box h3 {
+            color: #d4af37;
+            font-size: 16px;
+            font-weight: 600;
+            margin-bottom: 12px;
+            letter-spacing: 0.5px;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 6px 20px;
+        }
+
+        .stat-item {
+            display: flex;
+            justify-content: space-between;
+            font-size: 14px;
+            padding: 4px 0;
+            border-bottom: 1px solid #252525;
+        }
+
+        .stat-item .label {
+            color: #999;
+        }
+
+        .stat-item .value {
+            color: #eee;
+            font-weight: 600;
+        }
+
+        .stat-item .value.gold {
+            color: #d4af37;
+        }
+
+        /* Coluna direita */
+        .right-col {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        .info-card {
+            background: #1a1a1a;
+            border: 1px solid #2a2a2a;
+            border-radius: 10px;
+            padding: 18px 20px;
+        }
+
+        .info-card h4 {
+            color: #d4af37;
+            font-size: 14px;
+            font-weight: 600;
+            margin-bottom: 10px;
+            letter-spacing: 0.3px;
+        }
+
+        .info-card ul {
+            list-style: none;
+            padding: 0;
+        }
+
+        .info-card ul li {
+            font-size: 13px;
+            color: #aaa;
+            padding: 5px 0;
+            border-bottom: 1px solid #252525;
+            display: flex;
+            justify-content: space-between;
+        }
+
+        .info-card ul li:last-child {
+            border-bottom: none;
+        }
+
+        .info-card ul li .highlight {
+            color: #d4af37;
+        }
+
+        .online-count {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 14px;
+            color: #aaa;
+        }
+
+        .online-count .dot {
+            display: inline-block;
+            width: 10px;
+            height: 10px;
+            background: #4caf50;
+            border-radius: 50%;
+            animation: pulse 1.8s infinite;
+        }
+
+        @keyframes pulse {
+            0% { opacity: 0.4; transform: scale(0.9); }
+            50% { opacity: 1; transform: scale(1.1); }
+            100% { opacity: 0.4; transform: scale(0.9); }
+        }
+
+        .footer-note {
+            margin-top: 30px;
+            padding-top: 18px;
+            border-top: 1px solid #222;
+            font-size: 12px;
+            color: #555;
+            text-align: center;
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 10px 25px;
+        }
+
+        .footer-note a {
+            color: #666;
+            text-decoration: none;
+        }
+
+        .footer-note a:hover {
+            color: #999;
+        }
+
+        .cookie-bar {
+            background: #1a1a1a;
+            border: 1px solid #2a2a2a;
+            border-radius: 8px;
+            padding: 14px 20px;
+            margin-top: 20px;
+            display: flex;
+            flex-wrap: wrap;
+            align-items: center;
+            justify-content: space-between;
+            gap: 12px;
+        }
+
+        .cookie-bar p {
+            font-size: 13px;
+            color: #999;
+        }
+
+        .cookie-bar .btn-cookie {
+            background: #2a2a2a;
+            border: 1px solid #444;
+            color: #ddd;
+            padding: 6px 18px;
+            border-radius: 4px;
+            font-size: 13px;
+            cursor: pointer;
+            transition: 0.2s;
+        }
+
+        .cookie-bar .btn-cookie:hover {
+            background: #333;
+        }
+
+        .cookie-bar .btn-accept {
+            background: #d4af37;
+            color: #111;
+            border: none;
+            padding: 6px 22px;
+            border-radius: 4px;
+            font-weight: 600;
+            font-size: 13px;
+            cursor: pointer;
+            transition: 0.2s;
+        }
+
+        .cookie-bar .btn-accept:hover {
+            background: #e6c44a;
+        }
+
+        /* Mensagens de log */
+        .log-area {
+            background: #0f0f0f;
+            border: 1px solid #2a2a2a;
+            border-radius: 6px;
+            padding: 12px 16px;
+            margin-top: 10px;
+            max-height: 120px;
+            overflow-y: auto;
+            font-size: 13px;
+            color: #aaa;
+            line-height: 1.5;
+        }
+
+        .log-area .log-entry {
+            border-bottom: 1px solid #1e1e1e;
+            padding: 3px 0;
+        }
+
+        .log-area .log-entry:last-child {
+            border-bottom: none;
+        }
+
+        .log-area .log-success {
+            color: #8bc34a;
+        }
+
+        .log-area .log-fail {
+            color: #e57373;
+        }
+
+        .log-area .log-info {
+            color: #64b5f6;
+        }
+
+        /* ações rápidas com botões */
+        .action-buttons {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            margin-top: 8px;
+        }
+
+        .action-buttons .btn-small {
+            background: #2a2a2a;
+            border: 1px solid #444;
+            color: #ddd;
+            padding: 6px 14px;
+            border-radius: 4px;
+            font-size: 13px;
+            cursor: pointer;
+            transition: 0.2s;
+            flex: 1 0 auto;
+        }
+
+        .action-buttons .btn-small:hover {
+            background: #333;
+            border-color: #666;
+        }
+
+        .action-buttons .btn-small.gold {
+            background: #d4af37;
+            color: #111;
+            border-color: #b8960f;
+        }
+
+        .action-buttons .btn-small.gold:hover {
+            background: #e6c44a;
+        }
+
+        /* Responsividade extra */
+        @media (max-width: 500px) {
+            .container {
+                padding: 15px;
+            }
+            .welcome-box {
+                padding: 18px;
+            }
+            .stats-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+
+        <!-- Cabeçalho -->
+        <header class="header">
+            <div class="logo-area">
+                <div class="logo">
+                    THE CRIMS
+                    <small>· Cidade do Crime</small>
+                </div>
+            </div>
+            <div class="header-right">
+                <span class="badge-round">🔫 Rodada 239</span>
+                <a href="#" onclick="resetGame()">Reiniciar</a>
+                <a href="#">Ajuda</a>
+                <a href="#">Português</a>
+            </div>
+        </header>
+
+        <!-- Menu -->
+        <nav class="menu">
+            <a href="#" class="highlight">🏠 Início</a>
+            <a href="#" onclick="updateStats()">Estatísticas</a>
+            <a href="#">Reputação</a>
+            <a href="#">Top assassinos</a>
+            <a href="#" onclick="registerUser()">Registrar</a>
+            <a href="#" onclick="loginUser()">Entrar</a>
+            <a href="#">Reenviar e-mail</a>
+            <a href="#">Excluir usuário</a>
+        </nav>
+
+        <!-- Grid principal -->
+        <div class="main-grid">
+
+            <!-- Coluna esquerda -->
+            <div class="left-col">
+
+                <!-- Caixa de boas-vindas / Login -->
+                <div class="welcome-box" id="welcomeBox">
+                    <h2>Bem-vindo ao <span>CrimCity</span></h2>
+                    <p id="userGreeting">
+                        Entre no derradeiro jogo de máfia para navegador. Construa seu império,
+                        domine as ruas e comande o submundo do crime. Escolha seu caminho – gangster,
+                        cafetão, assassino de aluguel ou traficante.
+                    </p>
+
+                    <!-- Status do jogador (dinâmico) -->
+                    <div style="background: #0f0f0f; border-radius: 6px; padding: 12px 16px; margin-bottom: 15px; display: flex; flex-wrap: wrap; gap: 15px 30px; border: 1px solid #282828;">
+                        <div><span style="color:#999;">💰 Dinheiro:</span> <strong id="playerMoney" style="color:#d4af37;">100</strong></div>
+                        <div><span style="color:#999;">⭐ Respeito:</span> <strong id="playerRespect" style="color:#eee;">0</strong></div>
+                        <div><span style="color:#999;">🎯 Nível:</span> <strong id="playerLevel" style="color:#eee;">1</strong></div>
+                        <div><span style="color:#999;">🔫 Armas:</span> <strong id="playerGuns" style="color:#eee;">0</strong></div>
+                    </div>
+
+                    <!-- Botões de ação -->
+                    <div class="btn-group">
+                        <button class="btn btn-primary" onclick="doRobbery()">🔫 Roubar</button>
+                        <button class="btn btn-secondary" onclick="doInvest()">📈 Investir</button>
+                        <button class="btn btn-danger" onclick="buyGun()">🔫 Comprar arma</button>
+                        <button class="btn btn-secondary" onclick="doWork()">💼 Trabalhar</button>
+                    </div>
+
+                    <!-- Ações rápidas adicionais -->
+                    <div class="action-buttons">
+                        <button class="btn-small" onclick="doRobbery()">Roubo simples</button>
+                        <button class="btn-small" onclick="doRobbery()">Roubo em gangue</button>
+                        <button class="btn-small" onclick="doWork()">Prostituição</button>
+                        <button class="btn-small gold" onclick="doInvest()">Investir</button>
+                        <button class="btn-small" onclick="doSabotage()">Sabotagem</button>
+                    </div>
+
+                    <div class="login-links">
+                        <a href="#" onclick="resetGame()">Perdeu a senha?</a> ·
+                        <a href="#" onclick="registerUser()">Reenviar e-mail de registro</a> ·
+                        <a href="#" onclick="resetGame()">Excluir usuário</a>
+                    </div>
+                </div>
+
+                <!-- Estatísticas do jogo -->
+                <div class="stats-box">
+                    <h3>📊 Status do Jogo</h3>
+                    <div class="stats-grid">
+                        <div class="stat-item">
+                            <span class="label">Rodada</span>
+                            <span class="value gold">239</span>
+                        </div>
+                        <div class="stat-item">
+                            <span class="label">Online</span>
+                            <span class="value" id="onlineCount">408</span>
+                        </div>
+                        <div class="stat-item">
+                            <span class="label">Últimas 24h</span>
+                            <span class="value">1.316</span>
+                        </div>
+                        <div class="stat-item">
+                            <span class="label">Tempo restante</span>
+                            <span class="value">4d 12h</span>
+                        </div>
+                        <div class="stat-item">
+                            <span class="label">Início</span>
+                            <span class="value">4 de ago, 17:00</span>
+                        </div>
+                        <div class="stat-item">
+                            <span class="label">Fim</span>
+                            <span class="value">17 de ago, 17:00</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Área de log -->
+                <div class="log-area" id="logArea">
+                    <div class="log-entry log-info">Bem-vindo ao CrimCity! Comece roubando para ganhar dinheiro.</div>
+                </div>
+
+            </div>
+
+            <!-- Coluna direita -->
+            <div class="right-col">
+
+                <div class="info-card">
+                    <h4>🏆 Top Assassinos</h4>
+                    <ul id="topKillers">
+                        <li><span>1. Godfather</span> <span class="highlight">2.847</span></li>
+                        <li><span>2. Scarface</span> <span class="highlight">2.312</span></li>
+                        <li><span>3. Vito</span> <span class="highlight">1.956</span></li>
+                        <li><span>4. Nucky</span> <span class="highlight">1.743</span></li>
+                        <li><span>5. Tony</span> <span class="highlight">1.501</span></li>
+                    </ul>
+                </div>
+
+                <div class="info-card">
+                    <h4>📰 Ações Rápidas</h4>
+                    <ul>
+                        <li><span>Roubo simples</span> <span>🔫</span></li>
+                        <li><span>Roubo em gangue</span> <span>👥</span></li>
+                        <li><span>Prostituição</span> <span>💋</span></li>
+                        <li><span>Investir</span> <span>💰</span></li>
+                        <li><span>Sabotagem</span> <span>💣</span></li>
+                    </ul>
+                </div>
+
+                <div class="info-card">
+                    <div class="online-count">
+                        <span class="dot"></span>
+                        <span><strong id="onlineCount2">408</strong> jogadores online agora</span>
+                    </div>
+                    <div style="margin-top: 8px; font-size: 13px; color: #666;">
+                        Últimas 24h: 1.316
+                    </div>
+                </div>
+
+            </div>
+        </div>
+
+        <!-- Cookie bar -->
+        <div class="cookie-bar">
+            <p>🍪 Este site usa cookies. Cookies necessários para o funcionamento do site foram salvos no seu computador.</p>
+            <div style="display: flex; gap: 8px; flex-wrap: wrap;">
+                <button class="btn-accept" onclick="acceptCookies()">Aceitar todos</button>
+                <button class="btn-cookie" onclick="acceptNecessary()">Aceitar necessários</button>
+                <button class="btn-cookie" onclick="customizeCookies()">Personalizar</button>
+            </div>
+        </div>
+
+        <!-- Rodapé -->
+        <div class="footer-note">
+            <span>© 2026 The Crims</span>
+            <a href="#">Cookies</a>
+            <a href="#">Privacidade</a>
+            <a href="#">Termos</a>
+            <a href="#">Contato</a>
+        </div>
+
+    </div>
+
+    <script>
+        // --- Estado do jogador ---
+        let player = {
+            money: 100,
+            respect: 0,
+            level: 1,
+            guns: 0,
+            xp: 0,
+            robberies: 0,
+            investments: 0
+        };
+
+        // --- Funções auxiliares ---
+        function updateUI() {
+            document.getElementById('playerMoney').textContent = Math.floor(player.money);
+            document.getElementById('playerRespect').textContent = player.respect;
+            document.getElementById('playerLevel').textContent = player.level;
+            document.getElementById('playerGuns').textContent = player.guns;
+            // Atualiza online count (simula variação)
+            let online = 400 + Math.floor(Math.random() * 60);
+            document.getElementById('onlineCount').textContent = online;
+            document.getElementById('onlineCount2').textContent = online;
+        }
+
+        function addLog(message, type = 'info') {
+            const logArea = document.getElementById('logArea');
+            const entry = document.createElement('div');
+            entry.className = 'log-entry log-' + type;
+            entry.textContent = message;
+            logArea.appendChild(entry);
+            logArea.scrollTop = logArea.scrollHeight;
+            // Mantém no máximo 20 entradas
+            while (logArea.children.length > 20) {
+                logArea.removeChild(logArea.firstChild);
+            }
+        }
+
+        // --- Ações do jogo ---
+
+        // Roubar
+        function doRobbery() {
+            // Chance de sucesso baseada em nível e armas
+            let successRate = 0.6 + (player.level * 0.03) + (player.guns * 0.05);
+            if (successRate > 0.95) successRate = 0.95;
+
+            if (Math.random() < successRate) {
+                // Roubo bem-sucedido
+                let baseGain = 20 + Math.floor(Math.random() * 60) + (player.level * 5);
+                let gunBonus = player.guns * 3;
+                let totalGain = baseGain + gunBonus;
+                player.money += totalGain;
+                player.respect += 2 + Math.floor(Math.random() * 5);
+                player.robberies++;
+                addLog(`💰 Roubo bem-sucedido! Você ganhou $${totalGain} e +${2+Math.floor(Math.random()*5)} de respeito.`, 'success');
+                // Ganho de XP
+                player.xp += 5 + Math.floor(Math.random() * 8);
+                checkLevelUp();
+            } else {
+                // Falha
+                let loss = 10 + Math.floor(Math.random() * 30);
+                if (player.money < loss) loss = player.money;
+                player.money -= loss;
+                player.respect -= 1;
+                addLog(`❌ Roubo falhou! Você perdeu $${loss} e -1 de respeito.`, 'fail');
+            }
+            // Pequena chance de perder arma
+            if (player.guns > 0 && Math.random() < 0.1) {
+                player.guns--;
+                addLog(`🔫 Você perdeu uma arma durante a ação.`, 'fail');
+            }
+            updateUI();
+        }
+
+        // Investir
+        function doInvest() {
+            if (player.money < 50) {
+                addLog(`⚠️ Você precisa de pelo menos $50 para investir.`, 'fail');
+                return;
+            }
+            let investAmount = Math.min(player.money, 100 + Math.floor(Math.random() * 150));
+            if (investAmount > player.money) investAmount = player.money;
+            // Retorno entre 20% e 80%
+            let returnRate = 0.2 + Math.random() * 0.6;
+            let profit = Math.floor(investAmount * returnRate);
+            player.money += profit;
+            player.investments++;
+            player.respect += 1;
+            addLog(`📈 Você investiu $${investAmount} e obteve lucro de $${profit}!`, 'success');
+            player.xp += 3 + Math.floor(Math.random() * 5);
+            checkLevelUp();
+            updateUI();
+        }
+
+        // Comprar arma
+        function buyGun() {
+            let cost = 50 + (player.guns * 20);
+            if (player.money < cost) {
+                addLog(`⚠️ Você precisa de $${cost} para comprar uma arma.`, 'fail');
+                return;
+            }
+            player.money -= cost;
+            player.guns++;
+            addLog(`🔫 Você comprou uma arma por $${cost}. Agora tem ${player.guns} arma(s).`, 'success');
+            updateUI();
+        }
+
+        // Trabalhar (ação segura, ganho pequeno)
+        function doWork() {
+            let gain = 10 + Math.floor(Math.random() * 20);
+            player.money += gain;
+            player.respect += 1;
+            addLog(`💼 Você trabalhou e ganhou $${gain} e +1 de respeito.`, 'info');
+            player.xp += 2 + Math.floor(Math.random() * 4);
+            checkLevelUp();
+            updateUI();
+        }
+
+        // Sabotagem (arriscado, ganho alto)
+        function doSabotage() {
+            if (player.guns < 1) {
+                addLog(`⚠️ Você precisa de pelo menos 1 arma para sabotar.`, 'fail');
+                return;
+            }
+            let success = Math.random() < 0.5 + (player.level * 0.02);
+            if (success) {
+                let gain = 60 + Math.floor(Math.random() * 100) + (player.level * 10);
+                player.money += gain;
+                player.respect += 3 + Math.floor(Math.random() * 6);
+                addLog(`💣 Sabotagem bem-sucedida! Você ganhou $${gain} e muito respeito.`, 'success');
+                player.xp += 8 + Math.floor(Math.random() * 10);
+            } else {
+                let loss = 30 + Math.floor(Math.random() * 60);
+                if (player.money < loss) loss = player.money;
+                player.money -= loss;
+                player.guns--; // perde uma arma
+                if (player.guns < 0) player.guns = 0;
+                addLog(`💥 Sabotagem falhou! Você perdeu $${loss} e uma arma.`, 'fail');
+            }
+            checkLevelUp();
+            updateUI();
+        }
+
+        // Verificar e subir de nível
+        function checkLevelUp() {
+            let xpNeeded = player.level * 20 + 10;
+            while (player.xp >= xpNeeded) {
+                player.xp -= xpNeeded;
+                player.level++;
+                player.respect += 5;
+                addLog(`🎉 PARABÉNS! Você subiu para o nível ${player.level}! Ganhou +5 de respeito.`, 'success');
+                xpNeeded = player.level * 20 + 10;
+            }
+        }
+
+        // Resetar jogo
+        function resetGame() {
+            if (confirm('Tem certeza que deseja reiniciar seu progresso?')) {
+                player.money = 100;
+                player.respect = 0;
+                player.level = 1;
+                player.guns = 0;
+                player.xp = 0;
+                player.robberies = 0;
+                player.investments = 0;
+                document.getElementById('logArea').innerHTML = `<div class="log-entry log-info">Jogo reiniciado. Boa sorte!</div>`;
+                updateUI();
+                addLog('🔄 Jogo reiniciado.', 'info');
+            }
+        }
+
+        // Login/Registro (simulação)
+        function loginUser() {
+            alert('Funcionalidade de login simulada. Você já está logado como "Jogador".');
+        }
+
+        function registerUser() {
+            alert('Registro simulado. Conta criada com sucesso!');
+        }
+
+        function acceptCookies() {
+            alert('Cookies aceitos! (simulação)');
+        }
+
+        function acceptNecessary() {
+            alert('Cookies necessários aceitos. (simulação)');
+        }
+
+        function customizeCookies() {
+            alert('Personalização de cookies (simulação).');
+        }
+
+        // Inicialização
+        updateUI();
+        addLog('🚀 Comece sua carreira criminosa!', 'info');
+
+        // Simular atualização de online a cada 30s
+        setInterval(() => {
+            let online = 400 + Math.floor(Math.random() * 60);
+            document.getElementById('onlineCount').textContent = online;
+            document.getElementById('onlineCount2').textContent = online;
+        }, 30000);
+
+        // Dica: tecla R para roubar, I para investir
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'r' || e.key === 'R') {
+                e.preventDefault();
+                doRobbery();
+            } else if (e.key === 'i' || e.key === 'I') {
+                e.preventDefault();
+                doInvest();
+            }
+        });
+    </script>
+</body>
+</html>

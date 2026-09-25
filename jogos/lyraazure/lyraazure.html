@@ -1,0 +1,2117 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.5, user-scalable=yes">
+    <title>Aetheria · RPG de Mundo Aberto</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', 'Poppins', system-ui, sans-serif;
+        }
+        body {
+            background: #0b0a0c;
+            color: #eee;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: flex-start;
+            background-image: radial-gradient(circle at 20% 30%, #1e1a2b 0%, #0a080e 90%);
+            padding: 0.3rem;
+        }
+        .game-container {
+            max-width: 500px;
+            width: 100%;
+            background: rgba(18, 16, 24, 0.92);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 215, 150, 0.08);
+            border-radius: 1rem;
+            padding: 0.5rem;
+            box-shadow: 0 15px 50px rgba(0,0,0,0.85);
+        }
+        .layout-vertical { display: block; }
+        .layout-horizontal { display: none; }
+        @media (orientation: landscape) and (max-height: 600px) {
+            .game-container { max-width: 100%; padding: 0.3rem; }
+            .layout-vertical { display: none !important; }
+            .layout-horizontal { display: block !important; }
+            body { padding: 0.15rem; }
+        }
+        @media (min-width: 700px) and (orientation: landscape) {
+            .game-container { max-width: 90%; padding: 0.4rem; }
+        }
+        .hero-header {
+            display: flex;
+            flex-wrap: wrap;
+            align-items: center;
+            gap: 0.25rem;
+            border-bottom: 1px solid rgba(255, 200, 140, 0.08);
+            padding-bottom: 0.25rem;
+            margin-bottom: 0.25rem;
+        }
+        .avatar-area {
+            display: flex;
+            align-items: center;
+            gap: 0.25rem;
+        }
+        .avatar-frame {
+            width: 34px;
+            height: 34px;
+            border-radius: 50%;
+            background: linear-gradient(145deg, #3a2f4a, #1c1625);
+            border: 2px solid #b894e8;
+            box-shadow: 0 0 10px #7f5fbf30;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+            flex-shrink: 0;
+        }
+        .avatar-frame svg {
+            width: 100%;
+            height: 100%;
+            display: block;
+        }
+        .hero-name {
+            font-size: 0.8rem;
+            font-weight: 700;
+            background: linear-gradient(135deg, #f2e3b3, #dbbd7a);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+        }
+        .hero-title {
+            font-size: 0.35rem;
+            color: #b6a7d9;
+            background: #29213a;
+            padding: 0.03rem 0.35rem;
+            border-radius: 8px;
+            border: 1px solid #56477a;
+            display: inline-block;
+        }
+        .class-badge {
+            background: #1e1730;
+            border-radius: 12px;
+            padding: 0.03rem 0.35rem;
+            border-left: 2px solid #b28aff;
+            color: #d2c0f5;
+            font-weight: 500;
+            font-size: 0.4rem;
+        }
+        .power-total {
+            font-size: 0.4rem;
+            color: #ffd87b;
+            background: #1a1428;
+            padding: 0.03rem 0.35rem;
+            border-radius: 10px;
+            border: 1px solid #7a6a3a;
+            display: inline-block;
+        }
+        .stats-mini {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 0.08rem;
+            margin-left: auto;
+        }
+        .stat-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            background: rgba(0,0,0,0.3);
+            padding: 0.03rem 0.15rem;
+            border-radius: 8px;
+            border: 1px solid #3b314b;
+            cursor: pointer;
+            transition: 0.2s;
+            min-width: 28px;
+        }
+        .stat-item:hover { border-color: #b28aff; }
+        .stat-val {
+            font-size: 0.42rem;
+            font-weight: 600;
+            color: #f2e2b0;
+        }
+        .stat-label {
+            font-size: 0.25rem;
+            text-transform: uppercase;
+            letter-spacing: 0.2px;
+            color: #9b8ab3;
+        }
+        .stat-bonus {
+            font-size: 0.25rem;
+            color: #7bff9b;
+        }
+        .stat-dead {
+            color: #ff4444 !important;
+            animation: pulse 1s infinite;
+        }
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.3; }
+        }
+        .panel {
+            background: rgba(10, 8, 14, 0.5);
+            backdrop-filter: blur(4px);
+            -webkit-backdrop-filter: blur(4px);
+            border-radius: 8px;
+            padding: 0.25rem;
+            border: 1px solid #3a2d4e;
+            box-shadow: inset 0 0 10px #00000033, 0 2px 6px #00000044;
+            margin-bottom: 0.2rem;
+        }
+        .panel h3 {
+            font-size: 0.4rem;
+            text-transform: uppercase;
+            letter-spacing: 0.6px;
+            color: #beaae2;
+            border-bottom: 1px solid #332a44;
+            padding-bottom: 0.12rem;
+            margin-bottom: 0.15rem;
+            display: flex;
+            align-items: center;
+            gap: 0.12rem;
+        }
+        .panel h3 i {
+            font-size: 0.5rem;
+            color: #d8b4ff;
+        }
+        .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 0.2rem; }
+        .grid-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 0.12rem; }
+        .grid-4 { display: grid; grid-template-columns: 1fr 1fr 1fr 1fr; gap: 0.1rem; }
+        .btn {
+            border: none;
+            border-radius: 8px;
+            padding: 0.08rem 0.25rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: 0.1s;
+            font-size: 0.38rem;
+            text-align: center;
+            min-height: 16px;
+            line-height: 1.2;
+            width: auto;
+            display: inline-block;
+        }
+        .btn:disabled {
+            opacity: 0.3;
+            cursor: not-allowed;
+        }
+        .btn-primary {
+            background: linear-gradient(145deg, #624a8a, #3e2d5e);
+            color: white;
+            border: 1px solid #947bc0;
+            box-shadow: 0 1px 4px #2f1f4b;
+        }
+        .btn-primary:hover:not(:disabled) { background: #7b5ea3; }
+        .btn-secondary {
+            background: #1a1428;
+            border: 1px solid #4a3d62;
+            color: #c5b0e6;
+        }
+        .btn-secondary:hover:not(:disabled) { background: #2a1f40; }
+        .btn-success {
+            background: #1a3a2a;
+            border: 1px solid #4a7a5a;
+            color: #7bff9b;
+        }
+        .btn-success:hover:not(:disabled) { background: #2a5a3a; }
+        .btn-danger {
+            background: #3a1a2a;
+            border: 1px solid #6a3a4a;
+            color: #ff8a8a;
+        }
+        .btn-danger:hover:not(:disabled) { background: #5a2a3a; }
+        .btn-gold {
+            background: #3a2a1a;
+            border: 1px solid #7a6a3a;
+            color: #ffd87b;
+        }
+        .btn-gold:hover:not(:disabled) { background: #5a3a2a; }
+        .btn-checkpoint {
+            background: linear-gradient(145deg, #2a4a6a, #1a2a4a);
+            border: 1px solid #4a7a9a;
+            color: #7bc8ff;
+        }
+        .btn-checkpoint:hover:not(:disabled) { background: #3a5a7a; }
+        .btn-revive {
+            background: linear-gradient(145deg, #6a2a2a, #4a1a1a);
+            border: 1px solid #aa4a4a;
+            color: #ff6b6b;
+            animation: pulse-revive 1.8s infinite;
+        }
+        @keyframes pulse-revive {
+            0%, 100% { box-shadow: 0 0 6px #ff000033; }
+            50% { box-shadow: 0 0 14px #ff000066; }
+        }
+        .btn-revive:hover:not(:disabled) { background: #8a3a3a; }
+        .btn-clear {
+            background: #2a1a2a;
+            border: 1px solid #6a3a5a;
+            color: #d8a0c0;
+        }
+        .btn-clear:hover:not(:disabled) { background: #4a2a3a; }
+        .btn-block { width: 100%; display: block; }
+        .btn-inline { display: inline-block; }
+        .btn-xs { font-size: 0.32rem; padding: 0.05rem 0.15rem; min-height: 14px; }
+        .map-preview {
+            background: #13101b;
+            border-radius: 6px;
+            height: 45px;
+            background-image: radial-gradient(circle at 30% 40%, #3b2d4b 0%, #0d0a12 90%);
+            border: 1px solid #4d3d62;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+        }
+        .map-preview .label {
+            color: #b8a2d9;
+            font-weight: 300;
+            letter-spacing: 1px;
+            background: #1f192bcc;
+            padding: 0.08rem 0.5rem;
+            border-radius: 12px;
+            border: 1px solid #78629e;
+            font-size: 0.4rem;
+        }
+        .mini-biomes {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.06rem 0.12rem;
+            margin: 0.08rem 0 0.05rem;
+            font-size: 0.28rem;
+            color: #a58cc2;
+        }
+        .mini-biomes span {
+            background: #1f1a2b;
+            padding: 0.02rem 0.2rem;
+            border-radius: 5px;
+            border: 1px solid #3e3153;
+        }
+        .quest-list {
+            list-style: none;
+            margin-top: 0.08rem;
+            max-height: 70px;
+            overflow-y: auto;
+        }
+        .quest-list li {
+            display: flex;
+            align-items: center;
+            gap: 0.12rem;
+            padding: 0.08rem 0.03rem;
+            border-bottom: 1px solid #29213b;
+            font-size: 0.35rem;
+            cursor: pointer;
+            transition: 0.1s;
+        }
+        .quest-list li:hover { background: #1a1428; border-radius: 4px; }
+        .quest-list li .marker {
+            width: 4px;
+            height: 4px;
+            border-radius: 50%;
+            flex-shrink: 0;
+        }
+        .quest-list li .qinfo { flex: 1; }
+        .quest-list li .qinfo small {
+            color: #9580b0;
+            font-size: 0.28rem;
+            display: block;
+        }
+        .quest-list li .qlevel {
+            color: #7b6a93;
+            font-size: 0.28rem;
+            background: #1a1428;
+            padding: 0.02rem 0.15rem;
+            border-radius: 4px;
+        }
+        .quest-list li .qboss {
+            color: #ff6b6b;
+            font-size: 0.28rem;
+            background: #2a1a1a;
+            padding: 0.02rem 0.15rem;
+            border-radius: 4px;
+            border: 1px solid #6a3a3a;
+        }
+        .quest-actions {
+            display: flex;
+            gap: 0.08rem;
+            margin-top: 0.08rem;
+            flex-wrap: wrap;
+        }
+        .skill-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr;
+            gap: 0.08rem;
+            margin: 0.12rem 0;
+        }
+        .skill-item {
+            background: #19142a;
+            padding: 0.06rem 0.12rem;
+            border-radius: 5px;
+            border-left: 2px solid #b38edb;
+            font-size: 0.32rem;
+            display: flex;
+            justify-content: space-between;
+            cursor: pointer;
+            transition: 0.1s;
+            min-height: 14px;
+            align-items: center;
+        }
+        .skill-item:hover {
+            border-left-color: #f0d070;
+            background: #221c35;
+        }
+        .skill-item .skill-cost {
+            color: #ff7b7b;
+            font-size: 0.25rem;
+        }
+        .equip-slot {
+            background: #0d0a14;
+            border: 1px solid #3a2d4e;
+            border-radius: 5px;
+            padding: 0.06rem 0.12rem;
+            font-size: 0.32rem;
+            min-height: 16px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            transition: 0.1s;
+            flex-wrap: wrap;
+            gap: 0.03rem;
+        }
+        .equip-slot:hover { border-color: #6a518b; }
+        .equip-slot .slot-label {
+            color: #7b6a93;
+            font-size: 0.28rem;
+            text-transform: uppercase;
+        }
+        .equip-slot .slot-item {
+            color: #f0e0b0;
+            font-weight: 500;
+            font-size: 0.28rem;
+        }
+        .equip-slot .slot-level {
+            color: #7b6a93;
+            font-size: 0.22rem;
+            background: #1a1428;
+            padding: 0.02rem 0.15rem;
+            border-radius: 4px;
+        }
+        .equip-slot .slot-bonus {
+            color: #7bff9b;
+            font-size: 0.22rem;
+        }
+        .slot-empty {
+            color: #4a3d62;
+            font-style: italic;
+            font-size: 0.28rem;
+        }
+        .equip-highlight {
+            border-color: #b28aff !important;
+            box-shadow: 0 0 6px #7f5fbf20;
+        }
+        .inventory-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0.06rem 0.03rem;
+            border-bottom: 1px solid #1a1428;
+            font-size: 0.35rem;
+            flex-wrap: wrap;
+            gap: 0.05rem;
+        }
+        .inventory-item .item-info {
+            flex: 1;
+            min-width: 80px;
+        }
+        .inventory-item .item-name {
+            font-weight: 500;
+        }
+        .inventory-item .item-desc {
+            font-size: 0.28rem;
+            color: #9580b0;
+            display: block;
+            margin-top: 0.02rem;
+        }
+        .inventory-item .item-level {
+            font-size: 0.22rem;
+            color: #7b6a93;
+            background: #1a1428;
+            padding: 0.02rem 0.15rem;
+            border-radius: 4px;
+            margin-left: 0.3rem;
+        }
+        .inventory-item .item-power-indicator {
+            font-size: 0.4rem;
+            margin-left: 0.15rem;
+        }
+        .inventory-item .item-actions {
+            display: flex;
+            gap: 0.06rem;
+            flex-wrap: wrap;
+        }
+        .shop-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr;
+            gap: 0.12rem;
+        }
+        .shop-item {
+            background: #0d0a14;
+            border: 1px solid #3a2d4e;
+            border-radius: 5px;
+            padding: 0.12rem;
+            display: flex;
+            flex-direction: column;
+            gap: 0.03rem;
+        }
+        .shop-item .shop-name {
+            color: #f0e0b0;
+            font-weight: 500;
+            font-size: 0.38rem;
+        }
+        .shop-item .shop-price {
+            color: #dbbd7a;
+            font-size: 0.32rem;
+        }
+        .shop-item .shop-bonus {
+            color: #7bff9b;
+            font-size: 0.28rem;
+        }
+        .shop-item .shop-actions {
+            display: flex;
+            gap: 0.06rem;
+            margin-top: 0.05rem;
+        }
+        .shop-item .shop-level {
+            color: #7b6a93;
+            font-size: 0.28rem;
+        }
+        .combat-log {
+            background: #0d0a14;
+            border-radius: 5px;
+            padding: 0.12rem;
+            margin: 0.08rem 0;
+            max-height: 50px;
+            overflow-y: auto;
+            font-size: 0.32rem;
+            border: 1px solid #2d2340;
+            color: #b8a8d0;
+        }
+        .combat-log .damage { color: #ff7b7b; }
+        .combat-log .heal { color: #7bff9b; }
+        .combat-log .xp { color: #ffd87b; }
+        .combat-log .loot { color: #7bc8ff; }
+        .combat-log .shop { color: #ffb07b; }
+        .combat-log .death { color: #ff4444; font-weight: bold; }
+        .combat-log .boss { color: #ff6b6b; font-weight: bold; }
+        .combat-log .ia { color: #b28aff; font-weight: bold; }
+        .enemy-card {
+            background: #13101e;
+            border-radius: 5px;
+            padding: 0.1rem 0.15rem;
+            margin: 0.06rem 0;
+            border: 1px solid #4a3d62;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 0.06rem;
+            font-size: 0.35rem;
+        }
+        .enemy-card .hp-bar {
+            background: #2a1f30;
+            border-radius: 3px;
+            height: 4px;
+            width: 35px;
+            overflow: hidden;
+        }
+        .enemy-card .hp-bar .fill {
+            height: 100%;
+            background: linear-gradient(90deg, #ff4444, #ff8844);
+            transition: width 0.3s;
+        }
+        .enemy-card.boss-card {
+            border-color: #ff6b6b;
+            background: #1a0a0a;
+        }
+        .enemy-card .enemy-level {
+            color: #7b6a93;
+            font-size: 0.28rem;
+        }
+        .online-toggle {
+            display: flex;
+            align-items: center;
+            gap: 0.08rem;
+            font-size: 0.32rem;
+            color: #b8a8d0;
+        }
+        .toggle-switch {
+            width: 18px;
+            height: 11px;
+            background: #2a1f40;
+            border-radius: 6px;
+            cursor: pointer;
+            position: relative;
+            transition: 0.3s;
+            border: 1px solid #4a3d62;
+            flex-shrink: 0;
+        }
+        .toggle-switch.active {
+            background: #4a7a5a;
+            border-color: #7ab890;
+        }
+        .toggle-switch .knob {
+            width: 6px;
+            height: 6px;
+            background: #c8b8e0;
+            border-radius: 50%;
+            position: absolute;
+            top: 1.5px;
+            left: 1.5px;
+            transition: 0.3s;
+        }
+        .toggle-switch.active .knob {
+            left: 9px;
+            background: #d0f0d0;
+        }
+        .checkpoint-info {
+            font-size: 0.28rem;
+            color: #7b6a93;
+            margin-top: 0.05rem;
+            padding: 0.05rem;
+            background: #0d0a14;
+            border-radius: 3px;
+            border: 1px solid #2d2340;
+        }
+        .scroll-inv { max-height: 60px; overflow-y: auto; }
+        .scroll-shop { max-height: 100px; overflow-y: auto; }
+        .toast {
+            position: fixed;
+            bottom: 10px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: #1a1628;
+            border: 1px solid #6a518b;
+            border-radius: 8px;
+            padding: 0.2rem 0.6rem;
+            color: #e8d8f0;
+            box-shadow: 0 8px 25px #00000099;
+            z-index: 2000;
+            animation: slideIn 0.3s ease;
+            max-width: 90%;
+            font-size: 0.5rem;
+            text-align: center;
+        }
+        @keyframes slideIn {
+            from { transform: translateX(-50%) translateY(20px); opacity: 0; }
+            to { transform: translateX(-50%) translateY(0); opacity: 1; }
+        }
+        .dead-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.92);
+            z-index: 3000;
+            display: none;
+            justify-content: center;
+            align-items: center;
+            flex-direction: column;
+            padding: 1rem;
+        }
+        .dead-overlay.active {
+            display: flex;
+        }
+        .dead-overlay h1 {
+            color: #ff4444;
+            font-size: 1.5rem;
+            text-shadow: 0 0 30px #ff000055;
+        }
+        .dead-overlay p {
+            color: #aa8888;
+            font-size: 0.55rem;
+            margin: 0.15rem 0;
+        }
+        .dead-overlay .btn {
+            padding: 0.2rem 0.7rem;
+            font-size: 0.5rem;
+            margin: 0.08rem;
+        }
+        .footer-info {
+            margin-top: 0.2rem;
+            display: flex;
+            justify-content: space-between;
+            border-top: 1px solid #2d2340;
+            padding-top: 0.15rem;
+            font-size: 0.28rem;
+            color: #7b6a93;
+            flex-wrap: wrap;
+        }
+        .footer-info span {
+            background: #181424;
+            padding: 0.03rem 0.2rem;
+            border-radius: 6px;
+        }
+        .layout-horizontal .grid-2-h {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 0.15rem;
+        }
+        .layout-horizontal .grid-3-h {
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr;
+            gap: 0.1rem;
+        }
+        .layout-horizontal .panel { padding: 0.15rem; margin-bottom: 0.1rem; }
+        .layout-horizontal .hero-header { padding-bottom: 0.1rem; margin-bottom: 0.1rem; }
+        .layout-horizontal .avatar-frame { width: 28px; height: 28px; }
+        .layout-horizontal .hero-name { font-size: 0.65rem; }
+        .layout-horizontal .stats-mini { grid-template-columns: 1fr 1fr 1fr 1fr; }
+        .layout-horizontal .stat-val { font-size: 0.35rem; }
+        .layout-horizontal .map-preview { height: 35px; }
+        .layout-horizontal .quest-list { max-height: 50px; }
+        .layout-horizontal .combat-log { max-height: 35px; }
+        .layout-horizontal .shop-grid { grid-template-columns: 1fr 1fr 1fr; }
+        .layout-horizontal .skill-grid { grid-template-columns: 1fr 1fr 1fr; }
+        .layout-horizontal .btn {
+            font-size: 0.32rem;
+            padding: 0.05rem 0.18rem;
+            min-height: 13px;
+        }
+        .layout-horizontal .enemy-card { font-size: 0.3rem; padding: 0.06rem 0.1rem; }
+        .layout-horizontal .enemy-card .hp-bar { width: 25px; height: 3px; }
+        .layout-horizontal .inventory-item { font-size: 0.3rem; padding: 0.04rem 0.02rem; }
+        .layout-horizontal .inventory-item .item-desc { font-size: 0.24rem; }
+        .layout-horizontal .scroll-inv { max-height: 40px; }
+        .layout-horizontal .scroll-shop { max-height: 70px; }
+        .layout-horizontal .equip-slot { min-height: 14px; font-size: 0.28rem; }
+        .layout-horizontal .equip-slot .slot-item { font-size: 0.24rem; }
+        @media (max-width: 400px) {
+            .grid-2 { grid-template-columns: 1fr; }
+            .grid-3 { grid-template-columns: 1fr 1fr; }
+            .grid-4 { grid-template-columns: 1fr 1fr; }
+            .shop-grid { grid-template-columns: 1fr 1fr; }
+            .layout-horizontal .shop-grid { grid-template-columns: 1fr 1fr; }
+            .stats-mini { grid-template-columns: 1fr 1fr; gap: 0.05rem; }
+        }
+        @media (max-width: 350px) {
+            .shop-grid { grid-template-columns: 1fr; }
+            .layout-horizontal .shop-grid { grid-template-columns: 1fr; }
+            .skill-grid { grid-template-columns: 1fr 1fr; }
+            .layout-horizontal .skill-grid { grid-template-columns: 1fr 1fr; }
+        }
+        @media (orientation: landscape) and (max-height: 500px) {
+            .layout-horizontal .shop-grid { grid-template-columns: 1fr 1fr; }
+            .layout-horizontal .grid-3-h { grid-template-columns: 1fr 1fr; }
+        }
+        .power-up { color: #7bff9b; }
+        .power-down { color: #ff7b7b; }
+    </style>
+</head>
+<body>
+<div class="game-container" id="app">
+    <!-- ===== LAYOUT VERTICAL ===== -->
+    <div class="layout-vertical">
+        <!-- HEADER -->
+        <header class="hero-header">
+            <div class="avatar-area">
+                <div class="avatar-frame">
+                    <svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+                        <circle cx="50" cy="40" r="28" fill="#2f2542" stroke="#b28aff" stroke-width="1.5"/>
+                        <circle cx="38" cy="34" r="7" fill="#f0e8ff" stroke="#a58bd6" stroke-width="0.8"/>
+                        <circle cx="62" cy="34" r="7" fill="#f0e8ff" stroke="#a58bd6" stroke-width="0.8"/>
+                        <circle cx="36" cy="32" r="3.5" fill="#2f1d4a"/>
+                        <circle cx="60" cy="32" r="3.5" fill="#2f1d4a"/>
+                        <ellipse cx="50" cy="42" rx="6" ry="3" fill="#b49ad9"/>
+                        <path d="M30 28 Q25 35 18 30 Q12 22 22 18 Q30 14 38 18 Q44 22 44 28 Z" fill="#3f7ab8" stroke="#2f5f94" stroke-width="0.6"/>
+                        <path d="M70 28 Q75 35 82 30 Q88 22 78 18 Q70 14 62 18 Q56 22 56 28 Z" fill="#3f7ab8" stroke="#2f5f94" stroke-width="0.6"/>
+                        <path d="M30 18 Q40 6 56 8 Q68 12 72 22 Q60 18 44 20 Q32 22 30 18" fill="#2266b0" stroke="#1e4a7e" stroke-width="0.8"/>
+                        <path d="M20 65 Q30 72 50 74 Q70 72 80 65 Q74 80 50 82 Q26 80 20 65" fill="#1e162b"/>
+                        <circle cx="50" cy="78" r="2.5" fill="#c9b0e8"/>
+                        <path d="M40 88 L45 95 L55 95 L60 88 Z" fill="#9575b0"/>
+                    </svg>
+                </div>
+                <div>
+                    <div class="hero-name">Lyra</div>
+                    <div>
+                        <span class="hero-title">Arcana</span>
+                        <span class="class-badge">Nv.{{ level }}</span>
+                        <span class="power-total">⚡ Poder {{ totalPower }}</span>
+                    </div>
+                </div>
+            </div>
+            <div class="stats-mini">
+                <div class="stat-item" @click="usePotion('health')" :class="{'stat-dead': hp <= 0}">
+                    <span class="stat-val">❤️ {{ hp }}/{{ maxHp }}</span>
+                    <span class="stat-label">Vida</span>
+                    <span class="stat-bonus" v-if="getTotalBonus('hp') > 0">+{{ getTotalBonus('hp') }}</span>
+                </div>
+                <div class="stat-item" @click="usePotion('energy')">
+                    <span class="stat-val">⚡ {{ energy }}/{{ maxEnergy }}</span>
+                    <span class="stat-label">Energia</span>
+                    <span class="stat-bonus" v-if="getTotalBonus('energy') > 0">+{{ getTotalBonus('energy') }}</span>
+                </div>
+                <div class="stat-item">
+                    <span class="stat-val">🏹 {{ getStatWithBonus('dex') }}</span>
+                    <span class="stat-label">Dex</span>
+                    <span class="stat-bonus" v-if="getBonusFromEquipment('dex') > 0">+{{ getBonusFromEquipment('dex') }}</span>
+                </div>
+                <div class="stat-item">
+                    <span class="stat-val">🧠 {{ getStatWithBonus('int') }}</span>
+                    <span class="stat-label">Int</span>
+                    <span class="stat-bonus" v-if="getBonusFromEquipment('int') > 0">+{{ getBonusFromEquipment('int') }}</span>
+                </div>
+            </div>
+        </header>
+
+        <!-- LINHA 1: MAPA + MISSÕES + HABILIDADES -->
+        <div class="grid-2">
+            <div>
+                <div class="panel">
+                    <h3><i>🗺️</i> Aetheria</h3>
+                    <div class="map-preview" @click="explore()">
+                        <span class="label">🌍 EXPLORAR</span>
+                    </div>
+                    <div class="mini-biomes">
+                        <span>🌲Floresta</span> <span>🏜️Deserto</span> <span>❄️Montanhas</span>
+                        <span>🌫️Pântano</span> <span>☁️Ilhas</span>
+                    </div>
+                    <div style="display:flex; gap:0.08rem; margin-top:0.08rem; flex-wrap:wrap;">
+                        <button class="btn btn-primary btn-xs" @click="explore()" :disabled="hp <= 0 || energy < 8">🌍 Explorar (-8⚡)</button>
+                        <button class="btn btn-checkpoint btn-xs" @click="saveCheckpoint()" :disabled="hp <= 0" title="Salvar progresso atual">💾 Check</button>
+                        <button class="btn btn-checkpoint btn-xs" @click="goToCheckpoint()" :disabled="!hasCheckpoint || hp <= 0" title="Voltar ao checkpoint perdendo 3 níveis">⏪ Voltar</button>
+                    </div>
+                    <div class="checkpoint-info" v-if="hasCheckpoint">📍 Nv.{{ checkpointLevel }} · {{ checkpointQuests }} missões</div>
+                </div>
+
+                <div class="panel">
+                    <h3><i>📜</i> Missões</h3>
+                    <ul class="quest-list">
+                        <li v-for="quest in availableQuests" :key="quest.id" @click="showQuest(quest)">
+                            <span class="marker" :style="{background: quest.completed ? '#7bc87b' : quest.boss ? '#ff6b6b' : '#e6c87a'}"></span>
+                            <span class="qinfo"><strong>{{ quest.name }}</strong><small>{{ quest.desc }}</small></span>
+                            <span class="qlevel" v-if="!quest.boss">Nv{{ quest.level }}</span>
+                            <span class="qboss" v-if="quest.boss">👹BOSS</span>
+                        </li>
+                        <li v-if="availableQuests.length === 0" style="color:#6a5a80; text-align:center; padding:0.1rem; font-size:0.3rem;">⏳ Complete missões</li>
+                    </ul>
+                    <div class="quest-actions">
+                        <button class="btn btn-primary btn-xs" @click="generateQuest()" :disabled="hp <= 0">🔄 Nova</button>
+                        <button class="btn btn-clear btn-xs" @click="clearCompletedQuests()" :disabled="completedQuestsCount === 0" title="Limpar missões concluídas">🧹 Limpar</button>
+                    </div>
+                </div>
+
+                <div class="panel">
+                    <h3><i>⚡</i> Habilidades</h3>
+                    <div class="skill-grid">
+                        <div class="skill-item" v-for="skill in skills" :key="skill.name" @click="useSkill(skill)" :style="{opacity: hp <= 0 ? 0.4 : 1}">
+                            <span>{{ skill.icon }} {{ skill.name }}</span>
+                            <span class="skill-cost">-{{ skill.cost }}⚡</span>
+                        </div>
+                    </div>
+                    <button class="btn btn-primary btn-xs" @click="levelUp()" :disabled="hp <= 0">⬆️ Nv ({{ xp }}/{{ xpNeeded }}XP)</button>
+                </div>
+            </div>
+
+            <!-- COLUNA DIREITA: COMBATE + EQUIP + RECURSOS -->
+            <div>
+                <div class="panel">
+                    <h3><i>⚔️</i> Combate</h3>
+                    <div class="combat-log">
+                        <div v-for="log in combatLogs" :key="log.id" :class="log.type" style="font-size:0.3rem;">{{ log.msg }}</div>
+                    </div>
+                    <div id="enemyArea">
+                        <div class="enemy-card" :class="{'boss-card': enemy.isBoss}" v-for="enemy in enemies" :key="enemy.id">
+                            <span>{{ enemy.icon }} {{ enemy.name }} <span class="enemy-level">(Nv{{ enemy.level }})</span></span>
+                            <span v-if="enemy.isBoss" style="color:#ff6b6b; font-size:0.28rem;">👹BOSS</span>
+                            <div class="hp-bar"><div class="fill" :style="{width: (enemy.hp/enemy.maxHp*100)+'%'}"></div></div>
+                            <button class="btn btn-secondary btn-xs" @click="attackEnemy(enemy)" :disabled="hp <= 0">⚔️</button>
+                        </div>
+                    </div>
+                    <button class="btn btn-primary btn-xs" @click="spawnEnemy()" :disabled="hp <= 0 || energy < 5">👹 Buscar (-5⚡)</button>
+                </div>
+
+                <div class="panel">
+                    <h3><i>🛡️</i> Equipamento</h3>
+                    <div class="grid-3">
+                        <div class="equip-slot" :class="{'equip-highlight': equipment.cabeca}">
+                            <span class="slot-label">👑</span>
+                            <span class="slot-item" v-if="equipment.cabeca">{{ equipment.cabeca.nome }}</span>
+                            <span class="slot-empty" v-else>vazio</span>
+                            <span class="slot-level" v-if="equipment.cabeca">Nv{{ getItemLevel(equipment.cabeca) }}</span>
+                            <button class="btn btn-danger btn-xs" v-if="equipment.cabeca" @click="unequip('cabeca')" :disabled="hp <= 0">✕</button>
+                        </div>
+                        <div class="equip-slot" :class="{'equip-highlight': equipment.peito}">
+                            <span class="slot-label">👕</span>
+                            <span class="slot-item" v-if="equipment.peito">{{ equipment.peito.nome }}</span>
+                            <span class="slot-empty" v-else>vazio</span>
+                            <span class="slot-level" v-if="equipment.peito">Nv{{ getItemLevel(equipment.peito) }}</span>
+                            <button class="btn btn-danger btn-xs" v-if="equipment.peito" @click="unequip('peito')" :disabled="hp <= 0">✕</button>
+                        </div>
+                        <div class="equip-slot" :class="{'equip-highlight': equipment.arma}">
+                            <span class="slot-label">⚔️</span>
+                            <span class="slot-item" v-if="equipment.arma">{{ equipment.arma.nome }}</span>
+                            <span class="slot-empty" v-else>vazio</span>
+                            <span class="slot-level" v-if="equipment.arma">Nv{{ getItemLevel(equipment.arma) }}</span>
+                            <button class="btn btn-danger btn-xs" v-if="equipment.arma" @click="unequip('arma')" :disabled="hp <= 0">✕</button>
+                        </div>
+                    </div>
+                    <div style="font-size:0.28rem; color:#7b6a93; text-align:center;">+{{ getTotalBonus('dex') }}D +{{ getTotalBonus('int') }}I +{{ getTotalBonus('hp') }}V</div>
+                </div>
+
+                <div class="panel">
+                    <h3><i>💰</i> Recursos</h3>
+                    <div style="display:flex; justify-content:space-between; font-size:0.4rem; flex-wrap:wrap; align-items:center;">
+                        <span style="color:#dbbd7a;">💛 {{ gold }}</span>
+                        <span style="color:#b6b0b0;">🤍 {{ silver }}</span>
+                        <span style="color:#7b6a93;">📦 {{ inventory.length }}</span>
+                        <span style="color:#7b6a93;">Nv.{{ level }}</span>
+                        <button class="btn btn-revive btn-xs" @click="revivePlayer()" :disabled="hp > 0">💀 Reviver</button>
+                    </div>
+                    <div class="online-toggle" style="justify-content:center; margin-top:0.05rem;">
+                        <span style="font-size:0.3rem;">Offline</span>
+                        <div class="toggle-switch" :class="{active: online}" @click="toggleOnline()">
+                            <div class="knob"></div>
+                        </div>
+                        <span style="font-size:0.3rem;">Online</span>
+                        <span style="font-size:0.28rem; color:#7b6a93; margin-left:0.05rem;">{{ online ? '🌐' : '📴' }}</span>
+                        <span style="font-size:0.25rem; color:#7bff9b; margin-left:0.05rem;" v-if="internetAvailable">🤖 IA</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- INVENTÁRIO -->
+        <div class="panel">
+            <h3><i>📦</i> Inventário</h3>
+            <div style="max-height:70px; overflow-y:auto;">
+                <div class="inventory-item" v-for="(item, idx) in inventory" :key="idx">
+                    <div class="item-info">
+                        <span class="item-name">{{ item.icon || '📦' }} {{ item.nome || item }}</span>
+                        <span class="item-level" v-if="getItemLevel(item) > 0">Nv{{ getItemLevel(item) }}</span>
+                        <span class="item-power-indicator" v-if="isEquippable(item)">
+                            <span v-if="getItemPowerComparison(item) > 0" class="power-up">⬆</span>
+                            <span v-else-if="getItemPowerComparison(item) < 0" class="power-down">⬇</span>
+                        </span>
+                        <span class="item-desc">{{ getItemDescription(item) }}</span>
+                    </div>
+                    <div class="item-actions">
+                        <button class="btn btn-secondary btn-xs" v-if="isEquippable(item)" @click="equipItem(item, idx)" :disabled="hp <= 0">Equipar</button>
+                        <button class="btn btn-secondary btn-xs" v-if="!isEquippable(item)" @click="useItem(idx)" :disabled="hp <= 0 && !item.nome?.includes('Vida')">Usar</button>
+                    </div>
+                </div>
+                <div v-if="inventory.length === 0" style="color:#6a5a80; text-align:center; padding:0.08rem; font-size:0.3rem;">Inventário vazio</div>
+            </div>
+        </div>
+
+        <!-- LOJA -->
+        <div class="panel" style="border-color: #6a518b;">
+            <h3><i>🏪</i> Loja · Comprar & Vender</h3>
+            <div style="display:grid; grid-template-columns: 1.5fr 1fr; gap:0.15rem;">
+                <div>
+                    <h4 style="color:#7bff9b; font-size:0.35rem;">🛒 Comprar (+50%)</h4>
+                    <div class="scroll-shop" style="max-height:100px; overflow-y:auto;">
+                        <div class="shop-grid" style="grid-template-columns:1fr 1fr;">
+                            <div class="shop-item" v-for="(item, idx) in shopItems" :key="idx">
+                                <span class="shop-name">{{ item.icon }} {{ item.nome }}</span>
+                                <span class="shop-bonus" v-if="item.bonus">
+                                    <span v-for="(bonus, stat) in item.bonus" :key="stat">+{{ bonus }} {{ stat }} </span>
+                                </span>
+                                <span class="shop-level" v-if="item.levelReq">🔒 Nv{{ item.levelReq }}</span>
+                                <span class="shop-price">💰 {{ item.price }}</span>
+                                <div class="shop-actions">
+                                    <button class="btn btn-success btn-xs" @click="buyItem(idx)" :disabled="gold < item.price || item.levelReq > level">Comprar</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div>
+                    <h4 style="color:#ffb07b; font-size:0.35rem;">🔄 Vender (-50%)</h4>
+                    <div class="scroll-inv" style="max-height:100px; overflow-y:auto;">
+                        <div v-for="(item, idx) in inventory" :key="'sell'+idx" style="display:flex; justify-content:space-between; padding:0.05rem 0; border-bottom:1px solid #1a1428; font-size:0.32rem; flex-wrap:wrap; align-items:center;">
+                            <span style="font-size:0.32rem;">{{ item.icon || '📦' }} {{ item.nome || item }}</span>
+                            <span style="color:#dbbd7a; font-size:0.28rem;">💰{{ getItemPrice(item) }}</span>
+                            <button class="btn btn-gold btn-xs" @click="sellItem(idx)">Vender</button>
+                        </div>
+                        <div v-if="inventory.length === 0" style="color:#6a5a80; text-align:center; padding:0.08rem; font-size:0.28rem;">Nada para vender</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="footer-info">
+            <span>💾 Auto Save</span>
+            <span>Nv.{{ level }}</span>
+            <span>{{ inventory.length }} itens</span>
+            <span v-if="internetAvailable">🤖 IA</span>
+        </div>
+    </div>
+
+    <!-- ===== LAYOUT HORIZONTAL ===== -->
+    <div class="layout-horizontal">
+        <header class="hero-header">
+            <div class="avatar-area">
+                <div class="avatar-frame">
+                    <svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+                        <circle cx="50" cy="40" r="28" fill="#2f2542" stroke="#b28aff" stroke-width="1.5"/>
+                        <circle cx="38" cy="34" r="7" fill="#f0e8ff" stroke="#a58bd6" stroke-width="0.8"/>
+                        <circle cx="62" cy="34" r="7" fill="#f0e8ff" stroke="#a58bd6" stroke-width="0.8"/>
+                        <circle cx="36" cy="32" r="3.5" fill="#2f1d4a"/>
+                        <circle cx="60" cy="32" r="3.5" fill="#2f1d4a"/>
+                        <ellipse cx="50" cy="42" rx="6" ry="3" fill="#b49ad9"/>
+                        <path d="M30 28 Q25 35 18 30 Q12 22 22 18 Q30 14 38 18 Q44 22 44 28 Z" fill="#3f7ab8" stroke="#2f5f94" stroke-width="0.6"/>
+                        <path d="M70 28 Q75 35 82 30 Q88 22 78 18 Q70 14 62 18 Q56 22 56 28 Z" fill="#3f7ab8" stroke="#2f5f94" stroke-width="0.6"/>
+                        <path d="M30 18 Q40 6 56 8 Q68 12 72 22 Q60 18 44 20 Q32 22 30 18" fill="#2266b0" stroke="#1e4a7e" stroke-width="0.8"/>
+                        <path d="M20 65 Q30 72 50 74 Q70 72 80 65 Q74 80 50 82 Q26 80 20 65" fill="#1e162b"/>
+                        <circle cx="50" cy="78" r="2.5" fill="#c9b0e8"/>
+                        <path d="M40 88 L45 95 L55 95 L60 88 Z" fill="#9575b0"/>
+                    </svg>
+                </div>
+                <div>
+                    <div class="hero-name">Lyra</div>
+                    <div>
+                        <span class="hero-title">Arcana</span>
+                        <span class="class-badge">Nv.{{ level }}</span>
+                        <span class="power-total">⚡ Poder {{ totalPower }}</span>
+                    </div>
+                </div>
+            </div>
+            <div class="stats-mini" style="grid-template-columns:1fr 1fr 1fr 1fr;">
+                <div class="stat-item" @click="usePotion('health')" :class="{'stat-dead': hp <= 0}" style="padding:0.02rem 0.1rem;">
+                    <span class="stat-val" style="font-size:0.35rem;">❤️ {{ hp }}/{{ maxHp }}</span>
+                    <span class="stat-label" style="font-size:0.22rem;">Vida</span>
+                </div>
+                <div class="stat-item" @click="usePotion('energy')" style="padding:0.02rem 0.1rem;">
+                    <span class="stat-val" style="font-size:0.35rem;">⚡ {{ energy }}/{{ maxEnergy }}</span>
+                    <span class="stat-label" style="font-size:0.22rem;">Energia</span>
+                </div>
+                <div class="stat-item" style="padding:0.02rem 0.1rem;">
+                    <span class="stat-val" style="font-size:0.35rem;">🏹 {{ getStatWithBonus('dex') }}</span>
+                    <span class="stat-label" style="font-size:0.22rem;">Dex</span>
+                </div>
+                <div class="stat-item" style="padding:0.02rem 0.1rem;">
+                    <span class="stat-val" style="font-size:0.35rem;">🧠 {{ getStatWithBonus('int') }}</span>
+                    <span class="stat-label" style="font-size:0.22rem;">Int</span>
+                </div>
+            </div>
+        </header>
+
+        <div class="grid-2-h">
+            <div>
+                <div class="panel">
+                    <h3><i>🗺️</i> Aetheria</h3>
+                    <div class="map-preview" @click="explore()" style="height:30px;">
+                        <span class="label" style="font-size:0.35rem;">🌍 EXPLORAR</span>
+                    </div>
+                    <div class="mini-biomes" style="font-size:0.22rem;">
+                        <span>🌲Floresta</span> <span>🏜️Deserto</span> <span>❄️Montanhas</span>
+                    </div>
+                    <div style="display:flex; gap:0.06rem; margin-top:0.05rem; flex-wrap:wrap;">
+                        <button class="btn btn-primary btn-xs" @click="explore()" :disabled="hp <= 0 || energy < 8">🌍 Explorar (-8⚡)</button>
+                        <button class="btn btn-checkpoint btn-xs" @click="saveCheckpoint()" :disabled="hp <= 0" title="Salvar progresso atual">💾 Check</button>
+                        <button class="btn btn-checkpoint btn-xs" @click="goToCheckpoint()" :disabled="!hasCheckpoint || hp <= 0" title="Voltar ao checkpoint perdendo 3 níveis">⏪ Voltar</button>
+                    </div>
+                    <div class="checkpoint-info" v-if="hasCheckpoint" style="font-size:0.22rem;">📍 Nv.{{ checkpointLevel }}</div>
+                </div>
+
+                <div class="panel">
+                    <h3><i>📜</i> Missões</h3>
+                    <ul class="quest-list" style="max-height:45px;">
+                        <li v-for="quest in availableQuests" :key="quest.id" @click="showQuest(quest)" style="font-size:0.28rem; padding:0.04rem 0.02rem;">
+                            <span class="marker" :style="{background: quest.completed ? '#7bc87b' : quest.boss ? '#ff6b6b' : '#e6c87a'}"></span>
+                            <span class="qinfo"><strong>{{ quest.name }}</strong></span>
+                            <span class="qlevel" v-if="!quest.boss">Nv{{ quest.level }}</span>
+                            <span class="qboss" v-if="quest.boss">👹BOSS</span>
+                        </li>
+                    </ul>
+                    <div class="quest-actions" style="gap:0.05rem;">
+                        <button class="btn btn-primary btn-xs" @click="generateQuest()" :disabled="hp <= 0" style="font-size:0.28rem;">🔄 Nova</button>
+                        <button class="btn btn-clear btn-xs" @click="clearCompletedQuests()" :disabled="completedQuestsCount === 0" title="Limpar missões concluídas" style="font-size:0.28rem;">🧹 Limpar</button>
+                    </div>
+                </div>
+
+                <div class="panel">
+                    <h3><i>⚡</i> Habilidades</h3>
+                    <div class="skill-grid" style="grid-template-columns:1fr 1fr 1fr;">
+                        <div class="skill-item" v-for="skill in skills" :key="skill.name" @click="useSkill(skill)" :style="{opacity: hp <= 0 ? 0.4 : 1, fontSize:'0.28rem', minHeight:'12px'}">
+                            <span>{{ skill.icon }} {{ skill.name }}</span>
+                            <span class="skill-cost" style="font-size:0.22rem;">-{{ skill.cost }}⚡</span>
+                        </div>
+                    </div>
+                    <button class="btn btn-primary btn-xs" @click="levelUp()" :disabled="hp <= 0" style="font-size:0.28rem;">⬆️ Nv ({{ xp }}/{{ xpNeeded }}XP)</button>
+                </div>
+            </div>
+
+            <div>
+                <div class="panel">
+                    <h3><i>⚔️</i> Combate</h3>
+                    <div class="combat-log" style="max-height:30px;">
+                        <div v-for="log in combatLogs" :key="log.id" :class="log.type" style="font-size:0.28rem;">{{ log.msg }}</div>
+                    </div>
+                    <div id="enemyAreaH">
+                        <div class="enemy-card" :class="{'boss-card': enemy.isBoss}" v-for="enemy in enemies" :key="enemy.id" style="font-size:0.28rem; padding:0.05rem 0.08rem;">
+                            <span>{{ enemy.icon }} {{ enemy.name }} <span style="font-size:0.22rem;color:#7b6a93;">(Nv{{ enemy.level }})</span></span>
+                            <span v-if="enemy.isBoss" style="color:#ff6b6b; font-size:0.22rem;">👹BOSS</span>
+                            <div class="hp-bar" style="width:22px; height:3px;"><div class="fill" :style="{width: (enemy.hp/enemy.maxHp*100)+'%'}"></div></div>
+                            <button class="btn btn-secondary btn-xs" @click="attackEnemy(enemy)" :disabled="hp <= 0">⚔️</button>
+                        </div>
+                    </div>
+                    <button class="btn btn-primary btn-xs" @click="spawnEnemy()" :disabled="hp <= 0 || energy < 5" style="font-size:0.28rem;">👹 Buscar (-5⚡)</button>
+                </div>
+
+                <div class="grid-2-h" style="gap:0.1rem;">
+                    <div class="panel">
+                        <h3><i>🛡️</i> Equip.</h3>
+                        <div class="equip-slot" :class="{'equip-highlight': equipment.cabeca}" style="font-size:0.28rem; min-height:12px;">
+                            <span class="slot-label">👑</span>
+                            <span class="slot-item" v-if="equipment.cabeca" style="font-size:0.22rem;">{{ equipment.cabeca.nome }}</span>
+                            <span class="slot-empty" v-else style="font-size:0.22rem;">vazio</span>
+                            <span class="slot-level" v-if="equipment.cabeca" style="font-size:0.2rem;">Nv{{ getItemLevel(equipment.cabeca) }}</span>
+                            <button class="btn btn-danger btn-xs" v-if="equipment.cabeca" @click="unequip('cabeca')" :disabled="hp <= 0" style="font-size:0.2rem;">✕</button>
+                        </div>
+                        <div class="equip-slot" :class="{'equip-highlight': equipment.peito}" style="font-size:0.28rem; min-height:12px;">
+                            <span class="slot-label">👕</span>
+                            <span class="slot-item" v-if="equipment.peito" style="font-size:0.22rem;">{{ equipment.peito.nome }}</span>
+                            <span class="slot-empty" v-else style="font-size:0.22rem;">vazio</span>
+                            <span class="slot-level" v-if="equipment.peito" style="font-size:0.2rem;">Nv{{ getItemLevel(equipment.peito) }}</span>
+                            <button class="btn btn-danger btn-xs" v-if="equipment.peito" @click="unequip('peito')" :disabled="hp <= 0" style="font-size:0.2rem;">✕</button>
+                        </div>
+                        <div class="equip-slot" :class="{'equip-highlight': equipment.arma}" style="font-size:0.28rem; min-height:12px;">
+                            <span class="slot-label">⚔️</span>
+                            <span class="slot-item" v-if="equipment.arma" style="font-size:0.22rem;">{{ equipment.arma.nome }}</span>
+                            <span class="slot-empty" v-else style="font-size:0.22rem;">vazio</span>
+                            <span class="slot-level" v-if="equipment.arma" style="font-size:0.2rem;">Nv{{ getItemLevel(equipment.arma) }}</span>
+                            <button class="btn btn-danger btn-xs" v-if="equipment.arma" @click="unequip('arma')" :disabled="hp <= 0" style="font-size:0.2rem;">✕</button>
+                        </div>
+                        <div style="font-size:0.22rem; color:#7b6a93; text-align:center;">+{{ getTotalBonus('dex') }}D +{{ getTotalBonus('int') }}I</div>
+                    </div>
+
+                    <div class="panel">
+                        <h3><i>💰</i> Recursos</h3>
+                        <div style="display:flex; justify-content:space-between; font-size:0.32rem; flex-wrap:wrap;">
+                            <span style="color:#dbbd7a;">💛 {{ gold }}</span>
+                            <span style="color:#b6b0b0;">🤍 {{ silver }}</span>
+                            <span style="color:#7b6a93;">📦 {{ inventory.length }}</span>
+                            <button class="btn btn-revive btn-xs" @click="revivePlayer()" :disabled="hp > 0" style="font-size:0.28rem;">💀 Reviver</button>
+                        </div>
+                        <div class="online-toggle" style="justify-content:center; margin-top:0.05rem;">
+                            <span style="font-size:0.28rem;">Offline</span>
+                            <div class="toggle-switch" style="width:16px; height:10px;" :class="{active: online}" @click="toggleOnline()">
+                                <div class="knob" style="width:5px; height:5px;"></div>
+                            </div>
+                            <span style="font-size:0.28rem;">Online</span>
+                            <span style="font-size:0.22rem; color:#7b6a93;">{{ online ? '🌐' : '📴' }}</span>
+                            <span style="font-size:0.2rem; color:#7bff9b;" v-if="internetAvailable">🤖IA</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="panel" style="border-color:#6a518b; padding:0.12rem;">
+                    <h3 style="font-size:0.35rem;"><i>🏪</i> Loja</h3>
+                    <div style="display:grid; grid-template-columns:1.2fr 1fr; gap:0.1rem;">
+                        <div>
+                            <h4 style="color:#7bff9b; font-size:0.28rem;">🛒 Comprar (+50%)</h4>
+                            <div class="scroll-shop" style="max-height:55px; overflow-y:auto;">
+                                <div style="display:grid; grid-template-columns:1fr 1fr; gap:0.06rem;">
+                                    <div class="shop-item" v-for="(item, idx) in shopItems.slice(0,6)" :key="'hbuy'+idx" style="padding:0.06rem;">
+                                        <span class="shop-name" style="font-size:0.28rem;">{{ item.icon }} {{ item.nome }}</span>
+                                        <span class="shop-price" style="font-size:0.22rem;">💰{{ item.price }}</span>
+                                        <button class="btn btn-success btn-xs" @click="buyItem(idx)" :disabled="gold < item.price || item.levelReq > level" style="font-size:0.22rem;">Comprar</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div>
+                            <h4 style="color:#ffb07b; font-size:0.28rem;">🔄 Vender (-50%)</h4>
+                            <div class="scroll-inv" style="max-height:55px; overflow-y:auto;">
+                                <div v-for="(item, idx) in inventory.slice(0,4)" :key="'hsell'+idx" style="display:flex; justify-content:space-between; padding:0.03rem 0; font-size:0.26rem; border-bottom:1px solid #1a1428; align-items:center;">
+                                    <span>{{ item.icon || '📦' }} {{ item.nome || item }}</span>
+                                    <span style="color:#dbbd7a; font-size:0.2rem;">💰{{ getItemPrice(item) }}</span>
+                                    <button class="btn btn-gold btn-xs" @click="sellItem(idx)" style="font-size:0.2rem;">Vender</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="footer-info" style="font-size:0.22rem;">
+            <span>💾 Auto Save</span>
+            <span>Nv.{{ level }}</span>
+            <span>{{ inventory.length }} itens</span>
+            <span v-if="internetAvailable">🤖 IA</span>
+        </div>
+    </div>
+</div>
+
+<!-- Dead Overlay -->
+<div class="dead-overlay" :class="{active: hp <= 0}">
+    <h1>💀 MORTO</h1>
+    <p>Você foi derrotado!</p>
+    <p style="font-size:0.45rem; color:#aa6666;">Use o botão REVIVER ou compre poção na loja</p>
+    <div style="display:flex; flex-wrap:wrap; gap:0.15rem; justify-content:center; margin-top:0.15rem;">
+        <button class="btn btn-revive" @click="revivePlayer()" style="padding:0.2rem 0.8rem; font-size:0.5rem;">💀 Reviver (TESTE)</button>
+        <button class="btn btn-checkpoint" @click="goToCheckpoint()" :disabled="!hasCheckpoint" style="padding:0.2rem 0.8rem; font-size:0.45rem;">⏪ Checkpoint (-3 Nv)</button>
+    </div>
+    <p style="font-size:0.35rem; color:#6a5a80; margin-top:0.15rem;">🏪 Loja disponível na interface</p>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/vue@2.7.14/dist/vue.min.js"></script>
+<script>
+new Vue({
+    el: '#app',
+    data: {
+        level: 1,
+        xp: 0,
+        hp: 500,
+        maxHp: 500,
+        energy: 50,
+        maxEnergy: 50,
+        dex: 10,
+        int: 12,
+        gold: 100,
+        silver: 20,
+        reputation: 'Neutra',
+        inventory: [
+            { nome: 'Poção de Vida', icon: '❤️', tipo: 'consumivel', price: 20, desc: 'Restaura 30 de vida', level: 1 },
+            { nome: 'Poção de Energia', icon: '⚡', tipo: 'consumivel', price: 15, desc: 'Restaura 20 de energia', level: 1 }
+        ],
+        equipment: {
+            cabeca: null,
+            peito: null,
+            arma: null
+        },
+        shopItems: [],
+        skills: [
+            { name: 'Fogo', icon: '🔥', cost: 30, damage: 15 },
+            { name: 'Gelo', icon: '❄️', cost: 32, damage: 12 },
+            { name: 'Raio', icon: '⚡', cost: 35, damage: 18 },
+            { name: 'Ar', icon: '🌪️', cost: 38, damage: 10 },
+            { name: 'Trevas', icon: '💀', cost: 34, damage: 20 },
+            { name: 'Luz', icon: '✨', cost: 30, damage: 14 }
+        ],
+        classes: ['Maga Elemental', 'Assassina', 'Cavaleira'],
+        factions: ['🌞 Império', '🧙 Guilda', '⚔️ Ordem', '🌑 Clã', '🏴‍☠️ Piratas'],
+        professions: ['🔨 Ferreiro', '🧪 Alquimista', '🎣 Pescador', '🪓 Lenhador', '⛏️ Minerador'],
+        mount: 'Lobo',
+        pet: 'Fada',
+        online: false,
+        quests: [
+            { id: 1, name: 'O Despertar', desc: 'Encontrar o 1º Cristal', level: 1, completed: false, boss: false },
+            { id: 2, name: 'Ecos do Devorador', desc: 'Investigar as ruínas', level: 3, completed: false, boss: false },
+            { id: 3, name: 'Aliança dos Clãs', desc: 'Reunir as facções', level: 5, completed: false, boss: false },
+            { id: 4, name: 'O Selo de Gelo', desc: 'Cristal do Gelo', level: 7, completed: false, boss: false },
+            { id: 5, name: 'A Profecia', desc: 'Encontre o pergaminho', level: 10, completed: false, boss: false },
+            { id: 6, name: 'O Gigante', desc: 'Derrote o guardião', level: 15, completed: false, boss: true },
+            { id: 7, name: 'Cidade Submersa', desc: 'Explore as ruínas', level: 20, completed: false, boss: false },
+            { id: 8, name: 'Portal das Estrelas', desc: 'Ative o portal', level: 25, completed: false, boss: false },
+            { id: 9, name: 'Maldição do Rei', desc: 'Quebre a maldição', level: 30, completed: false, boss: true },
+            { id: 10, name: 'Despertar Divino', desc: 'Enfrente o Deus', level: 40, completed: false, boss: true }
+        ],
+        enemies: [],
+        combatLogs: [],
+        logId: 0,
+        internetAvailable: false,
+        isDead: false,
+        checkpoint: null,
+        hasCheckpoint: false,
+        checkpointLevel: 0,
+        checkpointQuests: 0
+    },
+    
+    computed: {
+        xpNeeded() {
+            return Math.floor(this.level * 20 + 10);
+        },
+        availableQuests() {
+            return this.quests.filter(q => q.level <= this.level);
+        },
+        completedQuestsCount() {
+            return this.quests.filter(q => q.completed).length;
+        },
+        totalPower() {
+            const dexBonus = this.getBonusFromEquipment('dex');
+            const intBonus = this.getBonusFromEquipment('int');
+            const hpBonus = this.getBonusFromEquipment('hp');
+            const energyBonus = this.getBonusFromEquipment('energy');
+            const base = this.dex + this.int + Math.floor(this.level * 1.5);
+            return base + dexBonus + intBonus + hpBonus + energyBonus;
+        }
+    },
+    
+    mounted() {
+        this.loadGame();
+        this.generateShopItems();
+        this.spawnEnemy();
+        this.checkDeath();
+        this.startIA();
+        setInterval(() => this.saveGame(), 15000);
+        this.updateStatsDisplay();
+    },
+    
+    methods: {
+        // ========== PODER DO ITEM ==========
+        getItemPower(item) {
+            if (!item) return 0;
+            if (item.bonus) {
+                return Object.values(item.bonus).reduce((a, b) => a + b, 0);
+            }
+            // Para consumíveis, poder baseado no preço ou nível
+            if (item.tipo === 'consumivel') {
+                if (item.nome.includes('Grande')) return 8;
+                if (item.nome.includes('Vida')) return 3;
+                if (item.nome.includes('Energia')) return 2;
+                return item.level || 1;
+            }
+            return item.level || 0;
+        },
+        
+        getItemPowerComparison(item) {
+            if (!this.isEquippable(item)) return 0;
+            const slot = item.slot;
+            const equipped = this.equipment[slot];
+            if (!equipped) return 1; // se não tem nada equipado, é melhor
+            const powerItem = this.getItemPower(item);
+            const powerEquipped = this.getItemPower(equipped);
+            return powerItem - powerEquipped;
+        },
+        
+        // ========== DESCRIÇÃO DOS ITENS ==========
+        getItemDescription(item) {
+            if (typeof item === 'string') {
+                if (item.includes('Vida')) return 'Restaura 30 de vida';
+                if (item.includes('Energia')) return 'Restaura 20 de energia';
+                return 'Item comum';
+            }
+            if (item.desc) return item.desc;
+            if (item.bonus) {
+                const parts = [];
+                if (item.bonus.hp) parts.push(`+${item.bonus.hp} Vida`);
+                if (item.bonus.energy) parts.push(`+${item.bonus.energy} Energia`);
+                if (item.bonus.dex) parts.push(`+${item.bonus.dex} Destreza`);
+                if (item.bonus.int) parts.push(`+${item.bonus.int} Inteligência`);
+                if (parts.length > 0) return parts.join(', ');
+                return 'Equipamento';
+            }
+            if (item.tipo === 'consumivel') return 'Item consumível';
+            if (item.tipo === 'equipavel') return 'Equipamento';
+            return 'Item';
+        },
+        
+        // ========== CONTRA-ATAQUE ==========
+        enemyCounterAttack(target) {
+            if (target.hp <= 0) return;
+            let enemyDmg = Math.floor(3 + target.level * 2 + Math.random() * 5);
+            if (target.isBoss) enemyDmg = Math.floor(enemyDmg * 1.5);
+            let dodge = Math.random() < 0.1 + (this.dex + this.getBonusFromEquipment('dex')) * 0.005;
+            if (dodge) {
+                this.addLog('heal', `🌀 ${target.name} errou o contra-ataque!`);
+            } else {
+                this.hp -= enemyDmg;
+                this.addLog('damage', `💢 ${target.name} contra-atacou causando ${enemyDmg} de dano`);
+                this.checkDeath();
+            }
+        },
+        
+        // ========== ITEM LEVEL ==========
+        getItemLevel(item) {
+            if (!item) return 0;
+            if (item.level) return item.level;
+            if (item.price) {
+                if (item.price >= 400) return 25;
+                if (item.price >= 200) return 15;
+                if (item.price >= 100) return 10;
+                if (item.price >= 50) return 5;
+                return 1;
+            }
+            if (item.bonus) {
+                const total = Object.values(item.bonus).reduce((a, b) => a + b, 0);
+                if (total >= 20) return 25;
+                if (total >= 12) return 15;
+                if (total >= 6) return 10;
+                if (total >= 3) return 5;
+                return 1;
+            }
+            return 1;
+        },
+        
+        // ========== CLEAR COMPLETED QUESTS ==========
+        clearCompletedQuests() {
+            if (this.completedQuestsCount === 0) {
+                this.showToast('❌ Nenhuma missão concluída para limpar');
+                return;
+            }
+            if (confirm(`⚠️ Deseja remover todas as ${this.completedQuestsCount} missões concluídas?`)) {
+                this.quests = this.quests.filter(q => !q.completed);
+                this.addLog('xp', `🧹 ${this.completedQuestsCount} missões concluídas removidas`);
+                this.showToast(`🧹 ${this.completedQuestsCount} missões removidas`);
+                this.saveGame();
+            }
+        },
+        
+        // ========== IA ==========
+        startIA() {
+            setInterval(() => this.checkInternet(), 15000);
+            setInterval(() => this.iaContentUpdate(), 45000);
+        },
+        
+        checkInternet() {
+            fetch('https://www.google.com/favicon.ico', { mode: 'no-cors', cache: 'no-store' })
+                .then(() => { this.internetAvailable = true; })
+                .catch(() => { this.internetAvailable = false; });
+        },
+        
+        iaContentUpdate() {
+            if (this.internetAvailable) {
+                if (this.availableQuests.length < 5 && Math.random() < 0.3) {
+                    const isBoss = Math.random() < 0.25 && this.level >= 10;
+                    const newQuest = {
+                        id: Date.now(),
+                        name: `🌐 IA: ${['Destino', 'Profecia', 'Renascer', 'Alvorada', 'Eternidade'][Math.floor(Math.random()*5)]}`,
+                        desc: isBoss ? '👹 Boss gerado pela IA' : 'Missão descoberta pela IA',
+                        level: this.level + Math.floor(Math.random() * 2),
+                        completed: false,
+                        boss: isBoss
+                    };
+                    if (!this.quests.some(q => q.name === newQuest.name)) {
+                        this.quests.push(newQuest);
+                        this.addLog('ia', '🤖 IA: Nova missão!');
+                        this.showToast('📜 IA gerou uma missão!');
+                    }
+                }
+                const reps = ['Neutra', 'Amigável', 'Respeitada', 'Honrada', 'Lendária'];
+                const idx = Math.min(reps.length - 1, Math.floor(this.level / 8));
+                if (this.reputation !== reps[idx]) {
+                    this.reputation = reps[idx];
+                    this.addLog('ia', `🤖 Reputação: ${reps[idx]}`);
+                }
+            } else {
+                if (this.availableQuests.length < 3 && Math.random() < 0.15) {
+                    const newQuest = {
+                        id: Date.now(),
+                        name: `📜 Missão Local: ${['Caça', 'Exploração', 'Coleta', 'Patrulha'][Math.floor(Math.random()*4)]}`,
+                        desc: 'Missão gerada pela IA local',
+                        level: this.level,
+                        completed: false,
+                        boss: false
+                    };
+                    if (!this.quests.some(q => q.name === newQuest.name)) {
+                        this.quests.push(newQuest);
+                        this.addLog('ia', '🤖 IA Local: Nova missão');
+                    }
+                }
+            }
+            this.generateShopItems();
+            this.saveGame();
+        },
+        
+        // ========== REVIVE ==========
+        revivePlayer() {
+            if (this.hp > 0) {
+                this.showToast('✅ Já está vivo!');
+                return;
+            }
+            this.hp = Math.floor(this.maxHp * 0.5);
+            this.energy = Math.floor(this.maxEnergy * 0.5);
+            this.isDead = false;
+            this.addLog('heal', '💚 Revivido! (TESTE)');
+            this.showToast('💚 Revivido!');
+            this.checkDeath();
+            this.saveGame();
+        },
+        
+        // ========== LOJA ==========
+        generateShopItems() {
+            const baseItems = [
+                { nome: 'Poção de Vida', icon: '❤️', tipo: 'consumivel', basePrice: 20, levelMult: 1, desc: 'Restaura 30 de vida', level: 1 },
+                { nome: 'Poção de Energia', icon: '⚡', tipo: 'consumivel', basePrice: 15, levelMult: 1, desc: 'Restaura 20 de energia', level: 1 },
+                { nome: 'Poção Grande Vida', icon: '💖', tipo: 'consumivel', basePrice: 50, levelMult: 1.2, desc: 'Restaura 80 de vida', level: 5 },
+                { nome: 'Poção Grande Energia', icon: '💫', tipo: 'consumivel', basePrice: 40, levelMult: 1.2, desc: 'Restaura 60 de energia', level: 5 },
+                { nome: 'Elmo de Ferro', icon: '👑', tipo: 'equipavel', slot: 'cabeca', bonus: { hp: 10, dex: 2 }, basePrice: 50, levelMult: 1.1, level: 5, desc: '+10 Vida, +2 Destreza' },
+                { nome: 'Armadura de Couro', icon: '👕', tipo: 'equipavel', slot: 'peito', bonus: { hp: 20, dex: 3 }, basePrice: 80, levelMult: 1.1, level: 5, desc: '+20 Vida, +3 Destreza' },
+                { nome: 'Espada Curta', icon: '⚔️', tipo: 'equipavel', slot: 'arma', bonus: { dex: 5, int: 2 }, basePrice: 100, levelMult: 1.15, level: 5, desc: '+5 Destreza, +2 Inteligência' }
+            ];
+            const epicItems = [
+                { nome: 'Elmo Épico', icon: '👑', tipo: 'equipavel', slot: 'cabeca', bonus: { hp: 25, dex: 5, int: 3 }, basePrice: 200, levelMult: 1.2, levelReq: 10, level: 10, desc: '+25 Vida, +5 Destreza, +3 Inteligência' },
+                { nome: 'Armadura Épica', icon: '👕', tipo: 'equipavel', slot: 'peito', bonus: { hp: 40, dex: 6, int: 4 }, basePrice: 300, levelMult: 1.2, levelReq: 12, level: 12, desc: '+40 Vida, +6 Destreza, +4 Inteligência' },
+                { nome: 'Espada Épica', icon: '⚔️', tipo: 'equipavel', slot: 'arma', bonus: { dex: 12, int: 6 }, basePrice: 400, levelMult: 1.25, levelReq: 15, level: 15, desc: '+12 Destreza, +6 Inteligência' }
+            ];
+            const iaItems = [
+                { nome: 'Cristal Étereo', icon: '💎', tipo: 'consumivel', basePrice: 100, levelMult: 1.2, levelReq: 8, desc: 'Consumir concede 50 XP', level: 8 },
+                { nome: 'Lâmina Lunar', icon: '🗡️', tipo: 'equipavel', slot: 'arma', bonus: { dex: 10, int: 5 }, basePrice: 300, levelMult: 1.3, levelReq: 18, level: 18, desc: '+10 Destreza, +5 Inteligência' }
+            ];
+            
+            let allItems = [...baseItems];
+            epicItems.forEach(item => {
+                if (this.level >= (item.levelReq || 0)) allItems.push(item);
+            });
+            if (this.internetAvailable || this.online) {
+                iaItems.forEach(item => {
+                    if (this.level >= (item.levelReq || 0) && !allItems.some(i => i.nome === item.nome)) {
+                        allItems.push(item);
+                    }
+                });
+            }
+            
+            this.shopItems = allItems.map(item => {
+                const levelFactor = 1 + (this.level - 1) * 0.05;
+                // Preço de compra com +50% (multiplica por 1.5)
+                const price = Math.floor(item.basePrice * levelFactor * (item.levelMult || 1) * 1.5);
+                const newItem = { ...item, price, levelReq: item.levelReq || 0 };
+                delete newItem.basePrice;
+                delete newItem.levelMult;
+                return newItem;
+            });
+        },
+        
+        buyItem(index) {
+            const item = this.shopItems[index];
+            if (!item) return;
+            if (this.gold < item.price) { this.showToast('❌ Ouro insuficiente!'); return; }
+            if (item.levelReq > this.level) { this.showToast(`❌ Requer Nv${item.levelReq}!`); return; }
+            if (this.hp <= 0 && !item.nome.includes('Vida')) {
+                this.showToast('💀 Morto! Compre poção de vida.');
+                return;
+            }
+            
+            this.gold -= item.price;
+            // Preço de venda será 50% do preço base (calculado depois)
+            const basePriceForSell = Math.floor(item.price / 1.5); // remove o +50%
+            const newItem = { 
+                nome: item.nome, icon: item.icon, tipo: item.tipo,
+                price: basePriceForSell, // guarda o preço base para venda
+                level: item.level || 1,
+                desc: item.desc || ''
+            };
+            if (item.slot) newItem.slot = item.slot;
+            if (item.bonus) newItem.bonus = { ...item.bonus };
+            
+            this.inventory.push(newItem);
+            this.addLog('shop', `🛒 Comprou ${item.nome} por ${item.price}💰`);
+            this.showToast(`🛒 ${item.nome}`);
+            if (item.nome.includes('Vida') && this.hp <= 0) this.revivePlayer();
+            this.saveGame();
+        },
+        
+        sellItem(index) {
+            const item = this.inventory[index];
+            const price = this.getItemPrice(item);
+            if (price <= 0) return;
+            this.gold += price;
+            this.inventory.splice(index, 1);
+            this.addLog('shop', `💰 Vendeu por ${price}💰`);
+            this.showToast(`💰 +${price}`);
+            this.saveGame();
+        },
+        
+        getItemPrice(item) {
+            if (typeof item === 'string') {
+                if (item.includes('Vida')) return 5; // 50% de 10
+                if (item.includes('Energia')) return 4;
+                return 2;
+            }
+            // Preço de venda = 50% do preço base
+            if (item.price) return Math.floor(item.price * 0.5);
+            if (item.bonus) {
+                const total = Object.values(item.bonus).reduce((a, b) => a + b, 0);
+                return Math.floor(total * 4); // 50% do valor original
+            }
+            return 2;
+        },
+        
+        // ========== CHECKPOINT ==========
+        saveCheckpoint() {
+            if (this.hp <= 0) { this.showToast('💀 Morto!'); return; }
+            this.checkpoint = {
+                level: this.level, xp: this.xp, hp: this.maxHp, energy: this.maxEnergy,
+                dex: this.dex, int: this.int, gold: this.gold, silver: this.silver,
+                inventory: JSON.parse(JSON.stringify(this.inventory)),
+                equipment: JSON.parse(JSON.stringify(this.equipment)),
+                quests: JSON.parse(JSON.stringify(this.quests)),
+                reputation: this.reputation
+            };
+            this.hasCheckpoint = true;
+            this.checkpointLevel = this.level;
+            this.checkpointQuests = this.quests.filter(q => q.completed).length;
+            this.addLog('heal', '💾 Checkpoint salvo!');
+            this.showToast('💾 Checkpoint salvo!');
+            this.saveGame();
+        },
+        
+        goToCheckpoint() {
+            if (!this.hasCheckpoint) { this.showToast('❌ Nenhum checkpoint!'); return; }
+            if (!confirm(`⚠️ Voltar ao checkpoint perderá 3 níveis! (Nv.${this.level} → Nv.${Math.max(1, this.checkpoint.level - 3)})\nDeseja continuar?`)) return;
+            
+            const checkpoint = this.checkpoint;
+            const newLevel = Math.max(1, checkpoint.level - 3);
+            this.level = newLevel;
+            this.xp = 0;
+            this.dex = Math.max(10, checkpoint.dex - (checkpoint.level - newLevel) * 2);
+            this.int = Math.max(12, checkpoint.int - (checkpoint.level - newLevel) * 2);
+            this.gold = checkpoint.gold;
+            this.silver = checkpoint.silver;
+            this.reputation = checkpoint.reputation;
+            this.inventory = JSON.parse(JSON.stringify(checkpoint.inventory));
+            this.equipment = JSON.parse(JSON.stringify(checkpoint.equipment));
+            this.quests = JSON.parse(JSON.stringify(checkpoint.quests));
+            
+            this.updateStatsDisplay();
+            this.hp = this.maxHp;
+            this.energy = this.maxEnergy;
+            this.isDead = false;
+            this.quests.forEach(q => {
+                if (q.completed && q.level > newLevel) q.completed = false;
+            });
+            this.addLog('heal', `⏪ Nível ${newLevel}`);
+            this.showToast(`⏪ Nível ${newLevel}`);
+            this.saveGame();
+            this.spawnEnemy();
+            this.generateShopItems();
+        },
+        
+        // ========== MORTE ==========
+        checkDeath() {
+            if (this.hp <= 0) {
+                this.hp = 0;
+                this.isDead = true;
+                this.addLog('death', '💀 Morreu! Use revive ou poção.');
+            } else {
+                this.isDead = false;
+            }
+        },
+        
+        // ========== EQUIPAMENTO ==========
+        isEquippable(item) {
+            if (typeof item === 'string') return false;
+            return item && item.tipo === 'equipavel' && item.slot;
+        },
+        
+        equipItem(item, idx) {
+            if (!this.isEquippable(item)) return;
+            if (this.hp <= 0) { this.showToast('💀 Morto!'); return; }
+            const slot = item.slot;
+            if (this.equipment[slot]) this.inventory.push(this.equipment[slot]);
+            this.equipment[slot] = { ...item };
+            this.inventory.splice(idx, 1);
+            this.updateStatsDisplay();
+            this.addLog('loot', `✅ ${item.nome}`);
+            this.showToast(`✅ ${item.nome}`);
+            this.saveGame();
+        },
+        
+        unequip(slot) {
+            if (this.hp <= 0) { this.showToast('💀 Morto!'); return; }
+            if (this.equipment[slot]) {
+                this.inventory.push(this.equipment[slot]);
+                this.equipment[slot] = null;
+                this.updateStatsDisplay();
+                this.showToast(`↩️ Desequipou`);
+                this.saveGame();
+            }
+        },
+        
+        getItemBonus(item) {
+            if (!item || !item.bonus) return 0;
+            return Object.values(item.bonus).reduce((a, b) => a + b, 0);
+        },
+        
+        getBonusFromEquipment(stat) {
+            let total = 0;
+            for (const slot in this.equipment) {
+                const item = this.equipment[slot];
+                if (item && item.bonus && item.bonus[stat]) total += item.bonus[stat];
+            }
+            return total;
+        },
+        
+        getTotalBonus(stat) {
+            return this.getBonusFromEquipment(stat);
+        },
+        
+        getStatWithBonus(stat) {
+            return (this[stat] || 0) + this.getBonusFromEquipment(stat);
+        },
+        
+        updateStatsDisplay() {
+            const hpBonus = this.getTotalBonus('hp');
+            const energyBonus = this.getTotalBonus('energy');
+            this.maxHp = 80 + this.level * 20 + hpBonus;
+            this.maxEnergy = 40 + this.level * 10 + energyBonus;
+            if (this.hp > this.maxHp) this.hp = this.maxHp;
+            if (this.energy > this.maxEnergy) this.energy = this.maxEnergy;
+            this.checkDeath();
+        },
+        
+        // ========== INVENTÁRIO ==========
+        useItem(index) {
+            const item = this.inventory[index];
+            if (!item) return;
+            
+            if (this.hp <= 0) {
+                const name = typeof item === 'string' ? item : item.nome;
+                if (!name.includes('Vida')) {
+                    this.showToast('💀 Morto! Use poção de vida.');
+                    return;
+                }
+            }
+            
+            if (typeof item === 'string') {
+                if (item.includes('Vida')) {
+                    this.hp = Math.min(this.maxHp, this.hp + 30);
+                    this.addLog('heal', '❤️ +30 HP');
+                    this.checkDeath();
+                } else if (item.includes('Energia')) {
+                    this.energy = Math.min(this.maxEnergy, this.energy + 20);
+                    this.addLog('heal', '⚡ +20 Energia');
+                } else {
+                    this.xp += 15;
+                    this.addLog('xp', '📜 +15 XP');
+                    this.checkLevelUp();
+                }
+                this.inventory.splice(index, 1);
+                this.saveGame();
+                return;
+            }
+            
+            if (item.tipo === 'consumivel') {
+                if (item.nome.includes('Vida')) {
+                    const heal = item.nome.includes('Grande') ? 80 : 30;
+                    this.hp = Math.min(this.maxHp, this.hp + heal);
+                    this.addLog('heal', `❤️ +${heal} HP`);
+                    this.checkDeath();
+                    if (this.hp > 0 && this.isDead) {
+                        this.isDead = false;
+                        this.showToast('🔄 Revivido!');
+                    }
+                } else if (item.nome.includes('Energia')) {
+                    const restore = item.nome.includes('Grande') ? 60 : 20;
+                    this.energy = Math.min(this.maxEnergy, this.energy + restore);
+                    this.addLog('heal', `⚡ +${restore} Energia`);
+                } else {
+                    this.xp += 20;
+                    this.addLog('xp', '📜 +20 XP');
+                    this.checkLevelUp();
+                }
+                this.inventory.splice(index, 1);
+                this.saveGame();
+            }
+        },
+        
+        usePotion(type) {
+            const idx = this.inventory.findIndex(i => {
+                const name = typeof i === 'string' ? i : i.nome;
+                return name && name.includes(type === 'health' ? 'Vida' : 'Energia');
+            });
+            if (idx >= 0) this.useItem(idx);
+            else this.showToast(`❌ Sem poção de ${type === 'health' ? 'vida' : 'energia'}!`);
+        },
+        
+        // ========== SAVE / LOAD ==========
+        saveGame() {
+            const data = {
+                level: this.level, xp: this.xp, hp: this.hp, maxHp: this.maxHp,
+                energy: this.energy, maxEnergy: this.maxEnergy, dex: this.dex, int: this.int,
+                gold: this.gold, silver: this.silver, inventory: this.inventory,
+                equipment: this.equipment, quests: this.quests, reputation: this.reputation,
+                checkpoint: this.checkpoint, hasCheckpoint: this.hasCheckpoint,
+                checkpointLevel: this.checkpointLevel, checkpointQuests: this.checkpointQuests
+            };
+            try { localStorage.setItem('aetheria_save', JSON.stringify(data)); } catch(e) {}
+        },
+        
+        loadGame() {
+            try {
+                const raw = localStorage.getItem('aetheria_save');
+                if (!raw) return;
+                const data = JSON.parse(raw);
+                Object.assign(this, data);
+                this.updateStatsDisplay();
+                this.checkDeath();
+                this.generateShopItems();
+            } catch(e) {}
+        },
+        
+        // ========== LEVEL UP ==========
+        checkLevelUp() {
+            while (this.xp >= this.xpNeeded) {
+                this.xp -= this.xpNeeded;
+                this.level++;
+                this.dex += 2;
+                this.int += 2;
+                this.updateStatsDisplay();
+                this.hp = this.maxHp;
+                this.energy = this.maxEnergy;
+                this.isDead = false;
+                this.addLog('heal', `⬆️ Nível ${this.level}!`);
+                this.showToast(`🎉 Nível ${this.level}!`);
+                const lvlItems = [
+                    { nome: '💎 Cristal de Poder', icon: '💎', tipo: 'consumivel', price: 30, level: this.level, desc: 'Consumir concede 30 XP' },
+                    { nome: '🗡️ Espada Arcano', icon: '🗡️', tipo: 'equipavel', slot: 'arma', bonus: { dex: 6, int: 4 }, price: 150, level: this.level, desc: '+6 Destreza, +4 Inteligência' }
+                ];
+                const item = lvlItems[Math.floor(Math.random() * lvlItems.length)];
+                this.inventory.push(item);
+                this.addLog('loot', `📦 ${item.nome}`);
+                this.generateShopItems();
+            }
+            this.saveGame();
+        },
+        
+        levelUp() {
+            if (this.xp >= this.xpNeeded) {
+                this.checkLevelUp();
+                this.saveGame();
+            } else {
+                this.showToast(`❌ Precisa de ${this.xpNeeded - this.xp} XP`);
+            }
+        },
+        
+        // ========== EXPLORAÇÃO ==========
+        explore() {
+            if (this.hp <= 0) {
+                this.showToast('💀 Morto!');
+                return;
+            }
+            if (this.energy < 8) {
+                this.showToast('⚡ Energia insuficiente! (8⚡)');
+                return;
+            }
+            
+            this.energy -= 8;
+            this.addLog('xp', `🌍 Explorando... -8⚡`);
+            
+            const dano = Math.floor(Math.random() * 16) + 5;
+            this.hp -= dano;
+            this.addLog('damage', `💥 Durante a exploração, você sofreu ${dano} de dano!`);
+            this.checkDeath();
+            
+            if (this.hp <= 0) {
+                this.addLog('death', '💀 Você morreu durante a exploração!');
+                this.isDead = true;
+                this.saveGame();
+                return;
+            }
+            
+            this.spawnEnemy();
+            
+            const events = [
+                { msg: '🌿 Clareira mágica! +20 HP', heal: 20 },
+                { msg: '💰 Baú! +15 ouro', gold: 15 },
+                { msg: '📜 Pergaminho antigo!', item: { nome: 'Pergaminho', icon: '📜', tipo: 'consumivel', price: 25, level: 1, desc: 'Item misterioso' } },
+                { msg: '🌀 Energia mística! +10 XP', xp: 10 }
+            ];
+            const event = events[Math.floor(Math.random() * events.length)];
+            
+            setTimeout(() => {
+                this.addLog('loot', event.msg);
+                if (event.heal) { this.hp = Math.min(this.maxHp, this.hp + event.heal); this.checkDeath(); }
+                if (event.gold) this.gold += event.gold;
+                if (event.item) this.inventory.push(event.item);
+                if (event.xp) { this.xp += event.xp; this.checkLevelUp(); }
+                this.saveGame();
+            }, 300);
+            
+            if (Math.random() < 0.1 && this.availableQuests.length < 8) {
+                setTimeout(() => {
+                    const names = ['Ruína Esquecida', 'Covil do Dragão', 'Floresta Sussurrante'];
+                    const isBoss = Math.random() < 0.2 && this.level >= 10;
+                    const newQuest = {
+                        id: Date.now(),
+                        name: names[Math.floor(Math.random() * names.length)],
+                        desc: isBoss ? '👹 Derrote o chefe' : 'Descoberto na exploração',
+                        level: this.level + Math.floor(Math.random() * 3),
+                        completed: false,
+                        boss: isBoss
+                    };
+                    if (!this.quests.some(q => q.name === newQuest.name)) {
+                        this.quests.push(newQuest);
+                        this.addLog('xp', `📜 Nova missão${isBoss ? ' BOSS' : ''}!`);
+                    }
+                }, 400);
+            }
+        },
+        
+        // ========== COMBATE ==========
+        spawnEnemy() {
+            if (this.hp <= 0) { this.showToast('💀 Morto!'); return; }
+            if (this.energy < 5) {
+                this.showToast('⚡ Energia insuficiente para buscar inimigos! (5⚡)');
+                return;
+            }
+            
+            this.energy -= 5;
+            this.addLog('xp', `👹 Buscando inimigos... -5⚡`);
+            
+            const names = [
+                { name: 'Slime', icon: '🟢', level: 1, hp: 30, xp: 10, gold: 5, isBoss: false },
+                { name: 'Esqueleto', icon: '💀', level: 2, hp: 45, xp: 15, gold: 8, isBoss: false },
+                { name: 'Lobo', icon: '🐺', level: 3, hp: 60, xp: 20, gold: 12, isBoss: false },
+                { name: 'Golem', icon: '🗿', level: 4, hp: 90, xp: 30, gold: 20, isBoss: false },
+                { name: 'Dragão', icon: '🐉', level: 5, hp: 150, xp: 50, gold: 35, isBoss: false },
+                { name: 'Cavaleiro', icon: '⚫', level: 6, hp: 120, xp: 40, gold: 25, isBoss: false },
+                { name: 'Fênix', icon: '🔥', level: 7, hp: 180, xp: 60, gold: 45, isBoss: false },
+                { name: 'Lich', icon: '🧙', level: 8, hp: 200, xp: 70, gold: 50, isBoss: false },
+                { name: 'Titã', icon: '⛰️', level: 9, hp: 300, xp: 100, gold: 80, isBoss: false }
+            ];
+            const bosses = [
+                { name: 'Gigante', icon: '⛰️', level: 15, hp: 800, xp: 300, gold: 200, isBoss: true },
+                { name: 'Rei Esqueleto', icon: '💀', level: 20, hp: 1000, xp: 400, gold: 300, isBoss: true },
+                { name: 'Dragão Ancião', icon: '🐉', level: 25, hp: 1500, xp: 600, gold: 500, isBoss: true }
+            ];
+            
+            let maxLevel = Math.min(this.level + 2, 10);
+            let available = names.filter(n => n.level <= maxLevel);
+            let bossSpawn = false;
+            let boss = null;
+            if (this.level >= 15 && Math.random() < 0.12) {
+                const availableBosses = bosses.filter(b => b.level <= this.level + 2);
+                if (availableBosses.length > 0) {
+                    bossSpawn = true;
+                    boss = { ...availableBosses[Math.floor(Math.random() * availableBosses.length)] };
+                    boss.id = Date.now() + 999;
+                    boss.maxHp = boss.hp;
+                }
+            }
+            
+            let count = Math.min(2, available.length);
+            let chosen = [];
+            let used = new Set();
+            for (let i = 0; i < count; i++) {
+                let idx;
+                let attempts = 0;
+                do {
+                    idx = Math.floor(Math.random() * available.length);
+                    attempts++;
+                } while (used.has(idx) && attempts < 20);
+                used.add(idx);
+                let enemy = { ...available[idx] };
+                let levelMult = 1 + (this.level - 1) * 0.15;
+                enemy.hp = Math.floor(enemy.hp * levelMult);
+                enemy.maxHp = enemy.hp;
+                enemy.id = Date.now() + i;
+                chosen.push(enemy);
+            }
+            
+            if (bossSpawn && boss) {
+                let levelMult = 1 + (this.level - 1) * 0.2;
+                boss.hp = Math.floor(boss.hp * levelMult);
+                boss.maxHp = boss.hp;
+                chosen.push(boss);
+                this.addLog('boss', `👹 BOSS ${boss.name} apareceu!`);
+            }
+            this.enemies = chosen;
+            this.addLog('xp', `👹 ${chosen.length} inimigos!`);
+            this.saveGame();
+        },
+        
+        attackEnemy(enemy) {
+            if (this.hp <= 0) { this.showToast('💀 Morto!'); return; }
+            
+            const dexBonus = this.getBonusFromEquipment('dex');
+            const intBonus = this.getBonusFromEquipment('int');
+            let baseDmg = 5 + (this.dex + dexBonus) * 0.6 + (this.int + intBonus) * 0.3;
+            let variance = 0.8 + Math.random() * 0.4;
+            let damage = Math.floor(baseDmg * variance);
+            let crit = Math.random() < 0.15;
+            if (crit) damage = Math.floor(damage * 1.8);
+            if (enemy.isBoss) {
+                damage = Math.floor(damage * 1.2);
+                this.addLog('boss', `⚔️ ATACANDO BOSS!`);
+            }
+            
+            enemy.hp -= damage;
+            this.addLog('damage', `⚔️ ${enemy.name} -${damage}${crit ? ' 💥' : ''}`);
+            
+            if (enemy.hp > 0) {
+                this.enemyCounterAttack(enemy);
+            }
+            
+            if (enemy.hp <= 0) {
+                const xpGain = Math.floor(enemy.xp * (1 + this.level * 0.05));
+                const goldGain = Math.floor(enemy.gold * (1 + this.level * 0.1));
+                this.xp += xpGain;
+                this.gold += goldGain;
+                
+                if (enemy.isBoss) {
+                    this.addLog('boss', `🎉 BOSS DERROTADO! +${xpGain}XP`);
+                    this.showToast(`👹 BOSS DERROTADO!`);
+                    const bossDrops = [
+                        { nome: '💎 Cristal Épico', icon: '💎', tipo: 'consumivel', price: 200, level: this.level, desc: 'Consumir concede 100 XP' },
+                        { nome: '🗡️ Lâmina Lendária', icon: '🗡️', tipo: 'equipavel', slot: 'arma', bonus: { dex: 15, int: 10 }, price: 500, level: this.level, desc: '+15 Destreza, +10 Inteligência' }
+                    ];
+                    const drop = bossDrops[Math.floor(Math.random() * bossDrops.length)];
+                    this.inventory.push(drop);
+                    this.addLog('loot', `👑 Drop: ${drop.nome}`);
+                } else {
+                    this.addLog('xp', `🎉 +${xpGain}XP +${goldGain}💰`);
+                }
+                
+                if (Math.random() < 0.25 && !enemy.isBoss) {
+                    const drops = [
+                        { nome: 'Poção de Vida', icon: '❤️', tipo: 'consumivel', price: 20, level: 1, desc: 'Restaura 30 de vida' },
+                        { nome: 'Poção de Energia', icon: '⚡', tipo: 'consumivel', price: 15, level: 1, desc: 'Restaura 20 de energia' }
+                    ];
+                    const drop = drops[Math.floor(Math.random() * drops.length)];
+                    this.inventory.push(drop);
+                    this.addLog('loot', `📦 ${drop.nome}`);
+                }
+                
+                this.enemies = this.enemies.filter(e => e.id !== enemy.id);
+                this.checkLevelUp();
+                if (this.enemies.length === 0) {
+                    // Não spawna automaticamente
+                }
+            }
+            
+            if (this.hp <= 0) {
+                this.isDead = true;
+                this.addLog('death', '💀 Morreu! Use revive.');
+                this.showToast('💀 Morreu! Use revive.');
+            }
+            this.saveGame();
+        },
+        
+        useSkill(skill) {
+            if (this.hp <= 0) { this.showToast('💀 Morto!'); return; }
+            if (this.energy < skill.cost) { this.showToast(`⚡ Energia insuficiente! (${skill.cost}⚡)`); return; }
+            if (this.enemies.length === 0) { this.showToast('👹 Nenhum inimigo!'); return; }
+            
+            this.energy -= skill.cost;
+            let target = this.enemies[0];
+            const intBonus = this.getBonusFromEquipment('int');
+            let dmg = Math.floor(skill.damage * (1 + (this.int + intBonus) * 0.05));
+            let crit = Math.random() < 0.2;
+            if (crit) dmg = Math.floor(dmg * 2);
+            if (target.isBoss) {
+                dmg = Math.floor(dmg * 1.3);
+                this.addLog('boss', `✨ MAGIA CONTRA BOSS!`);
+            }
+            
+            target.hp -= dmg;
+            this.addLog('damage', `✨ ${skill.icon} -${dmg}${crit ? ' 💥' : ''}`);
+            
+            if (target.hp > 0) {
+                this.enemyCounterAttack(target);
+            }
+            
+            if (target.hp <= 0) {
+                const xpGain = Math.floor(target.xp * (1 + this.level * 0.05));
+                this.xp += xpGain;
+                this.gold += Math.floor(target.gold * (1 + this.level * 0.1));
+                this.enemies = this.enemies.filter(e => e.id !== target.id);
+                if (target.isBoss) {
+                    this.addLog('boss', `🎉 BOSS DERROTADO! +${xpGain}XP`);
+                    this.showToast(`👹 BOSS DERROTADO!`);
+                } else {
+                    this.addLog('xp', `🎉 +${xpGain}XP`);
+                }
+                this.checkLevelUp();
+                if (this.enemies.length === 0) {
+                    // Não spawna automaticamente
+                }
+            }
+            
+            if (this.hp <= 0) {
+                this.isDead = true;
+                this.addLog('death', '💀 Morreu! Use revive.');
+                this.showToast('💀 Morreu! Use revive.');
+            }
+            this.saveGame();
+        },
+        
+        // ========== QUESTS ==========
+        showQuest(quest) {
+            if (this.hp <= 0) { this.showToast('💀 Morto!'); return; }
+            if (quest.completed) { this.showToast(`📜 ${quest.name} já concluída.`); return; }
+            if (quest.level > this.level) { this.showToast(`❌ Requer Nível ${quest.level}!`); return; }
+            
+            if (quest.boss) {
+                const bossNames = [
+                    { name: 'Guardião das Ruínas', icon: '🗿', hp: 600, xp: 200, gold: 150 },
+                    { name: 'Dragão das Sombras', icon: '🐉', hp: 800, xp: 300, gold: 250 }
+                ];
+                const boss = { ...bossNames[Math.floor(Math.random() * bossNames.length)] };
+                const levelMult = 1 + (this.level - 1) * 0.2;
+                boss.hp = Math.floor(boss.hp * levelMult);
+                boss.maxHp = boss.hp;
+                boss.level = this.level + 2;
+                boss.isBoss = true;
+                boss.id = Date.now() + 999;
+                boss.questId = quest.id;
+                this.enemies = [boss];
+                this.addLog('boss', `👹 BOSS "${quest.name}" apareceu!`);
+                this.showToast(`👹 ${boss.name} apareceu!`);
+                return;
+            }
+            
+            quest.completed = true;
+            const reward = 10 + quest.level * 8;
+            this.xp += reward;
+            this.gold += Math.floor(reward * 0.5);
+            this.addLog('xp', `✅ "${quest.name}" +${reward}XP`);
+            this.showToast(`📜 Missão concluída!`);
+            this.checkLevelUp();
+            this.saveGame();
+        },
+        
+        generateQuest() {
+            if (this.hp <= 0) { this.showToast('💀 Morto!'); return; }
+            const names = ['Profecia Perdida', 'Gigante Adormecido', 'Cidade Submersa'];
+            const isBoss = Math.random() < 0.2 && this.level >= 8;
+            const newQuest = {
+                id: Date.now(),
+                name: names[Math.floor(Math.random() * names.length)],
+                desc: isBoss ? '👹 Derrote o chefe' : 'Explore as ruínas',
+                level: this.level + Math.floor(Math.random() * 3),
+                completed: false,
+                boss: isBoss
+            };
+            if (!this.quests.some(q => q.name === newQuest.name)) {
+                this.quests.push(newQuest);
+                this.addLog('xp', `📜 Nova missão${isBoss ? ' BOSS' : ''}!`);
+                this.showToast(`📜 Nova missão${isBoss ? ' BOSS' : ''}!`);
+                this.saveGame();
+            }
+        },
+        
+        // ========== MULTIPLAYER ==========
+        toggleOnline() {
+            this.online = !this.online;
+            if (this.online) {
+                this.showToast('🌐 Multiplayer ativo!');
+                this.addLog('xp', '🌐 Conectado!');
+                this.generateShopItems();
+            } else {
+                this.showToast('📴 Offline.');
+                this.addLog('xp', '📴 Desconectado.');
+            }
+            this.saveGame();
+        },
+        
+        // ========== LOGS ==========
+        addLog(type, msg) {
+            this.combatLogs.unshift({ id: this.logId++, type: type, msg: msg });
+            if (this.combatLogs.length > 16) this.combatLogs.pop();
+        },
+        
+        // ========== TOAST ==========
+        showToast(msg) {
+            const existing = document.querySelector('.toast');
+            if (existing) existing.remove();
+            const toast = document.createElement('div');
+            toast.className = 'toast';
+            toast.textContent = msg;
+            document.body.appendChild(toast);
+            setTimeout(() => toast.remove(), 2000);
+        }
+    }
+});
+</script>
+</body>
+</html>
