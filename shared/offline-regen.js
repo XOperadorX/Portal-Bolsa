@@ -239,11 +239,10 @@ export class OfflineRegen {
         this.hp = data.hp_atual ?? data.hp ?? this.hpMax;
         this.mp = data.mp_atual ?? data.mp ?? this.mpMax;
 
-        // Prefere o timestamp dedicado; cai para ultima_vez_online/updated_at
-        const ts = data.offline_regen_start
-            || data.ultima_vez_online
-            || data.updated_at;
-
+        // ✅ CORRIGIDO: usa APENAS o offline_regen_start explícito.
+        // NÃO usa ultima_vez_online/updated_at como fallback, pois isso
+        // marcaria regeneração ativa mesmo quando não há.
+        const ts = data.offline_regen_start;
         this.offlineRegenStart = ts ? new Date(ts).getTime() : null;
 
         // Se a SM já está saudável, limpa a marcação

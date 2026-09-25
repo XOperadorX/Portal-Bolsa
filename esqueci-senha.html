@@ -47,14 +47,107 @@
         <div id="statusSupabase" class="status-supabase">☁️ Verificando conexão...</div>
     </div>
 
-    <script type="importmap">
-    {
-        "imports": {
-            "@supabase/supabase-js": "https://esm.sh/@supabase/supabase-js@2"
-        }
-    }
-    </script>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script>
+        const SUPABASE_URL = 'https://xrcxvizzdumcxbylmkvn.supabase.co';
+        const SUPABASE_KEY = 'sb_publishable_E-g3G3wW4EySbCsXLXp8KQ_FnmERMcD';
+        const TABELA = 'Geral';
+        const supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
-    <script type="module" src="script/esqueci-senha.js"></script>
+        const form = document.getElementById('formRecuperar');
+        const loginInput = document.getElementById('login');
+        const novaInput = document.getElementById('nova_senha');
+        const confirmarInput = document.getElementById('confirmar_senha');
+        const btn = document.getElementById('btnRecuperar');
+        const mensagemErro = document.getElementById('mensagemErro');
+        const mensagemSucesso = document.getElementById('mensagemSucesso');
+        const statusSupabase = document.getElementById('statusSupabase');
+
+        function mostrarErro(m) {
+            mensagemErro.textContent = m;
+            mensagemErro.className = 'mensagem-erro show';
+            mensagemSucesso.className = 'mensagem-sucesso';
+        }
+        function mostrarSucesso(m) {
+            mensagemSucesso.textContent = m;
+            mensagemSucesso.className = 'mensagem-sucesso show';
+            mensagemErro.className = 'mensagem-erro';
+        }
+        function ocultar() {
+            mensagemErro.className = 'mensagem-erro';
+            mensagemSucesso.className = 'mensagem-sucesso';
+        }
+
+        async function hashSenha(senha) {
+            const enc = new TextEncoder().encode(senha);
+            const buf = await crypto.subtle.digest('SHA-256', enc);
+            return Array.from(new Uint8Array(buf))
+                .map(b => b.toString(16).padStart(2, '0')).join('');
+        }
+
+        async function verificarConexao() {
+            try {
+                const { error } = await supabaseClient.from(TABELA).select('id').limit(1);
+                if (error) throw error;
+                statusSupabase.textContent = '✅ Conectado';
+                statusSupabase.className = 'status-supabase online';
+                return true;
+            } catch {
+                statusSupabase.textContent = '❌ Sem conexão';
+                statusSupabase.className = 'status-supabase offline';
+                return false;
+            }
+        }
+
+        form.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            ocultar();
+
+            const login = loginInput.value.trim().toLowerCase();
+            const nova = novaInput.value.trim();
+            const conf = confirmarInput.value.trim();
+
+            if (!login || !nova || !conf) { mostrarErro('⚠️ Preencha todos os campos.'); return; }
+            if (nova.length < 6) { mostrarErro('⚠️ Senha mínima de 6 caracteres.'); return; }
+            if (!/[a-zA-Z]/.test(nova) || !/[0-9]/.test(nova)) {
+                mostrarErro('⚠️ A senha deve conter letras e números.'); return;
+            }
+            if (nova !== conf) { mostrarErro('⚠️ As senhas não coincidem.'); return; }
+
+            if (!(await verificarConexao())) { mostrarErro('❌ Sem conexão.'); return; }
+
+            btn.disabled = true;
+            btn.textContent = '⏳ Redefinindo...';
+
+            try {
+                // Verifica se o login existe
+                const { data: user, error: errFind } = await supabaseClient
+                    .from(TABELA).select('id, login')
+                    .eq('login', login).maybeSingle();
+
+                if (errFind) throw errFind;
+                if (!user) { mostrarErro('❌ Login não encontrado.'); return; }
+
+                // Atualiza a senha (hash)
+                const novoHash = await hashSenha(nova);
+                const { error: errUpd } = await supabaseClient
+                    .from(TABELA).update({ senha: novoHash })
+                    .eq('login', login);
+
+                if (errUpd) throw errUpd;
+
+                mostrarSucesso('✅ Senha redefinida! Redirecionando para o login...');
+                setTimeout(() => { window.location.href = 'login.html'; }, 1800);
+            } catch (err) {
+                console.error(err);
+                mostrarErro('❌ Erro ao redefinir. Tente novamente.');
+            } finally {
+                btn.disabled = false;
+                btn.textContent = '🔑 Redefinir Senha';
+            }
+        });
+
+        verificarConexao();
+    </script>
 </body>
 </html>

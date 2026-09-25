@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Login — Conta Teste</title>
+    <title>Login — MM Quase Tudo</title>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Segoe UI', sans-serif; }
@@ -58,17 +58,17 @@
         }
         .status-supabase.online { color: #86efac; border-color: #22c55e; }
         .status-supabase.offline { color: #fca5a5; border-color: #ef4444; }
-        .hint {
-            margin-top: 18px; padding: 12px; background: #0f172a;
-            border: 1px dashed #334155; border-radius: 8px;
-            font-size: 12px; color: #94a3b8; text-align: center; line-height: 1.6;
-        }
-        .hint strong { color: #cbd5e1; }
         .link-cadastro {
-            margin-top: 22px; text-align: center; font-size: 14px; color: #94a3b8;
+            margin-top: 18px; text-align: center; font-size: 14px; color: #94a3b8;
         }
         .link-cadastro a { color: #60a5fa; text-decoration: none; font-weight: 600; }
         .link-cadastro a:hover { text-decoration: underline; }
+        .links-recuperar {
+            display: flex; justify-content: space-between;
+            margin-top: 14px; font-size: 13px;
+        }
+        .links-recuperar a { color: #94a3b8; text-decoration: none; }
+        .links-recuperar a:hover { color: #60a5fa; text-decoration: underline; }
     </style>
 </head>
 <body>
@@ -82,8 +82,8 @@
 
         <form id="formLogin" autocomplete="on">
             <div class="form-group">
-                <label for="login">E-mail ou Login</label>
-                <input type="text" id="login" placeholder="teste@exemplo.com" autocomplete="username" required>
+                <label for="login">E-mail</label>
+                <input type="email" id="login" placeholder="teste@exemplo.com" autocomplete="username" required>
             </div>
             <div class="form-group">
                 <label for="senha">Senha</label>
@@ -92,15 +92,18 @@
             <button type="submit" id="btnLogin">🔐 Entrar</button>
         </form>
 
+        <div class="links-recuperar">
+            <a href="esqueci-login.html">Esqueci meu login</a>
+            <a href="esqueci-senha.html">Esqueci minha senha</a>
+        </div>
+
         <div id="statusSupabase" class="status-supabase">Verificando conexão...</div>
-
-
 
         <div class="link-cadastro">
             Não tem conta? <a href="cadastro.html">Criar cadastro</a>
         </div>
         <div class="link-cadastro">
-            Donload <a href="download.html">Baixar Arquivos</a>
+            Download <a href="download.html">Baixar Arquivos</a>
         </div>
     </div>
 
@@ -155,15 +158,6 @@
             mensagemSucesso.className = 'mensagem-sucesso';
         }
 
-        // ==================== HASH (SHA-256) ====================
-        async function hashSenha(senha) {
-            const enc = new TextEncoder().encode(senha);
-            const buf = await crypto.subtle.digest('SHA-256', enc);
-            return Array.from(new Uint8Array(buf))
-                .map(b => b.toString(16).padStart(2, '0'))
-                .join('');
-        }
-
         // ==================== CONEXÃO ====================
         async function verificarSupabase() {
             try {
@@ -183,53 +177,56 @@
             }
         }
 
-        // ==================== LOGIN (DIRETO NA TABELA) ====================
-        async function fazerLogin(loginDigitado, senhaDigitada) {
+        // ==================== LOGIN VIA SUPABASE AUTH ====================
+        async function fazerLogin(email, senha) {
             try {
-                const loginNorm = loginDigitado.trim().toLowerCase();
-                const senhaHash = await hashSenha(senhaDigitada.trim());
+                const emailNorm = email.trim().toLowerCase();
 
-                const { data, error } = await supabaseClient
+                // 1) Autentica no Supabase Auth
+                const { data: authData, error: authError } =
+                    await supabaseClient.auth.signInWithPassword({
+                        email: emailNorm,
+                        password: senha
+                    });
+
+                if (authError) {
+                    console.error('Erro Auth:', authError);
+                    if (authError.message.includes('Invalid login credentials')) {
+                        mostrarErro('❌ E-mail ou senha incorretos.');
+                    } else if (authError.message.includes('Email not confirmed')) {
+                        mostrarErro('📧 Confirme seu e-mail antes de entrar.');
+                    } else {
+                        mostrarErro('❌ ' + authError.message);
+                    }
+                    return false;
+                }
+
+                // 2) Busca dados extras na tabela Geral
+                const { data: profile, error: profError } = await supabaseClient
                     .from(TABELA)
-                    .select('id, login, nome, email, senha, saldo, saldo_poupanca, carteira, email_confirmado')
-                    .or(`login.eq.${loginNorm},email.eq.${loginNorm}`)
-                    .limit(1)
+                    .select('id, login, nome, email, saldo, saldo_poupanca, carteira, email_confirmado, cadeado')
+                    .eq('email', emailNorm)
                     .maybeSingle();
 
-                if (error) {
-                    console.error('Erro consulta:', error);
-                    mostrarErro('❌ Erro ao consultar dados. Tente novamente.');
-                    return false;
-                }
-
-                if (!data) {
-                    mostrarErro('❌ E-mail/login não encontrado.');
-                    return false;
-                }
-
-                if (data.senha !== senhaHash) {
-                    mostrarErro('❌ Senha incorreta.');
-                    return false;
-                }
-
-                if (data.email_confirmado === false) {
-                    mostrarErro('📧 Conta ainda não confirmada.');
-                    return false;
+                if (profError) {
+                    console.warn('⚠️ Erro ao buscar perfil:', profError);
                 }
 
                 const usuario = {
-                    id: data.id,
-                    login: data.login,
-                    nome: data.nome || data.login,
-                    email: data.email,
-                    saldo: data.saldo || 0,
-                    saldo_poupanca: data.saldo_poupanca || 0,
-                    carteira: data.carteira || {}
+                    id: profile?.id || authData.user.id,
+                    auth_id: authData.user.id,
+                    login: profile?.login || emailNorm,
+                    nome: profile?.nome || authData.user.email,
+                    email: authData.user.email,
+                    saldo: profile?.saldo || 0,
+                    saldo_poupanca: profile?.saldo_poupanca || 0,
+                    carteira: profile?.carteira || {},
+                    cadeado: profile?.cadeado === true
                 };
                 salvarSessao(usuario);
 
                 mostrarSucesso('✅ Login realizado! Redirecionando...');
-                setTimeout(() => { window.location.href = 'dashboard.html'; }, 1200);
+                setTimeout(() => { window.location.href = 'dashboard.html'; }, 1000);
                 return true;
             } catch (e) {
                 console.error('Erro inesperado:', e);
@@ -243,10 +240,10 @@
             e.preventDefault();
             ocultarMensagens();
 
-            const login = loginInput.value.trim();
+            const email = loginInput.value.trim();
             const senha = senhaInput.value.trim();
 
-            if (!login || !senha) {
+            if (!email || !senha) {
                 mostrarErro('⚠️ Preencha todos os campos!');
                 return;
             }
@@ -260,7 +257,7 @@
             btnLogin.disabled = true;
             btnLogin.innerHTML = '<span class="loading"></span> Entrando...';
 
-            await fazerLogin(login, senha);
+            await fazerLogin(email, senha);
 
             btnLogin.disabled = false;
             btnLogin.innerHTML = '🔐 Entrar';

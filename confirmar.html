@@ -68,7 +68,6 @@
                     console.error('Erro ao obter sessão:', error);
                 }
 
-                // Espera o evento de auth mudar (quando o token é processado)
                 if (!session) {
                     const { data: listener } = supabase.auth.onAuthStateChange(
                         async (event, newSession) => {
@@ -99,17 +98,25 @@
 
         async function finalizarConfirmacao(session) {
             if (session?.user?.email_confirmed_at) {
-                // Atualiza tabela Geral (caso o trigger não tenha rodado)
-                await supabase
+                // Atualiza a tabela Geral via auth_id (mais confiável)
+                const { error: updErr } = await supabase
                     .from('Geral')
                     .update({ email_confirmado: true })
                     .eq('auth_id', session.user.id);
+
+                if (updErr) {
+                    // fallback: tenta por email
+                    await supabase
+                        .from('Geral')
+                        .update({ email_confirmado: true })
+                        .eq('email', session.user.email);
+                }
 
                 finalizar(true,
                     'E-mail confirmado com sucesso!',
                     'Sua conta está ativa. Faça login para começar.');
 
-                // faz logout do Auth para evitar auto-login no dashboard
+                // Logout para evitar auto-login no dashboard
                 await supabase.auth.signOut();
             } else {
                 finalizar(false, 'Link inválido ou expirado',

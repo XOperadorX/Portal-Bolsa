@@ -1,0 +1,36 @@
+<?xml version='1.0' encoding='utf-8'?>
+<widget id="br.seuusuario.portalbolsa" version="1.0.0" xmlns="http://www.w3.org/ns/widgets" xmlns:cdv="http://cordova.apache.org/ns/1.0">
+    <name>PortalBolsa</name>
+    <description>
+        Aplicativo MM Quase Tudo - Central de Jogos
+    </description>
+    <author email="dev@cordova.apache.org" href="https://cordova.apache.org">
+        Apache Cordova Team
+    </author>
+
+    <content src="index.html" />
+
+    <!-- ✅ Permissões de rede para acessar o Supabase -->
+    <access origin="*" />
+    <allow-intent href="http://*/*" />
+    <allow-intent href="https://*/*" />
+    <allow-navigation href="http://*/*" />
+    <allow-navigation href="https://*/*" />
+
+    <!-- ✅ Preferências do app -->
+    <preference name="Orientation" value="portrait" />
+    <preference name="BackgroundColor" value="0xff0a0b10" />
+    <preference name="StatusBarBackgroundColor" value="#0a0b10" />
+    <preference name="StatusBarStyle" value="lightcontent" />
+
+    <!-- ✅ Splash / Ícone (opcional) -->
+    <platform name="android">
+        <allow-intent href="market:*" />
+        <preference name="android-minSdkVersion" value="22" />
+        <preference name="android-targetSdkVersion" value="33" />
+    </platform>
+    <platform name="ios">
+        <allow-intent href="itms:*" />
+        <allow-intent href="itms-apps:*" />
+    </platform>
+</widget>
