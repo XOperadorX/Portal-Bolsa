@@ -1,0 +1,440 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>MM Quase Tudo - Pontinhos</title>
+<style>
+  * { margin:0; padding:0; box-sizing:border-box; font-family:Arial, sans-serif; }
+  body { background:#f0f4f8; padding:20px; text-align:center; }
+
+  /* ===== NAV ===== */
+  .nav-bar {
+    display: flex;
+    justify-content: flex-start;
+    align-items: center;
+    margin-bottom: 10px;
+  }
+  .nav-links { display: flex; }
+  .btn-voltar {
+    display: inline-block;
+    padding: 8px 18px;
+    font-size: 15px;
+    font-weight: bold;
+    color: #2d3748;
+    background: #e2e8f0;
+    border-radius: 8px;
+    text-decoration: none;
+    transition: 0.2s;
+  }
+  .btn-voltar:hover {
+    background: #2b6cb0;
+    color: #fff;
+  }
+
+  h1 { color:#2d3748; margin-bottom:10px; }
+
+  .modo { margin-bottom:15px; font-size:16px; }
+  .modo button { padding:8px 20px; margin:0 5px; font-size:15px; border:none; border-radius:8px; cursor:pointer; background:#e2e8f0; color:#2d3748; }
+  .modo button.ativo { background:#2b6cb0; color:white; }
+
+  .info { display:flex; justify-content:center; gap:30px; margin-bottom:15px; font-size:18px; font-weight:bold; flex-wrap:wrap; }
+  .x { color:#e53e3e; }
+  .o { color:#3182ce; }
+
+  .jogador-ativo { padding:4px 12px; border-radius:8px; background:#e2e8f0; transition:0.3s; }
+  .jogador-ativo.ativo-x { background:#fed7d7; box-shadow:0 0 0 3px #e53e3e; }
+  .jogador-ativo.ativo-o { background:#bee3f8; box-shadow:0 0 0 3px #3182ce; }
+
+  .tabuleiro { display:inline-block; background:#fff; padding:20px; border-radius:12px; box-shadow:0 4px 12px rgba(0,0,0,0.15); }
+  .linha { display:flex; }
+  .ponto { width:12px; height:12px; background:#2d3748; border-radius:50%; margin:0; }
+
+  .h { width:40px; height:12px; cursor:pointer; position:relative; }
+  .h span { position:absolute; top:50%; left:0; width:100%; height:3px; background:#cbd5e0; transform:translateY(-50%); transition:0.2s; }
+  .h:hover span { background:#a0aec0; }
+  .h.clicado span { background:#2b6cb0; }
+  .h.clicado { cursor:default; }
+  .h.clicado:hover span { background:#2b6cb0; }
+
+  .v { width:12px; height:40px; cursor:pointer; position:relative; }
+  .v span { position:absolute; left:50%; top:0; width:3px; height:100%; background:#cbd5e0; transform:translateX(-50%); transition:0.2s; }
+  .v:hover span { background:#a0aec0; }
+  .v.clicado span { background:#2b6cb0; }
+  .v.clicado { cursor:default; }
+  .v.clicado:hover span { background:#2b6cb0; }
+
+  .celula { width:40px; height:40px; position:relative; }
+  .celula .marcado { display:flex; align-items:center; justify-content:center; width:100%; height:100%; font-weight:bold; font-size:22px; animation:pop 0.3s ease; }
+  .celula .marcado.x { color:#e53e3e; }
+  .celula .marcado.o { color:#3182ce; }
+
+  @keyframes pop {
+    0% { transform:scale(0); }
+    70% { transform:scale(1.2); }
+    100% { transform:scale(1); }
+  }
+
+  button.principal { margin-top:15px; padding:10px 25px; font-size:16px; background:#48bb78; color:white; border:none; border-radius:8px; cursor:pointer; }
+  button.principal:hover { background:#38a169; }
+
+  .fim { margin-top:20px; font-size:22px; font-weight:bold; color:#2d3748; }
+  .pensando { color:#718096; font-size:14px; font-style:italic; margin-top:10px; height:20px; }
+</style>
+</head>
+<body>
+    <nav class="nav-bar">
+        <div class="nav-links">
+            <a href="../../dashboard.html" class="btn-voltar" style="margin-left: 15px;">🏠 Voltar</a>
+        </div>
+    </nav>
+<h1>🎯 Jogo dos Pontinhos</h1>
+
+<div class="modo">
+  <button id="btn2p" class="ativo" onclick="definirModo('2p')">👥 2 Jogadores</button>
+  <button id="btnIA" onclick="definirModo('ia')">🤖 Jogar contra IA</button>
+</div>
+
+<div class="info">
+  <div class="jogador-ativo" id="painelX">Jogador <span class="x">X</span>: <span id="ptsX">0</span> quadrados</div>
+  <div class="jogador-ativo" id="painelO">Jogador <span class="o">O</span>: <span id="ptsO">0</span> quadrados</div>
+  <div>Tempo: <span id="tempo">05:00</span></div>
+</div>
+<div class="tabuleiro" id="tabuleiro"></div>
+<div class="pensando" id="pensando"></div>
+<br>
+<button class="principal" onclick="reiniciar()">🔄 Reiniciar Jogo</button>
+<div class="fim" id="fim"></div>
+
+<script>
+const LINHAS = 11;
+const COLUNAS = 11;
+const TEMPO_TOTAL = 5 * 60;
+const IA = 'O'; // IA joga como O
+
+let modo = '2p'; // '2p' ou 'ia'
+let jogador = 'X';
+let ptsX = 0, ptsO = 0;
+let fimJogo = false;
+let tempoRestante = TEMPO_TOTAL;
+let cronometro;
+let iaPensando = false;
+
+let horizontal = Array(LINHAS).fill().map(() => Array(COLUNAS - 1).fill(false));
+let vertical = Array(LINHAS - 1).fill().map(() => Array(COLUNAS).fill(false));
+let celulas = Array(LINHAS - 1).fill().map(() => Array(COLUNAS - 1).fill(null));
+
+function definirModo(m) {
+  modo = m;
+  document.getElementById('btn2p').classList.toggle('ativo', m === '2p');
+  document.getElementById('btnIA').classList.toggle('ativo', m === 'ia');
+  reiniciar();
+}
+
+function montarTabuleiro() {
+  const tab = document.getElementById('tabuleiro');
+  tab.innerHTML = '';
+
+  for (let l = 0; l < LINHAS * 2 - 1; l++) {
+    const divLinha = document.createElement('div');
+    divLinha.className = 'linha';
+
+    if (l % 2 === 0) {
+      const indiceLinha = l / 2;
+      for (let c = 0; c < COLUNAS; c++) {
+        const p = document.createElement('div');
+        p.className = 'ponto';
+        divLinha.appendChild(p);
+
+        if (c < COLUNAS - 1) {
+          const h = document.createElement('div');
+          h.className = 'h' + (horizontal[indiceLinha][c] ? ' clicado' : '');
+          h.onclick = () => clicarHorizontal(indiceLinha, c);
+          h.innerHTML = '<span></span>';
+          divLinha.appendChild(h);
+        }
+      }
+    } else {
+      const indiceLinha = Math.floor(l / 2);
+      for (let c = 0; c < COLUNAS; c++) {
+        const v = document.createElement('div');
+        v.className = 'v' + (vertical[indiceLinha][c] ? ' clicado' : '');
+        v.onclick = () => clicarVertical(indiceLinha, c);
+        v.innerHTML = '<span></span>';
+        divLinha.appendChild(v);
+
+        if (c < COLUNAS - 1) {
+          const cel = document.createElement('div');
+          cel.className = 'celula';
+          if (celulas[indiceLinha][c]) {
+            const m = document.createElement('div');
+            m.className = 'marcado ' + celulas[indiceLinha][c].toLowerCase();
+            m.textContent = celulas[indiceLinha][c];
+            cel.appendChild(m);
+          }
+          divLinha.appendChild(cel);
+        }
+      }
+    }
+    tab.appendChild(divLinha);
+  }
+  atualizarPainelJogador();
+}
+
+function atualizarPainelJogador() {
+  const painelX = document.getElementById('painelX');
+  const painelO = document.getElementById('painelO');
+  painelX.classList.remove('ativo-x');
+  painelO.classList.remove('ativo-o');
+  if (!fimJogo) {
+    if (jogador === 'X') painelX.classList.add('ativo-x');
+    else painelO.classList.add('ativo-o');
+  }
+}
+
+function ehVezDaIA() {
+  return modo === 'ia' && jogador === IA && !fimJogo;
+}
+
+function clicarHorizontal(l, c) {
+  if (fimJogo || horizontal[l][c] || ehVezDaIA() || iaPensando) return;
+  horizontal[l][c] = true;
+  const ganhou = verificarQuadrados();
+  if (!ganhou) jogador = jogador === 'X' ? 'O' : 'X';
+  montarTabuleiro();
+  agendarIA();
+}
+
+function clicarVertical(l, c) {
+  if (fimJogo || vertical[l][c] || ehVezDaIA() || iaPensando) return;
+  vertical[l][c] = true;
+  const ganhou = verificarQuadrados();
+  if (!ganhou) jogador = jogador === 'X' ? 'O' : 'X';
+  montarTabuleiro();
+  agendarIA();
+}
+
+function verificarQuadrados() {
+  let ganhouQuadrado = false;
+  for (let l = 0; l < LINHAS - 1; l++) {
+    for (let c = 0; c < COLUNAS - 1; c++) {
+      if (celulas[l][c]) continue;
+      if (horizontal[l][c] && horizontal[l + 1][c] && vertical[l][c] && vertical[l][c + 1]) {
+        celulas[l][c] = jogador;
+        if (jogador === 'X') ptsX++;
+        else ptsO++;
+        ganhouQuadrado = true;
+        atualizarPlacar();
+      }
+    }
+  }
+  verificarFim();
+  return ganhouQuadrado;
+}
+
+function atualizarPlacar() {
+  document.getElementById('ptsX').textContent = ptsX;
+  document.getElementById('ptsO').textContent = ptsO;
+}
+
+function verificarFim() {
+  const total = (LINHAS - 1) * (COLUNAS - 1);
+  if (ptsX + ptsO === total) terminar();
+}
+
+function atualizarTempo() {
+  const min = Math.floor(tempoRestante / 60);
+  const seg = tempoRestante % 60;
+  document.getElementById('tempo').textContent = 
+    `${String(min).padStart(2, '0')}:${String(seg).padStart(2, '0')}`;
+
+  if (tempoRestante <= 0) {
+    clearInterval(cronometro);
+    terminar();
+    return;
+  }
+  tempoRestante--;
+}
+
+function terminar() {
+  fimJogo = true;
+  clearInterval(cronometro);
+  atualizarPainelJogador();
+  const divFim = document.getElementById('fim');
+  const nomeX = 'Jogador X';
+  const nomeO = modo === 'ia' ? 'IA (O)' : 'Jogador O';
+  if (ptsX > ptsO) {
+    divFim.innerHTML = `🎉 Fim de Jogo! Vencedor: <span class="x">${nomeX}</span> (${ptsX} a ${ptsO})`;
+  } else if (ptsO > ptsX) {
+    divFim.innerHTML = `🎉 Fim de Jogo! Vencedor: <span class="o">${nomeO}</span> (${ptsO} a ${ptsX})`;
+  } else {
+    divFim.innerHTML = `🤝 Fim de Jogo! Empate: ${ptsX} a ${ptsO}`;
+  }
+}
+
+// ================= IA =================
+
+function agendarIA() {
+  if (!ehVezDaIA()) return;
+  iaPensando = true;
+  document.getElementById('pensando').textContent = '🤖 IA pensando...';
+  setTimeout(jogadaIA, 600);
+}
+
+function jogadaIA() {
+  if (fimJogo || !ehVezDaIA()) { iaPensando = false; return; }
+
+  let jogou = false;
+  let ganhou = false;
+  let continuar = true;
+
+  while (continuar && !fimJogo) {
+    const jogada = escolherJogadaIA();
+    if (!jogada) break;
+
+    if (jogada.tipo === 'h') {
+      horizontal[jogada.l][jogada.c] = true;
+    } else {
+      vertical[jogada.l][jogada.c] = true;
+    }
+
+    ganhou = verificarQuadrados();
+
+    if (!ganhou) {
+      jogador = jogador === 'X' ? 'O' : 'X';
+      continuar = false;
+    } else {
+      // continua jogando (jogada extra)
+      continuar = true;
+    }
+    jogou = true;
+    montarTabuleiro();
+  }
+
+  iaPensando = false;
+  document.getElementById('pensando').textContent = '';
+  montarTabuleiro();
+}
+
+// Verifica se uma jogada fecha um quadrado
+function fechaQuadrado(tipo, l, c, paraJogador) {
+  const h = horizontal.map(r => r.slice());
+  const v = vertical.map(r => r.slice());
+  if (tipo === 'h') h[l][c] = true;
+  else v[l][c] = true;
+
+  let count = 0;
+  for (let i = 0; i < LINHAS - 1; i++) {
+    for (let j = 0; j < COLUNAS - 1; j++) {
+      if (celulas[i][j]) continue;
+      if (h[i][j] && h[i + 1][j] && v[i][j] && v[i][j + 1]) count++;
+    }
+  }
+  return count;
+}
+
+// Lista todas as jogadas possíveis
+function jogadasPossiveis() {
+  const lista = [];
+  for (let l = 0; l < LINHAS; l++) {
+    for (let c = 0; c < COLUNAS - 1; c++) {
+      if (!horizontal[l][c]) lista.push({ tipo: 'h', l, c });
+    }
+  }
+  for (let l = 0; l < LINHAS - 1; l++) {
+    for (let c = 0; c < COLUNAS; c++) {
+      if (!vertical[l][c]) lista.push({ tipo: 'v', l, c });
+    }
+  }
+  return lista;
+}
+
+// Verifica se uma jogada cria a 3ª linha de algum quadrado
+function criaTerceiraLinha(tipo, l, c) {
+  const h = horizontal.map(r => r.slice());
+  const v = vertical.map(r => r.slice());
+  if (tipo === 'h') h[l][c] = true;
+  else v[l][c] = true;
+
+  for (let i = 0; i < LINHAS - 1; i++) {
+    for (let j = 0; j < COLUNAS - 1; j++) {
+      if (celulas[i][j]) continue;
+      const lados = [
+        h[i][j], h[i + 1][j], v[i][j], v[i][j + 1]
+      ].filter(Boolean).length;
+      if (lados === 3) return true;
+    }
+  }
+  return false;
+}
+
+function escolherJogadaIA() {
+  const jogadas = jogadasPossiveis();
+  if (jogadas.length === 0) return null;
+
+  // 1) Jogada que fecha quadrado (prioriza a que fecha mais)
+  const fechadoras = [];
+  for (const j of jogadas) {
+    const qtd = fechaQuadrado(j.tipo, j.l, j.c, IA);
+    if (qtd > 0) fechadoras.push({ ...j, qtd });
+  }
+  if (fechadoras.length > 0) {
+    fechadoras.sort((a, b) => b.qtd - a.qtd);
+    return fechadoras[0];
+  }
+
+  // 2) Jogada segura (não cria terceira linha)
+  const seguras = jogadas.filter(j => !criaTerceiraLinha(j.tipo, j.l, j.c));
+  if (seguras.length > 0) {
+    return seguras[Math.floor(Math.random() * seguras.length)];
+  }
+
+  // 3) Obrigado a dar ponto: escolhe a que dá menos quadrados
+  const comContagem = jogadas.map(j => {
+    // simula a jogada e conta quantos quadrados o adversário faria depois
+    const h = horizontal.map(r => r.slice());
+    const v = vertical.map(r => r.slice());
+    if (j.tipo === 'h') h[j.l][j.c] = true;
+    else v[j.l][j.c] = true;
+
+    let cedidos = 0;
+    for (let i = 0; i < LINHAS - 1; i++) {
+      for (let j2 = 0; j2 < COLUNAS - 1; j2++) {
+        if (celulas[i][j2]) continue;
+        const lados = [
+          h[i][j2], h[i + 1][j2], v[i][j2], v[i][j2 + 1]
+        ].filter(Boolean).length;
+        if (lados === 3) cedidos++;
+      }
+    }
+    return { ...j, cedidos };
+  });
+  comContagem.sort((a, b) => a.cedidos - b.cedidos);
+  return comContagem[0];
+}
+
+// ================= Fim IA =================
+
+function reiniciar() {
+  jogador = 'X';
+  ptsX = 0; ptsO = 0;
+  fimJogo = false;
+  iaPensando = false;
+  tempoRestante = TEMPO_TOTAL;
+  horizontal = Array(LINHAS).fill().map(() => Array(COLUNAS - 1).fill(false));
+  vertical = Array(LINHAS - 1).fill().map(() => Array(COLUNAS).fill(false));
+  celulas = Array(LINHAS - 1).fill().map(() => Array(COLUNAS - 1).fill(null));
+  document.getElementById('fim').innerHTML = '';
+  document.getElementById('pensando').textContent = '';
+  atualizarPlacar();
+  clearInterval(cronometro);
+  atualizarTempo();
+  cronometro = setInterval(atualizarTempo, 1000);
+  montarTabuleiro();
+}
+
+// Iniciar
+reiniciar();
+</script>
+</body>
+</html>
