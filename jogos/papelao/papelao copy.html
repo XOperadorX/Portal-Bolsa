@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>₿ A Jornada do Líquido Doce</title>
+    <title>🍹 A Jornada do Líquido Doce</title>
     <style>
         /* ===== RESET E BASE ===== */
         * {
@@ -17,72 +17,10 @@
             background: #1a1410;
             min-height: 100vh;
             display: flex;
-            flex-direction: column;
-            align-items: center;
-            padding: 0;
-            margin: 0;
-        }
-
-        /* ===== NAV BAR ===== */
-        .nav-bar {
-            width: 100%;
-            background: #2f1f12;
-            border-bottom: 2px solid #5a3f2b;
-            padding: 8px 0;
-            display: flex;
-            align-items: center;
-            justify-content: flex-start;
-            position: sticky;
-            top: 0;
-            z-index: 200;
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
-        }
-
-        .nav-links {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            width: 100%;
-            max-width: 800px;
-            margin: 0 auto;
-            padding: 0 16px;
-        }
-
-        .btn-voltar {
-            display: inline-flex;
-            align-items: center;
-            gap: 6px;
-            background: #5a3f2b;
-            color: #f7efe6;
-            text-decoration: none;
-            font-weight: 600;
-            font-size: 0.85rem;
-            padding: 8px 18px;
-            border-radius: 30px;
-            transition: 0.2s;
-            box-shadow: 0 3px 0 #1f140e;
-            white-space: nowrap;
-        }
-
-        .btn-voltar:hover {
-            background: #6b4c35;
-            transform: translateY(-2px);
-            box-shadow: 0 5px 0 #1f140e;
-        }
-
-        .btn-voltar:active {
-            transform: translateY(2px);
-            box-shadow: 0 1px 0 #1f140e;
-        }
-
-        /* ===== ÁREA DO JOGO ===== */
-        .area-jogo {
-            width: 100%;
-            display: flex;
             justify-content: center;
             align-items: center;
             padding: 20px;
-            flex: 1;
+            margin: 0;
         }
 
         /* ===== CONTAINER PRINCIPAL ===== */
@@ -218,25 +156,6 @@
         }
         .item-estatistica .valor.preco {
             color: #a1542b;
-        }
-
-        /* ===== ITENS BTC E PREÇO (FONTE MENOR) ===== */
-        .item-estatistica.item-btc,
-        .item-estatistica.item-preco {
-            font-size: 0.78rem;
-            padding: 3px 10px 3px 7px;
-            gap: 5px;
-        }
-
-        .item-estatistica.item-btc .icone,
-        .item-estatistica.item-preco .icone {
-            font-size: 0.95rem;
-        }
-
-        .item-estatistica.item-btc .valor,
-        .item-estatistica.item-preco .valor {
-            font-size: 0.82rem;
-            min-width: 34px;
         }
 
         /* ===== BARRA DE PROGRESSO ===== */
@@ -593,16 +512,6 @@
 
         /* ===== RESPONSIVIDADE ===== */
         @media (max-width: 600px) {
-            .nav-links {
-                padding: 0 12px;
-            }
-            .btn-voltar {
-                font-size: 0.75rem;
-                padding: 6px 14px;
-            }
-            .area-jogo {
-                padding: 12px;
-            }
             .container-jogo {
                 padding: 16px 14px 20px;
                 border-radius: 28px;
@@ -630,22 +539,6 @@
             .item-estatistica .valor {
                 font-size: 0.95rem;
                 min-width: 30px;
-            }
-            /* BTC e Preço menores no celular */
-            .item-estatistica.item-btc,
-            .item-estatistica.item-preco {
-                font-size: 0.68rem;
-                padding: 2px 8px 2px 6px;
-                gap: 4px;
-            }
-            .item-estatistica.item-btc .icone,
-            .item-estatistica.item-preco .icone {
-                font-size: 0.85rem;
-            }
-            .item-estatistica.item-btc .valor,
-            .item-estatistica.item-preco .valor {
-                font-size: 0.72rem;
-                min-width: 28px;
             }
             .campo-jogo {
                 min-height: 220px;
@@ -708,22 +601,6 @@
                 font-size: 0.8rem;
                 min-width: 24px;
             }
-            /* BTC e Preço ainda menores em telas muito pequenas */
-            .item-estatistica.item-btc,
-            .item-estatistica.item-preco {
-                font-size: 0.6rem;
-                padding: 2px 6px;
-                gap: 3px;
-            }
-            .item-estatistica.item-btc .icone,
-            .item-estatistica.item-preco .icone {
-                font-size: 0.75rem;
-            }
-            .item-estatistica.item-btc .valor,
-            .item-estatistica.item-preco .valor {
-                font-size: 0.62rem;
-                min-width: 22px;
-            }
             .campo-jogo {
                 min-height: 180px;
                 height: 30vh;
@@ -748,110 +625,104 @@
 </head>
 <body>
 
-    <!-- ===== ÁREA DO JOGO ===== -->
-    <div class="area-jogo">
-        <div class="container-jogo" id="app">
-            <!-- ===== CABEÇALHO ===== -->
-            <div class="cabecalho">
-                <div class="titulo-jogo">
-                    ₿ Jornada Doce
-                    <span>v2</span>
-                </div>
-                <button class="botao-reiniciar" id="botaoReiniciar">↺ Recomeçar</button>
-                <div class="nav-links">
-                    <a href="../../dashboard.html" class="btn-voltar">🏠 Voltar</a>
-                </div>
+    <div class="container-jogo" id="app">
+        <!-- ===== CABEÇALHO ===== -->
+        <div class="cabecalho">
+            <div class="titulo-jogo">
+                🍹 Jornada Doce
+                <span>v2</span>
             </div>
+            <button class="botao-reiniciar" id="botaoReiniciar">↺ Recomeçar</button>
+        </div>
 
-            <!-- ===== HISTÓRIA ===== -->
-            <div class="area-historia">
-                <div class="texto-historia" id="textoHistoria">
-                    👦 <span class="destaque">MoitaPR</span> viu outra criança tomando um líquido doce.
-                    Sua mãe não tinha dinheiro. Ele decidiu <span class="destaque">pegar papelão</span> no lixo
-                    para vender e comprar seu próprio líquido!
-                </div>
+        <!-- ===== HISTÓRIA ===== -->
+        <div class="area-historia">
+            <div class="texto-historia" id="textoHistoria">
+                👦 <span class="destaque">Carlinhos</span> viu outra criança tomando um líquido doce.
+                Sua mãe não tinha dinheiro. Ele decidiu <span class="destaque">pegar papelão</span> no lixo
+                para vender e comprar seu próprio líquido!
             </div>
+        </div>
 
-            <!-- ===== ESTATÍSTICAS ===== -->
-            <div class="barra-estatisticas">
-                <div class="item-estatistica item-btc">
-                    <span class="icone">₿</span>
-                    <span>BTC:</span>
-                    <span class="valor dinheiro" id="exibirDinheiro">0,00000000 BTC</span>
-                </div>
-                <div class="item-estatistica">
-                    <span class="icone">📦</span>
-                    <span>Papelão:</span>
-                    <span class="valor" id="exibirPapelao">0</span>
-                </div>
-                <div class="item-estatistica item-preco">
-                    <span class="icone">💲</span>
-                    <span>Preço:</span>
-                    <span class="valor preco" id="exibirPreco">0,00000247 BTC</span>
-                </div>
-                <div class="item-estatistica">
-                    <span class="icone">🎯</span>
-                    <span>Meta:</span>
-                    <span class="valor" id="exibirMeta">0%</span>
-                </div>
+        <!-- ===== ESTATÍSTICAS ===== -->
+        <div class="barra-estatisticas">
+            <div class="item-estatistica">
+                <span class="icone">💰</span>
+                <span>Dinheiro:</span>
+                <span class="valor dinheiro" id="exibirDinheiro">R$ 0,00</span>
             </div>
-
-            <!-- ===== PROGRESSO ===== -->
-            <div class="envoltorio-progresso">
-                <div class="barra-progresso" id="barraProgresso" style="width:0%;"></div>
-                <span class="rotulo-progresso" id="rotuloProgresso">0% da meta</span>
+            <div class="item-estatistica">
+                <span class="icone">📦</span>
+                <span>Papelão:</span>
+                <span class="valor" id="exibirPapelao">0</span>
             </div>
-
-            <!-- ===== INDICADOR DE PREÇO FIXO ===== -->
-            <div class="indicador-preco">
-                <span>📊 Preço fixo:</span>
-                <span class="preco-fixo">0,00000247 BTC</span>
-                <span style="opacity:0.5;margin-left:4px;">por papelão</span>
+            <div class="item-estatistica">
+                <span class="icone">💲</span>
+                <span>Preço:</span>
+                <span class="valor preco" id="exibirPreco">R$ 0,01</span>
             </div>
-
-            <!-- ===== CAMPO DE JOGO ===== -->
-            <div class="campo-jogo" id="campoJogo">
-                <!-- Os papelões serão inseridos aqui -->
+            <div class="item-estatistica">
+                <span class="icone">🎯</span>
+                <span>Meta:</span>
+                <span class="valor" id="exibirMeta">0%</span>
             </div>
+        </div>
 
-            <!-- ===== AÇÕES ===== -->
-            <div class="acoes">
-                <button class="botao botao-vender" id="botaoVender">
-                    ♻️ Vender Papelão
-                    <small style="font-weight:400;opacity:0.8;">(todos)</small>
-                </button>
-                <button class="botao botao-comprar" id="botaoComprar" disabled>
-                    🍹 Comprar Líquido
-                    <small style="font-weight:400;opacity:0.8;">0,00197600 BTC</small>
-                </button>
-            </div>
+        <!-- ===== PROGRESSO ===== -->
+        <div class="envoltorio-progresso">
+            <div class="barra-progresso" id="barraProgresso" style="width:0%;"></div>
+            <span class="rotulo-progresso" id="rotuloProgresso">0% da meta</span>
+        </div>
 
-            <!-- ===== TELA DE VITÓRIA ===== -->
-            <div class="tela-vitoria" id="telaVitoria">
-                <div class="caixa-vitoria">
-                    <span class="icone-grande">🎉</span>
-                    <h2>Você conseguiu!</h2>
-                    <p>
-                        <strong>MoitaPR</strong> juntou papelão, vendeu e finalmente
-                        comprou o <strong>líquido doce</strong> que tanto queria!
-                        <br><br>
-                        <em style="font-size:0.9rem;">"Nunca desista dos seus sonhos!"</em>
-                    </p>
-                    <button class="botao" id="botaoJogarNovamente">🔄 Jogar novamente</button>
-                </div>
+        <!-- ===== INDICADOR DE PREÇO FIXO ===== -->
+        <div class="indicador-preco">
+            <span>📊 Preço fixo:</span>
+            <span class="preco-fixo">R$ 0,01</span>
+            <span style="opacity:0.5;margin-left:4px;">por papelão</span>
+        </div>
+
+        <!-- ===== CAMPO DE JOGO ===== -->
+        <div class="campo-jogo" id="campoJogo">
+            <!-- Os papelões serão inseridos aqui -->
+        </div>
+
+        <!-- ===== AÇÕES ===== -->
+        <div class="acoes">
+            <button class="botao botao-vender" id="botaoVender">
+                ♻️ Vender Papelão
+                <small style="font-weight:400;opacity:0.8;">(todos)</small>
+            </button>
+            <button class="botao botao-comprar" id="botaoComprar" disabled>
+                🍹 Comprar Líquido
+                <small style="font-weight:400;opacity:0.8;">R$ 8,00</small>
+            </button>
+        </div>
+
+        <!-- ===== TELA DE VITÓRIA ===== -->
+        <div class="tela-vitoria" id="telaVitoria">
+            <div class="caixa-vitoria">
+                <span class="icone-grande">🎉</span>
+                <h2>Você conseguiu!</h2>
+                <p>
+                    <strong>Carlinhos</strong> juntou papelão, vendeu e finalmente
+                    comprou o <strong>líquido doce</strong> que tanto queria!
+                    <br><br>
+                    <em style="font-size:0.9rem;">"Nunca desista dos seus sonhos!"</em>
+                </p>
+                <button class="botao" id="botaoJogarNovamente">🔄 Jogar novamente</button>
             </div>
         </div>
     </div>
 
     <script>
         // ================================================================
-        //  ESTADO DO JOGO (MOEDA: BTC)
+        //  ESTADO DO JOGO (TUDO EM PORTUGUÊS)
         // ================================================================
         const ESTADO = {
-            dinheiro: 0,              // saldo em BTC
-            papelao: 0,               // quantidade de papelão
-            preco: 0.00000247,        // preço fixo por unidade em BTC (equivale a R$ 0,01)
-            meta: 0.001976,           // meta em BTC (equivale a R$ 8,00)
+            dinheiro: 0, // dinheiro em reais
+            papelao: 0, // quantidade de papelão
+            preco: 0.01, // preço fixo por unidade
+            meta: 8.00, // meta em reais (R$ 8,00)
             vitoria: false,
             estaJogando: true,
             temporizadorSpawn: 0,
@@ -880,34 +751,33 @@
         const botaoJogarNovamente = $('botaoJogarNovamente');
 
         // ================================================================
-        //  HISTÓRIAS (EM PORTUGUÊS, COM VALORES EM BTC)
+        //  HISTÓRIAS (EM PORTUGUÊS)
         // ================================================================
         const HISTORIAS = [{
-            texto: '👦 <span class="destaque">MoitaPR</span> viu outra criança tomando um líquido doce. Sua mãe não tinha dinheiro. Ele decidiu <span class="destaque">pegar papelão</span> no lixo para vender e comprar seu próprio líquido!',
+            texto: '👦 <span class="destaque">Carlinhos</span> viu outra criança tomando um líquido doce. Sua mãe não tinha dinheiro. Ele decidiu <span class="destaque">pegar papelão</span> no lixo para vender e comprar seu próprio líquido!',
             dinheiroMinimo: 0,
         }, {
-            texto: '📦 MoitaPR começou a juntar papelão. Cada peça vale <span class="destaque">0,00000247 BTC</span>. Ele precisa de <span class="destaque">muitas</span> para comprar o líquido. Ele não desiste!',
-            dinheiroMinimo: 0.00012350,
+            texto: '📦 Carlinhos começou a juntar papelão. Cada peça vale <span class="destaque">R$ 0,01</span>. Ele precisa de <span class="destaque">muitas</span> para comprar o líquido. Ele não desiste!',
+            dinheiroMinimo: 0.50,
         }, {
-            texto: '💪 "Vou continuar!", pensou MoitaPR. Ele já juntou alguns papelões. Cada um ajuda a chegar mais perto do <span class="destaque">líquido doce</span>!',
-            dinheiroMinimo: 0.00037050,
+            texto: '💪 "Vou continuar!", pensou Carlinhos. Ele já juntou alguns papelões. Cada um ajuda a chegar mais perto do <span class="destaque">líquido doce</span>!',
+            dinheiroMinimo: 1.50,
         }, {
-            texto: '📈 MoitaPR está ficando bom nisso! Ele já juntou bastante papelão. <span class="destaque">Quase lá!</span> Continue assim!',
-            dinheiroMinimo: 0.00086450,
+            texto: '📈 Carlinhos está ficando bom nisso! Ele já juntou bastante papelão. <span class="destaque">Quase lá!</span> Continue assim!',
+            dinheiroMinimo: 3.50,
         }, {
-            texto: '🔥 MoitaPR está <span class="destaque">muito perto</span> de realizar seu sonho! Mais alguns papelões e ele compra o líquido doce!',
-            dinheiroMinimo: 0.00135850,
+            texto: '🔥 Carlinhos está <span class="destaque">muito perto</span> de realizar seu sonho! Mais alguns papelões e ele compra o líquido doce!',
+            dinheiroMinimo: 5.50,
         }, {
-            texto: '🍹 <span class="destaque">É HOJE!</span> MoitaPR juntou o suficiente! Ele vai comprar o líquido doce que tanto sonhou! <strong>Clique em "Comprar Líquido"!</strong>',
-            dinheiroMinimo: 0.00185250,
+            texto: '🍹 <span class="destaque">É HOJE!</span> Carlinhos juntou o suficiente! Ele vai comprar o líquido doce que tanto sonhou! <strong>Clique em "Comprar Líquido"!</strong>',
+            dinheiroMinimo: 7.50,
         }, ];
 
         // ================================================================
         //  FUNÇÕES AUXILIARES
         // ================================================================
         function formatarDinheiro(v) {
-            // Exibe BTC com 8 casas decimais (padrão satoshi)
-            return v.toFixed(8).replace('.', ',') + ' BTC';
+            return 'R$ ' + v.toFixed(2).replace('.', ',');
         }
 
         function limitar(v, min, max) { return Math.max(min, Math.min(max, v)); }
@@ -938,7 +808,7 @@
             } else {
                 botaoComprar.classList.remove('pronto');
                 botaoComprar.innerHTML =
-                    `🍹 Comprar Líquido <small style="font-weight:400;opacity:0.8;">${formatarDinheiro(ESTADO.meta)}</small>`;
+                    `🍹 Comprar Líquido <small style="font-weight:400;opacity:0.8;">R$ ${ESTADO.meta.toFixed(2)}</small>`;
             }
 
             // Botão vender
@@ -1068,7 +938,7 @@
             flutuante.style.left = '50%';
             flutuante.style.top = '40%';
             flutuante.style.transform = 'translateX(-50%)';
-            flutuante.style.fontSize = '1.5rem';
+            flutuante.style.fontSize = '2rem';
             flutuante.style.color = '#1e7a3a';
             campo.appendChild(flutuante);
             setTimeout(() => flutuante.remove(), 1000);
@@ -1136,10 +1006,11 @@
             if (intervaloLoop) clearInterval(intervaloLoop);
             if (intervaloSpawn) clearInterval(intervaloSpawn);
 
-            // Spawn de papelão a cada 1 segundo
+            // Spawn de papelão a cada 0,8~1,5 segundos
             intervaloSpawn = setInterval(() => {
                 if (ESTADO.vitoria) return;
                 criarPapelao();
+                // Se tiver poucos papelões, spawna um extra
                 if (ESTADO.pecas.length < 4) {
                     setTimeout(criarPapelao, 200);
                 }
@@ -1148,6 +1019,7 @@
             // Atualização da interface a cada 150ms
             intervaloLoop = setInterval(() => {
                 if (ESTADO.vitoria) return;
+                // Garantir que sempre haja papelão no campo
                 if (ESTADO.pecas.length < 3 && !ESTADO.vitoria) {
                     criarPapelao();
                 }
@@ -1164,14 +1036,16 @@
         //  REINICIAR JOGO
         // ================================================================
         function reiniciarJogo() {
+            // Remover todos os papelões
             ESTADO.pecas.forEach(p => {
                 if (p.el.parentNode) p.el.remove();
             });
             ESTADO.pecas = [];
 
+            // Resetar estado
             ESTADO.dinheiro = 0;
             ESTADO.papelao = 0;
-            ESTADO.preco = 0.00000247;
+            ESTADO.preco = 0.01;
             ESTADO.vitoria = false;
             ESTADO.estaJogando = true;
             ESTADO.totalColetado = 0;
@@ -1179,11 +1053,14 @@
 
             telaVitoria.classList.remove('mostrar');
 
+            // Resetar história
             textoHistoria.innerHTML = HISTORIAS[0].texto;
 
+            // Limpar intervals e reiniciar
             if (intervaloLoop) clearInterval(intervaloLoop);
             if (intervaloSpawn) clearInterval(intervaloSpawn);
 
+            // Remover textos flutuantes
             document.querySelectorAll('.texto-flutuante').forEach(el => el.remove());
 
             atualizarInterface();
@@ -1224,15 +1101,16 @@
         atualizarInterface();
         iniciarLoopJogo();
 
+        // Spawn extra caso o campo esteja vazio
         setInterval(() => {
             if (ESTADO.pecas.length < 3 && !ESTADO.vitoria) {
                 criarPapelao();
             }
         }, 2500);
 
-        console.log('₿ Jornada do Líquido Doce - carregado!');
-        console.log('📦 Preço fixo: 0,00000247 BTC por papelão');
-        console.log('🎯 Meta: 0,00197600 BTC (800 papelões)');
+        console.log('🍹 Jornada do Líquido Doce - carregado!');
+        console.log('📦 Preço fixo: R$ 0,01 por papelão');
+        console.log('🎯 Meta: R$ 8,00 (800 papelões)');
         console.log('👆 Clique nos papelões para coletar, venda e compre o líquido!');
     </script>
 
