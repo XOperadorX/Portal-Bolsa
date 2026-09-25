@@ -1279,9 +1279,6 @@
                 }, 500);
             }
 
-            // ============================================================
-            // 🎮 CLIQUE EM JOGO — DESCONTO DE 10% DA STAMINA ATUAL
-            // ============================================================
             async gastarStaminaParaJogar(event) {
                 event.preventDefault();
                 event.stopPropagation();
@@ -1296,10 +1293,7 @@
                 if (this._processandoJogo) return;
                 this._processandoJogo = true;
 
-                // ✅ Custo = 10% da stamina ATUAL (mínimo 1 para nunca travar em 0)
-                const custoStamina = Math.max(1, Math.floor(this.sm * 0.50));
-
-                if (this.sm < custoStamina || this.sm <= 0) {
+                if (this.sm < 10) {
                     this.mostrarToast('⚠️ Stamina insuficiente! Descanse primeiro.', 'erro');
                     this._processandoJogo = false;
                     return;
@@ -1316,9 +1310,7 @@
                     if (loadingIcon) loadingIcon.textContent = gameIcon;
                     if (loadingTitle) loadingTitle.textContent = `Entrando em ${gameName}...`;
                     if (loadingSub) loadingSub.textContent = 'Preparando sua aventura';
-                    if (loadingStamina) {
-                        loadingStamina.textContent = `⚡ -${custoStamina} STAMINA (10%) — ${this.sm} → ${this.sm - custoStamina}`;
-                    }
+                    if (loadingStamina) loadingStamina.textContent = `⚡ -10 STAMINA (${this.sm} → ${this.sm - 10})`;
                     if (loadingProgressFill) loadingProgressFill.style.width = '0%';
                     loadingOverlay.classList.add('active');
                 }
@@ -1338,21 +1330,14 @@
                 }, 150);
 
                 const staminaAntes = this.sm;
-                this.sm -= custoStamina;
+                this.sm -= 10;
                 this.ultimaVezOnline = Date.now();
-
-                // ✅ Atualiza UI em tempo real (barra, número, cor)
                 this.atualizarUI();
 
-                // ✅ Notifica o módulo compartilhado + re-renderiza o widget de regen
-                if (this.offlineRegen) {
-                    this.offlineRegen.onSmReduzida(this.sm, this.getSmMax());
-                    if (typeof this.offlineRegen.render === 'function') {
-                        this.offlineRegen.render();
-                    }
-                }
+                // ✅ Notifica o módulo compartilhado (inicia regen offline se cruzar limiar)
+                if (this.offlineRegen) this.offlineRegen.onSmReduzida(this.sm, this.getSmMax());
 
-                const msg = `🎮 Entrou em ${gameName} (-${custoStamina} SM [10%]: ${staminaAntes} → ${this.sm})`;
+                const msg = `🎮 Entrou em ${gameName} (-10 SM: ${staminaAntes} → ${this.sm})`;
                 this.addLog(msg, 'info');
 
                 try {
@@ -1709,7 +1694,7 @@
                     card.removeEventListener('click', this.gastarStaminaParaJogar);
                     card.addEventListener('click', this.gastarStaminaParaJogar);
                 });
-                console.log(`🎮 ${gameCards.length} jogos configurados com consumo de 10% de stamina`);
+                console.log(`🎮 ${gameCards.length} jogos configurados com consumo de stamina`);
             }
 
             iniciarRecuperacaoStamina() {
@@ -1941,7 +1926,6 @@
         window.levelSystem = levelSystem;
 
         console.log('📊 Dashboard integrado com OfflineRegen compartilhado + login direto na tabela "Geral" + sessão 24h!');
-        console.log('🎮 Consumo de stamina: 10% do valor ATUAL por clique em jogo');
     </script>
 </body>
 </html>

@@ -1,0 +1,881 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard Central de Jogos MM</title>
+
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500;700;900&family=Rajdhani:wght@600;700&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+    <link rel="stylesheet" href="./shared/offline-regen.css">
+
+    <style>
+        :root {
+            --bg-dark: #0a0b10;
+            --card-bg: #121520;
+            --neon-blue: #00f0ff;
+            --neon-purple: #7000ff;
+            --neon-green: #00ff66;
+            --text-color: #f0f4f8;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Rajdhani', sans-serif; }
+
+        body {
+            background-color: var(--bg-dark);
+            color: var(--text-color);
+            background-image:
+                radial-gradient(circle at 15% 20%, rgba(112, 0, 255, 0.15) 0%, transparent 40%),
+                radial-gradient(circle at 85% 80%, rgba(0, 240, 255, 0.15) 0%, transparent 40%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .game-loading-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(10, 11, 16, 0.92); backdrop-filter: blur(10px); display: none; justify-content: center; align-items: center; z-index: 10000; flex-direction: column; gap: 20px; }
+        .game-loading-overlay.active { display: flex; }
+        #levelToast { position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%); background: rgba(10,11,16,0.95); backdrop-filter: blur(8px); color: #fff; padding: 10px 22px; border-radius: 12px; font-weight: 600; font-size: 0.85rem; box-shadow: 0 8px 32px rgba(0,0,0,0.5); border-left: 4px solid #3b82f6; z-index: 9999; display: none; opacity: 0; transition: opacity 0.4s ease; max-width: 90%; text-align: center; font-family: 'Rajdhani', sans-serif; }
+        #btnAdmin { display: none; }
+        #btnAdmin.visivel { display: inline-flex; align-items: center; justify-content: center; gap: 6px; animation: adminPulse 2s ease-in-out infinite; }
+        @keyframes adminPulse {
+            0%, 100% { box-shadow: 0 0 10px rgba(139, 92, 246, 0.6); }
+            50% { box-shadow: 0 0 20px rgba(139, 92, 246, 1), 0 0 30px rgba(112, 0, 255, 0.6); }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- OVERLAY DE CARREGAMENTO -->
+    <div class="game-loading-overlay" id="gameLoadingOverlay">
+        <div class="loading-spinner"></div>
+        <div class="loading-icon" id="loadingIcon">🎮</div>
+        <div class="loading-text" id="loadingTitle">Entrando no Jogo...</div>
+        <div class="loading-sub" id="loadingSub">Preparando sua aventura</div>
+        <div class="loading-stamina" id="loadingStamina">⚡ -10 STAMINA</div>
+        <div class="loading-progress-bar">
+            <div class="progress-fill" id="loadingProgressFill"></div>
+        </div>
+    </div>
+
+    <!-- STATUS BAR -->
+    <div class="status-bar">
+        <div class="status-item">
+            <span class="dot checking" id="supabaseDot"></span>
+            <span>Supabase:</span>
+            <span class="value checking" id="supabaseStatus">Verificando...</span>
+            <button class="status-reconnect" id="btnReconnectSupabase" title="Reconectar">🔄</button>
+        </div>
+        <div class="status-item" style="margin-left:auto;">
+            <span>👤 <span id="headerUser">Visitante</span></span>
+        </div>
+    </div>
+
+    <div class="dashboard-header">
+        <h1>🎮 Central de Jogos</h1>
+        <p>Escolha uma arena e comece a jogar agora mesmo!</p>
+    </div>
+
+    <nav class="nav-bar">
+        <div class="nav-links">
+            <a href="./dashboard.html" class="active">🏠 DASHBOARD</a>
+        </div>
+
+        <div class="user-profile" id="userProfile">
+            <div class="user-avatar" id="userAvatar">👤</div>
+            <div class="user-info">
+                <span class="user-nick" id="userNick">Carregando...</span>
+                <span class="saldo" id="saldo">R$ 0,00</span>
+            </div>
+        </div>
+
+        <div class="btc-widget">
+            <div class="btc-icon">⛏️</div>
+            <div class="btc-info">
+                <span class="btc-label">BTC Acumulado</span>
+                <span class="btc-value" id="btcTotal">0.00000000</span>
+            </div>
+        </div>
+
+        <div class="nav-buttons">
+            <a href="./jogos/mercado/mercado.html" class="btn-bolsa" style="background: linear-gradient(135deg, #f59e0b, #d97706);">💰 Mercado</a>
+            <a href="./jogos/mochila/mochila.html" class="btn-bolsa" style="background: linear-gradient(135deg, #8b5cf6, #7000ff);">🎒 Mochila</a>
+            <a href="./jogos/mumu/mumu.html" class="btn-bolsa" style="background: linear-gradient(135deg, #8b5cf6, #7000ff);">💰 Troca MUMU</a>
+            <a href="./jogos/troca/troca.html" class="btn-bolsa" style="background: linear-gradient(135deg, #8b5cf6, #7000ff);">💰 Troca BTC</a>
+            <a href="./jogos/ranking/ranking.html" class="btn-bolsa" style="background: linear-gradient(135deg, #8b5cf6, #7000ff);">🏆 Ranking</a>
+            <button class="btn-sair" id="btnSair">🚪 Sair</button>
+
+            <a href="./dados/admin/admin.html" id="btnAdmin" class="btn-bolsa"
+               style="display:none; background: linear-gradient(135deg, #7000ff, #8b5cf6);">
+               👑 Admin
+            </a>
+        </div>
+    </nav>
+
+    <div id="offlineRegenSlot"></div>
+
+    <div class="level-widget" id="levelWidget">
+        <div class="lw-header">
+            <div class="lw-badge">
+                <span class="lw-num" id="lwNivel">1</span>
+                <div>
+                    <div class="lw-label">NÍVEL</div>
+                    <div class="lw-title" id="lwTitulo">🌱 Iniciante</div>
+                </div>
+            </div>
+            <div class="lw-exp">
+                <div class="lw-bar"><div class="lw-fill" id="lwExpFill" style="width:0%"></div></div>
+                <div class="lw-text">
+                    <span class="lw-cur" id="lwExpAtual">0</span>
+                    <span>/ <span class="lw-nxt" id="lwExpProx">100</span> EXP</span>
+                </div>
+            </div>
+        </div>
+        <div class="lw-stats">
+            <span>❤️ HP <span class="hp-c" id="lwHp">100/100</span></span>
+            <span>💧 MANA <span class="mp-c" id="lwMp">50/50</span></span>
+            <span>⚡ STAMINA <span class="sm-c" id="lwSm">100/100</span></span>
+            <span>⚔️ FORCA <span class="atk-c" id="lwAtk">15</span></span>
+            <span>🛡️ DEFESA <span class="def-c" id="lwDef">10</span></span>
+            <span>🔮 MAGIA <span class="mag-c" id="lwMag">8</span></span>
+        </div>
+    </div>
+
+    <main class="games-grid" id="gamesGrid">
+        <a href="./jogos/planta/planta.html" class="game-card hot" data-game="fazendinha" data-game-name="Fazendinha">
+            <span class="game-badge">🌱 Novo</span>
+            <div class="game-icon">🌱</div>
+            <div class="game-title">Milharal</div>
+        </a>
+        <a href="./jogos/bolsa/bolsa.html" class="game-card" data-game="bolsa" data-game-name="Bolsa Simulator">
+            <span class="game-badge">📈</span>
+            <div class="game-icon">📈</div>
+            <div class="game-title">B3 Simulator</div>
+        </a>
+        <a href="./jogos/torre/torre.html" class="game-card" data-game="torre" data-game-name="Torre de Arena">
+            <span class="game-badge">NOVO</span>
+            <div class="game-icon">⚔️</div>
+            <div class="game-title">Torre de Arena</div>
+        </a>
+        <a href="./jogos/minerar/minerar.html" class="game-card" data-game="minerar" data-game-name="Mineração de BTC">
+            <span class="game-badge">NOVO</span>
+            <div class="game-icon">⛏️</div>
+            <div class="game-title">Mineração de BTC</div>
+        </a>
+        <a href="./jogos/faz/faz.html" class="game-card" data-game="faz" data-game-name="Fazenda">
+            <span class="game-badge">NOVO</span>
+            <div class="game-icon">🌾</div>
+            <div class="game-title">Fazenda</div>
+        </a>
+        <a href="./jogos/ninos/ninos.html" class="game-card" data-game="nino" data-game-name="Nino">
+            <span class="game-badge">NOVO</span>
+            <div class="game-icon">👶</div>
+            <div class="game-title">Nino</div>
+        </a>
+    </main>
+
+    <div class="activity-log">
+        <h3>📋 Histórico de Atividades</h3>
+        <div class="log-list" id="logList">
+            <div class="log-entry">
+                <span class="log-time">--</span>
+                <span class="log-msg" style="color:#6a7a8a;">Aguardando atividades...</span>
+            </div>
+        </div>
+    </div>
+
+    <div id="levelToast"></div>
+
+    <script type="importmap">
+    {
+      "imports": {
+        "@supabase/supabase-js": "https://esm.sh/@supabase/supabase-js@2"
+      }
+    }
+    </script>
+
+    <script type="module">
+        import { createClient } from '@supabase/supabase-js';
+
+        // ✅ Fallback seguro para o OfflineRegen
+        let OfflineRegen = null;
+        try {
+            const mod = await import('./shared/offline-regen.js');
+            OfflineRegen = mod.OfflineRegen;
+            console.log('✅ OfflineRegen carregado');
+        } catch (e) {
+            console.warn('⚠️ OfflineRegen não encontrado. Dashboard seguirá sem ele.', e);
+        }
+
+        // ============================================================
+        // DASHBOARD
+        // ============================================================
+        (function() {
+            'use strict';
+
+            const SUPABASE_URL = 'https://xrcxvizzdumcxbylmkvn.supabase.co';
+            const SUPABASE_KEY = 'sb_publishable_E-g3G3wW4EySbCsXLXp8KQ_FnmERMcD';
+            const TABELA = 'Geral';
+            const TABELA_ATIVIDADES = 'Atividades';
+
+            const SESSION_DURATION = 24 * 60 * 60 * 1000;
+            const SESSION_KEY = 'usuario_logado';
+            const SESSION_TIMESTAMP_KEY = 'session_timestamp';
+
+            const STAMINA_REGEN_INTERVAL = 30 * 1000;
+            const STAMINA_REGEN_PER_TICK = 1;
+
+            function limparSessao() {
+                localStorage.removeItem(SESSION_KEY);
+                localStorage.removeItem(SESSION_TIMESTAMP_KEY);
+            }
+
+            const supabase = createClient(SUPABASE_URL, SUPABASE_KEY);
+
+            class LevelSystem {
+                constructor() {
+                    this.nivel = 1;
+                    this.experiencia = 0;
+                    this.hpMax = 100; this.mpMax = 50; this.smMax = 100;
+                    this.ataqueBase = 15; this.defesaBase = 10; this.magiaBase = 8;
+                    this.hp = 100; this.mp = 50; this.sm = 100;
+                    this.saldo = 0; this.btc = 0; this.poderHash = 1.0;
+
+                    this.titulos = [
+                        { min: 1, titulo: '🌱 Iniciante' },
+                        { min: 5, titulo: '🌿 Aprendiz' },
+                        { min: 10, titulo: '⚔️ Guerreiro' },
+                        { min: 20, titulo: '🛡️ Mestre' },
+                        { min: 35, titulo: '🏆 Lendário' },
+                        { min: 50, titulo: '👑 Herói' },
+                        { min: 75, titulo: '⚡ Deus da Guerra' },
+                        { min: 100, titulo: '🌟 Imortal' },
+                    ];
+
+                    this.usuario = null;
+                    this.supabaseOnline = false;
+                    this.atividades = [];
+                    this.totalTreinos = 0;
+                    this.totalDescansos = 0;
+                    this.ultimaAtividade = null;
+                    this.ultimoReset = null;
+                    this.toastTimer = null;
+                    this.saveTimeout = null;
+                    this.mineracaoInterval = null;
+                    this.staminaInterval = null;
+                    this._processandoJogo = false;
+                    this.ultimaVezOnline = Date.now();
+                    this.regen = null;
+
+                    this.gastarStaminaParaJogar = this.gastarStaminaParaJogar.bind(this);
+                    this.atualizarUI = this.atualizarUI.bind(this);
+                    this.addLog = this.addLog.bind(this);
+                    this.salvar = this.salvar.bind(this);
+                }
+
+                getAtaque()  { return this.ataqueBase + Math.floor(this.nivel * 1.5); }
+                getDefesa()  { return this.defesaBase + Math.floor(this.nivel * 1.2); }
+                getMagia()   { return this.magiaBase  + Math.floor(this.nivel * 1.0); }
+                getHpMax()   { return this.hpMax + Math.floor(this.nivel * 6); }
+                getMpMax()   { return this.mpMax + Math.floor(this.nivel * 4); }
+                getSmMax()   { return this.smMax + Math.floor(this.nivel * 3); }
+
+                calcularExpProximo(nivel = this.nivel) {
+                    return Math.floor(100 * Math.pow(1.2, nivel - 1));
+                }
+                getExpProximo() { return this.calcularExpProximo(this.nivel); }
+
+                getTitulo() {
+                    let titulo = this.titulos[0].titulo;
+                    for (const t of this.titulos) if (this.nivel >= t.min) titulo = t.titulo;
+                    return titulo;
+                }
+
+                async verificarAdmin() {
+                    const btnAdmin = document.getElementById('btnAdmin');
+                    if (!btnAdmin) return;
+                    try {
+                        if (!this.usuario || !this.usuario.login || !this.supabaseOnline) {
+                            btnAdmin.style.display = 'none';
+                            btnAdmin.classList.remove('visivel');
+                            return;
+                        }
+                        const { data, error } = await supabase
+                            .from(TABELA).select('cadeado')
+                            .eq('login', this.usuario.login).maybeSingle();
+
+                        if (error || !data || data.cadeado !== true) {
+                            btnAdmin.style.display = 'none';
+                            btnAdmin.classList.remove('visivel');
+                        } else {
+                            btnAdmin.style.display = 'inline-flex';
+                            btnAdmin.classList.add('visivel');
+                        }
+                    } catch {
+                        btnAdmin.style.display = 'none';
+                        btnAdmin.classList.remove('visivel');
+                    }
+                }
+
+                addLog(mensagem, tipo = 'info') {
+                    const now = new Date();
+                    const timeStr = now.toLocaleTimeString('pt-BR', {
+                        hour: '2-digit', minute: '2-digit', second: '2-digit'
+                    });
+                    this.atividades.unshift({
+                        time: timeStr, msg: mensagem, type: tipo, timestamp: now.getTime()
+                    });
+                    if (this.atividades.length > 50) this.atividades = this.atividades.slice(0, 50);
+                    this.renderLog();
+                    if (this.usuario && this.supabaseOnline) this.salvarLog(mensagem, tipo);
+                }
+
+                renderLog() {
+                    const logList = document.getElementById('logList');
+                    if (!logList) return;
+                    if (this.atividades.length === 0) {
+                        logList.innerHTML = `<div class="log-entry"><span class="log-time">--</span><span class="log-msg" style="color:#6a7a8a;">Aguardando atividades...</span></div>`;
+                        return;
+                    }
+                    logList.innerHTML = this.atividades.map(log => `
+                        <div class="log-entry">
+                            <span class="log-time">${log.time}</span>
+                            <span class="log-msg">${log.msg}</span>
+                            <span class="log-badge">${log.type.toUpperCase()}</span>
+                        </div>
+                    `).join('');
+                }
+
+                async salvarLog(mensagem, tipo) {
+                    if (!this.usuario || !this.supabaseOnline) return;
+                    try {
+                        await supabase.from(TABELA_ATIVIDADES).insert({
+                            login: this.usuario.login,
+                            mensagem, tipo,
+                            nivel: this.nivel,
+                            exp: this.experiencia,
+                            created_at: new Date().toISOString()
+                        });
+                    } catch (e) { console.warn('⚠️ Erro ao salvar log:', e); }
+                }
+
+                async carregarLogs(login) {
+                    if (!login || !this.supabaseOnline) return;
+                    try {
+                        const { data, error } = await supabase
+                            .from(TABELA_ATIVIDADES).select('*')
+                            .eq('login', login)
+                            .order('created_at', { ascending: false })
+                            .limit(30);
+                        if (error) throw error;
+                        if (data && data.length > 0) {
+                            this.atividades = data.map(item => ({
+                                time: new Date(item.created_at).toLocaleTimeString('pt-BR', {
+                                    hour: '2-digit', minute: '2-digit', second: '2-digit'
+                                }),
+                                msg: item.mensagem,
+                                type: item.tipo || 'info',
+                                timestamp: new Date(item.created_at).getTime()
+                            }));
+                            this.renderLog();
+                        }
+                    } catch (e) { console.warn('⚠️ Erro ao carregar logs:', e); }
+                }
+
+                _notificarReducaoSm() {
+                    if (this.regen && this.regen.onSmReduzida) {
+                        this.regen.onSmReduzida(this.sm, this.getSmMax());
+                    }
+                }
+
+                salvarComDelay() {
+                    if (this.saveTimeout) clearTimeout(this.saveTimeout);
+                    this.saveTimeout = setTimeout(() => this.salvar(), 500);
+                }
+
+                async gastarStaminaParaJogar(event) {
+                    event.preventDefault();
+                    event.stopPropagation();
+
+                    const link = event.currentTarget;
+                    const gameName = link.getAttribute('data-game-name')
+                                  || link.getAttribute('data-game') || 'Jogo';
+                    const gameIcon = link.querySelector('.game-icon')?.textContent || '🎮';
+                    const href = link.getAttribute('href') || '#';
+
+                    if (this._processandoJogo) return;
+                    this._processandoJogo = true;
+
+                    if (this.sm < 10) {
+                        this.mostrarToast('⚠️ Stamina insuficiente! Descanse primeiro.', 'erro');
+                        this._processandoJogo = false;
+                        return;
+                    }
+
+                    const loadingOverlay = document.getElementById('gameLoadingOverlay');
+                    const loadingIcon = document.getElementById('loadingIcon');
+                    const loadingTitle = document.getElementById('loadingTitle');
+                    const loadingSub = document.getElementById('loadingSub');
+                    const loadingStamina = document.getElementById('loadingStamina');
+                    const loadingProgressFill = document.getElementById('loadingProgressFill');
+
+                    if (loadingOverlay) {
+                        if (loadingIcon) loadingIcon.textContent = gameIcon;
+                        if (loadingTitle) loadingTitle.textContent = `Entrando em ${gameName}...`;
+                        if (loadingSub) loadingSub.textContent = 'Preparando sua aventura';
+                        if (loadingStamina) loadingStamina.textContent = `⚡ -10 STAMINA (${this.sm} → ${this.sm - 10})`;
+                        if (loadingProgressFill) loadingProgressFill.style.width = '0%';
+                        loadingOverlay.classList.add('active');
+                    }
+
+                    let progress = 0;
+                    const progressInterval = setInterval(() => {
+                        progress += Math.random() * 15 + 5;
+                        if (progress > 95) progress = 95;
+                        if (loadingProgressFill) loadingProgressFill.style.width = Math.min(progress, 95) + '%';
+                        if (loadingSub) {
+                            loadingSub.textContent =
+                                progress < 30 ? 'Conectando ao servidor...' :
+                                progress < 60 ? 'Carregando dados do jogador...' :
+                                progress < 80 ? 'Preparando a arena...' : 'Quase lá...';
+                        }
+                    }, 150);
+
+                    const staminaAntes = this.sm;
+                    this.sm -= 10;
+                    this._notificarReducaoSm();
+                    this.ultimaVezOnline = Date.now();
+                    this.atualizarUI();
+
+                    this.addLog(`🎮 Entrou em ${gameName} (-10 SM: ${staminaAntes} → ${this.sm})`, 'info');
+
+                    try {
+                        if (this.usuario && this.supabaseOnline) {
+                            const payload = {
+                                sm_atual: this.sm,
+                                ultima_vez_online: new Date().toISOString(),
+                                updated_at: new Date().toISOString()
+                            };
+                            if (this.regen && this.regen.offlineRegenStart) {
+                                payload.offline_regen_start =
+                                    new Date(this.regen.offlineRegenStart).toISOString();
+                            }
+                            await supabase.from(TABELA).update(payload).eq('login', this.usuario.login);
+                        }
+                    } catch (e) { console.error('❌ Erro ao salvar SM:', e); }
+
+                    clearInterval(progressInterval);
+                    if (loadingProgressFill) loadingProgressFill.style.width = '100%';
+                    if (loadingSub) loadingSub.textContent = '✅ Pronto! Redirecionando...';
+
+                    setTimeout(() => {
+                        this._processandoJogo = false;
+                        window.location.href = href;
+                    }, 600);
+                }
+
+                async salvar() {
+                    if (!this.usuario || !this.supabaseOnline) return false;
+                    try {
+                        this.ultimaVezOnline = Date.now();
+                        const payload = {
+                            nivel: this.nivel,
+                            experiencia: this.experiencia,
+                            exp_proximo: this.getExpProximo(),
+                            max_hp: this.getHpMax(), max_mp: this.getMpMax(), max_sm: this.getSmMax(),
+                            atk: this.ataqueBase, def: this.defesaBase, mag: this.magiaBase,
+                            hp_atual: this.hp, mp_atual: this.mp, sm_atual: this.sm,
+                            hp: this.hp, mp: this.mp, sm: this.sm,
+                            btc: this.btc, poder_hash: this.poderHash,
+                            total_treinos: this.totalTreinos,
+                            total_descansos: this.totalDescansos,
+                            ultima_atividade: this.ultimaAtividade,
+                            ultimo_reset: this.ultimoReset,
+                            ultima_vez_online: new Date().toISOString(),
+                            offline_regen_start: (this.regen && this.regen.offlineRegenStart)
+                                ? new Date(this.regen.offlineRegenStart).toISOString() : null,
+                            updated_at: new Date().toISOString()
+                        };
+                        const { error } = await supabase.from(TABELA).update(payload).eq('login', this.usuario.login);
+                        if (error) throw error;
+                        return true;
+                    } catch (error) {
+                        console.error('❌ Erro ao salvar nível:', error);
+                        return false;
+                    }
+                }
+
+                async carregar(usuario) {
+                    this.usuario = usuario;
+                    try {
+                        const { data, error } = await supabase
+                            .from(TABELA).select('*')
+                            .eq('login', usuario.login).single();
+                        if (error) {
+                            if (error.code === 'PGRST116') return await this.criarRegistroNivel(usuario);
+                            throw error;
+                        }
+                        if (data) {
+                            this.nivel = data.nivel || 1;
+                            this.experiencia = data.experiencia || 0;
+                            this.hpMax = data.max_hp ?? 100;
+                            this.mpMax = data.max_mp ?? 50;
+                            this.smMax = data.max_sm ?? 100;
+                            this.ataqueBase = data.atk ?? 15;
+                            this.defesaBase = data.def ?? 10;
+                            this.magiaBase = data.mag ?? 8;
+                            this.hp = data.hp_atual ?? data.hp ?? this.getHpMax();
+                            this.mp = data.mp_atual ?? data.mp ?? this.getMpMax();
+                            this.sm = data.sm_atual ?? data.sm ?? this.getSmMax();
+                            this.totalTreinos = data.total_treinos || 0;
+                            this.totalDescansos = data.total_descansos || 0;
+                            this.ultimaAtividade = data.ultima_atividade || null;
+                            this.ultimoReset = data.ultimo_reset || null;
+                            this.saldo = parseFloat(data.saldo) || 0;
+                            this.btc = parseFloat(data.btc) || 0;
+                            this.poderHash = parseFloat(data.poder_hash) || 1.0;
+                            this.atualizarUI();
+                            await this.carregarLogs(usuario.login);
+                            return true;
+                        }
+                        return false;
+                    } catch (error) {
+                        console.error('❌ Erro ao carregar nível:', error);
+                        return await this.criarRegistroNivel(usuario);
+                    }
+                }
+
+                async criarRegistroNivel(usuario) {
+                    try {
+                        const { data: existing } = await supabase
+                            .from(TABELA).select('login')
+                            .eq('login', usuario.login).maybeSingle();
+                        if (existing) { this.usuario = usuario; return true; }
+
+                        const payload = {
+                            login: usuario.login,
+                            nivel: 1, experiencia: 0, exp_proximo: 100,
+                            max_hp: 100, max_mp: 50, max_sm: 100,
+                            atk: 15, def: 10, mag: 8,
+                            hp_atual: 100, mp_atual: 50, sm_atual: 100,
+                            hp: 100, mp: 50, sm: 100,
+                            saldo: 0, btc: 0, poder_hash: 1.0,
+                            total_treinos: 0, total_descansos: 0,
+                            ultima_vez_online: new Date().toISOString(),
+                            created_at: new Date().toISOString(),
+                            updated_at: new Date().toISOString()
+                        };
+                        await supabase.from(TABELA).insert(payload);
+                        this.atualizarUI();
+                        this.addLog('🌱 Registro de nível criado!', 'info');
+                        return true;
+                    } catch (error) {
+                        console.error('❌ Erro ao criar registro:', error);
+                        return false;
+                    }
+                }
+
+                atualizarUI() {
+                    const expProx = this.getExpProximo();
+                    const pct = Math.min((this.experiencia / expProx) * 100, 100);
+                    const $ = id => document.getElementById(id);
+
+                    if ($('lwNivel')) $('lwNivel').textContent = this.nivel;
+                    if ($('lwTitulo')) $('lwTitulo').textContent = this.getTitulo();
+                    if ($('lwExpFill')) {
+                        $('lwExpFill').style.width = pct + '%';
+                        $('lwExpFill').className = 'lw-fill' + (pct > 75 ? ' high' : '');
+                    }
+                    if ($('lwExpAtual')) $('lwExpAtual').textContent = this.experiencia;
+                    if ($('lwExpProx')) $('lwExpProx').textContent = expProx;
+                    if ($('lwHp')) $('lwHp').textContent = `${this.hp}/${this.getHpMax()}`;
+                    if ($('lwMp')) $('lwMp').textContent = `${this.mp}/${this.getMpMax()}`;
+                    if ($('lwSm')) {
+                        $('lwSm').textContent = `${this.sm}/${this.getSmMax()}`;
+                        $('lwSm').className = this.sm < 20 ? 'sm-c stamina-low' : 'sm-c';
+                    }
+                    if ($('lwAtk')) $('lwAtk').textContent = this.getAtaque();
+                    if ($('lwDef')) $('lwDef').textContent = this.getDefesa();
+                    if ($('lwMag')) $('lwMag').textContent = this.getMagia();
+
+                    if ($('saldo')) {
+                        $('saldo').textContent = new Intl.NumberFormat('pt-BR', {
+                            style: 'currency', currency: 'BRL'
+                        }).format(this.saldo || 0);
+                    }
+                    if ($('btcTotal')) $('btcTotal').textContent = (this.btc || 0).toFixed(8);
+                    if ($('userAvatar') && this.usuario) {
+                        $('userAvatar').textContent = this.usuario.login
+                            ? this.usuario.login.charAt(0).toUpperCase() : '👤';
+                    }
+                    const nick = $('userNick');
+                    if (nick && this.usuario) nick.textContent = this.usuario.nome || this.usuario.login;
+                    if ($('headerUser') && this.usuario) {
+                        $('headerUser').textContent = this.usuario.nome || this.usuario.login;
+                    }
+                }
+
+                mostrarToast(mensagem, tipo = 'info') {
+                    const toast = document.getElementById('levelToast');
+                    if (!toast) return;
+                    const cores = { sucesso: '#10b981', erro: '#ef4444', info: '#3b82f6', aviso: '#f59e0b' };
+                    toast.textContent = mensagem;
+                    toast.style.borderLeftColor = cores[tipo] || '#3b82f6';
+                    toast.style.display = 'block';
+                    toast.style.opacity = '1';
+                    if (this.toastTimer) clearTimeout(this.toastTimer);
+                    this.toastTimer = setTimeout(() => {
+                        toast.style.opacity = '0';
+                        setTimeout(() => { toast.style.display = 'none'; }, 400);
+                    }, 3000);
+                }
+
+                async verificarConexao() {
+                    try {
+                        const { error } = await supabase.from(TABELA).select('login').limit(1);
+                        this.supabaseOnline = !error;
+                        const dot = document.getElementById('supabaseDot');
+                        const status = document.getElementById('supabaseStatus');
+                        if (this.supabaseOnline) {
+                            if (dot) dot.className = 'dot online';
+                            if (status) { status.className = 'value online'; status.textContent = 'Online'; }
+                        } else {
+                            if (dot) dot.className = 'dot offline';
+                            if (status) { status.className = 'value offline'; status.textContent = 'Erro'; }
+                        }
+                        return this.supabaseOnline;
+                    } catch {
+                        this.supabaseOnline = false;
+                        const dot = document.getElementById('supabaseDot');
+                        const status = document.getElementById('supabaseStatus');
+                        if (dot) dot.className = 'dot offline';
+                        if (status) { status.className = 'value offline'; status.textContent = 'Falha'; }
+                        return false;
+                    }
+                }
+
+                configurarEventosDosJogos() {
+                    document.querySelectorAll('.game-card').forEach(card => {
+                        card.removeEventListener('click', this.gastarStaminaParaJogar);
+                        card.addEventListener('click', this.gastarStaminaParaJogar);
+                    });
+                }
+
+                iniciarRecuperacaoStamina() {
+                    if (this.staminaInterval) clearInterval(this.staminaInterval);
+                    this.staminaInterval = setInterval(() => {
+                        if (this.regen && this.regen.offlineRegenStart) return;
+                        const smMax = this.getSmMax();
+                        if (this.sm < smMax) {
+                            this.sm = Math.min(this.sm + STAMINA_REGEN_PER_TICK, smMax);
+                            this.ultimaVezOnline = Date.now();
+                            this.atualizarUI();
+                            if (this.usuario && this.supabaseOnline) this.salvar();
+                        }
+                    }, STAMINA_REGEN_INTERVAL);
+                }
+
+                async inicializarRegen() {
+                    if (!OfflineRegen) return;
+                    if (!this.usuario || !this.usuario.login) return;
+                    const slot = document.getElementById('offlineRegenSlot') || document.body;
+                    this.regen = new OfflineRegen({
+                        supabase, tabela: TABELA, login: this.usuario.login,
+                        container: slot,
+                        onApply: (snap) => {
+                            this.hp = snap.hp; this.mp = snap.mp; this.sm = snap.sm;
+                            this.hpMax = snap.hpMax; this.mpMax = snap.mpMax; this.smMax = snap.smMax;
+                            this.atualizarUI();
+                        }
+                    });
+                    await this.regen.init();
+                    this.regen.startAutoTick();
+                    this.atualizarUI();
+                }
+
+                async loadUserData() {
+                    try {
+                        const raw = localStorage.getItem(SESSION_KEY);
+                        if (!raw) { this.setFallbackUser(); return false; }
+                        let sessao;
+                        try { sessao = JSON.parse(raw); } catch { this.setFallbackUser(); return false; }
+                        if (!sessao?.login) { this.setFallbackUser(); return false; }
+
+                        const { data: profile, error } = await supabase
+                            .from(TABELA).select('*').eq('login', sessao.login).maybeSingle();
+                        if (error || !profile) { this.setFallbackUser(); return false; }
+
+                        const usuario = {
+                            login: profile.login,
+                            nome: profile.nome || profile.login,
+                            email: profile.email || sessao.email
+                        };
+                        this.usuario = usuario;
+                        localStorage.setItem(SESSION_KEY, JSON.stringify({ ...sessao, ...usuario }));
+                        await this.carregar(usuario);
+
+                        try { await this.inicializarRegen(); }
+                        catch (e) { console.warn('⚠️ Falha ao inicializar OfflineRegen:', e); }
+
+                        this.saldo = profile.saldo ?? 0;
+                        this.atualizarUI();
+                        this.addLog(`👋 Bem-vindo, ${usuario.nome}!`, 'info');
+                        this.iniciarMineracaoPassiva();
+                        await this.verificarAdmin();
+                        return true;
+                    } catch (error) {
+                        console.error('❌ Erro ao carregar perfil:', error);
+                        this.setFallbackUser();
+                        return false;
+                    }
+                }
+
+                setFallbackUser() {
+                    const nick = document.getElementById('userNick');
+                    const saldo = document.getElementById('saldo');
+                    const avatar = document.getElementById('userAvatar');
+                    const headerUser = document.getElementById('headerUser');
+                    if (nick) nick.textContent = 'Visitante';
+                    if (saldo) saldo.textContent = 'R$ 0,00';
+                    if (avatar) avatar.textContent = '👤';
+                    if (headerUser) headerUser.textContent = 'Visitante';
+                }
+
+                // ============================================================
+                // ✅ MINERAÇÃO PASSIVA — CORRIGIDA
+                // Pausa enquanto a Recuperação Total estiver ativa
+                // ============================================================
+                iniciarMineracaoPassiva() {
+                    if (this.mineracaoInterval) clearInterval(this.mineracaoInterval);
+                    this.mineracaoInterval = setInterval(() => {
+                        if (!this.usuario) return;
+
+                        // ✅ Verificação 1: estado interno do regen
+                        const regenAtivo = this.regen && this.regen.offlineRegenStart;
+
+                        // ✅ Verificação 2: widget visível no DOM (fallback à prova de falhas)
+                        const widget = document.getElementById('offlineRegenWidget');
+                        const widgetVisivel = widget
+                            && widget.style.display !== 'none'
+                            && widget.offsetParent !== null;
+
+                        if (regenAtivo || widgetVisivel) {
+                            // ⏸️ Recuperação Total ativa → não acumula BTC
+                            return;
+                        }
+
+                        if (this.poderHash > 0) {
+                            const ganho = this.poderHash * 0.00000001 * 3;
+                            if (ganho > 0) {
+                                this.btc += ganho;
+                                this.atualizarUI();
+                            }
+                        }
+                    }, 3000);
+                }
+            }
+
+            const levelSystem = new LevelSystem();
+            let saveInterval = null;
+
+            function iniciarSalvamentoAutomatico() {
+                saveInterval = setInterval(async () => {
+                    if (levelSystem.usuario && levelSystem.supabaseOnline) {
+                        await levelSystem.salvar();
+                    }
+                }, 15000);
+            }
+
+            async function verificarSessao() {
+                const timestamp = localStorage.getItem(SESSION_TIMESTAMP_KEY);
+                const usuarioLogado = localStorage.getItem(SESSION_KEY);
+
+                if (!timestamp || !usuarioLogado) {
+                    window.location.href = 'login.html';
+                    return false;
+                }
+
+                const loginTime = parseInt(timestamp, 10);
+                const decorrido = Date.now() - loginTime;
+
+                if (decorrido >= SESSION_DURATION) {
+                    limparSessao();
+                    window.location.href = 'login.html';
+                    return false;
+                }
+
+                const restante = SESSION_DURATION - decorrido;
+                setTimeout(() => {
+                    limparSessao();
+                    window.location.href = 'login.html';
+                }, restante);
+
+                return true;
+            }
+
+            document.addEventListener('DOMContentLoaded', async function() {
+                if (!(await verificarSessao())) return;
+
+                levelSystem.verificarConexao();
+
+                setTimeout(async () => {
+                    await levelSystem.loadUserData();
+                    setTimeout(() => levelSystem.configurarEventosDosJogos(), 500);
+                }, 300);
+
+                iniciarSalvamentoAutomatico();
+                levelSystem.iniciarRecuperacaoStamina();
+
+                const btnSair = document.getElementById('btnSair');
+                const btnReconnect = document.getElementById('btnReconnectSupabase');
+
+                if (btnSair) {
+                    const novoBtnSair = btnSair.cloneNode(true);
+                    btnSair.parentNode.replaceChild(novoBtnSair, btnSair);
+                    novoBtnSair.addEventListener('click', async function() {
+                        if (!confirm('Tem certeza que deseja sair?')) return;
+                        try {
+                            if (levelSystem.usuario && levelSystem.supabaseOnline) {
+                                await levelSystem.salvar();
+                            }
+                        } catch (e) { console.warn(e); }
+                        finally {
+                            limparSessao();
+                            window.location.href = 'login.html';
+                        }
+                    });
+                }
+
+                if (btnReconnect) {
+                    btnReconnect.addEventListener('click', function() {
+                        levelSystem.verificarConexao().then(() => levelSystem.verificarAdmin());
+                        levelSystem.mostrarToast('🔄 Verificando conexão...', 'info');
+                    });
+                }
+
+                window.addEventListener('beforeunload', () => {
+                    try {
+                        if (levelSystem.usuario && levelSystem.supabaseOnline) {
+                            const payload = JSON.stringify({
+                                login: levelSystem.usuario.login,
+                                sm: levelSystem.sm, hp: levelSystem.hp, mp: levelSystem.mp,
+                                updated_at: new Date().toISOString()
+                            });
+                            navigator.sendBeacon(
+                                SUPABASE_URL + '/rest/v1/' + TABELA + '?login=eq.' + encodeURIComponent(levelSystem.usuario.login),
+                                new Blob([payload], { type: 'application/json' })
+                            );
+                        }
+                    } catch (e) { /* silencioso */ }
+
+                    if (saveInterval) clearInterval(saveInterval);
+                    if (levelSystem.mineracaoInterval) clearInterval(levelSystem.mineracaoInterval);
+                    if (levelSystem.staminaInterval) clearInterval(levelSystem.staminaInterval);
+                    if (levelSystem.regen && levelSystem.regen.destroy) levelSystem.regen.destroy();
+                });
+            });
+
+            window.levelSystem = levelSystem;
+        })();
+    </script>
+</body>
+</html>

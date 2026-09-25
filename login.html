@@ -82,8 +82,8 @@
 
         <form id="formLogin" autocomplete="on">
             <div class="form-group">
-                <label for="login">E-mail</label>
-                <input type="email" id="login" placeholder="teste@exemplo.com" autocomplete="username" required>
+                <label for="login">Login</label>
+                <input type="text" id="login" placeholder="seu_login" autocomplete="username" required>
             </div>
             <div class="form-group">
                 <label for="senha">Senha</label>
@@ -163,65 +163,74 @@
             try {
                 const { error } = await supabaseClient.from(TABELA).select('id').limit(1);
                 if (error) {
-                    statusSupabase.textContent = '⚠️ Erro ao conectar';
+                    statusSupabase.textContent = '⚠️ Erro ao conectar: ' + error.message;
                     statusSupabase.className = 'status-supabase offline';
                     return false;
                 }
                 statusSupabase.textContent = '✅ Conectado ao Supabase';
                 statusSupabase.className = 'status-supabase online';
                 return true;
-            } catch {
-                statusSupabase.textContent = '❌ Erro ao conectar';
+            } catch (e) {
+                statusSupabase.textContent = '❌ Erro ao conectar: ' + e.message;
                 statusSupabase.className = 'status-supabase offline';
                 return false;
             }
         }
 
-        // ==================== LOGIN VIA SUPABASE AUTH ====================
-        async function fazerLogin(email, senha) {
+        // ==================== LOGIN DIRETO NA TABELA (RLS DESABILITADO) ====================
+        // Com RLS desabilitado, o cliente anônimo consegue ler/escrever na tabela.
+        async function fazerLogin(login, senha) {
             try {
-                const emailNorm = email.trim().toLowerCase();
+                console.log('🔎 Tentando login:', { login, senha_length: senha.length });
 
-                // 1) Autentica no Supabase Auth
-                const { data: authData, error: authError } =
-                    await supabaseClient.auth.signInWithPassword({
-                        email: emailNorm,
-                        password: senha
-                    });
+                // Busca o usuário pelo login
+                const { data: usuarios, error } = await supabaseClient
+                    .from(TABELA)
+                    .select('*')
+                    .eq('login', login.trim());
 
-                if (authError) {
-                    console.error('Erro Auth:', authError);
-                    if (authError.message.includes('Invalid login credentials')) {
-                        mostrarErro('❌ E-mail ou senha incorretos.');
-                    } else if (authError.message.includes('Email not confirmed')) {
-                        mostrarErro('📧 Confirme seu e-mail antes de entrar.');
-                    } else {
-                        mostrarErro('❌ ' + authError.message);
-                    }
+                console.log('📦 Busca por login → encontrados:', usuarios?.length, '| erro:', error);
+
+                if (error) {
+                    console.error('Erro Supabase:', error);
+                    mostrarErro('❌ Erro ao consultar usuário. (' + error.message + ')');
                     return false;
                 }
 
-                // 2) Busca dados extras na tabela Geral
-                const { data: profile, error: profError } = await supabaseClient
-                    .from(TABELA)
-                    .select('id, login, nome, email, saldo, saldo_poupanca, carteira, email_confirmado, cadeado')
-                    .eq('email', emailNorm)
-                    .maybeSingle();
+                if (!usuarios || usuarios.length === 0) {
+                    mostrarErro('❌ Login não encontrado.');
+                    return false;
+                }
 
-                if (profError) {
-                    console.warn('⚠️ Erro ao buscar perfil:', profError);
+                const u = usuarios[0];
+
+                // Compara a senha (texto puro)
+                const senhaBanco = String(u.senha ?? '').trim();
+                const senhaDigitada = String(senha).trim();
+
+                console.log('🔐 Senha banco :', JSON.stringify(senhaBanco));
+                console.log('🔐 Senha digitada:', JSON.stringify(senhaDigitada));
+                console.log('🔐 Iguais?', senhaBanco === senhaDigitada);
+
+                if (senhaBanco !== senhaDigitada) {
+                    mostrarErro('❌ Senha incorreta.');
+                    return false;
+                }
+
+                if (u.bloqueado === true) {
+                    mostrarErro('🚫 Sua conta está bloqueada. Contate o suporte.');
+                    return false;
                 }
 
                 const usuario = {
-                    id: profile?.id || authData.user.id,
-                    auth_id: authData.user.id,
-                    login: profile?.login || emailNorm,
-                    nome: profile?.nome || authData.user.email,
-                    email: authData.user.email,
-                    saldo: profile?.saldo || 0,
-                    saldo_poupanca: profile?.saldo_poupanca || 0,
-                    carteira: profile?.carteira || {},
-                    cadeado: profile?.cadeado === true
+                    id: u.id,
+                    login: u.login,
+                    nome: u.nome,
+                    email: u.email,
+                    saldo: u.saldo || 0,
+                    saldo_poupanca: u.saldo_poupanca || 0,
+                    carteira: u.carteira || {},
+                    cadeado: u.cadeado === true
                 };
                 salvarSessao(usuario);
 
@@ -240,10 +249,10 @@
             e.preventDefault();
             ocultarMensagens();
 
-            const email = loginInput.value.trim();
+            const login = loginInput.value.trim();
             const senha = senhaInput.value.trim();
 
-            if (!email || !senha) {
+            if (!login || !senha) {
                 mostrarErro('⚠️ Preencha todos os campos!');
                 return;
             }
@@ -257,7 +266,7 @@
             btnLogin.disabled = true;
             btnLogin.innerHTML = '<span class="loading"></span> Entrando...';
 
-            await fazerLogin(email, senha);
+            await fazerLogin(login, senha);
 
             btnLogin.disabled = false;
             btnLogin.innerHTML = '🔐 Entrar';
