@@ -8,9 +8,6 @@
     <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500;700;900&family=Rajdhani:wght@600;700&display=swap" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
-    <!-- ✅ CSS compartilhado da barra de regeneração offline -->
-    <link rel="stylesheet" href="./shared/offline-regen.css">
-
     <style>
         /* ============================================================
            VARIÁVEIS GLOBAIS
@@ -733,7 +730,7 @@
         }
 
         /* ============================================================
-           👑 BOTÃO ADMIN
+           👑 BOTÃO ADMIN — escondido por padrão, aparece se cadeado = true
            ============================================================ */
         #btnAdmin {
             display: none;
@@ -821,6 +818,7 @@
             <a href="./jogos/ranking/ranking.html" class="btn-bolsa" style="background: linear-gradient(135deg, #8b5cf6, #7000ff);">🏆 Ranking</a>
             <button class="btn-sair" id="btnSair">🚪 Sair</button>
 
+            <!-- 👑 BOTÃO ADMIN — só aparece se cadeado = true (verificado no dashboard.js) -->
             <a href="./dados/admin/admin.html"
                id="btnAdmin"
                class="btn-bolsa"
@@ -829,9 +827,6 @@
             </a>
         </div>
     </nav>
-
-    <!-- ✅ Container onde o módulo OfflineRegen injeta a barra -->
-    <div id="offlineRegenSlot"></div>
 
     <!-- SISTEMA DE NÍVEL -->
     <div class="level-widget" id="levelWidget">
@@ -896,6 +891,7 @@
             <div class="game-icon">👶</div>
             <div class="game-title">Nino</div>
         </a>
+
     </main>
 
     <!-- HISTÓRICO -->
@@ -911,21 +907,11 @@
 
     <div id="levelToast"></div>
 
-    <!-- ✅ Importmap para carregar o Supabase e o módulo compartilhado -->
-    <script type="importmap">
-    {
-      "imports": {
-        "@supabase/supabase-js": "https://esm.sh/@supabase/supabase-js@2"
-      }
-    }
-    </script>
-
-    <script type="module">
-        import { createClient } from '@supabase/supabase-js';
-        import { OfflineRegen } from './shared/offline-regen.js';
-
+    <script>
         // ============================================================
-        // DASHBOARD — usa o módulo OfflineRegen compartilhado
+        // DASHBOARD — SISTEMA DE NÍVEL (SCHEMA PADRONIZADO)
+        // + LOGIN DIRETO NA TABELA "Geral" (sem Supabase Auth)
+        // + REGENERAÇÃO DE STAMINA OFFLINE (proporcional até 24h / 100% após 24h)
         // ============================================================
         (function() {
             'use strict';
@@ -940,9 +926,10 @@
             const SESSION_KEY = 'usuario_logado';
             const SESSION_TIMESTAMP_KEY = 'session_timestamp';
 
-            // ==================== REGENERAÇÃO ONLINE ====================
-            const STAMINA_REGEN_INTERVAL = 30 * 1000;   // +1 SM a cada 30s online
-            const STAMINA_REGEN_PER_TICK = 1;
+            // ==================== REGENERAÇÃO DE STAMINA ====================
+            const STAMINA_REGEN_INTERVAL   = 30 * 1000;   // online: +1 SM a cada 30s
+            const STAMINA_REGEN_PER_TICK   = 1;           // quantidade por tick
+            const OFFLINE_MAX_MS           = 24 * 60 * 60 * 1000; // 24h
 
             function limparSessao() {
                 localStorage.removeItem(SESSION_KEY);
@@ -958,8 +945,8 @@
                 return (Date.now() - loginTime) < SESSION_DURATION;
             }
 
-            // Cliente Supabase (via ESM, mesma instância usada pelo módulo)
-            const supabase = createClient(SUPABASE_URL, SUPABASE_KEY);
+            // Cliente Supabase (usa o global do CDN)
+            const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
             class LevelSystem {
                 constructor() {
@@ -992,7 +979,7 @@
                         { min: 100, titulo: '🌟 Imortal' },
                     ];
 
-                    this.usuario = null;
+                    this.usuario = null;          // { login, nome, email }
                     this.supabaseOnline = false;
                     this.atividades = [];
                     this.totalTreinos = 0;
@@ -1005,9 +992,6 @@
                     this.staminaInterval = null;
                     this._processandoJogo = false;
                     this.ultimaVezOnline = Date.now();
-
-                    // ✅ Módulo compartilhado
-                    this.regen = null;
 
                     // binds
                     this.treinar = this.treinar.bind(this);
@@ -1027,6 +1011,7 @@
                     this.minerar = this.minerar.bind(this);
                     this.upgradeMineracao = this.upgradeMineracao.bind(this);
                     this.verificarAdmin = this.verificarAdmin.bind(this);
+                    this.aplicarRegeneracaoOffline = this.aplicarRegeneracaoOffline.bind(this);
                     this.loadUserData = this.loadUserData.bind(this);
                 }
 
@@ -1051,6 +1036,48 @@
                         if (this.nivel >= t.min) titulo = t.titulo;
                     }
                     return titulo;
+                }
+
+                // ============================================================
+                // REGENERAÇÃO OFFLINE DE STAMINA
+                // ============================================================
+                aplicarRegeneracaoOffline(timestampUltimaVez) {
+                    if (!timestampUltimaVez) return;
+
+                    const agora = Date.now();
+                    const offlineMs = agora - timestampUltimaVez;
+                    if (offlineMs <= 0) return;
+
+                    const smMax = this.getSmMax();
+
+                    if (this.sm >= smMax) {
+                        this.ultimaVezOnline = agora;
+                        return;
+                    }
+
+                    let smGanho = 0;
+
+                    if (offlineMs >= OFFLINE_MAX_MS) {
+                        smGanho = smMax - this.sm;
+                        console.log(`⏰ Offline ≥ 24h → stamina restaurada ao máximo (+${smGanho})`);
+                    } else {
+                        const intervalos = Math.floor(offlineMs / STAMINA_REGEN_INTERVAL);
+                        smGanho = intervalos * STAMINA_REGEN_PER_TICK;
+                        if (smGanho <= 0) {
+                            this.ultimaVezOnline = agora;
+                            return;
+                        }
+                        console.log(`⏰ Offline por ${Math.round(offlineMs / 1000 / 60)} min → +${smGanho} SM`);
+                    }
+
+                    const smAntes = this.sm;
+                    this.sm = Math.min(smMax, this.sm + smGanho);
+                    this.ultimaVezOnline = agora;
+
+                    if (this.sm > smAntes) {
+                        this.addLog(`⚡ Regenerou +${this.sm - smAntes} SM offline (${this.sm}/${smMax})`, 'info');
+                        this.atualizarUI();
+                    }
                 }
 
                 // ============================================================
@@ -1189,7 +1216,6 @@
                     }
 
                     this.sm -= 10;
-                    this._notificarReducaoSm();
                     this.totalTreinos++;
 
                     const ganhoBase = 15 + Math.floor(this.nivel * 2);
@@ -1230,10 +1256,6 @@
                     this.hp = Math.min(this.getHpMax(), this.hp + hpRestaurado);
                     this.mp = Math.min(this.getMpMax(), this.mp + mpRestaurado);
                     this.sm = Math.min(this.getSmMax(), this.sm + smRestaurado);
-
-                    // ✅ Notifica o módulo que a SM subiu
-                    if (this.regen) this.regen.onSmAumentada(this.sm);
-
                     this.totalDescansos++;
 
                     this.atualizarUI();
@@ -1252,8 +1274,6 @@
                     this.mp = this.getMpMax();
                     this.sm = this.getSmMax();
                     this.ultimoReset = new Date().toISOString();
-
-                    if (this.regen) this.regen.onSmAumentada(this.sm);
 
                     this.atualizarUI();
                     this.mostrarToast('🔄 Nível resetado para 1!', 'info');
@@ -1274,9 +1294,6 @@
                     }
 
                     this.sm = novoSm;
-
-                    if (this.regen) this.regen.onSmAumentada(this.sm);
-
                     this.atualizarUI();
                     this.mostrarToast(`➕ +${ganhoReal} SM (${this.sm}/${smMax})`, 'sucesso');
                     this.addLog(`➕ +${ganhoReal} SM (${this.sm}/${smMax})`, 'info');
@@ -1291,7 +1308,6 @@
                         return false;
                     }
                     this.sm -= gasto;
-                    this._notificarReducaoSm();
                     this.atualizarUI();
                     this.mostrarToast(`➖ -${gasto} SM (${this.sm}/${this.getSmMax()})`, 'info');
                     this.addLog(`➖ -${gasto} SM (${this.sm}/${this.getSmMax()})`, 'info');
@@ -1302,19 +1318,11 @@
                 resetarSm() {
                     if (!confirm('⚠️ Tem certeza que quer resetar o SM para o máximo?')) return false;
                     this.sm = this.getSmMax();
-                    if (this.regen) this.regen.onSmAumentada(this.sm);
                     this.atualizarUI();
                     this.mostrarToast(`🔄 SM resetado para ${this.sm}/${this.getSmMax()}`, 'info');
                     this.addLog(`🔄 SM resetado para ${this.sm}/${this.getSmMax()}`, 'info');
                     this.salvarComDelay();
                     return true;
-                }
-
-                // ✅ Helper: avisa o módulo que a SM foi reduzida
-                _notificarReducaoSm() {
-                    if (this.regen) {
-                        this.regen.onSmReduzida(this.sm, this.getSmMax());
-                    }
                 }
 
                 // ============================================================
@@ -1380,29 +1388,21 @@
 
                     const staminaAntes = this.sm;
                     this.sm -= 10;
-                    this._notificarReducaoSm();
                     this.ultimaVezOnline = Date.now();
                     this.atualizarUI();
 
                     const msg = `🎮 Entrou em ${gameName} (-10 SM: ${staminaAntes} → ${this.sm})`;
                     this.addLog(msg, 'info');
 
-                    // ✅ Também grava offline_regen_start (se houver)
                     try {
                         if (this.usuario && this.supabaseOnline) {
-                            const payload = {
-                                sm_atual: this.sm,
-                                ultima_vez_online: new Date().toISOString(),
-                                updated_at: new Date().toISOString()
-                            };
-                            if (this.regen) {
-                                payload.offline_regen_start = this.regen.offlineRegenStart
-                                    ? new Date(this.regen.offlineRegenStart).toISOString()
-                                    : null;
-                            }
                             const { error } = await supabase
                                 .from(TABELA)
-                                .update(payload)
+                                .update({
+                                    sm_atual: this.sm,
+                                    ultima_vez_online: new Date().toISOString(),
+                                    updated_at: new Date().toISOString()
+                                })
                                 .eq('login', this.usuario.login);
 
                             if (error) console.error('❌ Erro ao salvar SM no Supabase:', error);
@@ -1471,9 +1471,6 @@
                             ultima_atividade: this.ultimaAtividade,
                             ultimo_reset: this.ultimoReset,
                             ultima_vez_online: new Date().toISOString(),
-                            offline_regen_start: this.regen && this.regen.offlineRegenStart
-                                ? new Date(this.regen.offlineRegenStart).toISOString()
-                                : null,
                             updated_at: new Date().toISOString()
                         };
 
@@ -1530,9 +1527,22 @@
                             this.btc = parseFloat(data.btc) || 0;
                             this.poderHash = parseFloat(data.poder_hash) || 1.0;
 
+                            // Regeneração offline
+                            const timestampUltimaVez =
+                                data.ultima_vez_online ||
+                                data.ultima_coleta    ||
+                                data.ultima_atividade ||
+                                data.updated_at;
+
+                            this.aplicarRegeneracaoOffline(
+                                timestampUltimaVez ? new Date(timestampUltimaVez).getTime() : null
+                            );
+
                             this.atualizarUI();
                             await this.carregarLogs(usuario.login);
+
                             this.salvarComDelay();
+
                             return true;
                         }
 
@@ -1563,7 +1573,6 @@
                             hp: 100, mp: 50, sm: 100,
                             saldo: 0, btc: 0, poder_hash: 1.0,
                             total_treinos: 0, total_descansos: 0,
-                            offline_regen_start: null,
                             ultima_vez_online: new Date().toISOString(),
                             created_at: new Date().toISOString(),
                             updated_at: new Date().toISOString()
@@ -1749,9 +1758,6 @@
                 iniciarRecuperacaoStamina() {
                     if (this.staminaInterval) clearInterval(this.staminaInterval);
                     this.staminaInterval = setInterval(() => {
-                        // ✅ Se estiver em regeneração offline, NÃO faz tick online
-                        if (this.regen && this.regen.offlineRegenStart) return;
-
                         const smMax = this.getSmMax();
                         if (this.sm < smMax) {
                             this.sm = Math.min(this.sm + STAMINA_REGEN_PER_TICK, smMax);
@@ -1765,50 +1771,11 @@
                 }
 
                 // ============================================================
-                // ✅ MÓDULO OfflineRegen — inicialização
-                // ============================================================
-                async inicializarRegen() {
-                    if (!this.usuario || !this.usuario.login) return;
-
-                    const slot = document.getElementById('offlineRegenSlot') || document.body;
-
-                    this.regen = new OfflineRegen({
-                        supabase,
-                        tabela: TABELA,
-                        login: this.usuario.login,
-                        container: slot,
-                        onApply: (snap) => {
-                            // Sincroniza HP/MP/SM do LevelSystem
-                            this.hp = snap.hp;
-                            this.mp = snap.mp;
-                            this.sm = snap.sm;
-                            this.hpMax = snap.hpMax;
-                            this.mpMax = snap.mpMax;
-                            this.smMax = snap.smMax;
-                            this.atualizarUI();
-                        }
-                    });
-
-                    await this.regen.init();
-                    this.regen.startAutoTick();
-
-                    // Snapshot inicial
-                    this.hp = this.regen.hp;
-                    this.mp = this.regen.mp;
-                    this.sm = this.regen.sm;
-                    this.hpMax = this.regen.hpMax;
-                    this.mpMax = this.regen.mpMax;
-                    this.smMax = this.regen.smMax;
-
-                    // Se a regeneração terminou e restaurou tudo, atualiza
-                    this.atualizarUI();
-                }
-
-                // ============================================================
-                // CARREGAR DADOS DO USUÁRIO — VIA SESSÃO LOCAL
+                // CARREGAR DADOS DO USUÁRIO — VIA SESSÃO LOCAL (SEM AUTH)
                 // ============================================================
                 async loadUserData() {
                     try {
+                        // 1) Lê dados da sessão local
                         const raw = localStorage.getItem(SESSION_KEY);
                         if (!raw) {
                             console.warn('⚠️ Sessão local inexistente.');
@@ -1831,6 +1798,7 @@
                             return false;
                         }
 
+                        // 2) Busca perfil atualizado na tabela Geral
                         const { data: profile, error } = await supabase
                             .from(TABELA)
                             .select('*')
@@ -1856,13 +1824,6 @@
                         }));
 
                         await this.carregar(usuario);
-
-                        // ✅ Depois de carregar, inicializa o módulo de regen
-                        try {
-                            await this.inicializarRegen();
-                        } catch (e) {
-                            console.warn('⚠️ Falha ao inicializar OfflineRegen:', e);
-                        }
 
                         const nick = profile.nome || usuario.login;
                         this.saldo = profile.saldo ?? 0;
@@ -1959,6 +1920,7 @@
                 iniciarSalvamentoAutomatico();
                 levelSystem.iniciarRecuperacaoStamina();
 
+                // Botões
                 const btnTreinar = document.getElementById('btnTreinar');
                 const btnDescansar = document.getElementById('btnDescansar');
                 const btnResetLevel = document.getElementById('btnResetLevel');
@@ -1979,6 +1941,9 @@
                 if (btnMinerar) btnMinerar.addEventListener('click', levelSystem.minerar);
                 if (btnUpgrade) btnUpgrade.addEventListener('click', levelSystem.upgradeMineracao);
 
+                // ============================================================
+                // LOGOUT — APENAS LOCAL (SEM SUPABASE AUTH)
+                // ============================================================
                 if (btnSair) {
                     const novoBtnSair = btnSair.cloneNode(true);
                     btnSair.parentNode.replaceChild(novoBtnSair, btnSair);
@@ -2021,13 +1986,12 @@
                     if (saveInterval) clearInterval(saveInterval);
                     if (levelSystem.mineracaoInterval) clearInterval(levelSystem.mineracaoInterval);
                     if (levelSystem.staminaInterval) clearInterval(levelSystem.staminaInterval);
-                    if (levelSystem.regen) levelSystem.regen.destroy();
                 });
             });
 
             window.levelSystem = levelSystem;
 
-            console.log('📊 Dashboard integrado com OfflineRegen compartilhado!');
+            console.log('📊 Dashboard integrado com login direto na tabela "Geral" + sessão 24h + regeneração offline de stamina!');
         })();
     </script>
 </body>

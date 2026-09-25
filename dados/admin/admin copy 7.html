@@ -779,22 +779,6 @@
             color: #f59e0b;
         }
 
-        .stat-box .stat-red {
-            color: #ef4444;
-        }
-
-        .stat-box .stat-cyan {
-            color: #22d3ee;
-        }
-
-        .stat-box .stat-purple {
-            color: #a78bfa;
-        }
-
-        .stat-box .stat-orange {
-            color: #f7931a;
-        }
-
         /* Cor da senha */
         .senha-texto {
             font-family: 'Courier New', monospace;
@@ -1137,28 +1121,12 @@
                     <p class="stat-blue" id="totalUsuarios">0</p>
                 </div>
                 <div class="stat-box">
-                    <h3>Total Mumu</h3>
-                    <p class="stat-green" id="totalMumu">0,00 <span class="moeda-simbolo">Mumu</span></p>
+                    <h3>Total em Circulação</h3>
+                    <p class="stat-green" id="totalCirculacao">0,00 <span class="moeda-simbolo">Mumu</span></p>
                 </div>
                 <div class="stat-box">
-                    <h3>Total Saldo</h3>
-                    <p class="stat-cyan" id="totalSaldo">0,00 <span class="moeda-simbolo">R$</span></p>
-                </div>
-                <div class="stat-box">
-                    <h3>Total Poupança</h3>
+                    <h3>Total na Poupança</h3>
                     <p class="stat-gold" id="totalPoupanca">0,00 <span class="moeda-simbolo">Mumu</span></p>
-                </div>
-                <div class="stat-box">
-                    <h3>Proventos Pendentes</h3>
-                    <p class="stat-gold" id="totalProventos">0,00 <span class="moeda-simbolo">R$</span></p>
-                </div>
-                <div class="stat-box">
-                    <h3>Total BTC</h3>
-                    <p class="stat-orange" id="totalBtc">0,00000000 <span class="moeda-simbolo">BTC</span></p>
-                </div>
-                <div class="stat-box">
-                    <h3>Poder de Mercado</h3>
-                    <p class="stat-purple" id="totalPoderMercado">0,00 <span class="moeda-simbolo">R$</span></p>
                 </div>
                 <div class="stat-box">
                     <h3>Usuários Bloqueados</h3>
@@ -1392,7 +1360,7 @@
             try {
                 let query = supabase
                     .from(TABELA)
-                    .select('id, nome, login, saldo, saldo_poupanca, sm_atual, btc, mumu, bloqueado, proventos_pendentes, poder_mercado')
+                    .select('id, nome, login, saldo, saldo_poupanca, sm_atual, btc, mumu, bloqueado')
                     .not('login', 'is', null);
 
                 if (filtro) {
@@ -1584,14 +1552,6 @@
                         <p style="font-size: 1.4rem; font-weight: 700; color: #f59e0b;">${formatarMoeda(usuario.saldo_poupanca || 0)}</p>
                     </div>
                     <div>
-                        <p style="font-size: 0.8rem; color: #8a99ad;">Proventos Pendentes</p>
-                        <p style="font-size: 1.4rem; font-weight: 700; color: #f59e0b;">${formatarMoeda(usuario.proventos_pendentes || 0)}</p>
-                    </div>
-                    <div>
-                        <p style="font-size: 0.8rem; color: #8a99ad;">Poder de Mercado</p>
-                        <p style="font-size: 1.4rem; font-weight: 700; color: #a78bfa;">${formatarMoeda(usuario.poder_mercado || 0)}</p>
-                    </div>
-                    <div>
                         <p style="font-size: 0.8rem; color: #8a99ad;">SM Atual</p>
                         <div style="display: flex; gap: 8px; align-items: center; margin-top: 4px;">
                             <input type="number" id="smAtualDetalhe_${usuario.id}" class="quantidade-input" style="width: 100px; font-size: 1rem; padding: 6px 10px;" step="1" value="${usuario.sm_atual ?? 0}">
@@ -1719,23 +1679,14 @@
             }
 
             const total = usuarios.length;
-
             const totalMumu = usuarios.reduce((acc, u) => acc + (Number(u.mumu) || 0), 0);
-            const totalSaldo = usuarios.reduce((acc, u) => acc + (Number(u.saldo) || 0), 0);
             const totalPoupanca = usuarios.reduce((acc, u) => acc + (Number(u.saldo_poupanca) || 0), 0);
-            const totalProventos = usuarios.reduce((acc, u) => acc + (Number(u.proventos_pendentes) || 0), 0);
-            const totalBtc = usuarios.reduce((acc, u) => acc + (Number(u.btc) || 0), 0);
-            const totalPoderMercado = usuarios.reduce((acc, u) => acc + (Number(u.poder_mercado) || 0), 0);
             const totalBloqueados = usuarios.filter(u => u.bloqueado === true).length;
 
             document.getElementById('totalUsuarios').textContent = total;
-            document.getElementById('totalMumu').innerHTML = `${totalMumu.toFixed(2)} <span class="moeda-simbolo">${MOEDA}</span>`;
-            document.getElementById('totalSaldo').innerHTML = `${totalSaldo.toFixed(2)} <span class="moeda-simbolo">R$</span>`;
+            document.getElementById('totalCirculacao').innerHTML = `${totalMumu.toFixed(2)} <span class="moeda-simbolo">${MOEDA}</span>`;
             document.getElementById('totalPoupanca').innerHTML = `${totalPoupanca.toFixed(2)} <span class="moeda-simbolo">${MOEDA}</span>`;
-            document.getElementById('totalProventos').innerHTML = `${totalProventos.toFixed(2)} <span class="moeda-simbolo">R$</span>`;
-            document.getElementById('totalBtc').innerHTML = `${totalBtc.toFixed(8)} <span class="moeda-simbolo">BTC</span>`;
-            document.getElementById('totalPoderMercado').innerHTML = `${totalPoderMercado.toFixed(2)} <span class="moeda-simbolo">R$</span>`;
-
+            
             const elBloq = document.getElementById('totalBloqueados');
             if (elBloq) elBloq.textContent = totalBloqueados;
         }

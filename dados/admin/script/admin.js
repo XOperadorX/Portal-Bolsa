@@ -37,7 +37,11 @@ function mostrarMensagem(texto, tipo = 'info') {
 }
 
 function formatarMoeda(valor) {
-    return `${valor.toFixed(2)} ${MOEDA}`;
+    return `${Number(valor || 0).toFixed(2)} ${MOEDA}`;
+}
+
+function formatarBtc(valor) {
+    return `${Number(valor || 0).toFixed(8)} BTC`;
 }
 
 function atualizarStatusSupabase(online, mensagem = null) {
@@ -209,7 +213,7 @@ async function buscarUsuarios(filtro = null) {
     try {
         let query = supabase
             .from(TABELA)
-            .select('id, nome, login, senha, saldo, saldo_poupanca, sm_atual, bloqueado')
+            .select('id, nome, login, saldo, saldo_poupanca, sm_atual, btc, mumu, bloqueado')
             .not('login', 'is', null);
 
         if (filtro) {
@@ -253,17 +257,18 @@ async function buscarUsuarioPorId(id) {
     }
 }
 
-async function atualizarSaldoUsuario(id, novoSaldo) {
+// ============ NOVO: atualizar MUMU (não saldo) ============
+async function atualizarMumu(id, novoMumu) {
     try {
         const { data, error } = await supabase
             .from(TABELA)
-            .update({ saldo: novoSaldo, updated_at: new Date().toISOString() })
+            .update({ mumu: novoMumu, updated_at: new Date().toISOString() })
             .eq('id', id)
             .select();
         if (error) throw error;
         return data;
     } catch (error) {
-        console.error('Erro ao atualizar saldo:', error);
+        console.error('Erro ao atualizar Mumu:', error);
         throw error;
     }
 }
@@ -279,6 +284,21 @@ async function atualizarSmAtual(id, valor) {
         return data;
     } catch (error) {
         console.error('Erro ao atualizar SM Atual:', error);
+        throw error;
+    }
+}
+
+async function atualizarBtc(id, valor) {
+    try {
+        const { data, error } = await supabase
+            .from(TABELA)
+            .update({ btc: valor, updated_at: new Date().toISOString() })
+            .eq('id', id)
+            .select();
+        if (error) throw error;
+        return data;
+    } catch (error) {
+        console.error('Erro ao atualizar BTC:', error);
         throw error;
     }
 }
@@ -329,7 +349,7 @@ async function deletarUsuario(id, login) {
             return;
         }
 
-        console.log(`🗑️ Usuário deletado: ID ${id} | Login: ${login} | Saldo: ${usuario.saldo} | Poupança: ${usuario.saldo_poupanca}`);
+        console.log(`🗑️ Usuário deletado: ID ${id} | Login: ${login}`);
 
         mostrarMensagem(`🗑️ Usuário "${login}" (ID: ${id}) deletado com sucesso!`, 'sucesso');
         
@@ -373,8 +393,12 @@ function renderizarUsuarioDetalhes(usuario) {
                 <p style="font-size: 1.2rem; font-weight: 600; color: #fbbf24; font-family: 'Courier New', monospace;">${usuario.senha || '—'}</p>
             </div>
             <div>
+                <p style="font-size: 0.8rem; color: #8a99ad;">Mumu</p>
+                <p style="font-size: 1.4rem; font-weight: 700; color: var(--neon-green);">${formatarMoeda(usuario.mumu || 0)}</p>
+            </div>
+            <div>
                 <p style="font-size: 0.8rem; color: #8a99ad;">Saldo</p>
-                <p style="font-size: 1.4rem; font-weight: 700; color: var(--neon-green);">${formatarMoeda(usuario.saldo || 0)}</p>
+                <p style="font-size: 1.4rem; font-weight: 700; color: #22d3ee;">${formatarMoeda(usuario.saldo || 0)}</p>
             </div>
             <div>
                 <p style="font-size: 0.8rem; color: #8a99ad;">Poupança</p>
@@ -383,13 +407,13 @@ function renderizarUsuarioDetalhes(usuario) {
             <div>
                 <p style="font-size: 0.8rem; color: #8a99ad;">SM Atual</p>
                 <div style="display: flex; gap: 8px; align-items: center; margin-top: 4px;">
-                    <input type="number" id="smAtualDetalhe_${usuario.id}" class="quantidade-input" style="width: 100px; font-size: 1rem; padding: 6px 10px;" step="0.01" value="${usuario.sm_atual ?? 0}">
+                    <input type="number" id="smAtualDetalhe_${usuario.id}" class="quantidade-input" style="width: 100px; font-size: 1rem; padding: 6px 10px;" step="1" value="${usuario.sm_atual ?? 0}">
                     <button class="acao-botoes" style="background:#a78bfa; color:#fff; border:none; border-radius:20px; padding:6px 12px; font-weight:700; cursor:pointer; font-size:0.75rem;" onclick="window.salvarSmAtualDetalhe(${usuario.id})">💾 Salvar</button>
                 </div>
             </div>
             <div>
-                <p style="font-size: 0.8rem; color: #8a99ad;">Patrimônio Total</p>
-                <p style="font-size: 1.4rem; font-weight: 700; color: #fff;">${formatarMoeda((usuario.saldo || 0) + (usuario.saldo_poupanca || 0))}</p>
+                <p style="font-size: 0.8rem; color: #8a99ad;">BTC</p>
+                <p style="font-size: 1.4rem; font-weight: 700; color: #f7931a;">${formatarBtc(usuario.btc || 0)}</p>
             </div>
             <div>
                 <p style="font-size: 0.8rem; color: #8a99ad;">Status</p>
@@ -399,9 +423,9 @@ function renderizarUsuarioDetalhes(usuario) {
             </div>
         </div>
         <div style="margin-top: 16px; display: flex; gap: 10px; flex-wrap: wrap;">
-            <button class="btn btn-success" onclick="window.adicionarSaldoEspecifico(${usuario.id})">➕ Adicionar</button>
-            <button class="btn btn-danger" onclick="window.removerSaldoEspecifico(${usuario.id})">➖ Remover</button>
-            <button class="btn btn-warning" onclick="window.definirSaldoEspecifico(${usuario.id})">🎯 Definir</button>
+            <button class="btn btn-success" onclick="window.adicionarMumuEspecifico(${usuario.id})">➕ Adicionar</button>
+            <button class="btn btn-danger" onclick="window.removerMumuEspecifico(${usuario.id})">➖ Remover</button>
+            <button class="btn btn-warning" onclick="window.definirMumuEspecifico(${usuario.id})">🎯 Definir</button>
             <button class="btn btn-bloquear" onclick="window.alternarBloqueio(${usuario.id}, '${usuario.login}', ${estaBloqueado})">
                 ${estaBloqueado ? '🔓 Desbloquear' : '🔒 Bloquear'}
             </button>
@@ -430,12 +454,12 @@ function renderizarListaUsuarios(usuarios) {
                 <td style="color: var(--neon-blue);">#${u.id}</td>
                 <td><strong>${u.nome || '—'}</strong></td>
                 <td>${u.login}</td>
-                <td><span class="senha-texto">${u.senha || '—'}</span></td>
-                <td style="color: var(--neon-green); font-weight: 600;">${formatarMoeda(u.saldo || 0)}</td>
+                <td style="color: var(--neon-green); font-weight: 600;">${formatarMoeda(u.mumu || 0)}</td>
+                <td style="color: #22d3ee; font-weight: 600;">${formatarMoeda(u.saldo || 0)}</td>
                 <td style="color: #f59e0b; font-weight: 600;">${formatarMoeda(u.saldo_poupanca || 0)}</td>
                 <td>
                     <div class="sm-edit-wrapper">
-                        <input type="number" id="sm_${u.id}" class="quantidade-input" step="0.01" value="${u.sm_atual ?? 0}">
+                        <input type="number" id="sm_${u.id}" class="quantidade-input" step="1" value="${u.sm_atual ?? 0}">
                         <button class="sm-save" onclick="window.salvarSmAtual(${u.id})">💾</button>
                     </div>
                 </td>
@@ -446,13 +470,50 @@ function renderizarListaUsuarios(usuarios) {
                 </td>
                 <td>
                     <div class="acao-botoes">
-                        <input type="number" id="valor_${u.id}" class="quantidade-input" placeholder="Valor" step="0.01" min="0.01" value="10">
-                        <button class="add" onclick="window.adicionarSaldoUsuario(${u.id})">+</button>
-                        <button class="remove" onclick="window.removerSaldoUsuario(${u.id})">-</button>
-                        <button class="set" onclick="window.definirSaldoUsuario(${u.id})">=</button>
+                        <input type="number" id="mumu_${u.id}" class="quantidade-input" placeholder="Mumu" step="0.01" min="0.01" value="10">
+                        <button class="add" onclick="window.adicionarMumuUsuario(${u.id})">+</button>
+                        <button class="remove" onclick="window.removerMumuUsuario(${u.id})">-</button>
+                        <button class="set" onclick="window.definirMumuUsuario(${u.id})">=</button>
                         <button class="${estaBloqueado ? 'unlock' : 'lock'}" onclick="window.alternarBloqueio(${u.id}, '${u.login}', ${estaBloqueado})">
                             ${estaBloqueado ? '🔓' : '🔒'}
                         </button>
+                        <button class="delete" onclick="window.deletarUsuario(${u.id}, '${u.login}')">🗑️</button>
+                    </div>
+                </td>
+            </tr>
+        `;
+    });
+
+    tbody.innerHTML = html;
+    card.style.display = 'block';
+}
+
+function renderizarListaSatoshi(usuarios) {
+    const tbody = document.getElementById('tabelaSatoshi');
+    const card = document.getElementById('cardSatoshi');
+
+    if (!usuarios || usuarios.length === 0) {
+        tbody.innerHTML = `<tr><td colspan="5" style="padding: 20px; color: #8a99ad;">Nenhum Satoshi encontrado.</td></tr>`;
+        card.style.display = 'block';
+        return;
+    }
+
+    let html = '';
+    usuarios.forEach(u => {
+        const estaBloqueado = u.bloqueado === true;
+        const btc = u.btc ?? 0;
+        html += `
+            <tr style="${estaBloqueado ? 'opacity: 0.6;' : ''}">
+                <td style="color: var(--neon-blue);">#${u.id}</td>
+                <td><strong>${u.nome || '—'}</strong></td>
+                <td>${u.login}</td>
+                <td class="btc-texto">${formatarBtc(btc)}</td>
+                <td>
+                    <div class="acao-botoes">
+                        <input type="number" id="btc_${u.id}" class="quantidade-input" placeholder="BTC" step="0.00000001" min="0" value="0.00000001">
+                        <button class="add" onclick="window.adicionarBtcUsuario(${u.id})">+</button>
+                        <button class="remove" onclick="window.removerBtcUsuario(${u.id})">-</button>
+                        <button class="set" onclick="window.definirBtcUsuario(${u.id})">=</button>
                         <button class="delete" onclick="window.deletarUsuario(${u.id}, '${u.login}')">🗑️</button>
                     </div>
                 </td>
@@ -471,21 +532,21 @@ async function atualizarEstatisticas(usuarios) {
     }
 
     const total = usuarios.length;
-    const totalSaldo = usuarios.reduce((acc, u) => acc + (u.saldo || 0), 0);
-    const totalPoupanca = usuarios.reduce((acc, u) => acc + (u.saldo_poupanca || 0), 0);
+    const totalMumu = usuarios.reduce((acc, u) => acc + (Number(u.mumu) || 0), 0);
+    const totalPoupanca = usuarios.reduce((acc, u) => acc + (Number(u.saldo_poupanca) || 0), 0);
     const totalBloqueados = usuarios.filter(u => u.bloqueado === true).length;
 
     document.getElementById('totalUsuarios').textContent = total;
-    document.getElementById('totalCirculacao').innerHTML = `${totalSaldo.toFixed(2)} <span class="moeda-simbolo">${MOEDA}</span>`;
+    document.getElementById('totalCirculacao').innerHTML = `${totalMumu.toFixed(2)} <span class="moeda-simbolo">${MOEDA}</span>`;
     document.getElementById('totalPoupanca').innerHTML = `${totalPoupanca.toFixed(2)} <span class="moeda-simbolo">${MOEDA}</span>`;
     
     const elBloq = document.getElementById('totalBloqueados');
     if (elBloq) elBloq.textContent = totalBloqueados;
 }
 
-// ==================== AÇÕES DE SALDO ====================
-window.adicionarSaldoUsuario = async function(id) {
-    const input = document.getElementById(`valor_${id}`);
+// ==================== AÇÕES DE MUMU ====================
+window.adicionarMumuUsuario = async function(id) {
+    const input = document.getElementById(`mumu_${id}`);
     const valor = parseFloat(input.value);
     if (!valor || valor <= 0) {
         mostrarMensagem('⚠️ Digite um valor válido.', 'erro');
@@ -499,18 +560,19 @@ window.adicionarSaldoUsuario = async function(id) {
             return;
         }
 
-        const novoSaldo = (usuario.saldo || 0) + valor;
-        await atualizarSaldoUsuario(id, novoSaldo);
+        const novoMumu = (Number(usuario.mumu) || 0) + valor;
+        await atualizarMumu(id, novoMumu);
 
-        mostrarMensagem(`✅ Adicionado ${formatarMoeda(valor)} para ${usuario.login}. Novo saldo: ${formatarMoeda(novoSaldo)}`, 'sucesso');
+        mostrarMensagem(`✅ Adicionado ${formatarMoeda(valor)} para ${usuario.login}. Novo Mumu: ${formatarMoeda(novoMumu)}`, 'sucesso');
         await carregarDados();
     } catch (error) {
-        mostrarMensagem('❌ Erro ao adicionar saldo.', 'erro');
+        console.error('Erro ao adicionar Mumu:', error);
+        mostrarMensagem('❌ Erro ao adicionar Mumu: ' + (error.message || ''), 'erro');
     }
 };
 
-window.removerSaldoUsuario = async function(id) {
-    const input = document.getElementById(`valor_${id}`);
+window.removerMumuUsuario = async function(id) {
+    const input = document.getElementById(`mumu_${id}`);
     const valor = parseFloat(input.value);
     if (!valor || valor <= 0) {
         mostrarMensagem('⚠️ Digite um valor válido.', 'erro');
@@ -524,18 +586,19 @@ window.removerSaldoUsuario = async function(id) {
             return;
         }
 
-        const novoSaldo = Math.max(0, (usuario.saldo || 0) - valor);
-        await atualizarSaldoUsuario(id, novoSaldo);
+        const novoMumu = Math.max(0, (Number(usuario.mumu) || 0) - valor);
+        await atualizarMumu(id, novoMumu);
 
-        mostrarMensagem(`✅ Removido ${formatarMoeda(valor)} de ${usuario.login}. Novo saldo: ${formatarMoeda(novoSaldo)}`, 'sucesso');
+        mostrarMensagem(`✅ Removido ${formatarMoeda(valor)} de ${usuario.login}. Novo Mumu: ${formatarMoeda(novoMumu)}`, 'sucesso');
         await carregarDados();
     } catch (error) {
-        mostrarMensagem('❌ Erro ao remover saldo.', 'erro');
+        console.error('Erro ao remover Mumu:', error);
+        mostrarMensagem('❌ Erro ao remover Mumu: ' + (error.message || ''), 'erro');
     }
 };
 
-window.definirSaldoUsuario = async function(id) {
-    const input = document.getElementById(`valor_${id}`);
+window.definirMumuUsuario = async function(id) {
+    const input = document.getElementById(`mumu_${id}`);
     const valor = parseFloat(input.value);
     if (!valor || valor < 0) {
         mostrarMensagem('⚠️ Digite um valor válido (0 ou mais).', 'erro');
@@ -549,19 +612,98 @@ window.definirSaldoUsuario = async function(id) {
             return;
         }
 
-        await atualizarSaldoUsuario(id, valor);
+        await atualizarMumu(id, valor);
 
-        mostrarMensagem(`✅ Saldo de ${usuario.login} definido para ${formatarMoeda(valor)}`, 'sucesso');
+        mostrarMensagem(`✅ Mumu de ${usuario.login} definido para ${formatarMoeda(valor)}`, 'sucesso');
         await carregarDados();
     } catch (error) {
-        mostrarMensagem('❌ Erro ao definir saldo.', 'erro');
+        console.error('Erro ao definir Mumu:', error);
+        mostrarMensagem('❌ Erro ao definir Mumu: ' + (error.message || ''), 'erro');
+    }
+};
+
+// ==================== AÇÕES DE BTC ====================
+window.adicionarBtcUsuario = async function(id) {
+    const input = document.getElementById(`btc_${id}`);
+    const valor = parseFloat(input.value);
+    if (isNaN(valor) || valor <= 0) {
+        mostrarMensagem('⚠️ Digite um valor BTC válido.', 'erro');
+        return;
+    }
+
+    try {
+        const usuario = await buscarUsuarioPorId(id);
+        if (!usuario) {
+            mostrarMensagem('❌ Usuário não encontrado.', 'erro');
+            return;
+        }
+
+        const novoBtc = (Number(usuario.btc) || 0) + valor;
+        await atualizarBtc(id, novoBtc);
+
+        mostrarMensagem(`✅ Adicionado ${valor.toFixed(8)} BTC para ${usuario.login}. Novo BTC: ${formatarBtc(novoBtc)}`, 'sucesso');
+        await carregarDados();
+    } catch (error) {
+        console.error('Erro ao adicionar BTC:', error);
+        mostrarMensagem('❌ Erro ao adicionar BTC: ' + (error.message || ''), 'erro');
+    }
+};
+
+window.removerBtcUsuario = async function(id) {
+    const input = document.getElementById(`btc_${id}`);
+    const valor = parseFloat(input.value);
+    if (isNaN(valor) || valor <= 0) {
+        mostrarMensagem('⚠️ Digite um valor BTC válido.', 'erro');
+        return;
+    }
+
+    try {
+        const usuario = await buscarUsuarioPorId(id);
+        if (!usuario) {
+            mostrarMensagem('❌ Usuário não encontrado.', 'erro');
+            return;
+        }
+
+        const novoBtc = Math.max(0, (Number(usuario.btc) || 0) - valor);
+        await atualizarBtc(id, novoBtc);
+
+        mostrarMensagem(`✅ Removido ${valor.toFixed(8)} BTC de ${usuario.login}. Novo BTC: ${formatarBtc(novoBtc)}`, 'sucesso');
+        await carregarDados();
+    } catch (error) {
+        console.error('Erro ao remover BTC:', error);
+        mostrarMensagem('❌ Erro ao remover BTC: ' + (error.message || ''), 'erro');
+    }
+};
+
+window.definirBtcUsuario = async function(id) {
+    const input = document.getElementById(`btc_${id}`);
+    const valor = parseFloat(input.value);
+    if (isNaN(valor) || valor < 0) {
+        mostrarMensagem('⚠️ Digite um valor BTC válido (0 ou mais).', 'erro');
+        return;
+    }
+
+    try {
+        const usuario = await buscarUsuarioPorId(id);
+        if (!usuario) {
+            mostrarMensagem('❌ Usuário não encontrado.', 'erro');
+            return;
+        }
+
+        await atualizarBtc(id, valor);
+
+        mostrarMensagem(`✅ BTC de ${usuario.login} definido para ${formatarBtc(valor)}`, 'sucesso');
+        await carregarDados();
+    } catch (error) {
+        console.error('Erro ao definir BTC:', error);
+        mostrarMensagem('❌ Erro ao definir BTC: ' + (error.message || ''), 'erro');
     }
 };
 
 // ==================== SM ATUAL ====================
 window.salvarSmAtual = async function(id) {
     const input = document.getElementById(`sm_${id}`);
-    const valor = parseFloat(input.value);
+    const valor = parseInt(input.value);
     if (isNaN(valor)) {
         mostrarMensagem('⚠️ Digite um valor válido para SM Atual.', 'erro');
         return;
@@ -576,7 +718,7 @@ window.salvarSmAtual = async function(id) {
 
         await atualizarSmAtual(id, valor);
 
-        mostrarMensagem(`✅ SM Atual de ${usuario.login} atualizado para ${valor.toFixed(2)}`, 'sucesso');
+        mostrarMensagem(`✅ SM Atual de ${usuario.login} atualizado para ${valor}`, 'sucesso');
         await carregarDados();
     } catch (error) {
         mostrarMensagem('❌ Erro ao atualizar SM Atual.', 'erro');
@@ -585,7 +727,7 @@ window.salvarSmAtual = async function(id) {
 
 window.salvarSmAtualDetalhe = async function(id) {
     const input = document.getElementById(`smAtualDetalhe_${id}`);
-    const valor = parseFloat(input.value);
+    const valor = parseInt(input.value);
     if (isNaN(valor)) {
         mostrarMensagem('⚠️ Digite um valor válido para SM Atual.', 'erro');
         return;
@@ -600,7 +742,7 @@ window.salvarSmAtualDetalhe = async function(id) {
 
         await atualizarSmAtual(id, valor);
 
-        mostrarMensagem(`✅ SM Atual de ${usuario.login} atualizado para ${valor.toFixed(2)}`, 'sucesso');
+        mostrarMensagem(`✅ SM Atual de ${usuario.login} atualizado para ${valor}`, 'sucesso');
         await carregarDados();
     } catch (error) {
         mostrarMensagem('❌ Erro ao atualizar SM Atual.', 'erro');
@@ -626,8 +768,8 @@ window.alternarBloqueio = async function(id, login, estaBloqueado) {
 
 window.deletarUsuario = deletarUsuario;
 
-// ==================== AÇÕES ESPECÍFICAS ====================
-window.adicionarSaldoEspecifico = async function(id) {
+// ==================== AÇÕES ESPECÍFICAS (MUMU) ====================
+window.adicionarMumuEspecifico = async function(id) {
     const valorInput = document.getElementById('valorAcao');
     const valor = parseFloat(valorInput.value);
     if (!valor || valor <= 0) {
@@ -642,17 +784,17 @@ window.adicionarSaldoEspecifico = async function(id) {
             return;
         }
 
-        const novoSaldo = (usuario.saldo || 0) + valor;
-        await atualizarSaldoUsuario(id, novoSaldo);
+        const novoMumu = (Number(usuario.mumu) || 0) + valor;
+        await atualizarMumu(id, novoMumu);
 
-        mostrarMensagem(`✅ Adicionado ${formatarMoeda(valor)} para ${usuario.login}. Novo saldo: ${formatarMoeda(novoSaldo)}`, 'sucesso');
+        mostrarMensagem(`✅ Adicionado ${formatarMoeda(valor)} para ${usuario.login}. Novo Mumu: ${formatarMoeda(novoMumu)}`, 'sucesso');
         await carregarDados();
     } catch (error) {
-        mostrarMensagem('❌ Erro ao adicionar saldo.', 'erro');
+        mostrarMensagem('❌ Erro ao adicionar Mumu.', 'erro');
     }
 };
 
-window.removerSaldoEspecifico = async function(id) {
+window.removerMumuEspecifico = async function(id) {
     const valorInput = document.getElementById('valorAcao');
     const valor = parseFloat(valorInput.value);
     if (!valor || valor <= 0) {
@@ -667,17 +809,17 @@ window.removerSaldoEspecifico = async function(id) {
             return;
         }
 
-        const novoSaldo = Math.max(0, (usuario.saldo || 0) - valor);
-        await atualizarSaldoUsuario(id, novoSaldo);
+        const novoMumu = Math.max(0, (Number(usuario.mumu) || 0) - valor);
+        await atualizarMumu(id, novoMumu);
 
-        mostrarMensagem(`✅ Removido ${formatarMoeda(valor)} de ${usuario.login}. Novo saldo: ${formatarMoeda(novoSaldo)}`, 'sucesso');
+        mostrarMensagem(`✅ Removido ${formatarMoeda(valor)} de ${usuario.login}. Novo Mumu: ${formatarMoeda(novoMumu)}`, 'sucesso');
         await carregarDados();
     } catch (error) {
-        mostrarMensagem('❌ Erro ao remover saldo.', 'erro');
+        mostrarMensagem('❌ Erro ao remover Mumu.', 'erro');
     }
 };
 
-window.definirSaldoEspecifico = async function(id) {
+window.definirMumuEspecifico = async function(id) {
     const valorInput = document.getElementById('valorAcao');
     const valor = parseFloat(valorInput.value);
     if (!valor || valor < 0) {
@@ -692,12 +834,12 @@ window.definirSaldoEspecifico = async function(id) {
             return;
         }
 
-        await atualizarSaldoUsuario(id, valor);
+        await atualizarMumu(id, valor);
 
-        mostrarMensagem(`✅ Saldo de ${usuario.login} definido para ${formatarMoeda(valor)}`, 'sucesso');
+        mostrarMensagem(`✅ Mumu de ${usuario.login} definido para ${formatarMoeda(valor)}`, 'sucesso');
         await carregarDados();
     } catch (error) {
-        mostrarMensagem('❌ Erro ao definir saldo.', 'erro');
+        mostrarMensagem('❌ Erro ao definir Mumu.', 'erro');
     }
 };
 
@@ -724,13 +866,13 @@ async function adicionarSaldoMassa() {
             return;
         }
 
-        const novoSaldo = (usuario.saldo || 0) + valor;
-        await atualizarSaldoUsuario(id, novoSaldo);
+        const novoMumu = (Number(usuario.mumu) || 0) + valor;
+        await atualizarMumu(id, novoMumu);
 
-        mostrarMensagem(`✅ Adicionado ${formatarMoeda(valor)} para ${usuario.login}. Novo saldo: ${formatarMoeda(novoSaldo)}`, 'sucesso');
+        mostrarMensagem(`✅ Adicionado ${formatarMoeda(valor)} para ${usuario.login}. Novo Mumu: ${formatarMoeda(novoMumu)}`, 'sucesso');
         await carregarDados();
     } catch (error) {
-        mostrarMensagem('❌ Erro ao adicionar saldo.', 'erro');
+        mostrarMensagem('❌ Erro ao adicionar Mumu.', 'erro');
     }
 }
 
@@ -756,13 +898,13 @@ async function removerSaldoMassa() {
             return;
         }
 
-        const novoSaldo = Math.max(0, (usuario.saldo || 0) - valor);
-        await atualizarSaldoUsuario(id, novoSaldo);
+        const novoMumu = Math.max(0, (Number(usuario.mumu) || 0) - valor);
+        await atualizarMumu(id, novoMumu);
 
-        mostrarMensagem(`✅ Removido ${formatarMoeda(valor)} de ${usuario.login}. Novo saldo: ${formatarMoeda(novoSaldo)}`, 'sucesso');
+        mostrarMensagem(`✅ Removido ${formatarMoeda(valor)} de ${usuario.login}. Novo Mumu: ${formatarMoeda(novoMumu)}`, 'sucesso');
         await carregarDados();
     } catch (error) {
-        mostrarMensagem('❌ Erro ao remover saldo.', 'erro');
+        mostrarMensagem('❌ Erro ao remover Mumu.', 'erro');
     }
 }
 
@@ -788,12 +930,12 @@ async function definirSaldoMassa() {
             return;
         }
 
-        await atualizarSaldoUsuario(id, valor);
+        await atualizarMumu(id, valor);
 
-        mostrarMensagem(`✅ Saldo de ${usuario.login} definido para ${formatarMoeda(valor)}`, 'sucesso');
+        mostrarMensagem(`✅ Mumu de ${usuario.login} definido para ${formatarMoeda(valor)}`, 'sucesso');
         await carregarDados();
     } catch (error) {
-        mostrarMensagem('❌ Erro ao definir saldo.', 'erro');
+        mostrarMensagem('❌ Erro ao definir Mumu.', 'erro');
     }
 }
 
@@ -974,6 +1116,7 @@ async function carregarDados() {
     if (filtro) {
         usuarios = await buscarUsuarios(filtro);
         renderizarListaUsuarios(usuarios);
+        renderizarListaSatoshi(usuarios);
         if (usuarios.length === 1) {
             renderizarUsuarioDetalhes(usuarios[0]);
         } else {
@@ -982,6 +1125,7 @@ async function carregarDados() {
     } else {
         usuarios = await buscarUsuarios();
         renderizarListaUsuarios(usuarios);
+        renderizarListaSatoshi(usuarios);
         document.getElementById('cardResultados').style.display = 'none';
     }
 

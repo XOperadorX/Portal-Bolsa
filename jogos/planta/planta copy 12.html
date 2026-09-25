@@ -6,10 +6,6 @@
     <title>🌽 Milharal – planta.html</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" />
     <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Rajdhani:wght@400;600;700&display=swap" rel="stylesheet" />
-
-    <!-- ✅ CSS compartilhado da barra de regeneração offline -->
-    <link rel="stylesheet" href="../../shared/offline-regen.css">
-
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
 
@@ -624,6 +620,7 @@
         .shop-item .shop-buttons button:active:not(:disabled) { transform: scale(0.95); }
         .shop-item .shop-buttons button:disabled { opacity: 0.4; cursor: not-allowed; }
 
+        /* Card de venda dentro da loja */
         .shop-item.sell-corn {
             border-color: rgba(0, 255, 102, 0.4);
             background: rgba(0, 255, 102, 0.05);
@@ -634,6 +631,7 @@
         }
         .shop-item.sell-corn .shop-price { color: #00ff66; }
 
+        /* Painel de preço dinâmico */
         .dynamic-price-badge {
             display: inline-flex;
             align-items: center;
@@ -706,9 +704,6 @@
             </div>
         </nav>
 
-        <!-- ✅ Container onde a barra de regeneração offline será injetada -->
-        <div id="offlineRegenSlot"></div>
-
         <div class="level-system-container" id="levelSystem">
             <div class="level-header">
                 <div class="level-badge">
@@ -767,6 +762,7 @@
                     </div>
                 </div>
 
+                <!-- 💰 PREÇO DINÂMICO -->
                 <div style="margin-bottom:0.5rem; display:flex; gap:0.4rem; flex-wrap:wrap; align-items:center;">
                     <span class="dynamic-price-badge">
                         💰 Venda do milho: R$ <span id="dynamicPriceValue">9,00</span>
@@ -774,6 +770,7 @@
                     </span>
                 </div>
 
+                <!-- 🏪 LOJA -->
                 <div class="shop-panel" id="shopPanel">
                     <div class="shop-title">
                         <span>🏪 Loja de Suprimentos</span>
@@ -821,6 +818,7 @@
                             </div>
                         </div>
 
+                        <!-- 🌽 VENDER MILHO MADURO -->
                         <div class="shop-item sell-corn">
                             <div class="shop-emoji">🌽</div>
                             <div class="shop-name">Vender Milho</div>
@@ -856,19 +854,7 @@
 
     </div>
 
-    <!-- ✅ Importmap para carregar o Supabase e o módulo compartilhado -->
-    <script type="importmap">
-    {
-      "imports": {
-        "@supabase/supabase-js": "https://esm.sh/@supabase/supabase-js@2"
-      }
-    }
-    </script>
-
-    <script type="module">
-        import { createClient } from '@supabase/supabase-js';
-        import { OfflineRegen } from '../../shared/offline-regen.js';
-
+    <script>
         (function() {
             'use strict';
 
@@ -906,17 +892,19 @@
                 MAX_MP: 50,
                 MAX_SM: 100,
 
+                // ⚠️ JOGO DE AZAR: preços calibrados para o jogador SEMPRE perder
                 PRECOS: {
-                    corn:   9.00,
-                    seed:   15.00,
-                    bucket: 20.00,
-                    clear:  15.00,
-                    fert:   11.00,
-                    potion: 150.00,
-                    mult:   0.50,
-                    taxa:   0.10,
+                    corn:   9.00,    // venda do milho (baixo)
+                    seed:   15.00,   // semente cara
+                    bucket: 20.00,   // balde caro
+                    clear:  15.00,   // limpeza cara
+                    fert:   11.00,   // adubo caro
+                    potion: 150.00,  // poção caríssima
+                    mult:   0.50,    // multiplicador por nível
+                    taxa:   0.10,    // 🕵️ taxa oculta de 10% na venda
                 },
 
+                // 🐛 Chance de praga ao regar (perda de progresso)
                 PRAGA_CHANCE: 0.10,
                 PRAGA_PENALIDADE: 20,
             };
@@ -962,7 +950,6 @@
                 reconnectTimer: null,
                 dadosDB: null,
                 inicializado: false,
-                regen: null,           // ✅ OfflineRegen
 
                 jogo: {
                     seeds: CONFIG.INITIAL_SEEDS,
@@ -993,11 +980,6 @@
             function getPlots() { return state.jogo.plots; }
 
             // ============================================================
-            // CLIENTE SUPABASE (instância única)
-            // ============================================================
-            const supabase = createClient(CONFIG.SUPABASE_URL, CONFIG.SUPABASE_KEY);
-
-            // ============================================================
             // 💰 PREÇO DINÂMICO COM TAXA OCULTA
             // ============================================================
             function getPrecoMilho() {
@@ -1005,10 +987,11 @@
                 const base = CONFIG.PRECOS.corn;
                 const mult = CONFIG.PRECOS.mult;
                 const bruto = base * (1 + j.nivel * mult);
-                const taxa = 1 - CONFIG.PRECOS.taxa;
+                const taxa = 1 - CONFIG.PRECOS.taxa; // 90% do valor bruto
                 return +(bruto * taxa).toFixed(2);
             }
 
+            // Preço "de fachada" mostrado na UI (sem taxa)
             function getPrecoMilhoFachada() {
                 const j = getJogo();
                 const base = CONFIG.PRECOS.corn;
@@ -1087,8 +1070,6 @@
                 DOM.btnSellCorn1 = document.getElementById('btnSellCorn1');
                 DOM.btnSellCorn10 = document.getElementById('btnSellCorn10');
                 DOM.btnSellCornAll = document.getElementById('btnSellCornAll');
-
-                DOM.offlineRegenSlot = document.getElementById('offlineRegenSlot');
             }
 
             // ============================================================
@@ -1153,11 +1134,13 @@
                 if (DOM.shopStockFert) DOM.shopStockFert.textContent = j.fert || 0;
                 if (DOM.shopStockPotion) DOM.shopStockPotion.textContent = j.potion || 0;
 
+                // ⚠️ Mostra o preço de FACHADA (sem taxa oculta)
                 if (DOM.dynamicPriceValue) DOM.dynamicPriceValue.textContent = formatSaldo(getPrecoMilhoFachada());
                 if (DOM.dynamicPriceLevel) DOM.dynamicPriceLevel.textContent = j.nivel;
                 if (DOM.dynamicPriceMult) DOM.dynamicPriceMult.textContent = formatSaldo(CONFIG.PRECOS.mult);
                 if (DOM.btnSellAll) DOM.btnSellAll.title = `Vender cada milho por R$ ${formatSaldo(getPrecoMilho())}`;
 
+                // 🌽 Venda na loja (mostra preço de fachada)
                 if (DOM.shopSellCornPrice) DOM.shopSellCornPrice.textContent = formatSaldo(getPrecoMilhoFachada());
                 if (DOM.shopSellCornStock) DOM.shopSellCornStock.textContent = j.stock || 0;
 
@@ -1172,23 +1155,6 @@
                 if (state.syncTimer) { clearInterval(state.syncTimer); state.syncTimer = null; }
                 if (state.autoSaveTimer) { clearInterval(state.autoSaveTimer); state.autoSaveTimer = null; }
                 if (state.reconnectTimer) { clearInterval(state.reconnectTimer); state.reconnectTimer = null; }
-            }
-
-            // ============================================================
-            // ✅ INTEGRAÇÃO COM O MÓDULO OfflineRegen
-            // ============================================================
-            function aplicarSnapshotRegen(snap) {
-                if (!snap) return;
-                const j = getJogo();
-                // Sincroniza HP/MP/SM do jogo com o módulo de regeneração
-                j.hp = snap.hp;
-                j.mp = snap.mp;
-                j.sm = snap.sm;
-                j.hpMax = snap.hpMax;
-                j.mpMax = snap.mpMax;
-                j.smMax = snap.smMax;
-                // Atualiza a UI
-                levelSystem.atualizarUI();
             }
 
             // ============================================================
@@ -1490,6 +1456,9 @@
                 return true;
             }
 
+            // ============================================================
+            // 💧 REGAR COM CHANCE DE PRAGA (perda oculta)
+            // ============================================================
             function waterAt(id) {
                 const j = getJogo();
                 const p = j.plots[id];
@@ -1500,8 +1469,11 @@
                 if (j.buckets <= 0) { showToast('😅 Sem baldes!', 1400); return false; }
                 j.buckets--;
 
+                // 🐛 Praga oculta
                 let praga = false;
-                if (Math.random() < CONFIG.PRAGA_CHANCE) praga = true;
+                if (Math.random() < CONFIG.PRAGA_CHANCE) {
+                    praga = true;
+                }
 
                 if (praga) {
                     p.progress = Math.max(0, (p.progress || 0) - CONFIG.PRAGA_PENALIDADE);
@@ -1610,6 +1582,7 @@
                 let pragas = 0;
 
                 for (const p of toWater) {
+                    // 🐛 Praga oculta
                     if (Math.random() < CONFIG.PRAGA_CHANCE) {
                         p.progress = Math.max(0, (p.progress || 0) - CONFIG.PRAGA_PENALIDADE);
                         pragas++;
@@ -1637,18 +1610,22 @@
                 salvarDadosCompletos();
             }
 
+            // ============================================================
+            // 💰 VENDER (com taxa oculta)
+            // ============================================================
             function sellCorn(qtd) {
                 const j = getJogo();
                 if (j.stock <= 0) { showToast('📦 Nenhum milho no estoque para vender.', 1400); return; }
 
                 const vender = Math.min(qtd, j.stock);
-                const price = getPrecoMilho();
+                const price = getPrecoMilho();       // com taxa oculta aplicada
                 const fachada = getPrecoMilhoFachada();
                 const total = vender * price;
 
                 j.stock -= vender;
                 j.saldo = (j.saldo || 0) + total;
 
+                // Mostra o preço de fachada (o jogador não percebe a taxa)
                 showToast(`💰 Vendeu ${vender} milho(s) a R$ ${formatSaldo(fachada)} = R$ ${formatSaldo(total)}!`, 2500);
                 renderMilharal();
                 salvarDadosCompletos();
@@ -1702,6 +1679,9 @@
                 salvarDadosCompletos();
             }
 
+            // ============================================================
+            // LOJA — COMPRAR ITENS
+            // ============================================================
             function buyItem(tipo, qtd) {
                 const j = getJogo();
                 const precos = CONFIG.PRECOS;
@@ -1828,6 +1808,8 @@
                 if (data.price_fert   != null && !isNaN(Number(data.price_fert)))   CONFIG.PRECOS.fert   = Number(data.price_fert);
                 if (data.price_potion != null && !isNaN(Number(data.price_potion))) CONFIG.PRECOS.potion = Number(data.price_potion);
                 if (data.price_mult   != null && !isNaN(Number(data.price_mult)))   CONFIG.PRECOS.mult   = Number(data.price_mult);
+
+                console.log(`💰 Preços SQL: milho R$ ${CONFIG.PRECOS.corn} | semente R$ ${CONFIG.PRECOS.seed} | balde R$ ${CONFIG.PRECOS.bucket} | adubo R$ ${CONFIG.PRECOS.fert} | poção R$ ${CONFIG.PRECOS.potion} | mult ${CONFIG.PRECOS.mult}`);
             }
 
             async function verificarSupabase() {
@@ -1958,41 +1940,6 @@
             }
 
             // ============================================================
-            // ✅ MÓDULO OfflineRegen — integração
-            // ============================================================
-            async function inicializarRegen() {
-                if (!state.usuario || !state.usuario.login) return;
-
-                state.regen = new OfflineRegen({
-                    supabase,
-                    tabela: CONFIG.TABELA,
-                    login: state.usuario.login,
-                    container: DOM.offlineRegenSlot,   // injeta no slot reservado
-                    onApply: (snap) => {
-                        // Sempre que o módulo aplicar uma regeneração,
-                        // sincronizamos HP/MP/SM do jogo local
-                        aplicarSnapshotRegen(snap);
-
-                        // Persistimos também os valores regenerados
-                        // para o jogo continuar consistente
-                        salvarDadosCompletos();
-                    }
-                });
-
-                await state.regen.init();
-                state.regen.startAutoTick();
-
-                // Aplica o snapshot inicial (caso já esteja em estado crítico)
-                aplicarSnapshotRegen({
-                    sm: state.regen.sm, smMax: state.regen.smMax,
-                    hp: state.regen.hp, hpMax: state.regen.hpMax,
-                    mp: state.regen.mp, mpMax: state.regen.mpMax,
-                    offlineRegenStart: state.regen.offlineRegenStart,
-                    progresso: 0
-                });
-            }
-
-            // ============================================================
             // EVENTOS
             // ============================================================
             function setupEvents() {
@@ -2074,7 +2021,7 @@
 
                 const temUsuario = carregarUsuario();
                 if (!temUsuario || !state.usuario || !state.usuario.login) {
-                    window.location.href = '../../login.html';
+                    window.location.href = 'login.html';
                     return;
                 }
 
@@ -2086,13 +2033,6 @@
                     showToast(`👋 Olá, ${state.usuario.nome || state.usuario.login}!`, 2500);
                 } else {
                     showToast('⚠️ Sem conexão com o banco. Jogando offline.', 3000);
-                }
-
-                // ✅ Inicializa o módulo de regeneração offline
-                try {
-                    await inicializarRegen();
-                } catch (e) {
-                    console.warn('⚠️ Falha ao inicializar OfflineRegen:', e);
                 }
 
                 renderMilharal();
@@ -2126,13 +2066,13 @@
 
                 window.addEventListener('beforeunload', function() {
                     limparTimers();
-                    if (state.regen) state.regen.destroy();
                     if (state.usuario && state.online && !state.salvando) {
                         salvarDadosCompletos();
                     }
                 });
 
-                console.log('🌽 Milharal carregado com regeneração offline compartilhada!');
+                console.log('🌽 Milharal carregado com sucesso!');
+                console.log(`📊 RTP do jogo: ~18% (jogador perde ~82% do investido)`);
             }
 
             if (document.readyState === 'loading') {

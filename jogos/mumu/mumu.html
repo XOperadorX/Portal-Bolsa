@@ -47,9 +47,7 @@
             padding: 8px;
             border-radius: 8px;
         }
-        .usuario-info strong {
-            color: #333;
-        }
+        .usuario-info strong { color: #333; }
 
         .saldos-grid {
             display: grid;
@@ -62,17 +60,9 @@
             padding: 22px 14px;
             text-align: center;
         }
-        .saldo-container.mumu {
-            background: linear-gradient(90deg, #ffd700, #ffb300);
-        }
-        .saldo-container.reais {
-            background: linear-gradient(90deg, #43e97b, #38f9d7);
-        }
-        .saldo-label {
-            font-size: 0.85rem;
-            font-weight: 600;
-            margin-bottom: 8px;
-        }
+        .saldo-container.mumu { background: linear-gradient(90deg, #ffd700, #ffb300); }
+        .saldo-container.reais { background: linear-gradient(90deg, #43e97b, #38f9d7); }
+        .saldo-label { font-size: 0.85rem; font-weight: 600; margin-bottom: 8px; }
         .saldo-container.mumu .saldo-label { color: #856d00; }
         .saldo-container.reais .saldo-label { color: #05664a; }
 
@@ -83,22 +73,14 @@
             letter-spacing: 0.5px;
             word-break: break-word;
         }
-        .saldo-valor .simbolo {
-            font-size: 1.1rem;
-            margin-right: 4px;
-        }
+        .saldo-valor .simbolo { font-size: 1.1rem; margin-right: 4px; }
 
-        .info {
-            font-size: 0.85rem;
-            color: #888;
-            margin-top: 10px;
-        }
+        .info { font-size: 0.85rem; color: #888; margin-top: 10px; }
         .carregando { color: #555; font-style: italic; }
         .erro { color: #d32f2f; }
         .spinner {
             display: inline-block;
-            width: 18px;
-            height: 18px;
+            width: 18px; height: 18px;
             border: 3px solid rgba(255,255,255,0.5);
             border-top: 3px solid #856d00;
             border-radius: 50%;
@@ -106,45 +88,26 @@
             vertical-align: middle;
             margin-right: 6px;
         }
-        @keyframes spin {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(360deg); }
-        }
+        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
         .offline-badge {
-            background: #ff6b6b;
-            color: #fff;
-            font-size: 0.7rem;
-            padding: 4px 10px;
-            border-radius: 20px;
-            display: inline-block;
-            margin-top: 8px;
+            background: #ff6b6b; color: #fff;
+            font-size: 0.7rem; padding: 4px 10px;
+            border-radius: 20px; display: inline-block; margin-top: 8px;
         }
         .online-badge {
-            background: #51cf66;
-            color: #fff;
-            font-size: 0.7rem;
-            padding: 4px 10px;
-            border-radius: 20px;
-            display: inline-block;
-            margin-top: 8px;
+            background: #51cf66; color: #fff;
+            font-size: 0.7rem; padding: 4px 10px;
+            border-radius: 20px; display: inline-block; margin-top: 8px;
         }
 
         .btn-voltar {
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
+            display: inline-flex; align-items: center; justify-content: center;
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: #ffffff !important;
-            text-decoration: none;
-            font-size: 0.95rem;
-            font-weight: 500;
-            padding: 10px 20px;
-            border-radius: 10px;
-            margin-top: 25px;
+            color: #ffffff !important; text-decoration: none;
+            font-size: 0.95rem; font-weight: 500;
+            padding: 10px 20px; border-radius: 10px; margin-top: 25px;
             box-shadow: 0 4px 12px rgba(102, 126, 234, 0.35);
-            transition: all 0.3s ease;
-            border: none;
-            cursor: pointer;
+            transition: all 0.3s ease; border: none; cursor: pointer;
         }
         .btn-voltar:hover {
             background: linear-gradient(135deg, #5a6fd6 0%, #6a4190 100%);
@@ -152,39 +115,20 @@
             box-shadow: 0 6px 16px rgba(102, 126, 234, 0.45);
         }
 
-        /* ===== PACOTES DE TROCA ===== */
-        .troca-section {
-            margin-top: 30px;
-            text-align: left;
-        }
-        .troca-section h3 {
-            color: #333;
-            font-size: 1.1rem;
-            margin-bottom: 5px;
-            text-align: center;
-        }
+        .troca-section { margin-top: 30px; text-align: left; }
+        .troca-section h3 { color: #333; font-size: 1.1rem; margin-bottom: 5px; text-align: center; }
         .troca-section .regra {
-            font-size: 0.8rem;
-            color: #888;
-            text-align: center;
-            margin-bottom: 18px;
-            line-height: 1.5;
+            font-size: 0.8rem; color: #888; text-align: center;
+            margin-bottom: 18px; line-height: 1.5;
         }
         .pacotes-grid {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 12px;
+            display: grid; grid-template-columns: 1fr 1fr; gap: 12px;
         }
         .pacote {
-            background: #f9f9ff;
-            border: 2px solid #e0e0ff;
-            border-radius: 14px;
-            padding: 14px 10px;
-            text-align: center;
+            background: #f9f9ff; border: 2px solid #e0e0ff;
+            border-radius: 14px; padding: 14px 10px; text-align: center;
             transition: all 0.25s ease;
-            display: flex;
-            flex-direction: column;
-            justify-content: space-between;
+            display: flex; flex-direction: column; justify-content: space-between;
         }
         .pacote:hover {
             border-color: #764ba2;
@@ -192,231 +136,112 @@
             transform: translateY(-2px);
         }
         .pacote .custo {
-            font-size: 0.78rem;
-            color: #764ba2;
-            font-weight: 600;
-            margin-bottom: 6px;
+            font-size: 0.78rem; color: #764ba2;
+            font-weight: 600; margin-bottom: 6px;
         }
         .pacote .ganho {
-            font-size: 1.2rem;
-            font-weight: bold;
-            color: #2e7d32;
-            margin-bottom: 10px;
+            font-size: 1.2rem; font-weight: bold;
+            color: #2e7d32; margin-bottom: 10px;
         }
         .pacote .ganho small {
-            font-size: 0.7rem;
-            font-weight: 500;
-            color: #555;
-            display: block;
+            font-size: 0.7rem; font-weight: 500;
+            color: #555; display: block;
         }
         .pacote button {
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: #fff;
-            border: none;
-            padding: 8px 10px;
-            border-radius: 8px;
-            font-size: 0.78rem;
-            font-weight: 600;
-            cursor: pointer;
-            transition: all 0.25s ease;
-            width: 100%;
+            color: #fff; border: none; padding: 8px 10px;
+            border-radius: 8px; font-size: 0.78rem; font-weight: 600;
+            cursor: pointer; transition: all 0.25s ease; width: 100%;
         }
         .pacote button:hover:not(:disabled) {
             background: linear-gradient(135deg, #5a6fd6 0%, #6a4190 100%);
             transform: scale(1.03);
         }
-        .pacote button:disabled {
-            background: #ccc;
-            cursor: not-allowed;
-            opacity: 0.7;
-        }
-        .pacote button.desfazer {
-            background: #ffc400;
-            margin-top: 6px;
-        }
-        .pacote button.desfazer:hover:not(:disabled) {
-            background: #00ff40;
-        }
+        .pacote button:disabled { background: #ccc; cursor: not-allowed; opacity: 0.7; }
+        .pacote button.desfazer { background: #ffc400; margin-top: 6px; }
+        .pacote button.desfazer:hover:not(:disabled) { background: #00ff40; }
         .pacote .aviso-desfazer {
-            font-size: 0.62rem;
-            color: #999;
-            margin-top: 4px;
-            display: block;
+            font-size: 0.62rem; color: #999;
+            margin-top: 4px; display: block;
         }
 
         .msg-troca {
-            margin-top: 15px;
-            font-size: 0.85rem;
-            padding: 10px;
-            border-radius: 8px;
-            display: none;
+            margin-top: 15px; font-size: 0.85rem;
+            padding: 10px; border-radius: 8px; display: none;
         }
-        .msg-troca.sucesso {
-            background: #e8f5e9;
-            color: #2e7d32;
-            display: block;
-        }
-        .msg-troca.erro {
-            background: #ffebee;
-            color: #c62828;
-            display: block;
-        }
-        .msg-troca.carregando {
-            background: #fff8e1;
-            color: #856d00;
-            display: block;
-        }
+        .msg-troca.sucesso { background: #e8f5e9; color: #2e7d32; display: block; }
+        .msg-troca.erro { background: #ffebee; color: #c62828; display: block; }
+        .msg-troca.carregando { background: #fff8e1; color: #856d00; display: block; }
 
-        /* ===== HISTÓRICO DE TROCAS ===== */
-        .historico-section {
-            margin-top: 30px;
-            text-align: left;
-        }
+        .historico-section { margin-top: 30px; text-align: left; }
         .historico-section h3 {
-            color: #333;
-            font-size: 1.1rem;
-            margin-bottom: 12px;
-            text-align: center;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 8px;
+            color: #333; font-size: 1.1rem; margin-bottom: 12px;
+            text-align: center; display: flex;
+            align-items: center; justify-content: center; gap: 8px;
         }
         .historico-lista {
-            max-height: 280px;
-            overflow-y: auto;
-            border: 1px solid #eee;
-            border-radius: 12px;
-            padding: 8px;
-            background: #fafafa;
+            max-height: 280px; overflow-y: auto;
+            border: 1px solid #eee; border-radius: 12px;
+            padding: 8px; background: #fafafa;
         }
-        .historico-lista::-webkit-scrollbar {
-            width: 6px;
-        }
-        .historico-lista::-webkit-scrollbar-track {
-            background: #f1f1f1;
-            border-radius: 10px;
-        }
-        .historico-lista::-webkit-scrollbar-thumb {
-            background: #c7c7c7;
-            border-radius: 10px;
-        }
+        .historico-lista::-webkit-scrollbar { width: 6px; }
+        .historico-lista::-webkit-scrollbar-track { background: #f1f1f1; border-radius: 10px; }
+        .historico-lista::-webkit-scrollbar-thumb { background: #c7c7c7; border-radius: 10px; }
         .historico-item {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            padding: 10px 12px;
-            border-radius: 10px;
-            margin-bottom: 6px;
-            background: #fff;
-            box-shadow: 0 1px 4px rgba(0,0,0,0.06);
-            font-size: 0.82rem;
-            transition: all 0.2s ease;
+            display: flex; align-items: center; justify-content: space-between;
+            padding: 10px 12px; border-radius: 10px; margin-bottom: 6px;
+            background: #fff; box-shadow: 0 1px 4px rgba(0,0,0,0.06);
+            font-size: 0.82rem; transition: all 0.2s ease;
         }
-        .historico-item:last-child {
-            margin-bottom: 0;
-        }
-        .historico-item:hover {
-            box-shadow: 0 3px 10px rgba(0,0,0,0.1);
-        }
-        .historico-item.troca {
-            border-left: 4px solid #764ba2;
-        }
-        .historico-item.desfazer {
-            border-left: 4px solid #ffc400;
-        }
-        .historico-item.resgate {
-            border-left: 4px solid #00b894;
-        }
-        .historico-info {
-            display: flex;
-            flex-direction: column;
-            gap: 2px;
-        }
+        .historico-item:last-child { margin-bottom: 0; }
+        .historico-item:hover { box-shadow: 0 3px 10px rgba(0,0,0,0.1); }
+        .historico-item.troca { border-left: 4px solid #764ba2; }
+        .historico-item.desfazer { border-left: 4px solid #ffc400; }
+        .historico-item.resgate { border-left: 4px solid #00b894; }
+        .historico-info { display: flex; flex-direction: column; gap: 2px; }
         .historico-tipo {
-            font-weight: 700;
-            font-size: 0.75rem;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
+            font-weight: 700; font-size: 0.75rem;
+            text-transform: uppercase; letter-spacing: 0.5px;
         }
-        .historico-item.troca .historico-tipo {
-            color: #764ba2;
-        }
-        .historico-item.desfazer .historico-tipo {
-            color: #b8860b;
-        }
-        .historico-item.resgate .historico-tipo {
-            color: #00b894;
-        }
-        .historico-detalhe {
-            color: #555;
-            font-size: 0.8rem;
-        }
+        .historico-item.troca .historico-tipo { color: #764ba2; }
+        .historico-item.desfazer .historico-tipo { color: #b8860b; }
+        .historico-item.resgate .historico-tipo { color: #00b894; }
+        .historico-detalhe { color: #555; font-size: 0.8rem; }
         .historico-data {
-            color: #999;
-            font-size: 0.7rem;
-            white-space: nowrap;
-            margin-left: 8px;
+            color: #999; font-size: 0.7rem;
+            white-space: nowrap; margin-left: 8px;
         }
         .historico-vazio {
-            text-align: center;
-            color: #aaa;
-            font-size: 0.85rem;
-            padding: 20px;
-            font-style: italic;
+            text-align: center; color: #aaa; font-size: 0.85rem;
+            padding: 20px; font-style: italic;
         }
         .btn-limpar-historico {
-            background: none;
-            border: 1px solid #ddd;
-            color: #999;
-            font-size: 0.7rem;
-            padding: 4px 10px;
-            border-radius: 6px;
-            cursor: pointer;
-            margin-top: 8px;
-            transition: all 0.2s ease;
-            width: 100%;
+            background: none; border: 1px solid #ddd;
+            color: #999; font-size: 0.7rem;
+            padding: 4px 10px; border-radius: 6px;
+            cursor: pointer; margin-top: 8px;
+            transition: all 0.2s ease; width: 100%;
         }
         .btn-limpar-historico:hover {
-            background: #ffebee;
-            border-color: #ffcdd2;
-            color: #c62828;
+            background: #ffebee; border-color: #ffcdd2; color: #c62828;
         }
 
-        /* ===== RESGATAR CÓDIGO ===== */
-        .resgate-section {
-            margin-top: 30px;
-            text-align: left;
-        }
+        .resgate-section { margin-top: 30px; text-align: left; }
         .resgate-section h3 {
-            color: #333;
-            font-size: 1.1rem;
-            margin-bottom: 5px;
-            text-align: center;
+            color: #333; font-size: 1.1rem;
+            margin-bottom: 5px; text-align: center;
         }
         .resgate-section .regra {
-            font-size: 0.8rem;
-            color: #888;
-            text-align: center;
-            margin-bottom: 15px;
-            line-height: 1.5;
+            font-size: 0.8rem; color: #888;
+            text-align: center; margin-bottom: 15px; line-height: 1.5;
         }
-        .resgate-input-group {
-            display: flex;
-            gap: 8px;
-        }
+        .resgate-input-group { display: flex; gap: 8px; }
         .resgate-input-group input {
-            flex: 1;
-            padding: 12px 14px;
-            border: 2px solid #e0e0ff;
-            border-radius: 10px;
-            font-size: 0.95rem;
-            font-weight: 600;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-            transition: all 0.25s;
-            outline: none;
-            min-width: 0;
+            flex: 1; padding: 12px 14px;
+            border: 2px solid #e0e0ff; border-radius: 10px;
+            font-size: 0.95rem; font-weight: 600;
+            text-transform: uppercase; letter-spacing: 1px;
+            transition: all 0.25s; outline: none; min-width: 0;
         }
         .resgate-input-group input:focus {
             border-color: #764ba2;
@@ -424,54 +249,30 @@
         }
         .btn-resgatar {
             background: linear-gradient(135deg, #00b894 0%, #00cec9 100%);
-            color: #fff;
-            border: none;
-            padding: 12px 22px;
-            border-radius: 10px;
-            font-size: 0.9rem;
-            font-weight: 700;
-            cursor: pointer;
-            transition: all 0.25s;
-            white-space: nowrap;
+            color: #fff; border: none; padding: 12px 22px;
+            border-radius: 10px; font-size: 0.9rem;
+            font-weight: 700; cursor: pointer;
+            transition: all 0.25s; white-space: nowrap;
         }
         .btn-resgatar:hover:not(:disabled) {
             transform: translateY(-2px);
             box-shadow: 0 6px 18px rgba(0, 184, 148, 0.4);
         }
-        .btn-resgatar:disabled {
-            background: #ccc;
-            cursor: not-allowed;
-            opacity: 0.7;
-        }
+        .btn-resgatar:disabled { background: #ccc; cursor: not-allowed; opacity: 0.7; }
         .msg-resgate {
-            margin-top: 12px;
-            font-size: 0.85rem;
-            padding: 10px 14px;
-            border-radius: 8px;
-            display: none;
+            margin-top: 12px; font-size: 0.85rem;
+            padding: 10px 14px; border-radius: 8px; display: none;
         }
         .msg-resgate.sucesso { background: #e8f5e9; color: #2e7d32; display: block; }
         .msg-resgate.erro { background: #ffebee; color: #c62828; display: block; }
         .msg-resgate.carregando { background: #fff8e1; color: #856d00; display: block; }
 
         @media (max-width: 420px) {
-            .pacotes-grid {
-                grid-template-columns: 1fr;
-            }
-            .saldos-grid {
-                grid-template-columns: 1fr;
-            }
-            .historico-item {
-                flex-direction: column;
-                align-items: flex-start;
-                gap: 4px;
-            }
-            .historico-data {
-                margin-left: 0;
-            }
-            .resgate-input-group {
-                flex-direction: column;
-            }
+            .pacotes-grid { grid-template-columns: 1fr; }
+            .saldos-grid { grid-template-columns: 1fr; }
+            .historico-item { flex-direction: column; align-items: flex-start; gap: 4px; }
+            .historico-data { margin-left: 0; }
+            .resgate-input-group { flex-direction: column; }
         }
     </style>
 </head>
@@ -582,19 +383,41 @@
     </div>
 
     <script>
-        const SUPABASE_URL = "https://xrcxvizzdumcxbylmkvn.supabase.co/rest/v1";
-        const SUPABASE_KEY = "sb_publishable_E-g3G3wW4EySbCsXLXp8KQ_FnmERMcD";
+        // ============================================================
+        // CONFIGURAÇÃO
+        // ============================================================
+        const CONFIG = {
+            SUPABASE_URL: "https://xrcxvizzdumcxbylmkvn.supabase.co/rest/v1",
+            SUPABASE_KEY: "sb_publishable_E-g3G3wW4EySbCsXLXp8KQ_FnmERMcD",
+            INTERVALO_POLLING: 10000,
+            INTERVALO_SESSAO: 30000,
+            MAX_HISTORICO: 50
+        };
 
+        // ============================================================
+        // ESTADO GLOBAL
+        // ============================================================
         let usuarioAtual = null;
         let intervaloAtualizacao = null;
+        let intervaloSessao = null;
         let estaAtualizando = false;
+        let operacaoEmAndamento = false;
         let saldoMumuAtual = 0;
         let saldoReaisAtual = 0;
         let historicoTrocas = [];
         let codigosUsados = [];
+        let historicoHashAtual = '';
 
-        const MAX_HISTORICO = 50;
+        // Formatter memoizado (performance no polling)
+        const _fmtMoeda = new Intl.NumberFormat('pt-BR', {
+            minimumFractionDigits: 2,
+            maximumFractionDigits: 2
+        });
+        const formatarMoeda = (v) => _fmtMoeda.format(parseFloat(v || 0));
 
+        // ============================================================
+        // HELPERS
+        // ============================================================
         function carregarUsuarioLogado() {
             try {
                 const dados = localStorage.getItem('usuario_logado');
@@ -637,13 +460,33 @@
             });
         }
 
-        function formatarMoeda(valor) {
-            return parseFloat(valor || 0).toLocaleString('pt-BR', {
-                minimumFractionDigits: 2,
-                maximumFractionDigits: 2
-            });
+        // Retry exponencial (rede instável) — usado só em GET
+        async function fetchComRetry(url, opts, tentativas = 3) {
+            let ultimoErro;
+            for (let i = 0; i < tentativas; i++) {
+                try {
+                    const r = await fetch(url, opts);
+                    if (!r.ok) throw new Error(`HTTP ${r.status}`);
+                    return r;
+                } catch (e) {
+                    ultimoErro = e;
+                    if (i < tentativas - 1) {
+                        await new Promise(res => setTimeout(res, 1000 * Math.pow(2, i)));
+                    }
+                }
+            }
+            throw ultimoErro;
         }
 
+        function bloquearBotoes(bloquear) {
+            document.querySelectorAll('.btn-trocar, .btn-desfazer, .btn-resgatar')
+                .forEach(b => { b.disabled = bloquear; });
+            if (!bloquear) atualizarBotoesPacotes();
+        }
+
+        // ============================================================
+        // MENSAGENS
+        // ============================================================
         function mostrarMensagemTroca(texto, tipo) {
             const el = document.getElementById('msgTroca');
             el.textContent = texto;
@@ -653,6 +496,18 @@
             }
         }
 
+        function mostrarMsgResgate(texto, tipo) {
+            const el = document.getElementById('msgResgate');
+            el.textContent = texto;
+            el.className = 'msg-resgate ' + tipo;
+            if (tipo === 'sucesso' || tipo === 'erro') {
+                setTimeout(() => { el.className = 'msg-resgate'; }, 6000);
+            }
+        }
+
+        // ============================================================
+        // UI — RENDER
+        // ============================================================
         function atualizarBotoesPacotes() {
             document.querySelectorAll('.btn-trocar').forEach(btn => {
                 const custo = parseFloat(btn.dataset.mumu);
@@ -665,18 +520,23 @@
         }
 
         function exibirSaldos(mumu, reais) {
-            document.getElementById('saldoMumu').innerHTML =
-                `<span class="simbolo">M$</span> ${formatarMoeda(mumu)}`;
-            document.getElementById('saldoReais').innerHTML =
-                `<span class="simbolo">R$</span> ${formatarMoeda(reais)}`;
+            const render = (id, simbolo, valor) => {
+                const el = document.getElementById(id);
+                el.replaceChildren();
+                const s = document.createElement('span');
+                s.className = 'simbolo';
+                s.textContent = simbolo;
+                el.appendChild(s);
+                el.appendChild(document.createTextNode(' ' + formatarMoeda(valor)));
+            };
+            render('saldoMumu', 'M$', mumu);
+            render('saldoReais', 'R$', reais);
         }
 
-        // ====== HISTÓRICO ======
         function renderizarHistorico() {
             const lista = document.getElementById('historicoLista');
             const btnLimpar = document.getElementById('btnLimparHistorico');
 
-            // Junta trocas + resgates
             const todos = [...historicoTrocas];
             codigosUsados.forEach(c => {
                 todos.push({
@@ -689,7 +549,13 @@
             });
 
             if (todos.length === 0) {
-                lista.innerHTML = '<div class="historico-vazio">Nenhuma movimentação registrada ainda.</div>';
+                if (historicoHashAtual === 'vazio') return;
+                historicoHashAtual = 'vazio';
+                lista.replaceChildren();
+                const vazio = document.createElement('div');
+                vazio.className = 'historico-vazio';
+                vazio.textContent = 'Nenhuma movimentação registrada ainda.';
+                lista.appendChild(vazio);
                 btnLimpar.style.display = 'none';
                 return;
             }
@@ -697,8 +563,12 @@
             btnLimpar.style.display = 'block';
 
             const ordenado = todos.sort((a, b) => new Date(b.data) - new Date(a.data));
+            const novoHash = JSON.stringify(ordenado);
+            if (novoHash === historicoHashAtual) return;
+            historicoHashAtual = novoHash;
 
-            lista.innerHTML = ordenado.map(item => {
+            lista.replaceChildren();
+            ordenado.forEach(item => {
                 let classe, icone, rotulo, detalhe;
 
                 if (item.tipo === 'troca') {
@@ -708,74 +578,51 @@
                     classe = 'desfazer'; icone = '↩️'; rotulo = 'Desfazer';
                     detalhe = `R$ ${formatarMoeda(item.saldoGasto)} → ${formatarMoeda(item.mumuGanho)} Mumu`;
                 } else {
-                    classe = 'resgate'; icone = '🎁'; rotulo = `Resgate "${item.codigo || ''}"`;
+                    classe = 'resgate'; icone = '🎁';
+                    rotulo = `Resgate "${item.codigo || ''}"`;
                     const partes = [];
                     if (item.mumuGanho > 0) partes.push(`${formatarMoeda(item.mumuGanho)} Mumu`);
                     if (item.saldoGanho > 0) partes.push(`R$ ${formatarMoeda(item.saldoGanho)}`);
                     detalhe = partes.join(' + ') || 'Sem recompensa';
                 }
 
-                return `
-                    <div class="historico-item ${classe}">
-                        <div class="historico-info">
-                            <span class="historico-tipo">${icone} ${rotulo}</span>
-                            <span class="historico-detalhe">${detalhe}</span>
-                        </div>
-                        <span class="historico-data">${formatarDataCurta(item.data)}</span>
-                    </div>
-                `;
-            }).join('');
+                const div = document.createElement('div');
+                div.className = `historico-item ${classe}`;
+
+                const info = document.createElement('div');
+                info.className = 'historico-info';
+
+                const tipoEl = document.createElement('span');
+                tipoEl.className = 'historico-tipo';
+                tipoEl.textContent = `${icone} ${rotulo}`;
+
+                const detEl = document.createElement('span');
+                detEl.className = 'historico-detalhe';
+                detEl.textContent = detalhe;
+
+                info.appendChild(tipoEl);
+                info.appendChild(detEl);
+
+                const dataEl = document.createElement('span');
+                dataEl.className = 'historico-data';
+                dataEl.textContent = formatarDataCurta(item.data);
+
+                div.appendChild(info);
+                div.appendChild(dataEl);
+                lista.appendChild(div);
+            });
         }
 
-        async function salvarHistoricoSupabase(novoHistorico) {
-            if (!usuarioAtual || !usuarioAtual.login) return;
-            try {
-                await fetch(
-                    `${SUPABASE_URL}/Geral?login=eq.${encodeURIComponent(usuarioAtual.login)}`,
-                    {
-                        method: "PATCH",
-                        headers: {
-                            "apikey": SUPABASE_KEY,
-                            "Content-Type": "application/json"
-                        },
-                        body: JSON.stringify({ historico_trocas: novoHistorico })
-                    }
-                );
-            } catch (e) {
-                console.warn('Erro ao salvar histórico:', e.message);
-            }
-        }
-
-        async function limparHistorico() {
-            if (!confirm('Tem certeza que deseja limpar todo o histórico?')) return;
-            historicoTrocas = [];
-            codigosUsados = [];
-            renderizarHistorico();
-            await salvarHistoricoSupabase([]);
-            // Limpa também códigos usados
-            try {
-                await fetch(
-                    `${SUPABASE_URL}/Geral?login=eq.${encodeURIComponent(usuarioAtual.login)}`,
-                    {
-                        method: "PATCH",
-                        headers: {
-                            "apikey": SUPABASE_KEY,
-                            "Content-Type": "application/json"
-                        },
-                        body: JSON.stringify({ codigos_usados: [] })
-                    }
-                );
-            } catch (e) {}
-            mostrarMensagemTroca('🗑️ Histórico limpo!', 'sucesso');
-        }
-
-        // ====== BUSCAR SALDO ======
+        // ============================================================
+        // BUSCAR SALDO (GET)
+        // ============================================================
         async function buscarSaldo() {
             if (!usuarioAtual || !usuarioAtual.login) {
-                document.getElementById('saldoMumu').innerHTML = `<span class="erro">Sessão expirada</span>`;
+                document.getElementById('saldoMumu').replaceChildren(
+                    Object.assign(document.createElement('span'), { className: 'erro', textContent: 'Sessão expirada' })
+                );
                 return;
             }
-
             if (estaAtualizando) return;
             estaAtualizando = true;
 
@@ -787,23 +634,21 @@
             elemErro.textContent = "";
 
             try {
-                const resposta = await fetch(
-                    `${SUPABASE_URL}/Geral?login=eq.${encodeURIComponent(usuarioAtual.login)}&select=mumu,saldo,updated_at,nome,historico_trocas,codigos_usados`,
+                const resposta = await fetchComRetry(
+                    `${CONFIG.SUPABASE_URL}/Geral?login=eq.${encodeURIComponent(usuarioAtual.login)}&select=mumu,saldo,updated_at,nome,historico_trocas,codigos_usados`,
                     {
                         method: "GET",
                         headers: {
-                            "apikey": SUPABASE_KEY,
+                            "apikey": CONFIG.SUPABASE_KEY,
                             "Content-Type": "application/json"
                         }
                     }
                 );
 
-                if (!resposta.ok) throw new Error(`Erro HTTP: ${resposta.status}`);
                 const dados = await resposta.json();
 
                 if (!dados || dados.length === 0) {
-                    document.getElementById('saldoMumu').innerHTML = `<span class="erro">Não encontrado</span>`;
-                    document.getElementById('saldoReais').innerHTML = `<span class="erro">--</span>`;
+                    exibirSaldos(0, 0);
                     mostrarStatusConexao(true);
                     return;
                 }
@@ -820,7 +665,6 @@
                 codigosUsados = Array.isArray(usados) ? usados : [];
 
                 if (nome !== usuarioAtual.nome) usuarioAtual.nome = nome;
-
                 usuarioAtual.mumu = mumu;
                 usuarioAtual.saldo = reais;
                 localStorage.setItem('usuario_logado', JSON.stringify(usuarioAtual));
@@ -844,8 +688,7 @@
                     atualizarBotoesPacotes();
                     renderizarHistorico();
                 } else {
-                    document.getElementById('saldoMumu').innerHTML = `<span class="erro">Erro</span>`;
-                    document.getElementById('saldoReais').innerHTML = `<span class="erro">Erro</span>`;
+                    exibirSaldos(0, 0);
                     elemErro.textContent = `Detalhe: ${erro.message}`;
                 }
                 mostrarStatusConexao(false);
@@ -854,186 +697,113 @@
             }
         }
 
-        // ====== TROCA ======
+        // ============================================================
+        // RPC HELPER
+        // ============================================================
+        async function chamarRPC(nome, payload) {
+            const resp = await fetch(`${CONFIG.SUPABASE_URL}/rpc/${nome}`, {
+                method: 'POST',
+                headers: {
+                    "apikey": CONFIG.SUPABASE_KEY,
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify(payload)
+            });
+            let json;
+            try { json = await resp.json(); } catch { json = {}; }
+            if (!resp.ok) {
+                throw new Error(json.message || json.error || `Erro HTTP ${resp.status}`);
+            }
+            return json;
+        }
+
+        // ============================================================
+        // TROCA — RPC
+        // ============================================================
         async function trocarMumuPorSaldo(mumuGasto, saldoGanho) {
             if (!usuarioAtual || !usuarioAtual.login) {
                 mostrarMensagemTroca('Sessão expirada.', 'erro'); return;
             }
-            if (saldoMumuAtual < mumuGasto) {
-                mostrarMensagemTroca(`Saldo insuficiente. Você tem ${formatarMoeda(saldoMumuAtual)} Mumu.`, 'erro'); return;
-            }
+            if (operacaoEmAndamento) return;
+            if (!confirm(`Confirmar troca?\n\n🪙 ${formatarMoeda(mumuGasto)} Mumu → 💵 R$ ${formatarMoeda(saldoGanho)}`)) return;
 
+            operacaoEmAndamento = true;
+            bloquearBotoes(true);
             mostrarMensagemTroca('Processando troca...', 'carregando');
 
             try {
-                const respGet = await fetch(
-                    `${SUPABASE_URL}/Geral?login=eq.${encodeURIComponent(usuarioAtual.login)}&select=mumu,saldo,historico_trocas`,
-                    { headers: { "apikey": SUPABASE_KEY, "Content-Type": "application/json" } }
-                );
+                const json = await chamarRPC('trocar_mumu_por_saldo', {
+                    p_login: usuarioAtual.login,
+                    p_mumu_gasto: mumuGasto,
+                    p_saldo_ganho: saldoGanho
+                });
 
-                if (!respGet.ok) throw new Error(`Erro HTTP: ${respGet.status}`);
-                const dadosAtuais = await respGet.json();
-                if (!dadosAtuais || dadosAtuais.length === 0) throw new Error('Usuário não encontrado.');
-
-                const mumuAtual = parseFloat(dadosAtuais[0].mumu || 0);
-                const saldoAtual = parseFloat(dadosAtuais[0].saldo || 0);
-                let historicoAtual = dadosAtuais[0].historico_trocas || [];
-                if (!Array.isArray(historicoAtual)) historicoAtual = [];
-
-                if (mumuAtual < mumuGasto) throw new Error(`Saldo insuficiente.`);
-
-                const novoMumu = mumuAtual - mumuGasto;
-                const novoSaldo = saldoAtual + saldoGanho;
-
-                const novoRegistro = {
-                    tipo: 'troca',
-                    data: new Date().toISOString(),
-                    mumuGasto: mumuGasto,
-                    saldoGanho: saldoGanho
-                };
-                historicoAtual.unshift(novoRegistro);
-                if (historicoAtual.length > MAX_HISTORICO) historicoAtual = historicoAtual.slice(0, MAX_HISTORICO);
-
-                const respPatch = await fetch(
-                    `${SUPABASE_URL}/Geral?login=eq.${encodeURIComponent(usuarioAtual.login)}`,
-                    {
-                        method: "PATCH",
-                        headers: {
-                            "apikey": SUPABASE_KEY,
-                            "Content-Type": "application/json",
-                            "Prefer": "return=representation"
-                        },
-                        body: JSON.stringify({
-                            mumu: novoMumu,
-                            saldo: novoSaldo,
-                            historico_trocas: historicoAtual,
-                            updated_at: new Date().toISOString()
-                        })
-                    }
-                );
-
-                if (!respPatch.ok) throw new Error(`Erro HTTP: ${respPatch.status}`);
-
-                saldoMumuAtual = novoMumu;
-                saldoReaisAtual = novoSaldo;
-                usuarioAtual.mumu = novoMumu;
-                usuarioAtual.saldo = novoSaldo;
-                historicoTrocas = historicoAtual;
+                saldoMumuAtual = parseFloat(json.mumu);
+                saldoReaisAtual = parseFloat(json.saldo);
+                usuarioAtual.mumu = saldoMumuAtual;
+                usuarioAtual.saldo = saldoReaisAtual;
                 localStorage.setItem('usuario_logado', JSON.stringify(usuarioAtual));
 
-                exibirSaldos(novoMumu, novoSaldo);
-                renderizarHistorico();
+                exibirSaldos(saldoMumuAtual, saldoReaisAtual);
                 atualizarBotoesPacotes();
+                await buscarSaldo();
+
                 mostrarMensagemTroca(`✅ Troca realizada! ${formatarMoeda(mumuGasto)} Mumu → R$ ${formatarMoeda(saldoGanho)}`, 'sucesso');
 
             } catch (erro) {
                 mostrarMensagemTroca(`❌ ${erro.message}`, 'erro');
+            } finally {
+                operacaoEmAndamento = false;
+                bloquearBotoes(false);
             }
         }
 
+        // ============================================================
+        // DESFAZER — RPC
+        // ============================================================
         async function desfazerTroca(saldoGasto, mumuGanho) {
             if (!usuarioAtual || !usuarioAtual.login) {
                 mostrarMensagemTroca('Sessão expirada.', 'erro'); return;
             }
-            if (saldoReaisAtual < saldoGasto) {
-                mostrarMensagemTroca(`Saldo em R$ insuficiente.`, 'erro'); return;
-            }
+            if (operacaoEmAndamento) return;
+            if (!confirm(`Desfazer troca?\n\n💵 R$ ${formatarMoeda(saldoGasto)} → 🪙 ${formatarMoeda(mumuGanho)} Mumu\n\n⚠️ Você recebe 50% do valor original.`)) return;
 
+            operacaoEmAndamento = true;
+            bloquearBotoes(true);
             mostrarMensagemTroca('Processando desfazer...', 'carregando');
 
             try {
-                const respGet = await fetch(
-                    `${SUPABASE_URL}/Geral?login=eq.${encodeURIComponent(usuarioAtual.login)}&select=mumu,saldo,historico_trocas`,
-                    { headers: { "apikey": SUPABASE_KEY, "Content-Type": "application/json" } }
-                );
-                if (!respGet.ok) throw new Error(`Erro HTTP: ${respGet.status}`);
-                const dadosAtuais = await respGet.json();
-                if (!dadosAtuais || dadosAtuais.length === 0) throw new Error('Usuário não encontrado.');
+                const json = await chamarRPC('desfazer_troca', {
+                    p_login: usuarioAtual.login,
+                    p_saldo_gasto: saldoGasto,
+                    p_mumu_ganho: mumuGanho
+                });
 
-                const mumuAtual = parseFloat(dadosAtuais[0].mumu || 0);
-                const saldoAtual = parseFloat(dadosAtuais[0].saldo || 0);
-                let historicoAtual = dadosAtuais[0].historico_trocas || [];
-                if (!Array.isArray(historicoAtual)) historicoAtual = [];
-
-                if (saldoAtual < saldoGasto) throw new Error(`Saldo em R$ insuficiente.`);
-
-                const novoMumu = mumuAtual + mumuGanho;
-                const novoSaldo = saldoAtual - saldoGasto;
-
-                const novoRegistro = {
-                    tipo: 'desfazer',
-                    data: new Date().toISOString(),
-                    saldoGasto: saldoGasto,
-                    mumuGanho: mumuGanho
-                };
-                historicoAtual.unshift(novoRegistro);
-                if (historicoAtual.length > MAX_HISTORICO) historicoAtual = historicoAtual.slice(0, MAX_HISTORICO);
-
-                const respPatch = await fetch(
-                    `${SUPABASE_URL}/Geral?login=eq.${encodeURIComponent(usuarioAtual.login)}`,
-                    {
-                        method: "PATCH",
-                        headers: {
-                            "apikey": SUPABASE_KEY,
-                            "Content-Type": "application/json",
-                            "Prefer": "return=representation"
-                        },
-                        body: JSON.stringify({
-                            mumu: novoMumu,
-                            saldo: novoSaldo,
-                            historico_trocas: historicoAtual,
-                            updated_at: new Date().toISOString()
-                        })
-                    }
-                );
-                if (!respPatch.ok) throw new Error(`Erro HTTP: ${respPatch.status}`);
-
-                saldoMumuAtual = novoMumu;
-                saldoReaisAtual = novoSaldo;
-                usuarioAtual.mumu = novoMumu;
-                usuarioAtual.saldo = novoSaldo;
-                historicoTrocas = historicoAtual;
+                saldoMumuAtual = parseFloat(json.mumu);
+                saldoReaisAtual = parseFloat(json.saldo);
+                usuarioAtual.mumu = saldoMumuAtual;
+                usuarioAtual.saldo = saldoReaisAtual;
                 localStorage.setItem('usuario_logado', JSON.stringify(usuarioAtual));
 
-                exibirSaldos(novoMumu, novoSaldo);
-                renderizarHistorico();
+                exibirSaldos(saldoMumuAtual, saldoReaisAtual);
                 atualizarBotoesPacotes();
+                await buscarSaldo();
+
                 mostrarMensagemTroca(`✅ Troca desfeita! R$ ${formatarMoeda(saldoGasto)} → ${formatarMoeda(mumuGanho)} Mumu`, 'sucesso');
 
             } catch (erro) {
                 mostrarMensagemTroca(`❌ ${erro.message}`, 'erro');
+            } finally {
+                operacaoEmAndamento = false;
+                bloquearBotoes(false);
             }
         }
 
-        // ====== RESGATAR CÓDIGO ======
-        function mostrarMsgResgate(texto, tipo) {
-            const el = document.getElementById('msgResgate');
-            el.textContent = texto;
-            el.className = 'msg-resgate ' + tipo;
-            if (tipo === 'sucesso' || tipo === 'erro') {
-                setTimeout(() => { el.className = 'msg-resgate'; }, 6000);
-            }
-        }
-
-        async function buscarCodigosAdmin() {
-            try {
-                const resp = await fetch(
-                    `${SUPABASE_URL}/Geral?id=eq.1&select=codigos_resgate`,
-                    { headers: { "apikey": SUPABASE_KEY, "Content-Type": "application/json" } }
-                );
-                if (!resp.ok) throw new Error(`HTTP ${resp.status}`);
-                const data = await resp.json();
-                if (!data || data.length === 0) return [];
-                return Array.isArray(data[0].codigos_resgate) ? data[0].codigos_resgate : [];
-            } catch (e) {
-                console.warn('Erro ao buscar códigos:', e.message);
-                return [];
-            }
-        }
-
+        // ============================================================
+        // RESGATE — RPC
+        // ============================================================
         async function resgatarCodigo() {
             const input = document.getElementById('inputCodigo');
-            const btn = document.getElementById('btnResgatar');
             const codigo = (input.value || '').trim().toUpperCase();
 
             if (!codigo) {
@@ -1044,109 +814,31 @@
                 mostrarMsgResgate('❌ Sessão expirada. Faça login novamente.', 'erro');
                 return;
             }
+            if (operacaoEmAndamento) return;
 
-            btn.disabled = true;
+            operacaoEmAndamento = true;
+            bloquearBotoes(true);
             mostrarMsgResgate('🔍 Verificando código...', 'carregando');
 
             try {
-                // 1) Busca códigos disponíveis
-                const codigos = await buscarCodigosAdmin();
-                const codigoEncontrado = codigos.find(
-                    c => (c.codigo || '').toUpperCase() === codigo && c.ativo !== false
-                );
-
-                if (!codigoEncontrado) throw new Error('Código inválido ou expirado.');
-
-                // 2) Busca dados atuais do usuário
-                const respUser = await fetch(
-                    `${SUPABASE_URL}/Geral?login=eq.${encodeURIComponent(usuarioAtual.login)}&select=mumu,saldo,codigos_usados,historico_trocas`,
-                    { headers: { "apikey": SUPABASE_KEY, "Content-Type": "application/json" } }
-                );
-                if (!respUser.ok) throw new Error(`HTTP ${respUser.status}`);
-                const dadosUser = await respUser.json();
-                if (!dadosUser || dadosUser.length === 0) throw new Error('Usuário não encontrado.');
-
-                const user = dadosUser[0];
-                const usados = Array.isArray(user.codigos_usados) ? user.codigos_usados : [];
-
-                // 3) Verifica se já usou
-                if (usados.some(u => (u.codigo || '').toUpperCase() === codigo)) {
-                    throw new Error('Você já resgatou este código.');
-                }
-
-                // 4) Verifica limite global
-                const limite = codigoEncontrado.limite || 0;
-                const usosAtuais = codigoEncontrado.usos || 0;
-                if (limite > 0 && usosAtuais >= limite) {
-                    throw new Error('Este código já atingiu o limite de resgates.');
-                }
-
-                // 5) Aplica recompensas
-                const bonusMumu = parseFloat(codigoEncontrado.mumu || 0);
-                const bonusSaldo = parseFloat(codigoEncontrado.saldo || 0);
-                if (bonusMumu <= 0 && bonusSaldo <= 0) {
-                    throw new Error('Este código não possui recompensas.');
-                }
-
-                const novoMumu = parseFloat(user.mumu || 0) + bonusMumu;
-                const novoSaldo = parseFloat(user.saldo || 0) + bonusSaldo;
-
-                // 6) Registra no histórico de códigos usados
-                const novoUsados = [
-                    { codigo: codigo, data: new Date().toISOString(), mumu: bonusMumu, saldo: bonusSaldo },
-                    ...usados
-                ].slice(0, 100);
-
-                // 7) Atualiza usuário
-                const respPatchUser = await fetch(
-                    `${SUPABASE_URL}/Geral?login=eq.${encodeURIComponent(usuarioAtual.login)}`,
-                    {
-                        method: 'PATCH',
-                        headers: {
-                            "apikey": SUPABASE_KEY,
-                            "Content-Type": "application/json",
-                            "Prefer": "return=representation"
-                        },
-                        body: JSON.stringify({
-                            mumu: novoMumu,
-                            saldo: novoSaldo,
-                            codigos_usados: novoUsados,
-                            updated_at: new Date().toISOString()
-                        })
-                    }
-                );
-                if (!respPatchUser.ok) throw new Error(`Erro ao salvar: HTTP ${respPatchUser.status}`);
-
-                // 8) Incrementa contador de usos do código
-                const codigosAtualizados = codigos.map(c => {
-                    if ((c.codigo || '').toUpperCase() === codigo) {
-                        return { ...c, usos: (c.usos || 0) + 1 };
-                    }
-                    return c;
+                const json = await chamarRPC('resgatar_codigo', {
+                    p_login: usuarioAtual.login,
+                    p_codigo: codigo
                 });
 
-                await fetch(`${SUPABASE_URL}/Geral?id=eq.1`, {
-                    method: 'PATCH',
-                    headers: { "apikey": SUPABASE_KEY, "Content-Type": "application/json" },
-                    body: JSON.stringify({ codigos_resgate: codigosAtualizados })
-                });
-
-                // 9) Atualiza estado local
-                saldoMumuAtual = novoMumu;
-                saldoReaisAtual = novoSaldo;
-                usuarioAtual.mumu = novoMumu;
-                usuarioAtual.saldo = novoSaldo;
-                codigosUsados = novoUsados;
+                saldoMumuAtual = parseFloat(json.mumu);
+                saldoReaisAtual = parseFloat(json.saldo);
+                usuarioAtual.mumu = saldoMumuAtual;
+                usuarioAtual.saldo = saldoReaisAtual;
                 localStorage.setItem('usuario_logado', JSON.stringify(usuarioAtual));
 
-                exibirSaldos(novoMumu, novoSaldo);
+                exibirSaldos(saldoMumuAtual, saldoReaisAtual);
                 atualizarBotoesPacotes();
-                renderizarHistorico();
+                await buscarSaldo();
 
-                // 10) Mensagem
                 const partes = [];
-                if (bonusMumu > 0) partes.push(`${formatarMoeda(bonusMumu)} Mumu`);
-                if (bonusSaldo > 0) partes.push(`R$ ${formatarMoeda(bonusSaldo)}`);
+                if (json.bonusMumu > 0) partes.push(`${formatarMoeda(json.bonusMumu)} Mumu`);
+                if (json.bonusSaldo > 0) partes.push(`R$ ${formatarMoeda(json.bonusSaldo)}`);
                 mostrarMsgResgate(`✅ Código resgatado! Você ganhou ${partes.join(' + ')}`, 'sucesso');
 
                 input.value = '';
@@ -1154,52 +846,120 @@
             } catch (erro) {
                 mostrarMsgResgate(`❌ ${erro.message}`, 'erro');
             } finally {
-                btn.disabled = false;
+                operacaoEmAndamento = false;
+                bloquearBotoes(false);
             }
         }
 
-        function iniciarAtualizacaoAutomatica() {
-            if (intervaloAtualizacao) clearInterval(intervaloAtualizacao);
-            buscarSaldo();
-            intervaloAtualizacao = setInterval(() => { buscarSaldo(); }, 10000);
+        // ============================================================
+        // HISTÓRICO — LIMPAR (continua usando PATCH simples)
+        // ============================================================
+        async function limparHistorico() {
+            if (operacaoEmAndamento) return;
+            if (!confirm('Tem certeza que deseja limpar todo o histórico?')) return;
+
+            operacaoEmAndamento = true;
+            bloquearBotoes(true);
+            try {
+                await fetch(
+                    `${CONFIG.SUPABASE_URL}/Geral?login=eq.${encodeURIComponent(usuarioAtual.login)}`,
+                    {
+                        method: "PATCH",
+                        headers: {
+                            "apikey": CONFIG.SUPABASE_KEY,
+                            "Content-Type": "application/json"
+                        },
+                        body: JSON.stringify({
+                            historico_trocas: [],
+                            codigos_usados: []
+                        })
+                    }
+                );
+
+                historicoTrocas = [];
+                codigosUsados = [];
+                historicoHashAtual = '';
+                renderizarHistorico();
+                mostrarMensagemTroca('🗑️ Histórico limpo!', 'sucesso');
+            } catch (e) {
+                mostrarMensagemTroca(`❌ Erro ao limpar: ${e.message}`, 'erro');
+            } finally {
+                operacaoEmAndamento = false;
+                bloquearBotoes(false);
+            }
         }
 
+        // ============================================================
+        // POLLING & SESSÃO
+        // ============================================================
+        function iniciarPolling() {
+            if (intervaloAtualizacao) clearInterval(intervaloAtualizacao);
+            intervaloAtualizacao = setInterval(buscarSaldo, CONFIG.INTERVALO_POLLING);
+        }
+
+        function pararPolling() {
+            if (intervaloAtualizacao) {
+                clearInterval(intervaloAtualizacao);
+                intervaloAtualizacao = null;
+            }
+        }
+
+        function iniciarVerificacaoSessao() {
+            if (intervaloSessao) clearInterval(intervaloSessao);
+            intervaloSessao = setInterval(() => {
+                if (!carregarUsuarioLogado()) {
+                    pararPolling();
+                    window.location.href = 'login.html';
+                }
+            }, CONFIG.INTERVALO_SESSAO);
+        }
+
+        // ============================================================
+        // EVENTOS
+        // ============================================================
         document.addEventListener('DOMContentLoaded', () => {
             document.querySelectorAll('.btn-trocar').forEach(btn => {
                 btn.addEventListener('click', () => {
                     trocarMumuPorSaldo(parseFloat(btn.dataset.mumu), parseFloat(btn.dataset.saldo));
                 });
             });
+
             document.querySelectorAll('.btn-desfazer').forEach(btn => {
                 btn.addEventListener('click', () => {
                     desfazerTroca(parseFloat(btn.dataset.saldo), parseFloat(btn.dataset.mumu));
                 });
             });
+
             document.getElementById('btnLimparHistorico').addEventListener('click', limparHistorico);
             document.getElementById('btnResgatar').addEventListener('click', resgatarCodigo);
+
             document.getElementById('inputCodigo').addEventListener('keypress', (e) => {
                 if (e.key === 'Enter') resgatarCodigo();
             });
+
+            // Pausa polling quando a aba está oculta
+            document.addEventListener('visibilitychange', () => {
+                if (document.hidden) {
+                    pararPolling();
+                } else {
+                    buscarSaldo();
+                    iniciarPolling();
+                }
+            });
         });
 
+        // ============================================================
+        // BOOTSTRAP
+        // ============================================================
         if (!carregarUsuarioLogado()) {
             window.location.href = 'login.html';
         } else {
-            iniciarAtualizacaoAutomatica();
+            buscarSaldo();
+            iniciarPolling();
+            iniciarVerificacaoSessao();
         }
 
-        document.addEventListener('visibilitychange', () => {
-            if (!document.hidden) buscarSaldo();
-        });
-
-        setInterval(() => {
-            if (!carregarUsuarioLogado()) {
-                clearInterval(intervaloAtualizacao);
-                window.location.href = 'login.html';
-            }
-        }, 30000);
-
-        console.log('🔄 Sistema de saldo Mumu + trocas + resgate de códigos iniciado');
+        console.log('🔄 Sistema de saldo Mumu (RPC) iniciado');
     </script>
 </body>
 </html>
