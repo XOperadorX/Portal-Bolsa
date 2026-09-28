@@ -1,0 +1,2506 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Painel ADM - BAEP Investimentos</title>
+
+    <!-- 🔐 PROTEÇÃO: bloqueia acesso direto se cadeado !== true -->
+    <script>
+    (async function protegerAdmin() {
+        const usuarioData = localStorage.getItem('usuario_logado');
+
+        if (!usuarioData) {
+            alert('⛔ Você precisa estar logado.');
+            window.location.href = '/dashboard.html';
+            return;
+        }
+
+        let login;
+        try {
+            login = JSON.parse(usuarioData).login;
+        } catch (e) {
+            window.location.href = '/dashboard.html';
+            return;
+        }
+
+        if (!login) {
+            window.location.href = '/dashboard.html';
+            return;
+        }
+
+        const script = document.createElement('script');
+        script.src = 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2';
+        script.onload = async () => {
+            const sb = window.supabase.createClient(
+                'https://xrcxvizzdumcxbylmkvn.supabase.co',
+                'sb_publishable_E-g3G3wW4EySbCsXLXp8KQ_FnmERMcD'
+            );
+
+            const { data, error } = await sb
+                .from('Geral')
+                .select('cadeado')
+                .eq('login', login)
+                .maybeSingle();
+
+            if (error || !data || data.cadeado !== true) {
+                alert('⛔ Acesso negado. Você não é admin.');
+                window.location.href = '/dashboard.html';
+            } else {
+                console.log('👑 Bem-vindo, admin!');
+            }
+        };
+        document.head.appendChild(script);
+    })();
+    </script>
+
+    <link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@400;600;700&family=Orbitron:wght@400;700&display=swap" rel="stylesheet">
+
+    <style>
+        :root {
+            --bg-dark: #0a0b10;
+            --card-bg: #121520;
+            --neon-blue: #00f0ff;
+            --neon-purple: #7000ff;
+            --neon-green: #00ff66;
+            --text-color: #f0f4f8;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Rajdhani', sans-serif;
+        }
+
+        body {
+            background-color: var(--bg-dark);
+            color: var(--text-color);
+            background-image: 
+                radial-gradient(circle at 15% 20%, rgba(112, 0, 255, 0.15) 0%, transparent 40%),
+                radial-gradient(circle at 85% 80%, rgba(0, 240, 255, 0.15) 0%, transparent 40%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        /* --- BARRA DE NAVEGAÇÃO SUPERIOR (ADAPTADA) --- */
+        .nav-bar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: rgba(18, 21, 32, 0.8);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(0, 240, 255, 0.2);
+            padding: 12px 24px;
+            border-radius: 16px;
+            margin-bottom: 30px;
+            box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+
+        .nav-links {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            flex-wrap: wrap;
+        }
+
+        .nav-links a {
+            color: #a0aec0;
+            text-decoration: none;
+            font-weight: 700;
+            font-size: 1.1rem;
+            padding: 8px 16px;
+            border-radius: 8px;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .nav-links a:hover,
+        .nav-links a.active {
+            color: #fff;
+            background: rgba(0, 240, 255, 0.15);
+            border: 1px solid var(--neon-blue);
+            box-shadow: 0 0 10px rgba(0, 240, 255, 0.3);
+        }
+
+        /* Perfil do usuário */
+        .user-profile {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            background: rgba(0, 240, 255, 0.08);
+            padding: 6px 16px 6px 12px;
+            border-radius: 40px;
+            border: 1px solid rgba(0, 240, 255, 0.2);
+            color: #fff;
+            font-weight: 600;
+            font-size: 0.95rem;
+            transition: all 0.3s;
+            cursor: default;
+        }
+
+        .user-profile:hover {
+            background: rgba(0, 240, 255, 0.15);
+            border-color: var(--neon-blue);
+            box-shadow: 0 0 15px rgba(0, 240, 255, 0.2);
+        }
+
+        .user-avatar {
+            background: linear-gradient(135deg, var(--neon-blue), var(--neon-purple));
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.2rem;
+            font-weight: bold;
+            box-shadow: 0 0 10px rgba(0, 240, 255, 0.3);
+        }
+
+        .user-info {
+            display: flex;
+            flex-direction: column;
+            line-height: 1.2;
+        }
+
+        .user-nick {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 0.9rem;
+            letter-spacing: 0.5px;
+            color: #fff;
+        }
+
+        .user-balance {
+            font-size: 0.8rem;
+            color: var(--neon-green);
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+
+        .user-balance::before {
+            content: "💰";
+            font-size: 0.7rem;
+        }
+
+        .nav-buttons {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+
+        .btn-bolsa {
+            background: linear-gradient(135deg, #00f0ff, #7000ff);
+            color: white;
+            border: none;
+            padding: 8px 18px;
+            border-radius: 40px;
+            font-weight: bold;
+            font-size: 0.9rem;
+            cursor: pointer;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            box-shadow: 0 0 12px rgba(0, 240, 255, 0.4);
+        }
+
+        .btn-bolsa:hover {
+            transform: translateY(-2px) scale(1.02);
+            box-shadow: 0 0 20px rgba(0, 240, 255, 0.8);
+        }
+
+        .btn-sair {
+            background: linear-gradient(135deg, #ef4444, #dc2626);
+            color: white;
+            border: none;
+            padding: 8px 18px;
+            border-radius: 40px;
+            font-weight: bold;
+            font-size: 0.9rem;
+            cursor: pointer;
+            transition: all 0.2s;
+            box-shadow: 0 0 10px rgba(239, 68, 68, 0.3);
+        }
+
+        .btn-sair:hover {
+            transform: scale(0.96);
+            background: linear-gradient(135deg, #dc2626, #b91c1c);
+            box-shadow: 0 0 15px rgba(220, 38, 38, 0.6);
+        }
+
+        /* --- CARDS (painel ADM) --- */
+        .container {
+            padding: 0;
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        .card {
+            background: var(--card-bg);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            border-radius: 16px;
+            padding: 24px;
+            margin-bottom: 28px;
+            box-shadow: 0 8px 22px rgba(0, 0, 0, 0.4);
+            transition: border-color 0.3s;
+        }
+
+        .card:hover {
+            border-color: rgba(0, 240, 255, 0.2);
+        }
+
+        .card h2 {
+            font-size: 1.4rem;
+            margin-bottom: 20px;
+            border-left: 5px solid var(--neon-blue);
+            padding-left: 14px;
+            color: #fff;
+            font-family: 'Orbitron', sans-serif;
+            letter-spacing: 1px;
+            text-shadow: 0 0 8px rgba(0, 240, 255, 0.2);
+        }
+
+        .form-group {
+            margin-bottom: 16px;
+        }
+
+        .form-group label {
+            display: block;
+            font-weight: 600;
+            color: #c0d0e0;
+            margin-bottom: 6px;
+            font-size: 0.9rem;
+            letter-spacing: 0.3px;
+        }
+
+        .form-group input,
+        .form-group select {
+            width: 100%;
+            padding: 12px 16px;
+            border: 2px solid #2a2f45;
+            border-radius: 12px;
+            font-size: 1rem;
+            transition: all 0.3s;
+            background: #1a1f2f;
+            color: #f0f4f8;
+        }
+
+        .form-group input:focus,
+        .form-group select:focus {
+            outline: none;
+            border-color: var(--neon-blue);
+            background: #121a2a;
+            box-shadow: 0 0 0 4px rgba(0, 240, 255, 0.15);
+        }
+
+        .form-group input::placeholder {
+            color: #5a6a7a;
+        }
+
+        .form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+        }
+
+        .btn {
+            padding: 12px 24px;
+            border: none;
+            border-radius: 12px;
+            font-weight: 700;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: all 0.3s;
+            margin-right: 10px;
+            letter-spacing: 0.5px;
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+        }
+
+        .btn:active {
+            transform: scale(0.96);
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #002e5d, #001a33);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            box-shadow: 0 8px 25px rgba(0, 46, 93, 0.3);
+        }
+
+        .btn-success {
+            background: linear-gradient(135deg, #10b981, #059669);
+            color: white;
+        }
+
+        .btn-success:hover {
+            box-shadow: 0 8px 25px rgba(16, 185, 129, 0.3);
+        }
+
+        .btn-danger {
+            background: linear-gradient(135deg, #ef4444, #dc2626);
+            color: white;
+        }
+
+        .btn-danger:hover {
+            box-shadow: 0 8px 25px rgba(239, 68, 68, 0.3);
+        }
+
+        .btn-warning {
+            background: linear-gradient(135deg, #f59e0b, #d97706);
+            color: white;
+        }
+
+        .btn-warning:hover {
+            box-shadow: 0 8px 25px rgba(245, 158, 11, 0.3);
+        }
+
+        .btn-secondary {
+            background: linear-gradient(135deg, #6b7280, #4b5563);
+            color: white;
+        }
+
+        .btn-secondary:hover {
+            box-shadow: 0 8px 25px rgba(107, 114, 128, 0.3);
+        }
+
+        .btn-back {
+            background: linear-gradient(135deg, #8b5cf6, #7c3aed);
+            color: white;
+            border: none;
+            padding: 8px 20px;
+            border-radius: 40px;
+            font-weight: bold;
+            font-size: 0.8rem;
+            cursor: pointer;
+            transition: all 0.2s;
+            margin-left: auto;
+        }
+
+        .btn-back:hover {
+            transform: scale(0.96);
+            box-shadow: 0 8px 25px rgba(139, 92, 246, 0.3);
+        }
+
+        .header-actions {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-left: auto;
+        }
+
+        /* ============ BOTÃO DELETAR (CARD DETALHES) ============ */
+        .btn-delete {
+            background: linear-gradient(135deg, #7c3aed, #6d28d9);
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 12px;
+            font-weight: 700;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: all 0.3s;
+            letter-spacing: 0.5px;
+            box-shadow: 0 0 15px rgba(124, 58, 237, 0.3);
+        }
+
+        .btn-delete:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(124, 58, 237, 0.5);
+            background: linear-gradient(135deg, #6d28d9, #5b21b6);
+        }
+
+        .btn-delete:active {
+            transform: scale(0.96);
+        }
+
+        /* Mensagens */
+        .mensagem {
+            padding: 12px 16px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            font-size: 0.9rem;
+            display: none;
+        }
+
+        .mensagem.show {
+            display: block;
+        }
+
+        .mensagem-erro {
+            background: #1f1a2a;
+            color: #ff6b6b;
+            border-left: 4px solid #ef4444;
+        }
+
+        .mensagem-sucesso {
+            background: #0f2a1a;
+            color: #6bff9e;
+            border-left: 4px solid #10b981;
+        }
+
+        .mensagem-info {
+            background: #0f1f2a;
+            color: #6bc8ff;
+            border-left: 4px solid #3b82f6;
+        }
+
+        .table-wrapper {
+            overflow-x: auto;
+            width: 100%;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            min-width: 700px;
+        }
+
+        th,
+        td {
+            padding: 12px 8px;
+            text-align: center;
+            border-bottom: 1px solid #2a2f45;
+            font-size: 0.9rem;
+            vertical-align: middle;
+            color: #e0e8f0;
+        }
+
+        th {
+            background-color: #1a1f2f;
+            color: #8ab4e8;
+            font-weight: 600;
+            font-family: 'Orbitron', sans-serif;
+            font-size: 0.8rem;
+            letter-spacing: 1px;
+        }
+
+        tr:hover td {
+            background: rgba(0, 240, 255, 0.04);
+        }
+
+        .usuario-info {
+            font-size: 0.8rem;
+            font-weight: 400;
+            color: #6bb8e8;
+            margin-left: 10px;
+        }
+
+        .status-container {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+
+        .status-item {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 4px 14px;
+            border-radius: 20px;
+            font-size: 0.7rem;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            white-space: nowrap;
+        }
+
+        .status-online {
+            background: #10b981;
+            color: white;
+            box-shadow: 0 2px 8px rgba(16, 185, 129, 0.3);
+        }
+
+        .status-offline {
+            background: #ef4444;
+            color: white;
+            box-shadow: 0 2px 8px rgba(239, 68, 68, 0.3);
+        }
+
+        .status-checking {
+            background: #f59e0b;
+            color: white;
+            box-shadow: 0 2px 8px rgba(245, 158, 11, 0.3);
+            animation: pulse-status 1s ease-in-out infinite;
+        }
+
+        @keyframes pulse-status {
+            0%,
+            100% {
+                opacity: 1;
+            }
+            50% {
+                opacity: 0.6;
+            }
+        }
+
+        .status-dot {
+            display: inline-block;
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: currentColor;
+            flex-shrink: 0;
+        }
+
+        .status-dot.online {
+            animation: pulse-dot-online 1.5s ease-in-out infinite;
+        }
+
+        @keyframes pulse-dot-online {
+            0%,
+            100% {
+                opacity: 1;
+                transform: scale(1);
+            }
+            50% {
+                opacity: 0.5;
+                transform: scale(0.8);
+            }
+        }
+
+        .status-label {
+            font-size: 0.65rem;
+            opacity: 0.9;
+        }
+
+        .moeda-simbolo {
+            font-size: 0.9rem;
+            font-weight: 300;
+            color: #6c86a3;
+        }
+
+        .loading {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border: 3px solid #2a2f45;
+            border-top: 3px solid var(--neon-blue);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            vertical-align: middle;
+            margin-right: 10px;
+        }
+
+        @keyframes spin {
+            0% {
+                transform: rotate(0deg);
+            }
+            100% {
+                transform: rotate(360deg);
+            }
+        }
+
+        .btn:disabled {
+            opacity: 0.7;
+            cursor: not-allowed;
+        }
+
+        .acao-botoes {
+            display: flex;
+            gap: 6px;
+            justify-content: center;
+            flex-wrap: wrap;
+            align-items: center;
+        }
+
+        .acao-botoes button {
+            padding: 4px 12px;
+            border: none;
+            border-radius: 20px;
+            font-weight: 600;
+            font-size: 0.7rem;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .acao-botoes .add {
+            background: #10b981;
+            color: white;
+        }
+
+        .acao-botoes .add:hover {
+            background: #059669;
+        }
+
+        .acao-botoes .remove {
+            background: #ef4444;
+            color: white;
+        }
+
+        .acao-botoes .remove:hover {
+            background: #dc2626;
+        }
+
+        .acao-botoes .set {
+            background: #3b82f6;
+            color: white;
+        }
+
+        .acao-botoes .set:hover {
+            background: #2563eb;
+        }
+
+        /* ============ BOTÃO DELETAR (TABELA) ============ */
+        .acao-botoes .delete {
+            background: #7c3aed;
+            color: white;
+            padding: 4px 8px;
+            font-size: 0.8rem;
+        }
+
+        .acao-botoes .delete:hover {
+            background: #6d28d9;
+            box-shadow: 0 0 10px rgba(124, 58, 237, 0.6);
+            transform: scale(1.1);
+        }
+
+        .quantidade-input {
+            width: 100px;
+            padding: 4px 8px;
+            border: 1px solid #2a2f45;
+            border-radius: 8px;
+            text-align: center;
+            font-size: 0.8rem;
+            background: #1a1f2f;
+            color: #f0f4f8;
+        }
+
+        /* SELIC CARD (custom) */
+        .selic-card {
+            background: #141a2a;
+            border-left: 6px solid var(--neon-blue);
+            border-color: rgba(0, 240, 255, 0.3);
+        }
+
+        .selic-card h2 {
+            border-left-color: var(--neon-blue);
+            color: #fff;
+        }
+
+        .selic-atual {
+            font-size: 2.5rem;
+            font-weight: 800;
+            color: var(--neon-blue);
+            text-shadow: 0 0 20px rgba(0, 240, 255, 0.3);
+        }
+
+        .selic-indicador {
+            display: inline-block;
+            padding: 4px 16px;
+            border-radius: 30px;
+            font-weight: 700;
+            font-size: 0.9rem;
+        }
+
+        .selic-alta {
+            background: #ef4444;
+            color: white;
+        }
+
+        .selic-baixa {
+            background: #10b981;
+            color: white;
+        }
+
+        .selic-media {
+            background: #f59e0b;
+            color: white;
+        }
+
+        .selic-impacto {
+            padding: 12px 16px;
+            border-radius: 12px;
+            margin-top: 10px;
+            font-weight: 600;
+        }
+
+        .impacto-compra {
+            background: #0f2a1a;
+            color: #6bff9e;
+            border-left: 4px solid #10b981;
+        }
+
+        .impacto-venda {
+            background: #2a0f1a;
+            color: #ff6b6b;
+            border-left: 4px solid #ef4444;
+        }
+
+        .impacto-neutral {
+            background: #1f1f0f;
+            color: #ffd66b;
+            border-left: 4px solid #f59e0b;
+        }
+
+        /* Estatísticas */
+        .stat-box {
+            background: #1a1f2f;
+            padding: 16px;
+            border-radius: 16px;
+            text-align: center;
+            border: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        .stat-box h3 {
+            font-size: 0.8rem;
+            color: #8a99ad;
+            font-family: 'Orbitron', sans-serif;
+            letter-spacing: 1px;
+        }
+
+        .stat-box p {
+            font-size: 2rem;
+            font-weight: 700;
+            color: #fff;
+            margin-top: 6px;
+        }
+
+        .stat-box .stat-green {
+            color: var(--neon-green);
+        }
+
+        .stat-box .stat-blue {
+            color: var(--neon-blue);
+        }
+
+        .stat-box .stat-gold {
+            color: #f59e0b;
+        }
+
+        .stat-box .stat-red {
+            color: #ef4444;
+        }
+
+        .stat-box .stat-cyan {
+            color: #22d3ee;
+        }
+
+        .stat-box .stat-purple {
+            color: #a78bfa;
+        }
+
+        .stat-box .stat-orange {
+            color: #f7931a;
+        }
+
+        /* Cor da senha */
+        .senha-texto {
+            font-family: 'Courier New', monospace;
+            font-weight: 600;
+            color: #fbbf24;
+            letter-spacing: 1px;
+        }
+
+        /* ===== COLUNA SM ATUAL ===== */
+        .sm-atual-texto {
+            font-family: 'Orbitron', monospace;
+            font-weight: 700;
+            color: #a78bfa;
+            letter-spacing: 0.5px;
+        }
+
+        /* ===== BTC DESTAQUE ===== */
+        .btc-texto {
+            font-family: 'Orbitron', monospace;
+            font-weight: 700;
+            color: #f7931a;
+            letter-spacing: 0.5px;
+            text-shadow: 0 0 8px rgba(247, 147, 26, 0.3);
+        }
+
+        /* ===== CARD SATOSHI (custom) ===== */
+        .satoshi-card {
+            border-left: 6px solid #f7931a;
+            border-color: rgba(247, 147, 26, 0.3);
+        }
+
+        .satoshi-card h2 {
+            border-left-color: #f7931a;
+            color: #fff;
+            text-shadow: 0 0 8px rgba(247, 147, 26, 0.3);
+        }
+
+        @media (max-width: 768px) {
+            .form-row {
+                grid-template-columns: 1fr;
+            }
+            .header-actions {
+                width: 100%;
+                justify-content: flex-start;
+                margin-left: 0;
+                margin-top: 8px;
+            }
+            .status-container {
+                width: 100%;
+                justify-content: flex-start;
+            }
+            .btn-back {
+                margin-left: 0;
+            }
+            .selic-atual {
+                font-size: 1.8rem;
+            }
+            .nav-bar {
+                flex-direction: column;
+                align-items: stretch;
+            }
+            .nav-links {
+                justify-content: center;
+            }
+            .nav-buttons {
+                justify-content: center;
+            }
+            .user-profile {
+                padding: 4px 12px 4px 8px;
+            }
+            .user-info .user-nick {
+                font-size: 0.8rem;
+            }
+            table {
+                min-width: 500px;
+            }
+        }
+
+        /* ===== CÓDIGOS DE RESGATE ===== */
+        .codigos-card {
+            border-left: 6px solid var(--neon-green);
+        }
+
+        .codigos-card h2 {
+            border-left-color: var(--neon-green);
+        }
+
+        .codigo-badge {
+            display: inline-block;
+            background: linear-gradient(135deg, #7000ff, #00f0ff);
+            color: #fff;
+            font-family: 'Orbitron', monospace;
+            font-weight: 700;
+            padding: 4px 12px;
+            border-radius: 6px;
+            letter-spacing: 1px;
+            font-size: 0.85rem;
+        }
+
+        .codigo-status {
+            display: inline-block;
+            padding: 3px 10px;
+            border-radius: 20px;
+            font-size: 0.7rem;
+            font-weight: 700;
+        }
+
+        .codigo-status.ativo {
+            background: #10b981;
+            color: #fff;
+        }
+
+        .codigo-status.inativo {
+            background: #ef4444;
+            color: #fff;
+        }
+
+        .codigo-status.esgotado {
+            background: #f59e0b;
+            color: #fff;
+        }
+
+        .acao-botoes .toggle {
+            background: #3b82f6;
+            color: white;
+        }
+
+        .acao-botoes .toggle:hover {
+            background: #2563eb;
+        }
+    </style>
+</head>
+<body>
+    <!-- BARRA DE NAVEGAÇÃO ESTILIZADA (TEMA CYBERPUNK) -->
+    <div class="nav-bar">
+        <div class="nav-links">
+            <a href="./sys.html" class="active">⚡ ADMIN</a>
+        </div>
+        <div class="user-profile">
+            <div class="user-avatar">👑</div>
+            <div class="user-info">
+                <span class="user-nick" id="usuarioLogadoNav">ADM</span>
+                <span class="user-balance">Supabase <span id="statusSupabaseTextoNav">Online</span></span>
+            </div>
+        </div>
+        <div class="nav-buttons">
+            <button class="btn-bolsa" onclick="window.location.href='../../dashboard.html'">🏠 Voltar</button>
+        </div>
+    </div>
+
+    <div class="container">
+        <!-- Mensagens -->
+        <div id="mensagem" class="mensagem"></div>
+
+        <!-- ==================== SELIC - CONTROLE ==================== -->
+        <div class="card selic-card">
+            <h2>📈 TAXA SELIC - CONTROLE</h2>
+            <p style="color: #8a99ad; margin-bottom: 16px; font-size: 0.9rem;">
+                Ajuste a taxa SELIC para influenciar o mercado de FIIs. 
+                <strong style="color:var(--neon-blue);">SELIC alta</strong> → FIIs caem (oportunidade de compra) | 
+                <strong style="color:var(--neon-green);">SELIC baixa</strong> → FIIs sobem (momento de vender/colher)
+            </p>
+            
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="selicInput">Taxa SELIC Atual (% a.a.)</label>
+                    <input type="number" id="selicInput" step="0.25" min="0" max="25" value="10.75">
+                </div>
+                <div class="form-group" style="display: flex; align-items: flex-end; gap: 10px; flex-wrap: wrap;">
+                    <button class="btn btn-primary" id="btnAtualizarSelic">🔄 Atualizar SELIC</button>
+                    <button class="btn btn-secondary" id="btnSelicPadrao">↩️ Restaurar Padrão</button>
+                </div>
+            </div>
+
+            <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 20px; margin-top: 20px;">
+                <div class="stat-box">
+                    <h3>SELIC Atual</h3>
+                    <p class="selic-atual" id="selicDisplay">10,75%</p>
+                    <span class="selic-indicador" id="selicIndicador">Média</span>
+                </div>
+                <div class="stat-box">
+                    <h3>Impacto nos FIIs</h3>
+                    <p style="font-size: 1.2rem; font-weight: 700; color: #fff;" id="selicImpactoTexto">📊 Impacto Neutro</p>
+                    <div id="selicImpactoDetalhe" class="selic-impacto impacto-neutral" style="font-size: 0.85rem;">
+                        ⚖️ Mercado estável
+                    </div>
+                </div>
+                <div class="stat-box">
+                    <h3>Estratégia Recomendada</h3>
+                    <p style="font-size: 1rem; font-weight: 700; color: #fff;" id="selicEstrategia">🔍 Aguardar</p>
+                    <p style="font-size: 0.75rem; color: #8a99ad;" id="selicEstrategiaDetalhe">Analise o mercado</p>
+                </div>
+            </div>
+        </div>
+                <!-- ==================== CÓDIGOS DE RESGATE ==================== -->
+                <div class="card codigos-card">
+                    <h2>🎁 CÓDIGOS DE RESGATE</h2>
+                    <p style="color: #8a99ad; margin-bottom: 16px; font-size: 0.9rem;">
+                        Crie códigos que os usuários podem resgatar na página de saldo.
+                        Você pode dar <strong style="color:var(--neon-green);">Mumu</strong> e/ou
+                        <strong style="color:var(--neon-blue);">Saldo R$</strong>.
+                        <br><small style="color:#f59e0b;">💡 Valores negativos são aceitos (ex: -0.01) para penalidades.</small>
+                    </p>
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="codigoInput">Código (ex: BEMVINDO2026)</label>
+                            <input type="text" id="codigoInput" placeholder="Digite o código" maxlength="30" style="text-transform: uppercase;">
+                        </div>
+                        <div class="form-group">
+                            <label for="codigoMumu">Recompensa Mumu (pode ser negativo)</label>
+                            <input type="number" id="codigoMumu" placeholder="0.00" step="0.01" value="0">
+                        </div>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="codigoSaldo">Recompensa Saldo R$ (pode ser negativo)</label>
+                            <input type="number" id="codigoSaldo" placeholder="0.00" step="0.01" value="0">
+                        </div>
+                        <div class="form-group">
+                            <label for="codigoLimite">Limite de usos (0 = ilimitado)</label>
+                            <input type="number" id="codigoLimite" placeholder="0" min="0" value="0">
+                        </div>
+                    </div>
+
+                    <div style="display: flex; gap: 10px; flex-wrap: wrap; margin-bottom: 20px;">
+                        <button class="btn btn-success" id="btnCriarCodigo">➕ Criar Código</button>
+                        <button class="btn btn-warning" id="btnCancelarEdicao" style="display:none;">❌ Cancelar Edição</button>
+                        <button class="btn btn-secondary" id="btnRecarregarCodigos">🔄 Recarregar Lista</button>
+                    </div>
+
+                    <h3 style="color: #fff; font-size: 1rem; margin-bottom: 12px;">📋 Códigos Existentes</h3>
+                    <div class="table-wrapper">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Código</th>
+                                    <th>Mumu</th>
+                                    <th>Saldo R$</th>
+                                    <th>Usos</th>
+                                    <th>Limite</th>
+                                    <th>Status</th>
+                                    <th>Ações</th>
+                                </tr>
+                            </thead>
+                            <tbody id="tabelaCodigos"></tbody>
+                        </table>
+                    </div>
+                </div>
+
+        <!-- Buscar Usuário -->
+        <div class="card">
+            <h2>🔍 Buscar Usuário</h2>
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="buscaUsuario">Login ou Nome</label>
+                    <input type="text" id="buscaUsuario" placeholder="Digite o login ou nome do usuário">
+                </div>
+                <div class="form-group" style="display: flex; align-items: flex-end; gap: 10px; flex-wrap: wrap;">
+                    <button class="btn btn-primary" id="btnBuscar">🔍 Buscar</button>
+                    <button class="btn btn-secondary" id="btnListarTodos">📋 Listar Todos</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Resultados da Busca -->
+        <div class="card" id="cardResultados" style="display: none;">
+            <h2>👤 Usuário Encontrado</h2>
+            <div id="detalhesUsuario"></div>
+        </div>
+
+        <!-- ==================== TODOS OS USUÁRIOS ==================== -->
+        <div class="card" id="cardLista" style="display: none;">
+            <h2>📋 Todos os Usuários</h2>
+            <div class="table-wrapper">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Nome</th>
+                            <th>Login</th>
+                            <th>Mumu</th>
+                            <th>Saldo</th>
+                            <th>Poupança (Mumu)</th>
+                            <th>SM Atual</th>
+                            <th>Status</th>
+                            <th>Ações</th>
+                        </tr>
+                    </thead>
+                    <tbody id="tabelaUsuarios"></tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- ==================== TODOS OS SATOSHI ==================== -->
+        <div class="card satoshi-card" id="cardSatoshi" style="display: none;">
+            <h2>📋 Todos os Satoshi</h2>
+            <div class="table-wrapper">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Nome</th>
+                            <th>Login</th>
+                            <th>BTC</th>
+                            <th>Ações</th>
+                        </tr>
+                    </thead>
+                    <tbody id="tabelaSatoshi"></tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- Ações Rápidas -->
+        <div class="card">
+            <h2>⚡ Ações Rápidas</h2>
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="usuarioId">ID do Usuário</label>
+                    <input type="number" id="usuarioId" placeholder="Digite o ID do usuário">
+                </div>
+                <div class="form-group">
+                    <label for="valorAcao">Valor (Mumu)</label>
+                    <input type="number" id="valorAcao" placeholder="0.00" step="0.01" min="0.01">
+                </div>
+            </div>
+            <div style="display: flex; gap: 10px; flex-wrap: wrap; margin-top: 10px;">
+                <button class="btn btn-success" id="btnAdicionarSaldo">➕ Adicionar Saldo</button>
+                <button class="btn btn-danger" id="btnRemoverSaldo">➖ Remover Saldo</button>
+                <button class="btn btn-warning" id="btnDefinirSaldo">🎯 Definir Saldo</button>
+            </div>
+        </div>
+
+        <!-- Estatísticas -->
+        <div class="card">
+            <h2>📊 Estatísticas</h2>
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 20px;">
+                <div class="stat-box">
+                    <h3>Total de Usuários</h3>
+                    <p class="stat-blue" id="totalUsuarios">0</p>
+                </div>
+                <div class="stat-box">
+                    <h3>Total Mumu</h3>
+                    <p class="stat-green" id="totalMumu">0,00 <span class="moeda-simbolo">Mumu</span></p>
+                </div>
+                <div class="stat-box">
+                    <h3>Total Saldo</h3>
+                    <p class="stat-cyan" id="totalSaldo">0,00 <span class="moeda-simbolo">R$</span></p>
+                </div>
+                <div class="stat-box">
+                    <h3>Total Poupança</h3>
+                    <p class="stat-gold" id="totalPoupanca">0,00 <span class="moeda-simbolo">Mumu</span></p>
+                </div>
+                <div class="stat-box">
+                    <h3>Proventos Pendentes</h3>
+                    <p class="stat-gold" id="totalProventos">0,00 <span class="moeda-simbolo">R$</span></p>
+                </div>
+                <div class="stat-box">
+                    <h3>Total BTC</h3>
+                    <p class="stat-orange" id="totalBtc">0,00000000 <span class="moeda-simbolo">BTC</span></p>
+                </div>
+                <div class="stat-box">
+                    <h3>Poder de Mercado</h3>
+                    <p class="stat-purple" id="totalPoderMercado">0,00 <span class="moeda-simbolo">R$</span></p>
+                </div>
+                <div class="stat-box">
+                    <h3>Usuários Bloqueados</h3>
+                    <p class="stat-red" id="totalBloqueados">0</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script type="importmap">
+    {
+        "imports": {
+            "@supabase/supabase-js": "https://esm.sh/@supabase/supabase-js@2"
+        }
+    }
+    </script>
+
+    <script type="module">
+        import { createClient } from '@supabase/supabase-js';
+
+        // ==================== VERIFICAÇÃO DE LOGIN ====================
+        const usuarioLogado = localStorage.getItem('usuario_logado');
+        if (!usuarioLogado) {
+            window.location.href = 'login.html';
+        }
+
+        let usuario = null;
+        try {
+            usuario = JSON.parse(usuarioLogado);
+            document.getElementById('usuarioLogadoNav').textContent = usuario.nome || usuario.login || 'ADM';
+        } catch (e) {
+            window.location.href = 'login.html';
+        }
+
+        // ==================== CONFIGURAÇÕES ====================
+        const SUPABASE_URL = 'https://xrcxvizzdumcxbylmkvn.supabase.co';
+        const SUPABASE_KEY = 'sb_publishable_E-g3G3wW4EySbCsXLXp8KQ_FnmERMcD';
+        const supabase = createClient(SUPABASE_URL, SUPABASE_KEY);
+        const TABELA = 'Geral';
+        const MOEDA = 'Mumu';
+
+        let supabaseOnline = false;
+        let usuariosCache = [];
+        let selicAtual = 10.75;
+        let codigosCache = [];
+
+        // ==================== FUNÇÕES UTILITÁRIAS ====================
+        function mostrarMensagem(texto, tipo = 'info') {
+            const el = document.getElementById('mensagem');
+            el.textContent = texto;
+            el.className = `mensagem show mensagem-${tipo}`;
+            setTimeout(() => {
+                el.className = 'mensagem';
+            }, 5000);
+        }
+
+        function formatarMoeda(valor) {
+            return `${Number(valor || 0).toFixed(2)} ${MOEDA}`;
+        }
+
+        function formatarBtc(valor) {
+            return `${Number(valor || 0).toFixed(8)} BTC`;
+        }
+
+        function atualizarStatusSupabase(online, mensagem = null) {
+            const textoNav = document.getElementById('statusSupabaseTextoNav');
+            if (online) {
+                textoNav.textContent = mensagem || 'Online';
+                textoNav.style.color = '#00ff66';
+            } else {
+                textoNav.textContent = mensagem || 'Offline';
+                textoNav.style.color = '#ef4444';
+            }
+        }
+
+        // ==================== FUNÇÕES SELIC ====================
+        function atualizarDisplaySelic(valor) {
+            const display = document.getElementById('selicDisplay');
+            const indicador = document.getElementById('selicIndicador');
+            const impactoTexto = document.getElementById('selicImpactoTexto');
+            const impactoDetalhe = document.getElementById('selicImpactoDetalhe');
+            const estrategia = document.getElementById('selicEstrategia');
+            const estrategiaDetalhe = document.getElementById('selicEstrategiaDetalhe');
+
+            display.textContent = `${valor.toFixed(2)}%`;
+
+            let classificacao = 'Média';
+            let classe = 'selic-media';
+            let impacto = '⚖️ Impacto Neutro';
+            let impactoClasse = 'impacto-neutral';
+            let detalhe = 'Mercado estável, sem grandes movimentos.';
+            let estrategiaTexto = '🔍 Aguardar';
+            let estrategiaDetalheTexto = 'Analise o mercado antes de agir.';
+
+            if (valor >= 13.0) {
+                classificacao = 'ALTA';
+                classe = 'selic-alta';
+                impacto = '📉 FIIs em QUEDA';
+                impactoClasse = 'impacto-compra';
+                detalhe = 'SELIC alta → FIIs caem. Ótimo momento para COMPRAR cotas baratas!';
+                estrategiaTexto = '🛒 COMPRAR FIIs';
+                estrategiaDetalheTexto = 'Aproveite as cotas descontadas para acumular posições.';
+            } else if (valor >= 10.5) {
+                classificacao = 'Média';
+                classe = 'selic-media';
+                impacto = '⚖️ Impacto Neutro';
+                impactoClasse = 'impacto-neutral';
+                detalhe = 'SELIC moderada. Mercado sem grandes oportunidades.';
+                estrategiaTexto = '🔍 Observar';
+                estrategiaDetalheTexto = 'Acompanhe os movimentos do mercado.';
+            } else if (valor >= 8.0) {
+                classificacao = 'Média-Baixa';
+                classe = 'selic-media';
+                impacto = '📈 FIIs em SUBIDA';
+                impactoClasse = 'impacto-venda';
+                detalhe = 'SELIC baixa → FIIs sobem. Momento de COLHER lucros!';
+                estrategiaTexto = '💰 VENDER FIIs';
+                estrategiaDetalheTexto = 'Aproveite a alta para realizar lucros e proteger o capital.';
+            } else {
+                classificacao = 'BAIXA';
+                classe = 'selic-baixa';
+                impacto = '🚀 FIIs em ALTA';
+                impactoClasse = 'impacto-venda';
+                detalhe = 'SELIC muito baixa → FIIs valorizados. Hora de VENDER e colher!';
+                estrategiaTexto = '💸 COLHER LUCROS';
+                estrategiaDetalheTexto = 'Mercado aquecido, momento de vender posições.';
+            }
+
+            indicador.textContent = classificacao;
+            indicador.className = `selic-indicador ${classe}`;
+            impactoTexto.textContent = impacto;
+            impactoDetalhe.textContent = detalhe;
+            impactoDetalhe.className = `selic-impacto ${impactoClasse}`;
+            estrategia.textContent = estrategiaTexto;
+            estrategiaDetalhe.textContent = estrategiaDetalheTexto;
+        }
+
+        async function salvarSelicNoSupabase(valor) {
+            try {
+                const { data: existingData, error: checkError } = await supabase
+                    .from(TABELA)
+                    .select('id')
+                    .eq('id', 1)
+                    .single();
+
+                if (checkError && checkError.code === 'PGRST116') {
+                    const { error: insertError } = await supabase
+                        .from(TABELA)
+                        .insert({ id: 1, selic: valor, updated_at: new Date().toISOString() });
+                    if (insertError) {
+                        console.error('Erro ao criar registro SELIC:', insertError);
+                        return false;
+                    }
+                } else {
+                    const { error: updateError } = await supabase
+                        .from(TABELA)
+                        .update({ selic: valor, updated_at: new Date().toISOString() })
+                        .eq('id', 1);
+                    if (updateError) {
+                        console.error('Erro ao atualizar SELIC:', updateError);
+                        return false;
+                    }
+                }
+                return true;
+            } catch (error) {
+                console.error('Erro ao salvar SELIC:', error);
+                return false;
+            }
+        }
+
+        async function carregarSelicDoSupabase() {
+            try {
+                const { data, error } = await supabase
+                    .from(TABELA)
+                    .select('selic')
+                    .eq('id', 1)
+                    .single();
+                    
+                if (error) {
+                    if (error.code === 'PGRST116') {
+                        return null;
+                    }
+                    console.warn('Erro ao carregar SELIC:', error);
+                    return null;
+                }
+                return data?.selic ?? null;
+            } catch (error) {
+                console.error('Erro ao carregar SELIC:', error);
+                return null;
+            }
+        }
+
+        async function atualizarSelic(valor) {
+            if (valor < 0) valor = 0;
+            if (valor > 25) valor = 25;
+            selicAtual = valor;
+            document.getElementById('selicInput').value = valor;
+            atualizarDisplaySelic(valor);
+
+            const sucesso = await salvarSelicNoSupabase(valor);
+            if (sucesso) {
+                mostrarMensagem(`✅ SELIC atualizada para ${valor.toFixed(2)}% e salva no Supabase!`, 'sucesso');
+            } else {
+                mostrarMensagem(`⚠️ SELIC atualizada localmente, mas falha ao salvar no Supabase.`, 'erro');
+            }
+        }
+
+        // ==================== SUPABASE - USUÁRIOS ====================
+        async function verificarSupabase() {
+            try {
+                const { data, error } = await supabase
+                    .from(TABELA)
+                    .select('id')
+                    .limit(1);
+                if (error) {
+                    supabaseOnline = false;
+                    atualizarStatusSupabase(false, 'Erro');
+                    return false;
+                }
+                supabaseOnline = true;
+                atualizarStatusSupabase(true, 'Online');
+                return true;
+            } catch (error) {
+                supabaseOnline = false;
+                atualizarStatusSupabase(false, 'Erro');
+                return false;
+            }
+        }
+
+        async function buscarUsuarios(filtro = null) {
+            try {
+                let query = supabase
+                    .from(TABELA)
+                    .select('id, nome, login, saldo, saldo_poupanca, sm_atual, btc, mumu, bloqueado, proventos_pendentes, poder_mercado')
+                    .not('login', 'is', null);
+
+                if (filtro) {
+                    query = query.or(`login.ilike.%${filtro}%,nome.ilike.%${filtro}%`);
+                }
+
+                const { data, error } = await query;
+
+                if (error) {
+                    console.error('Erro ao buscar usuários:', error);
+                    mostrarMensagem('❌ Erro ao buscar usuários: ' + error.message, 'erro');
+                    return [];
+                }
+
+                usuariosCache = data || [];
+                return usuariosCache;
+            } catch (error) {
+                console.error('Erro:', error);
+                mostrarMensagem('❌ Erro ao buscar usuários.', 'erro');
+                return [];
+            }
+        }
+
+        async function buscarUsuarioPorId(id) {
+            try {
+                const { data, error } = await supabase
+                    .from(TABELA)
+                    .select('*')
+                    .eq('id', id)
+                    .single();
+
+                if (error) {
+                    mostrarMensagem('❌ Usuário não encontrado.', 'erro');
+                    return null;
+                }
+                return data;
+            } catch (error) {
+                console.error('Erro:', error);
+                mostrarMensagem('❌ Erro ao buscar usuário.', 'erro');
+                return null;
+            }
+        }
+
+        // ============ NOVO: atualizar MUMU (não saldo) ============
+        async function atualizarMumu(id, novoMumu) {
+            try {
+                const { data, error } = await supabase
+                    .from(TABELA)
+                    .update({ mumu: novoMumu, updated_at: new Date().toISOString() })
+                    .eq('id', id)
+                    .select();
+                if (error) throw error;
+                return data;
+            } catch (error) {
+                console.error('Erro ao atualizar Mumu:', error);
+                throw error;
+            }
+        }
+
+        async function atualizarSmAtual(id, valor) {
+            try {
+                const { data, error } = await supabase
+                    .from(TABELA)
+                    .update({ sm_atual: valor, updated_at: new Date().toISOString() })
+                    .eq('id', id)
+                    .select();
+                if (error) throw error;
+                return data;
+            } catch (error) {
+                console.error('Erro ao atualizar SM Atual:', error);
+                throw error;
+            }
+        }
+
+        async function atualizarBtc(id, valor) {
+            try {
+                const { data, error } = await supabase
+                    .from(TABELA)
+                    .update({ btc: valor, updated_at: new Date().toISOString() })
+                    .eq('id', id)
+                    .select();
+                if (error) throw error;
+                return data;
+            } catch (error) {
+                console.error('Erro ao atualizar BTC:', error);
+                throw error;
+            }
+        }
+
+        async function atualizarBloqueio(id, bloqueado) {
+            try {
+                const { data, error } = await supabase
+                    .from(TABELA)
+                    .update({ bloqueado: bloqueado, updated_at: new Date().toISOString() })
+                    .eq('id', id)
+                    .select();
+                if (error) throw error;
+                return data;
+            } catch (error) {
+                console.error('Erro ao atualizar bloqueio:', error);
+                throw error;
+            }
+        }
+
+        // ==================== DELETAR USUÁRIO ====================
+        async function deletarUsuario(id, login) {
+            const confirmacao1 = confirm(`⚠️ ATENÇÃO!\n\nTem certeza que deseja DELETAR o usuário "${login}" (ID: ${id})?\n\nEsta ação é IRREVERSÍVEL!`);
+            
+            if (!confirmacao1) return;
+            
+            const confirmacao2 = prompt(`🔴 CONFIRMAÇÃO FINAL\n\nDigite "DELETAR" (em maiúsculas) para confirmar a exclusão de "${login}":`);
+            
+            if (confirmacao2 !== 'DELETAR') {
+                mostrarMensagem('❌ Exclusão cancelada. Você digitou "' + (confirmacao2 || 'nada') + '" em vez de "DELETAR".', 'erro');
+                return;
+            }
+
+            try {
+                const usuario = await buscarUsuarioPorId(id);
+                if (!usuario) {
+                    mostrarMensagem('❌ Usuário não encontrado.', 'erro');
+                    return;
+                }
+
+                const { error } = await supabase
+                    .from(TABELA)
+                    .delete()
+                    .eq('id', id);
+
+                if (error) {
+                    console.error('Erro ao deletar usuário:', error);
+                    mostrarMensagem('❌ Erro ao deletar usuário: ' + error.message, 'erro');
+                    return;
+                }
+
+                console.log(`🗑️ Usuário deletado: ID ${id} | Login: ${login}`);
+
+                mostrarMensagem(`🗑️ Usuário "${login}" (ID: ${id}) deletado com sucesso!`, 'sucesso');
+                
+                document.getElementById('cardResultados').style.display = 'none';
+                await carregarDados();
+                
+            } catch (error) {
+                console.error('Erro:', error);
+                mostrarMensagem('❌ Erro ao deletar usuário.', 'erro');
+            }
+        }
+
+        // ==================== FUNÇÕES DE UI ====================
+        function renderizarUsuarioDetalhes(usuario) {
+            const container = document.getElementById('detalhesUsuario');
+            const card = document.getElementById('cardResultados');
+
+            if (!usuario) {
+                card.style.display = 'none';
+                return;
+            }
+
+            const estaBloqueado = usuario.bloqueado === true;
+
+            container.innerHTML = `
+                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 16px; background: #1a1f2f; padding: 20px; border-radius: 16px; border: 1px solid #2a2f45;">
+                    <div>
+                        <p style="font-size: 0.8rem; color: #8a99ad;">ID</p>
+                        <p style="font-size: 1.2rem; font-weight: 700; color: var(--neon-blue);">#${usuario.id}</p>
+                    </div>
+                    <div>
+                        <p style="font-size: 0.8rem; color: #8a99ad;">Nome</p>
+                        <p style="font-size: 1.2rem; font-weight: 600; color: #fff;">${usuario.nome || '—'}</p>
+                    </div>
+                    <div>
+                        <p style="font-size: 0.8rem; color: #8a99ad;">Login</p>
+                        <p style="font-size: 1.2rem; font-weight: 600; color: #fff;">${usuario.login}</p>
+                    </div>
+                    <div>
+                        <p style="font-size: 0.8rem; color: #8a99ad;">Senha</p>
+                        <p style="font-size: 1.2rem; font-weight: 600; color: #fbbf24; font-family: 'Courier New', monospace;">${usuario.senha || '—'}</p>
+                    </div>
+                    <div>
+                        <p style="font-size: 0.8rem; color: #8a99ad;">Mumu</p>
+                        <p style="font-size: 1.4rem; font-weight: 700; color: var(--neon-green);">${formatarMoeda(usuario.mumu || 0)}</p>
+                    </div>
+                    <div>
+                        <p style="font-size: 0.8rem; color: #8a99ad;">Saldo</p>
+                        <p style="font-size: 1.4rem; font-weight: 700; color: #22d3ee;">${formatarMoeda(usuario.saldo || 0)}</p>
+                    </div>
+                    <div>
+                        <p style="font-size: 0.8rem; color: #8a99ad;">Poupança</p>
+                        <p style="font-size: 1.4rem; font-weight: 700; color: #f59e0b;">${formatarMoeda(usuario.saldo_poupanca || 0)}</p>
+                    </div>
+                    <div>
+                        <p style="font-size: 0.8rem; color: #8a99ad;">Proventos Pendentes</p>
+                        <p style="font-size: 1.4rem; font-weight: 700; color: #f59e0b;">${formatarMoeda(usuario.proventos_pendentes || 0)}</p>
+                    </div>
+                    <div>
+                        <p style="font-size: 0.8rem; color: #8a99ad;">Poder de Mercado</p>
+                        <p style="font-size: 1.4rem; font-weight: 700; color: #a78bfa;">${formatarMoeda(usuario.poder_mercado || 0)}</p>
+                    </div>
+                    <div>
+                        <p style="font-size: 0.8rem; color: #8a99ad;">SM Atual</p>
+                        <div style="display: flex; gap: 8px; align-items: center; margin-top: 4px;">
+                            <input type="number" id="smAtualDetalhe_${usuario.id}" class="quantidade-input" style="width: 100px; font-size: 1rem; padding: 6px 10px;" step="1" value="${usuario.sm_atual ?? 0}">
+                            <button class="acao-botoes" style="background:#a78bfa; color:#fff; border:none; border-radius:20px; padding:6px 12px; font-weight:700; cursor:pointer; font-size:0.75rem;" onclick="window.salvarSmAtualDetalhe(${usuario.id})">💾 Salvar</button>
+                        </div>
+                    </div>
+                    <div>
+                        <p style="font-size: 0.8rem; color: #8a99ad;">BTC</p>
+                        <p style="font-size: 1.4rem; font-weight: 700; color: #f7931a;">${formatarBtc(usuario.btc || 0)}</p>
+                    </div>
+                    <div>
+                        <p style="font-size: 0.8rem; color: #8a99ad;">Status</p>
+                        <p style="font-size: 1.2rem; font-weight: 700; color: ${estaBloqueado ? '#ef4444' : '#10b981'};">
+                            ${estaBloqueado ? '🔒 Bloqueado' : '✅ Ativo'}
+                        </p>
+                    </div>
+                </div>
+                <div style="margin-top: 16px; display: flex; gap: 10px; flex-wrap: wrap;">
+                    <button class="btn btn-success" onclick="window.adicionarMumuEspecifico(${usuario.id})">➕ Adicionar</button>
+                    <button class="btn btn-danger" onclick="window.removerMumuEspecifico(${usuario.id})">➖ Remover</button>
+                    <button class="btn btn-warning" onclick="window.definirMumuEspecifico(${usuario.id})">🎯 Definir</button>
+                    <button class="btn btn-bloquear" onclick="window.alternarBloqueio(${usuario.id}, '${usuario.login}', ${estaBloqueado})">
+                        ${estaBloqueado ? '🔓 Desbloquear' : '🔒 Bloquear'}
+                    </button>
+                    <button class="btn-delete" onclick="window.deletarUsuario(${usuario.id}, '${usuario.login}')">🗑️ Deletar Conta</button>
+                </div>
+            `;
+
+            card.style.display = 'block';
+        }
+
+        function renderizarListaUsuarios(usuarios) {
+            const tbody = document.getElementById('tabelaUsuarios');
+            const card = document.getElementById('cardLista');
+
+            if (!usuarios || usuarios.length === 0) {
+                tbody.innerHTML = `<tr><td colspan="9" style="padding: 20px; color: #8a99ad;">Nenhum usuário encontrado.</td></tr>`;
+                card.style.display = 'block';
+                return;
+            }
+
+            let html = '';
+            usuarios.forEach(u => {
+                const estaBloqueado = u.bloqueado === true;
+                html += `
+                    <tr style="${estaBloqueado ? 'opacity: 0.6;' : ''}">
+                        <td style="color: var(--neon-blue);">#${u.id}</td>
+                        <td><strong>${u.nome || '—'}</strong></td>
+                        <td>${u.login}</td>
+                        <td style="color: var(--neon-green); font-weight: 600;">${formatarMoeda(u.mumu || 0)}</td>
+                        <td style="color: #22d3ee; font-weight: 600;">${formatarMoeda(u.saldo || 0)}</td>
+                        <td style="color: #f59e0b; font-weight: 600;">${formatarMoeda(u.saldo_poupanca || 0)}</td>
+                        <td>
+                            <div class="sm-edit-wrapper">
+                                <input type="number" id="sm_${u.id}" class="quantidade-input" step="1" value="${u.sm_atual ?? 0}">
+                                <button class="sm-save" onclick="window.salvarSmAtual(${u.id})">💾</button>
+                            </div>
+                        </td>
+                        <td>
+                            <span class="status-badge ${estaBloqueado ? 'bloqueado' : 'ativo'}">
+                                ${estaBloqueado ? '🔒 Bloqueado' : '✅ Ativo'}
+                            </span>
+                        </td>
+                        <td>
+                            <div class="acao-botoes">
+                                <input type="number" id="mumu_${u.id}" class="quantidade-input" placeholder="Mumu" step="0.01" min="0.01" value="10">
+                                <button class="add" onclick="window.adicionarMumuUsuario(${u.id})">+</button>
+                                <button class="remove" onclick="window.removerMumuUsuario(${u.id})">-</button>
+                                <button class="set" onclick="window.definirMumuUsuario(${u.id})">=</button>
+                                <button class="${estaBloqueado ? 'unlock' : 'lock'}" onclick="window.alternarBloqueio(${u.id}, '${u.login}', ${estaBloqueado})">
+                                    ${estaBloqueado ? '🔓' : '🔒'}
+                                </button>
+                                <button class="delete" onclick="window.deletarUsuario(${u.id}, '${u.login}')">🗑️</button>
+                            </div>
+                        </td>
+                    </tr>
+                `;
+            });
+
+            tbody.innerHTML = html;
+            card.style.display = 'block';
+        }
+
+        function renderizarListaSatoshi(usuarios) {
+            const tbody = document.getElementById('tabelaSatoshi');
+            const card = document.getElementById('cardSatoshi');
+
+            if (!usuarios || usuarios.length === 0) {
+                tbody.innerHTML = `<tr><td colspan="5" style="padding: 20px; color: #8a99ad;">Nenhum Satoshi encontrado.</td></tr>`;
+                card.style.display = 'block';
+                return;
+            }
+
+            let html = '';
+            usuarios.forEach(u => {
+                const estaBloqueado = u.bloqueado === true;
+                const btc = u.btc ?? 0;
+                html += `
+                    <tr style="${estaBloqueado ? 'opacity: 0.6;' : ''}">
+                        <td style="color: var(--neon-blue);">#${u.id}</td>
+                        <td><strong>${u.nome || '—'}</strong></td>
+                        <td>${u.login}</td>
+                        <td class="btc-texto">${formatarBtc(btc)}</td>
+                        <td>
+                            <div class="acao-botoes">
+                                <input type="number" id="btc_${u.id}" class="quantidade-input" placeholder="BTC" step="0.00000001" min="0" value="0.00000001">
+                                <button class="add" onclick="window.adicionarBtcUsuario(${u.id})">+</button>
+                                <button class="remove" onclick="window.removerBtcUsuario(${u.id})">-</button>
+                                <button class="set" onclick="window.definirBtcUsuario(${u.id})">=</button>
+                                <button class="delete" onclick="window.deletarUsuario(${u.id}, '${u.login}')">🗑️</button>
+                            </div>
+                        </td>
+                    </tr>
+                `;
+            });
+
+            tbody.innerHTML = html;
+            card.style.display = 'block';
+        }
+
+        async function atualizarEstatisticas(usuarios) {
+            if (!usuarios || usuarios.length === 0) {
+                const todos = await buscarUsuarios();
+                usuarios = todos;
+            }
+
+            const total = usuarios.length;
+
+            const totalMumu = usuarios.reduce((acc, u) => acc + (Number(u.mumu) || 0), 0);
+            const totalSaldo = usuarios.reduce((acc, u) => acc + (Number(u.saldo) || 0), 0);
+            const totalPoupanca = usuarios.reduce((acc, u) => acc + (Number(u.saldo_poupanca) || 0), 0);
+            const totalProventos = usuarios.reduce((acc, u) => acc + (Number(u.proventos_pendentes) || 0), 0);
+            const totalBtc = usuarios.reduce((acc, u) => acc + (Number(u.btc) || 0), 0);
+            const totalPoderMercado = usuarios.reduce((acc, u) => acc + (Number(u.poder_mercado) || 0), 0);
+            const totalBloqueados = usuarios.filter(u => u.bloqueado === true).length;
+
+            document.getElementById('totalUsuarios').textContent = total;
+            document.getElementById('totalMumu').innerHTML = `${totalMumu.toFixed(2)} <span class="moeda-simbolo">${MOEDA}</span>`;
+            document.getElementById('totalSaldo').innerHTML = `${totalSaldo.toFixed(2)} <span class="moeda-simbolo">R$</span>`;
+            document.getElementById('totalPoupanca').innerHTML = `${totalPoupanca.toFixed(2)} <span class="moeda-simbolo">${MOEDA}</span>`;
+            document.getElementById('totalProventos').innerHTML = `${totalProventos.toFixed(2)} <span class="moeda-simbolo">R$</span>`;
+            document.getElementById('totalBtc').innerHTML = `${totalBtc.toFixed(8)} <span class="moeda-simbolo">BTC</span>`;
+            document.getElementById('totalPoderMercado').innerHTML = `${totalPoderMercado.toFixed(2)} <span class="moeda-simbolo">R$</span>`;
+
+            const elBloq = document.getElementById('totalBloqueados');
+            if (elBloq) elBloq.textContent = totalBloqueados;
+        }
+
+        // ==================== AÇÕES DE MUMU ====================
+        window.adicionarMumuUsuario = async function(id) {
+            const input = document.getElementById(`mumu_${id}`);
+            const valor = parseFloat(input.value);
+            if (!valor || valor <= 0) {
+                mostrarMensagem('⚠️ Digite um valor válido.', 'erro');
+                return;
+            }
+
+            try {
+                const usuario = await buscarUsuarioPorId(id);
+                if (!usuario) {
+                    mostrarMensagem('❌ Usuário não encontrado.', 'erro');
+                    return;
+                }
+
+                const novoMumu = (Number(usuario.mumu) || 0) + valor;
+                await atualizarMumu(id, novoMumu);
+
+                mostrarMensagem(`✅ Adicionado ${formatarMoeda(valor)} para ${usuario.login}. Novo Mumu: ${formatarMoeda(novoMumu)}`, 'sucesso');
+                await carregarDados();
+            } catch (error) {
+                console.error('Erro ao adicionar Mumu:', error);
+                mostrarMensagem('❌ Erro ao adicionar Mumu: ' + (error.message || ''), 'erro');
+            }
+        };
+
+        window.removerMumuUsuario = async function(id) {
+            const input = document.getElementById(`mumu_${id}`);
+            const valor = parseFloat(input.value);
+            if (!valor || valor <= 0) {
+                mostrarMensagem('⚠️ Digite um valor válido.', 'erro');
+                return;
+            }
+
+            try {
+                const usuario = await buscarUsuarioPorId(id);
+                if (!usuario) {
+                    mostrarMensagem('❌ Usuário não encontrado.', 'erro');
+                    return;
+                }
+
+                const novoMumu = Math.max(0, (Number(usuario.mumu) || 0) - valor);
+                await atualizarMumu(id, novoMumu);
+
+                mostrarMensagem(`✅ Removido ${formatarMoeda(valor)} de ${usuario.login}. Novo Mumu: ${formatarMoeda(novoMumu)}`, 'sucesso');
+                await carregarDados();
+            } catch (error) {
+                console.error('Erro ao remover Mumu:', error);
+                mostrarMensagem('❌ Erro ao remover Mumu: ' + (error.message || ''), 'erro');
+            }
+        };
+
+        window.definirMumuUsuario = async function(id) {
+            const input = document.getElementById(`mumu_${id}`);
+            const valor = parseFloat(input.value);
+            if (!valor || valor < 0) {
+                mostrarMensagem('⚠️ Digite um valor válido (0 ou mais).', 'erro');
+                return;
+            }
+
+            try {
+                const usuario = await buscarUsuarioPorId(id);
+                if (!usuario) {
+                    mostrarMensagem('❌ Usuário não encontrado.', 'erro');
+                    return;
+                }
+
+                await atualizarMumu(id, valor);
+
+                mostrarMensagem(`✅ Mumu de ${usuario.login} definido para ${formatarMoeda(valor)}`, 'sucesso');
+                await carregarDados();
+            } catch (error) {
+                console.error('Erro ao definir Mumu:', error);
+                mostrarMensagem('❌ Erro ao definir Mumu: ' + (error.message || ''), 'erro');
+            }
+        };
+
+        // ==================== AÇÕES DE BTC ====================
+        window.adicionarBtcUsuario = async function(id) {
+            const input = document.getElementById(`btc_${id}`);
+            const valor = parseFloat(input.value);
+            if (isNaN(valor) || valor <= 0) {
+                mostrarMensagem('⚠️ Digite um valor BTC válido.', 'erro');
+                return;
+            }
+
+            try {
+                const usuario = await buscarUsuarioPorId(id);
+                if (!usuario) {
+                    mostrarMensagem('❌ Usuário não encontrado.', 'erro');
+                    return;
+                }
+
+                const novoBtc = (Number(usuario.btc) || 0) + valor;
+                await atualizarBtc(id, novoBtc);
+
+                mostrarMensagem(`✅ Adicionado ${valor.toFixed(8)} BTC para ${usuario.login}. Novo BTC: ${formatarBtc(novoBtc)}`, 'sucesso');
+                await carregarDados();
+            } catch (error) {
+                console.error('Erro ao adicionar BTC:', error);
+                mostrarMensagem('❌ Erro ao adicionar BTC: ' + (error.message || ''), 'erro');
+            }
+        };
+
+        window.removerBtcUsuario = async function(id) {
+            const input = document.getElementById(`btc_${id}`);
+            const valor = parseFloat(input.value);
+            if (isNaN(valor) || valor <= 0) {
+                mostrarMensagem('⚠️ Digite um valor BTC válido.', 'erro');
+                return;
+            }
+
+            try {
+                const usuario = await buscarUsuarioPorId(id);
+                if (!usuario) {
+                    mostrarMensagem('❌ Usuário não encontrado.', 'erro');
+                    return;
+                }
+
+                const novoBtc = Math.max(0, (Number(usuario.btc) || 0) - valor);
+                await atualizarBtc(id, novoBtc);
+
+                mostrarMensagem(`✅ Removido ${valor.toFixed(8)} BTC de ${usuario.login}. Novo BTC: ${formatarBtc(novoBtc)}`, 'sucesso');
+                await carregarDados();
+            } catch (error) {
+                console.error('Erro ao remover BTC:', error);
+                mostrarMensagem('❌ Erro ao remover BTC: ' + (error.message || ''), 'erro');
+            }
+        };
+
+        window.definirBtcUsuario = async function(id) {
+            const input = document.getElementById(`btc_${id}`);
+            const valor = parseFloat(input.value);
+            if (isNaN(valor) || valor < 0) {
+                mostrarMensagem('⚠️ Digite um valor BTC válido (0 ou mais).', 'erro');
+                return;
+            }
+
+            try {
+                const usuario = await buscarUsuarioPorId(id);
+                if (!usuario) {
+                    mostrarMensagem('❌ Usuário não encontrado.', 'erro');
+                    return;
+                }
+
+                await atualizarBtc(id, valor);
+
+                mostrarMensagem(`✅ BTC de ${usuario.login} definido para ${formatarBtc(valor)}`, 'sucesso');
+                await carregarDados();
+            } catch (error) {
+                console.error('Erro ao definir BTC:', error);
+                mostrarMensagem('❌ Erro ao definir BTC: ' + (error.message || ''), 'erro');
+            }
+        };
+
+        // ==================== SM ATUAL ====================
+        window.salvarSmAtual = async function(id) {
+            const input = document.getElementById(`sm_${id}`);
+            const valor = parseInt(input.value);
+            if (isNaN(valor)) {
+                mostrarMensagem('⚠️ Digite um valor válido para SM Atual.', 'erro');
+                return;
+            }
+
+            try {
+                const usuario = await buscarUsuarioPorId(id);
+                if (!usuario) {
+                    mostrarMensagem('❌ Usuário não encontrado.', 'erro');
+                    return;
+                }
+
+                await atualizarSmAtual(id, valor);
+
+                mostrarMensagem(`✅ SM Atual de ${usuario.login} atualizado para ${valor}`, 'sucesso');
+                await carregarDados();
+            } catch (error) {
+                mostrarMensagem('❌ Erro ao atualizar SM Atual.', 'erro');
+            }
+        };
+
+        window.salvarSmAtualDetalhe = async function(id) {
+            const input = document.getElementById(`smAtualDetalhe_${id}`);
+            const valor = parseInt(input.value);
+            if (isNaN(valor)) {
+                mostrarMensagem('⚠️ Digite um valor válido para SM Atual.', 'erro');
+                return;
+            }
+
+            try {
+                const usuario = await buscarUsuarioPorId(id);
+                if (!usuario) {
+                    mostrarMensagem('❌ Usuário não encontrado.', 'erro');
+                    return;
+                }
+
+                await atualizarSmAtual(id, valor);
+
+                mostrarMensagem(`✅ SM Atual de ${usuario.login} atualizado para ${valor}`, 'sucesso');
+                await carregarDados();
+            } catch (error) {
+                mostrarMensagem('❌ Erro ao atualizar SM Atual.', 'erro');
+            }
+        };
+
+        // ==================== BLOQUEIO ====================
+        window.alternarBloqueio = async function(id, login, estaBloqueado) {
+            const acao = estaBloqueado ? 'DESBLOQUEAR' : 'BLOQUEAR';
+            
+            if (!confirm(`Tem certeza que deseja ${acao} o usuário "${login}" (ID: ${id})?`)) {
+                return;
+            }
+
+            try {
+                await atualizarBloqueio(id, !estaBloqueado);
+                mostrarMensagem(`✅ Usuário "${login}" ${estaBloqueado ? 'desbloqueado' : 'bloqueado'} com sucesso!`, 'sucesso');
+                await carregarDados();
+            } catch (error) {
+                mostrarMensagem(`❌ Erro ao ${acao.toLowerCase()} usuário.`, 'erro');
+            }
+        };
+
+        window.deletarUsuario = deletarUsuario;
+
+        // ==================== AÇÕES ESPECÍFICAS (MUMU) ====================
+        window.adicionarMumuEspecifico = async function(id) {
+            const valorInput = document.getElementById('valorAcao');
+            const valor = parseFloat(valorInput.value);
+            if (!valor || valor <= 0) {
+                mostrarMensagem('⚠️ Digite um valor válido no campo "Valor (Mumu)".', 'erro');
+                return;
+            }
+
+            try {
+                const usuario = await buscarUsuarioPorId(id);
+                if (!usuario) {
+                    mostrarMensagem('❌ Usuário não encontrado.', 'erro');
+                    return;
+                }
+
+                const novoMumu = (Number(usuario.mumu) || 0) + valor;
+                await atualizarMumu(id, novoMumu);
+
+                mostrarMensagem(`✅ Adicionado ${formatarMoeda(valor)} para ${usuario.login}. Novo Mumu: ${formatarMoeda(novoMumu)}`, 'sucesso');
+                await carregarDados();
+            } catch (error) {
+                mostrarMensagem('❌ Erro ao adicionar Mumu.', 'erro');
+            }
+        };
+
+        window.removerMumuEspecifico = async function(id) {
+            const valorInput = document.getElementById('valorAcao');
+            const valor = parseFloat(valorInput.value);
+            if (!valor || valor <= 0) {
+                mostrarMensagem('⚠️ Digite um valor válido no campo "Valor (Mumu)".', 'erro');
+                return;
+            }
+
+            try {
+                const usuario = await buscarUsuarioPorId(id);
+                if (!usuario) {
+                    mostrarMensagem('❌ Usuário não encontrado.', 'erro');
+                    return;
+                }
+
+                const novoMumu = Math.max(0, (Number(usuario.mumu) || 0) - valor);
+                await atualizarMumu(id, novoMumu);
+
+                mostrarMensagem(`✅ Removido ${formatarMoeda(valor)} de ${usuario.login}. Novo Mumu: ${formatarMoeda(novoMumu)}`, 'sucesso');
+                await carregarDados();
+            } catch (error) {
+                mostrarMensagem('❌ Erro ao remover Mumu.', 'erro');
+            }
+        };
+
+        window.definirMumuEspecifico = async function(id) {
+            const valorInput = document.getElementById('valorAcao');
+            const valor = parseFloat(valorInput.value);
+            if (!valor || valor < 0) {
+                mostrarMensagem('⚠️ Digite um valor válido (0 ou mais) no campo "Valor (Mumu)".', 'erro');
+                return;
+            }
+
+            try {
+                const usuario = await buscarUsuarioPorId(id);
+                if (!usuario) {
+                    mostrarMensagem('❌ Usuário não encontrado.', 'erro');
+                    return;
+                }
+
+                await atualizarMumu(id, valor);
+
+                mostrarMensagem(`✅ Mumu de ${usuario.login} definido para ${formatarMoeda(valor)}`, 'sucesso');
+                await carregarDados();
+            } catch (error) {
+                mostrarMensagem('❌ Erro ao definir Mumu.', 'erro');
+            }
+        };
+
+        // ==================== AÇÕES EM MASSA ====================
+        async function adicionarSaldoMassa() {
+            const idInput = document.getElementById('usuarioId');
+            const valorInput = document.getElementById('valorAcao');
+            const id = parseInt(idInput.value);
+            const valor = parseFloat(valorInput.value);
+
+            if (!id || isNaN(id)) {
+                mostrarMensagem('⚠️ Digite o ID do usuário.', 'erro');
+                return;
+            }
+            if (!valor || valor <= 0) {
+                mostrarMensagem('⚠️ Digite um valor válido.', 'erro');
+                return;
+            }
+
+            try {
+                const usuario = await buscarUsuarioPorId(id);
+                if (!usuario) {
+                    mostrarMensagem('❌ Usuário não encontrado.', 'erro');
+                    return;
+                }
+
+                const novoMumu = (Number(usuario.mumu) || 0) + valor;
+                await atualizarMumu(id, novoMumu);
+
+                mostrarMensagem(`✅ Adicionado ${formatarMoeda(valor)} para ${usuario.login}. Novo Mumu: ${formatarMoeda(novoMumu)}`, 'sucesso');
+                await carregarDados();
+            } catch (error) {
+                mostrarMensagem('❌ Erro ao adicionar Mumu.', 'erro');
+            }
+        }
+
+        async function removerSaldoMassa() {
+            const idInput = document.getElementById('usuarioId');
+            const valorInput = document.getElementById('valorAcao');
+            const id = parseInt(idInput.value);
+            const valor = parseFloat(valorInput.value);
+
+            if (!id || isNaN(id)) {
+                mostrarMensagem('⚠️ Digite o ID do usuário.', 'erro');
+                return;
+            }
+            if (!valor || valor <= 0) {
+                mostrarMensagem('⚠️ Digite um valor válido.', 'erro');
+                return;
+            }
+
+            try {
+                const usuario = await buscarUsuarioPorId(id);
+                if (!usuario) {
+                    mostrarMensagem('❌ Usuário não encontrado.', 'erro');
+                    return;
+                }
+
+                const novoMumu = Math.max(0, (Number(usuario.mumu) || 0) - valor);
+                await atualizarMumu(id, novoMumu);
+
+                mostrarMensagem(`✅ Removido ${formatarMoeda(valor)} de ${usuario.login}. Novo Mumu: ${formatarMoeda(novoMumu)}`, 'sucesso');
+                await carregarDados();
+            } catch (error) {
+                mostrarMensagem('❌ Erro ao remover Mumu.', 'erro');
+            }
+        }
+
+        async function definirSaldoMassa() {
+            const idInput = document.getElementById('usuarioId');
+            const valorInput = document.getElementById('valorAcao');
+            const id = parseInt(idInput.value);
+            const valor = parseFloat(valorInput.value);
+
+            if (!id || isNaN(id)) {
+                mostrarMensagem('⚠️ Digite o ID do usuário.', 'erro');
+                return;
+            }
+            if (!valor || valor < 0) {
+                mostrarMensagem('⚠️ Digite um valor válido (0 ou mais).', 'erro');
+                return;
+            }
+
+            try {
+                const usuario = await buscarUsuarioPorId(id);
+                if (!usuario) {
+                    mostrarMensagem('❌ Usuário não encontrado.', 'erro');
+                    return;
+                }
+
+                await atualizarMumu(id, valor);
+
+                mostrarMensagem(`✅ Mumu de ${usuario.login} definido para ${formatarMoeda(valor)}`, 'sucesso');
+                await carregarDados();
+            } catch (error) {
+                mostrarMensagem('❌ Erro ao definir Mumu.', 'erro');
+            }
+        }
+
+                        // ==================== CÓDIGOS DE RESGATE ====================
+                let codigoEditando = null; // código em edição (null = modo criação)
+
+                async function carregarCodigos() {
+                    try {
+                        const { data, error } = await supabase
+                            .from(TABELA)
+                            .select('codigos_resgate')
+                            .eq('id', 1)
+                            .single();
+
+                        if (error) {
+                            console.warn('Erro ao carregar códigos:', error);
+                            codigosCache = [];
+                            renderizarTabelaCodigos();
+                            return [];
+                        }
+
+                        codigosCache = Array.isArray(data?.codigos_resgate) ? data.codigos_resgate : [];
+                        renderizarTabelaCodigos();
+                        return codigosCache;
+                    } catch (e) {
+                        console.error('Erro ao carregar códigos:', e);
+                        codigosCache = [];
+                        renderizarTabelaCodigos();
+                        return [];
+                    }
+                }
+
+                function renderizarTabelaCodigos() {
+                    const tbody = document.getElementById('tabelaCodigos');
+                    if (!tbody) return;
+
+                    if (!codigosCache || codigosCache.length === 0) {
+                        tbody.innerHTML = `<tr><td colspan="7" style="padding: 20px; color: #8a99ad; text-align: center;">Nenhum código criado ainda.</td></tr>`;
+                        return;
+                    }
+
+                    const ordenados = [...codigosCache].sort(
+                        (a, b) => new Date(b.criado_em || 0) - new Date(a.criado_em || 0)
+                    );
+
+                    tbody.innerHTML = ordenados.map(c => {
+                        const usos = c.usos || 0;
+                        const limite = c.limite || 0;
+                        const esgotado = limite > 0 && usos >= limite;
+
+                        let statusClasse = 'ativo';
+                        let statusTexto = 'Ativo';
+                        if (esgotado) { statusClasse = 'esgotado'; statusTexto = 'Esgotado'; }
+                        else if (c.ativo === false) { statusClasse = 'inativo'; statusTexto = 'Inativo'; }
+
+                        const mumuVal = Number(c.mumu) || 0;
+                        const saldoVal = Number(c.saldo) || 0;
+                        const mumuColor = mumuVal < 0 ? '#ef4444' : 'var(--neon-green)';
+                        const saldoColor = saldoVal < 0 ? '#ef4444' : 'var(--neon-blue)';
+                        const emEdicao = codigoEditando === c.codigo;
+
+                        return `
+                            <tr style="${emEdicao ? 'background: rgba(245,158,11,0.1);' : ''}">
+                                <td><span class="codigo-badge">${c.codigo}</span></td>
+                                <td style="color: ${mumuColor}; font-weight: 600;">${mumuVal.toFixed(2)}</td>
+                                <td style="color: ${saldoColor}; font-weight: 600;">R$ ${saldoVal.toFixed(2)}</td>
+                                <td>${usos}</td>
+                                <td>${limite === 0 ? '∞' : limite}</td>
+                                <td><span class="codigo-status ${statusClasse}">${statusTexto}</span></td>
+                                <td>
+                                    <div class="acao-botoes">
+                                        <button class="set" onclick="window.editarCodigo('${c.codigo}')" title="Editar valores">✏️</button>
+                                        <button class="toggle" onclick="window.alternarCodigo('${c.codigo}')">
+                                            ${c.ativo === false ? '✅' : '⏸️'}
+                                        </button>
+                                        <button class="delete" onclick="window.deletarCodigo('${c.codigo}')">🗑️</button>
+                                    </div>
+                                </td>
+                            </tr>
+                        `;
+                    }).join('');
+                }
+
+                async function salvarCodigosNoBanco() {
+                    try {
+                        const { error } = await supabase
+                            .from(TABELA)
+                            .update({ codigos_resgate: codigosCache })
+                            .eq('id', 1);
+
+                        if (error) throw error;
+                        return true;
+                    } catch (e) {
+                        console.error('Erro ao salvar códigos:', e);
+                        mostrarMensagem('❌ Erro ao salvar códigos no banco.', 'erro');
+                        return false;
+                    }
+                }
+
+                async function criarCodigo() {
+                    const codigoInput = document.getElementById('codigoInput');
+                    const mumuInput = document.getElementById('codigoMumu');
+                    const saldoInput = document.getElementById('codigoSaldo');
+                    const limiteInput = document.getElementById('codigoLimite');
+
+                    const codigo = (codigoInput.value || '').trim().toUpperCase().replace(/\s+/g, '');
+                    const mumu = parseFloat(mumuInput.value) || 0;
+                    const saldo = parseFloat(saldoInput.value) || 0;
+                    const limite = parseInt(limiteInput.value) || 0;
+
+                    if (!codigo || codigo.length < 3) {
+                        mostrarMensagem('⚠️ O código deve ter pelo menos 3 caracteres.', 'erro');
+                        return;
+                    }
+                    if (!/^[A-Z0-9_-]+$/.test(codigo)) {
+                        mostrarMensagem('⚠️ Use apenas letras, números, _ ou -.', 'erro');
+                        return;
+                    }
+                    // Aceita negativos, mas exige que pelo menos um seja diferente de zero
+                    if (mumu === 0 && saldo === 0) {
+                        mostrarMensagem('⚠️ Defina pelo menos uma recompensa (Mumu ou Saldo R$) diferente de zero.', 'erro');
+                        return;
+                    }
+
+                    // ===== MODO EDIÇÃO =====
+                    if (codigoEditando) {
+                        const idx = codigosCache.findIndex(c => c.codigo === codigoEditando);
+                        if (idx === -1) {
+                            mostrarMensagem('❌ Código em edição não encontrado.', 'erro');
+                            codigoEditando = null;
+                            return;
+                        }
+
+                        // Se o código foi alterado, verifica duplicidade
+                        if (codigo !== codigoEditando && codigosCache.some(c => c.codigo === codigo)) {
+                            mostrarMensagem('⚠️ Já existe um código com esse nome.', 'erro');
+                            return;
+                        }
+
+                        codigosCache[idx] = {
+                            ...codigosCache[idx],
+                            codigo: codigo,
+                            mumu: mumu,
+                            saldo: saldo,
+                            limite: limite,
+                            atualizado_em: new Date().toISOString()
+                        };
+
+                        const ok = await salvarCodigosNoBanco();
+                        if (ok) {
+                            mostrarMensagem(`✅ Código "${codigo}" atualizado com sucesso!`, 'sucesso');
+                            cancelarEdicaoCodigo();
+                        }
+                        return;
+                    }
+
+                    // ===== MODO CRIAÇÃO =====
+                    if (codigosCache.some(c => (c.codigo || '').toUpperCase() === codigo)) {
+                        mostrarMensagem('⚠️ Já existe um código com esse nome.', 'erro');
+                        return;
+                    }
+
+                    const novoCodigo = {
+                        codigo: codigo,
+                        mumu: mumu,
+                        saldo: saldo,
+                        limite: limite,
+                        usos: 0,
+                        ativo: true,
+                        criado_em: new Date().toISOString()
+                    };
+
+                    codigosCache.push(novoCodigo);
+
+                    const ok = await salvarCodigosNoBanco();
+                    if (ok) {
+                        mostrarMensagem(`✅ Código "${codigo}" criado com sucesso!`, 'sucesso');
+                        limparFormularioCodigo();
+                        renderizarTabelaCodigos();
+                    } else {
+                        codigosCache = codigosCache.filter(c => c.codigo !== codigo);
+                    }
+                }
+
+                function limparFormularioCodigo() {
+                    document.getElementById('codigoInput').value = '';
+                    document.getElementById('codigoMumu').value = 0;
+                    document.getElementById('codigoSaldo').value = 0;
+                    document.getElementById('codigoLimite').value = 0;
+                }
+
+                function cancelarEdicaoCodigo() {
+                    codigoEditando = null;
+                    limparFormularioCodigo();
+                    document.getElementById('btnCriarCodigo').textContent = '➕ Criar Código';
+                    document.getElementById('btnCancelarEdicao').style.display = 'none';
+                    document.getElementById('codigoInput').disabled = false;
+                    renderizarTabelaCodigos();
+                }
+
+                window.editarCodigo = function(codigo) {
+                    const c = codigosCache.find(x => x.codigo === codigo);
+                    if (!c) return;
+
+                    codigoEditando = codigo;
+
+                    document.getElementById('codigoInput').value = c.codigo;
+                    document.getElementById('codigoInput').disabled = true; // não permite alterar o nome
+                    document.getElementById('codigoMumu').value = c.mumu ?? 0;
+                    document.getElementById('codigoSaldo').value = c.saldo ?? 0;
+                    document.getElementById('codigoLimite').value = c.limite ?? 0;
+
+                    document.getElementById('btnCriarCodigo').textContent = '💾 Salvar Alterações';
+                    document.getElementById('btnCancelarEdicao').style.display = 'inline-block';
+
+                    renderizarTabelaCodigos();
+                    document.getElementById('codigoMumu').focus();
+                    mostrarMensagem(`✏️ Editando código "${codigo}". Altere os valores e clique em Salvar.`, 'info');
+                };
+
+                window.alternarCodigo = async function(codigo) {
+                    const idx = codigosCache.findIndex(c => c.codigo === codigo);
+                    if (idx === -1) return;
+
+                    codigosCache[idx].ativo = codigosCache[idx].ativo === false ? true : false;
+
+                    const ok = await salvarCodigosNoBanco();
+                    if (ok) {
+                        mostrarMensagem(`✅ Código "${codigo}" ${codigosCache[idx].ativo ? 'ativado' : 'pausado'}.`, 'sucesso');
+                        renderizarTabelaCodigos();
+                    }
+                };
+
+                window.deletarCodigo = async function(codigo) {
+                    if (!confirm(`Tem certeza que deseja deletar o código "${codigo}"?`)) return;
+
+                    const backup = [...codigosCache];
+                    codigosCache = codigosCache.filter(c => c.codigo !== codigo);
+
+                    const ok = await salvarCodigosNoBanco();
+                    if (ok) {
+                        mostrarMensagem(`🗑️ Código "${codigo}" deletado.`, 'sucesso');
+                        if (codigoEditando === codigo) cancelarEdicaoCodigo();
+                        renderizarTabelaCodigos();
+                    } else {
+                        codigosCache = backup;
+                    }
+                };
+
+                // ==================== EVENTOS CÓDIGOS DE RESGATE ====================
+                document.getElementById('btnCriarCodigo').addEventListener('click', criarCodigo);
+                document.getElementById('btnCancelarEdicao').addEventListener('click', cancelarEdicaoCodigo);
+                document.getElementById('btnRecarregarCodigos').addEventListener('click', async () => {
+                    cancelarEdicaoCodigo();
+                    await carregarCodigos();
+                    mostrarMensagem('🔄 Lista de códigos recarregada.', 'info');
+                });
+                document.getElementById('codigoInput').addEventListener('keypress', (e) => {
+                    if (e.key === 'Enter') criarCodigo();
+                });
+                document.getElementById('codigoMumu').addEventListener('keypress', (e) => {
+                    if (e.key === 'Enter') criarCodigo();
+                });
+                document.getElementById('codigoSaldo').addEventListener('keypress', (e) => {
+                    if (e.key === 'Enter') criarCodigo();
+                });
+                document.getElementById('codigoLimite').addEventListener('keypress', (e) => {
+                    if (e.key === 'Enter') criarCodigo();
+                });
+
+        // ==================== CARREGAR DADOS ====================
+        async function carregarDados() {
+            const filtro = document.getElementById('buscaUsuario').value.trim();
+            let usuarios = [];
+
+            if (filtro) {
+                usuarios = await buscarUsuarios(filtro);
+                renderizarListaUsuarios(usuarios);
+                renderizarListaSatoshi(usuarios);
+                if (usuarios.length === 1) {
+                    renderizarUsuarioDetalhes(usuarios[0]);
+                } else {
+                    document.getElementById('cardResultados').style.display = 'none';
+                }
+            } else {
+                usuarios = await buscarUsuarios();
+                renderizarListaUsuarios(usuarios);
+                renderizarListaSatoshi(usuarios);
+                document.getElementById('cardResultados').style.display = 'none';
+            }
+
+            await atualizarEstatisticas(usuarios);
+        }
+
+        // ==================== EVENT LISTENERS ====================
+        document.getElementById('btnBuscar').addEventListener('click', carregarDados);
+        document.getElementById('btnListarTodos').addEventListener('click', async () => {
+            document.getElementById('buscaUsuario').value = '';
+            await carregarDados();
+        });
+
+        document.getElementById('btnAdicionarSaldo').addEventListener('click', adicionarSaldoMassa);
+        document.getElementById('btnRemoverSaldo').addEventListener('click', removerSaldoMassa);
+        document.getElementById('btnDefinirSaldo').addEventListener('click', definirSaldoMassa);
+
+        document.getElementById('buscaUsuario').addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') {
+                carregarDados();
+            }
+        });
+
+        // ==================== EVENTOS SELIC ====================
+        document.getElementById('btnAtualizarSelic').addEventListener('click', async () => {
+            const valor = parseFloat(document.getElementById('selicInput').value);
+            if (isNaN(valor) || valor < 0) {
+                mostrarMensagem('⚠️ Digite um valor válido para a SELIC.', 'erro');
+                return;
+            }
+            await atualizarSelic(valor);
+        });
+
+        document.getElementById('btnSelicPadrao').addEventListener('click', async () => {
+            await atualizarSelic(10.75);
+        });
+
+        document.getElementById('selicInput').addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') {
+                document.getElementById('btnAtualizarSelic').click();
+            }
+        });
+
+        // ==================== EVENTOS CÓDIGOS DE RESGATE ====================
+        document.getElementById('btnCriarCodigo').addEventListener('click', criarCodigo);
+        document.getElementById('btnRecarregarCodigos').addEventListener('click', async () => {
+            await carregarCodigos();
+            mostrarMensagem('🔄 Lista de códigos recarregada.', 'info');
+        });
+        document.getElementById('codigoInput').addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') criarCodigo();
+        });
+
+        // ==================== INICIALIZAÇÃO ====================
+        async function inicializar() {
+            await verificarSupabase();
+
+            const selicSalva = await carregarSelicDoSupabase();
+            
+            if (selicSalva !== null && selicSalva !== undefined) {
+                selicAtual = selicSalva;
+                document.getElementById('selicInput').value = selicSalva;
+                atualizarDisplaySelic(selicSalva);
+                console.log('✅ SELIC carregada do Supabase:', selicSalva);
+            } else {
+                const valorPadrao = 10.75;
+                await salvarSelicNoSupabase(valorPadrao);
+                selicAtual = valorPadrao;
+                document.getElementById('selicInput').value = valorPadrao;
+                atualizarDisplaySelic(valorPadrao);
+                console.log('✅ SELIC criada no Supabase com valor padrão:', valorPadrao);
+            }
+
+            await carregarCodigos();
+            console.log('✅ Códigos de resgate carregados:', codigosCache.length);
+
+            await carregarDados();
+        }
+
+        inicializar();
+    </script>
+</body>
+</html>
