@@ -989,62 +989,61 @@
                 </div>
             </div>
         </div>
-                <!-- ==================== CÓDIGOS DE RESGATE ==================== -->
-                <div class="card codigos-card">
-                    <h2>🎁 CÓDIGOS DE RESGATE</h2>
-                    <p style="color: #8a99ad; margin-bottom: 16px; font-size: 0.9rem;">
-                        Crie códigos que os usuários podem resgatar na página de saldo.
-                        Você pode dar <strong style="color:var(--neon-green);">Mumu</strong> e/ou
-                        <strong style="color:var(--neon-blue);">Saldo R$</strong>.
-                        <br><small style="color:#f59e0b;">💡 Valores negativos são aceitos (ex: -0.01) para penalidades.</small>
-                    </p>
 
-                    <div class="form-row">
-                        <div class="form-group">
-                            <label for="codigoInput">Código (ex: BEMVINDO2026)</label>
-                            <input type="text" id="codigoInput" placeholder="Digite o código" maxlength="30" style="text-transform: uppercase;">
-                        </div>
-                        <div class="form-group">
-                            <label for="codigoMumu">Recompensa Mumu (pode ser negativo)</label>
-                            <input type="number" id="codigoMumu" placeholder="0.00" step="0.01" value="0">
-                        </div>
-                    </div>
+        <!-- ==================== CÓDIGOS DE RESGATE ==================== -->
+        <div class="card codigos-card">
+            <h2>🎁 CÓDIGOS DE RESGATE</h2>
+            <p style="color: #8a99ad; margin-bottom: 16px; font-size: 0.9rem;">
+                Crie códigos que os usuários podem resgatar na página de saldo.
+                Você pode dar <strong style="color:var(--neon-green);">Mumu</strong> e/ou
+                <strong style="color:var(--neon-blue);">Saldo R$</strong>.
+            </p>
 
-                    <div class="form-row">
-                        <div class="form-group">
-                            <label for="codigoSaldo">Recompensa Saldo R$ (pode ser negativo)</label>
-                            <input type="number" id="codigoSaldo" placeholder="0.00" step="0.01" value="0">
-                        </div>
-                        <div class="form-group">
-                            <label for="codigoLimite">Limite de usos (0 = ilimitado)</label>
-                            <input type="number" id="codigoLimite" placeholder="0" min="0" value="0">
-                        </div>
-                    </div>
-
-                    <div style="display: flex; gap: 10px; flex-wrap: wrap; margin-bottom: 20px;">
-                        <button class="btn btn-success" id="btnCriarCodigo">➕ Criar Código</button>
-                        <button class="btn btn-warning" id="btnCancelarEdicao" style="display:none;">❌ Cancelar Edição</button>
-                        <button class="btn btn-secondary" id="btnRecarregarCodigos">🔄 Recarregar Lista</button>
-                    </div>
-
-                    <h3 style="color: #fff; font-size: 1rem; margin-bottom: 12px;">📋 Códigos Existentes</h3>
-                    <div class="table-wrapper">
-                        <table>
-                            <thead>
-                                <tr>
-                                    <th>Código</th>
-                                    <th>Mumu</th>
-                                    <th>Saldo R$</th>
-                                    <th>Usos</th>
-                                    <th>Limite</th>
-                                    <th>Status</th>
-                                    <th>Ações</th>
-                                </tr>
-                            </thead>
-                            <tbody id="tabelaCodigos"></tbody>
-                        </table>
-                    </div>
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="codigoInput">Código (ex: BEMVINDO2026)</label>
+                    <input type="text" id="codigoInput" placeholder="Digite o código" maxlength="30" style="text-transform: uppercase;">
                 </div>
+                <div class="form-group">
+                    <label for="codigoMumu">Recompensa Mumu (opcional)</label>
+                    <input type="number" id="codigoMumu" placeholder="0.00" step="0.01" min="0" value="0">
+                </div>
+            </div>
+
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="codigoSaldo">Recompensa Saldo R$ (opcional)</label>
+                    <input type="number" id="codigoSaldo" placeholder="0.00" step="0.01" min="0" value="0">
+                </div>
+                <div class="form-group">
+                    <label for="codigoLimite">Limite de usos (0 = ilimitado)</label>
+                    <input type="number" id="codigoLimite" placeholder="0" min="0" value="0">
+                </div>
+            </div>
+
+            <div style="display: flex; gap: 10px; flex-wrap: wrap; margin-bottom: 20px;">
+                <button class="btn btn-success" id="btnCriarCodigo">➕ Criar Código</button>
+                <button class="btn btn-secondary" id="btnRecarregarCodigos">🔄 Recarregar Lista</button>
+            </div>
+
+            <h3 style="color: #fff; font-size: 1rem; margin-bottom: 12px;">📋 Códigos Existentes</h3>
+            <div class="table-wrapper">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Código</th>
+                            <th>Mumu</th>
+                            <th>Saldo R$</th>
+                            <th>Usos</th>
+                            <th>Limite</th>
+                            <th>Status</th>
+                            <th>Ações</th>
+                        </tr>
+                    </thead>
+                    <tbody id="tabelaCodigos"></tbody>
+                </table>
+            </div>
+        </div>
 
         <!-- Buscar Usuário -->
         <div class="card">
@@ -2136,272 +2135,174 @@
             }
         }
 
-                        // ==================== CÓDIGOS DE RESGATE ====================
-                let codigoEditando = null; // código em edição (null = modo criação)
+        // ==================== CÓDIGOS DE RESGATE ====================
+        async function carregarCodigos() {
+            try {
+                const { data, error } = await supabase
+                    .from(TABELA)
+                    .select('codigos_resgate')
+                    .eq('id', 1)
+                    .single();
 
-                async function carregarCodigos() {
-                    try {
-                        const { data, error } = await supabase
-                            .from(TABELA)
-                            .select('codigos_resgate')
-                            .eq('id', 1)
-                            .single();
-
-                        if (error) {
-                            console.warn('Erro ao carregar códigos:', error);
-                            codigosCache = [];
-                            renderizarTabelaCodigos();
-                            return [];
-                        }
-
-                        codigosCache = Array.isArray(data?.codigos_resgate) ? data.codigos_resgate : [];
-                        renderizarTabelaCodigos();
-                        return codigosCache;
-                    } catch (e) {
-                        console.error('Erro ao carregar códigos:', e);
-                        codigosCache = [];
-                        renderizarTabelaCodigos();
-                        return [];
-                    }
-                }
-
-                function renderizarTabelaCodigos() {
-                    const tbody = document.getElementById('tabelaCodigos');
-                    if (!tbody) return;
-
-                    if (!codigosCache || codigosCache.length === 0) {
-                        tbody.innerHTML = `<tr><td colspan="7" style="padding: 20px; color: #8a99ad; text-align: center;">Nenhum código criado ainda.</td></tr>`;
-                        return;
-                    }
-
-                    const ordenados = [...codigosCache].sort(
-                        (a, b) => new Date(b.criado_em || 0) - new Date(a.criado_em || 0)
-                    );
-
-                    tbody.innerHTML = ordenados.map(c => {
-                        const usos = c.usos || 0;
-                        const limite = c.limite || 0;
-                        const esgotado = limite > 0 && usos >= limite;
-
-                        let statusClasse = 'ativo';
-                        let statusTexto = 'Ativo';
-                        if (esgotado) { statusClasse = 'esgotado'; statusTexto = 'Esgotado'; }
-                        else if (c.ativo === false) { statusClasse = 'inativo'; statusTexto = 'Inativo'; }
-
-                        const mumuVal = Number(c.mumu) || 0;
-                        const saldoVal = Number(c.saldo) || 0;
-                        const mumuColor = mumuVal < 0 ? '#ef4444' : 'var(--neon-green)';
-                        const saldoColor = saldoVal < 0 ? '#ef4444' : 'var(--neon-blue)';
-                        const emEdicao = codigoEditando === c.codigo;
-
-                        return `
-                            <tr style="${emEdicao ? 'background: rgba(245,158,11,0.1);' : ''}">
-                                <td><span class="codigo-badge">${c.codigo}</span></td>
-                                <td style="color: ${mumuColor}; font-weight: 600;">${mumuVal.toFixed(2)}</td>
-                                <td style="color: ${saldoColor}; font-weight: 600;">R$ ${saldoVal.toFixed(2)}</td>
-                                <td>${usos}</td>
-                                <td>${limite === 0 ? '∞' : limite}</td>
-                                <td><span class="codigo-status ${statusClasse}">${statusTexto}</span></td>
-                                <td>
-                                    <div class="acao-botoes">
-                                        <button class="set" onclick="window.editarCodigo('${c.codigo}')" title="Editar valores">✏️</button>
-                                        <button class="toggle" onclick="window.alternarCodigo('${c.codigo}')">
-                                            ${c.ativo === false ? '✅' : '⏸️'}
-                                        </button>
-                                        <button class="delete" onclick="window.deletarCodigo('${c.codigo}')">🗑️</button>
-                                    </div>
-                                </td>
-                            </tr>
-                        `;
-                    }).join('');
-                }
-
-                async function salvarCodigosNoBanco() {
-                    try {
-                        const { error } = await supabase
-                            .from(TABELA)
-                            .update({ codigos_resgate: codigosCache })
-                            .eq('id', 1);
-
-                        if (error) throw error;
-                        return true;
-                    } catch (e) {
-                        console.error('Erro ao salvar códigos:', e);
-                        mostrarMensagem('❌ Erro ao salvar códigos no banco.', 'erro');
-                        return false;
-                    }
-                }
-
-                async function criarCodigo() {
-                    const codigoInput = document.getElementById('codigoInput');
-                    const mumuInput = document.getElementById('codigoMumu');
-                    const saldoInput = document.getElementById('codigoSaldo');
-                    const limiteInput = document.getElementById('codigoLimite');
-
-                    const codigo = (codigoInput.value || '').trim().toUpperCase().replace(/\s+/g, '');
-                    const mumu = parseFloat(mumuInput.value) || 0;
-                    const saldo = parseFloat(saldoInput.value) || 0;
-                    const limite = parseInt(limiteInput.value) || 0;
-
-                    if (!codigo || codigo.length < 3) {
-                        mostrarMensagem('⚠️ O código deve ter pelo menos 3 caracteres.', 'erro');
-                        return;
-                    }
-                    if (!/^[A-Z0-9_-]+$/.test(codigo)) {
-                        mostrarMensagem('⚠️ Use apenas letras, números, _ ou -.', 'erro');
-                        return;
-                    }
-                    // Aceita negativos, mas exige que pelo menos um seja diferente de zero
-                    if (mumu === 0 && saldo === 0) {
-                        mostrarMensagem('⚠️ Defina pelo menos uma recompensa (Mumu ou Saldo R$) diferente de zero.', 'erro');
-                        return;
-                    }
-
-                    // ===== MODO EDIÇÃO =====
-                    if (codigoEditando) {
-                        const idx = codigosCache.findIndex(c => c.codigo === codigoEditando);
-                        if (idx === -1) {
-                            mostrarMensagem('❌ Código em edição não encontrado.', 'erro');
-                            codigoEditando = null;
-                            return;
-                        }
-
-                        // Se o código foi alterado, verifica duplicidade
-                        if (codigo !== codigoEditando && codigosCache.some(c => c.codigo === codigo)) {
-                            mostrarMensagem('⚠️ Já existe um código com esse nome.', 'erro');
-                            return;
-                        }
-
-                        codigosCache[idx] = {
-                            ...codigosCache[idx],
-                            codigo: codigo,
-                            mumu: mumu,
-                            saldo: saldo,
-                            limite: limite,
-                            atualizado_em: new Date().toISOString()
-                        };
-
-                        const ok = await salvarCodigosNoBanco();
-                        if (ok) {
-                            mostrarMensagem(`✅ Código "${codigo}" atualizado com sucesso!`, 'sucesso');
-                            cancelarEdicaoCodigo();
-                        }
-                        return;
-                    }
-
-                    // ===== MODO CRIAÇÃO =====
-                    if (codigosCache.some(c => (c.codigo || '').toUpperCase() === codigo)) {
-                        mostrarMensagem('⚠️ Já existe um código com esse nome.', 'erro');
-                        return;
-                    }
-
-                    const novoCodigo = {
-                        codigo: codigo,
-                        mumu: mumu,
-                        saldo: saldo,
-                        limite: limite,
-                        usos: 0,
-                        ativo: true,
-                        criado_em: new Date().toISOString()
-                    };
-
-                    codigosCache.push(novoCodigo);
-
-                    const ok = await salvarCodigosNoBanco();
-                    if (ok) {
-                        mostrarMensagem(`✅ Código "${codigo}" criado com sucesso!`, 'sucesso');
-                        limparFormularioCodigo();
-                        renderizarTabelaCodigos();
-                    } else {
-                        codigosCache = codigosCache.filter(c => c.codigo !== codigo);
-                    }
-                }
-
-                function limparFormularioCodigo() {
-                    document.getElementById('codigoInput').value = '';
-                    document.getElementById('codigoMumu').value = 0;
-                    document.getElementById('codigoSaldo').value = 0;
-                    document.getElementById('codigoLimite').value = 0;
-                }
-
-                function cancelarEdicaoCodigo() {
-                    codigoEditando = null;
-                    limparFormularioCodigo();
-                    document.getElementById('btnCriarCodigo').textContent = '➕ Criar Código';
-                    document.getElementById('btnCancelarEdicao').style.display = 'none';
-                    document.getElementById('codigoInput').disabled = false;
+                if (error) {
+                    console.warn('Erro ao carregar códigos:', error);
+                    codigosCache = [];
                     renderizarTabelaCodigos();
+                    return [];
                 }
 
-                window.editarCodigo = function(codigo) {
-                    const c = codigosCache.find(x => x.codigo === codigo);
-                    if (!c) return;
+                codigosCache = Array.isArray(data?.codigos_resgate) ? data.codigos_resgate : [];
+                renderizarTabelaCodigos();
+                return codigosCache;
+            } catch (e) {
+                console.error('Erro ao carregar códigos:', e);
+                codigosCache = [];
+                renderizarTabelaCodigos();
+                return [];
+            }
+        }
 
-                    codigoEditando = codigo;
+        function renderizarTabelaCodigos() {
+            const tbody = document.getElementById('tabelaCodigos');
+            if (!tbody) return;
 
-                    document.getElementById('codigoInput').value = c.codigo;
-                    document.getElementById('codigoInput').disabled = true; // não permite alterar o nome
-                    document.getElementById('codigoMumu').value = c.mumu ?? 0;
-                    document.getElementById('codigoSaldo').value = c.saldo ?? 0;
-                    document.getElementById('codigoLimite').value = c.limite ?? 0;
+            if (!codigosCache || codigosCache.length === 0) {
+                tbody.innerHTML = `<tr><td colspan="7" style="padding: 20px; color: #8a99ad; text-align: center;">Nenhum código criado ainda.</td></tr>`;
+                return;
+            }
 
-                    document.getElementById('btnCriarCodigo').textContent = '💾 Salvar Alterações';
-                    document.getElementById('btnCancelarEdicao').style.display = 'inline-block';
+            const ordenados = [...codigosCache].sort(
+                (a, b) => new Date(b.criado_em || 0) - new Date(a.criado_em || 0)
+            );
 
-                    renderizarTabelaCodigos();
-                    document.getElementById('codigoMumu').focus();
-                    mostrarMensagem(`✏️ Editando código "${codigo}". Altere os valores e clique em Salvar.`, 'info');
-                };
+            tbody.innerHTML = ordenados.map(c => {
+                const usos = c.usos || 0;
+                const limite = c.limite || 0;
+                const esgotado = limite > 0 && usos >= limite;
 
-                window.alternarCodigo = async function(codigo) {
-                    const idx = codigosCache.findIndex(c => c.codigo === codigo);
-                    if (idx === -1) return;
+                let statusClasse = 'ativo';
+                let statusTexto = 'Ativo';
+                if (esgotado) { statusClasse = 'esgotado'; statusTexto = 'Esgotado'; }
+                else if (c.ativo === false) { statusClasse = 'inativo'; statusTexto = 'Inativo'; }
 
-                    codigosCache[idx].ativo = codigosCache[idx].ativo === false ? true : false;
+                return `
+                    <tr>
+                        <td><span class="codigo-badge">${c.codigo}</span></td>
+                        <td style="color: var(--neon-green); font-weight: 600;">${(c.mumu || 0).toFixed(2)}</td>
+                        <td style="color: var(--neon-blue); font-weight: 600;">R$ ${(c.saldo || 0).toFixed(2)}</td>
+                        <td>${usos}</td>
+                        <td>${limite === 0 ? '∞' : limite}</td>
+                        <td><span class="codigo-status ${statusClasse}">${statusTexto}</span></td>
+                        <td>
+                            <div class="acao-botoes">
+                                <button class="toggle" onclick="window.alternarCodigo('${c.codigo}')">
+                                    ${c.ativo === false ? '✅ Ativar' : '⏸️ Pausar'}
+                                </button>
+                                <button class="delete" onclick="window.deletarCodigo('${c.codigo}')">🗑️</button>
+                            </div>
+                        </td>
+                    </tr>
+                `;
+            }).join('');
+        }
 
-                    const ok = await salvarCodigosNoBanco();
-                    if (ok) {
-                        mostrarMensagem(`✅ Código "${codigo}" ${codigosCache[idx].ativo ? 'ativado' : 'pausado'}.`, 'sucesso');
-                        renderizarTabelaCodigos();
-                    }
-                };
+        async function salvarCodigosNoBanco() {
+            try {
+                const { error } = await supabase
+                    .from(TABELA)
+                    .update({ codigos_resgate: codigosCache })
+                    .eq('id', 1);
 
-                window.deletarCodigo = async function(codigo) {
-                    if (!confirm(`Tem certeza que deseja deletar o código "${codigo}"?`)) return;
+                if (error) throw error;
+                return true;
+            } catch (e) {
+                console.error('Erro ao salvar códigos:', e);
+                mostrarMensagem('❌ Erro ao salvar códigos no banco.', 'erro');
+                return false;
+            }
+        }
 
-                    const backup = [...codigosCache];
-                    codigosCache = codigosCache.filter(c => c.codigo !== codigo);
+        async function criarCodigo() {
+            const codigoInput = document.getElementById('codigoInput');
+            const mumuInput = document.getElementById('codigoMumu');
+            const saldoInput = document.getElementById('codigoSaldo');
+            const limiteInput = document.getElementById('codigoLimite');
 
-                    const ok = await salvarCodigosNoBanco();
-                    if (ok) {
-                        mostrarMensagem(`🗑️ Código "${codigo}" deletado.`, 'sucesso');
-                        if (codigoEditando === codigo) cancelarEdicaoCodigo();
-                        renderizarTabelaCodigos();
-                    } else {
-                        codigosCache = backup;
-                    }
-                };
+            const codigo = (codigoInput.value || '').trim().toUpperCase().replace(/\s+/g, '');
+            const mumu = parseFloat(mumuInput.value) || 0;
+            const saldo = parseFloat(saldoInput.value) || 0;
+            const limite = parseInt(limiteInput.value) || 0;
 
-                // ==================== EVENTOS CÓDIGOS DE RESGATE ====================
-                document.getElementById('btnCriarCodigo').addEventListener('click', criarCodigo);
-                document.getElementById('btnCancelarEdicao').addEventListener('click', cancelarEdicaoCodigo);
-                document.getElementById('btnRecarregarCodigos').addEventListener('click', async () => {
-                    cancelarEdicaoCodigo();
-                    await carregarCodigos();
-                    mostrarMensagem('🔄 Lista de códigos recarregada.', 'info');
-                });
-                document.getElementById('codigoInput').addEventListener('keypress', (e) => {
-                    if (e.key === 'Enter') criarCodigo();
-                });
-                document.getElementById('codigoMumu').addEventListener('keypress', (e) => {
-                    if (e.key === 'Enter') criarCodigo();
-                });
-                document.getElementById('codigoSaldo').addEventListener('keypress', (e) => {
-                    if (e.key === 'Enter') criarCodigo();
-                });
-                document.getElementById('codigoLimite').addEventListener('keypress', (e) => {
-                    if (e.key === 'Enter') criarCodigo();
-                });
+            if (!codigo || codigo.length < 3) {
+                mostrarMensagem('⚠️ O código deve ter pelo menos 3 caracteres.', 'erro');
+                return;
+            }
+            if (!/^[A-Z0-9_-]+$/.test(codigo)) {
+                mostrarMensagem('⚠️ Use apenas letras, números, _ ou -.', 'erro');
+                return;
+            }
+            if (mumu <= 0 && saldo <= 0) {
+                mostrarMensagem('⚠️ Defina pelo menos uma recompensa (Mumu ou Saldo R$).', 'erro');
+                return;
+            }
+
+            if (codigosCache.some(c => (c.codigo || '').toUpperCase() === codigo)) {
+                mostrarMensagem('⚠️ Já existe um código com esse nome.', 'erro');
+                return;
+            }
+
+            const novoCodigo = {
+                codigo: codigo,
+                mumu: mumu,
+                saldo: saldo,
+                limite: limite,
+                usos: 0,
+                ativo: true,
+                criado_em: new Date().toISOString()
+            };
+
+            codigosCache.push(novoCodigo);
+
+            const ok = await salvarCodigosNoBanco();
+            if (ok) {
+                mostrarMensagem(`✅ Código "${codigo}" criado com sucesso!`, 'sucesso');
+                codigoInput.value = '';
+                mumuInput.value = 0;
+                saldoInput.value = 0;
+                limiteInput.value = 0;
+                renderizarTabelaCodigos();
+            } else {
+                codigosCache = codigosCache.filter(c => c.codigo !== codigo);
+            }
+        }
+
+        window.alternarCodigo = async function(codigo) {
+            const idx = codigosCache.findIndex(c => c.codigo === codigo);
+            if (idx === -1) return;
+
+            codigosCache[idx].ativo = codigosCache[idx].ativo === false ? true : false;
+
+            const ok = await salvarCodigosNoBanco();
+            if (ok) {
+                mostrarMensagem(`✅ Código "${codigo}" ${codigosCache[idx].ativo ? 'ativado' : 'pausado'}.`, 'sucesso');
+                renderizarTabelaCodigos();
+            }
+        };
+
+        window.deletarCodigo = async function(codigo) {
+            if (!confirm(`Tem certeza que deseja deletar o código "${codigo}"?`)) return;
+
+            const backup = [...codigosCache];
+            codigosCache = codigosCache.filter(c => c.codigo !== codigo);
+
+            const ok = await salvarCodigosNoBanco();
+            if (ok) {
+                mostrarMensagem(`🗑️ Código "${codigo}" deletado.`, 'sucesso');
+                renderizarTabelaCodigos();
+            } else {
+                codigosCache = backup;
+            }
+        };
 
         // ==================== CARREGAR DADOS ====================
         async function carregarDados() {

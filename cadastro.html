@@ -79,17 +79,9 @@
 
         <form id="formCadastro" autocomplete="on">
             <div class="form-group">
-                <label for="nome">Nome completo</label>
-                <input type="text" id="nome" placeholder="Seu nome" autocomplete="name" required>
-            </div>
-            <div class="form-group">
                 <label for="login">Login</label>
                 <input type="text" id="login" placeholder="ex: joao123" autocomplete="username" required>
                 <div class="ajuda">Apenas letras, números e _ (sem espaços).</div>
-            </div>
-            <div class="form-group">
-                <label for="email">E-mail</label>
-                <input type="email" id="email" placeholder="voce@exemplo.com" autocomplete="email" required>
             </div>
             <div class="form-group">
                 <label for="senha">Senha</label>
@@ -119,40 +111,13 @@
         const supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
         // ==================== ATRIBUTOS INICIAIS ====================
-        // Usando EXATAMENTE os nomes das colunas da tabela "Geral"
         const ATRIBUTOS_INICIAIS = {
-            // Vida
-            hp: 50,
-            max_hp: 50,
-            hp_atual: 50,
-            hp_max: 50,
-
-            // Mana
-            mp: 25,
-            max_mp: 25,
-            mp_atual: 25,
-            mp_max: 25,
-
-            // Stamina
-            sm: 50,
-            max_sm: 50,
-            sm_atual: 50,
-            sm_max: 50,
-
-            // Combate
-            atk: 8,
-            ataque_base: 8,
-            def: 6,
-            defesa_base: 6,
-            mag: 4,
-            magia_base: 4,
-
-            // Progressão
-            nivel: 1,
-            experiencia: 0,
-            exp_proximo: 100,
-            exp: 0,
-            exp_next: 100
+            hp: 50, max_hp: 50, hp_atual: 50, hp_max: 50,
+            mp: 25, max_mp: 25, mp_atual: 25, mp_max: 25,
+            sm: 50, max_sm: 50, sm_atual: 50, sm_max: 50,
+            atk: 8, ataque_base: 8, def: 6, defesa_base: 6,
+            mag: 4, magia_base: 4,
+            nivel: 1, experiencia: 0, exp_proximo: 100, exp: 0, exp_next: 100
         };
 
         // ==================== SESSÃO LOCAL (24h) ====================
@@ -175,9 +140,7 @@
 
         // ==================== ELEMENTOS ====================
         const formCadastro    = document.getElementById('formCadastro');
-        const nomeInput       = document.getElementById('nome');
         const loginInput      = document.getElementById('login');
-        const emailInput      = document.getElementById('email');
         const senhaInput      = document.getElementById('senha');
         const confirmarInput  = document.getElementById('confirmarSenha');
         const btnCadastrar    = document.getElementById('btnCadastrar');
@@ -186,6 +149,8 @@
         const statusSupabase  = document.getElementById('statusSupabase');
 
         // ==================== MENSAGENS ====================
+        const MSG_APARELHO_DUPLICADO = 'Esse Aparelho já está cadastrado aqui. Não é possível repetir.';
+
         function mostrarErro(m) {
             mensagemErro.textContent = m;
             mensagemErro.className = 'mensagem-erro show';
@@ -202,12 +167,15 @@
         }
 
         // ==================== HASH (SHA-256) ====================
-        async function hashSenha(senha) {
-            const enc = new TextEncoder().encode(senha);
+        async function sha256(texto) {
+            const enc = new TextEncoder().encode(texto);
             const buf = await crypto.subtle.digest('SHA-256', enc);
             return Array.from(new Uint8Array(buf))
                 .map(b => b.toString(16).padStart(2, '0'))
                 .join('');
+        }
+        async function hashSenha(senha) {
+            return sha256('senha::' + senha);
         }
 
         // ==================== CONEXÃO ====================
@@ -233,14 +201,179 @@
         function validarLogin(v) {
             return /^[a-zA-Z0-9_]{3,20}$/.test(v);
         }
-        function validarEmail(v) {
-            return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v);
+
+        // ==================== 🧬 FINGERPRINT DO NAVEGADOR ====================
+        async function gerarFingerprint() {
+            const partes = [];
+
+            // 1) Canvas fingerprint
+            try {
+                const canvas = document.createElement('canvas');
+                canvas.width = 220; canvas.height = 50;
+                const ctx = canvas.getContext('2d');
+                ctx.textBaseline = 'top';
+                ctx.font = '14px "Arial"';
+                ctx.fillStyle = '#f60';
+                ctx.fillRect(125, 1, 62, 20);
+                ctx.fillStyle = '#069';
+                ctx.fillText('Fingerprint🎮🔥', 2, 15);
+                ctx.fillStyle = 'rgba(102,204,0,0.7)';
+                ctx.fillText('Fingerprint🎮🔥', 4, 17);
+                partes.push('canvas:' + canvas.toDataURL());
+            } catch { partes.push('canvas:err'); }
+
+            // 2) WebGL fingerprint
+            try {
+                const canvas = document.createElement('canvas');
+                const gl = canvas.getContext('webgl') || canvas.getContext('experimental-webgl');
+                if (gl) {
+                    const dbg = gl.getExtension('WEBGL_debug_renderer_info');
+                    if (dbg) {
+                        partes.push('gl_vendor:' + gl.getParameter(dbg.UNMASKED_VENDOR_WEBGL));
+                        partes.push('gl_renderer:' + gl.getParameter(dbg.UNMASKED_RENDERER_WEBGL));
+                    }
+                    partes.push('gl_version:' + gl.getParameter(gl.VERSION));
+                    partes.push('gl_ext:' + (gl.getSupportedExtensions() || []).sort().join(','));
+                }
+            } catch { partes.push('gl:err'); }
+
+            // 3) UA + Plataforma
+            partes.push('ua:' + navigator.userAgent);
+            partes.push('platform:' + (navigator.platform || ''));
+            partes.push('vendor:' + (navigator.vendor || ''));
+
+            // 4) Idioma
+            partes.push('lang:' + (navigator.language || ''));
+            partes.push('langs:' + (navigator.languages || []).join(','));
+
+            // 5) Timezone
+            try {
+                partes.push('tz:' + Intl.DateTimeFormat().resolvedOptions().timeZone);
+                partes.push('tz_off:' + new Date().getTimezoneOffset());
+            } catch { partes.push('tz:err'); }
+
+            // 6) Tela
+            partes.push('screen:' + screen.width + 'x' + screen.height);
+            partes.push('avail:' + screen.availWidth + 'x' + screen.availHeight);
+            partes.push('colorDepth:' + screen.colorDepth);
+            partes.push('pixelRatio:' + (window.devicePixelRatio || 1));
+
+            // 7) Hardware
+            partes.push('cores:' + (navigator.hardwareConcurrency || 0));
+            partes.push('mem:' + (navigator.deviceMemory || 0));
+            partes.push('touch:' + (navigator.maxTouchPoints || 0));
+
+            // 8) Plugins
+            try {
+                const plugins = Array.from(navigator.plugins || [])
+                    .map(p => p.name).sort().join(',');
+                partes.push('plugins:' + plugins);
+            } catch {}
+
+            // 9) Detecção de fontes instaladas
+            try {
+                const baseFonts = ['monospace', 'sans-serif', 'serif'];
+                const fontList = [
+                    'Arial','Arial Black','Comic Sans MS','Courier New','Georgia',
+                    'Impact','Lucida Console','Lucida Sans Unicode','Palatino Linotype',
+                    'Tahoma','Times New Roman','Trebuchet MS','Verdana','Webdings',
+                    'Calibri','Cambria','Candara','Consolas','Constantia','Corbel',
+                    'Franklin Gothic Medium','Gabriola','Leelawadee UI','Malgun Gothic',
+                    'Microsoft Sans Serif','MS Gothic','MV Boli','Nirmala UI','Segoe UI',
+                    'Segoe UI Emoji','SimSun','Sylfaen','Symbol','Wingdings','Yu Gothic'
+                ];
+                const span = document.createElement('span');
+                span.style.position = 'absolute';
+                span.style.left = '-9999px';
+                span.style.fontSize = '72px';
+                span.textContent = 'mmmmmmmmmmlli';
+                document.body.appendChild(span);
+
+                const baseSizes = {};
+                for (const bf of baseFonts) {
+                    span.style.fontFamily = bf;
+                    baseSizes[bf] = span.offsetWidth + 'x' + span.offsetHeight;
+                }
+                const detectadas = [];
+                for (const f of fontList) {
+                    let encontrada = false;
+                    for (const bf of baseFonts) {
+                        span.style.fontFamily = `'${f}',${bf}`;
+                        const tam = span.offsetWidth + 'x' + span.offsetHeight;
+                        if (tam !== baseSizes[bf]) { encontrada = true; break; }
+                    }
+                    if (encontrada) detectadas.push(f);
+                }
+                document.body.removeChild(span);
+                partes.push('fonts:' + detectadas.join(','));
+            } catch {}
+
+            const raw = partes.join('||');
+            return await sha256('fp::' + raw);
+        }
+
+        // ==================== 🌐 IP PÚBLICO ====================
+        async function obterIP() {
+            try {
+                const r = await fetch('https://api.ipify.org?format=json');
+                const j = await r.json();
+                return j.ip || 'desconhecido';
+            } catch {
+                return 'desconhecido';
+            }
+        }
+
+        // ==================== 🖥️ MAC VIA WEBRTC ====================
+        function obterMAC() {
+            return new Promise((resolve) => {
+                let macEncontrado = 'desconhecido';
+                let finalizado = false;
+
+                const finalizar = (valor) => {
+                    if (finalizado) return;
+                    finalizado = true;
+                    resolve(valor);
+                };
+
+                const timeout = setTimeout(() => finalizar(macEncontrado), 2500);
+
+                try {
+                    const pc = new RTCPeerConnection({
+                        iceServers: [{ urls: 'stun:stun.l.google.com:19302' }]
+                    });
+
+                    pc.createDataChannel('');
+
+                    pc.onicecandidate = (e) => {
+                        if (!e.candidate) return;
+                        const cand = e.candidate.candidate;
+                        const match = cand.match(/([0-9a-f]{2}[-:]){5}[0-9a-f]{2}/i);
+                        if (match && macEncontrado === 'desconhecido') {
+                            macEncontrado = match[0].toUpperCase();
+                        }
+                    };
+
+                    pc.createOffer()
+                        .then(o => pc.setLocalDescription(o))
+                        .catch(() => {});
+
+                    setTimeout(() => {
+                        clearTimeout(timeout);
+                        try { pc.close(); } catch {}
+                        finalizar(macEncontrado);
+                    }, 2000);
+
+                } catch {
+                    clearTimeout(timeout);
+                    finalizar('desconhecido');
+                }
+            });
         }
 
         // ==================== CADASTRO ====================
         async function fazerCadastro(dados) {
             try {
-                // 1) Verifica se login já existe
+                // 1) Login já existe?
                 const { data: existeLogin, error: erroLogin } = await supabaseClient
                     .from(TABELA)
                     .select('id')
@@ -258,35 +391,58 @@
                     return false;
                 }
 
-                // 2) Verifica se e-mail já existe
-                const { data: existeEmail, error: erroEmail } = await supabaseClient
+                // 2) Fingerprint já cadastrado?
+                const { data: existeFP, error: erroFP } = await supabaseClient
                     .from(TABELA)
                     .select('id')
-                    .eq('email', dados.email)
+                    .eq('fingerprint', dados.fingerprint)
                     .limit(1)
                     .maybeSingle();
 
-                if (erroEmail) {
-                    console.error('Erro ao verificar e-mail:', erroEmail);
-                    mostrarErro('❌ Erro ao verificar e-mail. Tente novamente.');
+                if (erroFP) {
+                    console.error('Erro ao verificar fingerprint:', erroFP);
+                    mostrarErro('❌ Erro ao verificar dispositivo. Tente novamente.');
                     return false;
                 }
-                if (existeEmail) {
-                    mostrarErro('❌ Este e-mail já está cadastrado.');
+                if (existeFP) {
+                    mostrarErro(MSG_APARELHO_DUPLICADO);
                     return false;
                 }
 
-                // 3) Gera hash da senha
+                // 3) MAC + IP já cadastrado? (reforço secundário)
+                if (dados.mac_address !== 'desconhecido' && dados.ip_address !== 'desconhecido') {
+                    const { data: existeDisp, error: erroDisp } = await supabaseClient
+                        .from(TABELA)
+                        .select('id')
+                        .eq('mac_address', dados.mac_address)
+                        .eq('ip_address', dados.ip_address)
+                        .limit(1)
+                        .maybeSingle();
+
+                    if (erroDisp) {
+                        console.error('Erro ao verificar dispositivo:', erroDisp);
+                        mostrarErro('❌ Erro ao verificar dispositivo. Tente novamente.');
+                        return false;
+                    }
+                    if (existeDisp) {
+                        mostrarErro(MSG_APARELHO_DUPLICADO);
+                        return false;
+                    }
+                }
+
+                // 4) Hash da senha
                 const senhaHash = await hashSenha(dados.senha);
 
-                // 4) Insere novo usuário com os atributos iniciais
+                // 5) Novo usuário
                 const novoUsuario = {
-                    // Dados básicos
-                    nome: dados.nome,
+                    // Básico
                     login: dados.login,
-                    email: dados.email,
                     senha: senhaHash,
-                    email_confirmado: true,
+
+                    // 🔒 Ocultos
+                    fingerprint: dados.fingerprint,
+                    mac_address: dados.mac_address,
+                    ip_address: dados.ip_address,
 
                     // Economia
                     saldo: 0,
@@ -297,32 +453,28 @@
                     proventos_por_ativo: {},
 
                     // Fazendinha
-                    seeds: 0,
-                    planted: 0,
-                    harvested: 0,
-                    buckets: 0,
-                    plot_data: [],
+                    seeds: 0, planted: 0, harvested: 0, buckets: 0, plot_data: [],
 
-                    // Progressão / Nível
+                    // Progressão
                     nivel: ATRIBUTOS_INICIAIS.nivel,
                     experiencia: ATRIBUTOS_INICIAIS.experiencia,
                     exp_proximo: ATRIBUTOS_INICIAIS.exp_proximo,
                     exp: ATRIBUTOS_INICIAIS.exp,
                     exp_next: ATRIBUTOS_INICIAIS.exp_next,
 
-                    // Vida (HP)
+                    // HP
                     hp: ATRIBUTOS_INICIAIS.hp,
                     max_hp: ATRIBUTOS_INICIAIS.max_hp,
                     hp_atual: ATRIBUTOS_INICIAIS.hp_atual,
                     hp_max: ATRIBUTOS_INICIAIS.hp_max,
 
-                    // Mana (MP)
+                    // MP
                     mp: ATRIBUTOS_INICIAIS.mp,
                     max_mp: ATRIBUTOS_INICIAIS.max_mp,
                     mp_atual: ATRIBUTOS_INICIAIS.mp_atual,
                     mp_max: ATRIBUTOS_INICIAIS.mp_max,
 
-                    // Stamina (SM)
+                    // SM
                     sm: ATRIBUTOS_INICIAIS.sm,
                     max_sm: ATRIBUTOS_INICIAIS.max_sm,
                     sm_atual: ATRIBUTOS_INICIAIS.sm_atual,
@@ -336,7 +488,7 @@
                     mag: ATRIBUTOS_INICIAIS.mag,
                     magia_base: ATRIBUTOS_INICIAIS.magia_base,
 
-                    // Outros campos com defaults seguros
+                    // Extras
                     itens: [],
                     historico: [],
                     historico_trocas: [],
@@ -356,48 +508,57 @@
                 const { data: inserido, error: erroInsert } = await supabaseClient
                     .from(TABELA)
                     .insert(novoUsuario)
-                    .select('id, login, nome, email, saldo, saldo_poupanca, carteira, nivel, experiencia, exp_proximo, hp, max_hp, hp_atual, hp_max, mp, max_mp, mp_atual, mp_max, sm, max_sm, sm_atual, sm_max, atk, ataque_base, def, defesa_base, mag, magia_base, exp, exp_next')
+                    .select('id, login, saldo, saldo_poupanca, carteira, nivel, experiencia, exp_proximo, hp, max_hp, hp_atual, hp_max, mp, max_mp, mp_atual, mp_max, sm, max_sm, sm_atual, sm_max, atk, ataque_base, def, defesa_base, mag, magia_base, exp, exp_next')
                     .single();
 
+                // 🔍 Tratamento de erro do insert
                 if (erroInsert) {
                     console.error('Erro ao cadastrar:', erroInsert);
-                    mostrarErro('❌ ' + (erroInsert.message || 'Erro ao criar conta.') +
-                                (erroInsert.details ? ' | ' + erroInsert.details : '') +
-                                (erroInsert.hint ? ' | ' + erroInsert.hint : ''));
+
+                    const msg  = (erroInsert.message || '').toLowerCase();
+                    const code = erroInsert.code || '';
+
+                    const ehDuplicidade =
+                        code === '23505' ||
+                        msg.includes('duplicate key') ||
+                        msg.includes('unique constraint') ||
+                        msg.includes('idx_geral_mac') ||
+                        msg.includes('idx_geral_fingerprint') ||
+                        msg.includes('idx_geral_ip');
+
+                    if (ehDuplicidade) {
+                        mostrarErro(MSG_APARELHO_DUPLICADO);
+                        return false;
+                    }
+
+                    mostrarErro('❌ ' + (erroInsert.message || 'Erro ao criar conta.'));
                     return false;
                 }
 
-                // 5) Salva sessão (login automático)
+                // 6) Sessão
                 const usuarioSessao = {
                     id: inserido.id,
                     login: inserido.login,
-                    nome: inserido.nome || inserido.login,
-                    email: inserido.email,
                     saldo: inserido.saldo || 0,
                     saldo_poupanca: inserido.saldo_poupanca || 0,
                     carteira: inserido.carteira || {},
-
                     nivel: inserido.nivel ?? ATRIBUTOS_INICIAIS.nivel,
                     experiencia: inserido.experiencia ?? ATRIBUTOS_INICIAIS.experiencia,
                     exp_proximo: inserido.exp_proximo ?? ATRIBUTOS_INICIAIS.exp_proximo,
                     exp: inserido.exp ?? ATRIBUTOS_INICIAIS.exp,
                     exp_next: inserido.exp_next ?? ATRIBUTOS_INICIAIS.exp_next,
-
                     hp: inserido.hp ?? ATRIBUTOS_INICIAIS.hp,
                     max_hp: inserido.max_hp ?? ATRIBUTOS_INICIAIS.max_hp,
                     hp_atual: inserido.hp_atual ?? ATRIBUTOS_INICIAIS.hp_atual,
                     hp_max: inserido.hp_max ?? ATRIBUTOS_INICIAIS.hp_max,
-
                     mp: inserido.mp ?? ATRIBUTOS_INICIAIS.mp,
                     max_mp: inserido.max_mp ?? ATRIBUTOS_INICIAIS.max_mp,
                     mp_atual: inserido.mp_atual ?? ATRIBUTOS_INICIAIS.mp_atual,
                     mp_max: inserido.mp_max ?? ATRIBUTOS_INICIAIS.mp_max,
-
                     sm: inserido.sm ?? ATRIBUTOS_INICIAIS.sm,
                     max_sm: inserido.max_sm ?? ATRIBUTOS_INICIAIS.max_sm,
                     sm_atual: inserido.sm_atual ?? ATRIBUTOS_INICIAIS.sm_atual,
                     sm_max: inserido.sm_max ?? ATRIBUTOS_INICIAIS.sm_max,
-
                     atk: inserido.atk ?? ATRIBUTOS_INICIAIS.atk,
                     ataque_base: inserido.ataque_base ?? ATRIBUTOS_INICIAIS.ataque_base,
                     def: inserido.def ?? ATRIBUTOS_INICIAIS.def,
@@ -410,6 +571,7 @@
                 mostrarSucesso('✅ Conta criada! Redirecionando...');
                 setTimeout(() => { window.location.href = 'dashboard.html'; }, 1200);
                 return true;
+
             } catch (e) {
                 console.error('Erro inesperado:', e);
                 mostrarErro('❌ ' + (e.message || 'Erro ao criar conta. Tente novamente.'));
@@ -422,23 +584,16 @@
             e.preventDefault();
             ocultarMensagens();
 
-            const nome     = nomeInput.value.trim();
             const login    = loginInput.value.trim().toLowerCase();
-            const email    = emailInput.value.trim().toLowerCase();
             const senha    = senhaInput.value.trim();
             const confirma = confirmarInput.value.trim();
 
-            // Validações
-            if (!nome || !login || !email || !senha || !confirma) {
+            if (!login || !senha || !confirma) {
                 mostrarErro('⚠️ Preencha todos os campos!');
                 return;
             }
             if (!validarLogin(login)) {
                 mostrarErro('⚠️ Login inválido. Use 3 a 20 caracteres (letras, números e _).');
-                return;
-            }
-            if (!validarEmail(email)) {
-                mostrarErro('⚠️ E-mail inválido.');
                 return;
             }
             if (senha.length < 6) {
@@ -457,9 +612,16 @@
             }
 
             btnCadastrar.disabled = true;
+            btnCadastrar.innerHTML = '<span class="loading"></span> Verificando dispositivo...';
+
+            // 🔒 Coleta oculta
+            const fingerprint = await gerarFingerprint();
+            const mac_address = await obterMAC();
+            const ip_address  = await obterIP();
+
             btnCadastrar.innerHTML = '<span class="loading"></span> Criando conta...';
 
-            await fazerCadastro({ nome, login, email, senha });
+            await fazerCadastro({ login, senha, fingerprint, mac_address, ip_address });
 
             btnCadastrar.disabled = false;
             btnCadastrar.innerHTML = '📝 Criar conta';

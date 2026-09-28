@@ -1,0 +1,706 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Perfil · MoitaPR</title>
+  <!-- Font Awesome 5 (gratuito) para ícones -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+  <!-- Fonte Orbitron do Google -->
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      font-family: 'Orbitron', sans-serif;
+      background: radial-gradient(circle at center, #0f0f1a, #000);
+      color: #00fff7;
+      text-align: center;
+      min-height: 100vh;
+      padding: 2rem 1rem;
+      display: flex;
+      justify-content: center;
+      align-items: flex-start;
+    }
+
+    /* container principal com glow e borda neon */
+    .container {
+      max-width: 1200px;
+      width: 100%;
+      background: rgba(10, 10, 20, 0.75);
+      backdrop-filter: blur(4px);
+      border: 2px solid #00fff7;
+      border-radius: 32px;
+      padding: 2rem 2rem 2.5rem;
+      box-shadow: 0 0 40px rgba(0, 255, 247, 0.2), inset 0 0 30px rgba(0, 255, 247, 0.05);
+      transition: 0.3s;
+    }
+
+    /* cabeçalho com navegação */
+    header {
+      padding: 0 0 1.5rem 0;
+      border-bottom: 2px solid #00fff7;
+      text-shadow: 0 0 10px #00fff7;
+      margin-bottom: 2rem;
+    }
+
+    h1 {
+      font-size: 2.6rem;
+      letter-spacing: 3px;
+      font-weight: 700;
+      text-transform: uppercase;
+      color: #00fff7;
+      text-shadow: 0 0 20px #00fff7, 0 0 40px #00fff7;
+      margin-bottom: 0.8rem;
+    }
+
+    nav {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 0.2rem 0.8rem;
+    }
+
+    nav a {
+      color: #00fff7;
+      margin: 0 8px;
+      text-decoration: none;
+      transition: 0.3s;
+      font-size: 0.85rem;
+      padding: 0.3rem 0.6rem;
+      border-radius: 4px;
+      letter-spacing: 1px;
+      border: 1px solid transparent;
+    }
+
+    nav a:hover {
+      color: #ff00ff;
+      text-shadow: 0 0 10px #ff00ff, 0 0 20px #ff00ff;
+      border-color: #ff00ff;
+    }
+
+    nav a i {
+      margin-right: 6px;
+    }
+
+    .nav-highlight {
+      color: #ff00ff !important;
+      text-shadow: 0 0 15px #ff00ff !important;
+      border-color: #ff00ff !important;
+      background: rgba(255, 0, 255, 0.08);
+    }
+
+    /* grid perfil */
+    .profile-grid {
+      display: grid;
+      grid-template-columns: 1fr 2.2fr;
+      gap: 2rem;
+      margin-top: 0.5rem;
+      text-align: left;
+    }
+
+    @media (max-width: 760px) {
+      .profile-grid {
+        grid-template-columns: 1fr;
+        gap: 1.8rem;
+      }
+    }
+
+    /* cards com tema neon */
+    .card {
+      background: rgba(0, 20, 30, 0.5);
+      backdrop-filter: blur(4px);
+      border-radius: 20px;
+      padding: 1.5rem 1.2rem;
+      border: 1px solid #00fff7;
+      box-shadow: 0 0 20px rgba(0, 255, 247, 0.1);
+      transition: 0.3s;
+    }
+
+    .card:hover {
+      box-shadow: 0 0 35px rgba(0, 255, 247, 0.2);
+      border-color: #ff00ff;
+    }
+
+    .avatar-section {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      text-align: center;
+    }
+
+    .avatar-circle {
+      background: #0a0a1a;
+      width: 100px;
+      height: 100px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 3.4rem;
+      font-weight: 700;
+      color: #ff00ff;
+      border: 3px solid #ff00ff;
+      box-shadow: 0 0 30px rgba(255, 0, 255, 0.3);
+      margin-bottom: 0.8rem;
+      text-shadow: 0 0 20px #ff00ff;
+    }
+
+    .avatar-section h2 {
+      font-size: 1.8rem;
+      font-weight: 700;
+      letter-spacing: 2px;
+      color: #00fff7;
+      text-shadow: 0 0 20px #00fff7;
+    }
+
+    .badge-role {
+      background: rgba(0, 255, 247, 0.08);
+      padding: 0.3rem 1.2rem;
+      border-radius: 40px;
+      font-size: 0.7rem;
+      color: #ff00ff;
+      border: 1px solid #ff00ff;
+      box-shadow: 0 0 15px rgba(255, 0, 255, 0.2);
+      display: inline-block;
+      margin: 4px 0 8px;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+    }
+
+    .id-respeito {
+      display: flex;
+      justify-content: center;
+      gap: 1.8rem;
+      font-size: 0.8rem;
+      color: #b0f0f0;
+      margin-top: 0.2rem;
+    }
+
+    .id-respeito span {
+      background: rgba(0, 255, 247, 0.06);
+      padding: 0.2rem 1rem;
+      border-radius: 30px;
+      border: 1px solid #00fff7;
+      box-shadow: 0 0 10px rgba(0, 255, 247, 0.1);
+    }
+
+    .id-respeito i {
+      margin-right: 4px;
+      color: #ff00ff;
+    }
+
+    .stats-mini {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: space-between;
+      gap: 0.4rem 0.8rem;
+      margin: 0.8rem 0 0.2rem;
+      font-size: 0.75rem;
+    }
+
+    .stats-mini div {
+      background: rgba(0, 255, 247, 0.05);
+      padding: 0.2rem 0.8rem;
+      border-radius: 30px;
+      border: 1px solid #00fff7;
+      box-shadow: 0 0 8px rgba(0, 255, 247, 0.05);
+    }
+
+    .info-list {
+      list-style: none;
+      margin-top: 0.2rem;
+    }
+
+    .info-list li {
+      display: flex;
+      justify-content: space-between;
+      padding: 0.45rem 0;
+      border-bottom: 1px solid rgba(0, 255, 247, 0.15);
+      font-size: 0.75rem;
+      letter-spacing: 0.5px;
+    }
+
+    .info-list li:last-child {
+      border-bottom: none;
+    }
+
+    .info-list .label {
+      color: #7acccc;
+    }
+
+    .info-list .value {
+      color: #00fff7;
+      font-weight: 500;
+      text-shadow: 0 0 8px rgba(0, 255, 247, 0.2);
+    }
+
+    .badge-group {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.5rem;
+      margin-top: 0.5rem;
+    }
+
+    .badge-item {
+      background: rgba(255, 0, 255, 0.06);
+      padding: 0.3rem 0.9rem;
+      border-radius: 30px;
+      border: 1px solid #ff00ff;
+      font-size: 0.7rem;
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      color: #ff99ff;
+      box-shadow: 0 0 12px rgba(255, 0, 255, 0.1);
+    }
+
+    .badge-item i {
+      color: #ff00ff;
+    }
+
+    .emblems {
+      display: flex;
+      gap: 0.8rem;
+      flex-wrap: wrap;
+      margin-top: 0.5rem;
+    }
+
+    .emblem {
+      background: rgba(0, 255, 247, 0.05);
+      padding: 0.35rem 0.9rem;
+      border-radius: 30px;
+      font-size: 0.7rem;
+      border: 1px solid #00fff7;
+      color: #b0f0f0;
+      box-shadow: 0 0 10px rgba(0, 255, 247, 0.05);
+    }
+
+    /* coluna direita */
+    .right-col {
+      display: flex;
+      flex-direction: column;
+      gap: 1.5rem;
+    }
+
+    .tabs {
+      display: flex;
+      gap: 0.8rem;
+      background: rgba(0, 20, 30, 0.4);
+      padding: 0.3rem 0.8rem;
+      border-radius: 40px;
+      border: 1px solid #00fff7;
+      width: fit-content;
+      margin-bottom: 0.2rem;
+    }
+
+    .tabs span {
+      padding: 0.3rem 1.2rem;
+      border-radius: 30px;
+      font-size: 0.7rem;
+      font-weight: 600;
+      color: #7acccc;
+      cursor: default;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+      transition: 0.3s;
+    }
+
+    .tabs .active-tab {
+      background: #ff00ff;
+      color: #000;
+      box-shadow: 0 0 30px rgba(255, 0, 255, 0.4);
+      text-shadow: 0 0 10px #ff00ff;
+    }
+
+    .round-history {
+      background: rgba(0, 20, 30, 0.3);
+      border-radius: 20px;
+      padding: 1.2rem 1.2rem 0.8rem;
+      border: 1px solid #00fff7;
+      box-shadow: 0 0 15px rgba(0, 255, 247, 0.05);
+    }
+
+    .round-history h4 {
+      font-weight: 500;
+      font-size: 0.8rem;
+      color: #b0f0f0;
+      margin-bottom: 0.8rem;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+      text-shadow: 0 0 10px rgba(0, 255, 247, 0.2);
+    }
+
+    .progress-row {
+      display: flex;
+      align-items: center;
+      gap: 0.6rem;
+      font-size: 0.7rem;
+      background: rgba(0, 0, 0, 0.3);
+      padding: 0.3rem 0.8rem;
+      border-radius: 30px;
+      border: 1px solid rgba(0, 255, 247, 0.2);
+      margin: 0.3rem 0;
+    }
+
+    .progress-row .day {
+      color: #7acccc;
+      min-width: 28px;
+    }
+
+    .progress-bar-bg {
+      flex: 1;
+      height: 6px;
+      background: rgba(0, 255, 247, 0.15);
+      border-radius: 10px;
+      box-shadow: inset 0 0 6px rgba(0, 0, 0, 0.5);
+    }
+
+    .progress-fill {
+      height: 6px;
+      border-radius: 10px;
+      background: #ff00ff;
+      width: 25%;
+      box-shadow: 0 0 15px #ff00ff;
+    }
+
+    .fill-86 {
+      width: 86%;
+      background: #00fff7;
+      box-shadow: 0 0 20px #00fff7;
+    }
+
+    .round-stats {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 0.3rem 1rem;
+      font-size: 0.7rem;
+      background: rgba(0, 0, 0, 0.25);
+      padding: 0.8rem 1rem;
+      border-radius: 16px;
+      border: 1px solid rgba(0, 255, 247, 0.15);
+    }
+
+    .round-stats div {
+      display: flex;
+      justify-content: space-between;
+      padding: 0.2rem 0;
+    }
+
+    .round-stats .rs-label {
+      color: #7acccc;
+    }
+
+    .round-stats .rs-value {
+      font-weight: 500;
+      color: #00fff7;
+    }
+
+    .stats-final {
+      margin-top: 0.5rem;
+    }
+
+    .stats-final .final-line {
+      display: flex;
+      justify-content: space-between;
+      padding: 0.25rem 0;
+      border-bottom: 1px solid rgba(0, 255, 247, 0.08);
+      font-size: 0.7rem;
+    }
+
+    .stats-final .final-line:last-child {
+      border-bottom: none;
+    }
+
+    .country-flag {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      font-weight: 500;
+    }
+
+    .mensagem-box {
+      background: rgba(0, 20, 30, 0.3);
+      border: 1px solid #ff00ff;
+      border-radius: 40px;
+      padding: 0.5rem 1.2rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-top: 0.8rem;
+      box-shadow: 0 0 20px rgba(255, 0, 255, 0.05);
+      transition: 0.3s;
+    }
+
+    .mensagem-box:hover {
+      box-shadow: 0 0 30px rgba(255, 0, 255, 0.15);
+      border-color: #00fff7;
+    }
+
+    .mensagem-box span {
+      color: #b0f0f0;
+      font-size: 0.8rem;
+      letter-spacing: 1px;
+    }
+
+    .mensagem-box i {
+      color: #ff00ff;
+      font-size: 1.2rem;
+      cursor: default;
+      text-shadow: 0 0 20px #ff00ff;
+    }
+
+    .footer-nav {
+      margin-top: 2rem;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 1.2rem 1.8rem;
+      border-top: 2px solid #00fff7;
+      padding-top: 1.4rem;
+      justify-content: center;
+      font-size: 0.7rem;
+      color: #7acccc;
+      text-shadow: 0 0 8px rgba(0, 255, 247, 0.1);
+    }
+
+    .footer-nav a {
+      color: #7acccc;
+      text-decoration: none;
+      transition: 0.3s;
+      letter-spacing: 1px;
+    }
+
+    .footer-nav a:hover {
+      color: #ff00ff;
+      text-shadow: 0 0 15px #ff00ff;
+    }
+
+    hr {
+      border: 0.5px solid rgba(0, 255, 247, 0.15);
+      margin: 1rem 0;
+    }
+
+    .text-muted {
+      color: #7acccc;
+    }
+
+    .flex-between {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .btn {
+      display: inline-block;
+      padding: 8px 18px;
+      border: 2px solid #00fff7;
+      color: #00fff7;
+      background: transparent;
+      cursor: pointer;
+      transition: 0.3s;
+      font-family: 'Orbitron', sans-serif;
+      font-size: 0.7rem;
+      letter-spacing: 1px;
+      border-radius: 30px;
+      text-transform: uppercase;
+    }
+
+    .btn:hover {
+      background: #00fff7;
+      color: #000;
+      box-shadow: 0 0 30px #00fff7;
+    }
+
+    /* ajustes mobile */
+    @media (max-width: 480px) {
+      .container { padding: 1rem; }
+      h1 { font-size: 1.8rem; }
+      nav a { font-size: 0.7rem; margin: 0 4px; }
+    }
+  </style>
+</head>
+<body>
+<div class="container">
+  <!-- HEADER com navegação neon -->
+  <header>
+    <h1><i class="fas fa-user-astronaut" style="color: #ff00ff; text-shadow: 0 0 30px #ff00ff;"></i> Perfil</h1>
+    <nav>
+      <a href="#"><i class="fas fa-shield-alt"></i> Contas</a>
+      <a href="#"><i class="fas fa-shopping-cart"></i> Compras</a>
+      <a href="#"><i class="fas fa-exchange-alt"></i> Transferir</a>
+      <a href="#"><i class="fas fa-chart-bar"></i> Estatísticas</a>
+      <a href="#"><i class="fas fa-book-open"></i> Guestbook</a>
+      <a href="#" class="nav-highlight"><i class="fas fa-user"></i> Perfil</a>
+      <a href="#"><i class="fas fa-cog"></i> Settings</a>
+      <a href="#"><i class="fas fa-gamepad"></i> Revisão</a>
+    </nav>
+  </header>
+
+  <!-- CONTEÚDO PRINCIPAL -->
+  <div class="profile-grid">
+    <!-- COLUNA ESQUERDA -->
+    <div class="left-col">
+      <!-- card perfil resumo -->
+      <div class="card avatar-section">
+        <div class="avatar-circle">M</div>
+        <h2>MoitaPR</h2>
+        <span class="badge-role"><i class="fas fa-briefcase"></i> Corretor - 2 Vagabundo</span>
+        <div style="font-size:0.7rem; color:#7acccc; margin-bottom: 6px;">
+          <i class="fas fa-clock"></i> Último login 2 hours ago
+        </div>
+        <div class="id-respeito">
+          <span><i class="fas fa-hashtag"></i> #1579</span>
+          <span><i class="fas fa-heart" style="color:#ff00ff;"></i> Respeito 116</span>
+        </div>
+        <div class="stats-mini">
+          <div><i class="fas fa-id-card"></i> ID 18150742</div>
+          <div><i class="fas fa-level-up-alt"></i> Nível 2</div>
+          <div><i class="fas fa-clock"></i> 2026-08-14 23:08:25</div>
+        </div>
+      </div>
+
+      <!-- informações detalhadas -->
+      <div class="card">
+        <ul class="info-list">
+          <li><span class="label">Último login</span><span class="value">2026-08-14 23:08:25</span></li>
+          <li><span class="label">Registrado desde</span><span class="value">2024-02-15</span></li>
+          <li><span class="label">Pontos de morte</span><span class="value">0.0</span></li>
+          <li><span class="label">Mortes</span><span class="value">0</span></li>
+          <li><span class="label">Bots mortos</span><span class="value">0</span></li>
+          <li><span class="label">Morreu</span><span class="value">0</span></li>
+          <li><span class="label">Sexo</span><span class="value">Masculino</span></li>
+          <li><span class="label">Data de Nascimento</span><span class="value">1978-07-11</span></li>
+          <li><span class="label">Visitantes do perfil</span><span class="value">1</span></li>
+          <li><span class="label">Tempo on line</span><span class="value">03:18</span></li>
+          <li><span class="label">Pontos de doação de gangue</span><span class="value">0</span></li>
+          <li><span class="label">Trusted gang memberships left</span><span class="value">2</span></li>
+        </ul>
+        <hr>
+        <div><i class="fas fa-trophy" style="color:#ff00ff; text-shadow: 0 0 15px #ff00ff;"></i> <strong>Realizações</strong></div>
+        <div class="badge-group">
+          <span class="badge-item"><i class="fas fa-calendar-check"></i> 2 ano(s) registrado</span>
+          <span class="badge-item"><i class="fas fa-star"></i> 2</span>
+        </div>
+        <div style="margin-top: 0.8rem;"><i class="fas fa-medal" style="color:#ff00ff; text-shadow: 0 0 15px #ff00ff;"></i> <strong>Emblemas</strong></div>
+        <div class="emblems">
+          <span class="emblem"><i class="fas fa-shield"></i> Emblema</span>
+          <span class="emblem"><i class="fas fa-skull"></i> +</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- COLUNA DIREITA -->
+    <div class="right-col">
+      <!-- Tabs: Profile / Stats / Guestbook -->
+      <div class="tabs">
+        <span class="active-tab">Profile</span>
+        <span>Stats</span>
+        <span>Guestbook</span>
+      </div>
+
+      <!-- Mini card com MoitaPR + mensagem -->
+      <div style="display: flex; justify-content: space-between; align-items: center; background: rgba(0,20,30,0.3); border-radius: 40px; padding: 0.5rem 1.2rem; border:1px solid #00fff7; box-shadow: 0 0 15px rgba(0,255,247,0.05);">
+        <div>
+          <span style="font-weight:600; font-size:1rem; color:#00fff7; text-shadow: 0 0 15px #00fff7;">MoitaPR</span>
+          <span style="color:#7acccc; margin-left: 10px; font-size:0.65rem;">Corretor - 2 Vagabundo</span>
+        </div>
+        <span style="background:rgba(255,0,255,0.08); padding:0.2rem 0.8rem; border-radius:40px; font-size:0.65rem; border:1px solid #ff00ff; color:#ff99ff;"><i class="fas fa-hashtag"></i> #1579</span>
+      </div>
+
+      <!-- Respeito mudado / progresso -->
+      <div class="round-history">
+        <h4><i class="fas fa-chart-line" style="color:#ff00ff; text-shadow: 0 0 15px #ff00ff;"></i> Respeito mudado</h4>
+        <div class="progress-row">
+          <span class="day">39</span> <span>0</span> <span style="color:#7acccc;">mortes</span>
+          <span style="margin-left: auto; font-weight:500;">28</span>
+          <span style="color:#7acccc; margin-left:4px;">25%</span>
+          <div class="progress-bar-bg"><div class="progress-fill"></div></div>
+        </div>
+        <div class="progress-row">
+          <span class="day">40</span> <span>0</span> <span style="color:#7acccc;">mortes</span>
+          <span style="margin-left: auto; font-weight:500;">28</span>
+          <span style="color:#7acccc; margin-left:4px;">25%</span>
+          <div class="progress-bar-bg"><div class="progress-fill"></div></div>
+        </div>
+        <div class="progress-row">
+          <span class="day">41</span> <span>0</span> <span style="color:#7acccc;">mortes</span>
+          <span style="margin-left: auto; font-weight:500;">28</span>
+          <span style="color:#7acccc; margin-left:4px;">25%</span>
+          <div class="progress-bar-bg"><div class="progress-fill"></div></div>
+        </div>
+        <div class="progress-row">
+          <span class="day">42</span> <span>0</span> <span style="color:#7acccc;">mortes</span>
+          <span style="margin-left: auto; font-weight:500;">99</span>
+          <span style="color:#7acccc; margin-left:4px;">86%</span>
+          <div class="progress-bar-bg"><div class="progress-fill fill-86"></div></div>
+        </div>
+      </div>
+
+      <!-- Histórico de rodadas e estatísticas finais -->
+      <div class="round-history">
+        <h4><i class="fas fa-history" style="color:#ff00ff; text-shadow: 0 0 15px #ff00ff;"></i> Histórico de rodadas</h4>
+        <div style="background:rgba(0,0,0,0.2); border-radius:16px; border:1px solid rgba(0,255,247,0.1); padding:0.2rem 0 0.2rem 0;">
+          <div style="display: flex; justify-content: space-between; padding:0.4rem 1rem; background:rgba(0,255,247,0.03); border-radius:16px 16px 0 0; border-bottom:1px solid rgba(0,255,247,0.1);">
+            <span><strong style="color:#00fff7;">Rodada 184</strong></span>
+            <span style="color:#7acccc;">Personagem: Empresário</span>
+          </div>
+          <div class="stats-final" style="padding:0.2rem 1rem 0.6rem;">
+            <div class="final-line"><span class="rs-label">Nível</span><span class="rs-value">Subordinado</span></div>
+            <div class="final-line"><span class="rs-label">Grana</span><span class="rs-value">$44,865</span></div>
+            <div class="final-line"><span class="rs-label">Banco</span><span class="rs-value">$19,810</span></div>
+            <div class="final-line"><span class="rs-label">Mortes</span><span class="rs-value">0</span></div>
+            <div class="final-line"><span class="rs-label">Morreu</span><span class="rs-value">0</span></div>
+            <div class="final-line"><span class="rs-label">Posição internacional</span><span class="rs-value">1572</span></div>
+            <div class="final-line"><span class="rs-label">Posição no Killer</span><span class="rs-value">1959</span></div>
+            <div class="final-line"><span class="rs-label">Respeito</span><span class="rs-value">228</span></div>
+            <div class="final-line"><span class="rs-label">Força</span><span class="rs-value">451</span></div>
+            <div class="final-line"><span class="rs-label">Resistência</span><span class="rs-value">451</span></div>
+            <div class="final-line"><span class="rs-label">Inteligência</span><span class="rs-value">453</span></div>
+            <div class="final-line"><span class="rs-label">Carisma</span><span class="rs-value">452</span></div>
+            <div class="final-line"><span class="rs-label">País:</span><span class="rs-value country-flag"><i class="fas fa-flag" style="color:#ff00ff;"></i> Brasil</span></div>
+            <div class="final-line"><span class="rs-label">Posição no País</span><span class="rs-value">697</span></div>
+            <div class="final-line"><span class="rs-label">Sequência de mortes</span><span class="rs-value">0</span></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Profile / Stats / Guestbook (segunda linha) + mensagem -->
+      <div style="display: flex; flex-wrap: wrap; gap: 1rem; justify-content: space-between; align-items: center; background: rgba(0,20,30,0.3); border-radius: 40px; padding: 0.3rem 1.2rem; border:1px solid #00fff7; box-shadow: 0 0 15px rgba(0,255,247,0.05);">
+        <div style="display: flex; gap: 1.2rem;">
+          <span style="color:#ff00ff; font-weight:600; text-shadow: 0 0 15px #ff00ff;">Profile</span>
+          <span style="color:#7acccc;">Stats</span>
+          <span style="color:#7acccc;">Guestbook</span>
+        </div>
+        <div style="display: flex; align-items: center; gap: 8px;">
+          <span style="color:#7acccc; font-size:0.65rem;">MoitaPR · Corretor - 2 Vagabundo</span>
+        </div>
+      </div>
+
+      <!-- Mensagem com botão neon -->
+      <div class="mensagem-box">
+        <span><i class="fas fa-envelope" style="color:#ff00ff; margin-right: 8px;"></i> Mensagem</span>
+        <i class="fas fa-chevron-right"></i>
+      </div>
+      <div style="margin-top: 0.5rem; text-align: right;">
+        <span class="btn"><i class="fas fa-paper-plane"></i> Enviar</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- rodapé com links -->
+  <div class="footer-nav">
+    <a href="#"><i class="fas fa-user"></i> Perfil</a>
+    <a href="#"><i class="fas fa-chart-simple"></i> Stats</a>
+    <a href="#"><i class="fas fa-book"></i> Guestbook</a>
+    <span style="color:#30363d;">|</span>
+    <span><i class="fas fa-user-circle" style="color:#ff00ff;"></i> MoitaPR</span>
+    <span style="color:#7acccc;">Corretor - 2 Vagabundo</span>
+  </div>
+</div>
+</body>
+</html>

@@ -139,7 +139,7 @@
   </header>
 
   <div class="controls">
-    <input type="text" id="search" placeholder="🔍 Buscar por nome…">
+    <input type="text" id="search" placeholder="🔍 Buscar por login…">
     <select id="sortSelect">
       <option value="saldo">Ordenar por Saldo</option>
       <option value="saldo_poupanca">Ordenar por Poupança</option>
@@ -156,7 +156,7 @@
       <thead>
         <tr>
           <th data-sort="pos">#</th>
-          <th data-sort="nome">Nome</th>
+          <th data-sort="login">Login</th>
           <th data-sort="saldo">Saldo</th>
           <th data-sort="saldo_poupanca">Poupança</th>
           <th data-sort="btc">BTC</th>
@@ -187,7 +187,7 @@ const { createClient } = supabase;
 const sb = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
 const COLS = [
-  'id','nome','saldo','saldo_poupanca','created_at','updated_at',
+  'id','login','saldo','saldo_poupanca','created_at','updated_at',
   'nivel','btc','mumu','cadeado','bloqueado','ultima_vez_online'
 ];
 
@@ -230,7 +230,7 @@ function isOnline(ts) {
 // ---------- Render ----------
 function render() {
   let lista = dados.filter(d =>
-    !filtro || (d.nome || '').toLowerCase().includes(filtro)
+    !filtro || (d.login || '').toLowerCase().includes(filtro)
   );
 
   lista.sort((a, b) => {
@@ -270,7 +270,7 @@ function render() {
     return `
       <tr data-id="${d.id}">
         <td class="pos ${posClass}">${pos}</td>
-        <td class="login">${escapeHtml(d.nome) || '—'}</td>
+        <td class="login">${escapeHtml(d.login) || '—'}</td>
         <td class="money">R$ ${fmtMoney(d.saldo)}</td>
         <td class="money">R$ ${fmtMoney(d.saldo_poupanca)}</td>
         <td class="btc">${fmtBtc(d.btc)}</td>
