@@ -61,7 +61,7 @@
     <div class="loading-container">
         <h1>🏦 MM Quase Tudo</h1>
         <div class="spinner"></div>
-        <p>Redirecionando para o login...</p>
+        <p>Redirecionando para o Logar...</p>
     </div>
 
     <script>
@@ -85,17 +85,17 @@
                 if (user && user.login) {
                     window.location.href = 'dashboard.html';
                 } else {
-                    window.location.href = 'login.html';
+                    window.location.href = 'noticias.html';
                 }
             } catch (e) {
-                window.location.href = 'login.html';
+                window.location.href = 'noticias.html';
             }
         } else {
             // Limpa sessão expirada
             localStorage.removeItem(SESSION_KEY);
             localStorage.removeItem(SESSION_TIMESTAMP_KEY);
             setTimeout(() => {
-                window.location.href = 'login.html';
+                window.location.href = 'noticias.html';
             }, 800);
         }
     </script>
