@@ -1,0 +1,638 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cadastro — Conta Teste</title>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Segoe UI', sans-serif; }
+        body {
+            min-height: 100vh; display: flex; align-items: center; justify-content: center;
+            background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%); padding: 20px;
+        }
+        .cadastro-container {
+            width: 100%; max-width: 460px; background: #1e293b;
+            border: 1px solid #334155; border-radius: 16px; padding: 40px 32px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.5);
+        }
+        h1 { color: #f1f5f9; font-size: 26px; text-align: center; margin-bottom: 8px; }
+        .subtitle { color: #94a3b8; font-size: 14px; text-align: center; margin-bottom: 28px; }
+        .form-group { margin-bottom: 18px; }
+        .form-group label { display: block; color: #cbd5e1; font-size: 14px; margin-bottom: 6px; font-weight: 500; }
+        .form-group input {
+            width: 100%; padding: 12px 14px; background: #0f172a;
+            border: 1px solid #334155; border-radius: 8px; color: #f1f5f9;
+            font-size: 15px; outline: none; transition: border-color 0.2s;
+        }
+        .form-group input:focus { border-color: #3b82f6; box-shadow: 0 0 0 3px rgba(59,130,246,0.2); }
+        .form-group input.invalido { border-color: #ef4444; }
+        .form-group input.valido { border-color: #22c55e; }
+        .form-group .ajuda { font-size: 12px; color: #94a3b8; margin-top: 5px; }
+        #btnCadastrar {
+            width: 100%; padding: 13px; background: linear-gradient(135deg, #22c55e, #16a34a);
+            color: #fff; border: none; border-radius: 8px; font-size: 16px;
+            font-weight: 600; cursor: pointer; margin-top: 8px;
+        }
+        #btnCadastrar:disabled { opacity: 0.6; cursor: not-allowed; }
+        .loading {
+            display: inline-block; width: 14px; height: 14px;
+            border: 2px solid rgba(255,255,255,0.3); border-top-color: #fff;
+            border-radius: 50%; animation: spin 0.6s linear infinite;
+            vertical-align: middle; margin-right: 6px;
+        }
+        @keyframes spin { to { transform: rotate(360deg); } }
+        .mensagem-erro, .mensagem-sucesso {
+            display: none; padding: 12px 14px; border-radius: 8px;
+            font-size: 14px; margin-bottom: 16px; text-align: center;
+        }
+        .mensagem-erro.show {
+            display: block; background: rgba(239,68,68,0.15);
+            border: 1px solid #ef4444; color: #fca5a5;
+        }
+        .mensagem-sucesso.show {
+            display: block; background: rgba(34,197,94,0.15);
+            border: 1px solid #22c55e; color: #86efac;
+        }
+        .status-supabase {
+            margin-top: 20px; padding: 10px; border-radius: 8px;
+            font-size: 13px; text-align: center; color: #94a3b8;
+            background: #0f172a; border: 1px solid #334155;
+        }
+        .status-supabase.online { color: #86efac; border-color: #22c55e; }
+        .status-supabase.offline { color: #fca5a5; border-color: #ef4444; }
+        .link-login {
+            margin-top: 22px; text-align: center; font-size: 14px; color: #94a3b8;
+        }
+        .link-login a { color: #60a5fa; text-decoration: none; font-weight: 600; }
+        .link-login a:hover { text-decoration: underline; }
+    </style>
+</head>
+<body>
+
+    <div class="cadastro-container">
+        <h1>📝 Criar Conta</h1>
+        <p class="subtitle">Preencha os dados para se cadastrar</p>
+        <div id="mensagemErro" class="mensagem-erro"></div>
+        <p class="subtitle">Esse Aparelho já cadastrado . Não é possível repetir.</p>
+        <div id="mensagemSucesso" class="mensagem-sucesso"></div>
+
+        <form id="formCadastro" autocomplete="on">
+            <div class="form-group">
+                <label for="login">Login</label>
+                <input type="text" id="login" placeholder="ex: joao123" autocomplete="username" required>
+                <div class="ajuda">Apenas letras, números e _ (sem espaços).</div>
+            </div>
+            <div class="form-group">
+                <label for="senha">Senha</label>
+                <input type="password" id="senha" placeholder="Mínimo 6 caracteres" autocomplete="new-password" required>
+                <div class="ajuda">Use pelo menos 6 caracteres.</div>
+            </div>
+            <div class="form-group">
+                <label for="confirmarSenha">Confirmar senha</label>
+                <input type="password" id="confirmarSenha" placeholder="Repita a senha" autocomplete="new-password" required>
+            </div>
+            <button type="submit" id="btnCadastrar">📝 Criar conta</button>
+        </form>
+
+        <div id="statusSupabase" class="status-supabase">Verificando conexão...</div>
+
+        <div class="link-login">
+            Já tem conta? <a href="./login.html">Fazer login</a>
+        </div>
+    </div>
+
+    <script>
+        // ==================== CONFIGURAÇÕES ====================
+        const SUPABASE_URL = 'https://xrcxvizzdumcxbylmkvn.supabase.co';
+        const SUPABASE_KEY = 'sb_publishable_E-g3G3wW4EySbCsXLXp8KQ_FnmERMcD';
+        const TABELA = 'Geral';
+
+        const supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+
+        // ==================== ATRIBUTOS INICIAIS ====================
+        const ATRIBUTOS_INICIAIS = {
+            hp: 50, max_hp: 50, hp_atual: 50, hp_max: 50,
+            mp: 25, max_mp: 25, mp_atual: 25, mp_max: 25,
+            sm: 50, max_sm: 50, sm_atual: 50, sm_max: 50,
+            atk: 8, ataque_base: 8, def: 6, defesa_base: 6,
+            mag: 4, magia_base: 4,
+            nivel: 1, experiencia: 0, exp_proximo: 100, exp: 0, exp_next: 100
+        };
+
+        // ==================== SESSÃO LOCAL (24h) ====================
+        const SESSION_KEY = 'usuario_logado';
+        const SESSION_TIMESTAMP_KEY = 'session_timestamp';
+        const SESSION_DURATION = 24 * 60 * 60 * 1000;
+
+        function salvarSessao(usuario) {
+            localStorage.setItem(SESSION_KEY, JSON.stringify(usuario));
+            localStorage.setItem(SESSION_TIMESTAMP_KEY, Date.now().toString());
+        }
+        function sessaoValida() {
+            const ts = localStorage.getItem(SESSION_TIMESTAMP_KEY);
+            const u = localStorage.getItem(SESSION_KEY);
+            if (!ts || !u) return false;
+            const t = parseInt(ts, 10);
+            if (isNaN(t)) return false;
+            return (Date.now() - t) < SESSION_DURATION;
+        }
+
+        // ==================== ELEMENTOS ====================
+        const formCadastro    = document.getElementById('formCadastro');
+        const loginInput      = document.getElementById('login');
+        const senhaInput      = document.getElementById('senha');
+        const confirmarInput  = document.getElementById('confirmarSenha');
+        const btnCadastrar    = document.getElementById('btnCadastrar');
+        const mensagemErro    = document.getElementById('mensagemErro');
+        const mensagemSucesso = document.getElementById('mensagemSucesso');
+        const statusSupabase  = document.getElementById('statusSupabase');
+
+        // ==================== MENSAGENS ====================
+        const MSG_APARELHO_DUPLICADO = 'Esse Aparelho já está cadastrado aqui. Não é possível repetir.';
+
+        function mostrarErro(m) {
+            mensagemErro.textContent = m;
+            mensagemErro.className = 'mensagem-erro show';
+            mensagemSucesso.className = 'mensagem-sucesso';
+        }
+        function mostrarSucesso(m) {
+            mensagemSucesso.textContent = m;
+            mensagemSucesso.className = 'mensagem-sucesso show';
+            mensagemErro.className = 'mensagem-erro';
+        }
+        function ocultarMensagens() {
+            mensagemErro.className = 'mensagem-erro';
+            mensagemSucesso.className = 'mensagem-sucesso';
+        }
+
+        // ==================== HASH (SHA-256) ====================
+        async function sha256(texto) {
+            const enc = new TextEncoder().encode(texto);
+            const buf = await crypto.subtle.digest('SHA-256', enc);
+            return Array.from(new Uint8Array(buf))
+                .map(b => b.toString(16).padStart(2, '0'))
+                .join('');
+        }
+        async function hashSenha(senha) {
+            return sha256('senha::' + senha);
+        }
+
+        // ==================== CONEXÃO ====================
+        async function verificarSupabase() {
+            try {
+                const { error } = await supabaseClient.from(TABELA).select('id').limit(1);
+                if (error) {
+                    statusSupabase.textContent = '⚠️ Erro ao conectar';
+                    statusSupabase.className = 'status-supabase offline';
+                    return false;
+                }
+                statusSupabase.textContent = '✅ Conectado ao Supabase';
+                statusSupabase.className = 'status-supabase online';
+                return true;
+            } catch {
+                statusSupabase.textContent = '❌ Erro ao conectar';
+                statusSupabase.className = 'status-supabase offline';
+                return false;
+            }
+        }
+
+        // ==================== VALIDAÇÕES ====================
+        function validarLogin(v) {
+            return /^[a-zA-Z0-9_]{3,20}$/.test(v);
+        }
+
+        // ==================== 🧬 FINGERPRINT DO NAVEGADOR ====================
+        async function gerarFingerprint() {
+            const partes = [];
+
+            // 1) Canvas fingerprint
+            try {
+                const canvas = document.createElement('canvas');
+                canvas.width = 220; canvas.height = 50;
+                const ctx = canvas.getContext('2d');
+                ctx.textBaseline = 'top';
+                ctx.font = '14px "Arial"';
+                ctx.fillStyle = '#f60';
+                ctx.fillRect(125, 1, 62, 20);
+                ctx.fillStyle = '#069';
+                ctx.fillText('Fingerprint🎮🔥', 2, 15);
+                ctx.fillStyle = 'rgba(102,204,0,0.7)';
+                ctx.fillText('Fingerprint🎮🔥', 4, 17);
+                partes.push('canvas:' + canvas.toDataURL());
+            } catch { partes.push('canvas:err'); }
+
+            // 2) WebGL fingerprint
+            try {
+                const canvas = document.createElement('canvas');
+                const gl = canvas.getContext('webgl') || canvas.getContext('experimental-webgl');
+                if (gl) {
+                    const dbg = gl.getExtension('WEBGL_debug_renderer_info');
+                    if (dbg) {
+                        partes.push('gl_vendor:' + gl.getParameter(dbg.UNMASKED_VENDOR_WEBGL));
+                        partes.push('gl_renderer:' + gl.getParameter(dbg.UNMASKED_RENDERER_WEBGL));
+                    }
+                    partes.push('gl_version:' + gl.getParameter(gl.VERSION));
+                    partes.push('gl_ext:' + (gl.getSupportedExtensions() || []).sort().join(','));
+                }
+            } catch { partes.push('gl:err'); }
+
+            // 3) UA + Plataforma
+            partes.push('ua:' + navigator.userAgent);
+            partes.push('platform:' + (navigator.platform || ''));
+            partes.push('vendor:' + (navigator.vendor || ''));
+
+            // 4) Idioma
+            partes.push('lang:' + (navigator.language || ''));
+            partes.push('langs:' + (navigator.languages || []).join(','));
+
+            // 5) Timezone
+            try {
+                partes.push('tz:' + Intl.DateTimeFormat().resolvedOptions().timeZone);
+                partes.push('tz_off:' + new Date().getTimezoneOffset());
+            } catch { partes.push('tz:err'); }
+
+            // 6) Tela
+            partes.push('screen:' + screen.width + 'x' + screen.height);
+            partes.push('avail:' + screen.availWidth + 'x' + screen.availHeight);
+            partes.push('colorDepth:' + screen.colorDepth);
+            partes.push('pixelRatio:' + (window.devicePixelRatio || 1));
+
+            // 7) Hardware
+            partes.push('cores:' + (navigator.hardwareConcurrency || 0));
+            partes.push('mem:' + (navigator.deviceMemory || 0));
+            partes.push('touch:' + (navigator.maxTouchPoints || 0));
+
+            // 8) Plugins
+            try {
+                const plugins = Array.from(navigator.plugins || [])
+                    .map(p => p.name).sort().join(',');
+                partes.push('plugins:' + plugins);
+            } catch {}
+
+            // 9) Detecção de fontes instaladas
+            try {
+                const baseFonts = ['monospace', 'sans-serif', 'serif'];
+                const fontList = [
+                    'Arial','Arial Black','Comic Sans MS','Courier New','Georgia',
+                    'Impact','Lucida Console','Lucida Sans Unicode','Palatino Linotype',
+                    'Tahoma','Times New Roman','Trebuchet MS','Verdana','Webdings',
+                    'Calibri','Cambria','Candara','Consolas','Constantia','Corbel',
+                    'Franklin Gothic Medium','Gabriola','Leelawadee UI','Malgun Gothic',
+                    'Microsoft Sans Serif','MS Gothic','MV Boli','Nirmala UI','Segoe UI',
+                    'Segoe UI Emoji','SimSun','Sylfaen','Symbol','Wingdings','Yu Gothic'
+                ];
+                const span = document.createElement('span');
+                span.style.position = 'absolute';
+                span.style.left = '-9999px';
+                span.style.fontSize = '72px';
+                span.textContent = 'mmmmmmmmmmlli';
+                document.body.appendChild(span);
+
+                const baseSizes = {};
+                for (const bf of baseFonts) {
+                    span.style.fontFamily = bf;
+                    baseSizes[bf] = span.offsetWidth + 'x' + span.offsetHeight;
+                }
+                const detectadas = [];
+                for (const f of fontList) {
+                    let encontrada = false;
+                    for (const bf of baseFonts) {
+                        span.style.fontFamily = `'${f}',${bf}`;
+                        const tam = span.offsetWidth + 'x' + span.offsetHeight;
+                        if (tam !== baseSizes[bf]) { encontrada = true; break; }
+                    }
+                    if (encontrada) detectadas.push(f);
+                }
+                document.body.removeChild(span);
+                partes.push('fonts:' + detectadas.join(','));
+            } catch {}
+
+            const raw = partes.join('||');
+            return await sha256('fp::' + raw);
+        }
+
+        // ==================== 🌐 IP PÚBLICO ====================
+        async function obterIP() {
+            try {
+                const r = await fetch('https://api.ipify.org?format=json');
+                const j = await r.json();
+                return j.ip || 'desconhecido';
+            } catch {
+                return 'desconhecido';
+            }
+        }
+
+        // ==================== 🖥️ MAC VIA WEBRTC ====================
+        function obterMAC() {
+            return new Promise((resolve) => {
+                let macEncontrado = 'desconhecido';
+                let finalizado = false;
+
+                const finalizar = (valor) => {
+                    if (finalizado) return;
+                    finalizado = true;
+                    resolve(valor);
+                };
+
+                const timeout = setTimeout(() => finalizar(macEncontrado), 2500);
+
+                try {
+                    const pc = new RTCPeerConnection({
+                        iceServers: [{ urls: 'stun:stun.l.google.com:19302' }]
+                    });
+
+                    pc.createDataChannel('');
+
+                    pc.onicecandidate = (e) => {
+                        if (!e.candidate) return;
+                        const cand = e.candidate.candidate;
+                        const match = cand.match(/([0-9a-f]{2}[-:]){5}[0-9a-f]{2}/i);
+                        if (match && macEncontrado === 'desconhecido') {
+                            macEncontrado = match[0].toUpperCase();
+                        }
+                    };
+
+                    pc.createOffer()
+                        .then(o => pc.setLocalDescription(o))
+                        .catch(() => {});
+
+                    setTimeout(() => {
+                        clearTimeout(timeout);
+                        try { pc.close(); } catch {}
+                        finalizar(macEncontrado);
+                    }, 2000);
+
+                } catch {
+                    clearTimeout(timeout);
+                    finalizar('desconhecido');
+                }
+            });
+        }
+
+        // ==================== CADASTRO ====================
+        async function fazerCadastro(dados) {
+            try {
+                // 1) Login já existe?
+                const { data: existeLogin, error: erroLogin } = await supabaseClient
+                    .from(TABELA)
+                    .select('id')
+                    .eq('login', dados.login)
+                    .limit(1)
+                    .maybeSingle();
+
+                if (erroLogin) {
+                    console.error('Erro ao verificar login:', erroLogin);
+                    mostrarErro('❌ Erro ao verificar login. Tente novamente.');
+                    return false;
+                }
+                if (existeLogin) {
+                    mostrarErro('❌ Este login já está em uso.');
+                    return false;
+                }
+
+                // 2) Fingerprint já cadastrado?
+                const { data: existeFP, error: erroFP } = await supabaseClient
+                    .from(TABELA)
+                    .select('id')
+                    .eq('fingerprint', dados.fingerprint)
+                    .limit(1)
+                    .maybeSingle();
+
+                if (erroFP) {
+                    console.error('Erro ao verificar fingerprint:', erroFP);
+                    mostrarErro('❌ Erro ao verificar dispositivo. Tente novamente.');
+                    return false;
+                }
+                if (existeFP) {
+                    mostrarErro(MSG_APARELHO_DUPLICADO);
+                    return false;
+                }
+
+                // 3) MAC + IP já cadastrado? (reforço secundário)
+                if (dados.mac_address !== 'desconhecido' && dados.ip_address !== 'desconhecido') {
+                    const { data: existeDisp, error: erroDisp } = await supabaseClient
+                        .from(TABELA)
+                        .select('id')
+                        .eq('mac_address', dados.mac_address)
+                        .eq('ip_address', dados.ip_address)
+                        .limit(1)
+                        .maybeSingle();
+
+                    if (erroDisp) {
+                        console.error('Erro ao verificar dispositivo:', erroDisp);
+                        mostrarErro('❌ Erro ao verificar dispositivo. Tente novamente.');
+                        return false;
+                    }
+                    if (existeDisp) {
+                        mostrarErro(MSG_APARELHO_DUPLICADO);
+                        return false;
+                    }
+                }
+
+                // 4) Hash da senha
+                const senhaHash = await hashSenha(dados.senha);
+
+                // 5) Novo usuário
+                const novoUsuario = {
+                    // Básico
+                    login: dados.login,
+                    senha: senhaHash,
+
+                    // 🔒 Ocultos
+                    fingerprint: dados.fingerprint,
+                    mac_address: dados.mac_address,
+                    ip_address: dados.ip_address,
+
+                    // Economia
+                    saldo: 0,
+                    saldo_poupanca: 0,
+                    proventos_pendentes: 0,
+                    carteira: {},
+                    preco_medio_compra: {},
+                    proventos_por_ativo: {},
+
+                    // Fazendinha
+                    seeds: 0, planted: 0, harvested: 0, buckets: 0, plot_data: [],
+
+                    // Progressão
+                    nivel: ATRIBUTOS_INICIAIS.nivel,
+                    experiencia: ATRIBUTOS_INICIAIS.experiencia,
+                    exp_proximo: ATRIBUTOS_INICIAIS.exp_proximo,
+                    exp: ATRIBUTOS_INICIAIS.exp,
+                    exp_next: ATRIBUTOS_INICIAIS.exp_next,
+
+                    // HP
+                    hp: ATRIBUTOS_INICIAIS.hp,
+                    max_hp: ATRIBUTOS_INICIAIS.max_hp,
+                    hp_atual: ATRIBUTOS_INICIAIS.hp_atual,
+                    hp_max: ATRIBUTOS_INICIAIS.hp_max,
+
+                    // MP
+                    mp: ATRIBUTOS_INICIAIS.mp,
+                    max_mp: ATRIBUTOS_INICIAIS.max_mp,
+                    mp_atual: ATRIBUTOS_INICIAIS.mp_atual,
+                    mp_max: ATRIBUTOS_INICIAIS.mp_max,
+
+                    // SM
+                    sm: ATRIBUTOS_INICIAIS.sm,
+                    max_sm: ATRIBUTOS_INICIAIS.max_sm,
+                    sm_atual: ATRIBUTOS_INICIAIS.sm_atual,
+                    sm_max: ATRIBUTOS_INICIAIS.sm_max,
+
+                    // Combate
+                    atk: ATRIBUTOS_INICIAIS.atk,
+                    ataque_base: ATRIBUTOS_INICIAIS.ataque_base,
+                    def: ATRIBUTOS_INICIAIS.def,
+                    defesa_base: ATRIBUTOS_INICIAIS.defesa_base,
+                    mag: ATRIBUTOS_INICIAIS.mag,
+                    magia_base: ATRIBUTOS_INICIAIS.magia_base,
+
+                    // Extras
+                    itens: [],
+                    historico: [],
+                    historico_trocas: [],
+                    codigos_resgate: [],
+                    codigos_usados: [],
+                    meta: {},
+                    fazendinha_dados: {},
+                    cadeado: false,
+                    bloqueado: false,
+                    stock: 0,
+                    total_upgrades: 0,
+                    fert_qty: 0,
+                    potion_qty: 0,
+                    mumu: 0
+                };
+
+                const { data: inserido, error: erroInsert } = await supabaseClient
+                    .from(TABELA)
+                    .insert(novoUsuario)
+                    .select('id, login, saldo, saldo_poupanca, carteira, nivel, experiencia, exp_proximo, hp, max_hp, hp_atual, hp_max, mp, max_mp, mp_atual, mp_max, sm, max_sm, sm_atual, sm_max, atk, ataque_base, def, defesa_base, mag, magia_base, exp, exp_next')
+                    .single();
+
+                // 🔍 Tratamento de erro do insert
+                if (erroInsert) {
+                    console.error('Erro ao cadastrar:', erroInsert);
+
+                    const msg  = (erroInsert.message || '').toLowerCase();
+                    const code = erroInsert.code || '';
+
+                    const ehDuplicidade =
+                        code === '23505' ||
+                        msg.includes('duplicate key') ||
+                        msg.includes('unique constraint') ||
+                        msg.includes('idx_geral_mac') ||
+                        msg.includes('idx_geral_fingerprint') ||
+                        msg.includes('idx_geral_ip');
+
+                    if (ehDuplicidade) {
+                        mostrarErro(MSG_APARELHO_DUPLICADO);
+                        return false;
+                    }
+
+                    mostrarErro('❌ ' + (erroInsert.message || 'Erro ao criar conta.'));
+                    return false;
+                }
+
+                // 6) Sessão
+                const usuarioSessao = {
+                    id: inserido.id,
+                    login: inserido.login,
+                    saldo: inserido.saldo || 0,
+                    saldo_poupanca: inserido.saldo_poupanca || 0,
+                    carteira: inserido.carteira || {},
+                    nivel: inserido.nivel ?? ATRIBUTOS_INICIAIS.nivel,
+                    experiencia: inserido.experiencia ?? ATRIBUTOS_INICIAIS.experiencia,
+                    exp_proximo: inserido.exp_proximo ?? ATRIBUTOS_INICIAIS.exp_proximo,
+                    exp: inserido.exp ?? ATRIBUTOS_INICIAIS.exp,
+                    exp_next: inserido.exp_next ?? ATRIBUTOS_INICIAIS.exp_next,
+                    hp: inserido.hp ?? ATRIBUTOS_INICIAIS.hp,
+                    max_hp: inserido.max_hp ?? ATRIBUTOS_INICIAIS.max_hp,
+                    hp_atual: inserido.hp_atual ?? ATRIBUTOS_INICIAIS.hp_atual,
+                    hp_max: inserido.hp_max ?? ATRIBUTOS_INICIAIS.hp_max,
+                    mp: inserido.mp ?? ATRIBUTOS_INICIAIS.mp,
+                    max_mp: inserido.max_mp ?? ATRIBUTOS_INICIAIS.max_mp,
+                    mp_atual: inserido.mp_atual ?? ATRIBUTOS_INICIAIS.mp_atual,
+                    mp_max: inserido.mp_max ?? ATRIBUTOS_INICIAIS.mp_max,
+                    sm: inserido.sm ?? ATRIBUTOS_INICIAIS.sm,
+                    max_sm: inserido.max_sm ?? ATRIBUTOS_INICIAIS.max_sm,
+                    sm_atual: inserido.sm_atual ?? ATRIBUTOS_INICIAIS.sm_atual,
+                    sm_max: inserido.sm_max ?? ATRIBUTOS_INICIAIS.sm_max,
+                    atk: inserido.atk ?? ATRIBUTOS_INICIAIS.atk,
+                    ataque_base: inserido.ataque_base ?? ATRIBUTOS_INICIAIS.ataque_base,
+                    def: inserido.def ?? ATRIBUTOS_INICIAIS.def,
+                    defesa_base: inserido.defesa_base ?? ATRIBUTOS_INICIAIS.defesa_base,
+                    mag: inserido.mag ?? ATRIBUTOS_INICIAIS.mag,
+                    magia_base: inserido.magia_base ?? ATRIBUTOS_INICIAIS.magia_base
+                };
+                salvarSessao(usuarioSessao);
+
+                mostrarSucesso('✅ Conta criada! Redirecionando...');
+                setTimeout(() => { window.location.href = 'dashboard.html'; }, 1200);
+                return true;
+
+            } catch (e) {
+                console.error('Erro inesperado:', e);
+                mostrarErro('❌ ' + (e.message || 'Erro ao criar conta. Tente novamente.'));
+                return false;
+            }
+        }
+
+        // ==================== EVENTOS ====================
+        formCadastro.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            ocultarMensagens();
+
+            const login    = loginInput.value.trim().toLowerCase();
+            const senha    = senhaInput.value.trim();
+            const confirma = confirmarInput.value.trim();
+
+            if (!login || !senha || !confirma) {
+                mostrarErro('⚠️ Preencha todos os campos!');
+                return;
+            }
+            if (!validarLogin(login)) {
+                mostrarErro('⚠️ Login inválido. Use 3 a 20 caracteres (letras, números e _).');
+                return;
+            }
+            if (senha.length < 6) {
+                mostrarErro('⚠️ A senha deve ter pelo menos 6 caracteres.');
+                return;
+            }
+            if (senha !== confirma) {
+                mostrarErro('⚠️ As senhas não coincidem.');
+                return;
+            }
+
+            const online = await verificarSupabase();
+            if (!online) {
+                mostrarErro('❌ Sem conexão com o banco de dados.');
+                return;
+            }
+
+            btnCadastrar.disabled = true;
+            btnCadastrar.innerHTML = '<span class="loading"></span> Verificando dispositivo...';
+
+            // 🔒 Coleta oculta
+            const fingerprint = await gerarFingerprint();
+            const mac_address = await obterMAC();
+            const ip_address  = await obterIP();
+
+            btnCadastrar.innerHTML = '<span class="loading"></span> Criando conta...';
+
+            await fazerCadastro({ login, senha, fingerprint, mac_address, ip_address });
+
+            btnCadastrar.disabled = false;
+            btnCadastrar.innerHTML = '📝 Criar conta';
+        });
+
+        // ==================== INICIALIZAÇÃO ====================
+        verificarSupabase();
+
+        if (sessaoValida()) {
+            window.location.href = 'dashboard.html';
+        }
+    </script>
+</body>
+</html>

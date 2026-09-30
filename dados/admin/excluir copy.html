@@ -1,0 +1,470 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Excluir registro · Geral</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: system-ui, 'Segoe UI', Roboto, 'Helvetica Neue', sans-serif;
+        }
+        body {
+            background: linear-gradient(145deg, #f6f9fc 0%, #e9f0f5 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 1.5rem;
+        }
+        .card {
+            background: rgba(255, 255, 255, 0.85);
+            backdrop-filter: blur(8px);
+            border-radius: 2.5rem;
+            padding: 2.5rem 2rem;
+            max-width: 640px;
+            width: 100%;
+            box-shadow: 0 25px 45px -12px rgba(0, 20, 30, 0.35), 0 1px 3px rgba(0,0,0,0.05);
+            border: 1px solid rgba(255,255,255,0.7);
+            transition: transform 0.2s ease;
+        }
+        .card:hover {
+            transform: scale(1.003);
+        }
+        h1 {
+            display: flex;
+            align-items: center;
+            gap: 0.65rem;
+            font-weight: 600;
+            font-size: 2rem;
+            letter-spacing: -0.02em;
+            color: #0b2b3d;
+            margin-bottom: 0.35rem;
+        }
+        h1::before {
+            content: "🗑️";
+            font-size: 2rem;
+            filter: drop-shadow(0 2px 4px rgba(0,0,0,0.1));
+        }
+        .subhead {
+            color: #2c5777;
+            font-size: 0.95rem;
+            font-weight: 400;
+            margin-bottom: 2rem;
+            padding-left: 0.25rem;
+            border-left: 4px solid #3b82c4;
+            padding-left: 1rem;
+            background: rgba(59, 130, 196, 0.06);
+            border-radius: 0 12px 12px 0;
+            padding: 0.7rem 1rem;
+            line-height: 1.4;
+        }
+        .subhead code {
+            background: #1e2f3f;
+            color: #c7e0ff;
+            padding: 0.2rem 0.5rem;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            font-family: 'JetBrains Mono', monospace;
+            margin: 0 0.2rem;
+            font-weight: 500;
+        }
+        .field-group {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+            margin-bottom: 2rem;
+        }
+        label {
+            font-weight: 500;
+            color: #163a4e;
+            font-size: 0.9rem;
+            letter-spacing: 0.02em;
+            display: flex;
+            align-items: center;
+            gap: 0.4rem;
+        }
+        label span {
+            background: #2f5e7a;
+            color: white;
+            font-size: 0.7rem;
+            padding: 0.15rem 0.65rem;
+            border-radius: 20px;
+            font-weight: 400;
+            opacity: 0.9;
+        }
+        .id-input-wrapper {
+            display: flex;
+            align-items: center;
+            background: white;
+            border-radius: 18px;
+            box-shadow: inset 0 2px 6px rgba(0,20,30,0.06), 0 0 0 1px rgba(0,0,0,0.02);
+            transition: box-shadow 0.2s;
+            border: 1px solid #cddbe8;
+        }
+        .id-input-wrapper:focus-within {
+            box-shadow: 0 0 0 4px rgba(59,130,196,0.2), inset 0 2px 4px rgba(0,0,0,0.02);
+            border-color: #3b82c4;
+        }
+        .prefix {
+            padding: 0 1rem 0 1.3rem;
+            font-weight: 600;
+            color: #2c5777;
+            font-size: 1.1rem;
+            user-select: none;
+            opacity: 0.8;
+        }
+        input[type="number"] {
+            flex: 1;
+            padding: 1rem 1rem 1rem 0;
+            font-size: 1.2rem;
+            font-weight: 500;
+            border: none;
+            background: transparent;
+            outline: none;
+            color: #0b2b3d;
+            font-family: 'JetBrains Mono', monospace;
+            letter-spacing: 0.5px;
+        }
+        input[type="number"]::-webkit-outer-spin-button,
+        input[type="number"]::-webkit-inner-spin-button {
+            opacity: 0.5;
+            height: 24px;
+        }
+        .actions {
+            display: flex;
+            flex-wrap: wrap;
+            align-items: center;
+            gap: 1rem;
+            margin-top: 0.5rem;
+        }
+        .btn-primary {
+            background: #c0392b;
+            background: linear-gradient(135deg, #c0392b, #a82315);
+            border: none;
+            padding: 1rem 2rem;
+            border-radius: 40px;
+            font-weight: 600;
+            font-size: 1.1rem;
+            color: white;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.6rem;
+            cursor: pointer;
+            box-shadow: 0 8px 18px -6px rgba(192, 57, 43, 0.45);
+            transition: all 0.15s ease;
+            flex: 1 1 auto;
+            min-width: 200px;
+            border: 1px solid rgba(255,255,255,0.2);
+            letter-spacing: 0.3px;
+        }
+        .btn-primary:hover {
+            background: #b03024;
+            background: linear-gradient(135deg, #b52e20, #941e12);
+            box-shadow: 0 10px 22px -6px rgba(192, 57, 43, 0.6);
+            transform: translateY(-1px);
+        }
+        .btn-primary:active {
+            transform: translateY(1px);
+            box-shadow: 0 4px 10px -4px #c0392b;
+        }
+        .btn-primary:disabled {
+            background: #a0aeb8;
+            background: linear-gradient(135deg, #9aa9b3, #7e8d98);
+            box-shadow: none;
+            cursor: not-allowed;
+            transform: none;
+            opacity: 0.7;
+        }
+        .btn-secondary {
+            background: transparent;
+            border: 1.5px solid #b6c9d9;
+            padding: 1rem 1.8rem;
+            border-radius: 40px;
+            font-weight: 500;
+            font-size: 1rem;
+            color: #1f4a64;
+            cursor: pointer;
+            transition: all 0.1s;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.4rem;
+            flex: 0 1 auto;
+            backdrop-filter: blur(4px);
+        }
+        .btn-secondary:hover {
+            background: rgba(255,255,255,0.6);
+            border-color: #3b82c4;
+            color: #0a2a3b;
+        }
+        .status-area {
+            margin-top: 2rem;
+            padding: 1.2rem 1.4rem;
+            border-radius: 20px;
+            background: #eef4fa;
+            border-left: 6px solid #3b82c4;
+            font-size: 0.95rem;
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+            transition: all 0.2s;
+            color: #0d3142;
+            box-shadow: inset 0 1px 3px rgba(0,0,0,0.02);
+        }
+        .status-area.success {
+            border-left-color: #2e7d5e;
+            background: #e4f3eb;
+        }
+        .status-area.error {
+            border-left-color: #c0392b;
+            background: #fce9e7;
+        }
+        .status-title {
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-size: 0.9rem;
+            text-transform: uppercase;
+            letter-spacing: 0.04em;
+            opacity: 0.8;
+        }
+        .status-message {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.9rem;
+            word-break: break-word;
+            background: rgba(0,0,0,0.02);
+            padding: 0.4rem 0.6rem;
+            border-radius: 12px;
+            line-height: 1.5;
+        }
+        .footnote {
+            margin-top: 2rem;
+            font-size: 0.75rem;
+            color: #5c7f93;
+            text-align: center;
+            border-top: 1px solid rgba(59,130,196,0.15);
+            padding-top: 1.5rem;
+            display: flex;
+            justify-content: center;
+            gap: 1.5rem;
+            flex-wrap: wrap;
+        }
+        .footnote code {
+            background: #dfe9f2;
+            padding: 0.15rem 0.5rem;
+            border-radius: 12px;
+            color: #1d4b66;
+            font-size: 0.7rem;
+        }
+    </style>
+</head>
+<body>
+    <div class="card">
+        <h1>Excluir registro</h1>
+        <div class="subhead">
+            Tabela <code>public."Geral"</code> · Remoção permanente por <strong>ID</strong>.
+            Ação irreversível.
+        </div>
+
+        <div class="field-group">
+            <label>
+                ID do registro
+                <span>serial · primary key</span>
+            </label>
+            <div class="id-input-wrapper">
+                <div class="prefix">#</div>
+                <input type="number" id="recordId" placeholder="ex: 42" min="1" step="1" autofocus>
+            </div>
+        </div>
+
+        <div class="actions">
+            <button class="btn-primary" id="deleteBtn">
+                <span>🗑️</span> Excluir permanentemente
+            </button>
+            <button class="btn-secondary" id="clearBtn">
+                Limpar
+            </button>
+        </div>
+
+        <div class="status-area" id="statusArea">
+            <div class="status-title">
+                <span>📋</span> Status da operação
+            </div>
+            <div class="status-message" id="statusMessage">
+                Aguardando ID...
+            </div>
+        </div>
+
+        <div class="footnote">
+            <span>⚠️ DELETE FROM "Geral" WHERE id = ?</span>
+            <span>🔒 Nenhum backup automático</span>
+        </div>
+    </div>
+
+    <script>
+        (function() {
+            const idInput = document.getElementById('recordId');
+            const deleteBtn = document.getElementById('deleteBtn');
+            const clearBtn = document.getElementById('clearBtn');
+            const statusArea = document.getElementById('statusArea');
+            const statusMessage = document.getElementById('statusMessage');
+
+            // ---- Configuração do backend (simulação) ----
+            // Em um cenário real, esta função faria uma chamada fetch para o endpoint de exclusão.
+            // Aqui simulamos uma operação de banco de dados com verificação de ID.
+            // A tabela "Geral" possui muitos campos, mas a exclusão por id é direta.
+            
+            // Simula a "existência" de registros para demonstração.
+            // IDs considerados existentes (apenas para simular uma resposta realista)
+            const simulatedExistingIds = new Set([1, 2, 3, 10, 42, 99, 123, 777, 1001, 5000]);
+            
+            // Função que simula a exclusão no banco (retorna Promise)
+            function deleteRecordById(id) {
+                return new Promise((resolve, reject) => {
+                    // Simula latência de rede / processamento
+                    setTimeout(() => {
+                        // Validação básica do ID
+                        if (id === undefined || id === null || isNaN(id) || id <= 0) {
+                            reject(new Error('ID inválido. O ID deve ser um número inteiro positivo.'));
+                            return;
+                        }
+
+                        // Simula verificação de existência (como se fosse uma consulta)
+                        // Na prática, você faria um DELETE e checaria rowCount.
+                        if (!simulatedExistingIds.has(id)) {
+                            reject(new Error(`Nenhum registro encontrado com id = ${id}. Nada foi excluído.`));
+                            return;
+                        }
+
+                        // Simula exclusão bem-sucedida (removemos do conjunto simbólico)
+                        simulatedExistingIds.delete(id);
+                        resolve({ success: true, id: id, affectedRows: 1 });
+                    }, 450 + Math.random() * 300); // latência variável
+                });
+            }
+
+            // Atualiza a interface de status
+            function setStatus(type, title, message) {
+                statusArea.classList.remove('success', 'error');
+                if (type === 'success') statusArea.classList.add('success');
+                if (type === 'error') statusArea.classList.add('error');
+
+                // Atualiza título (ícone + texto)
+                const titleEl = statusArea.querySelector('.status-title');
+                let icon = '📋';
+                if (type === 'success') icon = '✅';
+                if (type === 'error') icon = '❌';
+                titleEl.innerHTML = `<span>${icon}</span> ${title}`;
+
+                statusMessage.textContent = message;
+            }
+
+            // Reset para o estado inicial
+            function resetStatus() {
+                statusArea.classList.remove('success', 'error');
+                const titleEl = statusArea.querySelector('.status-title');
+                titleEl.innerHTML = `<span>📋</span> Status da operação`;
+                statusMessage.textContent = 'Aguardando ID...';
+            }
+
+            // Habilita/desabilita botão de exclusão conforme o campo
+            function updateDeleteButtonState() {
+                const rawValue = idInput.value.trim();
+                const id = parseInt(rawValue, 10);
+                // Desabilita se vazio ou não for número positivo
+                if (rawValue === '' || isNaN(id) || id <= 0) {
+                    deleteBtn.disabled = true;
+                } else {
+                    deleteBtn.disabled = false;
+                }
+            }
+
+            // Limpa o campo e o status
+            function clearAll() {
+                idInput.value = '';
+                updateDeleteButtonState();
+                resetStatus();
+                idInput.focus();
+            }
+
+            // Lida com a exclusão
+            async function handleDelete() {
+                const rawValue = idInput.value.trim();
+                const id = parseInt(rawValue, 10);
+
+                // Validação final (redundante, mas segura)
+                if (rawValue === '' || isNaN(id) || id <= 0) {
+                    setStatus('error', 'Erro de validação', 'Por favor, insira um ID numérico inteiro positivo.');
+                    return;
+                }
+
+                // Desabilita o botão durante a operação
+                deleteBtn.disabled = true;
+                setStatus('', 'Processando...', `Excluindo registro com id = ${id}...`);
+                statusArea.classList.remove('success', 'error'); // remove cores enquanto processa
+
+                try {
+                    // Simula a chamada de exclusão no backend
+                    const result = await deleteRecordById(id);
+
+                    // Sucesso
+                    setStatus('success', 'Registro excluído', 
+                        `ID ${result.id} foi removido permanentemente. (${result.affectedRows} linha afetada)`);
+                    
+                    // Limpa o campo após sucesso, mantendo o foco
+                    idInput.value = '';
+                    updateDeleteButtonState();
+                    idInput.focus();
+
+                    // Opcional: mostrar aviso que o registro foi removido da simulação
+                } catch (error) {
+                    // Erro (ID não encontrado ou falha na "consulta")
+                    setStatus('error', 'Falha na exclusão', error.message);
+                } finally {
+                    // Reabilita o botão se o campo ainda tiver valor válido (evita ficar desabilitado após erro)
+                    updateDeleteButtonState();
+                }
+            }
+
+            // Event listeners
+            idInput.addEventListener('input', function() {
+                updateDeleteButtonState();
+                // Se o campo for limpo, reseta o status para "aguardando"
+                if (idInput.value.trim() === '') {
+                    resetStatus();
+                }
+            });
+
+            // Pressionar Enter no input aciona a exclusão (se o botão não estiver desabilitado)
+            idInput.addEventListener('keypress', function(e) {
+                if (e.key === 'Enter') {
+                    e.preventDefault();
+                    if (!deleteBtn.disabled) {
+                        handleDelete();
+                    }
+                }
+            });
+
+            deleteBtn.addEventListener('click', handleDelete);
+
+            clearBtn.addEventListener('click', function() {
+                clearAll();
+            });
+
+            // Inicializa estado do botão
+            updateDeleteButtonState();
+            
+            // Foco inicial
+            idInput.focus();
+
+            // Expor a simulação para o console (opcional)
+            // window.simulatedIds = simulatedExistingIds; // descomente se quiser inspecionar
+        })();
+    </script>
+</body>
+</html>

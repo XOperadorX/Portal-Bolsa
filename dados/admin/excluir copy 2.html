@@ -1,0 +1,721 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gerenciar registros · Geral</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: system-ui, 'Segoe UI', Roboto, 'Helvetica Neue', sans-serif;
+        }
+        body {
+            background: linear-gradient(145deg, #f6f9fc 0%, #e9f0f5 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 1.5rem;
+        }
+        .card {
+            background: rgba(255, 255, 255, 0.88);
+            backdrop-filter: blur(10px);
+            border-radius: 2.5rem;
+            padding: 2.5rem 2rem;
+            max-width: 880px;
+            width: 100%;
+            box-shadow: 0 25px 45px -12px rgba(0, 20, 30, 0.35), 0 1px 3px rgba(0,0,0,0.05);
+            border: 1px solid rgba(255,255,255,0.7);
+            transition: transform 0.2s ease;
+        }
+        h1 {
+            display: flex;
+            align-items: center;
+            gap: 0.65rem;
+            font-weight: 600;
+            font-size: 2rem;
+            letter-spacing: -0.02em;
+            color: #0b2b3d;
+            margin-bottom: 0.35rem;
+        }
+        h1::before {
+            content: "🗂️";
+            font-size: 2rem;
+            filter: drop-shadow(0 2px 4px rgba(0,0,0,0.1));
+        }
+        .subhead {
+            color: #2c5777;
+            font-size: 0.95rem;
+            font-weight: 400;
+            margin-bottom: 2rem;
+            border-left: 4px solid #3b82c4;
+            background: rgba(59, 130, 196, 0.06);
+            border-radius: 0 12px 12px 0;
+            padding: 0.7rem 1rem;
+            line-height: 1.4;
+        }
+        .subhead code {
+            background: #1e2f3f;
+            color: #c7e0ff;
+            padding: 0.2rem 0.5rem;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            font-family: 'JetBrains Mono', monospace;
+            margin: 0 0.2rem;
+            font-weight: 500;
+        }
+
+        /* Layout de duas colunas */
+        .grid-2 {
+            display: grid;
+            grid-template-columns: 1.2fr 0.9fr;
+            gap: 2rem;
+        }
+        @media (max-width: 700px) {
+            .grid-2 {
+                grid-template-columns: 1fr;
+                gap: 1.5rem;
+            }
+        }
+
+        /* Painel de lista de IDs */
+        .panel-title {
+            font-weight: 600;
+            font-size: 1rem;
+            color: #163a4e;
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            letter-spacing: 0.01em;
+        }
+        .panel-title .badge {
+            background: #2f5e7a;
+            color: white;
+            font-size: 0.75rem;
+            padding: 0.2rem 0.7rem;
+            border-radius: 20px;
+            font-weight: 500;
+        }
+        .search-box {
+            width: 100%;
+            padding: 0.7rem 1rem;
+            border-radius: 40px;
+            border: 1px solid #cddbe8;
+            background: white;
+            font-size: 0.9rem;
+            margin-bottom: 1rem;
+            outline: none;
+            transition: box-shadow 0.15s;
+        }
+        .search-box:focus {
+            box-shadow: 0 0 0 3px rgba(59,130,196,0.15);
+            border-color: #3b82c4;
+        }
+        .id-list {
+            max-height: 380px;
+            overflow-y: auto;
+            background: white;
+            border-radius: 24px;
+            padding: 0.6rem;
+            border: 1px solid #e2ebf3;
+            box-shadow: inset 0 1px 4px rgba(0,0,0,0.02);
+            display: flex;
+            flex-direction: column;
+            gap: 0.35rem;
+        }
+        .id-list::-webkit-scrollbar {
+            width: 8px;
+        }
+        .id-list::-webkit-scrollbar-track {
+            background: #eef4fa;
+            border-radius: 10px;
+        }
+        .id-list::-webkit-scrollbar-thumb {
+            background: #b6c9d9;
+            border-radius: 10px;
+        }
+        .id-item {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0.65rem 1rem;
+            border-radius: 40px;
+            background: #f9fcff;
+            border: 1px solid transparent;
+            transition: all 0.12s;
+            cursor: pointer;
+            font-family: 'JetBrains Mono', monospace;
+            font-weight: 500;
+            color: #0b2b3d;
+        }
+        .id-item:hover {
+            background: #e8f2fc;
+            border-color: #b3d4f0;
+            transform: translateX(2px);
+        }
+        .id-item.selected {
+            background: #d4e7fa;
+            border-color: #3b82c4;
+            box-shadow: 0 0 0 2px rgba(59,130,196,0.2);
+        }
+        .id-item .id-num {
+            font-size: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 0.6rem;
+        }
+        .id-item .id-num .icon {
+            opacity: 0.6;
+            font-size: 0.85rem;
+        }
+        .id-item .status-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: #2e7d5e;
+            box-shadow: 0 0 0 2px rgba(46,125,94,0.2);
+        }
+        .id-item .delete-mini {
+            background: transparent;
+            border: none;
+            color: #b03024;
+            font-size: 1.1rem;
+            padding: 0.2rem 0.5rem;
+            border-radius: 30px;
+            cursor: pointer;
+            opacity: 0.4;
+            transition: all 0.1s;
+            font-weight: 600;
+        }
+        .id-item .delete-mini:hover {
+            opacity: 1;
+            background: #fce9e7;
+        }
+        .empty-list {
+            padding: 2rem 1rem;
+            text-align: center;
+            color: #7a9bb0;
+            font-size: 0.9rem;
+        }
+
+        /* Painel direito - formulário */
+        .field-group {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+            margin-bottom: 1.5rem;
+        }
+        label {
+            font-weight: 500;
+            color: #163a4e;
+            font-size: 0.9rem;
+            letter-spacing: 0.02em;
+            display: flex;
+            align-items: center;
+            gap: 0.4rem;
+        }
+        label span {
+            background: #2f5e7a;
+            color: white;
+            font-size: 0.7rem;
+            padding: 0.15rem 0.65rem;
+            border-radius: 20px;
+            font-weight: 400;
+            opacity: 0.9;
+        }
+        .id-input-wrapper {
+            display: flex;
+            align-items: center;
+            background: white;
+            border-radius: 18px;
+            box-shadow: inset 0 2px 6px rgba(0,20,30,0.06), 0 0 0 1px rgba(0,0,0,0.02);
+            transition: box-shadow 0.2s;
+            border: 1px solid #cddbe8;
+        }
+        .id-input-wrapper:focus-within {
+            box-shadow: 0 0 0 4px rgba(59,130,196,0.2), inset 0 2px 4px rgba(0,0,0,0.02);
+            border-color: #3b82c4;
+        }
+        .prefix {
+            padding: 0 1rem 0 1.3rem;
+            font-weight: 600;
+            color: #2c5777;
+            font-size: 1.1rem;
+            user-select: none;
+            opacity: 0.8;
+        }
+        input[type="number"] {
+            flex: 1;
+            padding: 1rem 1rem 1rem 0;
+            font-size: 1.2rem;
+            font-weight: 500;
+            border: none;
+            background: transparent;
+            outline: none;
+            color: #0b2b3d;
+            font-family: 'JetBrains Mono', monospace;
+            letter-spacing: 0.5px;
+        }
+        input[type="number"]::-webkit-outer-spin-button,
+        input[type="number"]::-webkit-inner-spin-button {
+            opacity: 0.5;
+            height: 24px;
+        }
+        .actions {
+            display: flex;
+            flex-wrap: wrap;
+            align-items: center;
+            gap: 0.8rem;
+            margin-bottom: 1.5rem;
+        }
+        .btn-primary {
+            background: #c0392b;
+            background: linear-gradient(135deg, #c0392b, #a82315);
+            border: none;
+            padding: 0.9rem 1.6rem;
+            border-radius: 40px;
+            font-weight: 600;
+            font-size: 1rem;
+            color: white;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+            cursor: pointer;
+            box-shadow: 0 8px 18px -6px rgba(192, 57, 43, 0.45);
+            transition: all 0.15s ease;
+            flex: 1 1 auto;
+            min-width: 160px;
+            border: 1px solid rgba(255,255,255,0.2);
+        }
+        .btn-primary:hover {
+            background: #b03024;
+            box-shadow: 0 10px 22px -6px rgba(192, 57, 43, 0.6);
+            transform: translateY(-1px);
+        }
+        .btn-primary:active {
+            transform: translateY(1px);
+            box-shadow: 0 4px 10px -4px #c0392b;
+        }
+        .btn-primary:disabled {
+            background: #a0aeb8;
+            box-shadow: none;
+            cursor: not-allowed;
+            transform: none;
+            opacity: 0.7;
+        }
+        .btn-secondary {
+            background: transparent;
+            border: 1.5px solid #b6c9d9;
+            padding: 0.9rem 1.4rem;
+            border-radius: 40px;
+            font-weight: 500;
+            font-size: 0.95rem;
+            color: #1f4a64;
+            cursor: pointer;
+            transition: all 0.1s;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.4rem;
+            backdrop-filter: blur(4px);
+        }
+        .btn-secondary:hover {
+            background: rgba(255,255,255,0.6);
+            border-color: #3b82c4;
+            color: #0a2a3b;
+        }
+
+        .status-area {
+            padding: 1rem 1.2rem;
+            border-radius: 20px;
+            background: #eef4fa;
+            border-left: 6px solid #3b82c4;
+            font-size: 0.9rem;
+            display: flex;
+            flex-direction: column;
+            gap: 0.4rem;
+            transition: all 0.2s;
+            color: #0d3142;
+            box-shadow: inset 0 1px 3px rgba(0,0,0,0.02);
+            margin-top: 1rem;
+        }
+        .status-area.success {
+            border-left-color: #2e7d5e;
+            background: #e4f3eb;
+        }
+        .status-area.error {
+            border-left-color: #c0392b;
+            background: #fce9e7;
+        }
+        .status-title {
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-size: 0.85rem;
+            text-transform: uppercase;
+            letter-spacing: 0.04em;
+            opacity: 0.8;
+        }
+        .status-message {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.85rem;
+            word-break: break-word;
+            background: rgba(0,0,0,0.02);
+            padding: 0.4rem 0.6rem;
+            border-radius: 12px;
+            line-height: 1.5;
+        }
+
+        .footnote {
+            margin-top: 2rem;
+            font-size: 0.75rem;
+            color: #5c7f93;
+            text-align: center;
+            border-top: 1px solid rgba(59,130,196,0.15);
+            padding-top: 1.5rem;
+            display: flex;
+            justify-content: center;
+            gap: 1.5rem;
+            flex-wrap: wrap;
+        }
+        .footnote code {
+            background: #dfe9f2;
+            padding: 0.15rem 0.5rem;
+            border-radius: 12px;
+            color: #1d4b66;
+            font-size: 0.7rem;
+        }
+
+        .info-line {
+            display: flex;
+            justify-content: space-between;
+            font-size: 0.8rem;
+            color: #4a6a7e;
+            margin-top: 0.5rem;
+            padding: 0 0.25rem;
+        }
+    </style>
+</head>
+<body>
+    <div class="card">
+        <h1>Gerenciar registros</h1>
+        <div class="subhead">
+            Tabela <code>public."Geral"</code> · IDs disponíveis e exclusão permanente.
+        </div>
+
+        <div class="grid-2">
+            <!-- COLUNA ESQUERDA: LISTA DE IDs -->
+            <div>
+                <div class="panel-title">
+                    <span>📋 IDs existentes</span>
+                    <span class="badge" id="idCount">0</span>
+                </div>
+                <input type="text" class="search-box" id="searchInput" placeholder="🔍 Filtrar por ID...">
+                <div class="id-list" id="idList">
+                    <!-- Preenchido via JavaScript -->
+                </div>
+                <div class="info-line">
+                    <span>Clique em um ID para selecionar</span>
+                    <span>🗑️ excluir direto</span>
+                </div>
+            </div>
+
+            <!-- COLUNA DIREITA: FORMULÁRIO -->
+            <div>
+                <div class="field-group">
+                    <label>
+                        ID selecionado / para excluir
+                        <span>primary key</span>
+                    </label>
+                    <div class="id-input-wrapper">
+                        <div class="prefix">#</div>
+                        <input type="number" id="recordId" placeholder="ex: 42" min="1" step="1">
+                    </div>
+                </div>
+
+                <div class="actions">
+                    <button class="btn-primary" id="deleteBtn">
+                        <span>🗑️</span> Excluir
+                    </button>
+                    <button class="btn-secondary" id="clearBtn">
+                        Limpar
+                    </button>
+                </div>
+
+                <div class="status-area" id="statusArea">
+                    <div class="status-title">
+                        <span>📋</span> Status
+                    </div>
+                    <div class="status-message" id="statusMessage">
+                        Selecione um ID na lista ou digite.
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="footnote">
+            <span>⚠️ DELETE FROM "Geral" WHERE id = ?</span>
+            <span>🔒 Sem backup automático</span>
+        </div>
+    </div>
+
+    <script>
+        (function() {
+            // ---- ESTADO GLOBAL ----
+            // Simula os IDs existentes na tabela "Geral".
+            // Em um sistema real, isso viria de uma chamada API (GET /ids).
+            // Aqui usamos um Set para refletir a exclusão.
+            const existingIds = new Set([
+                1, 2, 3, 5, 8, 10, 12, 15, 18, 21, 25, 30, 33, 37, 42, 45, 50,
+                55, 60, 66, 72, 78, 84, 91, 99, 105, 112, 120, 128, 136, 144,
+                153, 162, 172, 182, 193, 204, 216, 228, 241, 255, 269, 284, 300,
+                317, 335, 354, 374, 395, 417, 440, 464, 489, 515, 542, 570, 599,
+                629, 660, 692, 725, 759, 794, 830, 867, 905, 944, 984, 1025, 1067,
+                1110, 1154, 1199, 1245, 1292, 1340, 1389, 1439, 1490, 1542, 1595,
+                1649, 1704, 1760, 1817, 1875, 1934, 1994, 2055, 2117, 2180, 2244,
+                2309, 2375, 2442, 2510, 2579, 2649, 2720, 2792, 2865, 2939, 3014,
+                3090, 3167, 3245, 3324, 3404, 3485, 3567, 3650, 3734, 3819, 3905,
+                3992, 4080, 4169, 4259, 4350, 4442, 4535, 4629, 4724, 4820, 4917,
+                5015, 5114, 5214, 5315, 5417, 5520, 5624, 5729, 5835, 5942, 6050,
+                6159, 6269, 6380, 6492, 6605, 6719, 6834, 6950, 7067, 7185, 7304,
+                7424, 7545, 7667, 7790, 7914, 8039, 8165, 8292, 8420, 8549, 8679,
+                8810, 8942, 9075, 9209, 9344, 9480, 9617, 9755, 9894, 10034, 10175
+            ]);
+
+            // ---- DOM ELEMENTS ----
+            const idListEl = document.getElementById('idList');
+            const idCountEl = document.getElementById('idCount');
+            const searchInput = document.getElementById('searchInput');
+            const recordIdInput = document.getElementById('recordId');
+            const deleteBtn = document.getElementById('deleteBtn');
+            const clearBtn = document.getElementById('clearBtn');
+            const statusArea = document.getElementById('statusArea');
+            const statusMessage = document.getElementById('statusMessage');
+
+            let selectedId = null; // ID destacado na lista (opcional)
+
+            // ---- FUNÇÕES AUXILIARES ----
+            function setStatus(type, title, message) {
+                statusArea.classList.remove('success', 'error');
+                if (type === 'success') statusArea.classList.add('success');
+                if (type === 'error') statusArea.classList.add('error');
+
+                const titleEl = statusArea.querySelector('.status-title');
+                let icon = '📋';
+                if (type === 'success') icon = '✅';
+                if (type === 'error') icon = '❌';
+                titleEl.innerHTML = `<span>${icon}</span> ${title}`;
+                statusMessage.textContent = message;
+            }
+
+            function resetStatus() {
+                statusArea.classList.remove('success', 'error');
+                const titleEl = statusArea.querySelector('.status-title');
+                titleEl.innerHTML = `<span>📋</span> Status`;
+                statusMessage.textContent = 'Selecione um ID na lista ou digite.';
+            }
+
+            function updateDeleteButtonState() {
+                const raw = recordIdInput.value.trim();
+                const id = parseInt(raw, 10);
+                // Habilita apenas se for número positivo E existir no conjunto (simulando integridade)
+                if (raw === '' || isNaN(id) || id <= 0) {
+                    deleteBtn.disabled = true;
+                    return;
+                }
+                // Em um cenário real, a validação de existência poderia ser feita no backend.
+                // Aqui desabilitamos se o ID não existir (feedback imediato).
+                if (!existingIds.has(id)) {
+                    deleteBtn.disabled = true;
+                } else {
+                    deleteBtn.disabled = false;
+                }
+            }
+
+            // Renderiza a lista de IDs com base no filtro de busca
+            function renderIdList(filterText = '') {
+                const filter = filterText.trim().toLowerCase();
+                // Ordena os IDs numericamente
+                const sortedIds = Array.from(existingIds).sort((a, b) => a - b);
+                
+                // Filtra
+                const filtered = filter === '' 
+                    ? sortedIds 
+                    : sortedIds.filter(id => id.toString().includes(filter));
+
+                idCountEl.textContent = filtered.length;
+
+                if (filtered.length === 0) {
+                    idListEl.innerHTML = `<div class="empty-list">Nenhum ID encontrado.</div>`;
+                    return;
+                }
+
+                let html = '';
+                filtered.forEach(id => {
+                    const isSelected = (selectedId === id) ? 'selected' : '';
+                    html += `
+                        <div class="id-item ${isSelected}" data-id="${id}">
+                            <div class="id-num">
+                                <span class="icon">#</span>
+                                <span>${id}</span>
+                                <span class="status-dot"></span>
+                            </div>
+                            <button class="delete-mini" data-id="${id}" title="Excluir ID ${id}">✕</button>
+                        </div>
+                    `;
+                });
+                idListEl.innerHTML = html;
+
+                // Adiciona eventos aos itens recém-criados
+                document.querySelectorAll('.id-item').forEach(item => {
+                    const id = parseInt(item.dataset.id, 10);
+                    
+                    // Clique no item (exceto no botão de deletar) -> preenche o input
+                    item.addEventListener('click', (e) => {
+                        if (e.target.closest('.delete-mini')) return; // ignorar clique no botão de deletar
+                        
+                        selectedId = id;
+                        recordIdInput.value = id;
+                        updateDeleteButtonState();
+                        // Re-renderiza para destacar
+                        renderIdList(searchInput.value);
+                        // Foca no input
+                        recordIdInput.focus();
+                        // Limpa status anterior
+                        resetStatus();
+                    });
+                });
+
+                // Eventos dos botões "delete-mini"
+                document.querySelectorAll('.delete-mini').forEach(btn => {
+                    btn.addEventListener('click', (e) => {
+                        e.stopPropagation();
+                        const id = parseInt(btn.dataset.id, 10);
+                        // Preenche e executa a exclusão direta
+                        recordIdInput.value = id;
+                        selectedId = id;
+                        updateDeleteButtonState();
+                        // Pequeno delay para garantir atualização visual
+                        setTimeout(() => handleDelete(), 10);
+                    });
+                });
+            }
+
+            // ---- FUNÇÃO DE EXCLUSÃO (SIMULADA) ----
+            async function deleteRecordById(id) {
+                return new Promise((resolve, reject) => {
+                    setTimeout(() => {
+                        if (id === undefined || id === null || isNaN(id) || id <= 0) {
+                            reject(new Error('ID inválido.'));
+                            return;
+                        }
+                        if (!existingIds.has(id)) {
+                            reject(new Error(`ID ${id} não encontrado. Nada foi excluído.`));
+                            return;
+                        }
+                        // Simula exclusão
+                        existingIds.delete(id);
+                        resolve({ success: true, id: id, affectedRows: 1 });
+                    }, 350 + Math.random() * 200);
+                });
+            }
+
+            // ---- HANDLE DELETE ----
+            async function handleDelete() {
+                const rawValue = recordIdInput.value.trim();
+                const id = parseInt(rawValue, 10);
+
+                if (rawValue === '' || isNaN(id) || id <= 0) {
+                    setStatus('error', 'Erro', 'Insira um ID numérico positivo.');
+                    return;
+                }
+
+                if (!existingIds.has(id)) {
+                    setStatus('error', 'ID inexistente', `O ID ${id} não está na lista.`);
+                    // Atualiza a lista (já que pode ter sido removido por outra ação)
+                    renderIdList(searchInput.value);
+                    updateDeleteButtonState();
+                    return;
+                }
+
+                deleteBtn.disabled = true;
+                setStatus('', 'Processando...', `Excluindo registro #${id}...`);
+                statusArea.classList.remove('success', 'error');
+
+                try {
+                    const result = await deleteRecordById(id);
+                    setStatus('success', 'Excluído', `ID ${result.id} removido permanentemente. (${result.affectedRows} linha)`);
+                    
+                    // Limpa campo e seleção
+                    recordIdInput.value = '';
+                    selectedId = null;
+                    
+                    // Atualiza a lista e contagem
+                    renderIdList(searchInput.value);
+                    updateDeleteButtonState();
+                    
+                    // Se o filtro de busca ainda mostrar algo, mantém
+                } catch (error) {
+                    setStatus('error', 'Falha', error.message);
+                    // Reabilita se ainda existir
+                    updateDeleteButtonState();
+                    renderIdList(searchInput.value);
+                } finally {
+                    // Garante que o botão reflita o estado atual do input
+                    updateDeleteButtonState();
+                }
+            }
+
+            // ---- EVENT LISTENERS ----
+            searchInput.addEventListener('input', (e) => {
+                renderIdList(e.target.value);
+            });
+
+            recordIdInput.addEventListener('input', () => {
+                const raw = recordIdInput.value.trim();
+                const id = parseInt(raw, 10);
+                // Atualiza seleção visual na lista
+                if (!isNaN(id) && existingIds.has(id)) {
+                    selectedId = id;
+                } else {
+                    selectedId = null;
+                }
+                renderIdList(searchInput.value);
+                updateDeleteButtonState();
+                if (raw === '') resetStatus();
+            });
+
+            recordIdInput.addEventListener('keypress', (e) => {
+                if (e.key === 'Enter' && !deleteBtn.disabled) {
+                    e.preventDefault();
+                    handleDelete();
+                }
+            });
+
+            deleteBtn.addEventListener('click', handleDelete);
+
+            clearBtn.addEventListener('click', () => {
+                recordIdInput.value = '';
+                selectedId = null;
+                renderIdList(searchInput.value);
+                updateDeleteButtonState();
+                resetStatus();
+                recordIdInput.focus();
+            });
+
+            // ---- INICIALIZAÇÃO ----
+            renderIdList();
+            updateDeleteButtonState();
+            resetStatus();
+            
+            // Expor para debug (opcional)
+            // window.existingIds = existingIds;
+        })();
+    </script>
+</body>
+</html>

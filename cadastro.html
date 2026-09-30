@@ -73,8 +73,8 @@
     <div class="cadastro-container">
         <h1>📝 Criar Conta</h1>
         <p class="subtitle">Preencha os dados para se cadastrar</p>
-
         <div id="mensagemErro" class="mensagem-erro"></div>
+        <p class="subtitle">Esse Aparelho já cadastrado . Não é possível repetir.</p>
         <div id="mensagemSucesso" class="mensagem-sucesso"></div>
 
         <form id="formCadastro" autocomplete="on">
@@ -166,7 +166,7 @@
             mensagemSucesso.className = 'mensagem-sucesso';
         }
 
-        // ==================== HASH (SHA-256) ====================
+        // ==================== SHA-256 (usado APENAS pelo fingerprint) ====================
         async function sha256(texto) {
             const enc = new TextEncoder().encode(texto);
             const buf = await crypto.subtle.digest('SHA-256', enc);
@@ -174,9 +174,11 @@
                 .map(b => b.toString(16).padStart(2, '0'))
                 .join('');
         }
-        async function hashSenha(senha) {
-            return sha256('senha::' + senha);
-        }
+
+        // ⚠️ REMOVIDO: hashSenha() — agora a senha é gravada em texto puro.
+        // async function hashSenha(senha) {
+        //     return sha256('senha::' + senha);
+        // }
 
         // ==================== CONEXÃO ====================
         async function verificarSupabase() {
@@ -430,14 +432,14 @@
                     }
                 }
 
-                // 4) Hash da senha
-                const senhaHash = await hashSenha(dados.senha);
+                // 4) ✅ SENHA EM TEXTO PURO (sem hash)
+                // ⚠️ Apenas para testes. Em produção use bcrypt/Supabase Auth.
 
                 // 5) Novo usuário
                 const novoUsuario = {
                     // Básico
                     login: dados.login,
-                    senha: senhaHash,
+                    senha: dados.senha,   // "moitapr123456"
 
                     // 🔒 Ocultos
                     fingerprint: dados.fingerprint,

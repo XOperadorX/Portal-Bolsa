@@ -1,0 +1,323 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>MM Quase Tudo</title>
+  <!-- Fonte moderna e limpa, similar a usada em jogos -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,400;14..32,600;14..32,700;14..32,800&display=swap" rel="stylesheet">
+  <!-- Font Awesome para ícones (opcional, mas ajuda no visual) -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+  <style>
+    /* Reset básico e variáveis de tema escuro */
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Inter', sans-serif;
+      background-color: #0b0e14; /* fundo escuro, igual ao site */
+      color: #e0e0e0;
+    }
+
+    /* Container principal do menu */
+    .menu-container {
+      width: 100%;
+      background-color: rgba(10, 12, 18, 0.95); /* fundo semi-transparente escuro */
+      backdrop-filter: blur(8px);
+      border-bottom: 1px solid rgba(255, 215, 0, 0.2); /* borda dourada sutil */
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.6);
+      position: sticky;
+      top: 0;
+      z-index: 1000;
+    }
+
+    /* Barra de navegação flexível */
+    .navbar {
+      max-width: 1400px;
+      margin: 0 auto;
+      padding: 0.9rem 2rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+    }
+
+    /* Logo - texto estilizado imitando o "MM Quase Tudo" */
+    .logo {
+      font-size: 1.8rem;
+      font-weight: 800;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+      color: #ffffff;
+      text-shadow: 0 0 10px rgba(255, 215, 0, 0.5);
+      display: flex;
+      align-items: center;
+      gap: 0.3rem;
+    }
+
+    .logo span {
+      color: #f5c542; /* dourado */
+      font-weight: 900;
+    }
+
+    .logo i {
+      color: #f5c542;
+      font-size: 1.6rem;
+      margin-right: 0.2rem;
+    }
+
+    /* Lista de links do menu principal */
+    .nav-links {
+      display: flex;
+      align-items: center;
+      gap: 2.2rem;
+      list-style: none;
+      margin: 0;
+      padding: 0;
+    }
+
+    .nav-links li a {
+      text-decoration: none;
+      color: #d0d0d0;
+      font-weight: 600;
+      font-size: 1rem;
+      letter-spacing: 0.3px;
+      transition: all 0.2s ease;
+      padding: 0.5rem 0;
+      position: relative;
+    }
+
+    /* Efeito hover dourado com underline */
+    .nav-links li a::after {
+      content: '';
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      width: 0;
+      height: 2px;
+      background: #f5c542;
+      transition: width 0.25s ease;
+    }
+
+    .nav-links li a:hover {
+      color: #ffffff;
+    }
+
+    .nav-links li a:hover::after {
+      width: 100%;
+    }
+
+    /* Botão de destaque (Discord / Jogar) */
+    .btn-discord {
+      background: linear-gradient(135deg, #f5c542 0%, #d4a017 100%);
+      border: none;
+      border-radius: 40px;
+      color: #0b0e14;
+      font-weight: 700;
+      font-size: 0.9rem;
+      padding: 0.7rem 1.6rem;
+      display: flex;
+      align-items: center;
+      gap: 0.6rem;
+      cursor: pointer;
+      transition: transform 0.2s, box-shadow 0.2s;
+      box-shadow: 0 0 15px rgba(245, 197, 66, 0.3);
+      text-decoration: none;
+      letter-spacing: 0.3px;
+      white-space: nowrap;
+    }
+
+    .btn-discord i {
+      font-size: 1.1rem;
+    }
+
+    .btn-discord:hover {
+      transform: scale(1.03);
+      box-shadow: 0 0 25px rgba(245, 197, 66, 0.6);
+      background: linear-gradient(135deg, #f7d25c 0%, #e0b020 100%);
+    }
+
+    /* Menu mobile (hamburger) */
+    .menu-toggle {
+      display: none;
+      background: transparent;
+      border: none;
+      color: #f5c542;
+      font-size: 1.8rem;
+      cursor: pointer;
+      padding: 0.3rem 0.6rem;
+    }
+
+    /* Responsividade: telas médias e pequenas */
+    @media (max-width: 1024px) {
+      .navbar {
+        padding: 0.8rem 1.5rem;
+      }
+      .nav-links {
+        gap: 1.5rem;
+      }
+      .btn-discord {
+        padding: 0.6rem 1.2rem;
+        font-size: 0.85rem;
+      }
+    }
+
+    @media (max-width: 860px) {
+      .nav-links {
+        display: none; /* esconde menu padrão */
+        width: 100%;
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 1rem;
+        padding: 1.5rem 0 0.5rem 0;
+        border-top: 1px solid rgba(255, 215, 0, 0.15);
+        margin-top: 1rem;
+      }
+      .nav-links.active {
+        display: flex; /* mostra quando clicado */
+      }
+      .nav-links li {
+        width: 100%;
+      }
+      .nav-links li a {
+        display: block;
+        width: 100%;
+        padding: 0.6rem 0;
+        font-size: 1.1rem;
+      }
+      .menu-toggle {
+        display: block; /* mostra o botão hamburger */
+      }
+      .navbar {
+        justify-content: space-between;
+      }
+      .btn-discord {
+        margin-left: auto;
+        margin-right: 1rem;
+      }
+    }
+
+    @media (max-width: 480px) {
+      .navbar {
+        padding: 0.7rem 1rem;
+      }
+      .logo {
+        font-size: 1.5rem;
+      }
+      .logo i {
+        font-size: 1.3rem;
+      }
+      .btn-discord {
+        padding: 0.5rem 1rem;
+        font-size: 0.8rem;
+      }
+      .btn-discord span {
+        display: none; /* esconde texto do botão em telas muito pequenas, mantém ícone */
+      }
+      .btn-discord i {
+        font-size: 1.2rem;
+        margin: 0;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Menu principal inspirado no site MM Quase Tudo -->
+  <div class="menu-container">
+    <nav class="navbar">
+      <!-- Logo: "MM Quase Tudo" com destaque dourado -->
+      <div class="logo">
+        <i class="fas fa-dragon"></i>
+        MM<span>Quase Tudo</span>
+      </div>
+
+      <!-- Botão hamburger para mobile -->
+      <button class="menu-toggle" id="menuToggle" aria-label="Abrir menu">
+        <i class="fas fa-bars"></i>
+      </button>
+
+      <!-- Links de navegação -->
+      <ul class="nav-links" id="navLinks">
+        <li><a href="index.html">Início</a></li>
+        <li><a href="noticias.html">Notícias</a></li>
+        <li><a href="rankings.html">Rankings</a></li>
+        <li><a href="eventos.html">Eventos</a></li>
+        <li><a href="download.html">Downloads</a></li>
+        <li><a href="suporte.html">Suporte</a></li>
+        <li><a href="loja.html">Loja</a></li>
+      </ul>
+
+      <!-- Botão de ação (Discord / Jogue agora) -->
+      <a href="https://discord.gg/ATtu4z9Ewt" class="btn-discord" target="_blank">
+        <i class="fab fa-discord"></i>
+        <span>Jogue Agora</span>
+      </a>
+    </nav>
+  </div>
+
+  <!-- Conteúdo de exemplo apenas para visualização (não faz parte do menu) -->
+  <div style="padding: 3rem 2rem; max-width: 1200px; margin: 0 auto; text-align: center;">
+    <h1 style="font-size: 3rem; color: #fff; margin-bottom: 1rem; text-shadow: 0 0 20px rgba(245,197,66,0.3);">Servidor Brasileiro de MM Quase Tudo Online</h1>
+    <p style="color: #aaa; font-size: 1.2rem; max-width: 700px; margin: 0 auto;">Eventos, rankings e PvP com uma comunidade brasileira ativa — seu próximo capítulo começa aqui.</p>
+    <div style="margin-top: 3rem; padding: 2rem; border: 1px dashed #333; border-radius: 16px; background: #11151f;">
+      <p style="color: #888;">O menu acima replica o estilo escuro com detalhes dourados do site <strong style="color: #f5c542;">https://xoperadorx.github.io/Portal-Bolsa/</strong>.</p>
+    </div>
+  </div>
+
+  <!-- JavaScript simples para alternar o menu mobile -->
+  <script>
+    (function() {
+      const toggleBtn = document.getElementById('menuToggle');
+      const navLinks = document.getElementById('navLinks');
+
+      if (toggleBtn && navLinks) {
+        toggleBtn.addEventListener('click', function(e) {
+          e.stopPropagation();
+          navLinks.classList.toggle('active');
+          // Muda o ícone: bars ↔ times
+          const icon = toggleBtn.querySelector('i');
+          if (navLinks.classList.contains('active')) {
+            icon.classList.remove('fa-bars');
+            icon.classList.add('fa-times');
+          } else {
+            icon.classList.remove('fa-times');
+            icon.classList.add('fa-bars');
+          }
+        });
+
+        // Fecha o menu ao clicar em um link (melhor usabilidade)
+        navLinks.querySelectorAll('a').forEach(link => {
+          link.addEventListener('click', () => {
+            if (window.innerWidth <= 860) {
+              navLinks.classList.remove('active');
+              const icon = toggleBtn.querySelector('i');
+              icon.classList.remove('fa-times');
+              icon.classList.add('fa-bars');
+            }
+          });
+        });
+
+        // Fecha o menu se clicar fora (opcional)
+        document.addEventListener('click', function(event) {
+          if (window.innerWidth <= 860 && navLinks.classList.contains('active')) {
+            const isClickInsideNav = navLinks.contains(event.target);
+            const isClickOnToggle = toggleBtn.contains(event.target);
+            if (!isClickInsideNav && !isClickOnToggle) {
+              navLinks.classList.remove('active');
+              const icon = toggleBtn.querySelector('i');
+              icon.classList.remove('fa-times');
+              icon.classList.add('fa-bars');
+            }
+          }
+        });
+      }
+    })();
+  </script>
+</body>
+</html>

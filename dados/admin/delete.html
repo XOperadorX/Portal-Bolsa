@@ -1,0 +1,733 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Geral · Realtime + Delete</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: system-ui, 'Segoe UI', Roboto, 'Helvetica Neue', sans-serif;
+        }
+        body {
+            background: linear-gradient(145deg, #eef4fa 0%, #dce8f2 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 1.5rem;
+        }
+        .card {
+            background: rgba(255, 255, 255, 0.92);
+            backdrop-filter: blur(10px);
+            border-radius: 2.5rem;
+            padding: 2.5rem 2rem;
+            max-width: 1150px;
+            width: 100%;
+            box-shadow: 0 25px 45px -12px rgba(0, 20, 30, 0.35), 0 1px 3px rgba(0,0,0,0.05);
+            border: 1px solid rgba(255,255,255,0.7);
+        }
+        h1 {
+            display: flex;
+            align-items: center;
+            gap: 0.65rem;
+            font-weight: 600;
+            font-size: 2rem;
+            letter-spacing: -0.02em;
+            color: #0b2b3d;
+            margin-bottom: 0.35rem;
+        }
+        h1::before {
+            content: "📡";
+            font-size: 2rem;
+            filter: drop-shadow(0 2px 4px rgba(0,0,0,0.1));
+        }
+        .subhead {
+            color: #2c5777;
+            font-size: 0.95rem;
+            font-weight: 400;
+            margin-bottom: 1.5rem;
+            border-left: 4px solid #3b82c4;
+            background: rgba(59, 130, 196, 0.06);
+            border-radius: 0 12px 12px 0;
+            padding: 0.7rem 1rem;
+            line-height: 1.4;
+        }
+        .subhead code {
+            background: #1e2f3f;
+            color: #c7e0ff;
+            padding: 0.2rem 0.5rem;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            font-family: 'JetBrains Mono', monospace;
+            margin: 0 0.2rem;
+            font-weight: 500;
+        }
+
+        /* Indicador de conexão realtime */
+        .realtime-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            background: #e4f3eb;
+            color: #1e6b4a;
+            padding: 0.4rem 1rem;
+            border-radius: 40px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            border: 1px solid #b8e0cc;
+            margin-bottom: 1.5rem;
+        }
+        .realtime-badge .dot {
+            width: 9px;
+            height: 9px;
+            border-radius: 50%;
+            background: #2e7d5e;
+            box-shadow: 0 0 0 3px rgba(46,125,94,0.25);
+            animation: pulse 1.8s infinite;
+        }
+        .realtime-badge.offline {
+            background: #fce9e7;
+            color: #8f2b20;
+            border-color: #f0c8c4;
+        }
+        .realtime-badge.offline .dot {
+            background: #c0392b;
+            box-shadow: 0 0 0 3px rgba(192,57,43,0.25);
+            animation: none;
+        }
+        @keyframes pulse {
+            0%   { box-shadow: 0 0 0 0 rgba(46,125,94,0.5); }
+            70%  { box-shadow: 0 0 0 8px rgba(46,125,94,0); }
+            100% { box-shadow: 0 0 0 0 rgba(46,125,94,0); }
+        }
+
+        /* Barra de ferramentas */
+        .toolbar {
+            display: flex;
+            flex-wrap: wrap;
+            align-items: center;
+            justify-content: space-between;
+            gap: 1rem;
+            margin-bottom: 1.2rem;
+        }
+        .search-box {
+            flex: 1 1 260px;
+            padding: 0.75rem 1.2rem;
+            border-radius: 40px;
+            border: 1px solid #cddbe8;
+            background: white;
+            font-size: 0.95rem;
+            outline: none;
+            transition: box-shadow 0.15s, border-color 0.15s;
+        }
+        .search-box:focus {
+            box-shadow: 0 0 0 4px rgba(59,130,196,0.15);
+            border-color: #3b82c4;
+        }
+        .stats {
+            display: flex;
+            gap: 1rem;
+            font-size: 0.85rem;
+            color: #2c5777;
+            background: #eef4fa;
+            padding: 0.5rem 1.2rem;
+            border-radius: 40px;
+            border: 1px solid #d4e3f0;
+            white-space: nowrap;
+        }
+        .stats strong {
+            color: #0b2b3d;
+        }
+        .btn-refresh {
+            background: white;
+            border: 1px solid #cddbe8;
+            border-radius: 40px;
+            padding: 0.6rem 1.2rem;
+            font-size: 0.85rem;
+            font-weight: 500;
+            color: #1f4a64;
+            cursor: pointer;
+            transition: all 0.12s;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.4rem;
+        }
+        .btn-refresh:hover {
+            background: #eef4fa;
+            border-color: #3b82c4;
+        }
+
+        /* Tabela */
+        .table-wrapper {
+            overflow-x: auto;
+            border-radius: 24px;
+            background: white;
+            border: 1px solid #e2ebf3;
+            box-shadow: inset 0 1px 4px rgba(0,0,0,0.02);
+            max-height: 480px;
+            overflow-y: auto;
+        }
+        .table-wrapper::-webkit-scrollbar {
+            width: 10px;
+            height: 10px;
+        }
+        .table-wrapper::-webkit-scrollbar-track {
+            background: #eef4fa;
+            border-radius: 10px;
+        }
+        .table-wrapper::-webkit-scrollbar-thumb {
+            background: #b6c9d9;
+            border-radius: 10px;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 0.92rem;
+        }
+        thead {
+            position: sticky;
+            top: 0;
+            background: #f2f8ff;
+            z-index: 2;
+            box-shadow: 0 1px 0 #d4e3f0;
+        }
+        th {
+            text-align: left;
+            padding: 1rem 1.2rem;
+            font-weight: 600;
+            color: #163a4e;
+            font-size: 0.8rem;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            white-space: nowrap;
+        }
+        td {
+            padding: 0.9rem 1.2rem;
+            border-bottom: 1px solid #edf3f8;
+            color: #1e3f52;
+            vertical-align: middle;
+        }
+        tbody tr {
+            transition: background 0.12s;
+        }
+        tbody tr:hover {
+            background: #f5faff;
+        }
+        .id-badge {
+            display: inline-block;
+            background: #2f5e7a;
+            color: white;
+            font-weight: 600;
+            font-size: 0.75rem;
+            font-family: 'JetBrains Mono', monospace;
+            padding: 0.25rem 0.7rem;
+            border-radius: 40px;
+            letter-spacing: 0.3px;
+            min-width: 40px;
+            text-align: center;
+        }
+        .login-cell {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.85rem;
+            color: #0b2b3d;
+            background: #f0f6fc;
+            padding: 0.2rem 0.6rem;
+            border-radius: 20px;
+            display: inline-block;
+            border: 1px solid #d9e8f5;
+        }
+        .nome-cell {
+            font-weight: 500;
+            color: #0b2b3d;
+        }
+        .empty-row td {
+            text-align: center;
+            padding: 3rem 1rem;
+            color: #7a9bb0;
+            font-size: 1rem;
+        }
+
+        /* Botão de excluir */
+        .btn-delete {
+            background: transparent;
+            border: 1px solid #f0d6d3;
+            border-radius: 30px;
+            padding: 0.4rem 0.9rem;
+            font-size: 0.8rem;
+            cursor: pointer;
+            transition: all 0.12s;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.3rem;
+            font-weight: 500;
+            color: #b03024;
+        }
+        .btn-delete:hover {
+            background: #fce9e7;
+            border-color: #c0392b;
+            transform: translateY(-1px);
+        }
+        .btn-delete:disabled {
+            opacity: 0.4;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        /* Destaque para novos registros */
+        @keyframes flashNew {
+            0%   { background: #d4edda; }
+            100% { background: transparent; }
+        }
+        tbody tr.new-record {
+            animation: flashNew 2s ease-out;
+        }
+
+        /* Rodapé / status */
+        .status-bar {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-top: 1.5rem;
+            padding: 1rem 1.2rem;
+            border-radius: 20px;
+            background: #eef4fa;
+            border-left: 6px solid #3b82c4;
+            font-size: 0.9rem;
+            color: #0d3142;
+            transition: all 0.2s;
+            flex-wrap: wrap;
+            gap: 0.8rem;
+        }
+        .status-bar.success {
+            border-left-color: #2e7d5e;
+            background: #e4f3eb;
+        }
+        .status-bar.error {
+            border-left-color: #c0392b;
+            background: #fce9e7;
+        }
+        .status-message {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.85rem;
+            background: rgba(255,255,255,0.5);
+            padding: 0.4rem 0.9rem;
+            border-radius: 40px;
+        }
+        .status-title {
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-size: 0.85rem;
+            text-transform: uppercase;
+            letter-spacing: 0.04em;
+            opacity: 0.85;
+        }
+
+        /* Modal de confirmação */
+        .modal-overlay {
+            position: fixed;
+            inset: 0;
+            background: rgba(10, 25, 35, 0.5);
+            backdrop-filter: blur(4px);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 1.5rem;
+            z-index: 1000;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.2s;
+        }
+        .modal-overlay.active {
+            opacity: 1;
+            pointer-events: auto;
+        }
+        .modal {
+            background: white;
+            border-radius: 2rem;
+            padding: 2rem;
+            max-width: 480px;
+            width: 100%;
+            box-shadow: 0 30px 60px -15px rgba(0,0,0,0.4);
+            transform: scale(0.95);
+            transition: transform 0.2s;
+        }
+        .modal-overlay.active .modal {
+            transform: scale(1);
+        }
+        .modal h2 {
+            font-size: 1.4rem;
+            color: #0b2b3d;
+            margin-bottom: 0.8rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        .modal p {
+            color: #2c5777;
+            font-size: 0.95rem;
+            line-height: 1.6;
+            margin-bottom: 1.5rem;
+        }
+        .modal p strong {
+            color: #b03024;
+            font-family: 'JetBrains Mono', monospace;
+            background: #fce9e7;
+            padding: 0.1rem 0.5rem;
+            border-radius: 8px;
+        }
+        .modal-actions {
+            display: flex;
+            gap: 0.8rem;
+            justify-content: flex-end;
+        }
+        .btn-modal {
+            padding: 0.75rem 1.6rem;
+            border-radius: 40px;
+            font-weight: 600;
+            font-size: 0.95rem;
+            cursor: pointer;
+            border: none;
+            transition: all 0.12s;
+        }
+        .btn-cancel {
+            background: #eef4fa;
+            color: #1f4a64;
+            border: 1px solid #d4e3f0;
+        }
+        .btn-cancel:hover {
+            background: #e2ebf3;
+        }
+        .btn-confirm {
+            background: linear-gradient(135deg, #c0392b, #a82315);
+            color: white;
+            box-shadow: 0 6px 14px -6px rgba(192, 57, 43, 0.5);
+        }
+        .btn-confirm:hover {
+            background: #b03024;
+        }
+        .btn-confirm:disabled {
+            opacity: 0.6;
+            cursor: wait;
+        }
+
+        @media (max-width: 600px) {
+            .card { padding: 1.8rem 1.2rem; }
+            h1 { font-size: 1.5rem; }
+            th, td { padding: 0.7rem 0.8rem; }
+            .btn-delete span.label { display: none; }
+        }
+    </style>
+</head>
+<body>
+    <div class="card">
+        <h1>Geral · Realtime + Delete</h1>
+        <div class="subhead">
+            Supabase <code>xrcxvizzdumcxbylmkvn</code> ·
+            Tabela <code>public."Geral"</code> · Campos <code>id</code>, <code>nome</code>, <code>login</code>.
+        </div>
+
+        <div class="realtime-badge" id="realtimeBadge">
+            <span class="dot"></span>
+            <span id="realtimeLabel">Conectando...</span>
+        </div>
+
+        <div class="toolbar">
+            <input type="text" class="search-box" id="searchInput" placeholder="🔍 Buscar por id, nome ou login...">
+            <div class="stats">
+                <span>📋 Total: <strong id="totalCount">0</strong></span>
+                <span>🔎 Filtrados: <strong id="filteredCount">0</strong></span>
+            </div>
+            <button class="btn-refresh" id="refreshBtn">🔄 Recarregar</button>
+        </div>
+
+        <div class="table-wrapper">
+            <table>
+                <thead>
+                    <tr>
+                        <th style="width: 100px;">ID</th>
+                        <th>Nome</th>
+                        <th>Login</th>
+                        <th style="width: 140px; text-align: right;">Ações</th>
+                    </tr>
+                </thead>
+                <tbody id="tableBody">
+                    <tr class="empty-row">
+                        <td colspan="4">Carregando dados do Supabase...</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <div class="status-bar" id="statusBar">
+            <div class="status-title">
+                <span>📋</span> Status
+            </div>
+            <div class="status-message" id="statusMessage">
+                Inicializando conexão em tempo real...
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal de confirmação -->
+    <div class="modal-overlay" id="modalOverlay">
+        <div class="modal">
+            <h2>⚠️ Confirmar exclusão</h2>
+            <p>
+                Tem certeza que deseja excluir permanentemente o registro
+                <strong id="modalRecordInfo">#0</strong>?
+                Esta ação <strong>não pode ser desfeita</strong>.
+            </p>
+            <div class="modal-actions">
+                <button class="btn-modal btn-cancel" id="modalCancel">Cancelar</button>
+                <button class="btn-modal btn-confirm" id="modalConfirm">Excluir</button>
+            </div>
+        </div>
+    </div>
+
+    <script type="module">
+        // ============================================================
+        // CONFIGURAÇÃO DO SUPABASE
+        // ============================================================
+        const SUPABASE_URL = 'https://xrcxvizzdumcxbylmkvn.supabase.co';
+        const SUPABASE_ANON_KEY = 'sb_publishable_E-g3G3wW4EySbCsXLXp8KQ_FnmERMcD'; // ← substitua
+
+        import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/+esm';
+        const supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+        // ---- ESTADO ----
+        let registros = [];
+        let canalRealtime = null;
+        let pendingDeleteId = null;
+
+        // ---- DOM ----
+        const searchInput = document.getElementById('searchInput');
+        const tableBody = document.getElementById('tableBody');
+        const totalCountEl = document.getElementById('totalCount');
+        const filteredCountEl = document.getElementById('filteredCount');
+        const statusBar = document.getElementById('statusBar');
+        const statusMessage = document.getElementById('statusMessage');
+        const realtimeBadge = document.getElementById('realtimeBadge');
+        const realtimeLabel = document.getElementById('realtimeLabel');
+        const refreshBtn = document.getElementById('refreshBtn');
+        const modalOverlay = document.getElementById('modalOverlay');
+        const modalRecordInfo = document.getElementById('modalRecordInfo');
+        const modalCancel = document.getElementById('modalCancel');
+        const modalConfirm = document.getElementById('modalConfirm');
+
+        // ---- FUNÇÕES AUXILIARES ----
+        function setStatus(type, message) {
+            statusBar.classList.remove('success', 'error');
+            if (type === 'success') statusBar.classList.add('success');
+            if (type === 'error') statusBar.classList.add('error');
+            statusMessage.textContent = message;
+        }
+
+        function setRealtimeStatus(online, label) {
+            realtimeBadge.classList.toggle('offline', !online);
+            realtimeLabel.textContent = label;
+        }
+
+        function escaparHtml(texto) {
+            if (texto === null || texto === undefined) return '—';
+            const div = document.createElement('div');
+            div.textContent = texto;
+            return div.innerHTML;
+        }
+
+        // ---- RENDERIZAÇÃO ----
+        function renderizarTabela(filtro = '', novosIds = new Set()) {
+            const termo = filtro.trim().toLowerCase();
+            const filtrados = termo === ''
+                ? registros
+                : registros.filter(r =>
+                    (r.id ?? '').toString().includes(termo) ||
+                    (r.nome && r.nome.toLowerCase().includes(termo)) ||
+                    (r.login && r.login.toLowerCase().includes(termo))
+                );
+
+            totalCountEl.textContent = registros.length;
+            filteredCountEl.textContent = filtrados.length;
+
+            if (filtrados.length === 0) {
+                tableBody.innerHTML = `
+                    <tr class="empty-row">
+                        <td colspan="4">Nenhum registro encontrado${termo ? ` para "<strong>${escaparHtml(filtro)}</strong>"` : ''}.</td>
+                    </tr>
+                `;
+                return;
+            }
+
+            let html = '';
+            filtrados.forEach(r => {
+                const isNew = novosIds.has(r.id) ? 'new-record' : '';
+                html += `
+                    <tr data-id="${r.id}" class="${isNew}">
+                        <td><span class="id-badge">#${r.id}</span></td>
+                        <td class="nome-cell">${escaparHtml(r.nome)}</td>
+                        <td><span class="login-cell">${escaparHtml(r.login)}</span></td>
+                        <td style="text-align:right;">
+                            <button class="btn-delete" data-delete-id="${r.id}" title="Excluir registro #${r.id}">
+                                🗑️ <span class="label">Excluir</span>
+                            </button>
+                        </td>
+                    </tr>
+                `;
+            });
+            tableBody.innerHTML = html;
+
+            // Eventos dos botões de excluir
+            tableBody.querySelectorAll('[data-delete-id]').forEach(btn => {
+                btn.addEventListener('click', (e) => {
+                    e.stopPropagation();
+                    const id = parseInt(btn.dataset.deleteId, 10);
+                    const reg = registros.find(x => x.id === id);
+                    if (reg) abrirModal(id, reg);
+                });
+            });
+        }
+
+        // ---- CARREGAR DADOS ----
+        async function carregarDados() {
+            setStatus('', 'Carregando registros...');
+            const { data, error } = await supabase
+                .from('Geral')
+                .select('id, nome, login')
+                .order('id', { ascending: true });
+
+            if (error) {
+                console.error('Erro ao carregar:', error);
+                setStatus('error', `Erro ao carregar: ${error.message}`);
+                setRealtimeStatus(false, 'Erro na conexão');
+                return;
+            }
+
+            registros = data || [];
+            renderizarTabela(searchInput.value);
+            setStatus('success', `✅ ${registros.length} registro(s) carregado(s).`);
+        }
+
+        // ---- EXCLUSÃO VIA RPC (SEGURA) ----
+        async function excluirRegistro(id) {
+            // Chama a função RPC "deletar_geral" criada no Supabase.
+            // Se preferir DELETE direto, troque por:
+            //   supabase.from('Geral').delete().eq('id', id)
+            const { data, error } = await supabase.rpc('deletar_geral', { p_id: id });
+
+            if (error) {
+                throw new Error(error.message);
+            }
+            return data;
+        }
+
+        // ---- MODAL ----
+        function abrirModal(id, registro) {
+            pendingDeleteId = id;
+            modalRecordInfo.textContent = `#${id} — ${registro.nome || '(sem nome)'} (${registro.login || '—'})`;
+            modalOverlay.classList.add('active');
+        }
+
+        function fecharModal() {
+            modalOverlay.classList.remove('active');
+            pendingDeleteId = null;
+            modalConfirm.disabled = false;
+            modalConfirm.textContent = 'Excluir';
+        }
+
+        // ---- REALTIME ----
+        function inscreverRealtime() {
+            if (canalRealtime) supabase.removeChannel(canalRealtime);
+
+            canalRealtime = supabase
+                .channel('geral-realtime')
+                .on(
+                    'postgres_changes',
+                    { event: '*', schema: 'public', table: 'Geral' },
+                    (payload) => {
+                        const { eventType, new: novo, old: antigo } = payload;
+
+                        if (eventType === 'INSERT') {
+                            const novoRegistro = { id: novo.id, nome: novo.nome, login: novo.login };
+                            registros.push(novoRegistro);
+                            registros.sort((a, b) => a.id - b.id);
+                            renderizarTabela(searchInput.value, new Set([novoRegistro.id]));
+                            setStatus('success', `➕ Novo registro #${novoRegistro.id} adicionado em tempo real.`);
+                        }
+                        else if (eventType === 'UPDATE') {
+                            const idx = registros.findIndex(r => r.id === novo.id);
+                            if (idx !== -1) {
+                                registros[idx] = { id: novo.id, nome: novo.nome, login: novo.login };
+                                renderizarTabela(searchInput.value, new Set([novo.id]));
+                                setStatus('success', `✏️ Registro #${novo.id} atualizado em tempo real.`);
+                            }
+                        }
+                        else if (eventType === 'DELETE') {
+                            registros = registros.filter(r => r.id !== antigo.id);
+                            renderizarTabela(searchInput.value);
+                            setStatus('success', `🗑️ Registro #${antigo.id} removido em tempo real.`);
+                        }
+
+                        totalCountEl.textContent = registros.length;
+                        if (searchInput.value.trim() === '') {
+                            filteredCountEl.textContent = registros.length;
+                        }
+                    }
+                )
+                .subscribe((status) => {
+                    if (status === 'SUBSCRIBED') setRealtimeStatus(true, 'Realtime conectado');
+                    else if (status === 'CHANNEL_ERROR' || status === 'TIMED_OUT')
+                        setRealtimeStatus(false, 'Realtime desconectado');
+                    else setRealtimeStatus(false, `Realtime: ${status}`);
+                });
+        }
+
+        // ---- EVENT LISTENERS ----
+        searchInput.addEventListener('input', (e) => renderizarTabela(e.target.value));
+        refreshBtn.addEventListener('click', carregarDados);
+        modalCancel.addEventListener('click', fecharModal);
+        modalOverlay.addEventListener('click', (e) => { if (e.target === modalOverlay) fecharModal(); });
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape' && modalOverlay.classList.contains('active')) fecharModal();
+        });
+
+        modalConfirm.addEventListener('click', async () => {
+            if (pendingDeleteId === null) return;
+            const id = pendingDeleteId;
+
+            modalConfirm.disabled = true;
+            modalConfirm.textContent = 'Excluindo...';
+
+            try {
+                await excluirRegistro(id);
+                // O Realtime vai remover da lista automaticamente ao receber o evento DELETE.
+                // Mas garantimos também localmente:
+                registros = registros.filter(r => r.id !== id);
+                renderizarTabela(searchInput.value);
+                setStatus('success', `✅ Registro #${id} excluído com sucesso.`);
+                fecharModal();
+            } catch (err) {
+                console.error('Erro ao excluir:', err);
+                setStatus('error', `❌ Falha ao excluir #${id}: ${err.message}`);
+                modalConfirm.disabled = false;
+                modalConfirm.textContent = 'Excluir';
+            }
+        });
+
+        // ---- INICIALIZAÇÃO ----
+        async function init() {
+            setRealtimeStatus(false, 'Conectando...');
+            await carregarDados();
+            inscreverRealtime();
+        }
+        init();
+
+        window.addEventListener('beforeunload', () => {
+            if (canalRealtime) supabase.removeChannel(canalRealtime);
+        });
+    </script>
+</body>
+</html>
