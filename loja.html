@@ -1,13 +1,21 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="pt-BR">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
-      <style>
-  
-       /* ==================== RESET E BASE ==================== */
-        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Inter', 'Segoe UI', sans-serif; }
+    <title>Loja | MM Quase Tudo</title>
+
+    <!-- Font Awesome (ícones) -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+
+    <style>
+        /* ==================== RESET E BASE ==================== */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Inter', 'Segoe UI', sans-serif;
+        }
 
         body {
             min-height: 100vh;
@@ -17,9 +25,7 @@
             flex-direction: column;
         }
 
-
-
-        /* ==================== MENU (adaptado do menu.html) ==================== */
+        /* ==================== MENU ==================== */
         .menu-container {
             width: 100%;
             background-color: rgb(0, 43, 173);
@@ -64,6 +70,7 @@
             margin-right: 0.2rem;
         }
 
+        /* ==================== LINKS DE NAVEGAÇÃO ==================== */
         .nav-links {
             display: flex;
             align-items: center;
@@ -82,6 +89,20 @@
             transition: all 0.2s ease;
             padding: 0.5rem 0;
             position: relative;
+            display: inline-flex;
+            align-items: center;
+        }
+
+        .nav-links li a i {
+            margin-right: 8px;
+            font-size: 0.95em;
+            color: #f5c542;
+            transition: color 0.2s ease, transform 0.2s ease;
+        }
+
+        .nav-links li a:hover i {
+            color: #ffffff;
+            transform: scale(1.1);
         }
 
         .nav-links li a::after {
@@ -103,6 +124,7 @@
             width: 100%;
         }
 
+        /* ==================== BOTÃO DISCORD ==================== */
         .btn-discord {
             background: linear-gradient(135deg, #f5c542 0%, #d4a017 100%);
             border: none;
@@ -132,6 +154,7 @@
             background: linear-gradient(135deg, #f7d25c 0%, #e0b020 100%);
         }
 
+        /* ==================== MENU TOGGLE (HAMBÚRGUER) ==================== */
         .menu-toggle {
             display: none;
             background: transparent;
@@ -141,15 +164,269 @@
             cursor: pointer;
             padding: 0.3rem 0.6rem;
         }
-      </style>
+
+        /* ==================== CONTEÚDO DA LOJA ==================== */
+        .loja-wrapper {
+            flex: 1;
+            max-width: 1400px;
+            width: 100%;
+            margin: 0 auto;
+            padding: 40px 20px;
+        }
+
+        .loja-header {
+            text-align: center;
+            margin-bottom: 40px;
+        }
+
+        .loja-header h1 {
+            font-size: 2.4rem;
+            color: #ffffff;
+            font-weight: 800;
+            letter-spacing: 1px;
+            text-shadow: 0 0 15px rgba(245, 197, 66, 0.4);
+            margin-bottom: 10px;
+        }
+
+        .loja-header h1 i {
+            color: #f5c542;
+            margin-right: 10px;
+        }
+
+        .loja-header p {
+            color: #a0b4d0;
+            font-size: 1rem;
+        }
+
+        /* ==================== FILTROS ==================== */
+        .filtros {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 12px;
+            margin-bottom: 35px;
+        }
+
+        .filtros button {
+            background: rgba(30, 41, 59, 0.8);
+            border: 1px solid #334155;
+            color: #cbd5e1;
+            padding: 10px 22px;
+            border-radius: 30px;
+            font-size: 0.9rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .filtros button:hover {
+            border-color: #f5c542;
+            color: #f5c542;
+            transform: translateY(-2px);
+        }
+
+        .filtros button.active {
+            background: linear-gradient(135deg, #f5c542 0%, #d4a017 100%);
+            color: #0b0e14;
+            border-color: #f5c542;
+            box-shadow: 0 0 15px rgba(245, 197, 66, 0.4);
+        }
+
+        /* ==================== GRID DE PRODUTOS ==================== */
+        .produtos-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+            gap: 24px;
+        }
+
+        .produto-card {
+            background: #1e293b;
+            border: 1px solid #334155;
+            border-radius: 16px;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            transition: transform 0.25s ease, box-shadow 0.25s ease, border-color 0.25s ease;
+            position: relative;
+        }
+
+        .produto-card:hover {
+            transform: translateY(-6px);
+            border-color: #f5c542;
+            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.5), 0 0 20px rgba(245, 197, 66, 0.2);
+        }
+
+        .produto-imagem {
+            width: 100%;
+            height: 160px;
+            background: linear-gradient(135deg, #002e5d 0%, #004080 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 3.5rem;
+            color: #f5c542;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .produto-imagem::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: radial-gradient(circle at 30% 30%, rgba(245, 197, 66, 0.15), transparent 60%);
+        }
+
+        .produto-tag {
+            position: absolute;
+            top: 12px;
+            right: 12px;
+            background: linear-gradient(135deg, #f5c542 0%, #d4a017 100%);
+            color: #0b0e14;
+            font-size: 0.7rem;
+            font-weight: 800;
+            text-transform: uppercase;
+            padding: 4px 10px;
+            border-radius: 20px;
+            letter-spacing: 0.5px;
+        }
+
+        .produto-info {
+            padding: 18px;
+            display: flex;
+            flex-direction: column;
+            flex: 1;
+        }
+
+        .produto-info h3 {
+            color: #f1f5f9;
+            font-size: 1.1rem;
+            font-weight: 700;
+            margin-bottom: 8px;
+        }
+
+        .produto-info p {
+            color: #94a3b8;
+            font-size: 0.85rem;
+            line-height: 1.5;
+            margin-bottom: 16px;
+            flex: 1;
+        }
+
+        .produto-preco {
+            display: flex;
+            align-items: baseline;
+            gap: 6px;
+            margin-bottom: 14px;
+        }
+
+        .produto-preco .valor {
+            color: #f5c542;
+            font-size: 1.4rem;
+            font-weight: 800;
+        }
+
+        .produto-preco .moeda {
+            color: #94a3b8;
+            font-size: 0.8rem;
+            font-weight: 600;
+            text-transform: uppercase;
+        }
+
+        .btn-comprar {
+            width: 100%;
+            padding: 11px;
+            background: linear-gradient(135deg, #3b82f6, #2563eb);
+            border: none;
+            border-radius: 8px;
+            color: #ffffff;
+            font-size: 0.9rem;
+            font-weight: 700;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+        }
+
+        .btn-comprar:hover {
+            transform: scale(1.03);
+            box-shadow: 0 0 20px rgba(59, 130, 246, 0.5);
+        }
+
+        .btn-comprar:active {
+            transform: scale(0.98);
+        }
+
+        /* ==================== RESPONSIVIDADE ==================== */
+        @media (max-width: 1024px) {
+            .navbar { padding: 0.8rem 1.5rem; }
+            .nav-links { gap: 1.5rem; }
+            .btn-discord { padding: 0.6rem 1.2rem; font-size: 0.85rem; }
+        }
+
+        @media (max-width: 860px) {
+            .nav-links {
+                display: none;
+                width: 100%;
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 1rem;
+                padding: 1.5rem 0 0.5rem 0;
+                border-top: 1px solid rgba(255, 215, 0, 0.15);
+                margin-top: 1rem;
+            }
+
+            .nav-links.active {
+                display: flex;
+            }
+
+            .nav-links li {
+                width: 100%;
+            }
+
+            .nav-links li a {
+                display: flex;
+                width: 100%;
+                padding: 0.6rem 0;
+                font-size: 1.1rem;
+            }
+
+            .menu-toggle {
+                display: block;
+            }
+
+            .navbar {
+                justify-content: space-between;
+            }
+
+            .btn-discord {
+                margin-left: auto;
+                margin-right: 1rem;
+            }
+
+            .loja-header h1 { font-size: 2rem; }
+        }
+
+        @media (max-width: 480px) {
+            .navbar { padding: 0.7rem 1rem; }
+            .logo { font-size: 1.5rem; }
+            .logo i { font-size: 1.3rem; }
+            .btn-discord { padding: 0.5rem 1rem; font-size: 0.8rem; }
+            .btn-discord span { display: none; }
+            .btn-discord i { font-size: 1.2rem; margin: 0; }
+            .loja-header h1 { font-size: 1.6rem; }
+            .produtos-grid { grid-template-columns: 1fr; }
+        }
+    </style>
 </head>
 <body>
-   
-    <!-- ==================== MENU PRINCIPAL (do menu.html) ==================== -->
+
+    <!-- ==================== MENU PRINCIPAL ==================== -->
     <div class="menu-container">
         <nav class="navbar">
             <div class="logo">
-                <i class="fas fa-dragon"></i>
+                <i class="fas fa-cow"></i>
                 MM<span>Quase Tudo</span>
             </div>
 
@@ -158,20 +435,202 @@
             </button>
 
             <ul class="nav-links" id="navLinks">
-                <li><a href="./index.html">Início</a></li>
-                <li><a href="./noticias.html">Notícias</a></li>
-                <li><a href="./jogos/ranking/ranking002.html">Classificaçõess</a></li>
-                <li><a href="./eventos.html">Eventos</a></li>
-                <li><a href="./download.html">Downloads</a></li>
-                <li><a href="./suporte.html">Suporte</a></li>
-                <li><a href="./loja.html">Loja</a></li>
+                <li><a href="./index.html"><i class="fas fa-house"></i> Início</a></li>
+                <li><a href="./noticias.html"><i class="fas fa-newspaper"></i> Notícias</a></li>
+                <li><a href="./jogos/ranking/ranking002.html"><i class="fas fa-trophy"></i> Classificações</a></li>
+                <li><a href="./eventos.html"><i class="fas fa-calendar-days"></i> Eventos</a></li>
+                <li><a href="./download.html"><i class="fas fa-download"></i> Downloads</a></li>
+                <li><a href="./suporte.html"><i class="fas fa-headset"></i> Suporte</a></li>
+                <li><a href="./loja.html"><i class="fas fa-cart-shopping"></i> Loja</a></li>
+                <li><a href="./cadastro.html"><i class="fas fa-user-plus"></i> Cadastro</a></li>
+                <li><a href="./login.html"><i class="fas fa-sign-in-alt"></i> Login</a></li>
             </ul>
 
-            <a href="https://discord.gg/ATtu4z9Ewt" class="btn-discord" target="_blank">
+            <a href="https://discord.gg/ATtu4z9Ewt" class="btn-discord" target="_blank" rel="noopener">
                 <i class="fab fa-discord"></i>
                 <span>Jogue Agora</span>
             </a>
         </nav>
-    </div> 
+    </div>
+
+    <!-- ==================== CONTEÚDO DA LOJA ==================== -->
+    <main class="loja-wrapper">
+        <header class="loja-header">
+            <h1><i class="fas fa-cart-shopping"></i>Loja MM Quase Tudo</h1>
+            <p>Itens exclusivos, boosts e pacotes para turbinar sua experiência</p>
+        </header>
+
+        <!-- Filtros -->
+        <div class="filtros">
+            <button class="active">Todos</button>
+            <button>Destaques</button>
+            <button>Boosts</button>
+            <button>Itens</button>
+            <button>Pacotes</button>
+        </div>
+
+        <!-- Grid de produtos -->
+        <section class="produtos-grid">
+            <article class="produto-card">
+                <div class="produto-imagem">
+                    <span class="produto-tag">Popular</span>
+                    <i class="fas fa-gem"></i>
+                </div>
+                <div class="produto-info">
+                    <h3>Pacote Diamante</h3>
+                    <p>Gemas premium, baús exclusivos e acesso a eventos especiais.</p>
+                    <div class="produto-preco">
+                        <span class="valor">R$ 49,90</span>
+                        <span class="moeda">BRL</span>
+                    </div>
+                    <button class="btn-comprar">
+                        <i class="fas fa-shopping-cart"></i> Comprar
+                    </button>
+                </div>
+            </article>
+
+            <article class="produto-card">
+                <div class="produto-imagem">
+                    <span class="produto-tag">Novo</span>
+                    <i class="fas fa-bolt"></i>
+                </div>
+                <div class="produto-info">
+                    <h3>Boost de XP 2x</h3>
+                    <p>Dobre sua experiência por 30 dias em todas as atividades.</p>
+                    <div class="produto-preco">
+                        <span class="valor">R$ 19,90</span>
+                        <span class="moeda">BRL</span>
+                    </div>
+                    <button class="btn-comprar">
+                        <i class="fas fa-shopping-cart"></i> Comprar
+                    </button>
+                </div>
+            </article>
+
+            <article class="produto-card">
+                <div class="produto-imagem">
+                    <i class="fas fa-crown"></i>
+                </div>
+                <div class="produto-info">
+                    <h3>VIP Real</h3>
+                    <p>Tag exclusiva, vantagens em rankings e suporte prioritário.</p>
+                    <div class="produto-preco">
+                        <span class="valor">R$ 89,90</span>
+                        <span class="moeda">BRL</span>
+                    </div>
+                    <button class="btn-comprar">
+                        <i class="fas fa-shopping-cart"></i> Comprar
+                    </button>
+                </div>
+            </article>
+
+            <article class="produto-card">
+                <div class="produto-imagem">
+                    <span class="produto-tag">-30%</span>
+                    <i class="fas fa-box-open"></i>
+                </div>
+                <div class="produto-info">
+                    <h3>Baú Lendário</h3>
+                    <p>Chance de itens raros e cosméticos únicos para seu personagem.</p>
+                    <div class="produto-preco">
+                        <span class="valor">R$ 34,90</span>
+                        <span class="moeda">BRL</span>
+                    </div>
+                    <button class="btn-comprar">
+                        <i class="fas fa-shopping-cart"></i> Comprar
+                    </button>
+                </div>
+            </article>
+
+            <article class="produto-card">
+                <div class="produto-imagem">
+                    <i class="fas fa-shield-halved"></i>
+                </div>
+                <div class="produto-info">
+                    <h3>Escudo de Proteção</h3>
+                    <p>Proteja seus itens contra perdas por 15 dias consecutivos.</p>
+                    <div class="produto-preco">
+                        <span class="valor">R$ 14,90</span>
+                        <span class="moeda">BRL</span>
+                    </div>
+                    <button class="btn-comprar">
+                        <i class="fas fa-shopping-cart"></i> Comprar
+                    </button>
+                </div>
+            </article>
+
+            <article class="produto-card">
+                <div class="produto-imagem">
+                    <span class="produto-tag">Melhor Valor</span>
+                    <i class="fas fa-star"></i>
+                </div>
+                <div class="produto-info">
+                    <h3>Pacote Completo</h3>
+                    <p>Todos os boosts, itens exclusivos e VIP por 3 meses.</p>
+                    <div class="produto-preco">
+                        <span class="valor">R$ 199,90</span>
+                        <span class="moeda">BRL</span>
+                    </div>
+                    <button class="btn-comprar">
+                        <i class="fas fa-shopping-cart"></i> Comprar
+                    </button>
+                </div>
+            </article>
+        </section>
+    </main>
+
+    <!-- ==================== JAVASCRIPT ==================== -->
+    <script>
+        // Menu toggle (mobile)
+        const menuToggle = document.getElementById('menuToggle');
+        const navLinks = document.getElementById('navLinks');
+
+        menuToggle.addEventListener('click', () => {
+            navLinks.classList.toggle('active');
+
+            const icon = menuToggle.querySelector('i');
+            if (navLinks.classList.contains('active')) {
+                icon.classList.remove('fa-bars');
+                icon.classList.add('fa-times');
+            } else {
+                icon.classList.remove('fa-times');
+                icon.classList.add('fa-bars');
+            }
+        });
+
+        // Fecha o menu ao clicar em um link (mobile)
+        navLinks.querySelectorAll('a').forEach(link => {
+            link.addEventListener('click', () => {
+                if (window.innerWidth <= 860) {
+                    navLinks.classList.remove('active');
+                    const icon = menuToggle.querySelector('i');
+                    icon.classList.remove('fa-times');
+                    icon.classList.add('fa-bars');
+                }
+            });
+        });
+
+        // Filtros (apenas visual por enquanto)
+        document.querySelectorAll('.filtros button').forEach(btn => {
+            btn.addEventListener('click', () => {
+                document.querySelectorAll('.filtros button').forEach(b => b.classList.remove('active'));
+                btn.classList.add('active');
+            });
+        });
+
+        // Botões de compra (feedback visual)
+        document.querySelectorAll('.btn-comprar').forEach(btn => {
+            btn.addEventListener('click', function () {
+                const original = this.innerHTML;
+                this.innerHTML = '<i class="fas fa-check"></i> Adicionado!';
+                this.style.background = 'linear-gradient(135deg, #22c55e, #16a34a)';
+
+                setTimeout(() => {
+                    this.innerHTML = original;
+                    this.style.background = '';
+                }, 1500);
+            });
+        });
+    </script>
 </body>
 </html>

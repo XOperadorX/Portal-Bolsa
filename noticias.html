@@ -1,13 +1,15 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
-
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Meus Arquivos para Download</title>
+    <title>Notícias | MM Quase Tudo</title>
 
-    <!-- Font Awesome (para os ícones do menu e botões) -->
+    <!-- Font Awesome -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+
+    <!-- Supabase JS (opcional, para notícias dinâmicas) -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
     <style>
         /* ==================== RESET E BASE ==================== */
@@ -60,16 +62,8 @@
             gap: 0.3rem;
         }
 
-        .logo span {
-            color: #f5c542;
-            font-weight: 900;
-        }
-
-        .logo i {
-            color: #f5c542;
-            font-size: 1.6rem;
-            margin-right: 0.2rem;
-        }
+        .logo span { color: #f5c542; font-weight: 900; }
+        .logo i { color: #f5c542; font-size: 1.6rem; margin-right: 0.2rem; }
 
         .nav-links {
             display: flex;
@@ -89,26 +83,30 @@
             transition: all 0.2s ease;
             padding: 0.5rem 0;
             position: relative;
+            display: inline-flex;
+            align-items: center;
         }
+
+        .nav-links li a i {
+            margin-right: 8px;
+            font-size: 0.95em;
+            color: #f5c542;
+            transition: color 0.2s ease, transform 0.2s ease;
+        }
+
+        .nav-links li a:hover i { color: #ffffff; transform: scale(1.1); }
 
         .nav-links li a::after {
             content: '';
             position: absolute;
-            bottom: 0;
-            left: 0;
-            width: 0;
-            height: 2px;
+            bottom: 0; left: 0;
+            width: 0; height: 2px;
             background: #f5c542;
             transition: width 0.25s ease;
         }
 
-        .nav-links li a:hover {
-            color: #ffffff;
-        }
-
-        .nav-links li a:hover::after {
-            width: 100%;
-        }
+        .nav-links li a:hover { color: #ffffff; }
+        .nav-links li a:hover::after { width: 100%; }
 
         .btn-discord {
             background: linear-gradient(135deg, #f5c542 0%, #d4a017 100%);
@@ -129,9 +127,7 @@
             white-space: nowrap;
         }
 
-        .btn-discord i {
-            font-size: 1.1rem;
-        }
+        .btn-discord i { font-size: 1.1rem; }
 
         .btn-discord:hover {
             transform: scale(1.03);
@@ -149,239 +145,375 @@
             padding: 0.3rem 0.6rem;
         }
 
-        /* ==================== CONTEÚDO PRINCIPAL ==================== */
-        .main-content {
+        /* ==================== HERO ==================== */
+        .noticias-hero {
+            text-align: center;
+            padding: 50px 20px 20px;
+            max-width: 900px;
+            margin: 0 auto;
+        }
+
+        .noticias-hero h1 {
+            font-size: 2.6rem;
+            color: #ffffff;
+            font-weight: 800;
+            letter-spacing: 1px;
+            text-shadow: 0 0 15px rgba(245, 197, 66, 0.4);
+            margin-bottom: 12px;
+        }
+
+        .noticias-hero h1 i { color: #f5c542; margin-right: 12px; }
+
+        .noticias-hero p {
+            color: #a0b4d0;
+            font-size: 1.05rem;
+            line-height: 1.6;
+        }
+
+        /* ==================== WRAPPER ==================== */
+        .noticias-wrapper {
             flex: 1;
+            max-width: 1400px;
+            width: 100%;
+            margin: 0 auto;
+            padding: 20px 20px 60px;
+        }
+
+        /* ==================== FILTROS ==================== */
+        .filtros {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 12px;
+            margin-bottom: 35px;
+        }
+
+        .filtros button {
+            background: rgba(30, 41, 59, 0.8);
+            border: 1px solid #334155;
+            color: #cbd5e1;
+            padding: 10px 22px;
+            border-radius: 30px;
+            font-size: 0.9rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .filtros button i { color: #f5c542; font-size: 0.85em; }
+
+        .filtros button:hover {
+            border-color: #f5c542;
+            color: #f5c542;
+            transform: translateY(-2px);
+        }
+
+        .filtros button.active {
+            background: linear-gradient(135deg, #f5c542 0%, #d4a017 100%);
+            color: #0b0e14;
+            border-color: #f5c542;
+            box-shadow: 0 0 15px rgba(245, 197, 66, 0.4);
+        }
+
+        .filtros button.active i { color: #0b0e14; }
+
+        /* ==================== NOTÍCIA DESTAQUE ==================== */
+        .destaque-card {
+            background: #1e293b;
+            border: 1px solid #334155;
+            border-radius: 20px;
+            overflow: hidden;
+            margin-bottom: 35px;
+            display: grid;
+            grid-template-columns: 1.2fr 1fr;
+            transition: transform 0.25s ease, box-shadow 0.25s ease, border-color 0.25s ease;
+        }
+
+        .destaque-card:hover {
+            transform: translateY(-4px);
+            border-color: #f5c542;
+            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.5), 0 0 25px rgba(245, 197, 66, 0.2);
+        }
+
+        .destaque-conteudo {
+            padding: 32px;
             display: flex;
             flex-direction: column;
-            align-items: center;
             justify-content: center;
-            padding: 2.5rem 1.5rem 4rem;
         }
 
-        .link-cadastro {
-            text-align: center;
-            margin-bottom: 1.5rem;
-        }
-
-        .link-cadastro a {
-            color: #93c5fd;
-            text-decoration: none;
-            font-weight: 600;
-            font-size: 0.95rem;
-            transition: color 0.2s ease;
-        }
-
-        .link-cadastro a:hover {
-            color: #ffffff;
-            text-decoration: underline;
-        }
-
-        .card {
-            width: 100%;
-            max-width: 560px;
-            background: rgba(255, 255, 255, 0.05);
-            border: 1px solid rgba(255, 215, 0, 0.15);
-            border-radius: 20px;
-            padding: 2.5rem 2rem;
-            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.5);
-            backdrop-filter: blur(6px);
-            text-align: center;
-        }
-
-        .card h1 {
-            font-size: 1.9rem;
+        .destaque-tag {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            background: linear-gradient(135deg, #f5c542 0%, #d4a017 100%);
+            color: #0b0e14;
+            font-size: 0.72rem;
             font-weight: 800;
-            color: #ffffff;
-            margin-bottom: 0.6rem;
-            text-shadow: 0 0 15px rgba(245, 197, 66, 0.25);
+            text-transform: uppercase;
+            letter-spacing: 0.6px;
+            padding: 5px 12px;
+            border-radius: 20px;
+            margin-bottom: 14px;
+            width: fit-content;
         }
 
-        .card > p {
-            color: #b0b8c4;
-            font-size: 1rem;
-            margin-bottom: 1.8rem;
+        .destaque-conteudo h2 {
+            color: #f1f5f9;
+            font-size: 1.7rem;
+            font-weight: 800;
+            line-height: 1.25;
+            margin-bottom: 12px;
         }
 
-        /* ==================== BOTÕES DE DOWNLOAD ==================== */
-        .btn {
+        .destaque-conteudo p {
+            color: #94a3b8;
+            font-size: 0.95rem;
+            line-height: 1.6;
+            margin-bottom: 18px;
+        }
+
+        .destaque-meta {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 18px;
+            font-size: 0.82rem;
+            color: #64748b;
+            margin-bottom: 20px;
+        }
+
+        .destaque-meta span { display: inline-flex; align-items: center; gap: 6px; }
+        .destaque-meta i { color: #f5c542; }
+
+        .btn-ler {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            background: linear-gradient(135deg, #3b82f6, #2563eb);
+            color: #fff;
+            border: none;
+            border-radius: 8px;
+            padding: 12px 22px;
+            font-size: 0.9rem;
+            font-weight: 700;
+            cursor: pointer;
+            text-decoration: none;
+            width: fit-content;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+
+        .btn-ler:hover {
+            transform: translateX(3px);
+            box-shadow: 0 0 20px rgba(59, 130, 246, 0.5);
+        }
+
+        .destaque-imagem {
+            background: linear-gradient(135deg, #002e5d 0%, #004080 100%);
             display: flex;
             align-items: center;
             justify-content: center;
-            gap: 0.6rem;
-            width: 100%;
-            padding: 1rem 1.2rem;
-            margin-bottom: 1rem;
-            border-radius: 14px;
-            font-size: 1rem;
-            font-weight: 700;
-            text-decoration: none;
-            color: #0b0e14;
-            background: linear-gradient(135deg, #f5c542 0%, #d4a017 100%);
-            box-shadow: 0 4px 15px rgba(245, 197, 66, 0.25);
-            transition: transform 0.2s ease, box-shadow 0.2s ease, filter 0.2s ease;
-            letter-spacing: 0.2px;
-            text-align: center;
-        }
-
-        .btn:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 8px 25px rgba(245, 197, 66, 0.45);
-            filter: brightness(1.05);
-        }
-
-        .btn:active {
-            transform: translateY(0);
-        }
-
-        .btn.apk {
-            background: linear-gradient(135deg, #34d399 0%, #059669 100%);
-            color: #04140d;
-            box-shadow: 0 4px 15px rgba(52, 211, 153, 0.25);
-        }
-
-        .btn.apk:hover {
-            box-shadow: 0 8px 25px rgba(52, 211, 153, 0.45);
-        }
-
-        /* ==================== INFO E INSTRUÇÕES ==================== */
-        .info {
-            margin-top: 1.4rem;
-            font-size: 0.85rem;
-            color: #9aa4b2;
-            line-height: 1.5;
-            text-align: center;
-        }
-
-        .instrucoes {
-            margin-top: 1.8rem;
-            padding: 1.4rem 1.2rem;
-            background: rgba(0, 0, 0, 0.25);
-            border: 1px solid rgba(245, 197, 66, 0.2);
-            border-radius: 14px;
-            text-align: left;
-        }
-
-        .instrucoes h4 {
+            font-size: 5rem;
             color: #f5c542;
+            position: relative;
+            overflow: hidden;
+            min-height: 280px;
+        }
+
+        .destaque-imagem::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: radial-gradient(circle at 70% 30%, rgba(245, 197, 66, 0.25), transparent 60%);
+        }
+
+        /* ==================== GRID DE NOTÍCIAS ==================== */
+        .noticias-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 24px;
+        }
+
+        .noticia-card {
+            background: #1e293b;
+            border: 1px solid #334155;
+            border-radius: 16px;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            transition: transform 0.25s ease, box-shadow 0.25s ease, border-color 0.25s ease;
+        }
+
+        .noticia-card:hover {
+            transform: translateY(-6px);
+            border-color: #f5c542;
+            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.5), 0 0 20px rgba(245, 197, 66, 0.2);
+        }
+
+        .noticia-imagem {
+            height: 140px;
+            background: linear-gradient(135deg, #002e5d 0%, #004080 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2.8rem;
+            color: #f5c542;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .noticia-imagem::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: radial-gradient(circle at 30% 30%, rgba(245, 197, 66, 0.15), transparent 60%);
+        }
+
+        .noticia-categoria {
+            position: absolute;
+            top: 12px;
+            left: 12px;
+            background: rgba(15, 23, 42, 0.85);
+            backdrop-filter: blur(6px);
+            color: #f5c542;
+            font-size: 0.68rem;
+            font-weight: 800;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            padding: 4px 10px;
+            border-radius: 20px;
+            border: 1px solid rgba(245, 197, 66, 0.4);
+            z-index: 1;
+        }
+
+        .noticia-info {
+            padding: 18px 20px 20px;
+            display: flex;
+            flex-direction: column;
+            flex: 1;
+        }
+
+        .noticia-info h3 {
+            color: #f1f5f9;
             font-size: 1.05rem;
-            margin-bottom: 0.8rem;
+            font-weight: 700;
+            line-height: 1.35;
+            margin-bottom: 8px;
+        }
+
+        .noticia-info p {
+            color: #94a3b8;
+            font-size: 0.85rem;
+            line-height: 1.55;
+            margin-bottom: 14px;
+            flex: 1;
+        }
+
+        .noticia-meta {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 12px;
+            font-size: 0.75rem;
+            color: #64748b;
+            padding-top: 12px;
+            border-top: 1px solid #334155;
+        }
+
+        .noticia-meta span { display: inline-flex; align-items: center; gap: 5px; }
+        .noticia-meta i { color: #f5c542; }
+
+        /* ==================== ESTADO VAZIO ==================== */
+        .estado-vazio {
+            grid-column: 1 / -1;
             text-align: center;
+            padding: 60px 20px;
+            color: #94a3b8;
         }
 
-        .instrucoes p {
-            color: #c8d0da;
-            font-size: 0.9rem;
-            line-height: 1.7;
-            margin: 0;
+        .estado-vazio i {
+            font-size: 3.5rem;
+            color: #334155;
+            margin-bottom: 16px;
+            display: block;
         }
 
-        .instrucoes p strong {
-            color: #f5c542;
+        .estado-vazio h3 {
+            color: #cbd5e1;
+            font-size: 1.2rem;
+            margin-bottom: 6px;
         }
 
-        /* ==================== RESPONSIVO ==================== */
-        @media (max-width: 900px) {
-            .nav-links {
-                gap: 1.4rem;
-            }
+        .estado-vazio p { font-size: 0.9rem; }
 
-            .logo {
-                font-size: 1.5rem;
-            }
+        /* ==================== SKELETON ==================== */
+        .skeleton {
+            background: linear-gradient(90deg, #1e293b 0%, #334155 50%, #1e293b 100%);
+            background-size: 200% 100%;
+            animation: shimmer 1.4s infinite;
+            border-radius: 16px;
+            height: 280px;
         }
 
-        @media (max-width: 768px) {
-            .navbar {
-                padding: 0.8rem 1.2rem;
-            }
+        @keyframes shimmer {
+            0% { background-position: 200% 0; }
+            100% { background-position: -200% 0; }
+        }
 
-            .menu-toggle {
-                display: block;
-                order: 2;
-            }
+        /* ==================== RESPONSIVIDADE ==================== */
+        @media (max-width: 1024px) {
+            .navbar { padding: 0.8rem 1.5rem; }
+            .nav-links { gap: 1.5rem; }
+            .btn-discord { padding: 0.6rem 1.2rem; font-size: 0.85rem; }
+            .destaque-card { grid-template-columns: 1fr; }
+            .destaque-imagem { min-height: 180px; order: -1; }
+        }
 
-            .btn-discord {
-                order: 3;
-                padding: 0.6rem 1.1rem;
-                font-size: 0.82rem;
-            }
-
+        @media (max-width: 860px) {
             .nav-links {
                 display: none;
                 width: 100%;
                 flex-direction: column;
                 align-items: flex-start;
-                gap: 0.4rem;
-                margin-top: 0.8rem;
-                padding: 0.6rem 0;
+                gap: 1rem;
+                padding: 1.5rem 0 0.5rem 0;
                 border-top: 1px solid rgba(255, 215, 0, 0.15);
-                order: 4;
+                margin-top: 1rem;
             }
 
-            .nav-links.active {
-                display: flex;
-            }
+            .nav-links.active { display: flex; }
+            .nav-links li { width: 100%; }
+            .nav-links li a { display: flex; width: 100%; padding: 0.6rem 0; font-size: 1.1rem; }
+            .menu-toggle { display: block; }
+            .navbar { justify-content: space-between; }
+            .btn-discord { margin-left: auto; margin-right: 1rem; }
 
-            .nav-links li {
-                width: 100%;
-            }
-
-            .nav-links li a {
-                display: block;
-                padding: 0.6rem 0.3rem;
-                width: 100%;
-            }
-
-            .card {
-                padding: 2rem 1.4rem;
-            }
-
-            .card h1 {
-                font-size: 1.6rem;
-            }
-
-            .btn {
-                font-size: 0.92rem;
-                padding: 0.9rem 1rem;
-            }
+            .noticias-hero h1 { font-size: 2rem; }
+            .destaque-conteudo { padding: 24px; }
+            .destaque-conteudo h2 { font-size: 1.4rem; }
         }
 
-        @media (max-width: 420px) {
-            .logo {
-                font-size: 1.25rem;
-            }
-
-            .logo i {
-                font-size: 1.3rem;
-            }
-
-            .btn-discord span {
-                display: none;
-            }
-
-            .btn-discord {
-                padding: 0.6rem 0.8rem;
-            }
-
-            .btn-discord i {
-                font-size: 1.2rem;
-            }
-
-            .main-content {
-                padding: 1.5rem 1rem 3rem;
-            }
+        @media (max-width: 480px) {
+            .navbar { padding: 0.7rem 1rem; }
+            .logo { font-size: 1.5rem; }
+            .logo i { font-size: 1.3rem; }
+            .btn-discord { padding: 0.5rem 1rem; font-size: 0.8rem; }
+            .btn-discord span { display: none; }
+            .btn-discord i { font-size: 1.2rem; margin: 0; }
+            .noticias-hero h1 { font-size: 1.6rem; }
+            .noticias-grid { grid-template-columns: 1fr; }
+            .filtros button { padding: 8px 16px; font-size: 0.82rem; }
         }
     </style>
 </head>
-
 <body>
 
     <!-- ==================== MENU PRINCIPAL ==================== -->
     <div class="menu-container">
         <nav class="navbar">
             <div class="logo">
-                <i class="fas fa-dragon"></i>
+                <i class="fas fa-cow"></i>
                 MM<span>Quase Tudo</span>
             </div>
 
@@ -390,52 +522,174 @@
             </button>
 
             <ul class="nav-links" id="navLinks">
-                <li><a href="./index.html">Início</a></li>
-                <li><a href="./noticias.html">Notícias</a></li>
-                <li><a href="../Portal-Bolsa/jogos/ranking/ranking002.html">Classificações</a></li>
-                <li><a href="./eventos.html">Eventos</a></li>
-                <li><a href="./download.html">Downloads</a></li>
-                <li><a href="./suporte.html">Suporte</a></li>
-                <li><a href="./loja.html">Loja</a></li>
+                <li><a href="./index.html"><i class="fas fa-house"></i> Início</a></li>
+                <li><a href="./noticias.html"><i class="fas fa-newspaper"></i> Notícias</a></li>
+                <li><a href="./jogos/ranking/ranking002.html"><i class="fas fa-trophy"></i> Classificações</a></li>
+                <li><a href="./eventos.html"><i class="fas fa-calendar-days"></i> Eventos</a></li>
+                <li><a href="./download.html"><i class="fas fa-download"></i> Downloads</a></li>
+                <li><a href="./suporte.html"><i class="fas fa-headset"></i> Suporte</a></li>
+                <li><a href="./loja.html"><i class="fas fa-cart-shopping"></i> Loja</a></li>
+                <li><a href="./cadastro.html"><i class="fas fa-user-plus"></i> Cadastro</a></li>
+                <li><a href="./login.html"><i class="fas fa-sign-in-alt"></i> Login</a></li>
             </ul>
 
-            <a href="https://discord.gg/ATtu4z9Ewt" class="btn-discord" target="_blank">
+            <a href="https://discord.gg/ATtu4z9Ewt" class="btn-discord" target="_blank" rel="noopener">
                 <i class="fab fa-discord"></i>
                 <span>Jogue Agora</span>
             </a>
         </nav>
     </div>
 
-    <!-- ==================== CONTEÚDO PRINCIPAL ==================== -->
-    <main class="main-content">
+    <!-- ==================== HERO ==================== -->
+    <section class="noticias-hero">
+        <h1><i class="fas fa-newspaper"></i>Notícias</h1>
+        <p>Acompanhe as últimas atualizações, eventos e novidades do MM Quase Tudo.</p>
+    </section>
 
-  
+    <!-- ==================== CONTEÚDO ==================== -->
+    <main class="noticias-wrapper">
 
-        <div class="card">
-            <h1>Notícias</h1>
-            <p>Jogos:</p>
-
-
-
-            <div class="instrucoes">
-                <h4>Noticia do Dia ou Noite kkk</h4>
-                <center><p><strong>====================================</strong></p></center>
-
-                <p><strong>-</strong> Atualização 30/09/2026 18:53 </p>
-                <p><strong>-</strong> Jogo esta massa </p>
-                <p><strong>-</strong> mandar a letra do jogo</p>
-                <p><strong>-</strong> jogo passivo</p>
-                <p><strong>-</strong> upe de vagar</p>
-
-                <center><p><strong>====================================</strong></p></center>
-
-            </div>
+        <!-- Filtros -->
+        <div class="filtros" id="filtros">
+            <button class="active" data-categoria="todas"><i class="fas fa-layer-group"></i> Todas</button>
+            <button data-categoria="atualizacao"><i class="fas fa-rocket"></i> Atualizações</button>
+            <button data-categoria="evento"><i class="fas fa-calendar-days"></i> Eventos</button>
+            <button data-categoria="manutencao"><i class="fas fa-wrench"></i> Manutenção</button>
+            <button data-categoria="comunidade"><i class="fas fa-users"></i> Comunidade</button>
         </div>
 
+        <!-- Notícia em destaque -->
+        <article class="destaque-card" id="destaqueCard">
+            <div class="destaque-conteudo">
+                <span class="destaque-tag">
+                    <i class="fas fa-star"></i> Destaque
+                </span>
+                <h2>Atualização 30/09/2026 — Novidades e ajustes no jogo</h2>
+                <p>Confira o que mudou nesta atualização: melhorias de balanceamento, correções de bugs, novos eventos e muito mais.</p>
+                <div class="destaque-meta">
+                    <span><i class="fas fa-user"></i> Equipe MM</span>
+                    <span><i class="fas fa-clock"></i> 30/09/2026 18:53</span>
+                    <span><i class="fas fa-tag"></i> Atualização</span>
+                </div>
+                <a href="#" class="btn-ler">
+                    Ler mais <i class="fas fa-arrow-right"></i>
+                </a>
+            </div>
+            <div class="destaque-imagem">
+                <i class="fas fa-rocket"></i>
+            </div>
+        </article>
+
+        <!-- Grid de notícias -->
+        <section class="noticias-grid" id="noticiasGrid">
+            <article class="noticia-card" data-categoria="atualizacao">
+                <div class="noticia-imagem">
+                    <span class="noticia-categoria">Atualização</span>
+                    <i class="fas fa-bolt"></i>
+                </div>
+                <div class="noticia-info">
+                    <h3>Jogo está massa — confira os detalhes</h3>
+                    <p>Novas mecânicas foram adicionadas e a jogabilidade está mais fluida do que nunca.</p>
+                    <div class="noticia-meta">
+                        <span><i class="fas fa-user"></i> Equipe MM</span>
+                        <span><i class="fas fa-clock"></i> 30/09/2026</span>
+                    </div>
+                </div>
+            </article>
+
+            <article class="noticia-card" data-categoria="comunidade">
+                <div class="noticia-imagem">
+                    <span class="noticia-categoria">Comunidade</span>
+                    <i class="fas fa-comments"></i>
+                </div>
+                <div class="noticia-info">
+                    <h3>Mande a letra do jogo!</h3>
+                    <p>Queremos ouvir sua opinião. Envie sugestões e ideias para melhorarmos ainda mais.</p>
+                    <div class="noticia-meta">
+                        <span><i class="fas fa-user"></i> Equipe MM</span>
+                        <span><i class="fas fa-clock"></i> 30/09/2026</span>
+                    </div>
+                </div>
+            </article>
+
+            <article class="noticia-card" data-categoria="atualizacao">
+                <div class="noticia-imagem">
+                    <span class="noticia-categoria">Atualização</span>
+                    <i class="fas fa-hourglass-half"></i>
+                </div>
+                <div class="noticia-info">
+                    <h3>Ajustes no ritmo de progressão</h3>
+                    <p>O sistema de XP foi recalibrado para tornar a jornada mais equilibrada e recompensadora.</p>
+                    <div class="noticia-meta">
+                        <span><i class="fas fa-user"></i> Equipe MM</span>
+                        <span><i class="fas fa-clock"></i> 30/09/2026</span>
+                    </div>
+                </div>
+            </article>
+
+            <article class="noticia-card" data-categoria="manutencao">
+                <div class="noticia-imagem">
+                    <span class="noticia-categoria">Manutenção</span>
+                    <i class="fas fa-wrench"></i>
+                </div>
+                <div class="noticia-info">
+                    <h3>Jogo passivo — servidores estáveis</h3>
+                    <p>Manutenção programada concluída com sucesso. Todos os serviços estão operando normalmente.</p>
+                    <div class="noticia-meta">
+                        <span><i class="fas fa-user"></i> Equipe MM</span>
+                        <span><i class="fas fa-clock"></i> 30/09/2026</span>
+                    </div>
+                </div>
+            </article>
+
+            <article class="noticia-card" data-categoria="evento">
+                <div class="noticia-imagem">
+                    <span class="noticia-categoria">Evento</span>
+                    <i class="fas fa-calendar-days"></i>
+                </div>
+                <div class="noticia-info">
+                    <h3>Evento especial de outubro</h3>
+                    <p>Prepare-se: um novo evento chega no dia 15 com recompensas exclusivas para todos os jogadores.</p>
+                    <div class="noticia-meta">
+                        <span><i class="fas fa-user"></i> Equipe MM</span>
+                        <span><i class="fas fa-clock"></i> Em breve</span>
+                    </div>
+                </div>
+            </article>
+
+            <article class="noticia-card" data-categoria="comunidade">
+                <div class="noticia-imagem">
+                    <span class="noticia-categoria">Comunidade</span>
+                    <i class="fas fa-trophy"></i>
+                </div>
+                <div class="noticia-info">
+                    <h3>Ranking da temporada atualizado</h3>
+                    <p>Confira quem são os melhores jogadores do mês e suas conquistas no ranking geral.</p>
+                    <div class="noticia-meta">
+                        <span><i class="fas fa-user"></i> Equipe MM</span>
+                        <span><i class="fas fa-clock"></i> 30/09/2026</span>
+                    </div>
+                </div>
+            </article>
+        </section>
     </main>
 
-    <!-- ==================== SCRIPT DO MENU MOBILE ==================== -->
+    <!-- ==================== JAVASCRIPT ==================== -->
     <script>
+        /* ==================== CONFIGURAÇÃO SUPABASE (opcional) ==================== */
+        const SUPABASE_URL = 'https://xrcxvizzdumcxbylmkvn.supabase.co';
+        const SUPABASE_ANON_KEY = 'sb_publishable_E-g3G3wW4EySbCsXLXp8KQ_FnmERMcD';
+
+        let supabaseClient = null;
+        try {
+            if (window.supabase) {
+                supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+            }
+        } catch (e) {
+            console.warn('[Notícias] Supabase não inicializado:', e);
+        }
+
+        /* ==================== MENU TOGGLE ==================== */
         const menuToggle = document.getElementById('menuToggle');
         const navLinks = document.getElementById('navLinks');
 
@@ -448,9 +702,177 @@
                     icon.classList.toggle('fa-times');
                 }
             });
+
+            navLinks.querySelectorAll('a').forEach(link => {
+                link.addEventListener('click', () => {
+                    if (window.innerWidth <= 860) {
+                        navLinks.classList.remove('active');
+                        const icon = menuToggle.querySelector('i');
+                        if (icon) {
+                            icon.classList.add('fa-bars');
+                            icon.classList.remove('fa-times');
+                        }
+                    }
+                });
+            });
         }
+
+        /* ==================== FILTROS ==================== */
+        const filtros = document.querySelectorAll('#filtros button');
+        const cards = document.querySelectorAll('.noticia-card');
+        const destaque = document.getElementById('destaqueCard');
+
+        filtros.forEach(btn => {
+            btn.addEventListener('click', () => {
+                // Atualiza botão ativo
+                filtros.forEach(b => b.classList.remove('active'));
+                btn.classList.add('active');
+
+                const categoria = btn.dataset.categoria;
+                let visiveis = 0;
+
+                // Filtra cards
+                cards.forEach(card => {
+                    const match = categoria === 'todas' || card.dataset.categoria === categoria;
+                    card.style.display = match ? '' : 'none';
+                    if (match) visiveis++;
+                });
+
+                // Esconde destaque se o filtro não for "todas"
+                if (destaque) {
+                    destaque.style.display = (categoria === 'todas') ? '' : 'none';
+                }
+
+                // Estado vazio
+                const vazioExistente = document.querySelector('.estado-vazio');
+                if (visiveis === 0 && !vazioExistente) {
+                    const vazio = document.createElement('div');
+                    vazio.className = 'estado-vazio';
+                    vazio.innerHTML = `
+                        <i class="fas fa-inbox"></i>
+                        <h3>Nenhuma notícia encontrada</h3>
+                        <p>Não há notícias nessa categoria no momento.</p>
+                    `;
+                    document.getElementById('noticiasGrid').appendChild(vazio);
+                } else if (visiveis > 0 && vazioExistente) {
+                    vazioExistente.remove();
+                }
+            });
+        });
+
+        /* ==================== CARREGAR NOTÍCIAS DO SUPABASE (opcional) ==================== */
+        async function carregarNoticias() {
+            if (!supabaseClient) {
+                console.log('[Notícias] Supabase não configurado — usando notícias estáticas.');
+                return;
+            }
+
+            try {
+                const { data, error } = await supabaseClient
+                    .from('noticias')
+                    .select('*')
+                    .eq('publicado', true)
+                    .order('created_at', { ascending: false })
+                    .limit(20);
+
+                if (error) throw error;
+                if (!data || data.length === 0) {
+                    console.log('[Notícias] Nenhuma notícia no Supabase — mantendo estáticas.');
+                    return;
+                }
+
+                console.log(`[Notícias] ${data.length} notícia(s) carregada(s) do Supabase.`);
+                renderizarNoticias(data);
+
+            } catch (err) {
+                // Se a tabela não existir, apenas mantém as estáticas
+                console.warn('[Notícias] Não foi possível carregar do Supabase:', err.message);
+            }
+        }
+
+        function renderizarNoticias(noticias) {
+            const grid = document.getElementById('noticiasGrid');
+            const destaqueCard = document.getElementById('destaqueCard');
+
+            // Separa destaque
+            const noticiaDestaque = noticias.find(n => n.destaque);
+            const demais = noticias.filter(n => !n.destaque || n.id !== noticiaDestaque?.id);
+
+            // Renderiza destaque
+            if (noticiaDestaque && destaqueCard) {
+                destaqueCard.querySelector('h2').textContent = noticiaDestaque.titulo;
+                destaqueCard.querySelector('p').textContent = noticiaDestaque.resumo;
+
+                const meta = destaqueCard.querySelector('.destaque-meta');
+                const dataFormatada = formatarData(noticiaDestaque.created_at);
+                meta.innerHTML = `
+                    <span><i class="fas fa-user"></i> ${noticiaDestaque.autor || 'Equipe MM'}</span>
+                    <span><i class="fas fa-clock"></i> ${dataFormatada}</span>
+                    <span><i class="fas fa-tag"></i> ${capitalizar(noticiaDestaque.categoria || 'Geral')}</span>
+                `;
+
+                const btnLer = destaqueCard.querySelector('.btn-ler');
+                if (btnLer) btnLer.href = `noticia.html?id=${noticiaDestaque.id}`;
+            }
+
+            // Renderiza grid
+            grid.innerHTML = demais.map(n => `
+                <article class="noticia-card" data-categoria="${n.categoria || 'geral'}">
+                    <div class="noticia-imagem">
+                        <span class="noticia-categoria">${capitalizar(n.categoria || 'Geral')}</span>
+                        <i class="${iconeCategoria(n.categoria)}"></i>
+                    </div>
+                    <div class="noticia-info">
+                        <h3>${escaparHTML(n.titulo)}</h3>
+                        <p>${escaparHTML(n.resumo)}</p>
+                        <div class="noticia-meta">
+                            <span><i class="fas fa-user"></i> ${escaparHTML(n.autor || 'Equipe MM')}</span>
+                            <span><i class="fas fa-clock"></i> ${formatarData(n.created_at)}</span>
+                        </div>
+                    </div>
+                </article>
+            `).join('');
+
+            // Reaplica filtro atual
+            const ativo = document.querySelector('#filtros button.active');
+            if (ativo && ativo.dataset.categoria !== 'todas') {
+                ativo.click();
+            }
+        }
+
+        /* ==================== HELPERS ==================== */
+        function formatarData(iso) {
+            if (!iso) return '—';
+            const d = new Date(iso);
+            return d.toLocaleDateString('pt-BR', { day: '2-digit', month: '2-digit', year: 'numeric' }) +
+                   ' ' + d.toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' });
+        }
+
+        function capitalizar(str) {
+            if (!str) return '';
+            return str.charAt(0).toUpperCase() + str.slice(1);
+        }
+
+        function iconeCategoria(cat) {
+            const mapa = {
+                atualizacao: 'fas fa-rocket',
+                evento: 'fas fa-calendar-days',
+                manutencao: 'fas fa-wrench',
+                comunidade: 'fas fa-users',
+                geral: 'fas fa-newspaper'
+            };
+            return mapa[cat] || mapa.geral;
+        }
+
+        function escaparHTML(str) {
+            if (!str) return '';
+            const div = document.createElement('div');
+            div.textContent = str;
+            return div.innerHTML;
+        }
+
+        /* ==================== INICIALIZAÇÃO ==================== */
+        carregarNoticias();
     </script>
-
 </body>
-
 </html>

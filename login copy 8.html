@@ -9,7 +9,7 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,400;14..32,600;14..32,700;14..32,800&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
     <style>
         /* ==================== RESET E BASE ==================== */
         * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Inter', 'Segoe UI', sans-serif; }
@@ -21,8 +21,6 @@
             display: flex;
             flex-direction: column;
         }
-
-
 
         /* ==================== MENU (adaptado do menu.html) ==================== */
         .menu-container {
@@ -87,6 +85,21 @@
             transition: all 0.2s ease;
             padding: 0.5rem 0;
             position: relative;
+            display: inline-flex;
+            align-items: center;
+        }
+
+        /* Ícones do menu */
+        .nav-links li a i {
+            margin-right: 8px;
+            font-size: 0.95em;
+            color: #f5c542;
+            transition: color 0.2s ease, transform 0.2s ease;
+        }
+
+        .nav-links li a:hover i {
+            color: #ffffff;
+            transform: scale(1.1);
         }
 
         .nav-links li a::after {
@@ -241,7 +254,7 @@
             .nav-links.active { display: flex; }
             .nav-links li { width: 100%; }
             .nav-links li a {
-                display: block;
+                display: flex;
                 width: 100%;
                 padding: 0.6rem 0;
                 font-size: 1.1rem;
@@ -277,13 +290,15 @@
             </button>
 
             <ul class="nav-links" id="navLinks">
-                <li><a href="./index.html">Início</a></li>
-                <li><a href="./noticias.html">Notícias</a></li>
-                <li><a href="../jogos/ranking/ranking002.html">Rankings</a></li>
-                <li><a href="./eventos.html">Eventos</a></li>
-                <li><a href="./download.html">Downloads</a></li>
-                <li><a href="./suporte.html">Suporte</a></li>
-                <li><a href="./loja.html">Loja</a></li>
+                <li><a href="./index.html"><i class="fas fa-house"></i> Início</a></li>
+                <li><a href="./noticias.html"><i class="fas fa-newspaper"></i> Notícias</a></li>
+                <li><a href="./jogos/ranking/ranking002.html"><i class="fas fa-trophy"></i> Classificações</a></li>
+                <li><a href="./eventos.html"><i class="fas fa-calendar-days"></i> Eventos</a></li>
+                <li><a href="./download.html"><i class="fas fa-download"></i> Downloads</a></li>
+                <li><a href="./suporte.html"><i class="fas fa-headset"></i> Suporte</a></li>
+                <li><a href="./loja.html"><i class="fas fa-cart-shopping"></i> Loja</a></li>
+                <li><a href="./cadastro.html"><i class="fas fa-user-plus"></i> Cadastro</a></li>
+                <li><a href="./login.html"><i class="fas fa-sign-in-alt"></i> Login</a></li>
             </ul>
 
             <a href="https://discord.gg/ATtu4z9Ewt" class="btn-discord" target="_blank">
@@ -305,7 +320,7 @@
             <form id="formLogin" autocomplete="on">
                 <div class="form-group">
                     <label for="login">Login</label>
-                    <input type="text" id="login" placeholder="seu_login" autocomplete="username" required>
+                    <input type="text" id="login" placeholder="MoitaPR" autocomplete="username" required>
                 </div>
                 <div class="form-group">
                     <label for="senha">Senha</label>
@@ -314,19 +329,7 @@
                 <button type="submit" id="btnLogin">🔐 Entrar</button>
             </form>
 
-            <div class="links-recuperar">
-                <a href="esqueci-login.html">Esqueci meu login</a>
-                <a href="esqueci-senha.html">Esqueci minha senha</a>
-            </div>
-
-            <div id="statusSupabase" class="status-supabase">Verificando conexão...</div>
-
-            <div class="link-cadastro">
-                Não tem conta? <a href="cadastro.html">Criar cadastro</a>
-            </div>
-            <div class="link-cadastro">
-                Download <a href="download.html">Baixar Arquivos</a>
-            </div>
+   
         </div>
     </div>
 

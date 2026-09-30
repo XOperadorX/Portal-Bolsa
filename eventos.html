@@ -1,13 +1,21 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="pt-BR">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
-      <style>
-  
-       /* ==================== RESET E BASE ==================== */
-        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Inter', 'Segoe UI', sans-serif; }
+    <title>Eventos | MM Quase Tudo</title>
+
+    <!-- Font Awesome (ícones) -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+
+    <style>
+        /* ==================== RESET E BASE ==================== */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Inter', 'Segoe UI', sans-serif;
+        }
 
         body {
             min-height: 100vh;
@@ -17,9 +25,7 @@
             flex-direction: column;
         }
 
-
-
-        /* ==================== MENU (adaptado do menu.html) ==================== */
+        /* ==================== MENU ==================== */
         .menu-container {
             width: 100%;
             background-color: rgb(0, 43, 173);
@@ -64,6 +70,7 @@
             margin-right: 0.2rem;
         }
 
+        /* ==================== LINKS DE NAVEGAÇÃO ==================== */
         .nav-links {
             display: flex;
             align-items: center;
@@ -82,6 +89,20 @@
             transition: all 0.2s ease;
             padding: 0.5rem 0;
             position: relative;
+            display: inline-flex;
+            align-items: center;
+        }
+
+        .nav-links li a i {
+            margin-right: 8px;
+            font-size: 0.95em;
+            color: #f5c542;
+            transition: color 0.2s ease, transform 0.2s ease;
+        }
+
+        .nav-links li a:hover i {
+            color: #ffffff;
+            transform: scale(1.1);
         }
 
         .nav-links li a::after {
@@ -103,6 +124,7 @@
             width: 100%;
         }
 
+        /* ==================== BOTÃO DISCORD ==================== */
         .btn-discord {
             background: linear-gradient(135deg, #f5c542 0%, #d4a017 100%);
             border: none;
@@ -132,6 +154,7 @@
             background: linear-gradient(135deg, #f7d25c 0%, #e0b020 100%);
         }
 
+        /* ==================== MENU TOGGLE (HAMBÚRGUER) ==================== */
         .menu-toggle {
             display: none;
             background: transparent;
@@ -141,15 +164,307 @@
             cursor: pointer;
             padding: 0.3rem 0.6rem;
         }
-      </style>
+
+        /* ==================== CONTEÚDO DE EVENTOS ==================== */
+        .eventos-wrapper {
+            flex: 1;
+            max-width: 1400px;
+            width: 100%;
+            margin: 0 auto;
+            padding: 40px 20px;
+        }
+
+        .eventos-header {
+            text-align: center;
+            margin-bottom: 40px;
+        }
+
+        .eventos-header h1 {
+            font-size: 2.4rem;
+            color: #ffffff;
+            font-weight: 800;
+            letter-spacing: 1px;
+            text-shadow: 0 0 15px rgba(245, 197, 66, 0.4);
+            margin-bottom: 10px;
+        }
+
+        .eventos-header h1 i {
+            color: #f5c542;
+            margin-right: 10px;
+        }
+
+        .eventos-header p {
+            color: #a0b4d0;
+            font-size: 1rem;
+        }
+
+        /* ==================== FILTROS ==================== */
+        .filtros {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 12px;
+            margin-bottom: 35px;
+        }
+
+        .filtros button {
+            background: rgba(30, 41, 59, 0.8);
+            border: 1px solid #334155;
+            color: #cbd5e1;
+            padding: 10px 22px;
+            border-radius: 30px;
+            font-size: 0.9rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .filtros button:hover {
+            border-color: #f5c542;
+            color: #f5c542;
+            transform: translateY(-2px);
+        }
+
+        .filtros button.active {
+            background: linear-gradient(135deg, #f5c542 0%, #d4a017 100%);
+            color: #0b0e14;
+            border-color: #f5c542;
+            box-shadow: 0 0 15px rgba(245, 197, 66, 0.4);
+        }
+
+        /* ==================== GRID DE EVENTOS ==================== */
+        .eventos-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+            gap: 24px;
+        }
+
+        .evento-card {
+            background: #1e293b;
+            border: 1px solid #334155;
+            border-radius: 16px;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            transition: transform 0.25s ease, box-shadow 0.25s ease, border-color 0.25s ease;
+        }
+
+        .evento-card:hover {
+            transform: translateY(-6px);
+            border-color: #f5c542;
+            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.5), 0 0 20px rgba(245, 197, 66, 0.2);
+        }
+
+        /* Cabeçalho do card com data */
+        .evento-data {
+            background: linear-gradient(135deg, #002e5d 0%, #004080 100%);
+            padding: 18px 20px;
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            position: relative;
+        }
+
+        .evento-data::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: radial-gradient(circle at 80% 20%, rgba(245, 197, 66, 0.15), transparent 60%);
+            pointer-events: none;
+        }
+
+        .data-bloco {
+            background: linear-gradient(135deg, #f5c542 0%, #d4a017 100%);
+            color: #0b0e14;
+            border-radius: 10px;
+            padding: 8px 14px;
+            text-align: center;
+            min-width: 64px;
+            box-shadow: 0 4px 12px rgba(245, 197, 66, 0.3);
+        }
+
+        .data-bloco .dia {
+            display: block;
+            font-size: 1.5rem;
+            font-weight: 900;
+            line-height: 1;
+        }
+
+        .data-bloco .mes {
+            display: block;
+            font-size: 0.7rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-top: 3px;
+        }
+
+        .evento-titulo-data {
+            flex: 1;
+        }
+
+        .evento-titulo-data h3 {
+            color: #ffffff;
+            font-size: 1.1rem;
+            font-weight: 700;
+            margin-bottom: 4px;
+        }
+
+        .evento-titulo-data .categoria {
+            display: inline-block;
+            font-size: 0.7rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            padding: 3px 10px;
+            border-radius: 20px;
+            background: rgba(245, 197, 66, 0.15);
+            color: #f5c542;
+            border: 1px solid rgba(245, 197, 66, 0.4);
+        }
+
+        .evento-info {
+            padding: 18px 20px;
+            display: flex;
+            flex-direction: column;
+            flex: 1;
+        }
+
+        .evento-info p {
+            color: #94a3b8;
+            font-size: 0.9rem;
+            line-height: 1.5;
+            margin-bottom: 16px;
+            flex: 1;
+        }
+
+        .evento-meta {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            margin-bottom: 18px;
+        }
+
+        .evento-meta span {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            color: #cbd5e1;
+            font-size: 0.85rem;
+        }
+
+        .evento-meta span i {
+            color: #f5c542;
+            width: 16px;
+            text-align: center;
+        }
+
+        .btn-inscrever {
+            width: 100%;
+            padding: 11px;
+            background: linear-gradient(135deg, #3b82f6, #2563eb);
+            border: none;
+            border-radius: 8px;
+            color: #ffffff;
+            font-size: 0.9rem;
+            font-weight: 700;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+        }
+
+        .btn-inscrever:hover {
+            transform: scale(1.03);
+            box-shadow: 0 0 20px rgba(59, 130, 246, 0.5);
+        }
+
+        .btn-inscrever:active {
+            transform: scale(0.98);
+        }
+
+        .btn-inscrever.encerrado {
+            background: linear-gradient(135deg, #475569, #334155);
+            cursor: not-allowed;
+            opacity: 0.7;
+        }
+
+        .btn-inscrever.encerrado:hover {
+            transform: none;
+            box-shadow: none;
+        }
+
+        /* ==================== RESPONSIVIDADE ==================== */
+        @media (max-width: 1024px) {
+            .navbar { padding: 0.8rem 1.5rem; }
+            .nav-links { gap: 1.5rem; }
+            .btn-discord { padding: 0.6rem 1.2rem; font-size: 0.85rem; }
+        }
+
+        @media (max-width: 860px) {
+            .nav-links {
+                display: none;
+                width: 100%;
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 1rem;
+                padding: 1.5rem 0 0.5rem 0;
+                border-top: 1px solid rgba(255, 215, 0, 0.15);
+                margin-top: 1rem;
+            }
+
+            .nav-links.active {
+                display: flex;
+            }
+
+            .nav-links li {
+                width: 100%;
+            }
+
+            .nav-links li a {
+                display: flex;
+                width: 100%;
+                padding: 0.6rem 0;
+                font-size: 1.1rem;
+            }
+
+            .menu-toggle {
+                display: block;
+            }
+
+            .navbar {
+                justify-content: space-between;
+            }
+
+            .btn-discord {
+                margin-left: auto;
+                margin-right: 1rem;
+            }
+
+            .eventos-header h1 { font-size: 2rem; }
+        }
+
+        @media (max-width: 480px) {
+            .navbar { padding: 0.7rem 1rem; }
+            .logo { font-size: 1.5rem; }
+            .logo i { font-size: 1.3rem; }
+            .btn-discord { padding: 0.5rem 1rem; font-size: 0.8rem; }
+            .btn-discord span { display: none; }
+            .btn-discord i { font-size: 1.2rem; margin: 0; }
+            .eventos-header h1 { font-size: 1.6rem; }
+            .eventos-grid { grid-template-columns: 1fr; }
+        }
+    </style>
 </head>
 <body>
-   
-    <!-- ==================== MENU PRINCIPAL (do menu.html) ==================== -->
+
+    <!-- ==================== MENU PRINCIPAL ==================== -->
     <div class="menu-container">
         <nav class="navbar">
             <div class="logo">
-                <i class="fas fa-dragon"></i>
+                <i class="fas fa-cow"></i>
                 MM<span>Quase Tudo</span>
             </div>
 
@@ -158,20 +473,240 @@
             </button>
 
             <ul class="nav-links" id="navLinks">
-                <li><a href="./index.html">Início</a></li>
-                <li><a href="./noticias.html">Notícias</a></li>
-                <li><a href="./jogos/ranking/ranking002.html">Classificaçõess</a></li>
-                <li><a href="./eventos.html">Eventos</a></li>
-                <li><a href="./download.html">Downloads</a></li>
-                <li><a href="./suporte.html">Suporte</a></li>
-                <li><a href="./loja.html">Loja</a></li>
+                <li><a href="./index.html"><i class="fas fa-house"></i> Início</a></li>
+                <li><a href="./noticias.html"><i class="fas fa-newspaper"></i> Notícias</a></li>
+                <li><a href="./jogos/ranking/ranking002.html"><i class="fas fa-trophy"></i> Classificações</a></li>
+                <li><a href="./eventos.html"><i class="fas fa-calendar-days"></i> Eventos</a></li>
+                <li><a href="./download.html"><i class="fas fa-download"></i> Downloads</a></li>
+                <li><a href="./suporte.html"><i class="fas fa-headset"></i> Suporte</a></li>
+                <li><a href="./loja.html"><i class="fas fa-cart-shopping"></i> Loja</a></li>
+                <li><a href="./cadastro.html"><i class="fas fa-user-plus"></i> Cadastro</a></li>
+                <li><a href="./login.html"><i class="fas fa-sign-in-alt"></i> Login</a></li>
             </ul>
 
-            <a href="https://discord.gg/ATtu4z9Ewt" class="btn-discord" target="_blank">
+            <a href="https://discord.gg/ATtu4z9Ewt" class="btn-discord" target="_blank" rel="noopener">
                 <i class="fab fa-discord"></i>
                 <span>Jogue Agora</span>
             </a>
         </nav>
-    </div> 
+    </div>
+
+    <!-- ==================== CONTEÚDO DE EVENTOS ==================== -->
+    <main class="eventos-wrapper">
+        <header class="eventos-header">
+            <h1><i class="fas fa-calendar-days"></i>Eventos MM Quase Tudo</h1>
+            <p>Fique por dentro dos próximos eventos, torneios e atualizações especiais</p>
+        </header>
+
+        <!-- Filtros -->
+        <div class="filtros">
+            <button class="active">Todos</button>
+            <button>Próximos</button>
+            <button>Torneios</button>
+            <button>Atualizações</button>
+            <button>Comunidade</button>
+        </div>
+
+        <!-- Grid de eventos -->
+        <section class="eventos-grid">
+            <article class="evento-card">
+                <div class="evento-data">
+                    <div class="data-bloco">
+                        <span class="dia">15</span>
+                        <span class="mes">Out</span>
+                    </div>
+                    <div class="evento-titulo-data">
+                        <h3>Torneio de Abertura</h3>
+                        <span class="categoria">Torneio</span>
+                    </div>
+                </div>
+                <div class="evento-info">
+                    <p>Participe do primeiro torneio oficial da temporada e concorra a prêmios exclusivos.</p>
+                    <div class="evento-meta">
+                        <span><i class="fas fa-clock"></i> 19:00 às 22:00</span>
+                        <span><i class="fas fa-location-dot"></i> Servidor Principal</span>
+                        <span><i class="fas fa-users"></i> 64 vagas</span>
+                    </div>
+                    <button class="btn-inscrever">
+                        <i class="fas fa-pen-to-square"></i> Inscrever-se
+                    </button>
+                </div>
+            </article>
+
+            <article class="evento-card">
+                <div class="evento-data">
+                    <div class="data-bloco">
+                        <span class="dia">22</span>
+                        <span class="mes">Out</span>
+                    </div>
+                    <div class="evento-titulo-data">
+                        <h3>Atualização 2.0</h3>
+                        <span class="categoria">Atualização</span>
+                    </div>
+                </div>
+                <div class="evento-info">
+                    <p>Novos mapas, itens e sistema de guildas chegam na maior atualização do ano.</p>
+                    <div class="evento-meta">
+                        <span><i class="fas fa-clock"></i> 14:00</span>
+                        <span><i class="fas fa-server"></i> Todos os servidores</span>
+                        <span><i class="fas fa-download"></i> Download obrigatório</span>
+                    </div>
+                    <button class="btn-inscrever">
+                        <i class="fas fa-bell"></i> Lembrar-me
+                    </button>
+                </div>
+            </article>
+
+            <article class="evento-card">
+                <div class="evento-data">
+                    <div class="data-bloco">
+                        <span class="dia">29</span>
+                        <span class="mes">Out</span>
+                    </div>
+                    <div class="evento-titulo-data">
+                        <h3>Caçada ao Dragão</h3>
+                        <span class="categoria">Comunidade</span>
+                    </div>
+                </div>
+                <div class="evento-info">
+                    <p>Evento cooperativo onde todos os jogadores unem forças para derrotar um boss mundial.</p>
+                    <div class="evento-meta">
+                        <span><i class="fas fa-clock"></i> 20:00</span>
+                        <span><i class="fas fa-location-dot"></i> Vale dos Dragões</span>
+                        <span><i class="fas fa-users"></i> Ilimitado</span>
+                    </div>
+                    <button class="btn-inscrever">
+                        <i class="fas fa-pen-to-square"></i> Inscrever-se
+                    </button>
+                </div>
+            </article>
+
+            <article class="evento-card">
+                <div class="evento-data">
+                    <div class="data-bloco">
+                        <span class="dia">05</span>
+                        <span class="mes">Nov</span>
+                    </div>
+                    <div class="evento-titulo-data">
+                        <h3>Copa PvP</h3>
+                        <span class="categoria">Torneio</span>
+                    </div>
+                </div>
+                <div class="evento-info">
+                    <p>Competição de PvP em formato eliminatório com premiação em dinheiro e itens raros.</p>
+                    <div class="evento-meta">
+                        <span><i class="fas fa-clock"></i> 18:00 às 23:00</span>
+                        <span><i class="fas fa-location-dot"></i> Arena Central</span>
+                        <span><i class="fas fa-users"></i> 128 vagas</span>
+                    </div>
+                    <button class="btn-inscrever">
+                        <i class="fas fa-pen-to-square"></i> Inscrever-se
+                    </button>
+                </div>
+            </article>
+
+            <article class="evento-card">
+                <div class="evento-data">
+                    <div class="data-bloco">
+                        <span class="dia">12</span>
+                        <span class="mes">Nov</span>
+                    </div>
+                    <div class="evento-titulo-data">
+                        <h3>Festival de Inverno</h3>
+                        <span class="categoria">Comunidade</span>
+                    </div>
+                </div>
+                <div class="evento-info">
+                    <p>Evento sazonal com decorações temáticas, missões especiais e recompensas exclusivas.</p>
+                    <div class="evento-meta">
+                        <span><i class="fas fa-clock"></i> Durante todo o dia</span>
+                        <span><i class="fas fa-location-dot"></i> Cidade Principal</span>
+                        <span><i class="fas fa-users"></i> Ilimitado</span>
+                    </div>
+                    <button class="btn-inscrever">
+                        <i class="fas fa-pen-to-square"></i> Inscrever-se
+                    </button>
+                </div>
+            </article>
+
+            <article class="evento-card">
+                <div class="evento-data">
+                    <div class="data-bloco">
+                        <span class="dia">20</span>
+                        <span class="mes">Nov</span>
+                    </div>
+                    <div class="evento-titulo-data">
+                        <h3>Encerramento da Temporada</h3>
+                        <span class="categoria">Torneio</span>
+                    </div>
+                </div>
+                <div class="evento-info">
+                    <p>Grande final com os melhores jogadores da temporada. Premiação especial para o campeão.</p>
+                    <div class="evento-meta">
+                        <span><i class="fas fa-clock"></i> 20:00</span>
+                        <span><i class="fas fa-location-dot"></i> Arena Central</span>
+                        <span><i class="fas fa-lock"></i> Apenas classificados</span>
+                    </div>
+                    <button class="btn-inscrever encerrado" disabled>
+                        <i class="fas fa-lock"></i> Vagas esgotadas
+                    </button>
+                </div>
+            </article>
+        </section>
+    </main>
+
+    <!-- ==================== JAVASCRIPT ==================== -->
+    <script>
+        // Menu toggle (mobile)
+        const menuToggle = document.getElementById('menuToggle');
+        const navLinks = document.getElementById('navLinks');
+
+        menuToggle.addEventListener('click', () => {
+            navLinks.classList.toggle('active');
+
+            const icon = menuToggle.querySelector('i');
+            if (navLinks.classList.contains('active')) {
+                icon.classList.remove('fa-bars');
+                icon.classList.add('fa-times');
+            } else {
+                icon.classList.remove('fa-times');
+                icon.classList.add('fa-bars');
+            }
+        });
+
+        // Fecha o menu ao clicar em um link (mobile)
+        navLinks.querySelectorAll('a').forEach(link => {
+            link.addEventListener('click', () => {
+                if (window.innerWidth <= 860) {
+                    navLinks.classList.remove('active');
+                    const icon = menuToggle.querySelector('i');
+                    icon.classList.remove('fa-times');
+                    icon.classList.add('fa-bars');
+                }
+            });
+        });
+
+        // Filtros (visual)
+        document.querySelectorAll('.filtros button').forEach(btn => {
+            btn.addEventListener('click', () => {
+                document.querySelectorAll('.filtros button').forEach(b => b.classList.remove('active'));
+                btn.classList.add('active');
+            });
+        });
+
+        // Botões de inscrição (feedback visual)
+        document.querySelectorAll('.btn-inscrever:not(.encerrado)').forEach(btn => {
+            btn.addEventListener('click', function () {
+                const original = this.innerHTML;
+                this.innerHTML = '<i class="fas fa-check"></i> Inscrito!';
+                this.style.background = 'linear-gradient(135deg, #22c55e, #16a34a)';
+
+                setTimeout(() => {
+                    this.innerHTML = original;
+                    this.style.background = '';
+                }, 1500);
+            });
+        });
+    </script>
 </body>
 </html>

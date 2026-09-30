@@ -2,104 +2,494 @@
 <html lang="pt-BR">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0">
+    <meta name="theme-color" content="#002bad">
     <title>Cadastro — Conta Teste</title>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
     <style>
-        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Segoe UI', sans-serif; }
-        body {
-            min-height: 100vh; display: flex; align-items: center; justify-content: center;
-            background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%); padding: 20px;
+        /* ==================== RESET E BASE ==================== */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            -webkit-tap-highlight-color: transparent;
         }
+
+        html, body {
+            font-family: 'Inter', 'Segoe UI', -apple-system, BlinkMacSystemFont, sans-serif;
+            min-height: 100vh;
+        }
+
+        body {
+            background: linear-gradient(135deg, #002e5d 0%, #001a33 100%);
+            background-attachment: fixed;
+            color: #e0e0e0;
+            display: flex;
+            flex-direction: column;
+            overflow-x: hidden;
+        }
+
+        /* ==================== MENU ==================== */
+        .menu-container {
+            width: 100%;
+            background-color: rgb(0, 43, 173);
+            backdrop-filter: blur(8px);
+            -webkit-backdrop-filter: blur(8px);
+            border-bottom: 1px solid rgba(255, 215, 0, 0.2);
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.6);
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+        }
+
+        .navbar {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 0.9rem 2rem;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            gap: 0.8rem;
+        }
+
+        .logo {
+            font-size: 1.8rem;
+            font-weight: 800;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+            color: #ffffff;
+            text-shadow: 0 0 10px rgba(255, 215, 0, 0.5);
+            display: flex;
+            align-items: center;
+            gap: 0.3rem;
+            flex-shrink: 0;
+        }
+
+        .logo span { color: #f5c542; font-weight: 900; }
+        .logo i { color: #f5c542; font-size: 1.6rem; margin-right: 0.2rem; }
+
+        .nav-links {
+            display: flex;
+            align-items: center;
+            gap: 2.2rem;
+            list-style: none;
+            margin: 0;
+            padding: 0;
+        }
+
+        .nav-links li a {
+            text-decoration: none;
+            color: #d0d0d0;
+            font-weight: 600;
+            font-size: 1rem;
+            letter-spacing: 0.3px;
+            transition: all 0.2s ease;
+            padding: 0.5rem 0;
+            position: relative;
+            display: inline-flex;
+            align-items: center;
+        }
+
+        .nav-links li a i {
+            margin-right: 8px;
+            font-size: 0.95em;
+            color: #f5c542;
+            transition: color 0.2s ease, transform 0.2s ease;
+        }
+
+        .nav-links li a:hover i { color: #ffffff; transform: scale(1.1); }
+
+        .nav-links li a::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 0;
+            height: 2px;
+            background: #f5c542;
+            transition: width 0.25s ease;
+        }
+
+        .nav-links li a:hover { color: #ffffff; }
+        .nav-links li a:hover::after { width: 100%; }
+
+        .btn-discord {
+            background: linear-gradient(135deg, #f5c542 0%, #d4a017 100%);
+            border: none;
+            border-radius: 40px;
+            color: #0b0e14;
+            font-weight: 700;
+            font-size: 0.9rem;
+            padding: 0.7rem 1.6rem;
+            display: flex;
+            align-items: center;
+            gap: 0.6rem;
+            cursor: pointer;
+            transition: transform 0.2s, box-shadow 0.2s;
+            box-shadow: 0 0 15px rgba(245, 197, 66, 0.3);
+            text-decoration: none;
+            letter-spacing: 0.3px;
+            white-space: nowrap;
+            flex-shrink: 0;
+        }
+
+        .btn-discord i { font-size: 1.1rem; }
+
+        .btn-discord:hover {
+            transform: scale(1.03);
+            box-shadow: 0 0 25px rgba(245, 197, 66, 0.6);
+            background: linear-gradient(135deg, #f7d25c 0%, #e0b020 100%);
+        }
+
+        .menu-toggle {
+            display: none;
+            background: transparent;
+            border: none;
+            color: #f5c542;
+            font-size: 1.8rem;
+            cursor: pointer;
+            padding: 0.3rem 0.6rem;
+            order: 2;
+        }
+
+        /* ==================== WRAPPER DO CADASTRO ==================== */
+        .cadastro-wrapper {
+            flex: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 40px 20px;
+            width: 100%;
+        }
+
         .cadastro-container {
-            width: 100%; max-width: 460px; background: #1e293b;
-            border: 1px solid #334155; border-radius: 16px; padding: 40px 32px;
+            width: 100%;
+            max-width: 460px;
+            background: #1e293b;
+            border: 1px solid #334155;
+            border-radius: 16px;
+            padding: 40px 32px;
             box-shadow: 0 20px 60px rgba(0,0,0,0.5);
         }
-        h1 { color: #f1f5f9; font-size: 26px; text-align: center; margin-bottom: 8px; }
-        .subtitle { color: #94a3b8; font-size: 14px; text-align: center; margin-bottom: 28px; }
-        .form-group { margin-bottom: 18px; }
-        .form-group label { display: block; color: #cbd5e1; font-size: 14px; margin-bottom: 6px; font-weight: 500; }
-        .form-group input {
-            width: 100%; padding: 12px 14px; background: #0f172a;
-            border: 1px solid #334155; border-radius: 8px; color: #f1f5f9;
-            font-size: 15px; outline: none; transition: border-color 0.2s;
+
+        h1 {
+            color: #f1f5f9;
+            font-size: 26px;
+            text-align: center;
+            margin-bottom: 20px;
         }
-        .form-group input:focus { border-color: #3b82f6; box-shadow: 0 0 0 3px rgba(59,130,246,0.2); }
+
+        .subtitle-aviso {
+            color: #fca5a5;
+            font-size: 13px;
+            text-align: center;
+            margin-bottom: 20px;
+            padding: 10px 12px;
+            background: rgba(239, 68, 68, 0.1);
+            border: 1px solid rgba(239, 68, 68, 0.3);
+            border-radius: 8px;
+            line-height: 1.4;
+        }
+
+        /* ==================== FORMULÁRIO ==================== */
+        .form-group { margin-bottom: 18px; }
+
+        .form-group label {
+            display: block;
+            color: #cbd5e1;
+            font-size: 14px;
+            margin-bottom: 6px;
+            font-weight: 500;
+        }
+
+        .form-group input {
+            width: 100%;
+            padding: 12px 14px;
+            background: #0f172a;
+            border: 1px solid #334155;
+            border-radius: 8px;
+            color: #f1f5f9;
+            font-size: 16px;
+            outline: none;
+            transition: border-color 0.2s, box-shadow 0.2s;
+            -webkit-appearance: none;
+            appearance: none;
+        }
+
+        .form-group input:focus {
+            border-color: #3b82f6;
+            box-shadow: 0 0 0 3px rgba(59,130,246,0.2);
+        }
+
         .form-group input.invalido { border-color: #ef4444; }
         .form-group input.valido { border-color: #22c55e; }
-        .form-group .ajuda { font-size: 12px; color: #94a3b8; margin-top: 5px; }
+
+        .form-group .ajuda {
+            font-size: 12px;
+            color: #94a3b8;
+            margin-top: 5px;
+            line-height: 1.4;
+        }
+
         #btnCadastrar {
-            width: 100%; padding: 13px; background: linear-gradient(135deg, #22c55e, #16a34a);
-            color: #fff; border: none; border-radius: 8px; font-size: 16px;
-            font-weight: 600; cursor: pointer; margin-top: 8px;
+            width: 100%;
+            padding: 14px;
+            background: linear-gradient(135deg, #22c55e, #16a34a);
+            color: #fff;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            margin-top: 8px;
+            transition: opacity 0.2s, transform 0.2s, box-shadow 0.2s;
+            -webkit-appearance: none;
+            appearance: none;
+            touch-action: manipulation;
         }
-        #btnCadastrar:disabled { opacity: 0.6; cursor: not-allowed; }
+
+        #btnCadastrar:hover:not(:disabled) {
+            transform: scale(1.02);
+            box-shadow: 0 0 20px rgba(34, 197, 94, 0.4);
+        }
+
+        #btnCadastrar:active:not(:disabled) {
+            transform: scale(0.98);
+        }
+
+        #btnCadastrar:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+        }
+
+        /* ==================== LOADING ==================== */
         .loading {
-            display: inline-block; width: 14px; height: 14px;
-            border: 2px solid rgba(255,255,255,0.3); border-top-color: #fff;
-            border-radius: 50%; animation: spin 0.6s linear infinite;
-            vertical-align: middle; margin-right: 6px;
+            display: inline-block;
+            width: 14px;
+            height: 14px;
+            border: 2px solid rgba(255,255,255,0.3);
+            border-top-color: #fff;
+            border-radius: 50%;
+            animation: spin 0.6s linear infinite;
+            vertical-align: middle;
+            margin-right: 6px;
         }
+
         @keyframes spin { to { transform: rotate(360deg); } }
-        .mensagem-erro, .mensagem-sucesso {
-            display: none; padding: 12px 14px; border-radius: 8px;
-            font-size: 14px; margin-bottom: 16px; text-align: center;
+
+        /* ==================== MENSAGENS ==================== */
+        .mensagem-erro,
+        .mensagem-sucesso {
+            display: none;
+            padding: 12px 14px;
+            border-radius: 8px;
+            font-size: 14px;
+            margin-bottom: 16px;
+            text-align: center;
+            line-height: 1.4;
+            word-wrap: break-word;
         }
+
         .mensagem-erro.show {
-            display: block; background: rgba(239,68,68,0.15);
-            border: 1px solid #ef4444; color: #fca5a5;
+            display: block;
+            background: rgba(239,68,68,0.15);
+            border: 1px solid #ef4444;
+            color: #fca5a5;
         }
+
         .mensagem-sucesso.show {
-            display: block; background: rgba(34,197,94,0.15);
-            border: 1px solid #22c55e; color: #86efac;
+            display: block;
+            background: rgba(34,197,94,0.15);
+            border: 1px solid #22c55e;
+            color: #86efac;
         }
-        .status-supabase {
-            margin-top: 20px; padding: 10px; border-radius: 8px;
-            font-size: 13px; text-align: center; color: #94a3b8;
-            background: #0f172a; border: 1px solid #334155;
+
+        /* ==================== RESPONSIVIDADE ==================== */
+
+        @media (max-width: 1024px) {
+            .navbar { padding: 0.8rem 1.5rem; }
+            .nav-links { gap: 1.5rem; }
+            .btn-discord { padding: 0.6rem 1.2rem; font-size: 0.85rem; }
         }
-        .status-supabase.online { color: #86efac; border-color: #22c55e; }
-        .status-supabase.offline { color: #fca5a5; border-color: #ef4444; }
-        .link-login {
-            margin-top: 22px; text-align: center; font-size: 14px; color: #94a3b8;
+
+        @media (max-width: 860px) {
+            .navbar {
+                padding: 0.8rem 1.2rem;
+                justify-content: space-between;
+                flex-wrap: wrap;
+            }
+
+            .menu-toggle {
+                display: block;
+                order: 3;
+            }
+
+            .nav-links {
+                display: none;
+                width: 100%;
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 0;
+                padding: 1rem 0 0.5rem 0;
+                border-top: 1px solid rgba(255, 215, 0, 0.15);
+                margin-top: 1rem;
+                order: 4;
+            }
+
+            .nav-links.active { display: flex; }
+            .nav-links li { width: 100%; }
+
+            .nav-links li a {
+                display: flex;
+                width: 100%;
+                padding: 0.8rem 0;
+                font-size: 1.05rem;
+                border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+            }
+
+            .nav-links li:last-child a { border-bottom: none; }
+
+            .btn-discord {
+                order: 2;
+                margin-left: auto;
+                margin-right: 0.5rem;
+            }
         }
-        .link-login a { color: #60a5fa; text-decoration: none; font-weight: 600; }
-        .link-login a:hover { text-decoration: underline; }
+
+        @media (max-width: 600px) {
+            .cadastro-wrapper {
+                padding: 20px 15px;
+                align-items: flex-start;
+            }
+
+            .cadastro-container {
+                padding: 28px 22px;
+                border-radius: 14px;
+            }
+
+            h1 { font-size: 22px; margin-bottom: 16px; }
+            .subtitle-aviso { font-size: 12px; padding: 8px 10px; }
+
+            .form-group { margin-bottom: 16px; }
+            .form-group label { font-size: 13px; }
+            .form-group input { padding: 11px 12px; font-size: 16px; }
+            .form-group .ajuda { font-size: 11px; }
+
+            #btnCadastrar { padding: 13px; font-size: 15px; }
+        }
+
+        @media (max-width: 420px) {
+            .navbar { padding: 0.7rem 0.9rem; }
+
+            .logo { font-size: 1.35rem; }
+            .logo i { font-size: 1.2rem; }
+
+            .btn-discord {
+                padding: 0.5rem 0.9rem;
+                font-size: 0.8rem;
+                margin-right: 0.3rem;
+            }
+
+            .btn-discord span { display: none; }
+            .btn-discord i { font-size: 1.15rem; margin: 0; }
+
+            .menu-toggle { font-size: 1.5rem; padding: 0.2rem 0.4rem; }
+
+            .cadastro-wrapper { padding: 15px 10px; }
+
+            .cadastro-container {
+                padding: 22px 18px;
+                border-radius: 12px;
+            }
+
+            h1 { font-size: 20px; }
+            .form-group input { padding: 10px 12px; }
+            #btnCadastrar { padding: 12px; font-size: 14px; }
+        }
+
+        @media (max-width: 340px) {
+            .logo { font-size: 1.15rem; }
+            .logo i { font-size: 1rem; }
+            .cadastro-container { padding: 18px 14px; }
+            h1 { font-size: 18px; }
+        }
+
+        @media (hover: none) {
+            .nav-links li a:hover::after { width: 0; }
+            .btn-discord:hover { transform: none; }
+            #btnCadastrar:hover:not(:disabled) { transform: none; }
+        }
+
+        @media (max-height: 500px) and (orientation: landscape) {
+            .cadastro-wrapper {
+                align-items: flex-start;
+                padding: 15px;
+            }
+            .cadastro-container { padding: 20px; }
+            h1 { font-size: 20px; margin-bottom: 12px; }
+            .form-group { margin-bottom: 12px; }
+        }
     </style>
 </head>
 <body>
-
-    <div class="cadastro-container">
-        <h1>📝 Criar Conta</h1>
-        <p class="subtitle">Preencha os dados para se cadastrar</p>
-        <div id="mensagemErro" class="mensagem-erro"></div>
-        <p class="subtitle">Esse Aparelho já cadastrado . Não é possível repetir.</p>
-        <div id="mensagemSucesso" class="mensagem-sucesso"></div>
-
-        <form id="formCadastro" autocomplete="on">
-            <div class="form-group">
-                <label for="login">Login</label>
-                <input type="text" id="login" placeholder="ex: joao123" autocomplete="username" required>
-                <div class="ajuda">Apenas letras, números e _ (sem espaços).</div>
+    <!-- ==================== MENU PRINCIPAL ==================== -->
+    <div class="menu-container">
+        <nav class="navbar">
+            <div class="logo">
+                <i class="fas fa-cow"></i>
+                MM<span>Quase Tudo</span>
             </div>
-            <div class="form-group">
-                <label for="senha">Senha</label>
-                <input type="password" id="senha" placeholder="Mínimo 6 caracteres" autocomplete="new-password" required>
-                <div class="ajuda">Use pelo menos 6 caracteres.</div>
-            </div>
-            <div class="form-group">
-                <label for="confirmarSenha">Confirmar senha</label>
-                <input type="password" id="confirmarSenha" placeholder="Repita a senha" autocomplete="new-password" required>
-            </div>
-            <button type="submit" id="btnCadastrar">📝 Criar conta</button>
-        </form>
 
-        <div id="statusSupabase" class="status-supabase">Verificando conexão...</div>
+            <a href="https://discord.gg/ATtu4z9Ewt" class="btn-discord" target="_blank" rel="noopener">
+                <i class="fab fa-discord"></i>
+                <span>Jogue Agora</span>
+            </a>
 
-        <div class="link-login">
-            Já tem conta? <a href="./login.html">Fazer login</a>
-        </div>
+            <button class="menu-toggle" id="menuToggle" aria-label="Abrir menu" aria-expanded="false">
+                <i class="fas fa-bars"></i>
+            </button>
+
+            <ul class="nav-links" id="navLinks">
+                <li><a href="./index.html"><i class="fas fa-house"></i> Início</a></li>
+                <li><a href="./noticias.html"><i class="fas fa-newspaper"></i> Notícias</a></li>
+                <li><a href="./jogos/ranking/ranking002.html"><i class="fas fa-trophy"></i> Classificações</a></li>
+                <li><a href="./eventos.html"><i class="fas fa-calendar-days"></i> Eventos</a></li>
+                <li><a href="./download.html"><i class="fas fa-download"></i> Downloads</a></li>
+                <li><a href="./suporte.html"><i class="fas fa-headset"></i> Suporte</a></li>
+                <li><a href="./loja.html"><i class="fas fa-cart-shopping"></i> Loja</a></li>
+                <li><a href="./cadastro.html"><i class="fas fa-user-plus"></i> Cadastro</a></li>
+                <li><a href="./login.html"><i class="fas fa-sign-in-alt"></i> Login</a></li>
+            </ul>
+        </nav>
+    </div>
+
+    <!-- ==================== FORMULÁRIO DE CADASTRO ==================== -->
+    <div class="cadastro-wrapper">
+        <div class="cadastro-container">
+            <h1>📝 Criar Conta</h1>
+                        <div id="mensagemErro" class="mensagem-erro"></div>
+            <div id="mensagemSucesso" class="mensagem-sucesso"></div>
+
+            <form id="formCadastro" autocomplete="on">
+                <div class="form-group">
+                    <label for="login">Login</label>
+                    <input type="text" id="login" placeholder="ex: MoitaPR" autocomplete="username" required>
+                    <div class="ajuda">Apenas letras, números e _ (sem espaços).</div>
+                </div>
+                <div class="form-group">
+                    <label for="senha">Senha</label>
+                    <input type="password" id="senha" placeholder="Mínimo 6 caracteres" autocomplete="new-password" required>
+                    <div class="ajuda">Use pelo menos 6 caracteres Ex: moitapr123456.</div>
+                </div>
+                <div class="form-group">
+                    <label for="confirmarSenha">Confirmar senha</label>
+                    <input type="password" id="confirmarSenha" placeholder="Repita a senha" autocomplete="new-password" required>
+                </div>
+                <button type="submit" id="btnCadastrar">📝 Criar conta</button>
+            </form>
+ 
     </div>
 
     <script>
@@ -129,6 +519,7 @@
             localStorage.setItem(SESSION_KEY, JSON.stringify(usuario));
             localStorage.setItem(SESSION_TIMESTAMP_KEY, Date.now().toString());
         }
+
         function sessaoValida() {
             const ts = localStorage.getItem(SESSION_TIMESTAMP_KEY);
             const u = localStorage.getItem(SESSION_KEY);
@@ -146,7 +537,32 @@
         const btnCadastrar    = document.getElementById('btnCadastrar');
         const mensagemErro    = document.getElementById('mensagemErro');
         const mensagemSucesso = document.getElementById('mensagemSucesso');
-        const statusSupabase  = document.getElementById('statusSupabase');
+
+        // ==================== MENU TOGGLE ====================
+        const menuToggle = document.getElementById('menuToggle');
+        const navLinks   = document.getElementById('navLinks');
+
+        if (menuToggle && navLinks) {
+            menuToggle.addEventListener('click', () => {
+                const aberto = navLinks.classList.toggle('active');
+                menuToggle.setAttribute('aria-expanded', aberto ? 'true' : 'false');
+                const icon = menuToggle.querySelector('i');
+                if (icon) {
+                    icon.className = aberto ? 'fas fa-times' : 'fas fa-bars';
+                }
+            });
+
+            navLinks.querySelectorAll('a').forEach(link => {
+                link.addEventListener('click', () => {
+                    if (window.innerWidth <= 860) {
+                        navLinks.classList.remove('active');
+                        menuToggle.setAttribute('aria-expanded', 'false');
+                        const icon = menuToggle.querySelector('i');
+                        if (icon) icon.className = 'fas fa-bars';
+                    }
+                });
+            });
+        }
 
         // ==================== MENSAGENS ====================
         const MSG_APARELHO_DUPLICADO = 'Esse Aparelho já está cadastrado aqui. Não é possível repetir.';
@@ -156,17 +572,19 @@
             mensagemErro.className = 'mensagem-erro show';
             mensagemSucesso.className = 'mensagem-sucesso';
         }
+
         function mostrarSucesso(m) {
             mensagemSucesso.textContent = m;
             mensagemSucesso.className = 'mensagem-sucesso show';
             mensagemErro.className = 'mensagem-erro';
         }
+
         function ocultarMensagens() {
             mensagemErro.className = 'mensagem-erro';
             mensagemSucesso.className = 'mensagem-sucesso';
         }
 
-        // ==================== SHA-256 (usado APENAS pelo fingerprint) ====================
+        // ==================== SHA-256 ====================
         async function sha256(texto) {
             const enc = new TextEncoder().encode(texto);
             const buf = await crypto.subtle.digest('SHA-256', enc);
@@ -175,26 +593,15 @@
                 .join('');
         }
 
-        // ⚠️ REMOVIDO: hashSenha() — agora a senha é gravada em texto puro.
-        // async function hashSenha(senha) {
-        //     return sha256('senha::' + senha);
-        // }
-
         // ==================== CONEXÃO ====================
         async function verificarSupabase() {
             try {
                 const { error } = await supabaseClient.from(TABELA).select('id').limit(1);
                 if (error) {
-                    statusSupabase.textContent = '⚠️ Erro ao conectar';
-                    statusSupabase.className = 'status-supabase offline';
                     return false;
                 }
-                statusSupabase.textContent = '✅ Conectado ao Supabase';
-                statusSupabase.className = 'status-supabase online';
                 return true;
             } catch {
-                statusSupabase.textContent = '❌ Erro ao conectar';
-                statusSupabase.className = 'status-supabase offline';
                 return false;
             }
         }
@@ -204,7 +611,7 @@
             return /^[a-zA-Z0-9_]{3,20}$/.test(v);
         }
 
-        // ==================== 🧬 FINGERPRINT DO NAVEGADOR ====================
+        // ==================== FINGERPRINT DO NAVEGADOR ====================
         async function gerarFingerprint() {
             const partes = [];
 
@@ -314,7 +721,7 @@
             return await sha256('fp::' + raw);
         }
 
-        // ==================== 🌐 IP PÚBLICO ====================
+        // ==================== IP PÚBLICO ====================
         async function obterIP() {
             try {
                 const r = await fetch('https://api.ipify.org?format=json');
@@ -325,7 +732,7 @@
             }
         }
 
-        // ==================== 🖥️ MAC VIA WEBRTC ====================
+        // ==================== MAC VIA WEBRTC ====================
         function obterMAC() {
             return new Promise((resolve) => {
                 let macEncontrado = 'desconhecido';
@@ -432,65 +839,46 @@
                     }
                 }
 
-                // 4) ✅ SENHA EM TEXTO PURO (sem hash)
-                // ⚠️ Apenas para testes. Em produção use bcrypt/Supabase Auth.
+                // 4) Senha em texto puro (apenas para testes)
+                // ⚠️ Em produção use bcrypt/Supabase Auth.
 
                 // 5) Novo usuário
                 const novoUsuario = {
-                    // Básico
                     login: dados.login,
-                    senha: dados.senha,   // "moitapr123456"
-
-                    // 🔒 Ocultos
+                    senha: dados.senha,
                     fingerprint: dados.fingerprint,
                     mac_address: dados.mac_address,
                     ip_address: dados.ip_address,
-
-                    // Economia
                     saldo: 0,
                     saldo_poupanca: 0,
                     proventos_pendentes: 0,
                     carteira: {},
                     preco_medio_compra: {},
                     proventos_por_ativo: {},
-
-                    // Fazendinha
                     seeds: 0, planted: 0, harvested: 0, buckets: 0, plot_data: [],
-
-                    // Progressão
                     nivel: ATRIBUTOS_INICIAIS.nivel,
                     experiencia: ATRIBUTOS_INICIAIS.experiencia,
                     exp_proximo: ATRIBUTOS_INICIAIS.exp_proximo,
                     exp: ATRIBUTOS_INICIAIS.exp,
                     exp_next: ATRIBUTOS_INICIAIS.exp_next,
-
-                    // HP
                     hp: ATRIBUTOS_INICIAIS.hp,
                     max_hp: ATRIBUTOS_INICIAIS.max_hp,
                     hp_atual: ATRIBUTOS_INICIAIS.hp_atual,
                     hp_max: ATRIBUTOS_INICIAIS.hp_max,
-
-                    // MP
                     mp: ATRIBUTOS_INICIAIS.mp,
                     max_mp: ATRIBUTOS_INICIAIS.max_mp,
                     mp_atual: ATRIBUTOS_INICIAIS.mp_atual,
                     mp_max: ATRIBUTOS_INICIAIS.mp_max,
-
-                    // SM
                     sm: ATRIBUTOS_INICIAIS.sm,
                     max_sm: ATRIBUTOS_INICIAIS.max_sm,
                     sm_atual: ATRIBUTOS_INICIAIS.sm_atual,
                     sm_max: ATRIBUTOS_INICIAIS.sm_max,
-
-                    // Combate
                     atk: ATRIBUTOS_INICIAIS.atk,
                     ataque_base: ATRIBUTOS_INICIAIS.ataque_base,
                     def: ATRIBUTOS_INICIAIS.def,
                     defesa_base: ATRIBUTOS_INICIAIS.defesa_base,
                     mag: ATRIBUTOS_INICIAIS.mag,
                     magia_base: ATRIBUTOS_INICIAIS.magia_base,
-
-                    // Extras
                     itens: [],
                     historico: [],
                     historico_trocas: [],
@@ -513,7 +901,7 @@
                     .select('id, login, saldo, saldo_poupanca, carteira, nivel, experiencia, exp_proximo, hp, max_hp, hp_atual, hp_max, mp, max_mp, mp_atual, mp_max, sm, max_sm, sm_atual, sm_max, atk, ataque_base, def, defesa_base, mag, magia_base, exp, exp_next')
                     .single();
 
-                // 🔍 Tratamento de erro do insert
+                // Tratamento de erro do insert
                 if (erroInsert) {
                     console.error('Erro ao cadastrar:', erroInsert);
 
@@ -616,7 +1004,7 @@
             btnCadastrar.disabled = true;
             btnCadastrar.innerHTML = '<span class="loading"></span> Verificando dispositivo...';
 
-            // 🔒 Coleta oculta
+            // Coleta oculta
             const fingerprint = await gerarFingerprint();
             const mac_address = await obterMAC();
             const ip_address  = await obterIP();
