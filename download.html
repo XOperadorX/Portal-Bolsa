@@ -4,10 +4,13 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Meus Arquivos para Download</title>
+    <title>Downloads | MM Quase Tudo</title>
 
-    <!-- Font Awesome (para os ícones do menu e botões) -->
+    <!-- Font Awesome -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+
+    <!-- Supabase -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
     <style>
         /* ==================== RESET E BASE ==================== */
@@ -60,16 +63,8 @@
             gap: 0.3rem;
         }
 
-        .logo span {
-            color: #f5c542;
-            font-weight: 900;
-        }
-
-        .logo i {
-            color: #f5c542;
-            font-size: 1.6rem;
-            margin-right: 0.2rem;
-        }
+        .logo span { color: #f5c542; font-weight: 900; }
+        .logo i { color: #f5c542; font-size: 1.6rem; margin-right: 0.2rem; }
 
         .nav-links {
             display: flex;
@@ -89,26 +84,30 @@
             transition: all 0.2s ease;
             padding: 0.5rem 0;
             position: relative;
+            display: inline-flex;
+            align-items: center;
         }
+
+        .nav-links li a i {
+            margin-right: 8px;
+            font-size: 0.95em;
+            color: #f5c542;
+            transition: color 0.2s ease, transform 0.2s ease;
+        }
+
+        .nav-links li a:hover i { color: #ffffff; transform: scale(1.1); }
 
         .nav-links li a::after {
             content: '';
             position: absolute;
-            bottom: 0;
-            left: 0;
-            width: 0;
-            height: 2px;
+            bottom: 0; left: 0;
+            width: 0; height: 2px;
             background: #f5c542;
             transition: width 0.25s ease;
         }
 
-        .nav-links li a:hover {
-            color: #ffffff;
-        }
-
-        .nav-links li a:hover::after {
-            width: 100%;
-        }
+        .nav-links li a:hover { color: #ffffff; }
+        .nav-links li a:hover::after { width: 100%; }
 
         .btn-discord {
             background: linear-gradient(135deg, #f5c542 0%, #d4a017 100%);
@@ -129,9 +128,7 @@
             white-space: nowrap;
         }
 
-        .btn-discord i {
-            font-size: 1.1rem;
-        }
+        .btn-discord i { font-size: 1.1rem; }
 
         .btn-discord:hover {
             transform: scale(1.03);
@@ -149,235 +146,486 @@
             padding: 0.3rem 0.6rem;
         }
 
-        /* ==================== CONTEÚDO PRINCIPAL ==================== */
-        .main-content {
-            flex: 1;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            padding: 2.5rem 1.5rem 4rem;
-        }
-
-        .link-cadastro {
+        /* ==================== HERO ==================== */
+        .download-hero {
             text-align: center;
-            margin-bottom: 1.5rem;
+            padding: 50px 20px 20px;
+            max-width: 900px;
+            margin: 0 auto;
         }
 
-        .link-cadastro a {
-            color: #93c5fd;
-            text-decoration: none;
-            font-weight: 600;
-            font-size: 0.95rem;
-            transition: color 0.2s ease;
-        }
-
-        .link-cadastro a:hover {
+        .download-hero h1 {
+            font-size: 2.6rem;
             color: #ffffff;
-            text-decoration: underline;
-        }
-
-        .card {
-            width: 100%;
-            max-width: 560px;
-            background: rgba(255, 255, 255, 0.05);
-            border: 1px solid rgba(255, 215, 0, 0.15);
-            border-radius: 20px;
-            padding: 2.5rem 2rem;
-            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.5);
-            backdrop-filter: blur(6px);
-            text-align: center;
-        }
-
-        .card h1 {
-            font-size: 1.9rem;
             font-weight: 800;
-            color: #ffffff;
-            margin-bottom: 0.6rem;
-            text-shadow: 0 0 15px rgba(245, 197, 66, 0.25);
+            letter-spacing: 1px;
+            text-shadow: 0 0 15px rgba(245, 197, 66, 0.4);
+            margin-bottom: 12px;
         }
 
-        .card > p {
-            color: #b0b8c4;
-            font-size: 1rem;
-            margin-bottom: 1.8rem;
+        .download-hero h1 i { color: #f5c542; margin-right: 12px; }
+
+        .download-hero p {
+            color: #a0b4d0;
+            font-size: 1.05rem;
+            line-height: 1.6;
         }
 
-        /* ==================== BOTÕES DE DOWNLOAD ==================== */
-        .btn {
+        .versao-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            margin-top: 16px;
+            padding: 6px 16px;
+            background: rgba(245, 197, 66, 0.15);
+            border: 1px solid rgba(245, 197, 66, 0.4);
+            border-radius: 999px;
+            color: #f5c542;
+            font-size: 0.85rem;
+            font-weight: 700;
+        }
+
+        /* ==================== WRAPPER ==================== */
+        .download-wrapper {
+            flex: 1;
+            max-width: 1200px;
+            width: 100%;
+            margin: 0 auto;
+            padding: 20px 20px 60px;
+            display: grid;
+            grid-template-columns: 1.4fr 1fr;
+            gap: 30px;
+        }
+
+        /* ==================== CARDS BASE ==================== */
+        .card {
+            background: #1e293b;
+            border: 1px solid #334155;
+            border-radius: 16px;
+            padding: 28px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+        }
+
+        .card h2 {
+            color: #f1f5f9;
+            font-size: 1.3rem;
+            font-weight: 700;
+            margin-bottom: 6px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .card h2 i { color: #f5c542; }
+
+        .card .subtitulo {
+            color: #94a3b8;
+            font-size: 0.9rem;
+            margin-bottom: 22px;
+        }
+
+        /* ==================== CARD DE DOWNLOAD ==================== */
+        .download-card {
+            background: #0f172a;
+            border: 1px solid #334155;
+            border-radius: 14px;
+            padding: 20px;
+            margin-bottom: 16px;
+            transition: transform 0.2s, border-color 0.2s, box-shadow 0.2s;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .download-card:last-child { margin-bottom: 0; }
+
+        .download-card:hover {
+            border-color: #f5c542;
+            transform: translateY(-3px);
+            box-shadow: 0 12px 30px rgba(0, 0, 0, 0.4);
+        }
+
+        .download-card.recomendado {
+            border-color: #22c55e;
+            box-shadow: 0 0 0 1px rgba(34, 197, 94, 0.3);
+        }
+
+        .download-card .recomendado-tag {
+            position: absolute;
+            top: 12px;
+            right: 12px;
+            background: linear-gradient(135deg, #22c55e, #16a34a);
+            color: #fff;
+            font-size: 0.65rem;
+            font-weight: 800;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            padding: 4px 10px;
+            border-radius: 20px;
+        }
+
+        .download-header {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            margin-bottom: 14px;
+        }
+
+        .download-icon {
+            width: 52px;
+            height: 52px;
+            border-radius: 12px;
             display: flex;
             align-items: center;
             justify-content: center;
-            gap: 0.6rem;
+            font-size: 1.6rem;
+            flex-shrink: 0;
+        }
+
+        .download-icon.android {
+            background: linear-gradient(135deg, #3ddc84, #00a651);
+            color: #fff;
+        }
+
+        .download-icon.windows {
+            background: linear-gradient(135deg, #00a4ef, #0078d4);
+            color: #fff;
+        }
+
+        .download-icon.ios {
+            background: linear-gradient(135deg, #a2aaad, #000);
+            color: #fff;
+        }
+
+        .download-icon.linux {
+            background: linear-gradient(135deg, #f6a800, #d78400);
+            color: #fff;
+        }
+
+        .download-titulo {
+            flex: 1;
+        }
+
+        .download-titulo h3 {
+            color: #f1f5f9;
+            font-size: 1.05rem;
+            font-weight: 700;
+            margin-bottom: 4px;
+        }
+
+        .download-titulo .meta {
+            color: #64748b;
+            font-size: 0.8rem;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+
+        .download-titulo .meta span {
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .download-titulo .meta i { color: #f5c542; font-size: 0.75em; }
+
+        .btn-download {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
             width: 100%;
-            padding: 1rem 1.2rem;
-            margin-bottom: 1rem;
-            border-radius: 14px;
-            font-size: 1rem;
+            padding: 13px;
+            border-radius: 10px;
+            font-size: 0.95rem;
             font-weight: 700;
             text-decoration: none;
-            color: #0b0e14;
-            background: linear-gradient(135deg, #f5c542 0%, #d4a017 100%);
-            box-shadow: 0 4px 15px rgba(245, 197, 66, 0.25);
-            transition: transform 0.2s ease, box-shadow 0.2s ease, filter 0.2s ease;
-            letter-spacing: 0.2px;
-            text-align: center;
+            border: none;
+            cursor: pointer;
+            transition: transform 0.2s, box-shadow 0.2s, filter 0.2s;
+            letter-spacing: 0.3px;
+            font-family: inherit;
         }
 
-        .btn:hover {
+        .btn-download.android {
+            background: linear-gradient(135deg, #3ddc84, #00a651);
+            color: #04140d;
+            box-shadow: 0 4px 15px rgba(61, 220, 132, 0.25);
+        }
+
+        .btn-download.windows {
+            background: linear-gradient(135deg, #00a4ef, #0078d4);
+            color: #fff;
+            box-shadow: 0 4px 15px rgba(0, 164, 239, 0.25);
+        }
+
+        .btn-download:hover {
             transform: translateY(-2px);
-            box-shadow: 0 8px 25px rgba(245, 197, 66, 0.45);
             filter: brightness(1.05);
         }
 
-        .btn:active {
-            transform: translateY(0);
+        .btn-download.android:hover { box-shadow: 0 8px 25px rgba(61, 220, 132, 0.45); }
+        .btn-download.windows:hover { box-shadow: 0 8px 25px rgba(0, 164, 239, 0.45); }
+
+        /* Barra de progresso */
+        .progress-bar {
+            height: 4px;
+            width: 100%;
+            background: #1e293b;
+            border-radius: 4px;
+            margin-top: 10px;
+            overflow: hidden;
+            display: none;
         }
 
-        .btn.apk {
-            background: linear-gradient(135deg, #34d399 0%, #059669 100%);
-            color: #04140d;
-            box-shadow: 0 4px 15px rgba(52, 211, 153, 0.25);
+        .progress-bar.ativa { display: block; }
+
+        .progress-fill {
+            height: 100%;
+            width: 0%;
+            background: linear-gradient(90deg, #f5c542, #22c55e);
+            border-radius: 4px;
+            transition: width 0.3s ease;
         }
 
-        .btn.apk:hover {
-            box-shadow: 0 8px 25px rgba(52, 211, 153, 0.45);
+        /* ==================== REQUISITOS ==================== */
+        .requisitos-lista {
+            list-style: none;
+            margin-top: 16px;
         }
 
-        /* ==================== INFO E INSTRUÇÕES ==================== */
-        .info {
-            margin-top: 1.4rem;
-            font-size: 0.85rem;
-            color: #9aa4b2;
-            line-height: 1.5;
-            text-align: center;
+        .requisitos-lista li {
+            display: flex;
+            align-items: flex-start;
+            gap: 10px;
+            padding: 10px 0;
+            border-bottom: 1px solid #334155;
+            font-size: 0.88rem;
+            color: #cbd5e1;
         }
 
-        .instrucoes {
-            margin-top: 1.8rem;
-            padding: 1.4rem 1.2rem;
-            background: rgba(0, 0, 0, 0.25);
-            border: 1px solid rgba(245, 197, 66, 0.2);
-            border-radius: 14px;
-            text-align: left;
-        }
+        .requisitos-lista li:last-child { border-bottom: none; }
 
-        .instrucoes h4 {
+        .requisitos-lista li i {
             color: #f5c542;
-            font-size: 1.05rem;
-            margin-bottom: 0.8rem;
-            text-align: center;
+            margin-top: 2px;
+            flex-shrink: 0;
         }
 
-        .instrucoes p {
-            color: #c8d0da;
+        .requisitos-lista li strong { color: #f1f5f9; }
+
+        /* ==================== PASSOS ==================== */
+        .passos {
+            counter-reset: passo;
+            margin-top: 16px;
+        }
+
+        .passo {
+            display: flex;
+            align-items: flex-start;
+            gap: 14px;
+            padding: 12px 0;
+            border-bottom: 1px solid #334155;
+        }
+
+        .passo:last-child { border-bottom: none; }
+
+        .passo-num {
+            counter-increment: passo;
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #f5c542, #d4a017);
+            color: #0b0e14;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 800;
             font-size: 0.9rem;
-            line-height: 1.7;
-            margin: 0;
+            flex-shrink: 0;
         }
 
-        .instrucoes p strong {
+        .passo-num::before { content: counter(passo); }
+
+        .passo-texto {
+            color: #cbd5e1;
+            font-size: 0.88rem;
+            line-height: 1.55;
+            padding-top: 6px;
+        }
+
+        .passo-texto strong { color: #f5c542; }
+
+        /* ==================== AVISO ==================== */
+        .aviso {
+            background: rgba(245, 197, 66, 0.08);
+            border: 1px solid rgba(245, 197, 66, 0.3);
+            border-radius: 12px;
+            padding: 16px;
+            margin-top: 20px;
+            display: flex;
+            gap: 12px;
+            align-items: flex-start;
+        }
+
+        .aviso i {
             color: #f5c542;
+            font-size: 1.2rem;
+            flex-shrink: 0;
+            margin-top: 2px;
         }
 
-        /* ==================== RESPONSIVO ==================== */
-        @media (max-width: 900px) {
-            .nav-links {
-                gap: 1.4rem;
-            }
-
-            .logo {
-                font-size: 1.5rem;
-            }
+        .aviso p {
+            color: #cbd5e1;
+            font-size: 0.85rem;
+            line-height: 1.55;
         }
 
-        @media (max-width: 768px) {
-            .navbar {
-                padding: 0.8rem 1.2rem;
-            }
+        .aviso p strong { color: #f5c542; }
 
-            .menu-toggle {
-                display: block;
-                order: 2;
-            }
+        /* ==================== CHANGELOG ==================== */
+        .changelog-item {
+            padding: 12px 0;
+            border-bottom: 1px solid #334155;
+        }
 
-            .btn-discord {
-                order: 3;
-                padding: 0.6rem 1.1rem;
-                font-size: 0.82rem;
-            }
+        .changelog-item:last-child { border-bottom: none; }
 
+        .changelog-item .versao {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 6px;
+        }
+
+        .changelog-item .versao strong {
+            color: #f5c542;
+            font-size: 0.9rem;
+        }
+
+        .changelog-item .versao span {
+            color: #64748b;
+            font-size: 0.75rem;
+        }
+
+        .changelog-item ul {
+            list-style: none;
+            padding-left: 16px;
+        }
+
+        .changelog-item ul li {
+            color: #94a3b8;
+            font-size: 0.82rem;
+            padding: 3px 0;
+            position: relative;
+        }
+
+        .changelog-item ul li::before {
+            content: '•';
+            color: #f5c542;
+            position: absolute;
+            left: -14px;
+        }
+
+        /* ==================== STATUS ==================== */
+        .status-servidor {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 12px 0;
+            border-bottom: 1px solid #334155;
+            font-size: 0.88rem;
+        }
+
+        .status-servidor:last-child { border-bottom: none; }
+
+        .status-servidor .label {
+            color: #cbd5e1;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .status-servidor .label i { color: #f5c542; width: 16px; }
+
+        .status-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            font-size: 0.72rem;
+            font-weight: 700;
+            padding: 4px 10px;
+            border-radius: 20px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .status-badge.online {
+            background: rgba(34, 197, 94, 0.15);
+            color: #86efac;
+            border: 1px solid rgba(34, 197, 94, 0.4);
+        }
+
+        .status-badge.offline {
+            background: rgba(239, 68, 68, 0.15);
+            color: #fca5a5;
+            border: 1px solid rgba(239, 68, 68, 0.4);
+        }
+
+        .status-badge::before {
+            content: '';
+            width: 8px; height: 8px;
+            border-radius: 50%;
+            background: currentColor;
+            display: inline-block;
+        }
+
+        /* ==================== RESPONSIVIDADE ==================== */
+        @media (max-width: 1024px) {
+            .navbar { padding: 0.8rem 1.5rem; }
+            .nav-links { gap: 1.5rem; }
+            .btn-discord { padding: 0.6rem 1.2rem; font-size: 0.85rem; }
+            .download-wrapper { grid-template-columns: 1fr; }
+        }
+
+        @media (max-width: 860px) {
             .nav-links {
                 display: none;
                 width: 100%;
                 flex-direction: column;
                 align-items: flex-start;
-                gap: 0.4rem;
-                margin-top: 0.8rem;
-                padding: 0.6rem 0;
+                gap: 1rem;
+                padding: 1.5rem 0 0.5rem 0;
                 border-top: 1px solid rgba(255, 215, 0, 0.15);
-                order: 4;
+                margin-top: 1rem;
             }
 
-            .nav-links.active {
-                display: flex;
-            }
+            .nav-links.active { display: flex; }
+            .nav-links li { width: 100%; }
+            .nav-links li a { display: flex; width: 100%; padding: 0.6rem 0; font-size: 1.1rem; }
+            .menu-toggle { display: block; }
+            .navbar { justify-content: space-between; }
+            .btn-discord { margin-left: auto; margin-right: 1rem; }
 
-            .nav-links li {
-                width: 100%;
-            }
-
-            .nav-links li a {
-                display: block;
-                padding: 0.6rem 0.3rem;
-                width: 100%;
-            }
-
-            .card {
-                padding: 2rem 1.4rem;
-            }
-
-            .card h1 {
-                font-size: 1.6rem;
-            }
-
-            .btn {
-                font-size: 0.92rem;
-                padding: 0.9rem 1rem;
-            }
+            .download-hero h1 { font-size: 2rem; }
         }
 
-        @media (max-width: 420px) {
-            .logo {
-                font-size: 1.25rem;
-            }
-
-            .logo i {
-                font-size: 1.3rem;
-            }
-
-            .btn-discord span {
-                display: none;
-            }
-
-            .btn-discord {
-                padding: 0.6rem 0.8rem;
-            }
-
-            .btn-discord i {
-                font-size: 1.2rem;
-            }
-
-            .main-content {
-                padding: 1.5rem 1rem 3rem;
-            }
+        @media (max-width: 480px) {
+            .navbar { padding: 0.7rem 1rem; }
+            .logo { font-size: 1.5rem; }
+            .logo i { font-size: 1.3rem; }
+            .btn-discord { padding: 0.5rem 1rem; font-size: 0.8rem; }
+            .btn-discord span { display: none; }
+            .btn-discord i { font-size: 1.2rem; margin: 0; }
+            .download-hero h1 { font-size: 1.6rem; }
+            .card { padding: 20px; }
+            .download-card { padding: 16px; }
         }
     </style>
 </head>
 
 <body>
 
-    <!-- ==================== MENU PRINCIPAL (do menu.html) ==================== -->
+    <!-- ==================== MENU PRINCIPAL ==================== -->
     <div class="menu-container">
         <nav class="navbar">
             <div class="logo">
@@ -401,49 +649,234 @@
                 <li><a href="./login.html"><i class="fas fa-sign-in-alt"></i> Login</a></li>
             </ul>
 
-            <a href="https://discord.gg/ATtu4z9Ewt" class="btn-discord" target="_blank">
+            <a href="https://discord.gg/ATtu4z9Ewt" class="btn-discord" target="_blank" rel="noopener">
                 <i class="fab fa-discord"></i>
                 <span>Jogue Agora</span>
             </a>
         </nav>
     </div>
 
-    <!-- ==================== CONTEÚDO PRINCIPAL ==================== -->
-    <main class="main-content">
-
-  
-
-        <div class="card">
-            <h1>📦 Meus Arquivos</h1>
-            <p>Escolha o arquivo abaixo:</p>
-
-            <!-- ⚠️ Substitua pelos SEUS links diretos -->
-            <a href="https://gofile.io/d/EAGM9koU" class="btn apk" target="_blank" rel="noopener">
-                📲 Baixar Aplicativo Android (.apk) — 14,7 MB
-            </a>
-
-            <a href="https://drive.google.com/file/d/1URRx8cXFOuyMcW5c8jgDu-GCYJsttj8D/view?usp=sharing" class="btn"
-                target="_blank" rel="noopener">
-                📂 Baixar Arquivos Completos Windows (.zip) — 195,2 MB
-            </a>
-
-            <p class="info">
-                ℹ️ Após baixar o APK, permita a instalação de fontes confiáveis nas configurações do seu celular.
-            </p>
-
-            <div class="instrucoes">
-                <h4>🎁 Como resgatar o código:</h4>
-                <p>1. Faça login no app</p>
-                <p>2. Vá em <strong>💰 Troca MUMU</strong></p>
-                <p>3. Depois em <strong>🎁 Resgatar Código</strong></p>
-                <p>4. Digite: <strong>MUMU2026</strong></p>
-            </div>
+    <!-- ==================== HERO ==================== -->
+    <section class="download-hero">
+        <h1><i class="fas fa-download"></i>Downloads</h1>
+        <p>Baixe o MM Quase Tudo para o seu dispositivo e comece a jogar agora mesmo.</p>
+        <div class="versao-badge" id="versaoBadge">
+            <i class="fas fa-tag"></i>
+            <span id="versaoTexto">Versão 2026.09.30</span>
         </div>
+    </section>
 
+    <!-- ==================== CONTEÚDO ==================== -->
+    <main class="download-wrapper">
+
+        <!-- COLUNA ESQUERDA: DOWNLOADS -->
+        <section class="card">
+            <h2><i class="fas fa-cloud-arrow-down"></i>Escolha sua plataforma</h2>
+            <p class="subtitulo">Selecione o arquivo compatível com seu dispositivo.</p>
+
+            <!-- Android -->
+            <div class="download-card" id="cardAndroid">
+                <div class="download-header">
+                    <div class="download-icon android">
+                        <i class="fab fa-android"></i>
+                    </div>
+                    <div class="download-titulo">
+                        <h3>Aplicativo Android</h3>
+                        <div class="meta">
+                            <span><i class="fas fa-file-archive"></i> APK</span>
+                            <span><i class="fas fa-weight-hanging"></i> 14,7 MB</span>
+                            <span><i class="fas fa-mobile-screen"></i> Android 7.0+</span>
+                        </div>
+                    </div>
+                </div>
+                <a href="https://gofile.io/d/EAGM9koU" class="btn-download android" target="_blank" rel="noopener"
+                   data-download="android">
+                    <i class="fab fa-android"></i>
+                    <span>Baixar APK</span>
+                </a>
+                <div class="progress-bar" id="progressAndroid">
+                    <div class="progress-fill"></div>
+                </div>
+            </div>
+
+            <!-- Windows -->
+            <div class="download-card" id="cardWindows">
+                <div class="download-header">
+                    <div class="download-icon windows">
+                        <i class="fab fa-windows"></i>
+                    </div>
+                    <div class="download-titulo">
+                        <h3>Arquivos Completos Windows</h3>
+                        <div class="meta">
+                            <span><i class="fas fa-file-zipper"></i> ZIP</span>
+                            <span><i class="fas fa-weight-hanging"></i> 195,2 MB</span>
+                            <span><i class="fas fa-desktop"></i> Windows 10+</span>
+                        </div>
+                    </div>
+                </div>
+                <a href="https://drive.google.com/file/d/1URRx8cXFOuyMcW5c8jgDu-GCYJsttj8D/view?usp=sharing"
+                   class="btn-download windows" target="_blank" rel="noopener" data-download="windows">
+                    <i class="fab fa-windows"></i>
+                    <span>Baixar ZIP</span>
+                </a>
+                <div class="progress-bar" id="progressWindows">
+                    <div class="progress-fill"></div>
+                </div>
+            </div>
+
+            <!-- Aviso de segurança -->
+            <div class="aviso">
+                <i class="fas fa-shield-halved"></i>
+                <p>
+                    <strong>Segurança:</strong> após baixar o APK, permita a instalação de
+                    <strong>fontes confiáveis</strong> nas configurações do seu celular. Nunca instale arquivos de origem desconhecida.
+                </p>
+            </div>
+        </section>
+
+        <!-- COLUNA DIREITA -->
+        <div style="display: flex; flex-direction: column; gap: 30px;">
+
+            <!-- Requisitos -->
+            <section class="card">
+                <h2><i class="fas fa-list-check"></i>Requisitos Mínimos</h2>
+                <p class="subtitulo">Verifique antes de instalar.</p>
+
+                <ul class="requisitos-lista">
+                    <li>
+                        <i class="fas fa-microchip"></i>
+                        <span><strong>Processador:</strong> 1.5 GHz dual-core ou superior</span>
+                    </li>
+                    <li>
+                        <i class="fas fa-memory"></i>
+                        <span><strong>Memória RAM:</strong> 2 GB (recomendado 4 GB)</span>
+                    </li>
+                    <li>
+                        <i class="fas fa-hard-drive"></i>
+                        <span><strong>Armazenamento:</strong> 500 MB livres</span>
+                    </li>
+                    <li>
+                        <i class="fas fa-wifi"></i>
+                        <span><strong>Conexão:</strong> Internet estável</span>
+                    </li>
+                    <li>
+                        <i class="fas fa-mobile-screen-button"></i>
+                        <span><strong>Android:</strong> 7.0 (Nougat) ou superior</span>
+                    </li>
+                    <li>
+                        <i class="fas fa-desktop"></i>
+                        <span><strong>Windows:</strong> 10 ou superior (64 bits)</span>
+                    </li>
+                </ul>
+            </section>
+
+            <!-- Como instalar -->
+            <section class="card">
+                <h2><i class="fas fa-circle-info"></i>Como Instalar</h2>
+                <p class="subtitulo">Siga o passo a passo.</p>
+
+                <div class="passos">
+                    <div class="passo">
+                        <div class="passo-num"></div>
+                        <div class="passo-texto">Baixe o arquivo <strong>APK</strong> ou <strong>ZIP</strong> acima.</div>
+                    </div>
+                    <div class="passo">
+                        <div class="passo-num"></div>
+                        <div class="passo-texto">No Android, vá em <strong>Configurações → Segurança</strong> e ative "Fontes desconhecidas".</div>
+                    </div>
+                    <div class="passo">
+                        <div class="passo-num"></div>
+                        <div class="passo-texto">Toque no APK baixado e confirme a instalação.</div>
+                    </div>
+                    <div class="passo">
+                        <div class="passo-num"></div>
+                        <div class="passo-texto">No Windows, extraia o <strong>ZIP</strong> e execute o <strong>.exe</strong>.</div>
+                    </div>
+                    <div class="passo">
+                        <div class="passo-num"></div>
+                        <div class="passo-texto">Abra o app, faça <strong>login</strong> e comece a jogar!</div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Changelog -->
+            <section class="card">
+                <h2><i class="fas fa-clock-rotate-left"></i>Últimas Versões</h2>
+                <p class="subtitulo">Histórico de atualizações recentes.</p>
+
+                <div class="changelog-item">
+                    <div class="versao">
+                        <strong>v2026.09.30</strong>
+                        <span>30/09/2026</span>
+                    </div>
+                    <ul>
+                        <li>Melhorias de balanceamento no XP</li>
+                        <li>Correção de bugs no ranking</li>
+                        <li>Novos eventos de outubro</li>
+                    </ul>
+                </div>
+
+                <div class="changelog-item">
+                    <div class="versao">
+                        <strong>v2026.09.15</strong>
+                        <span>15/09/2026</span>
+                    </div>
+                    <ul>
+                        <li>Sistema de trocas MUMU</li>
+                        <li>Novo código de resgate ativo</li>
+                    </ul>
+                </div>
+
+                <div class="changelog-item">
+                    <div class="versao">
+                        <strong>v2026.09.01</strong>
+                        <span>01/09/2026</span>
+                    </div>
+                    <ul>
+                        <li>Lançamento da temporada 2026</li>
+                        <li>Sistema de fazendinha</li>
+                    </ul>
+                </div>
+            </section>
+
+            <!-- Status do servidor -->
+            <section class="card">
+                <h2><i class="fas fa-signal"></i>Status dos Servidores</h2>
+                <p class="subtitulo">Monitoramento em tempo real.</p>
+
+                <div class="status-servidor">
+                    <span class="label"><i class="fas fa-server"></i> Servidor de Download</span>
+                    <span class="status-badge online">Online</span>
+                </div>
+                <div class="status-servidor">
+                    <span class="label"><i class="fas fa-database"></i> Banco de Dados</span>
+                    <span class="status-badge online" id="statusBanco">Online</span>
+                </div>
+                <div class="status-servidor">
+                    <span class="label"><i class="fas fa-gamepad"></i> Servidor de Jogo</span>
+                    <span class="status-badge online">Online</span>
+                </div>
+            </section>
+
+        </div>
     </main>
 
-    <!-- ==================== SCRIPT DO MENU MOBILE ==================== -->
+    <!-- ==================== JAVASCRIPT ==================== -->
     <script>
+        /* ==================== CONFIGURAÇÃO SUPABASE ==================== */
+        const SUPABASE_URL = 'https://xrcxvizzdumcxbylmkvn.supabase.co';
+        const SUPABASE_ANON_KEY = 'sb_publishable_E-g3G3wW4EySbCsXLXp8KQ_FnmERMcD';
+
+        let supabaseClient = null;
+        try {
+            if (window.supabase) {
+                supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+            }
+        } catch (e) {
+            console.warn('[Downloads] Supabase não inicializado:', e);
+        }
+
+        /* ==================== MENU TOGGLE ==================== */
         const menuToggle = document.getElementById('menuToggle');
         const navLinks = document.getElementById('navLinks');
 
@@ -456,7 +889,152 @@
                     icon.classList.toggle('fa-times');
                 }
             });
+
+            navLinks.querySelectorAll('a').forEach(link => {
+                link.addEventListener('click', () => {
+                    if (window.innerWidth <= 860) {
+                        navLinks.classList.remove('active');
+                        const icon = menuToggle.querySelector('i');
+                        if (icon) {
+                            icon.classList.add('fa-bars');
+                            icon.classList.remove('fa-times');
+                        }
+                    }
+                });
+            });
         }
+
+        /* ==================== DETECÇÃO DE PLATAFORMA ==================== */
+        function detectarPlataforma() {
+            const ua = navigator.userAgent.toLowerCase();
+            if (/android/.test(ua)) return 'android';
+            if (/iphone|ipad|ipod/.test(ua)) return 'ios';
+            if (/windows/.test(ua)) return 'windows';
+            if (/macintosh|mac os x/.test(ua)) return 'mac';
+            if (/linux/.test(ua)) return 'linux';
+            return 'desconhecido';
+        }
+
+        const plataforma = detectarPlataforma();
+
+        // Destaca o card da plataforma do usuário
+        function destacarPlataforma() {
+            const mapa = {
+                android: 'cardAndroid',
+                windows: 'cardWindows'
+            };
+            const cardId = mapa[plataforma];
+            if (cardId) {
+                const card = document.getElementById(cardId);
+                if (card) {
+                    card.classList.add('recomendado');
+                    if (!card.querySelector('.recomendado-tag')) {
+                        const tag = document.createElement('span');
+                        tag.className = 'recomendado-tag';
+                        tag.textContent = 'Recomendado';
+                        card.appendChild(tag);
+                    }
+                }
+            }
+        }
+
+        destacarPlataforma();
+
+        /* ==================== PROGRESSO FALSO ==================== */
+        document.querySelectorAll('[data-download]').forEach(btn => {
+            btn.addEventListener('click', function () {
+                const tipo = this.dataset.download;
+                const progressBar = document.getElementById(
+                    'progress' + tipo.charAt(0).toUpperCase() + tipo.slice(1)
+                );
+
+                if (!progressBar) return;
+
+                const fill = progressBar.querySelector('.progress-fill');
+                progressBar.classList.add('ativa');
+                fill.style.width = '0%';
+
+                let progresso = 0;
+                const interval = setInterval(() => {
+                    progresso += Math.random() * 15 + 5;
+                    if (progresso >= 100) {
+                        progresso = 100;
+                        clearInterval(interval);
+                        setTimeout(() => {
+                            progressBar.classList.remove('ativa');
+                            fill.style.width = '0%';
+                        }, 2000);
+                    }
+                    fill.style.width = progresso + '%';
+                }, 300);
+            });
+        });
+
+        /* ==================== CARREGAR VERSÃO DO SUPABASE (opcional) ==================== */
+        async function carregarVersao() {
+            if (!supabaseClient) return;
+
+            try {
+                const { data, error } = await supabaseClient
+                    .from('downloads')
+                    .select('plataforma, versao, url, tamanho_mb, hash_sha256')
+                    .eq('ativo', true)
+                    .order('created_at', { ascending: false });
+
+                if (error) throw error;
+                if (!data || data.length === 0) return;
+
+                // Atualiza badge com a versão mais recente
+                const maisRecente = data[0];
+                if (maisRecente) {
+                    document.getElementById('versaoTexto').textContent = 'Versão ' + maisRecente.versao;
+                }
+
+                // Atualiza botões se houver URL no banco
+                data.forEach(item => {
+                    const btn = document.querySelector(`[data-download="${item.plataforma}"]`);
+                    if (btn && item.url) {
+                        btn.href = item.url;
+                    }
+                });
+
+                console.log(`[Downloads] ${data.length} versão(ões) carregada(s) do Supabase.`);
+
+            } catch (err) {
+                // Tabela pode não existir — apenas mantém os valores padrão
+                console.warn('[Downloads] Não foi possível carregar versões:', err.message);
+            }
+        }
+
+        carregarVersao();
+
+        /* ==================== STATUS DO BANCO ==================== */
+        async function verificarStatus() {
+            if (!supabaseClient) return;
+
+            const badge = document.getElementById('statusBanco');
+
+            try {
+                const inicio = Date.now();
+                const { error } = await supabaseClient
+                    .from('Geral')
+                    .select('id', { count: 'exact', head: true });
+
+                const latencia = Date.now() - inicio;
+
+                if (error) throw error;
+
+                badge.className = 'status-badge online';
+                badge.textContent = `Online (${latencia}ms)`;
+
+            } catch (err) {
+                badge.className = 'status-badge offline';
+                badge.textContent = 'Offline';
+            }
+        }
+
+        verificarStatus();
+        setInterval(verificarStatus, 30000);
     </script>
 
 </body>

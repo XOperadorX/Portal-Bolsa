@@ -1,0 +1,464 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Meus Arquivos para Download</title>
+
+    <!-- Font Awesome (para os ícones do menu e botões) -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+
+    <style>
+        /* ==================== RESET E BASE ==================== */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Inter', 'Segoe UI', sans-serif;
+        }
+
+        body {
+            min-height: 100vh;
+            background: linear-gradient(135deg, #002e5d 0%, #001a33 100%);
+            color: #e0e0e0;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* ==================== MENU ==================== */
+        .menu-container {
+            width: 100%;
+            background-color: rgb(0, 43, 173);
+            backdrop-filter: blur(8px);
+            border-bottom: 1px solid rgba(255, 215, 0, 0.2);
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.6);
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+        }
+
+        .navbar {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 0.9rem 2rem;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            flex-wrap: wrap;
+        }
+
+        .logo {
+            font-size: 1.8rem;
+            font-weight: 800;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+            color: #ffffff;
+            text-shadow: 0 0 10px rgba(255, 215, 0, 0.5);
+            display: flex;
+            align-items: center;
+            gap: 0.3rem;
+        }
+
+        .logo span {
+            color: #f5c542;
+            font-weight: 900;
+        }
+
+        .logo i {
+            color: #f5c542;
+            font-size: 1.6rem;
+            margin-right: 0.2rem;
+        }
+
+        .nav-links {
+            display: flex;
+            align-items: center;
+            gap: 2.2rem;
+            list-style: none;
+            margin: 0;
+            padding: 0;
+        }
+
+        .nav-links li a {
+            text-decoration: none;
+            color: #d0d0d0;
+            font-weight: 600;
+            font-size: 1rem;
+            letter-spacing: 0.3px;
+            transition: all 0.2s ease;
+            padding: 0.5rem 0;
+            position: relative;
+        }
+
+        .nav-links li a::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 0;
+            height: 2px;
+            background: #f5c542;
+            transition: width 0.25s ease;
+        }
+
+        .nav-links li a:hover {
+            color: #ffffff;
+        }
+
+        .nav-links li a:hover::after {
+            width: 100%;
+        }
+
+        .btn-discord {
+            background: linear-gradient(135deg, #f5c542 0%, #d4a017 100%);
+            border: none;
+            border-radius: 40px;
+            color: #0b0e14;
+            font-weight: 700;
+            font-size: 0.9rem;
+            padding: 0.7rem 1.6rem;
+            display: flex;
+            align-items: center;
+            gap: 0.6rem;
+            cursor: pointer;
+            transition: transform 0.2s, box-shadow 0.2s;
+            box-shadow: 0 0 15px rgba(245, 197, 66, 0.3);
+            text-decoration: none;
+            letter-spacing: 0.3px;
+            white-space: nowrap;
+        }
+
+        .btn-discord i {
+            font-size: 1.1rem;
+        }
+
+        .btn-discord:hover {
+            transform: scale(1.03);
+            box-shadow: 0 0 25px rgba(245, 197, 66, 0.6);
+            background: linear-gradient(135deg, #f7d25c 0%, #e0b020 100%);
+        }
+
+        .menu-toggle {
+            display: none;
+            background: transparent;
+            border: none;
+            color: #f5c542;
+            font-size: 1.8rem;
+            cursor: pointer;
+            padding: 0.3rem 0.6rem;
+        }
+
+        /* ==================== CONTEÚDO PRINCIPAL ==================== */
+        .main-content {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 2.5rem 1.5rem 4rem;
+        }
+
+        .link-cadastro {
+            text-align: center;
+            margin-bottom: 1.5rem;
+        }
+
+        .link-cadastro a {
+            color: #93c5fd;
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 0.95rem;
+            transition: color 0.2s ease;
+        }
+
+        .link-cadastro a:hover {
+            color: #ffffff;
+            text-decoration: underline;
+        }
+
+        .card {
+            width: 100%;
+            max-width: 560px;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 215, 0, 0.15);
+            border-radius: 20px;
+            padding: 2.5rem 2rem;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.5);
+            backdrop-filter: blur(6px);
+            text-align: center;
+        }
+
+        .card h1 {
+            font-size: 1.9rem;
+            font-weight: 800;
+            color: #ffffff;
+            margin-bottom: 0.6rem;
+            text-shadow: 0 0 15px rgba(245, 197, 66, 0.25);
+        }
+
+        .card > p {
+            color: #b0b8c4;
+            font-size: 1rem;
+            margin-bottom: 1.8rem;
+        }
+
+        /* ==================== BOTÕES DE DOWNLOAD ==================== */
+        .btn {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.6rem;
+            width: 100%;
+            padding: 1rem 1.2rem;
+            margin-bottom: 1rem;
+            border-radius: 14px;
+            font-size: 1rem;
+            font-weight: 700;
+            text-decoration: none;
+            color: #0b0e14;
+            background: linear-gradient(135deg, #f5c542 0%, #d4a017 100%);
+            box-shadow: 0 4px 15px rgba(245, 197, 66, 0.25);
+            transition: transform 0.2s ease, box-shadow 0.2s ease, filter 0.2s ease;
+            letter-spacing: 0.2px;
+            text-align: center;
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(245, 197, 66, 0.45);
+            filter: brightness(1.05);
+        }
+
+        .btn:active {
+            transform: translateY(0);
+        }
+
+        .btn.apk {
+            background: linear-gradient(135deg, #34d399 0%, #059669 100%);
+            color: #04140d;
+            box-shadow: 0 4px 15px rgba(52, 211, 153, 0.25);
+        }
+
+        .btn.apk:hover {
+            box-shadow: 0 8px 25px rgba(52, 211, 153, 0.45);
+        }
+
+        /* ==================== INFO E INSTRUÇÕES ==================== */
+        .info {
+            margin-top: 1.4rem;
+            font-size: 0.85rem;
+            color: #9aa4b2;
+            line-height: 1.5;
+            text-align: center;
+        }
+
+        .instrucoes {
+            margin-top: 1.8rem;
+            padding: 1.4rem 1.2rem;
+            background: rgba(0, 0, 0, 0.25);
+            border: 1px solid rgba(245, 197, 66, 0.2);
+            border-radius: 14px;
+            text-align: left;
+        }
+
+        .instrucoes h4 {
+            color: #f5c542;
+            font-size: 1.05rem;
+            margin-bottom: 0.8rem;
+            text-align: center;
+        }
+
+        .instrucoes p {
+            color: #c8d0da;
+            font-size: 0.9rem;
+            line-height: 1.7;
+            margin: 0;
+        }
+
+        .instrucoes p strong {
+            color: #f5c542;
+        }
+
+        /* ==================== RESPONSIVO ==================== */
+        @media (max-width: 900px) {
+            .nav-links {
+                gap: 1.4rem;
+            }
+
+            .logo {
+                font-size: 1.5rem;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .navbar {
+                padding: 0.8rem 1.2rem;
+            }
+
+            .menu-toggle {
+                display: block;
+                order: 2;
+            }
+
+            .btn-discord {
+                order: 3;
+                padding: 0.6rem 1.1rem;
+                font-size: 0.82rem;
+            }
+
+            .nav-links {
+                display: none;
+                width: 100%;
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 0.4rem;
+                margin-top: 0.8rem;
+                padding: 0.6rem 0;
+                border-top: 1px solid rgba(255, 215, 0, 0.15);
+                order: 4;
+            }
+
+            .nav-links.active {
+                display: flex;
+            }
+
+            .nav-links li {
+                width: 100%;
+            }
+
+            .nav-links li a {
+                display: block;
+                padding: 0.6rem 0.3rem;
+                width: 100%;
+            }
+
+            .card {
+                padding: 2rem 1.4rem;
+            }
+
+            .card h1 {
+                font-size: 1.6rem;
+            }
+
+            .btn {
+                font-size: 0.92rem;
+                padding: 0.9rem 1rem;
+            }
+        }
+
+        @media (max-width: 420px) {
+            .logo {
+                font-size: 1.25rem;
+            }
+
+            .logo i {
+                font-size: 1.3rem;
+            }
+
+            .btn-discord span {
+                display: none;
+            }
+
+            .btn-discord {
+                padding: 0.6rem 0.8rem;
+            }
+
+            .btn-discord i {
+                font-size: 1.2rem;
+            }
+
+            .main-content {
+                padding: 1.5rem 1rem 3rem;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <!-- ==================== MENU PRINCIPAL (do menu.html) ==================== -->
+    <div class="menu-container">
+        <nav class="navbar">
+            <div class="logo">
+                <i class="fas fa-cow"></i>
+                MM<span>Quase Tudo</span>
+            </div>
+
+            <button class="menu-toggle" id="menuToggle" aria-label="Abrir menu">
+                <i class="fas fa-bars"></i>
+            </button>
+
+            <ul class="nav-links" id="navLinks">
+                <li><a href="./index.html"><i class="fas fa-house"></i> Início</a></li>
+                <li><a href="./noticias.html"><i class="fas fa-newspaper"></i> Notícias</a></li>
+                <li><a href="./jogos/ranking/ranking002.html"><i class="fas fa-trophy"></i> Classificações</a></li>
+                <li><a href="./eventos.html"><i class="fas fa-calendar-days"></i> Eventos</a></li>
+                <li><a href="./download.html"><i class="fas fa-download"></i> Downloads</a></li>
+                <li><a href="./suporte.html"><i class="fas fa-headset"></i> Suporte</a></li>
+                <li><a href="./loja.html"><i class="fas fa-cart-shopping"></i> Loja</a></li>
+                <li><a href="./cadastro.html"><i class="fas fa-user-plus"></i> Cadastro</a></li>
+                <li><a href="./login.html"><i class="fas fa-sign-in-alt"></i> Login</a></li>
+            </ul>
+
+            <a href="https://discord.gg/ATtu4z9Ewt" class="btn-discord" target="_blank">
+                <i class="fab fa-discord"></i>
+                <span>Jogue Agora</span>
+            </a>
+        </nav>
+    </div>
+
+    <!-- ==================== CONTEÚDO PRINCIPAL ==================== -->
+    <main class="main-content">
+
+  
+
+        <div class="card">
+            <h1>📦 Meus Arquivos</h1>
+            <p>Escolha o arquivo abaixo:</p>
+
+            <!-- ⚠️ Substitua pelos SEUS links diretos -->
+            <a href="https://gofile.io/d/EAGM9koU" class="btn apk" target="_blank" rel="noopener">
+                📲 Baixar Aplicativo Android (.apk) — 14,7 MB
+            </a>
+
+            <a href="https://drive.google.com/file/d/1URRx8cXFOuyMcW5c8jgDu-GCYJsttj8D/view?usp=sharing" class="btn"
+                target="_blank" rel="noopener">
+                📂 Baixar Arquivos Completos Windows (.zip) — 195,2 MB
+            </a>
+
+            <p class="info">
+                ℹ️ Após baixar o APK, permita a instalação de fontes confiáveis nas configurações do seu celular.
+            </p>
+
+            <div class="instrucoes">
+                <h4>🎁 Como resgatar o código:</h4>
+                <p>1. Faça login no app</p>
+                <p>2. Vá em <strong>💰 Troca MUMU</strong></p>
+                <p>3. Depois em <strong>🎁 Resgatar Código</strong></p>
+                <p>4. Digite: <strong>MUMU2026</strong></p>
+            </div>
+        </div>
+
+    </main>
+
+    <!-- ==================== SCRIPT DO MENU MOBILE ==================== -->
+    <script>
+        const menuToggle = document.getElementById('menuToggle');
+        const navLinks = document.getElementById('navLinks');
+
+        if (menuToggle && navLinks) {
+            menuToggle.addEventListener('click', () => {
+                navLinks.classList.toggle('active');
+                const icon = menuToggle.querySelector('i');
+                if (icon) {
+                    icon.classList.toggle('fa-bars');
+                    icon.classList.toggle('fa-times');
+                }
+            });
+        }
+    </script>
+
+</body>
+
+</html>
