@@ -1,0 +1,807 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>TrocaSegura — Negociação entre Jogadores</title>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<style>
+  *{box-sizing:border-box}
+  :root{
+    --bg:#0a0e16; --card:#121a28; --card2:#18222f; --line:#233046;
+    --txt:#e7eefb; --mut:#8ea0bb; --pri:#4f8cff; --pri2:#2f6fe0;
+    --ok:#22c55e; --warn:#f59e0b; --err:#ef4444; --info:#38bdf8;
+  }
+  body{
+    margin:0;font-family:system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;
+    background:radial-gradient(1200px 600px at 50% -10%,#16233a 0%,var(--bg) 60%);
+    color:var(--txt);min-height:100vh;padding-bottom:40px;
+  }
+  header{
+    display:flex;flex-wrap:wrap;gap:12px;align-items:center;justify-content:space-between;
+    padding:16px 22px;border-bottom:1px solid var(--line);
+    background:rgba(10,14,22,.75);backdrop-filter:blur(10px);position:sticky;top:0;z-index:20;
+  }
+  .brand{font-size:20px;font-weight:800;letter-spacing:.3px;display:flex;align-items:center;gap:8px}
+  .brand small{font-weight:400;font-size:12px;color:var(--mut);margin-left:6px}
+  .user{display:flex;gap:8px;align-items:center}
+  input,select,textarea{
+    background:var(--card2);border:1px solid var(--line);color:var(--txt);
+    padding:10px 12px;border-radius:10px;font-size:14px;font-family:inherit;outline:none;width:100%;
+    transition:border-color .15s, box-shadow .15s;
+  }
+  input:focus,textarea:focus,select:focus{border-color:var(--pri);box-shadow:0 0 0 3px rgba(79,140,255,.15)}
+  .user input{width:190px}
+  button{font-family:inherit;cursor:pointer;border:none;border-radius:10px;transition:.15s}
+  .btn{
+    padding:10px 16px;font-size:14px;font-weight:600;background:var(--card2);
+    color:var(--txt);border:1px solid var(--line);
+  }
+  .btn:hover{filter:brightness(1.2)}
+  .btn:active{transform:scale(.98)}
+  .btn.pri{background:linear-gradient(180deg,var(--pri),var(--pri2));border-color:transparent;color:#fff}
+  .btn.ok{background:linear-gradient(180deg,#26d366,#16a34a);border-color:transparent;color:#04140a}
+  .btn.ghost{background:transparent}
+  .btn.danger{color:#ff8b8b;border-color:#5a2530}
+  .btn.danger:hover{background:#2a1418}
+  .btn.mini{padding:6px 12px;font-size:12px}
+  .btn:disabled{opacity:.5;cursor:not-allowed}
+
+  main{max-width:1200px;margin:24px auto;padding:0 18px;display:grid;grid-template-columns:380px 1fr;gap:22px;align-items:start}
+  @media(max-width:900px){main{grid-template-columns:1fr}}
+
+  .panel{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:20px}
+  .panel h2{margin:0 0 4px;font-size:17px}
+  .panel .sub{color:var(--mut);font-size:13px;margin:0 0 18px;line-height:1.5}
+
+  .campo{margin-bottom:14px}
+  .campo label{display:block;font-size:12px;font-weight:600;color:var(--mut);
+    text-transform:uppercase;letter-spacing:.6px;margin-bottom:6px}
+  .dupla{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+
+  .lista-head{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:14px;flex-wrap:wrap}
+  .lista-head h2{margin:0;font-size:17px}
+  .toggle{display:flex;align-items:center;gap:7px;font-size:13px;color:var(--mut);cursor:pointer;user-select:none}
+  .toggle input{width:auto}
+
+  .card{
+    background:var(--card);border:1px solid var(--line);border-radius:14px;
+    padding:16px;margin-bottom:12px;animation:up .25s ease;
+  }
+  @keyframes up{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
+  .card-top{display:flex;justify-content:space-between;align-items:center;gap:10px;margin-bottom:10px;flex-wrap:wrap}
+  .badge{font-size:11px;font-weight:700;padding:4px 10px;border-radius:999px;letter-spacing:.4px;text-transform:uppercase}
+  .badge.warn{background:rgba(245,158,11,.14);color:#fbbf24;border:1px solid rgba(245,158,11,.3)}
+  .badge.info{background:rgba(56,189,248,.14);color:#38bdf8;border:1px solid rgba(56,189,248,.3)}
+  .badge.ok{background:rgba(34,197,94,.14);color:#4ade80;border:1px solid rgba(34,197,94,.3)}
+  .badge.err{background:rgba(239,68,68,.14);color:#f87171;border:1px solid rgba(239,68,68,.3)}
+  .card .data{font-size:11px;color:var(--mut)}
+  .card h3{margin:0 0 10px;font-size:16px}
+  .linha{display:flex;justify-content:space-between;font-size:13px;padding:4px 0;color:var(--mut)}
+  .linha strong{color:var(--txt);font-weight:600}
+  .preco{font-size:18px;color:#4ade80 !important}
+  .obs{font-size:13px;color:var(--mut);background:var(--card2);border-radius:8px;
+       padding:8px 10px;margin-top:8px;border-left:3px solid var(--line);white-space:pre-wrap;word-break:break-word}
+  .acoes{display:flex;flex-wrap:wrap;gap:8px;margin-top:14px;align-items:center}
+  .aviso{font-size:12.5px;color:var(--mut);flex-basis:100%;line-height:1.5}
+  .aviso.ok{color:#4ade80}.aviso.err{color:#f87171}
+
+  .codigo-box{
+    flex-basis:100%;background:var(--card2);border:1px dashed var(--line);
+    border-radius:10px;padding:12px;display:flex;flex-direction:column;gap:8px;
+  }
+  .codigo-box .rotulo{font-size:11.5px;color:var(--mut);text-transform:uppercase;letter-spacing:.5px}
+  .codigo-box code{
+    font-family:ui-monospace,Menlo,Consolas,monospace;font-size:26px;font-weight:800;
+    letter-spacing:8px;color:#fbbf24;text-align:center;padding:6px 0;
+  }
+  .linha-cod{display:flex;gap:8px}
+  .cod-input{
+    font-family:ui-monospace,monospace;font-size:20px;letter-spacing:6px;text-align:center;
+    font-weight:700;flex:1;min-width:0;
+  }
+
+  .vazio{text-align:center;color:var(--mut);padding:50px 20px;font-size:14px;
+         border:1px dashed var(--line);border-radius:14px}
+  .erro-box{background:rgba(239,68,68,.1);border:1px solid rgba(239,68,68,.35);color:#fca5a5;
+            padding:12px 14px;border-radius:10px;font-size:13px;margin-bottom:14px}
+
+  #toasts{position:fixed;bottom:20px;right:20px;display:flex;flex-direction:column;gap:8px;z-index:80}
+  .toast{padding:12px 16px;border-radius:10px;font-size:13.5px;font-weight:600;
+         background:var(--card2);border:1px solid var(--line);animation:up .2s;max-width:320px}
+  .toast.ok{border-color:rgba(34,197,94,.5);color:#4ade80}
+  .toast.err{border-color:rgba(239,68,68,.5);color:#f87171}
+
+  .modal{position:fixed;inset:0;background:rgba(4,7,12,.82);backdrop-filter:blur(4px);
+         display:flex;align-items:center;justify-content:center;padding:20px;z-index:100}
+  .modal.hidden{display:none}
+  .modal-box{background:var(--card);border:1px solid var(--line);border-radius:18px;
+             padding:28px;max-width:420px;width:100%;text-align:center;animation:up .25s}
+  .modal-box h2{margin:0 0 8px;font-size:19px}
+  .modal-box p{color:var(--mut);font-size:13.5px;line-height:1.6;margin:0 0 18px}
+  .codigo-grande{
+    font-family:ui-monospace,monospace;font-size:40px;font-weight:900;letter-spacing:12px;
+    color:#fbbf24;background:var(--card2);border:1px dashed var(--line);border-radius:12px;
+    padding:18px 8px 18px 20px;margin-bottom:18px;
+  }
+  .modal-box .btns{display:flex;gap:10px;justify-content:center;flex-wrap:wrap}
+</style>
+</head>
+<body>
+
+<header>
+  <div class="brand">🛡️ TrocaSegura <small>negociação segura entre jogadores</small></div>
+  <div class="user">
+    <input id="nome" placeholder="Seu nick no jogo" maxlength="30" autocomplete="off" />
+    <button class="btn pri" id="btn-entrar">Entrar</button>
+  </div>
+</header>
+
+<main>
+  <!-- ============ CRIAR ============ -->
+  <section class="panel">
+    <h2>➕ Nova negociação</h2>
+    <p class="sub">Você é o <strong>vendedor</strong>. Ao criar, um código secreto de 6 dígitos é gerado — só entregue ele ao comprador depois de confirmar o dinheiro.</p>
+
+    <!-- NOVO: aviso de inventário -->
+    <div id="mochila-aviso" style="margin-bottom:14px;display:none"></div>
+
+    <form id="form">
+      <div class="campo">
+        <label for="comprador">Nick do comprador</label>
+        <input id="comprador" placeholder="Ex: ZezinhoPro" maxlength="30" required />
+      </div>
+
+      <!-- NOVO: seleção de item da mochila -->
+      <div class="campo">
+        <label for="item-select">Item da mochila 🎒</label>
+        <select id="item-select">
+          <option value="">— Carregando itens… —</option>
+        </select>
+      </div>
+
+      <div class="campo">
+        <label for="item">Item / Serviço (editável)</label>
+        <input id="item" placeholder="Ex: Espada Lendária +100" maxlength="80" required />
+      </div>
+      <div class="dupla">
+        <div class="campo">
+          <label for="qtd">Quantidade</label>
+          <input id="qtd" type="number" min="1" value="1" required />
+          <small id="qtd-max" style="color:var(--mut);font-size:11.5px"></small>
+        </div>
+        <div class="campo">
+          <label for="preco">Preço (R$)</label>
+          <input id="preco" type="number" min="0" step="0.01" placeholder="0,00" required />
+        </div>
+      </div>
+      <div class="campo">
+        <label for="obs">Observação (opcional)</label>
+        <textarea id="obs" rows="2" maxlength="200" placeholder="Combinações, horário de entrega..."></textarea>
+      </div>
+      <button class="btn pri" type="submit" style="width:100%;padding:13px">🔐 Criar e gerar código</button>
+    </form>
+  </section>
+
+  <!-- ============ LISTA ============ -->
+  <section>
+    <div class="lista-head">
+      <h2>📋 Negociações</h2>
+      <div style="display:flex;gap:14px;align-items:center">
+        <label class="toggle"><input type="checkbox" id="chk-todas" /> Ver todas</label>
+        <button class="btn mini" id="btn-refresh">↻ Atualizar</button>
+      </div>
+    </div>
+    <div id="erro"></div>
+    <div id="lista"></div>
+  </section>
+</main>
+
+<div id="toasts"></div>
+
+<!-- ============ MODAL DO CÓDIGO ============ -->
+<div class="modal hidden" id="modal">
+  <div class="modal-box">
+    <h2>🔐 Código de liberação</h2>
+    <p>Guarde este código! Ele fica salvo <strong>somente neste dispositivo</strong>.<br>
+       Só entregue ao comprador quando tiver <strong>certeza absoluta</strong> que o dinheiro caiu.</p>
+    <div class="codigo-grande" id="modal-cod">000000</div>
+    <div class="btns">
+      <button class="btn pri" id="btn-copiar-modal">📋 Copiar código</button>
+      <button class="btn ghost" id="btn-fechar-modal">Já guardei</button>
+    </div>
+  </div>
+</div>
+
+<script>
+/* ============================================================
+   CONFIG
+============================================================ */
+const SUPABASE_URL = 'https://xrcxvizzdumcxbylmkvn.supabase.co';
+const SUPABASE_KEY = 'sb_publishable_E-g3G3wW4EySbCsXLXp8KQ_FnmERMcD';
+const TABELA           = 'Geral';        // tabela geral do sistema
+const TABELA_ATIVIDADES = 'Atividades';  // log de atividades
+const TABELA_TROCAS     = 'Trocas';      // tabela desta feature
+
+const { createClient } = supabase;
+const db = createClient(SUPABASE_URL, SUPABASE_KEY);
+
+const STATUS = {
+  aguardando_pagamento: { txt: 'Aguardando pagamento',  cls: 'warn' },
+  pagamento_confirmado: { txt: 'Pagamento confirmado',  cls: 'info' },
+  concluida:            { txt: 'Concluída',             cls: 'ok'   },
+  cancelada:            { txt: 'Cancelada',             cls: 'err'  }
+};
+
+/* ============================================================
+   ESTADO
+============================================================ */
+let usuario      = localStorage.getItem('ts_user') || '';
+let mostrarTodas = false;
+let cache        = [];
+let codigoModalAtual = '';
+
+// NOVO: estado do inventário
+let inventario = [];          // [{ nome, quantidade }]
+let mochilaCarregada = false;
+
+/* ============================================================
+   HELPERS
+============================================================ */
+const $ = (s) => document.querySelector(s);
+
+const esc = (s) => String(s ?? '').replace(/[&<>"']/g, c =>
+  ({ '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;' }[c]));
+
+const money = (v) => Number(v || 0).toLocaleString('pt-BR', { style:'currency', currency:'BRL' });
+const dataHora = (v) => v ? new Date(v).toLocaleString('pt-BR') : '—';
+
+function gerarCodigo() {
+  return String(Math.floor(Math.random() * 1000000)).padStart(6, '0');
+}
+
+function uuid() {
+  if (window.crypto?.randomUUID) return crypto.randomUUID();
+  return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, c => {
+    const r = (Math.random() * 16) | 0;
+    return (c === 'x' ? r : (r & 0x3) | 0x8).toString(16);
+  });
+}
+
+/* SHA-256 com fallback para contextos sem crypto.subtle */
+async function hash(str) {
+  try {
+    if (window.crypto?.subtle) {
+      const buf = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(str));
+      return [...new Uint8Array(buf)].map(b => b.toString(16).padStart(2, '0')).join('');
+    }
+  } catch (_) { /* cai no fallback */ }
+  let h = 2166136261;
+  for (let i = 0; i < str.length; i++) { h ^= str.charCodeAt(i); h = Math.imul(h, 16777619); }
+  return 'fb' + (h >>> 0).toString(16).padStart(8, '0');
+}
+
+function toast(msg, tipo = '') {
+  const el = document.createElement('div');
+  el.className = 'toast ' + tipo;
+  el.textContent = msg;
+  $('#toasts').appendChild(el);
+  setTimeout(() => { el.style.opacity = '0'; el.style.transition = '.3s'; }, 2800);
+  setTimeout(() => el.remove(), 3200);
+}
+
+/* Log de atividade (ajuste os campos conforme seu schema) */
+async function logAtividade(acao, detalhes) {
+  try {
+    await db.from(TABELA_ATIVIDADES).insert({
+      usuario, acao, detalhes: JSON.stringify(detalhes || {}),
+      criado_em: new Date().toISOString()
+    });
+  } catch (e) { console.warn('logAtividade falhou:', e); }
+}
+
+/* ============================================================
+   NOVO: MOCHILA — buscar inventário do jogador
+============================================================ */
+async function carregarMochila() {
+  const aviso = $('#mochila-aviso');
+  const select = $('#item-select');
+
+  // 1. Tenta ler o utilizador logado no sistema da mochila
+  let login = null;
+  try {
+    const raw = localStorage.getItem('usuario_logado');
+    if (raw) {
+      const u = JSON.parse(raw);
+      login = u?.login || null;
+    }
+  } catch (_) { /* ignora */ }
+
+  if (!login) {
+    aviso.style.display = 'block';
+    aviso.innerHTML =
+      `<div class="erro-box">⚠️ Não foi possível ler o login do jogador.
+       Faça login no sistema da mochila para carregar os itens.
+       <br><a href="https://xoperadorx.github.io/Portal-Bolsa/jogos/mochila/mochila.html"
+              target="_blank" style="color:#4f8cff">Ir para a Mochila →</a></div>`;
+    select.innerHTML = '<option value="">— Faça login na mochila —</option>';
+    return;
+  }
+
+  // 2. Busca os dados do utilizador no Supabase
+  try {
+    const resp = await fetch(
+      `${SUPABASE_URL}/rest/v1/${TABELA}?login=eq.${encodeURIComponent(login)}`,
+      {
+        headers: {
+          'apikey': SUPABASE_KEY,
+          'Authorization': `Bearer ${SUPABASE_KEY}`
+        }
+      }
+    );
+
+    if (!resp.ok) throw new Error(`HTTP ${resp.status}`);
+    const data = await resp.json();
+    if (!data || data.length === 0) throw new Error('Utilizador não encontrado');
+
+    const dados = data[0];
+    inventario = extrairTodosItens(dados);
+    mochilaCarregada = true;
+
+    // 3. Preenche o dropdown
+    if (inventario.length === 0) {
+      select.innerHTML = '<option value="">— Mochila vazia —</option>';
+    } else {
+      select.innerHTML =
+        '<option value="">— Escolha um item —</option>' +
+        inventario.map(it =>
+          `<option value="${esc(it.nome)}" data-qtd="${it.quantidade}">
+             ${esc(it.nome)} ×${it.quantidade}
+           </option>`
+        ).join('');
+    }
+
+    aviso.style.display = 'none';
+  } catch (e) {
+    console.error('Erro ao carregar mochila:', e);
+    aviso.style.display = 'block';
+    aviso.innerHTML =
+      `<div class="erro-box">⚠️ Não foi possível carregar a mochila: ${esc(e.message)}
+       <br><a href="https://xoperadorx.github.io/Portal-Bolsa/jogos/mochila/mochila.html"
+              target="_blank" style="color:#4f8cff">Abrir Mochila →</a></div>`;
+    select.innerHTML = '<option value="">— Erro ao carregar —</option>';
+  }
+}
+
+/* Reaproveita a lógica da mochila para extrair itens */
+function extrairTodosItens(d) {
+  const todos = {};
+
+  // carteira (jsonb)
+  if (d.carteira && typeof d.carteira === 'object') {
+    Object.keys(d.carteira).forEach(k => {
+      const q = Number(d.carteira[k]) || 0;
+      if (q > 0) todos[k] = (todos[k] || 0) + q;
+    });
+  }
+
+  // colunas diretas
+  const seeds     = Number(d.seeds)     || 0;
+  const stock     = Number(d.stock)     || 0;
+  const buckets   = Number(d.buckets)   || 0;
+  const planted   = Number(d.planted)   || 0;
+  const harvested = Number(d.harvested) || 0;
+
+  if (seeds > 0)     todos['Sementes'] = (todos['Sementes'] || 0) + seeds;
+  if (stock > 0)     todos['Milho']    = (todos['Milho']    || 0) + stock;
+  if (buckets > 0)   todos['Balde']    = (todos['Balde']    || 0) + buckets;
+  if (planted > 0)   todos['Planta']   = (todos['Planta']   || 0) + planted;
+  if (harvested > 0) todos['Colheita'] = (todos['Colheita'] || 0) + harvested;
+
+  // itens (jsonb) — array ou objeto
+  if (Array.isArray(d.itens)) {
+    d.itens.forEach(item => {
+      if (item && item.nome) {
+        const q = Number(item.quantidade) || 0;
+        if (q > 0) todos[item.nome] = (todos[item.nome] || 0) + q;
+      }
+    });
+  } else if (d.itens && typeof d.itens === 'object') {
+    Object.keys(d.itens).forEach(k => {
+      const q = Number(d.itens[k]) || 0;
+      if (q > 0) todos[k] = (todos[k] || 0) + q;
+    });
+  }
+
+  return Object.entries(todos).map(([nome, quantidade]) => ({ nome, quantidade }));
+}
+
+/* ============================================================
+   INICIALIZAÇÃO
+============================================================ */
+document.addEventListener('DOMContentLoaded', () => {
+  if (usuario) {
+    $('#nome').value = usuario;
+    $('#btn-entrar').textContent = 'Trocar';
+  }
+  bindEventos();
+  carregar();
+  inscreverRealtime();
+  // NOVO: carrega a mochila assim que a página abre
+  carregarMochila();
+});
+
+function bindEventos() {
+  $('#btn-entrar').addEventListener('click', () => {
+    const n = $('#nome').value.trim();
+    if (!n) return toast('Digite seu nick', 'err');
+    usuario = n;
+    localStorage.setItem('ts_user', n);
+    $('#btn-entrar').textContent = 'Trocar';
+    toast('Bem-vindo, ' + n + '!', 'ok');
+    render();
+    // NOVO: recarrega a mochila quando o nick muda
+    carregarMochila();
+  });
+
+  $('#nome').addEventListener('keydown', (e) => {
+    if (e.key === 'Enter') $('#btn-entrar').click();
+  });
+
+  $('#chk-todas').addEventListener('change', (e) => {
+    mostrarTodas = e.target.checked;
+    render();
+  });
+
+  $('#btn-refresh').addEventListener('click', carregar);
+  $('#form').addEventListener('submit', criarNegociacao);
+
+  // NOVO: ao escolher um item no dropdown, preenche os campos
+  $('#item-select').addEventListener('change', (e) => {
+    const opt = e.target.selectedOptions[0];
+    if (!opt || !opt.value) {
+      $('#qtd-max').textContent = '';
+      return;
+    }
+    $('#item').value = opt.value;
+    const qtd = Number(opt.dataset.qtd) || 1;
+    $('#qtd-max').textContent = `Máx. disponível: ${qtd}`;
+    $('#qtd').max = qtd;
+    if (Number($('#qtd').value) > qtd) $('#qtd').value = qtd;
+  });
+
+  $('#lista').addEventListener('click', onAcaoLista);
+
+  // Modal
+  $('#btn-fechar-modal').addEventListener('click', () => $('#modal').classList.add('hidden'));
+  $('#btn-copiar-modal').addEventListener('click', async () => {
+    await copiar(codigoModalAtual);
+  });
+  $('#modal').addEventListener('click', (e) => {
+    if (e.target.id === 'modal') $('#modal').classList.add('hidden');
+  });
+}
+
+/* ============================================================
+   SUPABASE — LEITURA
+============================================================ */
+async function carregar() {
+  const { data, error } = await db
+    .from(TABELA_TROCAS)
+    .select('*')
+    .order('criado_em', { ascending: false })
+    .limit(200);
+
+  if (error) {
+    $('#erro').innerHTML =
+      `<div class="erro-box"><strong>Erro ao carregar:</strong> ${esc(error.message)}<br>
+       Verifique se a tabela <code>${TABELA_TROCAS}</code> existe e se as policies estão criadas.</div>`;
+    return;
+  }
+  $('#erro').innerHTML = '';
+  cache = data || [];
+  render();
+}
+
+let rtTimer = null;
+function inscreverRealtime() {
+  db.channel('trocas-rt')
+    .on('postgres_changes',
+        { event: '*', schema: 'public', table: TABELA_TROCAS },
+        () => {
+          clearTimeout(rtTimer);
+          rtTimer = setTimeout(carregar, 300);
+        })
+    .subscribe();
+}
+
+/* ============================================================
+   RENDER
+============================================================ */
+function render() {
+  const lista = $('#lista');
+
+  if (!usuario) {
+    lista.innerHTML = `<div class="vazio">👆 Digite seu nick no topo e clique em <strong>Entrar</strong> para ver suas negociações.</div>`;
+    return;
+  }
+
+  let rows = cache;
+  if (!mostrarTodas) {
+    rows = rows.filter(r => r.vendedor === usuario || r.comprador === usuario);
+  }
+
+  if (!rows.length) {
+    lista.innerHTML = `<div class="vazio">Nenhuma negociação por aqui ainda.</div>`;
+    return;
+  }
+
+  lista.innerHTML = rows.map(cardHTML).join('');
+}
+
+function cardHTML(r) {
+  const euVendedor  = r.vendedor  === usuario;
+  const euComprador = r.comprador === usuario;
+  const st = STATUS[r.status] || { txt: r.status, cls: 'warn' };
+  const cod = localStorage.getItem('ts_cod_' + r.id);
+
+  let acoes = '';
+
+  /* ---------- Aguardando pagamento ---------- */
+  if (r.status === 'aguardando_pagamento') {
+    if (euVendedor) {
+      acoes += `<button class="btn ok" data-acao="pago" data-id="${r.id}">💰 Já recebi o pagamento</button>`;
+    }
+    if (euComprador) {
+      acoes += `<div class="aviso">⏳ Faça o pagamento combinado e aguarde o vendedor confirmar o recebimento.</div>`;
+    }
+    if (euVendedor || euComprador) {
+      acoes += `<button class="btn ghost danger" data-acao="cancelar" data-id="${r.id}">Cancelar</button>`;
+    }
+  }
+
+  /* ---------- Pagamento confirmado: hora do código ---------- */
+  else if (r.status === 'pagamento_confirmado') {
+    if (euVendedor) {
+      acoes += cod
+        ? `<div class="codigo-box">
+             <span class="rotulo">🔐 Código de liberação — entregue ao comprador</span>
+             <code>${esc(cod)}</code>
+             <button class="btn mini" data-acao="copiar" data-cod="${esc(cod)}">📋 Copiar</button>
+           </div>`
+        : `<div class="aviso err">⚠️ Código não disponível neste dispositivo. Ele foi gerado no aparelho onde a negociação foi criada.</div>`;
+      acoes += `<button class="btn ghost danger" data-acao="cancelar" data-id="${r.id}">Cancelar</button>`;
+    }
+    if (euComprador) {
+      acoes += `<div class="codigo-box">
+                  <span class="rotulo">🔓 Digite o código que o vendedor enviou</span>
+                  <div class="linha-cod">
+                    <input class="cod-input" data-codinput="${r.id}" maxlength="6"
+                           inputmode="numeric" autocomplete="off" placeholder="000000" />
+                    <button class="btn pri" data-acao="liberar" data-id="${r.id}">Liberar item</button>
+                  </div>
+                </div>`;
+    }
+    if (!euVendedor && !euComprador) {
+      acoes += `<div class="aviso">Aguardando liberação do comprador.</div>`;
+    }
+  }
+
+  /* ---------- Concluída ---------- */
+  else if (r.status === 'concluida') {
+    acoes += `<div class="aviso ok">✅ Negociação concluída${r.concluido_em ? ' em ' + dataHora(r.concluido_em) : ''}.</div>`;
+  }
+
+  /* ---------- Cancelada ---------- */
+  else {
+    acoes += `<div class="aviso err">❌ Negociação cancelada.</div>`;
+  }
+
+  return `
+    <div class="card">
+      <div class="card-top">
+        <span class="badge ${st.cls}">${esc(st.txt)}</span>
+        <span class="data">${dataHora(r.criado_em)}</span>
+      </div>
+
+      <h3>${esc(r.item)} ${Number(r.quantidade) > 1 ? `× ${esc(r.quantidade)}` : ''}</h3>
+
+      <div class="linha"><span>Preço</span><strong class="preco">${money(r.preco)}</strong></div>
+      <div class="linha"><span>Vendedor</span><strong>${esc(r.vendedor)}${euVendedor ? ' (você)' : ''}</strong></div>
+      <div class="linha"><span>Comprador</span><strong>${esc(r.comprador)}${euComprador ? ' (você)' : ''}</strong></div>
+      ${r.pago_em ? `<div class="linha"><span>Pago em</span><strong>${dataHora(r.pago_em)}</strong></div>` : ''}
+      ${Number(r.tentativas) > 0 ? `<div class="linha"><span>Tentativas erradas</span><strong>${esc(r.tentativas)}</strong></div>` : ''}
+
+      ${r.observacao ? `<div class="obs">${esc(r.observacao)}</div>` : ''}
+
+      <div class="acoes">${acoes}</div>
+    </div>`;
+}
+
+/* ============================================================
+   AÇÕES DA LISTA
+============================================================ */
+async function onAcaoLista(e) {
+  const btn = e.target.closest('[data-acao]');
+  if (!btn) return;
+
+  const { acao, id, cod } = btn.dataset;
+
+  if (acao === 'copiar')  return copiar(cod);
+  if (acao === 'pago')    return confirmarPagamento(id, btn);
+  if (acao === 'liberar') return liberarItem(id, btn);
+  if (acao === 'cancelar')return cancelar(id);
+}
+
+/* ---------- 1. Vendedor confirma que recebeu o dinheiro ---------- */
+async function confirmarPagamento(id, btn) {
+  if (!confirm('Confirmar que você RECEBEU o pagamento?\n\nSó faça isso com o dinheiro já na sua conta/mão.')) return;
+  btn.disabled = true;
+
+  const { error } = await db.from(TABELA_TROCAS)
+    .update({ status: 'pagamento_confirmado', pago_em: new Date().toISOString() })
+    .eq('id', id);
+
+  btn.disabled = false;
+  if (error) return toast('Erro: ' + error.message, 'err');
+
+  const r = cache.find(x => x.id === id);
+  logAtividade('troca_pagamento_confirmado', { id, item: r?.item, preco: r?.preco });
+  toast('Pagamento confirmado! Entregue o código ao comprador.', 'ok');
+  carregar();
+}
+
+/* ---------- 2. Comprador usa o código para liberar ---------- */
+async function liberarItem(id, btn) {
+  const input = document.querySelector(`[data-codinput="${id}"]`);
+  const code  = (input?.value || '').trim();
+
+  if (!/^\d{6}$/.test(code)) return toast('Digite os 6 dígitos do código.', 'err');
+
+  const r = cache.find(x => x.id === id);
+  if (!r) return toast('Negociação não encontrada.', 'err');
+
+  if (Number(r.tentativas) >= 5) {
+    toast('Limite de tentativas atingido. Contate o vendedor.', 'err');
+    return;
+  }
+
+  btn.disabled = true;
+  btn.textContent = 'Verificando...';
+
+  const h = await hash(code);
+
+  if (h !== r.codigo_hash) {
+    await db.from(TABELA_TROCAS).update({ tentativas: Number(r.tentativas || 0) + 1 }).eq('id', id);
+    btn.disabled = false;
+    btn.textContent = 'Liberar item';
+    input.value = '';
+    input.focus();
+    toast('❌ Código incorreto. Confira com o vendedor.', 'err');
+    carregar();
+    return;
+  }
+
+  const { error } = await db.from(TABELA_TROCAS)
+    .update({ status: 'concluida', concluido_em: new Date().toISOString() })
+    .eq('id', id);
+
+  btn.disabled = false;
+  btn.textContent = 'Liberar item';
+  if (error) return toast('Erro: ' + error.message, 'err');
+
+  logAtividade('troca_concluida', { id, item: r.item, preco: r.preco, vendedor: r.vendedor });
+  localStorage.removeItem('ts_cod_' + id);
+  toast('✅ Código validado! Negociação concluída.', 'ok');
+  carregar();
+}
+
+/* ---------- 3. Cancelar ---------- */
+async function cancelar(id) {
+  if (!confirm('Cancelar esta negociação? Essa ação não pode ser desfeita.')) return;
+
+  const { error } = await db.from(TABELA_TROCAS)
+    .update({ status: 'cancelada' })
+    .eq('id', id);
+
+  if (error) return toast('Erro: ' + error.message, 'err');
+  toast('Negociação cancelada.', '');
+  carregar();
+}
+
+/* ============================================================
+   CRIAR NEGOCIAÇÃO
+============================================================ */
+async function criarNegociacao(e) {
+  e.preventDefault();
+
+  if (!usuario) return toast('Defina seu nick antes de criar.', 'err');
+
+  const comprador = $('#comprador').value.trim();
+  const item      = $('#item').value.trim();
+  const qtd       = Math.max(1, parseInt($('#qtd').value, 10) || 1);
+  const preco     = Number($('#preco').value) || 0;
+  const obs       = $('#obs').value.trim();
+
+  if (!comprador || !item) return toast('Preencha comprador e item.', 'err');
+  if (comprador.toLowerCase() === usuario.toLowerCase())
+    return toast('Você não pode negociar consigo mesmo.', 'err');
+
+  // NOVO: valida se a quantidade não ultrapassa o disponível na mochila
+  if (mochilaCarregada) {
+    const inv = inventario.find(i => i.nome === item);
+    if (inv && qtd > inv.quantidade) {
+      return toast(`Você só tem ${inv.quantidade} unidade(s) de "${item}".`, 'err');
+    }
+  }
+
+  const btn = e.target.querySelector('button[type="submit"]');
+  btn.disabled = true;
+  btn.textContent = 'Criando...';
+
+  const id     = uuid();
+  const codigo = gerarCodigo();
+  const codigo_hash = await hash(codigo);
+
+  const payload = {
+    id,
+    vendedor: usuario,
+    comprador,
+    item,
+    quantidade: qtd,
+    preco,
+    observacao: obs || null,
+    status: 'aguardando_pagamento',
+    codigo_hash,
+    tentativas: 0,
+    criado_em: new Date().toISOString()
+  };
+
+  const { error } = await db.from(TABELA_TROCAS).insert(payload);
+
+  btn.disabled = false;
+  btn.textContent = '🔐 Criar e gerar código';
+
+  if (error) return toast('Erro: ' + error.message, 'err');
+
+  // Guarda o código em texto puro apenas neste dispositivo
+  localStorage.setItem('ts_cod_' + id, codigo);
+
+  logAtividade('troca_criada', { id, item, preco, comprador });
+
+  e.target.reset();
+  $('#qtd').value = 1;
+  $('#item-select').value = '';
+  $('#qtd-max').textContent = '';
+
+  abrirModalCodigo(codigo);
+  carregar();
+}
+
+/* ============================================================
+   MODAL DO CÓDIGO
+============================================================ */
+function abrirModalCodigo(codigo) {
+  codigoModalAtual = codigo;
+  $('#modal-cod').textContent = codigo;
+  $('#modal').classList.remove('hidden');
+}
+
+async function copiar(texto) {
+  if (!texto) return;
+  try {
+    await navigator.clipboard.writeText(texto);
+    toast('📋 Código copiado!', 'ok');
+  } catch (_) {
+    const ta = document.createElement('textarea');
+    ta.value = texto;
+    document.body.appendChild(ta);
+    ta.select();
+    document.execCommand('copy');
+    ta.remove();
+    toast('📋 Código copiado!', 'ok');
+  }
+}
+</script>
+</body>
+</html>
