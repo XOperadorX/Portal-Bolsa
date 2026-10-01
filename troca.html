@@ -250,7 +250,7 @@ const TABELA_TROCAS     = 'Trocas';
 const { createClient } = supabase;
 const db = createClient(SUPABASE_URL, SUPABASE_KEY);
 
-// Chaves da sessão usadas pelo login.html
+// Chaves da sessão usadas pelo login.html do portal
 const SESSION_KEY           = 'usuario_logado';
 const SESSION_TIMESTAMP_KEY = 'session_timestamp';
 const SESSION_DURATION      = 24 * 60 * 60 * 1000; // 24h
@@ -265,9 +265,9 @@ const STATUS = {
 /* ============================================================
    ESTADO
 ============================================================ */
-let usuarioLogado   = null;   // { id, login, nome, email, ... }
-let mostrarTodas    = false;
-let cache           = [];
+let usuarioLogado    = null;
+let mostrarTodas     = false;
+let cache            = [];
 let codigoModalAtual = '';
 let inventario       = [];
 let mochilaCarregada = false;
@@ -333,7 +333,7 @@ async function logAtividade(acao, detalhes) {
    SESSÃO DO PORTAL (lida do localStorage — igual ao login.html)
 ============================================================ */
 function lerSessao() {
-  const ts = localStorage.getItem(SESSION_TIMESTAMP_KEY);
+  const ts  = localStorage.getItem(SESSION_TIMESTAMP_KEY);
   const raw = localStorage.getItem(SESSION_KEY);
   if (!ts || !raw) return null;
   const t = parseInt(ts, 10);
@@ -356,11 +356,11 @@ function identificarUsuario() {
   }
 
   usuarioLogado = {
-    id:    u.id,
-    login: u.login,
-    nome:  u.nome || u.login,
-    email: u.email,
-    saldo: u.saldo || 0,
+    id:       u.id,
+    login:    u.login,
+    nome:     u.nome || u.login,
+    email:    u.email,
+    saldo:    u.saldo || 0,
     carteira: u.carteira || {}
   };
 
@@ -381,6 +381,8 @@ function identificarUsuario() {
 
 /* ============================================================
    STATUS SUPABASE (online / offline)
+   Usa HEAD em /rest/v1/ — não depende de nenhuma coluna existir.
+   Qualquer resposta HTTP < 500 prova que o servidor está acessível.
 ============================================================ */
 function atualizarStatus(online, msg) {
   const el = $('#statusSupabase');
@@ -392,12 +394,26 @@ function atualizarStatus(online, msg) {
 
 async function verificarSupabase() {
   try {
-    const { error } = await db.from(TABELA).select('id').limit(1);
-    if (error) { atualizarStatus(false, error.message); return false; }
-    atualizarStatus(true);
-    return true;
+    const resp = await fetch(`${SUPABASE_URL}/rest/v1/`, {
+      method: 'HEAD',
+      headers: {
+        'apikey': SUPABASE_KEY,
+        'Authorization': `Bearer ${SUPABASE_KEY}`
+      },
+      signal: (typeof AbortSignal !== 'undefined' && AbortSignal.timeout)
+        ? AbortSignal.timeout(5000)
+        : undefined
+    });
+
+    // Qualquer HTTP < 500 significa servidor acessível (200, 401, 404...)
+    if (resp.status < 500) {
+      atualizarStatus(true);
+      return true;
+    }
+    atualizarStatus(false, 'HTTP ' + resp.status);
+    return false;
   } catch (e) {
-    atualizarStatus(false, e.message);
+    atualizarStatus(false, e.message || 'sem conexão');
     return false;
   }
 }
@@ -412,7 +428,7 @@ function iniciarMonitorStatus() {
    MOCHILA — buscar inventário do jogador logado
 ============================================================ */
 async function carregarMochila() {
-  const aviso = $('#mochila-aviso');
+  const aviso  = $('#mochila-aviso');
   const select = $('#item-select');
 
   if (!usuarioLogado) {
@@ -422,13 +438,6 @@ async function carregarMochila() {
         <br><a href="https://xoperadorx.github.io/Portal-Bolsa/login.html">Ir para o Login →</a>
       </div>`;
     select.innerHTML = '<option value="">— Faça login —</option>';
-    return;
-  }
-
-  if (!statusOnline) {
-    aviso.style.display = 'block';
-    aviso.innerHTML = `<div class="erro-box">⚠️ Supabase offline. Não foi possível carregar a mochila.</div>`;
-    select.innerHTML = '<option value="">— Offline —</option>';
     return;
   }
 
@@ -533,6 +542,7 @@ function bindEventos() {
     verificarSupabase();
     carregar();
   });
+
   $('#form').addEventListener('submit', criarNegociacao);
 
   $('#item-select').addEventListener('change', (e) => {
@@ -562,11 +572,6 @@ function bindEventos() {
 ============================================================ */
 async function carregar() {
   if (!usuarioLogado) return;
-
-  if (!statusOnline) {
-    $('#erro').innerHTML = `<div class="erro-box">⚠️ Supabase offline — não foi possível carregar as negociações.</div>`;
-    return;
-  }
 
   const { data, error } = await db
     .from(TABELA_TROCAS)
@@ -615,7 +620,10 @@ function render() {
 
   let rows = cache;
   if (!mostrarTodas) {
-    rows = rows.filter(r => r.vendedor === usuarioLogado.login || r.comprador === usuarioLogado.login);
+    rows = rows.filter(r =>
+      r.vendedor  === usuarioLogado.login ||
+      r.comprador === usuarioLogado.login
+    );
   }
 
   if (!rows.length) {
@@ -751,7 +759,9 @@ async function liberarItem(id, btn) {
   const h = await hash(code);
 
   if (h !== r.codigo_hash) {
-    await db.from(TABELA_TROCAS).update({ tentativas: Number(r.tentativas || 0) + 1 }).eq('id', id);
+    await db.from(TABELA_TROCAS)
+      .update({ tentativas: Number(r.tentativas || 0) + 1 })
+      .eq('id', id);
     btn.disabled = false;
     btn.textContent = 'Liberar item';
     input.value = '';
@@ -794,7 +804,6 @@ async function criarNegociacao(e) {
   e.preventDefault();
 
   if (!usuarioLogado) return toast('Faça login no portal primeiro.', 'err');
-  if (!statusOnline) return toast('Supabase offline. Tente novamente.', 'err');
 
   const vendedor  = usuarioLogado.login;
   const comprador = $('#comprador').value.trim();
