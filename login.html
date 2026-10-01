@@ -5,13 +5,11 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Login — MM Quase Tudo</title>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-    <!-- Fonte moderna e ícones do menu -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,400;14..32,600;14..32,700;14..32,800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
     <style>
-        /* ==================== RESET E BASE ==================== */
         * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Inter', 'Segoe UI', sans-serif; }
 
         body {
@@ -22,7 +20,7 @@
             flex-direction: column;
         }
 
-        /* ==================== MENU (adaptado do menu.html) ==================== */
+        /* ==================== MENU ==================== */
         .menu-container {
             width: 100%;
             background-color: rgb(0, 43, 173);
@@ -55,17 +53,8 @@
             align-items: center;
             gap: 0.3rem;
         }
-
-        .logo span {
-            color: #f5c542;
-            font-weight: 900;
-        }
-
-        .logo i {
-            color: #f5c542;
-            font-size: 1.6rem;
-            margin-right: 0.2rem;
-        }
+        .logo span { color: #f5c542; font-weight: 900; }
+        .logo i { color: #f5c542; font-size: 1.6rem; margin-right: 0.2rem; }
 
         .nav-links {
             display: flex;
@@ -75,7 +64,6 @@
             margin: 0;
             padding: 0;
         }
-
         .nav-links li a {
             text-decoration: none;
             color: #d0d0d0;
@@ -88,38 +76,23 @@
             display: inline-flex;
             align-items: center;
         }
-
-        /* Ícones do menu */
         .nav-links li a i {
             margin-right: 8px;
             font-size: 0.95em;
             color: #f5c542;
             transition: color 0.2s ease, transform 0.2s ease;
         }
-
-        .nav-links li a:hover i {
-            color: #ffffff;
-            transform: scale(1.1);
-        }
-
+        .nav-links li a:hover i { color: #ffffff; transform: scale(1.1); }
         .nav-links li a::after {
             content: '';
             position: absolute;
-            bottom: 0;
-            left: 0;
-            width: 0;
-            height: 2px;
+            bottom: 0; left: 0;
+            width: 0; height: 2px;
             background: #f5c542;
             transition: width 0.25s ease;
         }
-
-        .nav-links li a:hover {
-            color: #ffffff;
-        }
-
-        .nav-links li a:hover::after {
-            width: 100%;
-        }
+        .nav-links li a:hover { color: #ffffff; }
+        .nav-links li a:hover::after { width: 100%; }
 
         .btn-discord {
             background: linear-gradient(135deg, #f5c542 0%, #d4a017 100%);
@@ -139,11 +112,6 @@
             letter-spacing: 0.3px;
             white-space: nowrap;
         }
-
-        .btn-discord i {
-            font-size: 1.1rem;
-        }
-
         .btn-discord:hover {
             transform: scale(1.03);
             box-shadow: 0 0 25px rgba(245, 197, 66, 0.6);
@@ -160,7 +128,7 @@
             padding: 0.3rem 0.6rem;
         }
 
-        /* ==================== CONTEÚDO DO LOGIN ==================== */
+        /* ==================== LOGIN ==================== */
         .login-wrapper {
             flex: 1;
             display: flex;
@@ -193,6 +161,7 @@
             width: 100%; padding: 13px; background: linear-gradient(135deg, #3b82f6, #2563eb);
             color: #fff; border: none; border-radius: 8px; font-size: 16px;
             font-weight: 600; cursor: pointer; margin-top: 8px;
+            transition: opacity 0.2s;
         }
         #btnLogin:disabled { opacity: 0.6; cursor: not-allowed; }
         .loading {
@@ -221,11 +190,7 @@
         }
         .status-supabase.online { color: #86efac; border-color: #22c55e; }
         .status-supabase.offline { color: #fca5a5; border-color: #ef4444; }
-        .link-cadastro {
-            margin-top: 18px; text-align: center; font-size: 14px; color: #94a3b8;
-        }
-        .link-cadastro a { color: #60a5fa; text-decoration: none; font-weight: 600; }
-        .link-cadastro a:hover { text-decoration: underline; }
+
         .links-recuperar {
             display: flex; justify-content: space-between;
             margin-top: 14px; font-size: 13px;
@@ -233,13 +198,12 @@
         .links-recuperar a { color: #94a3b8; text-decoration: none; }
         .links-recuperar a:hover { color: #60a5fa; text-decoration: underline; }
 
-        /* ==================== RESPONSIVIDADE DO MENU ==================== */
+        /* ==================== RESPONSIVIDADE ==================== */
         @media (max-width: 1024px) {
             .navbar { padding: 0.8rem 1.5rem; }
             .nav-links { gap: 1.5rem; }
             .btn-discord { padding: 0.6rem 1.2rem; font-size: 0.85rem; }
         }
-
         @media (max-width: 860px) {
             .nav-links {
                 display: none;
@@ -253,17 +217,11 @@
             }
             .nav-links.active { display: flex; }
             .nav-links li { width: 100%; }
-            .nav-links li a {
-                display: flex;
-                width: 100%;
-                padding: 0.6rem 0;
-                font-size: 1.1rem;
-            }
+            .nav-links li a { display: flex; width: 100%; padding: 0.6rem 0; font-size: 1.1rem; }
             .menu-toggle { display: block; }
             .navbar { justify-content: space-between; }
             .btn-discord { margin-left: auto; margin-right: 1rem; }
         }
-
         @media (max-width: 480px) {
             .navbar { padding: 0.7rem 1rem; }
             .logo { font-size: 1.5rem; }
@@ -277,7 +235,7 @@
 </head>
 <body>
 
-    <!-- ==================== MENU PRINCIPAL (do menu.html) ==================== -->
+    <!-- ==================== MENU ==================== -->
     <div class="menu-container">
         <nav class="navbar">
             <div class="logo">
@@ -308,7 +266,7 @@
         </nav>
     </div>
 
-    <!-- ==================== CONTEÚDO DO LOGIN ==================== -->
+    <!-- ==================== LOGIN ==================== -->
     <div class="login-wrapper">
         <div class="login-container">
             <h1>🔐 Entrar</h1>
@@ -329,13 +287,14 @@
                 <button type="submit" id="btnLogin">🔐 Entrar</button>
             </form>
 
-   
+            <!-- ✅ ELEMENTO QUE FALTAVA NO HTML ORIGINAL -->
+            <div id="statusSupabase" class="status-supabase">Verificando conexão...</div>
         </div>
     </div>
 
     <!-- ==================== SCRIPTS ==================== -->
     <script>
-        // ==================== MENU MOBILE (do menu.html) ====================
+        // ==================== MENU MOBILE ====================
         (function() {
             const toggleBtn = document.getElementById('menuToggle');
             const navLinks = document.getElementById('navLinks');
@@ -380,9 +339,10 @@
             }
         })();
 
-        // ==================== CONFIGURAÇÕES SUPABASE ====================
+        // ==================== SUPABASE ====================
+        // ✅ SUBSTITUA pela sua chave publishable COMPLETA (copiada do painel)
         const SUPABASE_URL = 'https://xrcxvizzdumcxbylmkvn.supabase.co';
-        const SUPABASE_KEY = 'sb_publishable_E-g3G3wW4EySbCsXLXp8KQ_FnmERMcD';
+        const SUPABASE_KEY = 'sb_publishable_E-g3G3wW4EySbCsXLXp8KQ_FnmERMcD'; // ⚠️ confirme se está completa
         const TABELA = 'Geral';
 
         const supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
@@ -412,7 +372,7 @@
         const btnLogin        = document.getElementById('btnLogin');
         const mensagemErro    = document.getElementById('mensagemErro');
         const mensagemSucesso = document.getElementById('mensagemSucesso');
-        const statusSupabase  = document.getElementById('statusSupabase');
+        const statusSupabase  = document.getElementById('statusSupabase'); // ✅ agora existe
 
         // ==================== MENSAGENS ====================
         function mostrarErro(m) {
@@ -435,31 +395,40 @@
             try {
                 const { error } = await supabaseClient.from(TABELA).select('id').limit(1);
                 if (error) {
-                    statusSupabase.textContent = '⚠️ Erro ao conectar: ' + error.message;
-                    statusSupabase.className = 'status-supabase offline';
+                    console.error('Erro Supabase:', error);
+                    if (statusSupabase) {
+                        statusSupabase.textContent = '⚠️ Erro: ' + error.message;
+                        statusSupabase.className = 'status-supabase offline';
+                    }
                     return false;
                 }
-                statusSupabase.textContent = '✅ Conectado ao Supabase';
-                statusSupabase.className = 'status-supabase online';
+                if (statusSupabase) {
+                    statusSupabase.textContent = '✅ Conectado ao Supabase';
+                    statusSupabase.className = 'status-supabase online';
+                }
                 return true;
             } catch (e) {
-                statusSupabase.textContent = '❌ Erro ao conectar: ' + e.message;
-                statusSupabase.className = 'status-supabase offline';
+                console.error('Erro de conexão:', e);
+                if (statusSupabase) {
+                    statusSupabase.textContent = '❌ Erro: ' + e.message;
+                    statusSupabase.className = 'status-supabase offline';
+                }
                 return false;
             }
         }
 
-        // ==================== LOGIN DIRETO NA TABELA ====================
+        // ==================== LOGIN ====================
         async function fazerLogin(login, senha) {
             try {
-                console.log('🔎 Tentando login:', { login, senha_length: senha.length });
+                console.log('🔎 Tentando login:', login);
 
+                // ✅ ilike = case-insensitive (resolve problema de MAIÚSCULA/minúscula)
                 const { data: usuarios, error } = await supabaseClient
                     .from(TABELA)
                     .select('*')
-                    .eq('login', login.trim());
+                    .ilike('login', login.trim());
 
-                console.log('📦 Busca por login → encontrados:', usuarios?.length, '| erro:', error);
+                console.log('📦 Encontrados:', usuarios?.length, '| erro:', error);
 
                 if (error) {
                     console.error('Erro Supabase:', error);
@@ -477,9 +446,7 @@
                 const senhaBanco = String(u.senha ?? '').trim();
                 const senhaDigitada = String(senha).trim();
 
-                console.log('🔐 Senha banco :', JSON.stringify(senhaBanco));
-                console.log('🔐 Senha digitada:', JSON.stringify(senhaDigitada));
-                console.log('🔐 Iguais?', senhaBanco === senhaDigitada);
+                console.log('🔐 Comparando senhas...', senhaBanco === senhaDigitada);
 
                 if (senhaBanco !== senhaDigitada) {
                     mostrarErro('❌ Senha incorreta.');
@@ -526,14 +493,16 @@
                 return;
             }
 
-            const online = await verificarSupabase();
-            if (!online) {
-                mostrarErro('❌ Sem conexão com o banco de dados.');
-                return;
-            }
-
             btnLogin.disabled = true;
             btnLogin.innerHTML = '<span class="loading"></span> Entrando...';
+
+            const online = await verificarSupabase();
+            if (!online) {
+                mostrarErro('❌ Sem conexão com o banco de dados. Verifique o console (F12).');
+                btnLogin.disabled = false;
+                btnLogin.innerHTML = '🔐 Entrar';
+                return;
+            }
 
             await fazerLogin(login, senha);
 
