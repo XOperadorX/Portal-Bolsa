@@ -1,0 +1,1186 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>ADM • BAEP Mercado</title>
+
+<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Rajdhani:wght@400;600;700&display=swap" rel="stylesheet" />
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" />
+
+<style>
+  :root {
+    --bg-dark: #0a0b10;
+    --card-bg: #121520;
+    --panel: #0f1219;
+    --border: #1f2634;
+    --neon-blue: #00f0ff;
+    --neon-purple: #7000ff;
+    --neon-green: #00ff66;
+    --neon-pink: #ff00aa;
+    --gold: #f9a825;
+    --stamina: #ff6b35;
+    --text-color: #f0f4f8;
+    --text-muted: #8a99ad;
+    --danger: #ef4444;
+    --warn: #f59e0b;
+    --info: #38bdf8;
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    background: var(--bg-dark);
+    color: var(--text-color);
+    background-image:
+      radial-gradient(circle at 15% 20%, rgba(112, 0, 255, 0.12) 0%, transparent 40%),
+      radial-gradient(circle at 85% 80%, rgba(0, 240, 255, 0.12) 0%, transparent 40%);
+    min-height: 100vh;
+    padding: 20px;
+    font-family: 'Rajdhani', sans-serif;
+  }
+  h1, h2, h3 { font-family: 'Orbitron', sans-serif; letter-spacing: 1px; }
+  h1 { font-size: 20px; color: var(--neon-blue); text-shadow: 0 0 12px rgba(0,240,255,.3); margin: 0; }
+  h2 { font-size: 15px; margin: 0 0 12px; color: var(--neon-blue); border-left: 4px solid var(--neon-blue); padding-left: 10px; }
+  h3 { font-size: 13px; color: var(--text-muted); margin: 0 0 8px; }
+  a { color: var(--neon-blue); text-decoration: none; }
+
+  .container { max-width: 1500px; margin: 0 auto; }
+
+  .topbar {
+    display: flex; flex-wrap: wrap; align-items: center; gap: 12px;
+    background: rgba(18,21,32,.8);
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(0,240,255,.2);
+    border-radius: 16px;
+    padding: 12px 16px;
+    margin-bottom: 16px;
+    box-shadow: 0 8px 32px rgba(0,0,0,.37);
+  }
+  .topbar .spacer { flex: 1; }
+  .badge {
+    font-size: 11px; padding: 4px 10px; border-radius: 30px;
+    border: 1px solid var(--border); color: var(--text-muted);
+    font-family: 'Orbitron', sans-serif;
+  }
+  .badge.on { color: var(--neon-green); border-color: var(--neon-green); box-shadow: 0 0 10px rgba(0,255,102,.25); }
+  .badge.err { color: var(--danger); border-color: var(--danger); }
+
+  .card {
+    background: var(--card-bg);
+    border: 1px solid rgba(0,240,255,.15);
+    border-radius: 14px;
+    padding: 16px;
+    margin-bottom: 16px;
+    box-shadow: 0 0 30px rgba(0,240,255,.05);
+  }
+
+  .row { display: flex; flex-wrap: wrap; gap: 10px; align-items: center; }
+  .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); gap: 12px; }
+
+  input, select, textarea, button {
+    background: #0a0d13;
+    color: var(--text-color);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 8px 10px;
+    font-size: 13px;
+    font-family: 'Rajdhani', sans-serif;
+  }
+  input:focus, select:focus, textarea:focus {
+    outline: none;
+    border-color: var(--neon-blue);
+    box-shadow: 0 0 0 2px rgba(0,240,255,.1);
+  }
+  textarea { min-height: 70px; font-family: monospace; font-size: 12px; width: 100%; }
+  button {
+    cursor: pointer;
+    background: linear-gradient(135deg, var(--neon-blue), #00b8cc);
+    color: #001018;
+    border: none;
+    font-weight: 700;
+    letter-spacing: .5px;
+    font-family: 'Orbitron', sans-serif;
+    font-size: 12px;
+    transition: filter .15s;
+  }
+  button:hover { filter: brightness(1.1); }
+  button.ghost { background: transparent; color: var(--text-color); border: 1px solid var(--border); }
+  button.danger { background: linear-gradient(135deg, #ef4444, #b91c1c); color: #fff; }
+  button.warn { background: linear-gradient(135deg, #f59e0b, #d97706); color: #1a1000; }
+  button.info { background: linear-gradient(135deg, #38bdf8, #0284c7); color: #001018; }
+  button.sm { padding: 5px 9px; font-size: 11px; }
+
+  table { width: 100%; border-collapse: collapse; font-size: 12.5px; }
+  th, td {
+    padding: 8px 10px;
+    border-bottom: 1px solid var(--border);
+    text-align: left;
+    vertical-align: middle;
+    max-width: 260px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+  th {
+    color: var(--text-muted);
+    font-family: 'Orbitron', sans-serif;
+    font-size: 11px;
+    letter-spacing: .5px;
+    background: #0a0d13;
+    position: sticky; top: 0; z-index: 1;
+  }
+  tr:hover td { background: rgba(0,240,255,.03); }
+
+  .pill { padding: 2px 8px; border-radius: 30px; font-size: 10px; font-weight: 700; }
+  .pill.ok { background: rgba(0,255,102,.15); color: var(--neon-green); border: 1px solid var(--neon-green); }
+  .pill.no { background: rgba(239,68,68,.15); color: var(--danger); border: 1px solid var(--danger); }
+  .pill.warn { background: rgba(245,158,11,.15); color: var(--warn); border: 1px solid var(--warn); }
+  .pill.info { background: rgba(56,189,248,.15); color: var(--info); border: 1px solid var(--info); }
+
+  .modal-bg {
+    position: fixed; inset: 0; background: rgba(0,0,0,.75);
+    display: none; align-items: flex-start; justify-content: center;
+    z-index: 100; padding: 20px; overflow: auto;
+  }
+  .modal-bg.show { display: flex; }
+  .modal {
+    background: var(--panel);
+    border: 1px solid var(--neon-blue);
+    border-radius: 14px;
+    padding: 20px;
+    width: 100%; max-width: 1000px;
+    box-shadow: 0 0 40px rgba(0,240,255,.15);
+  }
+  .field label { display: block; font-size: 11px; color: var(--text-muted); margin-bottom: 4px; font-family: 'Orbitron', sans-serif; }
+  .field input, .field select, .field textarea { width: 100%; }
+
+  .toast {
+    position: fixed; bottom: 20px; right: 20px;
+    background: var(--panel); border: 1px solid var(--border);
+    padding: 12px 18px; border-radius: 10px; font-size: 13px;
+    opacity: 0; transform: translateY(10px); transition: .2s;
+    z-index: 200; max-width: 380px;
+  }
+  .toast.show { opacity: 1; transform: translateY(0); }
+  .toast.err { border-color: var(--danger); color: #ffb3b3; }
+  .toast.ok { border-color: var(--neon-green); color: var(--neon-green); }
+
+  .tabs { display: flex; gap: 6px; flex-wrap: wrap; margin-bottom: 12px; }
+  .tab {
+    padding: 8px 14px; border-radius: 8px; cursor: pointer;
+    background: transparent; color: var(--text-muted); border: 1px solid var(--border);
+    font-family: 'Orbitron', sans-serif; font-size: 11px; letter-spacing: .5px;
+  }
+  .tab.active { background: rgba(0,240,255,.1); color: var(--neon-blue); border-color: var(--neon-blue); }
+
+  .stat { background: #0a0d13; border: 1px solid var(--border); border-radius: 10px; padding: 10px 12px; }
+  .stat .lbl { font-size: 10px; color: var(--text-muted); font-family: 'Orbitron', sans-serif; letter-spacing: .5px; }
+  .stat .val { font-size: 18px; font-weight: 800; color: var(--neon-blue); font-family: 'Orbitron', sans-serif; margin-top: 4px; }
+  .stat .val.warn { color: var(--warn); }
+  .stat .val.info { color: var(--info); }
+  .stat .val.danger { color: var(--danger); }
+  .stat .val.green { color: var(--neon-green); }
+  .stat .val.gold { color: var(--gold); }
+  .stat .val.stamina { color: var(--stamina); }
+
+  .mini-input { width: 90px; padding: 5px 8px; font-size: 12px; }
+  .actions-cell { display: flex; gap: 4px; flex-wrap: wrap; }
+  .muted { color: var(--text-muted); font-size: 11px; }
+  .mono { font-family: monospace; }
+
+  /* Simulador de preço */
+  .sim-box {
+    background: #0a0d13;
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 12px;
+  }
+  .sim-line { display: flex; justify-content: space-between; padding: 4px 0; font-size: 13px; border-bottom: 1px dashed var(--border); }
+  .sim-line:last-child { border-bottom: none; }
+  .sim-line .lbl { color: var(--text-muted); }
+  .sim-line .val { font-weight: 700; font-family: 'Orbitron', sans-serif; }
+  .sim-line .val.fachada { color: var(--gold); }
+  .sim-line .val.real { color: var(--neon-green); }
+  .sim-line .val.lucro { color: var(--neon-pink); }
+</style>
+</head>
+<body>
+
+<div class="container">
+
+  <!-- ========== TOPBAR ========== -->
+  <div class="topbar">
+    <h1>🛒 ADM • BAEP MERCADO</h1>
+    <span class="badge" id="badgeConn">🔌 Supabase: desconectado</span>
+    <span class="badge" id="badgeUser">👤 —</span>
+    <span class="badge" id="badgeRTP">📊 RTP: —</span>
+    <div class="spacer"></div>
+    <a href="mercado.html" target="_blank"><button class="ghost">🎮 Abrir Mercado</button></a>
+    <button class="ghost" id="btnConfig">⚙️ Conexão</button>
+  </div>
+
+  <!-- ========== CONEXÃO ========== -->
+  <div class="card" id="cardConfig">
+    <h2>⚙️ Conexão Supabase</h2>
+    <div class="row">
+      <input id="sbUrl" placeholder="https://xxxx.supabase.co" style="min-width:320px; flex:1" />
+      <input id="sbKey" placeholder="anon / service_role key" style="min-width:320px; flex:1" />
+      <button id="btnConnect">🔌 Conectar</button>
+      <button id="btnDisconnect" class="ghost">Desconectar</button>
+    </div>
+    <div class="muted" style="margin-top:8px">
+      ⚠️ Use <b>service_role</b> para alterar dados de qualquer usuário. A chave fica apenas no seu navegador.
+    </div>
+  </div>
+
+  <!-- ========== ESTATÍSTICAS ========== -->
+  <div class="card">
+    <h2>📊 Estatísticas do Mercado</h2>
+    <div class="grid">
+      <div class="stat"><div class="lbl">USUÁRIOS</div><div class="val" id="stUsers">—</div></div>
+      <div class="stat"><div class="lbl">SALDO TOTAL (R$)</div><div class="val gold" id="stSaldo">—</div></div>
+      <div class="stat"><div class="lbl">SEMENTES EM ESTOQUE</div><div class="val green" id="stSeeds">—</div></div>
+      <div class="stat"><div class="lbl">BALDES EM ESTOQUE</div><div class="val info" id="stBuckets">—</div></div>
+      <div class="stat"><div class="lbl">ESTAMINA (un.)</div><div class="val stamina" id="stStamina">—</div></div>
+      <div class="stat"><div class="lbl">SM TOTAL</div><div class="val warn" id="stSm">—</div></div>
+      <div class="stat"><div class="lbl">COMPRAS REGISTRADAS</div><div class="val" id="stCompras">—</div></div>
+      <div class="stat"><div class="lbl">RTP MÉDIO ESTIMADO</div><div class="val danger" id="stRtp">—</div></div>
+    </div>
+  </div>
+
+  <!-- ========== TABS ========== -->
+  <div class="tabs">
+    <div class="tab active" data-tab="config">💰 Preços & Config</div>
+    <div class="tab" data-tab="simulador">🧮 Simulador</div>
+    <div class="tab" data-tab="usuarios">👥 Usuários</div>
+    <div class="tab" data-tab="estoque">📦 Estoque</div>
+    <div class="tab" data-tab="estamina">⚡ Estamina / SM</div>
+    <div class="tab" data-tab="historico">📜 Histórico</div>
+  </div>
+
+  <!-- ========== ABA: CONFIG (PREÇOS) ========== -->
+  <div class="card tab-panel" data-panel="config">
+    <h2>💰 Preços Globais do Mercado</h2>
+    <div class="muted" style="margin-bottom:12px">
+      Estes valores são salvos na coluna <span class="mono">price*</span> de <b>todos</b> os usuários.
+      O <span class="mono">mercado.html</span> lê esses valores ao carregar e sobrescreve os padrões.
+    </div>
+
+    <div class="grid">
+      <div class="field"><label>💰 price (milho / venda)</label><input id="pCorn" type="number" step="0.01" /></div>
+      <div class="field"><label>🌰 price_seed</label><input id="pSeed" type="number" step="0.01" /></div>
+      <div class="field"><label>🪣 price_bucket</label><input id="pBucket" type="number" step="0.01" /></div>
+      <div class="field"><label>🧹 price_clear</label><input id="pClear" type="number" step="0.01" /></div>
+      <div class="field"><label>💩 price_fert</label><input id="pFert" type="number" step="0.01" /></div>
+      <div class="field"><label>🧪 price_potion</label><input id="pPotion" type="number" step="0.01" /></div>
+      <div class="field"><label>✖️ price_mult (multiplicador por nível)</label><input id="pMult" type="number" step="0.01" /></div>
+      <div class="field">
+        <label>🕵️ Taxa oculta (%) — <span class="muted">só no ADM, não existe coluna</span></label>
+        <input id="pTaxa" type="number" step="0.1" min="0" max="100" value="10" />
+      </div>
+    </div>
+
+    <div class="row" style="margin-top:14px">
+      <button id="btnSalvarPrecos">💾 Salvar em TODOS os Usuários</button>
+      <button id="btnRecarregarPrecos" class="ghost">🔄 Carregar do 1º usuário</button>
+      <button id="btnRestaurarPadrao" class="warn">↺ Restaurar Padrões</button>
+    </div>
+
+    <div class="muted" style="margin-top:10px">
+      ⚠️ A <b>taxa oculta</b> é aplicada apenas no client (<span class="mono">mercado.html</span>). Se você mudar aqui, precisa
+      alterar também o <span class="mono">CONFIG.PRECOS.taxa</span> no HTML do mercado — ou expor via coluna
+      <span class="mono">price_taxa</span> (não existe no schema atual).
+    </div>
+  </div>
+
+  <!-- ========== ABA: SIMULADOR ========== -->
+  <div class="card tab-panel" data-panel="simulador" style="display:none">
+    <h2>🧮 Simulador de Preços</h2>
+    <div class="muted" style="margin-bottom:12px">
+      Simula quanto o jogador <b>vê</b> (fachada) vs quanto ele <b>paga</b> (real, com taxa oculta) em cada nível.
+    </div>
+
+    <div class="row" style="margin-bottom:14px">
+      <div class="field" style="min-width:140px">
+        <label>Nível do jogador</label>
+        <input id="simNivel" type="number" min="1" value="1" />
+      </div>
+      <div class="field" style="min-width:140px">
+        <label>Multiplicador (mult)</label>
+        <input id="simMult" type="number" step="0.01" value="0.50" />
+      </div>
+      <div class="field" style="min-width:140px">
+        <label>Taxa oculta (%)</label>
+        <input id="simTaxa" type="number" step="0.1" value="10" />
+      </div>
+      <div class="field" style="min-width:160px">
+        <label>Preço-base (R$)</label>
+        <input id="simBase" type="number" step="0.01" value="15.00" />
+      </div>
+      <button id="btnSimular">🧮 Simular</button>
+    </div>
+
+    <div class="sim-box" id="simBox">
+      <div class="sim-line"><span class="lbl">Fórmula fachada</span><span class="val">base × (1 + nível × mult)</span></div>
+      <div class="sim-line"><span class="lbl">Fórmula real</span><span class="val">fachada × (1 − taxa)</span></div>
+      <div class="sim-line"><span class="lbl">Preço FACHADA (o que o jogador vê)</span><span class="val fachada" id="simFachada">R$ 0,00</span></div>
+      <div class="sim-line"><span class="lbl">Preço REAL (o que o jogador paga)</span><span class="val real" id="simReal">R$ 0,00</span></div>
+      <div class="sim-line"><span class="lbl">Diferença (lucro oculto)</span><span class="val lucro" id="simLucro">R$ 0,00</span></div>
+    </div>
+
+    <h3 style="margin-top:16px">Tabela por nível (base R$ 15,00)</h3>
+    <div style="overflow:auto; max-height:40vh; border:1px solid var(--border); border-radius:10px; margin-top:8px;">
+      <table>
+        <thead>
+          <tr>
+            <th>Nível</th>
+            <th>Fachada</th>
+            <th>Real</th>
+            <th>Lucro oculto</th>
+            <th>Margem %</th>
+          </tr>
+        </thead>
+        <tbody id="simTable"></tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- ========== ABA: USUÁRIOS ========== -->
+  <div class="card tab-panel" data-panel="usuarios" style="display:none">
+    <h2>👥 Usuários — Saldo & Itens</h2>
+    <div class="row" style="margin-bottom:12px">
+      <input id="fId" placeholder="ID" type="number" class="mini-input" />
+      <input id="fLogin" placeholder="login (ilike)" style="width:160px" />
+      <input id="fNome" placeholder="nome (ilike)" style="width:160px" />
+      <select id="fOrder">
+        <option value="id.desc">ID ↓</option>
+        <option value="id.asc">ID ↑</option>
+        <option value="saldo.desc">Saldo ↓</option>
+        <option value="seeds.desc">Sementes ↓</option>
+        <option value="buckets.desc">Baldes ↓</option>
+        <option value="stamina_qty.desc">Estamina ↓</option>
+        <option value="sm_atual.desc">SM atual ↓</option>
+      </select>
+      <button id="btnBuscar">🔍 Buscar</button>
+      <button id="btnLimpar" class="ghost">Limpar</button>
+      <button id="btnRecarregar" class="ghost">🔄 Recarregar</button>
+    </div>
+
+    <div style="overflow:auto; max-height:60vh; border:1px solid var(--border); border-radius:10px;">
+      <table>
+        <thead>
+          <tr>
+            <th>ID</th><th>nome</th><th>login</th>
+            <th>saldo</th><th>sementes</th><th>baldes</th>
+            <th>estamina</th><th>SM atual</th><th>SM máx</th>
+            <th>nível</th><th>compras</th><th>Ações</th>
+          </tr>
+        </thead>
+        <tbody id="tbodyUsers">
+          <tr><td colspan="12" style="text-align:center;color:#8a99ad">Conecte ao Supabase para carregar.</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="row" style="margin-top:10px">
+      <button id="btnPrev" class="ghost sm">← Anterior</button>
+      <span class="muted" id="pageInfo">página 1</span>
+      <button id="btnNext" class="ghost sm">Próxima →</button>
+      <select id="pageSize" class="mini-input">
+        <option>25</option>
+        <option selected>50</option>
+        <option>100</option>
+        <option>200</option>
+      </select>
+    </div>
+  </div>
+
+  <!-- ========== ABA: ESTOQUE ========== -->
+  <div class="card tab-panel" data-panel="estoque" style="display:none">
+    <h2>📦 Gerenciar Estoque em Massa</h2>
+    <div class="muted" style="margin-bottom:12px">
+      Ajuste sementes, baldes e estamina de <b>todos</b> os usuários de uma vez (ou de um ID específico).
+    </div>
+
+    <div class="row" style="margin-bottom:12px">
+      <div class="field" style="min-width:180px">
+        <label>Escopo</label>
+        <select id="estEscopo">
+          <option value="todos">Todos os usuários</option>
+          <option value="id">Usuário específico (ID)</option>
+        </select>
+      </div>
+      <div class="field" id="estIdWrap" style="display:none; min-width:140px">
+        <label>ID do usuário</label>
+        <input id="estId" type="number" />
+      </div>
+      <div class="field" style="min-width:140px">
+        <label>🌰 Sementes (+/-)</label>
+        <input id="estSeeds" type="number" value="0" />
+      </div>
+      <div class="field" style="min-width:140px">
+        <label>🪣 Baldes (+/-)</label>
+        <input id="estBuckets" type="number" value="0" />
+      </div>
+      <div class="field" style="min-width:140px">
+        <label>⚡ Estamina (+/-)</label>
+        <input id="estStamina" type="number" value="0" />
+      </div>
+      <button id="btnAplicarEstoque" class="info">➕ Aplicar Delta</button>
+      <button id="btnDefinirEstoque" class="warn">= Definir Valor</button>
+      <button id="btnZerarEstoque" class="danger">🧹 Zerar</button>
+    </div>
+
+    <div class="muted">
+      <b>➕ Aplicar Delta</b>: soma o valor informado (use negativo para subtrair).<br>
+      <b>= Definir Valor</b>: substitui o valor atual pelo informado.<br>
+      <b>🧹 Zerar</b>: define tudo como 0.
+    </div>
+  </div>
+
+  <!-- ========== ABA: ESTAMINA / SM ========== -->
+  <div class="card tab-panel" data-panel="estamina" style="display:none">
+    <h2>⚡ Estamina & SM</h2>
+
+    <div class="grid" style="margin-bottom:16px">
+      <div class="stat"><div class="lbl">TOTAL ESTAMINA (un.)</div><div class="val stamina" id="stEstaminaTotal">—</div></div>
+      <div class="stat"><div class="lbl">SM ATUAL (soma)</div><div class="val info" id="stSmTotal">—</div></div>
+      <div class="stat"><div class="lbl">SM MÁX (soma)</div><div class="val warn" id="stSmMaxTotal">—</div></div>
+      <div class="stat"><div class="lbl">USUÁRIOS COM ESTAMINA</div><div class="val green" id="stUsersEstamina">—</div></div>
+    </div>
+
+    <div class="row" style="margin-bottom:12px">
+      <div class="field" style="min-width:180px">
+        <label>Escopo</label>
+        <select id="smEscopo">
+          <option value="todos">Todos os usuários</option>
+          <option value="id">Usuário específico (ID)</option>
+        </select>
+      </div>
+      <div class="field" id="smIdWrap" style="display:none; min-width:140px">
+        <label>ID do usuário</label>
+        <input id="smId" type="number" />
+      </div>
+      <div class="field" style="min-width:140px">
+        <label>SM atual (definir)</label>
+        <input id="smAtualSet" type="number" />
+      </div>
+      <div class="field" style="min-width:140px">
+        <label>SM máx (definir)</label>
+        <input id="smMaxSet" type="number" />
+      </div>
+      <button id="btnDefinirSm" class="warn">= Definir SM</button>
+      <button id="btnSmCheia" class="info">⚡ Encher SM de Todos</button>
+      <button id="btnSmZerar" class="danger">🧹 Zerar SM</button>
+    </div>
+
+    <h3>Top 20 por Estamina</h3>
+    <div style="overflow:auto; max-height:50vh; border:1px solid var(--border); border-radius:10px; margin-top:8px;">
+      <table>
+        <thead><tr><th>ID</th><th>login</th><th>estamina</th><th>SM atual</th><th>SM máx</th><th>Ações</th></tr></thead>
+        <tbody id="tbodyEstamina"><tr><td colspan="6" class="muted" style="text-align:center">—</td></tr></tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- ========== ABA: HISTÓRICO ========== -->
+  <div class="card tab-panel" data-panel="historico" style="display:none">
+    <h2>📜 Histórico de Compras (por usuário)</h2>
+    <div class="row" style="margin-bottom:12px">
+      <div class="field" style="min-width:160px">
+        <label>ID do usuário</label>
+        <input id="histId" type="number" placeholder="ex: 1" />
+      </div>
+      <button id="btnHistCarregar">🔍 Carregar</button>
+      <button id="btnHistLimpar" class="danger">🧹 Limpar Histórico</button>
+      <button id="btnHistExportar" class="info">📤 Exportar JSON</button>
+    </div>
+
+    <div class="grid" style="margin-bottom:12px">
+      <div class="stat"><div class="lbl">TOTAL COMPRAS</div><div class="val" id="histTotalCompras">—</div></div>
+      <div class="stat"><div class="lbl">TOTAL GASTO (fachada)</div><div class="val gold" id="histTotalGasto">—</div></div>
+      <div class="stat"><div class="lbl">TOTAL VENDAS</div><div class="val" id="histTotalVendas">—</div></div>
+      <div class="stat"><div class="lbl">ÚLTIMA OPERAÇÃO</div><div class="val info" id="histUltima">—</div></div>
+    </div>
+
+    <div id="histBox" class="muted">Informe um ID para carregar o histórico.</div>
+  </div>
+
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+(function() {
+  'use strict';
+
+  const $ = (id) => document.getElementById(id);
+  const esc = (v) => (v ?? '').toString().replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+  const fmt = (v) => v === null || v === undefined || v === '' ? '' : Number(v).toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+  const fmtInt = (v) => v === null || v === undefined || v === '' ? '' : Number(v).toLocaleString('pt-BR');
+  const fmtDate = (v) => v ? new Date(v).toLocaleString('pt-BR') : '';
+
+  const PADROES = {
+    price: 9.00, price_seed: 15.00, price_bucket: 20.00,
+    price_clear: 15.00, price_fert: 11.00, price_potion: 150.00,
+    price_mult: 0.50, taxa: 10,
+  };
+
+  let sb = null;
+  let page = 0;
+  let pageSize = 50;
+  let currentRows = [];
+  let histAtual = null;
+
+  // ============================================================
+  // TOAST
+  // ============================================================
+  function toast(msg, type = '') {
+    const t = $('toast');
+    t.textContent = msg;
+    t.className = 'toast show ' + type;
+    clearTimeout(toast._t);
+    toast._t = setTimeout(() => t.classList.remove('show'), 3000);
+  }
+
+  // ============================================================
+  // CLIENTE SUPABASE (via REST para manter compatibilidade com fetch do mercado)
+  // ============================================================
+  function makeHeaders(extra = {}) {
+    return {
+      'apikey': sb.key,
+      'Authorization': `Bearer ${sb.key}`,
+      'Content-Type': 'application/json',
+      ...extra
+    };
+  }
+
+  async function rest(path, opts = {}) {
+    const url = `${sb.url}/rest/v1/${path}`;
+    const res = await fetch(url, {
+      ...opts,
+      headers: makeHeaders(opts.headers || {}),
+    });
+    if (!res.ok) {
+      const txt = await res.text().catch(() => '');
+      throw new Error(`HTTP ${res.status} — ${txt || res.statusText}`);
+    }
+    if (res.status === 204) return null;
+    const text = await res.text();
+    return text ? JSON.parse(text) : null;
+  }
+
+  // ============================================================
+  // CONEXÃO
+  // ============================================================
+  $('btnConfig').onclick = () => {
+    const c = $('cardConfig');
+    c.style.display = c.style.display === 'none' ? '' : 'none';
+  };
+
+  $('btnConnect').onclick = async () => {
+    const url = $('sbUrl').value.trim().replace(/\/$/, '');
+    const key = $('sbKey').value.trim();
+    if (!url || !key) return toast('Informe URL e chave', 'err');
+    sb = { url, key };
+
+    try {
+      await rest('Geral?select=id&limit=1');
+      $('badgeConn').textContent = '🔌 Supabase: conectado';
+      $('badgeConn').className = 'badge on';
+      toast('Conectado', 'ok');
+      await Promise.all([
+        loadStats(),
+        loadPrecos(),
+        loadUsers(),
+        loadEstamina(),
+      ]);
+      renderSimTable();
+    } catch (e) {
+      sb = null;
+      $('badgeConn').textContent = '🔌 Supabase: erro';
+      $('badgeConn').className = 'badge err';
+      toast('Erro: ' + e.message, 'err');
+    }
+  };
+
+  $('btnDisconnect').onclick = () => {
+    sb = null;
+    $('badgeConn').textContent = '🔌 Supabase: desconectado';
+    $('badgeConn').className = 'badge';
+    toast('Desconectado');
+  };
+
+  // ============================================================
+  // TABS
+  // ============================================================
+  document.querySelectorAll('.tabs .tab[data-tab]').forEach(t => {
+    t.onclick = () => {
+      document.querySelectorAll('.tabs .tab[data-tab]').forEach(x => x.classList.remove('active'));
+      t.classList.add('active');
+      document.querySelectorAll('.tab-panel').forEach(p => {
+        p.style.display = p.dataset.panel === t.dataset.tab ? '' : 'none';
+      });
+      const tab = t.dataset.tab;
+      if (tab === 'usuarios') loadUsers();
+      if (tab === 'estamina') loadEstamina();
+      if (tab === 'simulador') renderSimTable();
+      if (tab === 'config') loadPrecos();
+    };
+  });
+
+  // ============================================================
+  // ESTATÍSTICAS
+  // ============================================================
+  async function loadStats() {
+    if (!sb) return;
+    try {
+      const data = await rest('Geral?select=saldo,seeds,buckets,stamina_qty,sm_atual,sm_max,historico');
+      const totalSaldo   = data.reduce((a, r) => a + Number(r.saldo || 0), 0);
+      const totalSeeds   = data.reduce((a, r) => a + Number(r.seeds || 0), 0);
+      const totalBuckets = data.reduce((a, r) => a + Number(r.buckets || 0), 0);
+      const totalStamina = data.reduce((a, r) => a + Number(r.stamina_qty || 0), 0);
+      const totalSm      = data.reduce((a, r) => a + Number(r.sm_atual || 0), 0);
+      const totalCompras = data.reduce((a, r) => {
+        const h = Array.isArray(r.historico) ? r.historico : [];
+        return a + h.filter(x => x.tipo === 'compra').length;
+      }, 0);
+
+      // RTP médio estimado: usa preços atuais e taxa
+      const taxa = Number($('pTaxa')?.value || PADROES.taxa) / 100;
+      const mult = Number($('pMult')?.value || PADROES.price_mult);
+      // simplificação: assume que milho vale price e semente custa price_seed
+      const pCorn = Number($('pCorn')?.value || PADROES.price);
+      const pSeed = Number($('pSeed')?.value || PADROES.price_seed);
+      const rtp = pSeed > 0 ? (pCorn / (pSeed * (1 + mult * 1) * (1 + taxa)) * 100) : 0;
+
+      $('stUsers').textContent   = fmtInt(data.length);
+      $('stSaldo').textContent   = 'R$ ' + fmt(totalSaldo);
+      $('stSeeds').textContent   = fmtInt(totalSeeds);
+      $('stBuckets').textContent = fmtInt(totalBuckets);
+      $('stStamina').textContent = fmtInt(totalStamina);
+      $('stSm').textContent      = fmtInt(totalSm);
+      $('stCompras').textContent = fmtInt(totalCompras);
+      $('stRtp').textContent     = rtp.toFixed(1) + '%';
+      $('badgeRTP').textContent  = `📊 RTP: ${rtp.toFixed(1)}%`;
+
+      // Aba estamina
+      if ($('stEstaminaTotal')) {
+        $('stEstaminaTotal').textContent  = fmtInt(totalStamina);
+        $('stSmTotal').textContent        = fmtInt(totalSm);
+        $('stSmMaxTotal').textContent     = fmtInt(data.reduce((a, r) => a + Number(r.sm_max || 0), 0));
+        $('stUsersEstamina').textContent  = fmtInt(data.filter(r => Number(r.stamina_qty || 0) > 0).length);
+      }
+    } catch (e) {
+      toast('Erro stats: ' + e.message, 'err');
+    }
+  }
+
+  // ============================================================
+  // PREÇOS
+  // ============================================================
+  async function loadPrecos() {
+    if (!sb) return;
+    try {
+      const data = await rest('Geral?select=price,price_seed,price_bucket,price_clear,price_fert,price_potion,price_mult&limit=1');
+      const r = data?.[0] || {};
+      $('pCorn').value   = r.price        ?? PADROES.price;
+      $('pSeed').value   = r.price_seed   ?? PADROES.price_seed;
+      $('pBucket').value = r.price_bucket ?? PADROES.price_bucket;
+      $('pClear').value  = r.price_clear  ?? PADROES.price_clear;
+      $('pFert').value   = r.price_fert   ?? PADROES.price_fert;
+      $('pPotion').value = r.price_potion ?? PADROES.price_potion;
+      $('pMult').value   = r.price_mult   ?? PADROES.price_mult;
+      // taxa oculta não existe no DB — mantém o valor do input
+    } catch (e) {
+      toast('Erro preços: ' + e.message, 'err');
+    }
+  }
+
+  $('btnRecarregarPrecos').onclick = loadPrecos;
+
+  $('btnRestaurarPadrao').onclick = () => {
+    $('pCorn').value   = PADROES.price;
+    $('pSeed').value   = PADROES.price_seed;
+    $('pBucket').value = PADROES.price_bucket;
+    $('pClear').value  = PADROES.price_clear;
+    $('pFert').value   = PADROES.price_fert;
+    $('pPotion').value = PADROES.price_potion;
+    $('pMult').value   = PADROES.price_mult;
+    $('pTaxa').value   = PADROES.taxa;
+    toast('Padrões restaurados (não salvos)', 'warn');
+  };
+
+  $('btnSalvarPrecos').onclick = async () => {
+    if (!sb) return toast('Conecte primeiro', 'err');
+    if (!confirm('Aplicar preços em TODOS os usuários?')) return;
+    const payload = {
+      price:        num($('pCorn').value),
+      price_seed:   num($('pSeed').value),
+      price_bucket: num($('pBucket').value),
+      price_clear:  num($('pClear').value),
+      price_fert:   num($('pFert').value),
+      price_potion: num($('pPotion').value),
+      price_mult:   num($('pMult').value),
+    };
+    try {
+      const data = await rest('Geral?id=not.is.null', {
+        method: 'PATCH',
+        headers: { 'Prefer': 'return=representation' },
+        body: JSON.stringify(payload),
+      });
+      toast(`Preços aplicados em ${data?.length ?? 0} usuário(s)`, 'ok');
+      renderSimTable();
+      loadStats();
+    } catch (e) {
+      toast('Erro: ' + e.message, 'err');
+    }
+  };
+
+  function num(v) { const n = Number(v); return isNaN(n) ? null : n; }
+
+  // ============================================================
+  // SIMULADOR
+  // ============================================================
+  function simularUma(base, nivel, mult, taxa) {
+    const fachada = base * (1 + nivel * mult);
+    const real    = fachada * (1 - taxa);
+    return { fachada, real, lucro: fachada - real };
+  }
+
+  $('btnSimular').onclick = () => {
+    const base   = Number($('simBase').value) || 0;
+    const nivel  = Number($('simNivel').value) || 1;
+    const mult   = Number($('simMult').value) || 0;
+    const taxa   = (Number($('simTaxa').value) || 0) / 100;
+    const r = simularUma(base, nivel, mult, taxa);
+    $('simFachada').textContent = 'R$ ' + fmt(r.fachada);
+    $('simReal').textContent    = 'R$ ' + fmt(r.real);
+    $('simLucro').textContent   = 'R$ ' + fmt(r.lucro);
+    renderSimTable();
+  };
+
+  function renderSimTable() {
+    const base  = Number($('simBase')?.value) || 15;
+    const mult  = Number($('simMult')?.value) || 0.5;
+    const taxa  = (Number($('simTaxa')?.value) || 10) / 100;
+    let html = '';
+    for (let n = 1; n <= 20; n++) {
+      const r = simularUma(base, n, mult, taxa);
+      const margem = r.fachada > 0 ? (r.lucro / r.fachada * 100) : 0;
+      html += `
+        <tr>
+          <td>${n}</td>
+          <td style="color:var(--gold)">R$ ${fmt(r.fachada)}</td>
+          <td style="color:var(--neon-green)">R$ ${fmt(r.real)}</td>
+          <td style="color:var(--neon-pink)">R$ ${fmt(r.lucro)}</td>
+          <td>${margem.toFixed(1)}%</td>
+        </tr>`;
+    }
+    $('simTable').innerHTML = html;
+  }
+
+  // ============================================================
+  // USUÁRIOS
+  // ============================================================
+  async function loadUsers() {
+    if (!sb) return;
+    const [orderCol, orderDir] = $('fOrder').value.split('.');
+    const params = new URLSearchParams();
+    params.set('select', '*');
+    params.set('order', `${orderCol}.${orderDir}`);
+    params.set('limit', pageSize);
+    params.set('offset', page * pageSize);
+
+    const fId    = $('fId').value.trim();
+    const fLogin = $('fLogin').value.trim();
+    const fNome  = $('fNome').value.trim();
+    if (fId)    params.set('id', `eq.${fId}`);
+    if (fLogin) params.set('login', `ilike.*${fLogin}*`);
+    if (fNome)  params.set('nome',  `ilike.*${fNome}*`);
+
+    try {
+      const data = await rest('Geral?' + params.toString());
+      currentRows = data || [];
+      renderUsers(currentRows);
+      $('pageInfo').textContent = `página ${page + 1} • ${currentRows.length} registros`;
+    } catch (e) {
+      toast('Erro: ' + e.message, 'err');
+    }
+  }
+
+  function renderUsers(rows) {
+    if (!rows.length) {
+      $('tbodyUsers').innerHTML = '<tr><td colspan="12" style="text-align:center;color:#8a99ad">Nenhum registro.</td></tr>';
+      return;
+    }
+    $('tbodyUsers').innerHTML = rows.map(r => {
+      const compras = Array.isArray(r.historico) ? r.historico.filter(x => x.tipo === 'compra').length : 0;
+      return `<tr>
+        <td>${r.id}</td>
+        <td title="${esc(r.nome)}">${esc(r.nome)}</td>
+        <td>${esc(r.login)}</td>
+        <td style="color:var(--gold)">R$ ${fmt(r.saldo)}</td>
+        <td>${fmtInt(r.seeds)}</td>
+        <td>${fmtInt(r.buckets)}</td>
+        <td style="color:var(--stamina)">${fmtInt(r.stamina_qty)}</td>
+        <td>${fmtInt(r.sm_atual)}</td>
+        <td>${fmtInt(r.sm_max)}</td>
+        <td>${r.nivel ?? ''}</td>
+        <td>${compras}</td>
+        <td>
+          <div class="actions-cell">
+            <button class="sm warn" onclick="quickAddSaldo(${r.id})">💰</button>
+            <button class="sm info" onclick="quickAddItem(${r.id},'seeds')">🌰</button>
+            <button class="sm info" onclick="quickAddItem(${r.id},'buckets')">🪣</button>
+            <button class="sm info" onclick="quickAddItem(${r.id},'stamina_qty')">⚡</button>
+            <button class="sm danger" onclick="delRow(${r.id})">🗑️</button>
+          </div>
+        </td>
+      </tr>`;
+    }).join('');
+  }
+
+  $('btnBuscar').onclick = () => { page = 0; loadUsers(); };
+  $('btnLimpar').onclick = () => {
+    ['fId','fLogin','fNome'].forEach(id => $(id).value = '');
+    page = 0; loadUsers();
+  };
+  $('btnRecarregar').onclick = () => { page = 0; loadUsers(); loadStats(); };
+  $('btnPrev').onclick = () => { if (page > 0) { page--; loadUsers(); } };
+  $('btnNext').onclick = () => { page++; loadUsers(); };
+  $('pageSize').onchange = (e) => { pageSize = Number(e.target.value); page = 0; loadUsers(); };
+
+  // ============================================================
+  // AÇÕES RÁPIDAS
+  // ============================================================
+  window.quickAddSaldo = async (id) => {
+    const v = prompt(`Adicionar saldo ao usuário #${id}\n(positivo = crédito, negativo = débito)`, '100');
+    if (v === null) return;
+    const val = Number(v);
+    if (isNaN(val)) return toast('Valor inválido', 'err');
+    try {
+      const [row] = await rest(`Geral?id=eq.${id}&select=saldo,historico`);
+      const novo = Number(row.saldo || 0) + val;
+      const hist = Array.isArray(row.historico) ? row.historico.slice(0, 200) : [];
+      hist.unshift({ tipo: 'ADMIN_AJUSTE', valor: val, saldo_apos: novo, data: new Date().toISOString() });
+      await rest(`Geral?id=eq.${id}`, {
+        method: 'PATCH',
+        body: JSON.stringify({ saldo: novo, historico: hist }),
+      });
+      toast(`Saldo de #${id} atualizado para R$ ${fmt(novo)}`, 'ok');
+      loadUsers(); loadStats();
+    } catch (e) {
+      toast('Erro: ' + e.message, 'err');
+    }
+  };
+
+  window.quickAddItem = async (id, campo) => {
+    const v = prompt(`Adicionar em "${campo}" do #${id}\n(positivo = crédito, negativo = débito)`, '1');
+    if (v === null) return;
+    const val = Number(v);
+    if (isNaN(val)) return toast('Valor inválido', 'err');
+    try {
+      const [row] = await rest(`Geral?id=eq.${id}&select=${campo}`);
+      const novo = Math.max(0, Number(row[campo] || 0) + val);
+      await rest(`Geral?id=eq.${id}`, {
+        method: 'PATCH',
+        body: JSON.stringify({ [campo]: novo }),
+      });
+      toast(`#${id} — ${campo} = ${novo}`, 'ok');
+      loadUsers(); loadStats();
+    } catch (e) {
+      toast('Erro: ' + e.message, 'err');
+    }
+  };
+
+  window.delRow = async (id) => {
+    if (!confirm(`Excluir DEFINITIVAMENTE o usuário #${id}?`)) return;
+    try {
+      await rest(`Geral?id=eq.${id}`, { method: 'DELETE' });
+      toast('Excluído', 'ok');
+      loadUsers(); loadStats();
+    } catch (e) {
+      toast('Erro: ' + e.message, 'err');
+    }
+  };
+
+  // ============================================================
+  // ESTOQUE EM MASSA
+  // ============================================================
+  $('estEscopo').onchange = (e) => {
+    $('estIdWrap').style.display = e.target.value === 'id' ? '' : 'none';
+  };
+  $('smEscopo').onchange = (e) => {
+    $('smIdWrap').style.display = e.target.value === 'id' ? '' : 'none';
+  };
+
+  async function aplicarEstoque(modo) {
+    if (!sb) return toast('Conecte primeiro', 'err');
+    const escopo = $('estEscopo').value;
+    const dSeeds   = Number($('estSeeds').value || 0);
+    const dBuckets = Number($('estBuckets').value || 0);
+    const dStamina = Number($('estStamina').value || 0);
+
+    if (modo === 'delta' && dSeeds === 0 && dBuckets === 0 && dStamina === 0) {
+      return toast('Informe ao menos um valor', 'warn');
+    }
+    if (modo === 'zerar' && !confirm('Zerar sementes, baldes e estamina de todos os selecionados?')) return;
+
+    let filtro = 'id=not.is.null';
+    if (escopo === 'id') {
+      const id = Number($('estId').value);
+      if (!id) return toast('Informe o ID', 'err');
+      filtro = `id=eq.${id}`;
+    }
+
+    try {
+      if (modo === 'delta') {
+        // Para delta precisamos ler cada linha
+        const rows = await rest(`Geral?${filtro}&select=id,seeds,buckets,stamina_qty`);
+        for (const r of rows) {
+          const novo = {
+            seeds:       Math.max(0, Number(r.seeds || 0) + dSeeds),
+            buckets:     Math.max(0, Number(r.buckets || 0) + dBuckets),
+            stamina_qty: Math.max(0, Number(r.stamina_qty || 0) + dStamina),
+          };
+          await rest(`Geral?id=eq.${r.id}`, { method: 'PATCH', body: JSON.stringify(novo) });
+        }
+        toast(`Delta aplicado em ${rows.length} usuário(s)`, 'ok');
+      } else if (modo === 'definir') {
+        const payload = { seeds: dSeeds, buckets: dBuckets, stamina_qty: dStamina };
+        const data = await rest(`Geral?${filtro}`, {
+          method: 'PATCH',
+          headers: { 'Prefer': 'return=representation' },
+          body: JSON.stringify(payload),
+        });
+        toast(`Valores definidos em ${data?.length ?? 0} usuário(s)`, 'ok');
+      } else if (modo === 'zerar') {
+        const data = await rest(`Geral?${filtro}`, {
+          method: 'PATCH',
+          headers: { 'Prefer': 'return=representation' },
+          body: JSON.stringify({ seeds: 0, buckets: 0, stamina_qty: 0 }),
+        });
+        toast(`Zerado em ${data?.length ?? 0} usuário(s)`, 'ok');
+      }
+      loadUsers(); loadStats(); loadEstamina();
+    } catch (e) {
+      toast('Erro: ' + e.message, 'err');
+    }
+  }
+
+  $('btnAplicarEstoque').onclick = () => aplicarEstoque('delta');
+  $('btnDefinirEstoque').onclick = () => aplicarEstoque('definir');
+  $('btnZerarEstoque').onclick   = () => aplicarEstoque('zerar');
+
+  // ============================================================
+  // ESTAMINA / SM
+  // ============================================================
+  async function loadEstamina() {
+    if (!sb) return;
+    try {
+      const data = await rest('Geral?select=id,login,stamina_qty,sm_atual,sm_max&order=stamina_qty.desc&limit=20');
+      $('tbodyEstamina').innerHTML = data.length ? data.map(r => `
+        <tr>
+          <td>${r.id}</td>
+          <td>${esc(r.login)}</td>
+          <td style="color:var(--stamina)">${fmtInt(r.stamina_qty)}</td>
+          <td>${fmtInt(r.sm_atual)}</td>
+          <td>${fmtInt(r.sm_max)}</td>
+          <td>
+            <div class="actions-cell">
+              <button class="sm info" onclick="quickAddItem(${r.id},'stamina_qty')">⚡ +/-</button>
+              <button class="sm warn" onclick="quickAddSm(${r.id})">💧 SM</button>
+            </div>
+          </td>
+        </tr>
+      `).join('') : '<tr><td colspan="6" class="muted" style="text-align:center">—</td></tr>';
+    } catch (e) {
+      toast('Erro: ' + e.message, 'err');
+    }
+  }
+
+  window.quickAddSm = async (id) => {
+    const v = prompt(`SM atual do #${id}\n(positivo = soma, negativo = subtrai)`, '10');
+    if (v === null) return;
+    const val = Number(v);
+    if (isNaN(val)) return toast('Inválido', 'err');
+    try {
+      const [row] = await rest(`Geral?id=eq.${id}&select=sm_atual,sm_max`);
+      const novo = Math.max(0, Math.min(Number(row.sm_max || 0) || Infinity, Number(row.sm_atual || 0) + val));
+      await rest(`Geral?id=eq.${id}`, { method: 'PATCH', body: JSON.stringify({ sm_atual: novo }) });
+      toast(`SM de #${id} = ${fmtInt(novo)}`, 'ok');
+      loadEstamina(); loadUsers(); loadStats();
+    } catch (e) {
+      toast('Erro: ' + e.message, 'err');
+    }
+  };
+
+  $('btnDefinirSm').onclick = async () => {
+    if (!sb) return toast('Conecte primeiro', 'err');
+    const escopo = $('smEscopo').value;
+    const atual = num($('smAtualSet').value);
+    const max   = num($('smMaxSet').value);
+    if (atual === null && max === null) return toast('Informe ao menos um valor', 'warn');
+
+    let filtro = 'id=not.is.null';
+    if (escopo === 'id') {
+      const id = Number($('smId').value);
+      if (!id) return toast('Informe o ID', 'err');
+      filtro = `id=eq.${id}`;
+    }
+    const payload = {};
+    if (atual !== null) payload.sm_atual = atual;
+    if (max   !== null) payload.sm_max   = max;
+
+    try {
+      const data = await rest(`Geral?${filtro}`, {
+        method: 'PATCH',
+        headers: { 'Prefer': 'return=representation' },
+        body: JSON.stringify(payload),
+      });
+      toast(`SM definida em ${data?.length ?? 0} usuário(s)`, 'ok');
+      loadEstamina(); loadUsers(); loadStats();
+    } catch (e) {
+      toast('Erro: ' + e.message, 'err');
+    }
+  };
+
+  $('btnSmCheia').onclick = async () => {
+    if (!sb) return toast('Conecte primeiro', 'err');
+    if (!confirm('Definir sm_atual = sm_max para TODOS os usuários?')) return;
+    try {
+      const rows = await rest('Geral?select=id,sm_max');
+      for (const r of rows) {
+        await rest(`Geral?id=eq.${r.id}`, {
+          method: 'PATCH',
+          body: JSON.stringify({ sm_atual: Number(r.sm_max || 0) }),
+        });
+      }
+      toast(`SM cheia em ${rows.length} usuário(s)`, 'ok');
+      loadEstamina(); loadUsers(); loadStats();
+    } catch (e) {
+      toast('Erro: ' + e.message, 'err');
+    }
+  };
+
+  $('btnSmZerar').onclick = async () => {
+    if (!sb) return toast('Conecte primeiro', 'err');
+    if (!confirm('Zerar sm_atual de TODOS os usuários?')) return;
+    try {
+      const data = await rest('Geral?id=not.is.null', {
+        method: 'PATCH',
+        headers: { 'Prefer': 'return=representation' },
+        body: JSON.stringify({ sm_atual: 0 }),
+      });
+      toast(`SM zerada em ${data?.length ?? 0} usuário(s)`, 'ok');
+      loadEstamina(); loadUsers(); loadStats();
+    } catch (e) {
+      toast('Erro: ' + e.message, 'err');
+    }
+  };
+
+  // ============================================================
+  // HISTÓRICO
+  // ============================================================
+  $('btnHistCarregar').onclick = async () => {
+    if (!sb) return toast('Conecte primeiro', 'err');
+    const id = Number($('histId').value);
+    if (!id) return toast('Informe ID', 'err');
+    try {
+      const [row] = await rest(`Geral?id=eq.${id}&select=login,historico`);
+      if (!row) return toast('Usuário não encontrado', 'err');
+      histAtual = { id, login: row.login, historico: row.historico || [] };
+      renderHistorico();
+    } catch (e) {
+      toast('Erro: ' + e.message, 'err');
+    }
+  };
+
+  function renderHistorico() {
+    if (!histAtual) {
+      $('histBox').innerHTML = '<span class="muted">Informe um ID para carregar o histórico.</span>';
+      return;
+    }
+    const h = histAtual.historico;
+    const compras = h.filter(x => x.tipo === 'compra');
+    const vendas  = h.filter(x => x.tipo === 'venda');
+    const totalCompras = compras.reduce((a, x) => a + Number(x.valor || 0), 0);
+    const ultima = h[0]?.data;
+
+    $('histTotalCompras').textContent = compras.length;
+    $('histTotalGasto').textContent   = 'R$ ' + fmt(totalCompras);
+    $('histTotalVendas').textContent  = vendas.length;
+    $('histUltima').textContent       = fmtDate(ultima);
+
+    if (!h.length) {
+      $('histBox').innerHTML = `<h3>Usuário #${histAtual.id} (${esc(histAtual.login)})</h3><div class="muted">Histórico vazio.</div>`;
+      return;
+    }
+
+    const linhas = h.map(x => {
+      const tipo = x.tipo || '—';
+      const sinal = tipo === 'venda' ? '+' : (tipo === 'uso' ? '⚡' : '-');
+      const cor = tipo === 'venda' ? 'var(--neon-green)' : (tipo === 'uso' ? 'var(--stamina)' : 'var(--danger)');
+      return `<tr>
+        <td>${fmtDate(x.data)}</td>
+        <td>${esc(x.tipo)}</td>
+        <td>${esc(x.item)}</td>
+        <td>${fmtInt(x.quantidade)}</td>
+        <td style="color:${cor}">${sinal} R$ ${fmt(x.valor)}</td>
+        <td>R$ ${fmt(x.saldo_apos)}</td>
+      </tr>`;
+    }).join('');
+
+    $('histBox').innerHTML = `
+      <h3>Usuário #${histAtual.id} — ${esc(histAtual.login)} (${h.length} registros)</h3>
+      <div style="overflow:auto; max-height:55vh; border:1px solid var(--border); border-radius:10px; margin-top:8px;">
+        <table>
+          <thead>
+            <tr><th>Data</th><th>Tipo</th><th>Item</th><th>Qtd</th><th>Valor</th><th>Saldo após</th></tr>
+          </thead>
+          <tbody>${linhas}</tbody>
+        </table>
+      </div>
+    `;
+  }
+
+  $('btnHistLimpar').onclick = async () => {
+    if (!histAtual) return toast('Carregue um usuário primeiro', 'warn');
+    if (!confirm(`Zerar histórico do #${histAtual.id}?`)) return;
+    try {
+      await rest(`Geral?id=eq.${histAtual.id}`, {
+        method: 'PATCH',
+        body: JSON.stringify({ historico: [] }),
+      });
+      histAtual.historico = [];
+      renderHistorico();
+      toast('Histórico limpo', 'ok');
+    } catch (e) {
+      toast('Erro: ' + e.message, 'err');
+    }
+  };
+
+  $('btnHistExportar').onclick = () => {
+    if (!histAtual) return toast('Carregue um usuário primeiro', 'warn');
+    const blob = new Blob([JSON.stringify(histAtual, null, 2)], { type: 'application/json' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `historico_${histAtual.id}_${histAtual.login}.json`;
+    a.click();
+    URL.revokeObjectURL(url);
+    toast('Exportado', 'ok');
+  };
+
+  // ============================================================
+  // AUTO-CONNECT (opcional)
+  // ============================================================
+  // $('sbUrl').value = 'https://xrcxvizzdumcxbylmkvn.supabase.co';
+  // $('sbKey').value = 'SUA_KEY';
+  // $('btnConnect').click();
+
+})();
+</script>
+
+</body>
+</html>

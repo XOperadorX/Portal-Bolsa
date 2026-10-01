@@ -1,0 +1,1099 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>ADM • BAEP Investimentos</title>
+
+<link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@400;600;700&family=Orbitron:wght@400;700;900&display=swap" rel="stylesheet">
+
+<style>
+  :root {
+    --bg: #07080d;
+    --panel: #0f1219;
+    --panel2: #141924;
+    --border: #1f2634;
+    --border-glow: rgba(0, 255, 102, 0.25);
+    --text: #d7e0ef;
+    --muted: #7e8aa1;
+    --neon: #00ff66;
+    --neon2: #00cc55;
+    --warn: #f59e0b;
+    --danger: #ef4444;
+    --info: #38bdf8;
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    background: radial-gradient(circle at top, #0d1119 0%, #07080d 60%);
+    color: var(--text);
+    font-family: 'Rajdhani', system-ui, sans-serif;
+    min-height: 100vh;
+    padding: 16px;
+  }
+  h1, h2, h3 { font-family: 'Orbitron', sans-serif; letter-spacing: 1px; }
+  h1 { font-size: 20px; margin: 0; color: var(--neon); text-shadow: 0 0 12px rgba(0,255,102,.4); }
+  h2 { font-size: 15px; margin: 0 0 12px; color: var(--neon); border-left: 4px solid var(--neon); padding-left: 10px; }
+  h3 { font-size: 13px; margin: 0 0 8px; color: var(--muted); }
+  a { color: var(--neon); text-decoration: none; }
+
+  .topbar {
+    display: flex; flex-wrap: wrap; align-items: center; gap: 12px;
+    background: linear-gradient(135deg, #0d1219, #0a0e15);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 12px 16px;
+    margin-bottom: 16px;
+    box-shadow: 0 0 24px rgba(0,255,102,.05);
+  }
+  .topbar .spacer { flex: 1; }
+  .badge {
+    font-size: 11px; padding: 4px 10px; border-radius: 30px;
+    border: 1px solid var(--border); color: var(--muted);
+    font-family: 'Orbitron', sans-serif;
+  }
+  .badge.on { color: var(--neon); border-color: var(--neon); box-shadow: 0 0 10px rgba(0,255,102,.25); }
+  .badge.err { color: var(--danger); border-color: var(--danger); }
+
+  .container { max-width: 1500px; margin: 0 auto; }
+
+  .card {
+    background: linear-gradient(135deg, #0e1219, #0b0e14);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    padding: 16px;
+    margin-bottom: 16px;
+    box-shadow: 0 0 30px rgba(0,255,102,.03);
+  }
+
+  .row { display: flex; flex-wrap: wrap; gap: 10px; align-items: center; }
+  .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 12px; }
+
+  input, select, textarea, button {
+    background: #0a0d13;
+    color: var(--text);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 8px 10px;
+    font-size: 13px;
+    font-family: 'Rajdhani', sans-serif;
+  }
+  input:focus, select:focus, textarea:focus {
+    outline: none;
+    border-color: var(--neon);
+    box-shadow: 0 0 0 2px rgba(0,255,102,.1);
+  }
+  textarea { min-height: 70px; font-family: monospace; font-size: 12px; width: 100%; }
+  button {
+    cursor: pointer;
+    background: linear-gradient(135deg, var(--neon), var(--neon2));
+    color: #04140a;
+    border: none;
+    font-weight: 700;
+    letter-spacing: .5px;
+    transition: filter .15s;
+    font-family: 'Orbitron', sans-serif;
+    font-size: 12px;
+  }
+  button:hover { filter: brightness(1.1); }
+  button.ghost { background: transparent; color: var(--text); border: 1px solid var(--border); }
+  button.danger { background: linear-gradient(135deg, #ef4444, #b91c1c); color: #fff; }
+  button.warn { background: linear-gradient(135deg, #f59e0b, #d97706); color: #1a1000; }
+  button.info { background: linear-gradient(135deg, #38bdf8, #0284c7); color: #001018; }
+  button.sm { padding: 5px 9px; font-size: 11px; }
+
+  table { width: 100%; border-collapse: collapse; font-size: 12.5px; }
+  th, td {
+    padding: 8px 10px;
+    border-bottom: 1px solid var(--border);
+    text-align: left;
+    vertical-align: middle;
+    max-width: 260px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+  th {
+    color: var(--muted);
+    font-family: 'Orbitron', sans-serif;
+    font-size: 11px;
+    letter-spacing: .5px;
+    background: #0a0d13;
+    position: sticky; top: 0; z-index: 1;
+  }
+  tr:hover td { background: rgba(0,255,102,.03); }
+
+  .pill { padding: 2px 8px; border-radius: 30px; font-size: 10px; font-weight: 700; }
+  .pill.ok { background: rgba(0,255,102,.15); color: var(--neon); border: 1px solid var(--neon); }
+  .pill.no { background: rgba(239,68,68,.15); color: var(--danger); border: 1px solid var(--danger); }
+  .pill.warn { background: rgba(245,158,11,.15); color: var(--warn); border: 1px solid var(--warn); }
+
+  .modal-bg {
+    position: fixed; inset: 0; background: rgba(0,0,0,.7);
+    display: none; align-items: flex-start; justify-content: center;
+    z-index: 100; padding: 20px; overflow: auto;
+  }
+  .modal-bg.show { display: flex; }
+  .modal {
+    background: var(--panel);
+    border: 1px solid var(--neon);
+    border-radius: 14px;
+    padding: 20px;
+    width: 100%; max-width: 1000px;
+    box-shadow: 0 0 40px rgba(0,255,102,.15);
+  }
+  .field label { display: block; font-size: 11px; color: var(--muted); margin-bottom: 4px; font-family: 'Orbitron', sans-serif; }
+  .field input, .field select, .field textarea { width: 100%; }
+
+  .toast {
+    position: fixed; bottom: 20px; right: 20px;
+    background: var(--panel2); border: 1px solid var(--border);
+    padding: 12px 18px; border-radius: 10px; font-size: 13px;
+    opacity: 0; transform: translateY(10px); transition: .2s;
+    z-index: 200; max-width: 380px;
+  }
+  .toast.show { opacity: 1; transform: translateY(0); }
+  .toast.err { border-color: var(--danger); color: #ffb3b3; }
+  .toast.ok { border-color: var(--neon); color: var(--neon); }
+
+  .tabs { display: flex; gap: 6px; flex-wrap: wrap; margin-bottom: 12px; }
+  .tab {
+    padding: 8px 14px; border-radius: 8px; cursor: pointer;
+    background: transparent; color: var(--muted); border: 1px solid var(--border);
+    font-family: 'Orbitron', sans-serif; font-size: 11px; letter-spacing: .5px;
+  }
+  .tab.active { background: rgba(0,255,102,.1); color: var(--neon); border-color: var(--neon); }
+
+  .stat { background: #0a0d13; border: 1px solid var(--border); border-radius: 10px; padding: 10px 12px; }
+  .stat .lbl { font-size: 10px; color: var(--muted); font-family: 'Orbitron', sans-serif; letter-spacing: .5px; }
+  .stat .val { font-size: 18px; font-weight: 800; color: var(--neon); font-family: 'Orbitron', sans-serif; margin-top: 4px; }
+  .stat .val.warn { color: var(--warn); }
+  .stat .val.info { color: var(--info); }
+  .stat .val.danger { color: var(--danger); }
+
+  .mini-input { width: 90px; padding: 5px 8px; font-size: 12px; }
+  .actions-cell { display: flex; gap: 4px; flex-wrap: wrap; }
+  .muted { color: var(--muted); font-size: 11px; }
+  .mono { font-family: monospace; }
+</style>
+</head>
+<body>
+
+<div class="container">
+
+  <!-- ========== TOPBAR ========== -->
+  <div class="topbar">
+    <h1>🛠️ ADM • BAEP INVESTIMENTOS</h1>
+    <span class="badge" id="badgeConn">🔌 Supabase: desconectado</span>
+    <span class="badge" id="badgeUser">👤 —</span>
+    <span class="badge" id="badgeSelic">📈 SELIC: —</span>
+    <div class="spacer"></div>
+    <a href="bolsa.html" target="_blank"><button class="ghost">🎮 Abrir Bolsa</button></a>
+    <button class="ghost" id="btnConfig">⚙️ Conexão</button>
+  </div>
+
+  <!-- ========== CONEXÃO ========== -->
+  <div class="card" id="cardConfig">
+    <h2>⚙️ Conexão Supabase</h2>
+    <div class="row">
+      <input id="sbUrl" placeholder="https://xxxx.supabase.co" style="min-width:320px; flex:1" />
+      <input id="sbKey" placeholder="anon / service_role key" style="min-width:320px; flex:1" />
+      <button id="btnConnect">🔌 Conectar</button>
+      <button id="btnDisconnect" class="ghost">Desconectar</button>
+    </div>
+    <div class="muted" style="margin-top:8px">
+      ⚠️ Use <b>service_role</b> para poder alterar dados de qualquer usuário. A chave fica apenas no seu navegador.
+    </div>
+  </div>
+
+  <!-- ========== ESTATÍSTICAS GLOBAIS ========== -->
+  <div class="card">
+    <h2>📊 Estatísticas Globais</h2>
+    <div class="grid" id="statsGrid">
+      <div class="stat"><div class="lbl">USUÁRIOS</div><div class="val" id="stUsers">—</div></div>
+      <div class="stat"><div class="lbl">SALDO TOTAL</div><div class="val" id="stSaldo">—</div></div>
+      <div class="stat"><div class="lbl">POUPANÇA TOTAL</div><div class="val info" id="stPoupanca">—</div></div>
+      <div class="stat"><div class="lbl">PROVENTOS PENDENTES</div><div class="val warn" id="stProventos">—</div></div>
+      <div class="stat"><div class="lbl">BLOQUEADOS</div><div class="val danger" id="stBloq">—</div></div>
+      <div class="stat"><div class="lbl">SELIC ATUAL</div><div class="val warn" id="stSelic">—</div></div>
+    </div>
+  </div>
+
+  <!-- ========== TABS ========== -->
+  <div class="tabs">
+    <div class="tab active" data-tab="usuarios">👥 Usuários</div>
+    <div class="tab" data-tab="selic">📈 SELIC</div>
+    <div class="tab" data-tab="proventos">🎁 Proventos</div>
+    <div class="tab" data-tab="poupanca">🏦 Poupança</div>
+    <div class="tab" data-tab="mercado">💹 Mercado</div>
+    <div class="tab" data-tab="historico">📜 Histórico</div>
+  </div>
+
+  <!-- ========== ABA: USUÁRIOS ========== -->
+  <div class="card tab-panel" data-panel="usuarios">
+    <h2>👥 Gerenciar Usuários</h2>
+    <div class="row" style="margin-bottom:12px">
+      <input id="fId" placeholder="ID" type="number" class="mini-input" />
+      <input id="fLogin" placeholder="login (ilike)" style="width:160px" />
+      <input id="fNome" placeholder="nome (ilike)" style="width:160px" />
+      <input id="fEmail" placeholder="email (ilike)" style="width:180px" />
+      <select id="fOrder">
+        <option value="id.desc">ID ↓</option>
+        <option value="id.asc">ID ↑</option>
+        <option value="saldo.desc">Saldo ↓</option>
+        <option value="saldo_poupanca.desc">Poupança ↓</option>
+        <option value="proventos_pendentes.desc">Proventos ↓</option>
+      </select>
+      <button id="btnBuscar">🔍 Buscar</button>
+      <button id="btnLimpar" class="ghost">Limpar</button>
+      <button id="btnRecarregar" class="ghost">🔄 Recarregar</button>
+    </div>
+
+    <div style="overflow:auto; max-height:60vh; border:1px solid var(--border); border-radius:10px;">
+      <table>
+        <thead>
+          <tr>
+            <th>ID</th>
+            <th>nome</th>
+            <th>login</th>
+            <th>email</th>
+            <th>saldo</th>
+            <th>poupança</th>
+            <th>proventos</th>
+            <th>carteira</th>
+            <th>selic</th>
+            <th>bloq</th>
+            <th>cadeado</th>
+            <th>criado</th>
+            <th>Ações</th>
+          </tr>
+        </thead>
+        <tbody id="tbodyUsers">
+          <tr><td colspan="13" style="text-align:center;color:#7e8aa1">Conecte ao Supabase para carregar.</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="row" style="margin-top:10px">
+      <button id="btnPrev" class="ghost sm">← Anterior</button>
+      <span class="muted" id="pageInfo">página 1</span>
+      <button id="btnNext" class="ghost sm">Próxima →</button>
+      <select id="pageSize" class="mini-input">
+        <option>25</option>
+        <option selected>50</option>
+        <option>100</option>
+        <option>200</option>
+      </select>
+    </div>
+  </div>
+
+  <!-- ========== ABA: SELIC ========== -->
+  <div class="card tab-panel" data-panel="selic" style="display:none">
+    <h2>📈 Controle da SELIC</h2>
+    <div class="row">
+      <div class="field" style="min-width:200px">
+        <label>SELIC (%)</label>
+        <input id="selicInput" type="number" step="0.01" min="0" max="100" value="10.75" />
+      </div>
+      <div class="field" style="min-width:260px">
+        <label>Aplicar para</label>
+        <select id="selicEscopo">
+          <option value="todos">Todos os usuários</option>
+          <option value="ativos">Apenas usuários ativos (últimos 7 dias)</option>
+          <option value="id">Usuário específico (ID)</option>
+        </select>
+      </div>
+      <div class="field" id="selicUserIdWrap" style="display:none; min-width:140px">
+        <label>ID do usuário</label>
+        <input id="selicUserId" type="number" />
+      </div>
+      <button id="btnAplicarSelic">💾 Aplicar SELIC</button>
+      <button id="btnSelicAleatoria" class="warn">🎲 SELIC Aleatória (0–20%)</button>
+    </div>
+    <div class="muted" style="margin-top:10px">
+      Alterar a SELIC impacta diretamente a precificação dos FIIs no simulador. Valores mais altos → FIIs mais baratos.
+    </div>
+    <h3 style="margin-top:16px">Usuários com SELIC personalizada</h3>
+    <div style="overflow:auto; max-height:40vh; border:1px solid var(--border); border-radius:10px;">
+      <table>
+        <thead><tr><th>ID</th><th>login</th><th>SELIC</th><th>Ação</th></tr></thead>
+        <tbody id="tbodySelic"><tr><td colspan="4" class="muted" style="text-align:center">—</td></tr></tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- ========== ABA: PROVENTOS ========== -->
+  <div class="card tab-panel" data-panel="proventos" style="display:none">
+    <h2>🎁 Proventos Pendentes</h2>
+    <div class="muted" style="margin-bottom:10px">
+      Proventos acumulados que ainda não foram transferidos para o saldo. Você pode forçar o crédito ou zerar.
+    </div>
+    <div class="row" style="margin-bottom:12px">
+      <input id="provMin" type="number" step="0.01" placeholder="valor mínimo" style="width:140px" />
+      <button id="btnProvBuscar">🔍 Filtrar</button>
+      <button id="btnProvCreditarTodos" class="info">💰 Creditar Todos</button>
+      <button id="btnProvZerarTodos" class="danger">🧹 Zerar Todos</button>
+    </div>
+    <div style="overflow:auto; max-height:55vh; border:1px solid var(--border); border-radius:10px;">
+      <table>
+        <thead>
+          <tr>
+            <th>ID</th><th>login</th><th>proventos pendentes</th>
+            <th>saldo atual</th><th>proventos_por_ativo (resumo)</th><th>Ações</th>
+          </tr>
+        </thead>
+        <tbody id="tbodyProv"><tr><td colspan="6" class="muted" style="text-align:center">—</td></tr></tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- ========== ABA: POUPANÇA ========== -->
+  <div class="card tab-panel" data-panel="poupanca" style="display:none">
+    <h2>🏦 Gerenciar Poupança</h2>
+    <div class="muted" style="margin-bottom:10px">
+      A poupança rende <b>0,6% a cada 60s</b>. Você pode forçar um rendimento extra ou resetar.
+    </div>
+    <div class="row" style="margin-bottom:12px">
+      <div class="field" style="min-width:160px">
+        <label>ID do usuário</label>
+        <input id="poupId" type="number" placeholder="ex: 1" />
+      </div>
+      <div class="field" style="min-width:160px">
+        <label>Valor (Mumu)</label>
+        <input id="poupValor" type="number" step="0.01" placeholder="ex: 100.00" />
+      </div>
+      <button id="btnPoupCreditar" class="info">➕ Creditar</button>
+      <button id="btnPoupDebitar" class="warn">➖ Debitar</button>
+      <button id="btnPoupZerar" class="danger">🧹 Zerar</button>
+      <button id="btnPoupRenderTodos" class="info">⚡ Render 0,6% em Todos</button>
+    </div>
+    <h3>Top 20 poupanças</h3>
+    <div style="overflow:auto; max-height:50vh; border:1px solid var(--border); border-radius:10px;">
+      <table>
+        <thead><tr><th>ID</th><th>login</th><th>saldo</th><th>poupança</th><th>Ações</th></tr></thead>
+        <tbody id="tbodyPoup"><tr><td colspan="5" class="muted" style="text-align:center">—</td></tr></tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- ========== ABA: MERCADO ========== -->
+  <div class="card tab-panel" data-panel="mercado" style="display:none">
+    <h2>💹 Preços do Mercado</h2>
+    <div class="muted" style="margin-bottom:10px">
+      Ajuste os preços-base de sementes, buckets, fertilizantes, poções e multiplicadores. Estes valores são globais (coluna <span class="mono">price*</span>).
+    </div>
+    <div class="grid">
+      <div class="field"><label>price (base)</label><input id="priceBase" type="number" step="0.01" /></div>
+      <div class="field"><label>price_seed</label><input id="priceSeed" type="number" step="0.01" /></div>
+      <div class="field"><label>price_bucket</label><input id="priceBucket" type="number" step="0.01" /></div>
+      <div class="field"><label>price_clear</label><input id="priceClear" type="number" step="0.01" /></div>
+      <div class="field"><label>price_fert</label><input id="priceFert" type="number" step="0.01" /></div>
+      <div class="field"><label>price_potion</label><input id="pricePotion" type="number" step="0.01" /></div>
+      <div class="field"><label>price_mult</label><input id="priceMult" type="number" step="0.01" /></div>
+    </div>
+    <div class="row" style="margin-top:14px">
+      <button id="btnSalvarPrecos">💾 Salvar em Todos os Usuários</button>
+      <button id="btnRecarregarPrecos" class="ghost">🔄 Carregar do 1º usuário</button>
+    </div>
+  </div>
+
+  <!-- ========== ABA: HISTÓRICO ========== -->
+  <div class="card tab-panel" data-panel="historico" style="display:none">
+    <h2>📜 Histórico de Operações</h2>
+    <div class="row" style="margin-bottom:12px">
+      <div class="field" style="min-width:160px">
+        <label>ID do usuário</label>
+        <input id="histId" type="number" placeholder="ex: 1" />
+      </div>
+      <button id="btnHistCarregar">🔍 Carregar</button>
+      <button id="btnHistLimpar" class="danger">🧹 Limpar Histórico</button>
+    </div>
+    <div id="histBox" class="muted">Informe um ID para carregar o histórico.</div>
+  </div>
+
+</div>
+
+<!-- ========== MODAL USUÁRIO ========== -->
+<div class="modal-bg" id="modalBg">
+  <div class="modal">
+    <div class="row" style="justify-content:space-between; margin-bottom:14px">
+      <h2 id="modalTitle" style="margin:0">Editar usuário</h2>
+      <button class="ghost" onclick="closeModal()">✕ Fechar</button>
+    </div>
+
+    <div class="tabs" style="margin-bottom:14px">
+      <div class="tab active" data-mtab="basico">Básico</div>
+      <div class="tab" data-mtab="financeiro">Financeiro</div>
+      <div class="tab" data-mtab="carteira">Carteira</div>
+      <div class="tab" data-mtab="json">JSONs</div>
+      <div class="tab" data-mtab="bloqueios">Bloqueios</div>
+    </div>
+
+    <div class="m-panel" data-mpanel="basico">
+      <div class="grid">
+        <div class="field"><label>nome</label><input data-key="nome" /></div>
+        <div class="field"><label>login</label><input data-key="login" /></div>
+        <div class="field"><label>senha</label><input data-key="senha" /></div>
+        <div class="field"><label>email</label><input data-key="email" /></div>
+        <div class="field"><label>tipo</label><input data-key="tipo" /></div>
+        <div class="field"><label>nivel</label><input data-key="nivel" type="number" /></div>
+        <div class="field"><label>experiencia</label><input data-key="experiencia" type="number" /></div>
+        <div class="field"><label>exp_proximo</label><input data-key="exp_proximo" type="number" /></div>
+      </div>
+    </div>
+
+    <div class="m-panel" data-mpanel="financeiro" style="display:none">
+      <div class="grid">
+        <div class="field"><label>saldo</label><input data-key="saldo" type="number" step="0.01" /></div>
+        <div class="field"><label>saldo_poupanca</label><input data-key="saldo_poupanca" type="number" step="0.01" /></div>
+        <div class="field"><label>proventos_pendentes</label><input data-key="proventos_pendentes" type="number" step="0.01" /></div>
+        <div class="field"><label>selic</label><input data-key="selic" type="number" step="0.01" /></div>
+        <div class="field"><label>btc</label><input data-key="btc" type="number" step="0.000000000000000001" /></div>
+        <div class="field"><label>poder_hash</label><input data-key="poder_hash" type="number" step="0.01" /></div>
+        <div class="field"><label>mumu</label><input data-key="mumu" type="number" step="0.01" /></div>
+        <div class="field"><label>ganho</label><input data-key="ganho" type="number" step="0.000000000000000001" /></div>
+      </div>
+    </div>
+
+    <div class="m-panel" data-mpanel="carteira" style="display:none">
+      <div class="muted" style="margin-bottom:10px">
+        Formato JSON: <span class="mono">{"PETR4": {"qtd": 10, "pm": 25.50}}</span>
+      </div>
+      <div class="grid">
+        <div class="field"><label>carteira (JSON)</label><textarea data-key="carteira" data-json="1"></textarea></div>
+        <div class="field"><label>preco_medio_compra (JSON)</label><textarea data-key="preco_medio_compra" data-json="1"></textarea></div>
+        <div class="field"><label>proventos_por_ativo (JSON)</label><textarea data-key="proventos_por_ativo" data-json="1"></textarea></div>
+        <div class="field"><label>historico (JSON)</label><textarea data-key="historico" data-json="1"></textarea></div>
+      </div>
+      <div class="row" style="margin-top:8px">
+        <button class="danger sm" id="btnZerarCarteira">🧹 Zerar carteira</button>
+        <button class="danger sm" id="btnZerarHistorico">🧹 Zerar histórico</button>
+        <button class="warn sm" id="btnZerarProventos">🧹 Zerar proventos</button>
+      </div>
+    </div>
+
+    <div class="m-panel" data-mpanel="json" style="display:none">
+      <div class="grid">
+        <div class="field"><label>itens (JSON)</label><textarea data-key="itens" data-json="1"></textarea></div>
+        <div class="field"><label>historico_trocas (JSON)</label><textarea data-key="historico_trocas" data-json="1"></textarea></div>
+        <div class="field"><label>codigos_resgate (JSON)</label><textarea data-key="codigos_resgate" data-json="1"></textarea></div>
+        <div class="field"><label>codigos_usados (JSON)</label><textarea data-key="codigos_usados" data-json="1"></textarea></div>
+        <div class="field"><label>plot_data (JSON)</label><textarea data-key="plot_data" data-json="1"></textarea></div>
+        <div class="field"><label>fazendinha_dados (JSON)</label><textarea data-key="fazendinha_dados" data-json="1"></textarea></div>
+        <div class="field"><label>meta (JSON)</label><textarea data-key="meta" data-json="1"></textarea></div>
+      </div>
+    </div>
+
+    <div class="m-panel" data-mpanel="bloqueios" style="display:none">
+      <div class="grid">
+        <div class="field"><label>bloqueado</label>
+          <select data-key="bloqueado" data-bool="1"><option value="">null</option><option value="true">true</option><option value="false">false</option></select>
+        </div>
+        <div class="field"><label>cadeado</label>
+          <select data-key="cadeado" data-bool="1"><option value="">null</option><option value="true">true</option><option value="false">false</option></select>
+        </div>
+        <div class="field"><label>email_confirmado</label>
+          <select data-key="email_confirmado" data-bool="1"><option value="">null</option><option value="true">true</option><option value="false">false</option></select>
+        </div>
+        <div class="field"><label>mac_address</label><input data-key="mac_address" /></div>
+        <div class="field"><label>ip_address</label><input data-key="ip_address" /></div>
+        <div class="field"><label>fingerprint</label><input data-key="fingerprint" /></div>
+        <div class="field"><label>cargo_codigo</label><input data-key="cargo_codigo" /></div>
+      </div>
+    </div>
+
+    <div class="row" style="margin-top:16px; justify-content:flex-end">
+      <button class="ghost" onclick="closeModal()">Cancelar</button>
+      <button id="btnSave">💾 Salvar</button>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script type="importmap">
+{ "imports": { "@supabase/supabase-js": "https://esm.sh/@supabase/supabase-js@2" } }
+</script>
+
+<script type="module">
+import { createClient } from '@supabase/supabase-js';
+
+const $ = (id) => document.getElementById(id);
+const esc = (v) => (v ?? '').toString().replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const fmt = (v) => v === null || v === undefined ? '' : Number(v).toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+const fmtDate = (v) => v ? new Date(v).toLocaleString('pt-BR') : '';
+
+function toast(msg, type = '') {
+  const t = $('toast');
+  t.textContent = msg;
+  t.className = 'toast show ' + type;
+  clearTimeout(toast._t);
+  toast._t = setTimeout(() => t.classList.remove('show'), 3000);
+}
+
+let sb = null;
+let page = 0;
+let pageSize = 50;
+let editingId = null;
+let currentRows = [];
+
+// ==================== CONEXÃO ====================
+$('btnConfig').onclick = () => {
+  const c = $('cardConfig');
+  c.style.display = c.style.display === 'none' ? '' : 'none';
+};
+
+$('btnConnect').onclick = async () => {
+  const url = $('sbUrl').value.trim();
+  const key = $('sbKey').value.trim();
+  if (!url || !key) return toast('Informe URL e chave', 'err');
+  try {
+    sb = createClient(url, key);
+    $('badgeConn').textContent = '🔌 Supabase: conectado';
+    $('badgeConn').className = 'badge on';
+    toast('Conectado', 'ok');
+    await loadStats();
+    await loadUsers();
+    await loadSelicList();
+    await loadProventos();
+    await loadPoupanca();
+    await loadPrecos();
+  } catch (e) {
+    toast('Erro: ' + e.message, 'err');
+  }
+};
+
+$('btnDisconnect').onclick = () => {
+  sb = null;
+  $('badgeConn').textContent = '🔌 Supabase: desconectado';
+  $('badgeConn').className = 'badge';
+  toast('Desconectado');
+};
+
+// ==================== TABS PRINCIPAIS ====================
+document.querySelectorAll('.tabs .tab[data-tab]').forEach(t => {
+  t.onclick = () => {
+    document.querySelectorAll('.tabs .tab[data-tab]').forEach(x => x.classList.remove('active'));
+    t.classList.add('active');
+    document.querySelectorAll('.tab-panel').forEach(p => {
+      p.style.display = p.dataset.panel === t.dataset.tab ? '' : 'none';
+    });
+    if (t.dataset.tab === 'selic') loadSelicList();
+    if (t.dataset.tab === 'proventos') loadProventos();
+    if (t.dataset.tab === 'poupanca') loadPoupanca();
+    if (t.dataset.tab === 'mercado') loadPrecos();
+  };
+});
+
+// ==================== ESTATÍSTICAS ====================
+async function loadStats() {
+  if (!sb) return;
+  const { data, error } = await sb.from('Geral').select('saldo, saldo_poupanca, proventos_pendentes, bloqueado, selic');
+  if (error) return toast('Erro stats: ' + error.message, 'err');
+  const totalSaldo = data.reduce((a, r) => a + Number(r.saldo || 0), 0);
+  const totalPoup = data.reduce((a, r) => a + Number(r.saldo_poupanca || 0), 0);
+  const totalProv = data.reduce((a, r) => a + Number(r.proventos_pendentes || 0), 0);
+  const bloq = data.filter(r => r.bloqueado).length;
+  const selicMedia = data.length
+    ? data.reduce((a, r) => a + Number(r.selic || 10.75), 0) / data.length
+    : 10.75;
+
+  $('stUsers').textContent = data.length;
+  $('stSaldo').textContent = fmt(totalSaldo);
+  $('stPoupanca').textContent = fmt(totalPoup);
+  $('stProventos').textContent = fmt(totalProv);
+  $('stBloq').textContent = bloq;
+  $('stSelic').textContent = fmt(selicMedia) + '%';
+  $('badgeSelic').textContent = `📈 SELIC média: ${fmt(selicMedia)}%`;
+}
+
+// ==================== USUÁRIOS ====================
+async function loadUsers() {
+  if (!sb) return toast('Conecte primeiro', 'err');
+  const [orderCol, orderDir] = $('fOrder').value.split('.');
+
+  let q = sb.from('Geral').select('*', { count: 'exact' });
+  const fId = $('fId').value.trim();
+  const fLogin = $('fLogin').value.trim();
+  const fNome = $('fNome').value.trim();
+  const fEmail = $('fEmail').value.trim();
+  if (fId) q = q.eq('id', Number(fId));
+  if (fLogin) q = q.ilike('login', `%${fLogin}%`);
+  if (fNome) q = q.ilike('nome', `%${fNome}%`);
+  if (fEmail) q = q.ilike('email', `%${fEmail}%`);
+
+  q = q.order(orderCol, { ascending: orderDir === 'asc' })
+       .range(page * pageSize, page * pageSize + pageSize - 1);
+
+  const { data, error, count } = await q;
+  if (error) return toast('Erro: ' + error.message, 'err');
+
+  currentRows = data || [];
+  renderUsers(currentRows);
+  $('pageInfo').textContent = `página ${page + 1} • ${count ?? 0} registros`;
+}
+
+function renderUsers(rows) {
+  if (!rows.length) {
+    $('tbodyUsers').innerHTML = '<tr><td colspan="13" style="text-align:center;color:#7e8aa1">Nenhum registro.</td></tr>';
+    return;
+  }
+  $('tbodyUsers').innerHTML = rows.map(r => {
+    const carteiraQtd = r.carteira ? Object.keys(r.carteira).length : 0;
+    return `<tr>
+      <td>${r.id}</td>
+      <td title="${esc(r.nome)}">${esc(r.nome)}</td>
+      <td>${esc(r.login)}</td>
+      <td title="${esc(r.email)}">${esc(r.email)}</td>
+      <td>${fmt(r.saldo)}</td>
+      <td>${fmt(r.saldo_poupanca)}</td>
+      <td>${fmt(r.proventos_pendentes)}</td>
+      <td>${carteiraQtd} ativo(s)</td>
+      <td>${fmt(r.selic)}%</td>
+      <td>${r.bloqueado ? '<span class="pill no">SIM</span>' : '<span class="pill ok">não</span>'}</td>
+      <td>${r.cadeado ? '<span class="pill no">SIM</span>' : '<span class="pill ok">não</span>'}</td>
+      <td>${fmtDate(r.created_at)}</td>
+      <td>
+        <div class="actions-cell">
+          <button class="sm" onclick="openEdit(${r.id})">✏️</button>
+          <button class="sm warn" onclick="quickAddSaldo(${r.id})">💰</button>
+          <button class="sm info" onclick="quickProv(${r.id})">🎁</button>
+          <button class="sm danger" onclick="delRow(${r.id})">🗑️</button>
+        </div>
+      </td>
+    </tr>`;
+  }).join('');
+}
+
+$('btnBuscar').onclick = () => { page = 0; loadUsers(); };
+$('btnLimpar').onclick = () => {
+  ['fId','fLogin','fNome','fEmail'].forEach(id => $(id).value = '');
+  page = 0; loadUsers();
+};
+$('btnRecarregar').onclick = () => { page = 0; loadUsers(); loadStats(); };
+$('btnPrev').onclick = () => { if (page > 0) { page--; loadUsers(); } };
+$('btnNext').onclick = () => { page++; loadUsers(); };
+$('pageSize').onchange = (e) => { pageSize = Number(e.target.value); page = 0; loadUsers(); };
+
+// ==================== AÇÕES RÁPIDAS ====================
+window.quickAddSaldo = async (id) => {
+  const v = prompt(`Adicionar saldo ao usuário #${id}\n(valor positivo = crédito, negativo = débito)`, '100');
+  if (v === null) return;
+  const val = Number(v);
+  if (isNaN(val)) return toast('Valor inválido', 'err');
+  const { data, error } = await sb.from('Geral').select('saldo, historico').eq('id', id).single();
+  if (error) return toast(error.message, 'err');
+  const novoSaldo = Number(data.saldo || 0) + val;
+  const hist = Array.isArray(data.historico) ? data.historico.slice(0, 200) : [];
+  hist.unshift({ tipo: 'ADMIN_AJUSTE', valor: val, saldo_apos: novoSaldo, data: new Date().toISOString() });
+  const { error: e2 } = await sb.from('Geral').update({ saldo: novoSaldo, historico: hist }).eq('id', id);
+  if (e2) return toast(e2.message, 'err');
+  toast(`Saldo de #${id} atualizado para ${fmt(novoSaldo)}`, 'ok');
+  loadUsers(); loadStats();
+};
+
+window.quickProv = async (id) => {
+  const { data, error } = await sb.from('Geral').select('proventos_pendentes, saldo').eq('id', id).single();
+  if (error) return toast(error.message, 'err');
+  const prov = Number(data.proventos_pendentes || 0);
+  if (prov <= 0) return toast('Sem proventos pendentes', 'warn');
+  if (!confirm(`Creditar ${fmt(prov)} Mumu de proventos ao saldo do usuário #${id}?`)) return;
+  const { error: e2 } = await sb.from('Geral')
+    .update({ saldo: Number(data.saldo || 0) + prov, proventos_pendentes: 0 })
+    .eq('id', id);
+  if (e2) return toast(e2.message, 'err');
+  toast('Proventos creditados', 'ok');
+  loadUsers(); loadStats(); loadProventos();
+};
+
+window.delRow = async (id) => {
+  if (!confirm(`Excluir DEFINITIVAMENTE o usuário #${id}?`)) return;
+  const { error } = await sb.from('Geral').delete().eq('id', id);
+  if (error) return toast(error.message, 'err');
+  toast('Excluído', 'ok');
+  loadUsers(); loadStats();
+};
+
+// ==================== MODAL ====================
+window.closeModal = () => {
+  $('modalBg').classList.remove('show');
+  editingId = null;
+};
+
+window.openEdit = (id) => {
+  const row = currentRows.find(r => r.id === id);
+  if (!row) return toast('Não encontrado', 'err');
+  editingId = id;
+  $('modalTitle').textContent = `Editar usuário #${id} — ${row.login || ''}`;
+  fillForm(row);
+  $('modalBg').classList.add('show');
+};
+
+function fillForm(row) {
+  document.querySelectorAll('#modalBg [data-key]').forEach(el => {
+    const key = el.dataset.key;
+    const val = row[key];
+    if (el.dataset.json) {
+      el.value = val === null || val === undefined ? '' : JSON.stringify(val, null, 2);
+    } else if (el.dataset.bool) {
+      el.value = val === true ? 'true' : val === false ? 'false' : '';
+    } else {
+      el.value = val === null || val === undefined ? '' : val;
+    }
+  });
+}
+
+document.querySelectorAll('.tabs .tab[data-mtab]').forEach(t => {
+  t.onclick = () => {
+    document.querySelectorAll('.tabs .tab[data-mtab]').forEach(x => x.classList.remove('active'));
+    t.classList.add('active');
+    document.querySelectorAll('.m-panel').forEach(p => {
+      p.style.display = p.dataset.mpanel === t.dataset.mtab ? '' : 'none';
+    });
+  };
+});
+
+$('btnSave').onclick = async () => {
+  if (!editingId) return;
+  const payload = {};
+  try {
+    document.querySelectorAll('#modalBg [data-key]').forEach(el => {
+      const key = el.dataset.key;
+      if (el.dataset.json) {
+        const v = el.value.trim();
+        payload[key] = v === '' ? null : JSON.parse(v);
+      } else if (el.dataset.bool) {
+        payload[key] = el.value === '' ? null : el.value === 'true';
+      } else if (el.type === 'number') {
+        payload[key] = el.value === '' ? null : Number(el.value);
+      } else {
+        payload[key] = el.value === '' ? null : el.value;
+      }
+    });
+  } catch (e) {
+    return toast('JSON inválido: ' + e.message, 'err');
+  }
+  const { error } = await sb.from('Geral').update(payload).eq('id', editingId);
+  if (error) return toast(error.message, 'err');
+  toast('Salvo', 'ok');
+  closeModal();
+  loadUsers(); loadStats();
+};
+
+// Botões de zerar dentro do modal
+$('btnZerarCarteira').onclick = async () => {
+  if (!editingId || !confirm('Zerar carteira, preço médio e proventos por ativo?')) return;
+  const { error } = await sb.from('Geral').update({
+    carteira: {}, preco_medio_compra: {}, proventos_por_ativo: {}
+  }).eq('id', editingId);
+  if (error) return toast(error.message, 'err');
+  toast('Carteira zerada', 'ok');
+  const { data } = await sb.from('Geral').select('*').eq('id', editingId).single();
+  fillForm(data);
+  loadUsers();
+};
+
+$('btnZerarHistorico').onclick = async () => {
+  if (!editingId || !confirm('Zerar histórico?')) return;
+  const { error } = await sb.from('Geral').update({ historico: [] }).eq('id', editingId);
+  if (error) return toast(error.message, 'err');
+  toast('Histórico zerado', 'ok');
+  const { data } = await sb.from('Geral').select('*').eq('id', editingId).single();
+  fillForm(data);
+};
+
+$('btnZerarProventos').onclick = async () => {
+  if (!editingId || !confirm('Zerar proventos pendentes e por ativo?')) return;
+  const { error } = await sb.from('Geral').update({
+    proventos_pendentes: 0, proventos_por_ativo: {}
+  }).eq('id', editingId);
+  if (error) return toast(error.message, 'err');
+  toast('Proventos zerados', 'ok');
+  const { data } = await sb.from('Geral').select('*').eq('id', editingId).single();
+  fillForm(data);
+  loadUsers();
+};
+
+// ==================== SELIC (CORRIGIDO) ====================
+$('selicEscopo').onchange = (e) => {
+  $('selicUserIdWrap').style.display = e.target.value === 'id' ? '' : 'none';
+};
+
+// ⚠️ CORRIGIDO: PostgREST exige WHERE em UPDATE.
+// Para "todos", usamos .not('id', 'is', null) que gera WHERE id IS NOT NULL.
+$('btnAplicarSelic').onclick = async () => {
+  if (!sb) return toast('Conecte primeiro', 'err');
+  const val = Number($('selicInput').value);
+  if (isNaN(val) || val < 0 || val > 100) return toast('SELIC inválida', 'err');
+  const escopo = $('selicEscopo').value;
+
+  let q = sb.from('Geral').update({ selic: val });
+
+  if (escopo === 'id') {
+    const uid = Number($('selicUserId').value);
+    if (!uid) return toast('Informe o ID', 'err');
+    q = q.eq('id', uid);
+  } else if (escopo === 'ativos') {
+    const limite = new Date(Date.now() - 7 * 24 * 60 * 60 * 1000).toISOString();
+    q = q.gte('ultima_vez_online', limite);
+  } else {
+    // "todos" → força WHERE verdadeiro
+    q = q.not('id', 'is', null);
+  }
+
+  const { data, error } = await q.select('id');
+  if (error) return toast('Erro: ' + error.message, 'err');
+  toast(`SELIC ${fmt(val)}% aplicada em ${data?.length ?? 0} usuário(s)`, 'ok');
+  loadStats(); loadUsers(); loadSelicList();
+};
+
+$('btnSelicAleatoria').onclick = async () => {
+  if (!sb) return toast('Conecte primeiro', 'err');
+  const val = Number((Math.random() * 20).toFixed(2));
+  $('selicInput').value = val;
+  await $('btnAplicarSelic').click();
+};
+
+async function loadSelicList() {
+  if (!sb) return;
+  const { data, error } = await sb.from('Geral').select('id, login, selic').order('id').limit(500);
+  if (error) return;
+  $('tbodySelic').innerHTML = data.map(r => `
+    <tr>
+      <td>${r.id}</td>
+      <td>${esc(r.login)}</td>
+      <td>${fmt(r.selic)}%</td>
+      <td><button class="sm" onclick="editarSelic(${r.id}, ${r.selic ?? 'null'})">✏️</button></td>
+    </tr>
+  `).join('');
+}
+
+window.editarSelic = async (id, atual) => {
+  const v = prompt(`Nova SELIC para #${id}`, atual ?? '10.75');
+  if (v === null) return;
+  const val = Number(v);
+  if (isNaN(val)) return toast('Inválido', 'err');
+  const { error } = await sb.from('Geral').update({ selic: val }).eq('id', id);
+  if (error) return toast(error.message, 'err');
+  toast('SELIC atualizada', 'ok');
+  loadSelicList(); loadStats(); loadUsers();
+};
+
+// ==================== PROVENTOS ====================
+async function loadProventos() {
+  if (!sb) return;
+  let q = sb.from('Geral').select('id, login, proventos_pendentes, saldo, proventos_por_ativo')
+    .gt('proventos_pendentes', 0)
+    .order('proventos_pendentes', { ascending: false })
+    .limit(300);
+  const min = Number($('provMin').value);
+  if (!isNaN(min) && min > 0) q = q.gte('proventos_pendentes', min);
+
+  const { data, error } = await q;
+  if (error) return;
+  if (!data.length) {
+    $('tbodyProv').innerHTML = '<tr><td colspan="6" class="muted" style="text-align:center">Nenhum provento pendente.</td></tr>';
+    return;
+  }
+  $('tbodyProv').innerHTML = data.map(r => `
+    <tr>
+      <td>${r.id}</td>
+      <td>${esc(r.login)}</td>
+      <td><b style="color:var(--warn)">${fmt(r.proventos_pendentes)}</b></td>
+      <td>${fmt(r.saldo)}</td>
+      <td title='${esc(JSON.stringify(r.proventos_por_ativo))}'>${esc(JSON.stringify(r.proventos_por_ativo || {}).slice(0, 60))}…</td>
+      <td>
+        <div class="actions-cell">
+          <button class="sm info" onclick="creditarProv(${r.id})">💰 Creditar</button>
+          <button class="sm danger" onclick="zerarProv(${r.id})">🧹 Zerar</button>
+        </div>
+      </td>
+    </tr>
+  `).join('');
+}
+
+$('btnProvBuscar').onclick = loadProventos;
+
+window.creditarProv = async (id) => {
+  const { data, error } = await sb.from('Geral').select('saldo, proventos_pendentes').eq('id', id).single();
+  if (error) return toast(error.message, 'err');
+  const prov = Number(data.proventos_pendentes || 0);
+  const { error: e2 } = await sb.from('Geral')
+    .update({ saldo: Number(data.saldo || 0) + prov, proventos_pendentes: 0 }).eq('id', id);
+  if (e2) return toast(e2.message, 'err');
+  toast('Creditado', 'ok');
+  loadProventos(); loadUsers(); loadStats();
+};
+
+window.zerarProv = async (id) => {
+  if (!confirm(`Zerar proventos do #${id}?`)) return;
+  const { error } = await sb.from('Geral').update({ proventos_pendentes: 0, proventos_por_ativo: {} }).eq('id', id);
+  if (error) return toast(error.message, 'err');
+  toast('Zerado', 'ok');
+  loadProventos(); loadUsers();
+};
+
+$('btnProvCreditarTodos').onclick = async () => {
+  if (!confirm('Creditar proventos de TODOS os usuários? Essa ação é irreversível.')) return;
+  const { data, error } = await sb.from('Geral').select('id, saldo, proventos_pendentes').gt('proventos_pendentes', 0);
+  if (error) return toast(error.message, 'err');
+  let ok = 0;
+  for (const r of data) {
+    const prov = Number(r.proventos_pendentes || 0);
+    const { error: e2 } = await sb.from('Geral')
+      .update({ saldo: Number(r.saldo || 0) + prov, proventos_pendentes: 0 }).eq('id', r.id);
+    if (!e2) ok++;
+  }
+  toast(`${ok} usuário(s) creditados`, 'ok');
+  loadProventos(); loadUsers(); loadStats();
+};
+
+// ⚠️ CORRIGIDO: usamos .not('id','is',null) para garantir WHERE.
+$('btnProvZerarTodos').onclick = async () => {
+  if (!confirm('Zerar proventos de TODOS os usuários?')) return;
+  const { error } = await sb.from('Geral')
+    .update({ proventos_pendentes: 0, proventos_por_ativo: {} })
+    .not('id', 'is', null);
+  if (error) return toast(error.message, 'err');
+  toast('Todos zerados', 'ok');
+  loadProventos(); loadUsers();
+};
+
+// ==================== POUPANÇA ====================
+async function loadPoupanca() {
+  if (!sb) return;
+  const { data, error } = await sb.from('Geral').select('id, login, saldo, saldo_poupanca')
+    .order('saldo_poupanca', { ascending: false }).limit(20);
+  if (error) return;
+  $('tbodyPoup').innerHTML = data.map(r => `
+    <tr>
+      <td>${r.id}</td>
+      <td>${esc(r.login)}</td>
+      <td>${fmt(r.saldo)}</td>
+      <td><b style="color:var(--info)">${fmt(r.saldo_poupanca)}</b></td>
+      <td>
+        <div class="actions-cell">
+          <button class="sm info" onclick="poupAdd(${r.id}, 100)">➕100</button>
+          <button class="sm warn" onclick="poupAdd(${r.id}, -100)">➖100</button>
+        </div>
+      </td>
+    </tr>
+  `).join('');
+}
+
+window.poupAdd = async (id, delta) => {
+  const { data, error } = await sb.from('Geral').select('saldo_poupanca').eq('id', id).single();
+  if (error) return toast(error.message, 'err');
+  const novo = Math.max(0, Number(data.saldo_poupanca || 0) + delta);
+  const { error: e2 } = await sb.from('Geral').update({ saldo_poupanca: novo }).eq('id', id);
+  if (e2) return toast(e2.message, 'err');
+  toast('Poupança atualizada', 'ok');
+  loadPoupanca(); loadStats();
+};
+
+$('btnPoupCreditar').onclick = () => poupOp(1);
+$('btnPoupDebitar').onclick = () => poupOp(-1);
+$('btnPoupZerar').onclick = async () => {
+  const id = Number($('poupId').value);
+  if (!id) return toast('Informe ID', 'err');
+  const { error } = await sb.from('Geral').update({ saldo_poupanca: 0 }).eq('id', id);
+  if (error) return toast(error.message, 'err');
+  toast('Zerado', 'ok');
+  loadPoupanca(); loadStats();
+};
+
+async function poupOp(sinal) {
+  const id = Number($('poupId').value);
+  const val = Number($('poupValor').value);
+  if (!id || isNaN(val) || val <= 0) return toast('ID/valor inválidos', 'err');
+  const { data, error } = await sb.from('Geral').select('saldo_poupanca, saldo').eq('id', id).single();
+  if (error) return toast(error.message, 'err');
+  const novo = Math.max(0, Number(data.saldo_poupanca || 0) + sinal * val);
+  const { error: e2 } = await sb.from('Geral').update({ saldo_poupanca: novo }).eq('id', id);
+  if (e2) return toast(e2.message, 'err');
+  toast('OK', 'ok');
+  loadPoupanca(); loadStats();
+}
+
+$('btnPoupRenderTodos').onclick = async () => {
+  if (!confirm('Aplicar rendimento de 0,6% em todas as poupanças?')) return;
+  const { data, error } = await sb.from('Geral').select('id, saldo_poupanca').gt('saldo_poupanca', 0);
+  if (error) return toast(error.message, 'err');
+  for (const r of data) {
+    const novo = Number(r.saldo_poupanca) * 1.006;
+    await sb.from('Geral').update({ saldo_poupanca: novo }).eq('id', r.id);
+  }
+  toast(`${data.length} poupança(s) rendidas`, 'ok');
+  loadPoupanca(); loadStats();
+};
+
+// ==================== MERCADO ====================
+async function loadPrecos() {
+  if (!sb) return;
+  const { data, error } = await sb.from('Geral').select('price, price_seed, price_bucket, price_clear, price_fert, price_potion, price_mult').limit(1).single();
+  if (error) return;
+  $('priceBase').value = data.price ?? '';
+  $('priceSeed').value = data.price_seed ?? '';
+  $('priceBucket').value = data.price_bucket ?? '';
+  $('priceClear').value = data.price_clear ?? '';
+  $('priceFert').value = data.price_fert ?? '';
+  $('pricePotion').value = data.price_potion ?? '';
+  $('priceMult').value = data.price_mult ?? '';
+}
+
+$('btnRecarregarPrecos').onclick = loadPrecos;
+
+// ⚠️ CORRIGIDO: trocado .neq('id', 0) por .not('id','is',null)
+$('btnSalvarPrecos').onclick = async () => {
+  if (!sb) return toast('Conecte primeiro', 'err');
+  if (!confirm('Aplicar preços em TODOS os usuários?')) return;
+  const payload = {
+    price: num($('priceBase').value),
+    price_seed: num($('priceSeed').value),
+    price_bucket: num($('priceBucket').value),
+    price_clear: num($('priceClear').value),
+    price_fert: num($('priceFert').value),
+    price_potion: num($('pricePotion').value),
+    price_mult: num($('priceMult').value),
+  };
+  const { data, error } = await sb.from('Geral').update(payload).not('id', 'is', null).select('id');
+  if (error) return toast(error.message, 'err');
+  toast(`Preços atualizados em ${data?.length ?? 0} usuário(s)`, 'ok');
+};
+
+function num(v) { const n = Number(v); return isNaN(n) ? null : n; }
+
+// ==================== HISTÓRICO ====================
+$('btnHistCarregar').onclick = async () => {
+  const id = Number($('histId').value);
+  if (!id || !sb) return toast('Informe ID', 'err');
+  const { data, error } = await sb.from('Geral').select('historico, historico_trocas').eq('id', id).single();
+  if (error) return toast(error.message, 'err');
+  $('histBox').innerHTML = `
+    <h3>Histórico de operações (${(data.historico || []).length})</h3>
+    <pre class="mono" style="background:#0a0d13;padding:12px;border-radius:8px;max-height:40vh;overflow:auto">${esc(JSON.stringify(data.historico || [], null, 2))}</pre>
+    <h3 style="margin-top:12px">Histórico de trocas (${(data.historico_trocas || []).length})</h3>
+    <pre class="mono" style="background:#0a0d13;padding:12px;border-radius:8px;max-height:40vh;overflow:auto">${esc(JSON.stringify(data.historico_trocas || [], null, 2))}</pre>
+  `;
+};
+
+$('btnHistLimpar').onclick = async () => {
+  const id = Number($('histId').value);
+  if (!id) return toast('Informe ID', 'err');
+  if (!confirm(`Zerar histórico do #${id}?`)) return;
+  const { error } = await sb.from('Geral').update({ historico: [], historico_trocas: [] }).eq('id', id);
+  if (error) return toast(error.message, 'err');
+  toast('Histórico limpo', 'ok');
+  $('histBox').innerHTML = 'Histórico limpo.';
+};
+
+// Auto-connect (opcional — descomente e preencha)
+// $('sbUrl').value = 'https://SEU.supabase.co';
+// $('sbKey').value = 'SUA_KEY';
+// $('btnConnect').click();
+
+// Fecha modal clicando fora
+$('modalBg').onclick = (e) => { if (e.target.id === 'modalBg') closeModal(); };
+</script>
+</body>
+</html>

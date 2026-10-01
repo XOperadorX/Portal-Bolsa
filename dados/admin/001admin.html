@@ -1,0 +1,490 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>ADM - Tabela Geral</title>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<style>
+  :root {
+    --bg: #0f172a;
+    --panel: #1e293b;
+    --border: #334155;
+    --text: #e2e8f0;
+    --muted: #94a3b8;
+    --accent: #38bdf8;
+    --danger: #ef4444;
+    --ok: #22c55e;
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    font-family: system-ui, -apple-system, Segoe UI, Roboto, sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    padding: 20px;
+  }
+  h1 { margin: 0 0 16px; font-size: 22px; }
+  h2 { font-size: 16px; margin: 0 0 12px; color: var(--accent); }
+  .container { max-width: 1400px; margin: 0 auto; }
+  .card {
+    background: var(--panel);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 16px;
+    margin-bottom: 16px;
+  }
+  .row { display: flex; gap: 10px; flex-wrap: wrap; align-items: center; }
+  input, select, textarea, button {
+    background: #0b1220;
+    color: var(--text);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    padding: 8px 10px;
+    font-size: 13px;
+    font-family: inherit;
+  }
+  input:focus, select:focus, textarea:focus {
+    outline: none;
+    border-color: var(--accent);
+  }
+  button {
+    cursor: pointer;
+    background: var(--accent);
+    color: #001018;
+    border: none;
+    font-weight: 600;
+    transition: opacity .15s;
+  }
+  button:hover { opacity: .85; }
+  button.danger { background: var(--danger); color: #fff; }
+  button.ghost { background: transparent; border: 1px solid var(--border); color: var(--text); }
+  table { width: 100%; border-collapse: collapse; font-size: 12px; }
+  th, td {
+    padding: 8px;
+    border-bottom: 1px solid var(--border);
+    text-align: left;
+    vertical-align: top;
+    max-width: 220px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+  th { color: var(--muted); font-weight: 600; background: #0b1220; position: sticky; top: 0; }
+  tr:hover td { background: #243044; }
+  .json { color: #fbbf24; font-family: monospace; }
+  .status { font-size: 12px; color: var(--muted); margin-left: 8px; }
+  .pagination { display: flex; gap: 8px; align-items: center; margin-top: 12px; }
+  .modal-bg {
+    position: fixed; inset: 0; background: rgba(0,0,0,.6);
+    display: none; align-items: center; justify-content: center; z-index: 100;
+  }
+  .modal-bg.show { display: flex; }
+  .modal {
+    background: var(--panel);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 20px;
+    width: 90%; max-width: 900px;
+    max-height: 90vh; overflow: auto;
+  }
+  .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); gap: 10px; }
+  .field label { display: block; font-size: 11px; color: var(--muted); margin-bottom: 4px; }
+  .field input, .field textarea { width: 100%; }
+  textarea { min-height: 60px; font-family: monospace; font-size: 12px; }
+  .badge { padding: 2px 6px; border-radius: 4px; font-size: 10px; background: #1d4ed8; }
+  .badge.ok { background: var(--ok); color: #001018; }
+  .badge.no { background: var(--danger); color: #fff; }
+  .toast {
+    position: fixed; bottom: 20px; right: 20px;
+    background: var(--panel); border: 1px solid var(--border);
+    padding: 12px 16px; border-radius: 8px; font-size: 13px;
+    opacity: 0; transform: translateY(10px); transition: .2s;
+    z-index: 200;
+  }
+  .toast.show { opacity: 1; transform: translateY(0); }
+  .toast.err { border-color: var(--danger); }
+  .toast.ok { border-color: var(--ok); }
+</style>
+</head>
+<body>
+<div class="container">
+  <h1>🛠️ Painel ADM — <code>public."Geral"</code></h1>
+
+  <!-- Conexão -->
+  <div class="card">
+    <h2>1. Conexão Supabase</h2>
+    <div class="row">
+      <input id="sbUrl" placeholder="https://xxxx.supabase.co" style="min-width:320px" />
+      <input id="sbKey" placeholder="anon / service_role key" style="min-width:320px" />
+      <button id="btnConnect">Conectar</button>
+      <button id="btnDisconnect" class="ghost">Desconectar</button>
+      <span id="connStatus" class="status">desconectado</span>
+    </div>
+  </div>
+
+  <!-- Filtros -->
+  <div class="card">
+    <h2>2. Buscar / Filtrar</h2>
+    <div class="row">
+      <input id="fId" placeholder="ID exato" type="number" style="width:120px" />
+      <input id="fLogin" placeholder="login (ilike)" style="width:180px" />
+      <input id="fNome" placeholder="nome (ilike)" style="width:180px" />
+      <input id="fEmail" placeholder="email (ilike)" style="width:200px" />
+      <select id="fOrder">
+        <option value="id.desc">ID ↓</option>
+        <option value="id.asc">ID ↑</option>
+        <option value="created_at.desc">Criado ↓</option>
+        <option value="saldo.desc">Saldo ↓</option>
+      </select>
+      <button id="btnSearch">🔍 Buscar</button>
+      <button id="btnNew" class="ghost">➕ Novo</button>
+      <button id="btnClear" class="ghost">Limpar</button>
+    </div>
+  </div>
+
+  <!-- Lista -->
+  <div class="card">
+    <h2>3. Registros <span id="totalInfo" class="status"></span></h2>
+    <div style="overflow:auto; max-height:60vh;">
+      <table>
+        <thead>
+          <tr>
+            <th>ID</th>
+            <th>nome</th>
+            <th>login</th>
+            <th>email</th>
+            <th>saldo</th>
+            <th>saldo_poup</th>
+            <th>nivel</th>
+            <th>exp</th>
+            <th>btc</th>
+            <th>bloqueado</th>
+            <th>cadeado</th>
+            <th>criado</th>
+            <th>Ações</th>
+          </tr>
+        </thead>
+        <tbody id="tbody">
+          <tr><td colspan="13" style="text-align:center;color:#94a3b8">Conecte ao Supabase para carregar.</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="pagination">
+      <button id="btnPrev" class="ghost">← Anterior</button>
+      <span id="pageInfo" class="status">página 1</span>
+      <button id="btnNext" class="ghost">Próxima →</button>
+      <select id="pageSize">
+        <option value="25">25</option>
+        <option value="50" selected>50</option>
+        <option value="100">100</option>
+        <option value="200">200</option>
+      </select>
+    </div>
+  </div>
+</div>
+
+<!-- Modal Editar / Novo -->
+<div class="modal-bg" id="modalBg">
+  <div class="modal">
+    <div class="row" style="justify-content:space-between;margin-bottom:12px">
+      <h2 id="modalTitle">Editar registro</h2>
+      <button class="ghost" onclick="closeModal()">✕ Fechar</button>
+    </div>
+    <div class="grid" id="formGrid"></div>
+    <div class="row" style="margin-top:16px;justify-content:flex-end">
+      <button class="ghost" onclick="closeModal()">Cancelar</button>
+      <button id="btnSave">💾 Salvar</button>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+const { createClient } = supabase;
+
+let sb = null;
+let page = 0;
+let pageSize = 50;
+let editingId = null;
+let currentRows = [];
+
+const $ = (id) => document.getElementById(id);
+
+const toast = (msg, type = '') => {
+  const t = $('toast');
+  t.textContent = msg;
+  t.className = 'toast show ' + type;
+  setTimeout(() => t.classList.remove('show'), 2600);
+};
+
+// ---------- Conexão ----------
+$('btnConnect').onclick = () => {
+  const url = $('sbUrl').value.trim();
+  const key = $('sbKey').value.trim();
+  if (!url || !key) return toast('Informe URL e chave', 'err');
+  try {
+    sb = createClient(url, key);
+    $('connStatus').textContent = 'conectado ✅';
+    $('connStatus').style.color = '#22c55e';
+    toast('Conectado', 'ok');
+    load();
+  } catch (e) {
+    toast('Erro: ' + e.message, 'err');
+  }
+};
+
+$('btnDisconnect').onclick = () => {
+  sb = null;
+  $('connStatus').textContent = 'desconectado';
+  $('connStatus').style.color = '#94a3b8';
+  $('tbody').innerHTML = '<tr><td colspan="13" style="text-align:center;color:#94a3b8">Desconectado.</td></tr>';
+};
+
+// ---------- Listar ----------
+async function load() {
+  if (!sb) return toast('Conecte primeiro', 'err');
+  const [orderCol, orderDir] = $('fOrder').value.split('.');
+
+  let q = sb.from('Geral').select('*', { count: 'exact' });
+
+  const fId = $('fId').value.trim();
+  const fLogin = $('fLogin').value.trim();
+  const fNome = $('fNome').value.trim();
+  const fEmail = $('fEmail').value.trim();
+
+  if (fId) q = q.eq('id', Number(fId));
+  if (fLogin) q = q.ilike('login', `%${fLogin}%`);
+  if (fNome) q = q.ilike('nome', `%${fNome}%`);
+  if (fEmail) q = q.ilike('email', `%${fEmail}%`);
+
+  q = q.order(orderCol, { ascending: orderDir === 'asc' })
+       .range(page * pageSize, page * pageSize + pageSize - 1);
+
+  const { data, error, count } = await q;
+  if (error) return toast('Erro: ' + error.message, 'err');
+
+  currentRows = data || [];
+  renderTable(currentRows);
+  $('totalInfo').textContent = `— ${count ?? 0} registro(s)`;
+  $('pageInfo').textContent = `página ${page + 1} (${pageSize}/pág)`;
+}
+
+function renderTable(rows) {
+  if (!rows.length) {
+    $('tbody').innerHTML = '<tr><td colspan="13" style="text-align:center;color:#94a3b8">Nenhum registro.</td></tr>';
+    return;
+  }
+  $('tbody').innerHTML = rows.map(r => `
+    <tr>
+      <td>${r.id}</td>
+      <td title="${esc(r.nome)}">${esc(r.nome)}</td>
+      <td>${esc(r.login)}</td>
+      <td title="${esc(r.email)}">${esc(r.email)}</td>
+      <td>${fmt(r.saldo)}</td>
+      <td>${fmt(r.saldo_poupanca)}</td>
+      <td>${r.nivel ?? ''}</td>
+      <td>${r.experiencia ?? ''}</td>
+      <td>${fmt(r.btc)}</td>
+      <td>${r.bloqueado ? '<span class="badge no">sim</span>' : '<span class="badge ok">não</span>'}</td>
+      <td>${r.cadeado ? '<span class="badge no">sim</span>' : '<span class="badge ok">não</span>'}</td>
+      <td>${fmtDate(r.created_at)}</td>
+      <td>
+        <button class="ghost" onclick="openEdit(${r.id})">✏️</button>
+        <button class="danger" onclick="delRow(${r.id})">🗑️</button>
+      </td>
+    </tr>
+  `).join('');
+}
+
+const esc = (v) => (v ?? '').toString().replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const fmt = (v) => v === null || v === undefined ? '' : Number(v).toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+const fmtDate = (v) => v ? new Date(v).toLocaleString('pt-BR') : '';
+
+// ---------- Paginação ----------
+$('btnSearch').onclick = () => { page = 0; load(); };
+$('btnClear').onclick = () => {
+  ['fId','fLogin','fNome','fEmail'].forEach(id => $(id).value = '');
+  page = 0; load();
+};
+$('btnPrev').onclick = () => { if (page > 0) { page--; load(); } };
+$('btnNext').onclick = () => { page++; load(); };
+$('pageSize').onchange = (e) => { pageSize = Number(e.target.value); page = 0; load(); };
+
+// ---------- Formulário ----------
+// Campos editáveis (subset). Ajuste conforme necessário.
+const FIELDS = [
+  { key: 'nome', label: 'nome', type: 'text' },
+  { key: 'login', label: 'login', type: 'text' },
+  { key: 'senha', label: 'senha', type: 'text' },
+  { key: 'email', label: 'email', type: 'text' },
+  { key: 'saldo', label: 'saldo', type: 'number', step: '0.01' },
+  { key: 'saldo_poupanca', label: 'saldo_poupanca', type: 'number', step: '0.01' },
+  { key: 'proventos_pendentes', label: 'proventos_pendentes', type: 'number', step: '0.01' },
+  { key: 'seeds', label: 'seeds', type: 'number' },
+  { key: 'planted', label: 'planted', type: 'number' },
+  { key: 'harvested', label: 'harvested', type: 'number' },
+  { key: 'buckets', label: 'buckets', type: 'number' },
+  { key: 'nivel', label: 'nivel', type: 'number' },
+  { key: 'experiencia', label: 'experiencia', type: 'number' },
+  { key: 'exp_proximo', label: 'exp_proximo', type: 'number' },
+  { key: 'hp_max', label: 'hp_max', type: 'number' },
+  { key: 'mp_max', label: 'mp_max', type: 'number' },
+  { key: 'sm_max', label: 'sm_max', type: 'number' },
+  { key: 'ataque_base', label: 'ataque_base', type: 'number' },
+  { key: 'defesa_base', label: 'defesa_base', type: 'number' },
+  { key: 'magia_base', label: 'magia_base', type: 'number' },
+  { key: 'hp_atual', label: 'hp_atual', type: 'number' },
+  { key: 'mp_atual', label: 'mp_atual', type: 'number' },
+  { key: 'sm_atual', label: 'sm_atual', type: 'number' },
+  { key: 'btc', label: 'btc', type: 'number', step: '0.000000000000000001' },
+  { key: 'poder_hash', label: 'poder_hash', type: 'number', step: '0.01' },
+  { key: 'mumu', label: 'mumu', type: 'number' },
+  { key: 'hp', label: 'hp', type: 'number', step: '0.01' },
+  { key: 'max_hp', label: 'max_hp', type: 'number', step: '0.01' },
+  { key: 'mp', label: 'mp', type: 'number', step: '0.01' },
+  { key: 'max_mp', label: 'max_mp', type: 'number', step: '0.01' },
+  { key: 'sm', label: 'sm', type: 'number', step: '0.01' },
+  { key: 'max_sm', label: 'max_sm', type: 'number', step: '0.01' },
+  { key: 'atk', label: 'atk', type: 'number', step: '0.01' },
+  { key: 'def', label: 'def', type: 'number', step: '0.01' },
+  { key: 'mag', label: 'mag', type: 'number', step: '0.01' },
+  { key: 'exp', label: 'exp', type: 'number', step: '0.01' },
+  { key: 'exp_next', label: 'exp_next', type: 'number', step: '0.01' },
+  { key: 'stock', label: 'stock', type: 'number' },
+  { key: 'price', label: 'price', type: 'number', step: '0.01' },
+  { key: 'price_seed', label: 'price_seed', type: 'number', step: '0.01' },
+  { key: 'price_bucket', label: 'price_bucket', type: 'number', step: '0.01' },
+  { key: 'price_clear', label: 'price_clear', type: 'number', step: '0.01' },
+  { key: 'price_fert', label: 'price_fert', type: 'number', step: '0.01' },
+  { key: 'price_potion', label: 'price_potion', type: 'number', step: '0.01' },
+  { key: 'price_mult', label: 'price_mult', type: 'number', step: '0.01' },
+  { key: 'fert_qty', label: 'fert_qty', type: 'number' },
+  { key: 'potion_qty', label: 'potion_qty', type: 'number' },
+  { key: 'total_upgrades', label: 'total_upgrades', type: 'number' },
+  { key: 'poder_mercado', label: 'poder_mercado', type: 'number', step: '0.01' },
+  { key: 'stamina_qty', label: 'stamina_qty', type: 'number' },
+  { key: 'selic', label: 'selic', type: 'number', step: '0.01' },
+  { key: 'ganho', label: 'ganho', type: 'number', step: '0.000000000000000001' },
+  { key: 'btc_apos', label: 'btc_apos', type: 'number', step: '0.000000000000000001' },
+  { key: 'poder_apos', label: 'poder_apos', type: 'number', step: '0.01' },
+  { key: 'bloqueado', label: 'bloqueado', type: 'bool' },
+  { key: 'cadeado', label: 'cadeado', type: 'bool' },
+  { key: 'email_confirmado', label: 'email_confirmado', type: 'bool' },
+  { key: 'tipo', label: 'tipo', type: 'text' },
+  { key: 'mac_address', label: 'mac_address', type: 'text' },
+  { key: 'ip_address', label: 'ip_address', type: 'text' },
+  { key: 'fingerprint', label: 'fingerprint', type: 'text' },
+  { key: 'cargo_codigo', label: 'cargo_codigo', type: 'text' },
+  { key: 'carteira', label: 'carteira (JSON)', type: 'json' },
+  { key: 'preco_medio_compra', label: 'preco_medio_compra (JSON)', type: 'json' },
+  { key: 'proventos_por_ativo', label: 'proventos_por_ativo (JSON)', type: 'json' },
+  { key: 'plot_data', label: 'plot_data (JSON)', type: 'json' },
+  { key: 'fazendinha_dados', label: 'fazendinha_dados (JSON)', type: 'json' },
+  { key: 'historico', label: 'historico (JSON)', type: 'json' },
+  { key: 'itens', label: 'itens (JSON)', type: 'json' },
+  { key: 'historico_trocas', label: 'historico_trocas (JSON)', type: 'json' },
+  { key: 'codigos_resgate', label: 'codigos_resgate (JSON)', type: 'json' },
+  { key: 'codigos_usados', label: 'codigos_usados (JSON)', type: 'json' },
+  { key: 'meta', label: 'meta (JSON)', type: 'json' },
+];
+
+function openEdit(id) {
+  editingId = id;
+  const row = currentRows.find(r => r.id === id);
+  if (!row) return toast('Registro não encontrado', 'err');
+  $('modalTitle').textContent = `Editar #${id}`;
+  renderForm(row);
+  $('modalBg').classList.add('show');
+}
+
+function openNew() {
+  editingId = null;
+  $('modalTitle').textContent = 'Novo registro';
+  renderForm({});
+  $('modalBg').classList.add('show');
+}
+
+$('btnNew').onclick = openNew;
+
+function renderForm(row) {
+  $('formGrid').innerHTML = FIELDS.map(f => {
+    const val = row[f.key];
+    let input;
+    if (f.type === 'bool') {
+      input = `<select data-key="${f.key}">
+        <option value="">null</option>
+        <option value="true" ${val === true ? 'selected' : ''}>true</option>
+        <option value="false" ${val === false ? 'selected' : ''}>false</option>
+      </select>`;
+    } else if (f.type === 'json') {
+      const txt = val === null || val === undefined ? '' : JSON.stringify(val, null, 2);
+      input = `<textarea data-key="${f.key}" data-json="1">${esc(txt)}</textarea>`;
+    } else {
+      const v = val === null || val === undefined ? '' : esc(val);
+      input = `<input data-key="${f.key}" type="${f.type}" ${f.step ? `step="${f.step}"` : ''} value="${v}" />`;
+    }
+    return `<div class="field"><label>${f.label}</label>${input}</div>`;
+  }).join('');
+}
+
+function closeModal() {
+  $('modalBg').classList.remove('show');
+  editingId = null;
+}
+window.closeModal = closeModal;
+window.openEdit = openEdit;
+
+$('btnSave').onclick = async () => {
+  if (!sb) return toast('Conecte primeiro', 'err');
+  const payload = {};
+  document.querySelectorAll('#formGrid [data-key]').forEach(el => {
+    const key = el.dataset.key;
+    let v = el.value;
+    if (el.dataset.json) {
+      if (v.trim() === '') { payload[key] = null; return; }
+      try { payload[key] = JSON.parse(v); }
+      catch { throw toast(`JSON inválido em ${key}`, 'err'); }
+      return;
+    }
+    if (el.tagName === 'SELECT') {
+      payload[key] = v === '' ? null : v === 'true';
+      return;
+    }
+    if (el.type === 'number') {
+      payload[key] = v === '' ? null : Number(v);
+      return;
+    }
+    payload[key] = v === '' ? null : v;
+  });
+
+  let res;
+  if (editingId) {
+    res = await sb.from('Geral').update(payload).eq('id', editingId);
+  } else {
+    res = await sb.from('Geral').insert(payload);
+  }
+  if (res.error) return toast('Erro: ' + res.error.message, 'err');
+  toast('Salvo com sucesso', 'ok');
+  closeModal();
+  load();
+};
+
+async function delRow(id) {
+  if (!sb) return toast('Conecte primeiro', 'err');
+  if (!confirm(`Excluir registro #${id}?`)) return;
+  const { error } = await sb.from('Geral').delete().eq('id', id);
+  if (error) return toast('Erro: ' + error.message, 'err');
+  toast('Excluído', 'ok');
+  load();
+}
+window.delRow = delRow;
+
+// Auto-connect se quiser (opcional)
+// $('sbUrl').value = 'https://SEU_PROJETO.supabase.co';
+// $('sbKey').value = 'SUA_ANON_KEY';
+// $('btnConnect').click();
+</script>
+</body>
+</html>

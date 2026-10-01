@@ -1,0 +1,1639 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Cadastros | MM Quase Tudo</title>
+
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+
+    <!-- Supabase JS (CDN) -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+    <style>
+        /* ==================== RESET E BASE ==================== */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Inter', 'Segoe UI', sans-serif;
+        }
+
+        body {
+            min-height: 100vh;
+            background: linear-gradient(135deg, #001a33 0%, #000d1a 100%);
+            color: #e0e0e0;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* ==================== MENU ==================== */
+        .menu-container {
+            width: 100%;
+            background-color: rgb(0, 43, 173);
+            backdrop-filter: blur(8px);
+            border-bottom: 1px solid rgba(255, 215, 0, 0.2);
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.6);
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+        }
+
+        .navbar {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 0.9rem 2rem;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            flex-wrap: wrap;
+        }
+
+        .logo {
+            font-size: 1.8rem;
+            font-weight: 800;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+            color: #ffffff;
+            text-shadow: 0 0 10px rgba(255, 215, 0, 0.5);
+            display: flex;
+            align-items: center;
+            gap: 0.3rem;
+        }
+
+        .logo span { color: #f5c542; font-weight: 900; }
+        .logo i { color: #f5c542; font-size: 1.6rem; margin-right: 0.2rem; }
+
+        .nav-links {
+            display: flex;
+            align-items: center;
+            gap: 2.2rem;
+            list-style: none;
+            margin: 0;
+            padding: 0;
+        }
+
+        .nav-links li a {
+            text-decoration: none;
+            color: #d0d0d0;
+            font-weight: 600;
+            font-size: 1rem;
+            letter-spacing: 0.3px;
+            transition: all 0.2s ease;
+            padding: 0.5rem 0;
+            position: relative;
+            display: inline-flex;
+            align-items: center;
+        }
+
+        .nav-links li a i {
+            margin-right: 8px;
+            font-size: 0.95em;
+            color: #f5c542;
+            transition: color 0.2s ease, transform 0.2s ease;
+        }
+
+        .nav-links li a:hover i { color: #ffffff; transform: scale(1.1); }
+
+        .nav-links li a::after {
+            content: '';
+            position: absolute;
+            bottom: 0; left: 0;
+            width: 0; height: 2px;
+            background: #f5c542;
+            transition: width 0.25s ease;
+        }
+
+        .nav-links li a:hover { color: #ffffff; }
+        .nav-links li a:hover::after { width: 100%; }
+
+        .btn-discord {
+            background: linear-gradient(135deg, #f5c542 0%, #d4a017 100%);
+            border: none;
+            border-radius: 40px;
+            color: #0b0e14;
+            font-weight: 700;
+            font-size: 0.9rem;
+            padding: 0.7rem 1.6rem;
+            display: flex;
+            align-items: center;
+            gap: 0.6rem;
+            cursor: pointer;
+            transition: transform 0.2s, box-shadow 0.2s;
+            box-shadow: 0 0 15px rgba(245, 197, 66, 0.3);
+            text-decoration: none;
+            letter-spacing: 0.3px;
+            white-space: nowrap;
+        }
+
+        .btn-discord i { font-size: 1.1rem; }
+
+        .btn-discord:hover {
+            transform: scale(1.03);
+            box-shadow: 0 0 25px rgba(245, 197, 66, 0.6);
+            background: linear-gradient(135deg, #f7d25c 0%, #e0b020 100%);
+        }
+
+        .menu-toggle {
+            display: none;
+            background: transparent;
+            border: none;
+            color: #f5c542;
+            font-size: 1.8rem;
+            cursor: pointer;
+            padding: 0.3rem 0.6rem;
+        }
+
+        /* ==================== HERO ==================== */
+        .admin-hero {
+            text-align: center;
+            padding: 40px 20px 20px;
+            max-width: 900px;
+            margin: 0 auto;
+        }
+
+        .admin-hero h1 {
+            font-size: 2.4rem;
+            color: #ffffff;
+            font-weight: 800;
+            letter-spacing: 1px;
+            text-shadow: 0 0 15px rgba(245, 197, 66, 0.4);
+            margin-bottom: 10px;
+        }
+
+        .admin-hero h1 i { color: #f5c542; margin-right: 12px; }
+
+        .admin-hero p {
+            color: #a0b4d0;
+            font-size: 1rem;
+            line-height: 1.6;
+        }
+
+        /* ==================== DASHBOARD STATS ==================== */
+        .stats-grid {
+            max-width: 1400px;
+            width: 100%;
+            margin: 0 auto;
+            padding: 20px 20px 0;
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 18px;
+        }
+
+        .stat-card {
+            background: #1e293b;
+            border: 1px solid #334155;
+            border-radius: 14px;
+            padding: 20px;
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.3);
+            transition: transform 0.2s, border-color 0.2s;
+        }
+
+        .stat-card:hover {
+            transform: translateY(-3px);
+            border-color: #f5c542;
+        }
+
+        .stat-card .icone {
+            width: 52px;
+            height: 52px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            flex-shrink: 0;
+        }
+
+        .stat-card .icone.azul { background: rgba(59, 130, 246, 0.15); color: #60a5fa; }
+        .stat-card .icone.amarelo { background: rgba(245, 197, 66, 0.15); color: #f5c542; }
+        .stat-card .icone.verde { background: rgba(34, 197, 94, 0.15); color: #4ade80; }
+        .stat-card .icone.vermelho { background: rgba(239, 68, 68, 0.15); color: #f87171; }
+
+        .stat-card .info .valor {
+            font-size: 1.8rem;
+            font-weight: 800;
+            color: #f1f5f9;
+            line-height: 1.1;
+        }
+
+        .stat-card .info .rotulo {
+            font-size: 0.82rem;
+            color: #94a3b8;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        /* ==================== TOOLBAR ==================== */
+        .toolbar {
+            max-width: 1400px;
+            width: 100%;
+            margin: 0 auto;
+            padding: 20px;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 14px;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .filtros {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 12px;
+            align-items: center;
+        }
+
+        .filtros select,
+        .filtros input {
+            background: #1e293b;
+            border: 1px solid #334155;
+            border-radius: 8px;
+            color: #f1f5f9;
+            padding: 10px 14px;
+            font-size: 0.9rem;
+            outline: none;
+            transition: border-color 0.2s;
+            font-family: inherit;
+        }
+
+        .filtros select:focus,
+        .filtros input:focus {
+            border-color: #3b82f6;
+        }
+
+        .filtros input { min-width: 240px; }
+
+        .btn-atualizar {
+            background: #1e293b;
+            border: 1px solid #334155;
+            border-radius: 8px;
+            color: #f5c542;
+            padding: 10px 16px;
+            font-size: 0.9rem;
+            font-weight: 600;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            transition: all 0.2s;
+        }
+
+        .btn-atualizar:hover {
+            border-color: #f5c542;
+            background: #263449;
+        }
+
+        .btn-atualizar .fa-rotate.loading {
+            animation: spin 0.8s linear infinite;
+        }
+
+        @keyframes spin { to { transform: rotate(360deg); } }
+
+        /* ==================== TABELA ==================== */
+        .tabela-wrapper {
+            max-width: 1400px;
+            width: 100%;
+            margin: 0 auto;
+            padding: 0 20px 60px;
+            flex: 1;
+        }
+
+        .tabela-card {
+            background: #1e293b;
+            border: 1px solid #334155;
+            border-radius: 16px;
+            overflow: hidden;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+        }
+
+        .tabela-header {
+            padding: 18px 24px;
+            border-bottom: 1px solid #334155;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+
+        .tabela-header h2 {
+            color: #f1f5f9;
+            font-size: 1.15rem;
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .tabela-header h2 i { color: #f5c542; }
+
+        .tabela-header .contador {
+            color: #94a3b8;
+            font-size: 0.85rem;
+        }
+
+        .tabela-scroll {
+            overflow-x: auto;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            min-width: 1000px;
+        }
+
+        thead th {
+            background: #0f172a;
+            color: #94a3b8;
+            font-size: 0.78rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.6px;
+            padding: 14px 16px;
+            text-align: left;
+            border-bottom: 1px solid #334155;
+            white-space: nowrap;
+        }
+
+        tbody tr {
+            border-bottom: 1px solid #2a3648;
+            transition: background 0.15s;
+            cursor: pointer;
+        }
+
+        tbody tr:hover { background: #263449; }
+        tbody tr:last-child { border-bottom: none; }
+
+        tbody td {
+            padding: 14px 16px;
+            font-size: 0.88rem;
+            color: #cbd5e1;
+            vertical-align: middle;
+        }
+
+        .td-id { color: #f5c542; font-weight: 700; }
+        .td-login { color: #f1f5f9; font-weight: 600; }
+
+        .badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+            font-size: 0.72rem;
+            font-weight: 700;
+            padding: 4px 10px;
+            border-radius: 20px;
+            text-transform: uppercase;
+            letter-spacing: 0.4px;
+            white-space: nowrap;
+        }
+
+        .badge::before {
+            content: '';
+            width: 7px; height: 7px;
+            border-radius: 50%;
+            background: currentColor;
+        }
+
+        .badge.ativo { background: rgba(34, 197, 94, 0.15); color: #4ade80; border: 1px solid rgba(34, 197, 94, 0.4); }
+        .badge.bloqueado { background: rgba(239, 68, 68, 0.15); color: #f87171; border: 1px solid rgba(239, 68, 68, 0.4); }
+        .badge.cadeado { background: rgba(245, 197, 66, 0.15); color: #f5c542; border: 1px solid rgba(245, 197, 66, 0.4); }
+
+        .acoes {
+            display: flex;
+            gap: 6px;
+        }
+
+        .btn-acao {
+            width: 34px; height: 34px;
+            border-radius: 8px;
+            border: 1px solid #334155;
+            background: #0f172a;
+            color: #cbd5e1;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.85rem;
+            transition: all 0.2s;
+        }
+
+        .btn-acao:hover { border-color: #f5c542; color: #f5c542; }
+        .btn-acao.excluir:hover { border-color: #ef4444; color: #ef4444; }
+
+        /* Estado vazio / loading */
+        .estado-vazio {
+            padding: 60px 20px;
+            text-align: center;
+            color: #64748b;
+        }
+
+        .estado-vazio i { font-size: 3rem; margin-bottom: 14px; color: #334155; }
+        .estado-vazio p { font-size: 1rem; }
+
+        /* ==================== MODAL ==================== */
+        .modal-overlay {
+            position: fixed;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.7);
+            backdrop-filter: blur(4px);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            z-index: 2000;
+            padding: 20px;
+        }
+
+        .modal-overlay.show { display: flex; }
+
+        .modal {
+            background: #1e293b;
+            border: 1px solid #334155;
+            border-radius: 16px;
+            width: 100%;
+            max-width: 760px;
+            max-height: 90vh;
+            overflow-y: auto;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.6);
+            animation: modalIn 0.25s ease;
+        }
+
+        @keyframes modalIn {
+            from { opacity: 0; transform: translateY(20px) scale(0.98); }
+            to { opacity: 1; transform: translateY(0) scale(1); }
+        }
+
+        .modal-header {
+            padding: 20px 24px;
+            border-bottom: 1px solid #334155;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 12px;
+            position: sticky;
+            top: 0;
+            background: #1e293b;
+            z-index: 2;
+        }
+
+        .modal-header h2 {
+            font-size: 1.2rem;
+            color: #f1f5f9;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .modal-header h2 i { color: #f5c542; }
+
+        .btn-fechar {
+            background: transparent;
+            border: none;
+            color: #94a3b8;
+            font-size: 1.4rem;
+            cursor: pointer;
+            width: 36px; height: 36px;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.2s;
+        }
+
+        .btn-fechar:hover { background: #334155; color: #f1f5f9; }
+
+        .modal-body { padding: 24px; }
+
+        /* Abas */
+        .abas {
+            display: flex;
+            gap: 6px;
+            border-bottom: 1px solid #334155;
+            margin-bottom: 20px;
+            overflow-x: auto;
+        }
+
+        .aba {
+            background: transparent;
+            border: none;
+            color: #94a3b8;
+            font-size: 0.85rem;
+            font-weight: 700;
+            padding: 10px 14px;
+            cursor: pointer;
+            border-bottom: 2px solid transparent;
+            white-space: nowrap;
+            transition: all 0.2s;
+            font-family: inherit;
+        }
+
+        .aba:hover { color: #e2e8f0; }
+
+        .aba.ativa {
+            color: #f5c542;
+            border-bottom-color: #f5c542;
+        }
+
+        .painel { display: none; }
+        .painel.ativo { display: block; }
+
+        .detalhe-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 14px;
+            margin-bottom: 18px;
+        }
+
+        .detalhe-item {
+            background: #0f172a;
+            border: 1px solid #334155;
+            border-radius: 10px;
+            padding: 12px 14px;
+        }
+
+        .detalhe-item .rotulo {
+            font-size: 0.72rem;
+            color: #64748b;
+            text-transform: uppercase;
+            font-weight: 700;
+            letter-spacing: 0.5px;
+            margin-bottom: 4px;
+        }
+
+        .detalhe-item .valor {
+            color: #f1f5f9;
+            font-size: 0.92rem;
+            font-weight: 600;
+            word-break: break-word;
+        }
+
+        .detalhe-item.full { grid-column: 1 / -1; }
+
+        .detalhe-item .valor.mono {
+            font-family: 'Courier New', monospace;
+            font-size: 0.78rem;
+            color: #94a3b8;
+            word-break: break-all;
+        }
+
+        /* Formulário dentro do modal */
+        .campo-acao {
+            margin-bottom: 14px;
+        }
+
+        .campo-acao label {
+            display: block;
+            color: #94a3b8;
+            font-size: 0.78rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 6px;
+        }
+
+        .campo-acao input,
+        .campo-acao select,
+        .campo-acao textarea {
+            width: 100%;
+            background: #0f172a;
+            border: 1px solid #334155;
+            border-radius: 8px;
+            color: #f1f5f9;
+            padding: 10px 12px;
+            font-size: 0.9rem;
+            outline: none;
+            font-family: inherit;
+            transition: border-color 0.2s;
+        }
+
+        .campo-acao textarea { resize: vertical; min-height: 80px; }
+
+        .campo-acao input:focus,
+        .campo-acao select:focus,
+        .campo-acao textarea:focus { border-color: #3b82f6; }
+
+        .campo-acao input:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+        }
+
+        .form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 14px;
+        }
+
+        .form-row-3 {
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr;
+            gap: 14px;
+        }
+
+        .modal-footer {
+            display: flex;
+            gap: 12px;
+            justify-content: flex-end;
+            flex-wrap: wrap;
+            padding: 0 24px 24px;
+        }
+
+        .btn {
+            border: none;
+            border-radius: 8px;
+            padding: 11px 20px;
+            font-size: 0.9rem;
+            font-weight: 700;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            transition: all 0.2s;
+            font-family: inherit;
+        }
+
+        .btn-primario {
+            background: linear-gradient(135deg, #3b82f6, #2563eb);
+            color: #fff;
+        }
+
+        .btn-primario:hover { box-shadow: 0 0 20px rgba(59, 130, 246, 0.5); transform: scale(1.02); }
+
+        .btn-secundario {
+            background: #334155;
+            color: #e2e8f0;
+        }
+
+        .btn-secundario:hover { background: #475569; }
+
+        .btn-perigo {
+            background: rgba(239, 68, 68, 0.15);
+            color: #f87171;
+            border: 1px solid rgba(239, 68, 68, 0.4);
+        }
+
+        .btn-perigo:hover { background: rgba(239, 68, 68, 0.25); }
+
+        .btn-aviso {
+            background: rgba(245, 197, 66, 0.15);
+            color: #f5c542;
+            border: 1px solid rgba(245, 197, 66, 0.4);
+        }
+
+        .btn-aviso:hover { background: rgba(245, 197, 66, 0.25); }
+
+        .btn:disabled { opacity: 0.6; cursor: not-allowed; transform: none; }
+
+        /* ==================== TOAST ==================== */
+        .toast {
+            position: fixed;
+            bottom: 24px;
+            right: 24px;
+            background: #1e293b;
+            border: 1px solid #334155;
+            border-left: 4px solid #3b82f6;
+            border-radius: 10px;
+            padding: 14px 18px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+            transform: translateX(150%);
+            transition: transform 0.3s ease;
+            z-index: 3000;
+            max-width: 380px;
+        }
+
+        .toast.show { transform: translateX(0); }
+        .toast.sucesso { border-left-color: #22c55e; }
+        .toast.erro { border-left-color: #ef4444; }
+
+        .toast i { font-size: 1.2rem; }
+        .toast.sucesso i { color: #4ade80; }
+        .toast.erro i { color: #f87171; }
+        .toast .texto { font-size: 0.88rem; color: #e2e8f0; }
+
+        /* Loading spinner */
+        .loading {
+            display: inline-block;
+            width: 14px; height: 14px;
+            border: 2px solid rgba(255,255,255,0.3);
+            border-top-color: #fff;
+            border-radius: 50%;
+            animation: spin 0.6s linear infinite;
+            vertical-align: middle;
+            margin-right: 6px;
+        }
+
+        /* ==================== RESPONSIVIDADE ==================== */
+        @media (max-width: 1024px) {
+            .navbar { padding: 0.8rem 1.5rem; }
+            .nav-links { gap: 1.5rem; }
+            .btn-discord { padding: 0.6rem 1.2rem; font-size: 0.85rem; }
+            .stats-grid { grid-template-columns: repeat(2, 1fr); }
+            .form-row-3 { grid-template-columns: 1fr 1fr; }
+        }
+
+        @media (max-width: 860px) {
+            .nav-links {
+                display: none;
+                width: 100%;
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 1rem;
+                padding: 1.5rem 0 0.5rem 0;
+                border-top: 1px solid rgba(255, 215, 0, 0.15);
+                margin-top: 1rem;
+            }
+
+            .nav-links.active { display: flex; }
+            .nav-links li { width: 100%; }
+            .nav-links li a { display: flex; width: 100%; padding: 0.6rem 0; font-size: 1.1rem; }
+            .menu-toggle { display: block; }
+            .navbar { justify-content: space-between; }
+            .btn-discord { margin-left: auto; margin-right: 1rem; }
+
+            .admin-hero h1 { font-size: 1.9rem; }
+            .detalhe-grid { grid-template-columns: 1fr; }
+            .form-row, .form-row-3 { grid-template-columns: 1fr; }
+        }
+
+        @media (max-width: 480px) {
+            .navbar { padding: 0.7rem 1rem; }
+            .logo { font-size: 1.5rem; }
+            .logo i { font-size: 1.3rem; }
+            .btn-discord { padding: 0.5rem 1rem; font-size: 0.8rem; }
+            .btn-discord span { display: none; }
+            .btn-discord i { font-size: 1.2rem; margin: 0; }
+            .admin-hero h1 { font-size: 1.5rem; }
+            .stats-grid { grid-template-columns: 1fr; }
+            .filtros { width: 100%; }
+            .filtros select, .filtros input { width: 100%; }
+            .toast { left: 16px; right: 16px; max-width: none; }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- ==================== MENU PRINCIPAL ==================== -->
+    <div class="menu-container">
+        <nav class="navbar">
+            <div class="logo">
+                <i class="fas fa-cow"></i>
+                MM<span>Quase Tudo</span>
+            </div>
+
+            <button class="menu-toggle" id="menuToggle" aria-label="Abrir menu">
+                <i class="fas fa-bars"></i>
+            </button>
+
+            <ul class="nav-links" id="navLinks">
+                <li><a href="./index.html"><i class="fas fa-house"></i> Início</a></li>
+                <li><a href="./noticias.html"><i class="fas fa-newspaper"></i> Notícias</a></li>
+                <li><a href="./jogos/ranking/ranking002.html"><i class="fas fa-trophy"></i> Classificações</a></li>
+                <li><a href="./eventos.html"><i class="fas fa-calendar-days"></i> Eventos</a></li>
+                <li><a href="./download.html"><i class="fas fa-download"></i> Downloads</a></li>
+                <li><a href="./suporte.html"><i class="fas fa-headset"></i> Suporte</a></li>
+                <li><a href="./adm_suporte.html"><i class="fas fa-shield-halved"></i> Admin Suporte</a></li>
+                <li><a href="./adm_cadastro.html"><i class="fas fa-users-gear"></i> Admin Cadastros</a></li>
+                <li><a href="./loja.html"><i class="fas fa-cart-shopping"></i> Loja</a></li>
+                <li><a href="./cadastro.html"><i class="fas fa-user-plus"></i> Cadastro</a></li>
+                <li><a href="./login.html"><i class="fas fa-sign-in-alt"></i> Login</a></li>
+            </ul>
+
+            <a href="https://discord.gg/ATtu4z9Ewt" class="btn-discord" target="_blank" rel="noopener">
+                <i class="fab fa-discord"></i>
+                <span>Jogue Agora</span>
+            </a>
+        </nav>
+    </div>
+
+    <!-- ==================== HERO ==================== -->
+    <section class="admin-hero">
+        <h1><i class="fas fa-users-gear"></i>Painel de Cadastros</h1>
+        <p>Gerencie todas as contas registradas na tabela <strong>Geral</strong>.</p>
+    </section>
+
+    <!-- ==================== STATS ==================== -->
+    <section class="stats-grid">
+        <div class="stat-card">
+            <div class="icone azul"><i class="fas fa-users"></i></div>
+            <div class="info">
+                <div class="valor" id="statTotal">0</div>
+                <div class="rotulo">Total</div>
+            </div>
+        </div>
+        <div class="stat-card">
+            <div class="icone verde"><i class="fas fa-user-check"></i></div>
+            <div class="info">
+                <div class="valor" id="statAtivos">0</div>
+                <div class="rotulo">Ativos</div>
+            </div>
+        </div>
+        <div class="stat-card">
+            <div class="icone vermelho"><i class="fas fa-user-lock"></i></div>
+            <div class="info">
+                <div class="valor" id="statBloqueados">0</div>
+                <div class="rotulo">Bloqueados</div>
+            </div>
+        </div>
+        <div class="stat-card">
+            <div class="icone amarelo"><i class="fas fa-coins"></i></div>
+            <div class="info">
+                <div class="valor" id="statSaldo">0</div>
+                <div class="rotulo">Saldo Total</div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ==================== TOOLBAR ==================== -->
+    <section class="toolbar">
+        <div class="filtros">
+            <select id="filtroStatus">
+                <option value="">Todos os status</option>
+                <option value="ativo">Ativos</option>
+                <option value="bloqueado">Bloqueados</option>
+                <option value="cadeado">Com cadeado</option>
+            </select>
+
+            <select id="filtroNivel">
+                <option value="">Todos os níveis</option>
+                <option value="1-10">Nível 1 - 10</option>
+                <option value="11-30">Nível 11 - 30</option>
+                <option value="31-60">Nível 31 - 60</option>
+                <option value="61-100">Nível 61 - 100</option>
+                <option value="101+">Nível 101+</option>
+            </select>
+
+            <input type="text" id="busca" placeholder="Buscar por ID, login, MAC, IP...">
+        </div>
+
+        <button class="btn-atualizar" id="btnAtualizar">
+            <i class="fas fa-rotate" id="iconeAtualizar"></i>
+            <span>Atualizar</span>
+        </button>
+    </section>
+
+    <!-- ==================== TABELA ==================== -->
+    <section class="tabela-wrapper">
+        <div class="tabela-card">
+            <div class="tabela-header">
+                <h2><i class="fas fa-list"></i> Usuários</h2>
+                <span class="contador" id="contador">0 usuários</span>
+            </div>
+
+            <div class="tabela-scroll">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Login</th>
+                            <th>Nível</th>
+                            <th>Saldo</th>
+                            <th>Status</th>
+                            <th>IP</th>
+                            <th>MAC</th>
+                            <th>Ações</th>
+                        </tr>
+                    </thead>
+                    <tbody id="corpoTabela">
+                        <!-- Preenchido via JS -->
+                    </tbody>
+                </table>
+            </div>
+
+            <div class="estado-vazio" id="estadoVazio" style="display: none;">
+                <i class="fas fa-inbox"></i>
+                <p>Nenhum usuário encontrado.</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- ==================== MODAL ==================== -->
+    <div class="modal-overlay" id="modalOverlay">
+        <div class="modal">
+            <div class="modal-header">
+                <h2><i class="fas fa-user"></i> Usuário <span id="modalId">#</span></h2>
+                <button class="btn-fechar" id="btnFecharModal">
+                    <i class="fas fa-xmark"></i>
+                </button>
+            </div>
+
+            <div class="modal-body">
+                <!-- Abas -->
+                <div class="abas">
+                    <button class="aba ativa" data-aba="conta"><i class="fas fa-id-card"></i> Conta</button>
+                    <button class="aba" data-aba="atributos"><i class="fas fa-heart-pulse"></i> Atributos</button>
+                    <button class="aba" data-aba="dispositivo"><i class="fas fa-mobile-screen"></i> Dispositivo</button>
+                    <button class="aba" data-aba="editar"><i class="fas fa-pen"></i> Editar</button>
+                </div>
+
+                <!-- Aba: Conta -->
+                <div class="painel ativo" id="painel-conta">
+                    <div class="detalhe-grid">
+                        <div class="detalhe-item">
+                            <div class="rotulo">ID</div>
+                            <div class="valor" id="detId">—</div>
+                        </div>
+                        <div class="detalhe-item">
+                            <div class="rotulo">Login</div>
+                            <div class="valor" id="detLogin">—</div>
+                        </div>
+                        <div class="detalhe-item">
+                            <div class="rotulo">Saldo</div>
+                            <div class="valor" id="detSaldo">—</div>
+                        </div>
+                        <div class="detalhe-item">
+                            <div class="rotulo">Poupança</div>
+                            <div class="valor" id="detPoupanca">—</div>
+                        </div>
+                        <div class="detalhe-item">
+                            <div class="rotulo">Proventos Pendentes</div>
+                            <div class="valor" id="detProventos">—</div>
+                        </div>
+                        <div class="detalhe-item">
+                            <div class="rotulo">Criado em</div>
+                            <div class="valor" id="detCriado">—</div>
+                        </div>
+                        <div class="detalhe-item">
+                            <div class="rotulo">Bloqueado</div>
+                            <div class="valor" id="detBloqueado">—</div>
+                        </div>
+                        <div class="detalhe-item">
+                            <div class="rotulo">Cadeado</div>
+                            <div class="valor" id="detCadeado">—</div>
+                        </div>
+                        <div class="detalhe-item full">
+                            <div class="rotulo">Carteira (JSON)</div>
+                            <div class="valor mono" id="detCarteira">—</div>
+                        </div>
+                        <div class="detalhe-item full">
+                            <div class="rotulo">Itens (JSON)</div>
+                            <div class="valor mono" id="detItens">—</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Aba: Atributos -->
+                <div class="painel" id="painel-atributos">
+                    <div class="detalhe-grid">
+                        <div class="detalhe-item">
+                            <div class="rotulo">Nível</div>
+                            <div class="valor" id="detNivel">—</div>
+                        </div>
+                        <div class="detalhe-item">
+                            <div class="rotulo">Experiência</div>
+                            <div class="valor" id="detExp">—</div>
+                        </div>
+                        <div class="detalhe-item">
+                            <div class="rotulo">HP</div>
+                            <div class="valor" id="detHp">—</div>
+                        </div>
+                        <div class="detalhe-item">
+                            <div class="rotulo">MP</div>
+                            <div class="valor" id="detMp">—</div>
+                        </div>
+                        <div class="detalhe-item">
+                            <div class="rotulo">SM</div>
+                            <div class="valor" id="detSm">—</div>
+                        </div>
+                        <div class="detalhe-item">
+                            <div class="rotulo">Ataque (ATK)</div>
+                            <div class="valor" id="detAtk">—</div>
+                        </div>
+                        <div class="detalhe-item">
+                            <div class="rotulo">Defesa (DEF)</div>
+                            <div class="valor" id="detDef">—</div>
+                        </div>
+                        <div class="detalhe-item">
+                            <div class="rotulo">Magia (MAG)</div>
+                            <div class="valor" id="detMag">—</div>
+                        </div>
+                        <div class="detalhe-item">
+                            <div class="rotulo">Seeds</div>
+                            <div class="valor" id="detSeeds">—</div>
+                        </div>
+                        <div class="detalhe-item">
+                            <div class="rotulo">Mumu</div>
+                            <div class="valor" id="detMumu">—</div>
+                        </div>
+                        <div class="detalhe-item">
+                            <div class="rotulo">Total Upgrades</div>
+                            <div class="valor" id="detUpgrades">—</div>
+                        </div>
+                        <div class="detalhe-item">
+                            <div class="rotulo">Stock</div>
+                            <div class="valor" id="detStock">—</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Aba: Dispositivo -->
+                <div class="painel" id="painel-dispositivo">
+                    <div class="detalhe-grid">
+                        <div class="detalhe-item full">
+                            <div class="rotulo">Fingerprint</div>
+                            <div class="valor mono" id="detFingerprint">—</div>
+                        </div>
+                        <div class="detalhe-item full">
+                            <div class="rotulo">MAC Address</div>
+                            <div class="valor mono" id="detMac">—</div>
+                        </div>
+                        <div class="detalhe-item full">
+                            <div class="rotulo">IP Address</div>
+                            <div class="valor mono" id="detIp">—</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Aba: Editar -->
+                <div class="painel" id="painel-editar">
+                    <div class="form-row">
+                        <div class="campo-acao">
+                            <label for="editLogin">Login</label>
+                            <input type="text" id="editLogin" maxlength="20">
+                        </div>
+                        <div class="campo-acao">
+                            <label for="editSenha">Nova Senha (deixe vazio para manter)</label>
+                            <input type="text" id="editSenha" placeholder="Nova senha em texto puro">
+                        </div>
+                    </div>
+
+                    <div class="form-row-3">
+                        <div class="campo-acao">
+                            <label for="editNivel">Nível</label>
+                            <input type="number" id="editNivel" min="1">
+                        </div>
+                        <div class="campo-acao">
+                            <label for="editExp">Experiência</label>
+                            <input type="number" id="editExp" min="0">
+                        </div>
+                        <div class="campo-acao">
+                            <label for="editExpProximo">Exp Próximo</label>
+                            <input type="number" id="editExpProximo" min="1">
+                        </div>
+                    </div>
+
+                    <div class="form-row-3">
+                        <div class="campo-acao">
+                            <label for="editSaldo">Saldo</label>
+                            <input type="number" id="editSaldo" min="0" step="0.01">
+                        </div>
+                        <div class="campo-acao">
+                            <label for="editPoupanca">Poupança</label>
+                            <input type="number" id="editPoupanca" min="0" step="0.01">
+                        </div>
+                        <div class="campo-acao">
+                            <label for="editProventos">Proventos Pendentes</label>
+                            <input type="number" id="editProventos" min="0" step="0.01">
+                        </div>
+                    </div>
+
+                    <div class="form-row-3">
+                        <div class="campo-acao">
+                            <label for="editHp">HP</label>
+                            <input type="number" id="editHp" min="0">
+                        </div>
+                        <div class="campo-acao">
+                            <label for="editMaxHp">Max HP</label>
+                            <input type="number" id="editMaxHp" min="0">
+                        </div>
+                        <div class="campo-acao">
+                            <label for="editAtk">ATK</label>
+                            <input type="number" id="editAtk" min="0">
+                        </div>
+                    </div>
+
+                    <div class="form-row-3">
+                        <div class="campo-acao">
+                            <label for="editDef">DEF</label>
+                            <input type="number" id="editDef" min="0">
+                        </div>
+                        <div class="campo-acao">
+                            <label for="editMag">MAG</label>
+                            <input type="number" id="editMag" min="0">
+                        </div>
+                        <div class="campo-acao">
+                            <label for="editSeeds">Seeds</label>
+                            <input type="number" id="editSeeds" min="0">
+                        </div>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="campo-acao">
+                            <label for="editBloqueado">Bloqueado</label>
+                            <select id="editBloqueado">
+                                <option value="false">Não</option>
+                                <option value="true">Sim</option>
+                            </select>
+                        </div>
+                        <div class="campo-acao">
+                            <label for="editCadeado">Cadeado</label>
+                            <select id="editCadeado">
+                                <option value="false">Não</option>
+                                <option value="true">Sim</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="modal-footer">
+                <button class="btn btn-perigo" id="btnExcluirUsuario">
+                    <i class="fas fa-trash"></i> Excluir
+                </button>
+                <button class="btn btn-aviso" id="btnResetarSenha">
+                    <i class="fas fa-key"></i> Resetar senha
+                </button>
+                <button class="btn btn-secundario" id="btnCancelarModal">
+                    <i class="fas fa-xmark"></i> Fechar
+                </button>
+                <button class="btn btn-primario" id="btnSalvarUsuario">
+                    <i class="fas fa-floppy-disk"></i> Salvar alterações
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- ==================== TOAST ==================== -->
+    <div class="toast" id="toast">
+        <i class="fas fa-circle-check" id="toastIcone"></i>
+        <span class="texto" id="toastTexto">Mensagem</span>
+    </div>
+
+    <!-- ==================== JAVASCRIPT ==================== -->
+    <script>
+        /* ==================== CONFIGURAÇÃO SUPABASE ==================== */
+        const SUPABASE_URL = 'https://xrcxvizzdumcxbylmkvn.supabase.co';
+        const SUPABASE_ANON_KEY = 'sb_publishable_E-g3G3wW4EySbCsXLXp8KQ_FnmERMcD';
+        const TABELA = 'Geral';
+
+        const supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+        /* ==================== MENU TOGGLE ==================== */
+        const menuToggle = document.getElementById('menuToggle');
+        const navLinks = document.getElementById('navLinks');
+
+        menuToggle.addEventListener('click', () => {
+            navLinks.classList.toggle('active');
+            const icon = menuToggle.querySelector('i');
+            icon.classList.toggle('fa-bars');
+            icon.classList.toggle('fa-times');
+        });
+
+        navLinks.querySelectorAll('a').forEach(link => {
+            link.addEventListener('click', () => {
+                if (window.innerWidth <= 860) {
+                    navLinks.classList.remove('active');
+                    const icon = menuToggle.querySelector('i');
+                    icon.classList.add('fa-bars');
+                    icon.classList.remove('fa-times');
+                }
+            });
+        });
+
+        /* ==================== ESTADO GLOBAL ==================== */
+        let todosUsuarios = [];
+        let usuarioAtual = null;
+
+        /* ==================== REFERÊNCIAS DOM ==================== */
+        const corpoTabela = document.getElementById('corpoTabela');
+        const estadoVazio = document.getElementById('estadoVazio');
+        const contador = document.getElementById('contador');
+        const filtroStatus = document.getElementById('filtroStatus');
+        const filtroNivel = document.getElementById('filtroNivel');
+        const busca = document.getElementById('busca');
+        const btnAtualizar = document.getElementById('btnAtualizar');
+        const iconeAtualizar = document.getElementById('iconeAtualizar');
+
+        const modalOverlay = document.getElementById('modalOverlay');
+        const modalId = document.getElementById('modalId');
+
+        const toast = document.getElementById('toast');
+        const toastIcone = document.getElementById('toastIcone');
+        const toastTexto = document.getElementById('toastTexto');
+
+        /* ==================== UTILITÁRIOS ==================== */
+        function mostrarToast(tipo, texto) {
+            toast.classList.remove('show', 'sucesso', 'erro');
+            toast.classList.add(tipo === 'sucesso' ? 'sucesso' : 'erro');
+            toastIcone.className = tipo === 'sucesso'
+                ? 'fas fa-circle-check'
+                : 'fas fa-circle-exclamation';
+            toastTexto.textContent = texto;
+            toast.classList.add('show');
+
+            setTimeout(() => toast.classList.remove('show'), 4000);
+        }
+
+        function formatarData(isoString) {
+            if (!isoString) return '—';
+            try {
+                const data = new Date(isoString);
+                return data.toLocaleString('pt-BR', {
+                    day: '2-digit',
+                    month: '2-digit',
+                    year: 'numeric',
+                    hour: '2-digit',
+                    minute: '2-digit'
+                });
+            } catch {
+                return isoString;
+            }
+        }
+
+        function formatarMoeda(valor) {
+            if (valor === null || valor === undefined) return '—';
+            const n = Number(valor);
+            if (isNaN(n)) return '—';
+            return n.toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+        }
+
+        function escapeHtml(str) {
+            if (!str) return '';
+            const div = document.createElement('div');
+            div.textContent = str;
+            return div.innerHTML;
+        }
+
+        /* ==================== CARREGAR USUÁRIOS ==================== */
+        async function carregarUsuarios() {
+            iconeAtualizar.classList.add('loading');
+            btnAtualizar.disabled = true;
+
+            try {
+                const { data, error } = await supabaseClient
+                    .from(TABELA)
+                    .select('*')
+                    .order('id', { ascending: false });
+
+                if (error) throw error;
+
+                todosUsuarios = data || [];
+                aplicarFiltros();
+
+            } catch (err) {
+                console.error('[Admin Cadastros] Erro ao carregar:', err);
+                mostrarToast('erro', 'Erro ao carregar usuários: ' + err.message);
+                corpoTabela.innerHTML = '';
+                estadoVazio.style.display = 'block';
+                contador.textContent = '0 usuários';
+            } finally {
+                iconeAtualizar.classList.remove('loading');
+                btnAtualizar.disabled = false;
+            }
+        }
+
+        /* ==================== FILTROS ==================== */
+        function aplicarFiltros() {
+            const status = filtroStatus.value;
+            const faixaNivel = filtroNivel.value;
+            const termo = busca.value.trim().toLowerCase();
+
+            let filtrados = todosUsuarios.filter(u => {
+                // Status
+                if (status === 'ativo' && (u.bloqueado === true)) return false;
+                if (status === 'bloqueado' && (u.bloqueado !== true)) return false;
+                if (status === 'cadeado' && (u.cadeado !== true)) return false;
+
+                // Faixa de nível
+                if (faixaNivel) {
+                    const n = Number(u.nivel) || 0;
+                    if (faixaNivel === '1-10' && !(n >= 1 && n <= 10)) return false;
+                    if (faixaNivel === '11-30' && !(n >= 11 && n <= 30)) return false;
+                    if (faixaNivel === '31-60' && !(n >= 31 && n <= 60)) return false;
+                    if (faixaNivel === '61-100' && !(n >= 61 && n <= 100)) return false;
+                    if (faixaNivel === '101+' && !(n >= 101)) return false;
+                }
+
+                // Busca textual
+                if (termo) {
+                    const alvo = [
+                        u.id,
+                        u.login,
+                        u.mac_address,
+                        u.ip_address,
+                        u.fingerprint
+                    ].filter(Boolean).join(' ').toLowerCase();
+
+                    if (!alvo.includes(termo)) return false;
+                }
+
+                return true;
+            });
+
+            renderizarTabela(filtrados);
+            atualizarStats();
+        }
+
+        /* ==================== RENDERIZAR TABELA ==================== */
+        function renderizarTabela(usuarios) {
+            corpoTabela.innerHTML = '';
+
+            if (!usuarios.length) {
+                estadoVazio.style.display = 'block';
+                contador.textContent = '0 usuários';
+                return;
+            }
+
+            estadoVazio.style.display = 'none';
+            contador.textContent = `${usuarios.length} usuário${usuarios.length !== 1 ? 's' : ''}`;
+
+            usuarios.forEach(u => {
+                const tr = document.createElement('tr');
+                tr.dataset.id = u.id;
+
+                const statusBadge = u.bloqueado
+                    ? '<span class="badge bloqueado">Bloqueado</span>'
+                    : (u.cadeado
+                        ? '<span class="badge cadeado">Cadeado</span>'
+                        : '<span class="badge ativo">Ativo</span>');
+
+                const macCurto = u.mac_address && u.mac_address !== 'desconhecido'
+                    ? u.mac_address.substring(0, 17)
+                    : '—';
+
+                tr.innerHTML = `
+                    <td class="td-id">#${u.id}</td>
+                    <td class="td-login">${escapeHtml(u.login || '—')}</td>
+                    <td>${u.nivel ?? '—'}</td>
+                    <td>${formatarMoeda(u.saldo)}</td>
+                    <td>${statusBadge}</td>
+                    <td>${escapeHtml(u.ip_address || '—')}</td>
+                    <td>${escapeHtml(macCurto)}</td>
+                    <td>
+                        <div class="acoes">
+                            <button class="btn-acao abrir" title="Abrir usuário">
+                                <i class="fas fa-eye"></i>
+                            </button>
+                            <button class="btn-acao excluir" title="Excluir usuário" data-id="${u.id}">
+                                <i class="fas fa-trash"></i>
+                            </button>
+                        </div>
+                    </td>
+                `;
+
+                tr.addEventListener('click', (e) => {
+                    if (e.target.closest('.btn-acao.excluir')) return;
+                    abrirModal(u.id);
+                });
+
+                const btnExcluir = tr.querySelector('.btn-acao.excluir');
+                btnExcluir.addEventListener('click', async (e) => {
+                    e.stopPropagation();
+                    if (confirm(`Excluir o usuário #${u.id} (${u.login})? Essa ação não pode ser desfeita.`)) {
+                        await excluirUsuario(u.id);
+                    }
+                });
+
+                corpoTabela.appendChild(tr);
+            });
+        }
+
+        /* ==================== STATS ==================== */
+        function atualizarStats() {
+            const total = todosUsuarios.length;
+            const ativos = todosUsuarios.filter(u => !u.bloqueado).length;
+            const bloqueados = todosUsuarios.filter(u => u.bloqueado === true).length;
+            const saldoTotal = todosUsuarios.reduce((acc, u) => acc + (Number(u.saldo) || 0), 0);
+
+            document.getElementById('statTotal').textContent = total;
+            document.getElementById('statAtivos').textContent = ativos;
+            document.getElementById('statBloqueados').textContent = bloqueados;
+            document.getElementById('statSaldo').textContent = formatarMoeda(saldoTotal);
+        }
+
+        /* ==================== MODAL ==================== */
+        function abrirModal(id) {
+            const u = todosUsuarios.find(x => x.id === id);
+            if (!u) return;
+
+            usuarioAtual = u;
+            modalId.textContent = '#' + u.id;
+
+            // Aba Conta
+            document.getElementById('detId').textContent = u.id ?? '—';
+            document.getElementById('detLogin').textContent = u.login || '—';
+            document.getElementById('detSaldo').textContent = formatarMoeda(u.saldo);
+            document.getElementById('detPoupanca').textContent = formatarMoeda(u.saldo_poupanca);
+            document.getElementById('detProventos').textContent = formatarMoeda(u.proventos_pendentes);
+            document.getElementById('detCriado').textContent = formatarData(u.created_at);
+            document.getElementById('detBloqueado').textContent = u.bloqueado ? 'Sim' : 'Não';
+            document.getElementById('detCadeado').textContent = u.cadeado ? 'Sim' : 'Não';
+            document.getElementById('detCarteira').textContent = JSON.stringify(u.carteira || {}, null, 2);
+            document.getElementById('detItens').textContent = JSON.stringify(u.itens || [], null, 2);
+
+            // Aba Atributos
+            document.getElementById('detNivel').textContent = u.nivel ?? '—';
+            document.getElementById('detExp').textContent = u.experiencia ?? u.exp ?? '—';
+            document.getElementById('detHp').textContent = `${u.hp_atual ?? u.hp ?? '—'} / ${u.hp_max ?? u.max_hp ?? '—'}`;
+            document.getElementById('detMp').textContent = `${u.mp_atual ?? u.mp ?? '—'} / ${u.mp_max ?? u.max_mp ?? '—'}`;
+            document.getElementById('detSm').textContent = `${u.sm_atual ?? u.sm ?? '—'} / ${u.sm_max ?? u.max_sm ?? '—'}`;
+            document.getElementById('detAtk').textContent = u.atk ?? u.ataque_base ?? '—';
+            document.getElementById('detDef').textContent = u.def ?? u.defesa_base ?? '—';
+            document.getElementById('detMag').textContent = u.mag ?? u.magia_base ?? '—';
+            document.getElementById('detSeeds').textContent = u.seeds ?? '—';
+            document.getElementById('detMumu').textContent = u.mumu ?? '—';
+            document.getElementById('detUpgrades').textContent = u.total_upgrades ?? '—';
+            document.getElementById('detStock').textContent = u.stock ?? '—';
+
+            // Aba Dispositivo
+            document.getElementById('detFingerprint').textContent = u.fingerprint || '—';
+            document.getElementById('detMac').textContent = u.mac_address || '—';
+            document.getElementById('detIp').textContent = u.ip_address || '—';
+
+            // Aba Editar
+            document.getElementById('editLogin').value = u.login || '';
+            document.getElementById('editSenha').value = '';
+            document.getElementById('editNivel').value = u.nivel ?? 1;
+            document.getElementById('editExp').value = u.experiencia ?? u.exp ?? 0;
+            document.getElementById('editExpProximo').value = u.exp_proximo ?? u.exp_next ?? 100;
+            document.getElementById('editSaldo').value = u.saldo ?? 0;
+            document.getElementById('editPoupanca').value = u.saldo_poupanca ?? 0;
+            document.getElementById('editProventos').value = u.proventos_pendentes ?? 0;
+            document.getElementById('editHp').value = u.hp_atual ?? u.hp ?? 50;
+            document.getElementById('editMaxHp').value = u.hp_max ?? u.max_hp ?? 50;
+            document.getElementById('editAtk').value = u.atk ?? u.ataque_base ?? 8;
+            document.getElementById('editDef').value = u.def ?? u.defesa_base ?? 6;
+            document.getElementById('editMag').value = u.mag ?? u.magia_base ?? 4;
+            document.getElementById('editSeeds').value = u.seeds ?? 0;
+            document.getElementById('editBloqueado').value = u.bloqueado ? 'true' : 'false';
+            document.getElementById('editCadeado').value = u.cadeado ? 'true' : 'false';
+
+            // Resetar abas
+            document.querySelectorAll('.aba').forEach(a => a.classList.remove('ativa'));
+            document.querySelector('.aba[data-aba="conta"]').classList.add('ativa');
+            document.querySelectorAll('.painel').forEach(p => p.classList.remove('ativo'));
+            document.getElementById('painel-conta').classList.add('ativo');
+
+            modalOverlay.classList.add('show');
+        }
+
+        function fecharModal() {
+            modalOverlay.classList.remove('show');
+            usuarioAtual = null;
+        }
+
+        /* ==================== ABAS ==================== */
+        document.querySelectorAll('.aba').forEach(aba => {
+            aba.addEventListener('click', () => {
+                const alvo = aba.dataset.aba;
+                document.querySelectorAll('.aba').forEach(a => a.classList.remove('ativa'));
+                aba.classList.add('ativa');
+                document.querySelectorAll('.painel').forEach(p => p.classList.remove('ativo'));
+                document.getElementById('painel-' + alvo).classList.add('ativo');
+            });
+        });
+
+        /* ==================== FECHAR MODAL ==================== */
+        document.getElementById('btnFecharModal').addEventListener('click', fecharModal);
+        document.getElementById('btnCancelarModal').addEventListener('click', fecharModal);
+
+        modalOverlay.addEventListener('click', (e) => {
+            if (e.target === modalOverlay) fecharModal();
+        });
+
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape' && modalOverlay.classList.contains('show')) fecharModal();
+        });
+
+        /* ==================== SALVAR ALTERAÇÕES ==================== */
+        document.getElementById('btnSalvarUsuario').addEventListener('click', async () => {
+            if (!usuarioAtual) return;
+
+            const btn = document.getElementById('btnSalvarUsuario');
+            btn.disabled = true;
+            btn.innerHTML = '<span class="loading"></span> Salvando...';
+
+            const updates = {
+                login: document.getElementById('editLogin').value.trim().toLowerCase(),
+                nivel: parseInt(document.getElementById('editNivel').value) || 1,
+                experiencia: parseInt(document.getElementById('editExp').value) || 0,
+                exp: parseInt(document.getElementById('editExp').value) || 0,
+                exp_proximo: parseInt(document.getElementById('editExpProximo').value) || 100,
+                exp_next: parseInt(document.getElementById('editExpProximo').value) || 100,
+                saldo: parseFloat(document.getElementById('editSaldo').value) || 0,
+                saldo_poupanca: parseFloat(document.getElementById('editPoupanca').value) || 0,
+                proventos_pendentes: parseFloat(document.getElementById('editProventos').value) || 0,
+                hp: parseInt(document.getElementById('editHp').value) || 0,
+                hp_atual: parseInt(document.getElementById('editHp').value) || 0,
+                hp_max: parseInt(document.getElementById('editMaxHp').value) || 0,
+                max_hp: parseInt(document.getElementById('editMaxHp').value) || 0,
+                atk: parseInt(document.getElementById('editAtk').value) || 0,
+                ataque_base: parseInt(document.getElementById('editAtk').value) || 0,
+                def: parseInt(document.getElementById('editDef').value) || 0,
+                defesa_base: parseInt(document.getElementById('editDef').value) || 0,
+                mag: parseInt(document.getElementById('editMag').value) || 0,
+                magia_base: parseInt(document.getElementById('editMag').value) || 0,
+                seeds: parseInt(document.getElementById('editSeeds').value) || 0,
+                bloqueado: document.getElementById('editBloqueado').value === 'true',
+                cadeado: document.getElementById('editCadeado').value === 'true'
+            };
+
+            // Senha (se preenchida)
+            const novaSenha = document.getElementById('editSenha').value.trim();
+            if (novaSenha) {
+                if (novaSenha.length < 6) {
+                    mostrarToast('erro', 'A senha deve ter pelo menos 6 caracteres.');
+                    btn.disabled = false;
+                    btn.innerHTML = '<i class="fas fa-floppy-disk"></i> Salvar alterações';
+                    return;
+                }
+                updates.senha = novaSenha;
+            }
+
+            try {
+                const { error } = await supabaseClient
+                    .from(TABELA)
+                    .update(updates)
+                    .eq('id', usuarioAtual.id);
+
+                if (error) throw error;
+
+                mostrarToast('sucesso', `Usuário #${usuarioAtual.id} atualizado!`);
+                fecharModal();
+                await carregarUsuarios();
+
+            } catch (err) {
+                console.error('[Admin Cadastros] Erro ao salvar:', err);
+                let msg = 'Erro ao salvar: ' + err.message;
+                if (err.code === '23505') msg = 'Já existe outro usuário com esse login.';
+                mostrarToast('erro', msg);
+            } finally {
+                btn.disabled = false;
+                btn.innerHTML = '<i class="fas fa-floppy-disk"></i> Salvar alterações';
+            }
+        });
+
+        /* ==================== RESETAR SENHA ==================== */
+        document.getElementById('btnResetarSenha').addEventListener('click', async () => {
+            if (!usuarioAtual) return;
+
+            const nova = prompt('Digite a nova senha para o usuário "' + usuarioAtual.login + '":', '');
+            if (nova === null) return;
+
+            const senha = nova.trim();
+            if (senha.length < 6) {
+                mostrarToast('erro', 'A senha deve ter pelo menos 6 caracteres.');
+                return;
+            }
+
+            try {
+                const { error } = await supabaseClient
+                    .from(TABELA)
+                    .update({ senha: senha })
+                    .eq('id', usuarioAtual.id);
+
+                if (error) throw error;
+
+                mostrarToast('sucesso', `Senha do usuário #${usuarioAtual.id} redefinida!`);
+
+            } catch (err) {
+                console.error('[Admin Cadastros] Erro ao resetar senha:', err);
+                mostrarToast('erro', 'Erro ao resetar senha: ' + err.message);
+            }
+        });
+
+        /* ==================== EXCLUIR USUÁRIO ==================== */
+        async function excluirUsuario(id) {
+            try {
+                const { error } = await supabaseClient
+                    .from(TABELA)
+                    .delete()
+                    .eq('id', id);
+
+                if (error) throw error;
+
+                mostrarToast('sucesso', `Usuário #${id} excluído.`);
+                fecharModal();
+                await carregarUsuarios();
+
+            } catch (err) {
+                console.error('[Admin Cadastros] Erro ao excluir:', err);
+                mostrarToast('erro', 'Erro ao excluir: ' + err.message);
+            }
+        }
+
+        document.getElementById('btnExcluirUsuario').addEventListener('click', async () => {
+            if (!usuarioAtual) return;
+            if (confirm(`Excluir o usuário #${usuarioAtual.id} (${usuarioAtual.login})? Essa ação não pode ser desfeita.`)) {
+                await excluirUsuario(usuarioAtual.id);
+            }
+        });
+
+        /* ==================== EVENTOS DE FILTRO ==================== */
+        filtroStatus.addEventListener('change', aplicarFiltros);
+        filtroNivel.addEventListener('change', aplicarFiltros);
+        busca.addEventListener('input', aplicarFiltros);
+
+        btnAtualizar.addEventListener('click', carregarUsuarios);
+
+        /* ==================== INICIALIZAÇÃO ==================== */
+        carregarUsuarios();
+    </script>
+</body>
+</html>

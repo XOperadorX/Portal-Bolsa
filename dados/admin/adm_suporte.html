@@ -1,0 +1,1335 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Suporte | MM Quase Tudo</title>
+
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+
+    <!-- Supabase JS (CDN) -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+    <style>
+        /* ==================== RESET E BASE ==================== */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Inter', 'Segoe UI', sans-serif;
+        }
+
+        body {
+            min-height: 100vh;
+            background: linear-gradient(135deg, #001a33 0%, #000d1a 100%);
+            color: #e0e0e0;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* ==================== MENU ==================== */
+        .menu-container {
+            width: 100%;
+            background-color: rgb(0, 43, 173);
+            backdrop-filter: blur(8px);
+            border-bottom: 1px solid rgba(255, 215, 0, 0.2);
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.6);
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+        }
+
+        .navbar {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 0.9rem 2rem;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            flex-wrap: wrap;
+        }
+
+        .logo {
+            font-size: 1.8rem;
+            font-weight: 800;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+            color: #ffffff;
+            text-shadow: 0 0 10px rgba(255, 215, 0, 0.5);
+            display: flex;
+            align-items: center;
+            gap: 0.3rem;
+        }
+
+        .logo span { color: #f5c542; font-weight: 900; }
+        .logo i { color: #f5c542; font-size: 1.6rem; margin-right: 0.2rem; }
+
+        .nav-links {
+            display: flex;
+            align-items: center;
+            gap: 2.2rem;
+            list-style: none;
+            margin: 0;
+            padding: 0;
+        }
+
+        .nav-links li a {
+            text-decoration: none;
+            color: #d0d0d0;
+            font-weight: 600;
+            font-size: 1rem;
+            letter-spacing: 0.3px;
+            transition: all 0.2s ease;
+            padding: 0.5rem 0;
+            position: relative;
+            display: inline-flex;
+            align-items: center;
+        }
+
+        .nav-links li a i {
+            margin-right: 8px;
+            font-size: 0.95em;
+            color: #f5c542;
+            transition: color 0.2s ease, transform 0.2s ease;
+        }
+
+        .nav-links li a:hover i { color: #ffffff; transform: scale(1.1); }
+
+        .nav-links li a::after {
+            content: '';
+            position: absolute;
+            bottom: 0; left: 0;
+            width: 0; height: 2px;
+            background: #f5c542;
+            transition: width 0.25s ease;
+        }
+
+        .nav-links li a:hover { color: #ffffff; }
+        .nav-links li a:hover::after { width: 100%; }
+
+        .btn-discord {
+            background: linear-gradient(135deg, #f5c542 0%, #d4a017 100%);
+            border: none;
+            border-radius: 40px;
+            color: #0b0e14;
+            font-weight: 700;
+            font-size: 0.9rem;
+            padding: 0.7rem 1.6rem;
+            display: flex;
+            align-items: center;
+            gap: 0.6rem;
+            cursor: pointer;
+            transition: transform 0.2s, box-shadow 0.2s;
+            box-shadow: 0 0 15px rgba(245, 197, 66, 0.3);
+            text-decoration: none;
+            letter-spacing: 0.3px;
+            white-space: nowrap;
+        }
+
+        .btn-discord i { font-size: 1.1rem; }
+
+        .btn-discord:hover {
+            transform: scale(1.03);
+            box-shadow: 0 0 25px rgba(245, 197, 66, 0.6);
+            background: linear-gradient(135deg, #f7d25c 0%, #e0b020 100%);
+        }
+
+        .menu-toggle {
+            display: none;
+            background: transparent;
+            border: none;
+            color: #f5c542;
+            font-size: 1.8rem;
+            cursor: pointer;
+            padding: 0.3rem 0.6rem;
+        }
+
+        /* ==================== HERO ==================== */
+        .admin-hero {
+            text-align: center;
+            padding: 40px 20px 20px;
+            max-width: 900px;
+            margin: 0 auto;
+        }
+
+        .admin-hero h1 {
+            font-size: 2.4rem;
+            color: #ffffff;
+            font-weight: 800;
+            letter-spacing: 1px;
+            text-shadow: 0 0 15px rgba(245, 197, 66, 0.4);
+            margin-bottom: 10px;
+        }
+
+        .admin-hero h1 i { color: #f5c542; margin-right: 12px; }
+
+        .admin-hero p {
+            color: #a0b4d0;
+            font-size: 1rem;
+            line-height: 1.6;
+        }
+
+        /* ==================== DASHBOARD STATS ==================== */
+        .stats-grid {
+            max-width: 1400px;
+            width: 100%;
+            margin: 0 auto;
+            padding: 20px 20px 0;
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 18px;
+        }
+
+        .stat-card {
+            background: #1e293b;
+            border: 1px solid #334155;
+            border-radius: 14px;
+            padding: 20px;
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.3);
+            transition: transform 0.2s, border-color 0.2s;
+        }
+
+        .stat-card:hover {
+            transform: translateY(-3px);
+            border-color: #f5c542;
+        }
+
+        .stat-card .icone {
+            width: 52px;
+            height: 52px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            flex-shrink: 0;
+        }
+
+        .stat-card .icone.azul { background: rgba(59, 130, 246, 0.15); color: #60a5fa; }
+        .stat-card .icone.amarelo { background: rgba(245, 197, 66, 0.15); color: #f5c542; }
+        .stat-card .icone.verde { background: rgba(34, 197, 94, 0.15); color: #4ade80; }
+        .stat-card .icone.vermelho { background: rgba(239, 68, 68, 0.15); color: #f87171; }
+
+        .stat-card .info .valor {
+            font-size: 1.8rem;
+            font-weight: 800;
+            color: #f1f5f9;
+            line-height: 1.1;
+        }
+
+        .stat-card .info .rotulo {
+            font-size: 0.82rem;
+            color: #94a3b8;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        /* ==================== TOOLBAR ==================== */
+        .toolbar {
+            max-width: 1400px;
+            width: 100%;
+            margin: 0 auto;
+            padding: 20px;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 14px;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .filtros {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 12px;
+            align-items: center;
+        }
+
+        .filtros select,
+        .filtros input {
+            background: #1e293b;
+            border: 1px solid #334155;
+            border-radius: 8px;
+            color: #f1f5f9;
+            padding: 10px 14px;
+            font-size: 0.9rem;
+            outline: none;
+            transition: border-color 0.2s;
+            font-family: inherit;
+        }
+
+        .filtros select:focus,
+        .filtros input:focus {
+            border-color: #3b82f6;
+        }
+
+        .filtros input { min-width: 220px; }
+
+        .btn-atualizar {
+            background: #1e293b;
+            border: 1px solid #334155;
+            border-radius: 8px;
+            color: #f5c542;
+            padding: 10px 16px;
+            font-size: 0.9rem;
+            font-weight: 600;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            transition: all 0.2s;
+        }
+
+        .btn-atualizar:hover {
+            border-color: #f5c542;
+            background: #263449;
+        }
+
+        .btn-atualizar .fa-rotate.loading {
+            animation: spin 0.8s linear infinite;
+        }
+
+        @keyframes spin { to { transform: rotate(360deg); } }
+
+        /* ==================== TABELA ==================== */
+        .tabela-wrapper {
+            max-width: 1400px;
+            width: 100%;
+            margin: 0 auto;
+            padding: 0 20px 60px;
+            flex: 1;
+        }
+
+        .tabela-card {
+            background: #1e293b;
+            border: 1px solid #334155;
+            border-radius: 16px;
+            overflow: hidden;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+        }
+
+        .tabela-header {
+            padding: 18px 24px;
+            border-bottom: 1px solid #334155;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+
+        .tabela-header h2 {
+            color: #f1f5f9;
+            font-size: 1.15rem;
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .tabela-header h2 i { color: #f5c542; }
+
+        .tabela-header .contador {
+            color: #94a3b8;
+            font-size: 0.85rem;
+        }
+
+        .tabela-scroll {
+            overflow-x: auto;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            min-width: 900px;
+        }
+
+        thead th {
+            background: #0f172a;
+            color: #94a3b8;
+            font-size: 0.78rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.6px;
+            padding: 14px 16px;
+            text-align: left;
+            border-bottom: 1px solid #334155;
+            white-space: nowrap;
+        }
+
+        tbody tr {
+            border-bottom: 1px solid #2a3648;
+            transition: background 0.15s;
+            cursor: pointer;
+        }
+
+        tbody tr:hover { background: #263449; }
+        tbody tr:last-child { border-bottom: none; }
+
+        tbody td {
+            padding: 14px 16px;
+            font-size: 0.88rem;
+            color: #cbd5e1;
+            vertical-align: middle;
+        }
+
+        .td-id { color: #f5c542; font-weight: 700; }
+        .td-assunto { color: #f1f5f9; font-weight: 600; max-width: 260px; }
+
+        .badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+            font-size: 0.72rem;
+            font-weight: 700;
+            padding: 4px 10px;
+            border-radius: 20px;
+            text-transform: uppercase;
+            letter-spacing: 0.4px;
+            white-space: nowrap;
+        }
+
+        .badge::before {
+            content: '';
+            width: 7px; height: 7px;
+            border-radius: 50%;
+            background: currentColor;
+        }
+
+        /* Status */
+        .badge.status-aberto { background: rgba(59, 130, 246, 0.15); color: #60a5fa; border: 1px solid rgba(59, 130, 246, 0.4); }
+        .badge.status-em_andamento { background: rgba(245, 197, 66, 0.15); color: #f5c542; border: 1px solid rgba(245, 197, 66, 0.4); }
+        .badge.status-resolvido { background: rgba(34, 197, 94, 0.15); color: #4ade80; border: 1px solid rgba(34, 197, 94, 0.4); }
+        .badge.status-fechado { background: rgba(148, 163, 184, 0.15); color: #94a3b8; border: 1px solid rgba(148, 163, 184, 0.4); }
+
+        /* Prioridade */
+        .badge.prio-baixa { background: rgba(148, 163, 184, 0.15); color: #94a3b8; border: 1px solid rgba(148, 163, 184, 0.4); }
+        .badge.prio-normal { background: rgba(59, 130, 246, 0.15); color: #60a5fa; border: 1px solid rgba(59, 130, 246, 0.4); }
+        .badge.prio-alta { background: rgba(249, 115, 22, 0.15); color: #fb923c; border: 1px solid rgba(249, 115, 22, 0.4); }
+        .badge.prio-urgente { background: rgba(239, 68, 68, 0.15); color: #f87171; border: 1px solid rgba(239, 68, 68, 0.4); }
+
+        .acoes {
+            display: flex;
+            gap: 6px;
+        }
+
+        .btn-acao {
+            width: 34px; height: 34px;
+            border-radius: 8px;
+            border: 1px solid #334155;
+            background: #0f172a;
+            color: #cbd5e1;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.85rem;
+            transition: all 0.2s;
+        }
+
+        .btn-acao:hover { border-color: #f5c542; color: #f5c542; }
+        .btn-acao.excluir:hover { border-color: #ef4444; color: #ef4444; }
+
+        /* Estado vazio / loading */
+        .estado-vazio {
+            padding: 60px 20px;
+            text-align: center;
+            color: #64748b;
+        }
+
+        .estado-vazio i { font-size: 3rem; margin-bottom: 14px; color: #334155; }
+        .estado-vazio p { font-size: 1rem; }
+
+        /* ==================== MODAL ==================== */
+        .modal-overlay {
+            position: fixed;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.7);
+            backdrop-filter: blur(4px);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            z-index: 2000;
+            padding: 20px;
+        }
+
+        .modal-overlay.show { display: flex; }
+
+        .modal {
+            background: #1e293b;
+            border: 1px solid #334155;
+            border-radius: 16px;
+            width: 100%;
+            max-width: 680px;
+            max-height: 90vh;
+            overflow-y: auto;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.6);
+            animation: modalIn 0.25s ease;
+        }
+
+        @keyframes modalIn {
+            from { opacity: 0; transform: translateY(20px) scale(0.98); }
+            to { opacity: 1; transform: translateY(0) scale(1); }
+        }
+
+        .modal-header {
+            padding: 20px 24px;
+            border-bottom: 1px solid #334155;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 12px;
+            position: sticky;
+            top: 0;
+            background: #1e293b;
+            z-index: 2;
+        }
+
+        .modal-header h2 {
+            font-size: 1.2rem;
+            color: #f1f5f9;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .modal-header h2 i { color: #f5c542; }
+
+        .btn-fechar {
+            background: transparent;
+            border: none;
+            color: #94a3b8;
+            font-size: 1.4rem;
+            cursor: pointer;
+            width: 36px; height: 36px;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.2s;
+        }
+
+        .btn-fechar:hover { background: #334155; color: #f1f5f9; }
+
+        .modal-body { padding: 24px; }
+
+        .detalhe-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 16px;
+            margin-bottom: 20px;
+        }
+
+        .detalhe-item {
+            background: #0f172a;
+            border: 1px solid #334155;
+            border-radius: 10px;
+            padding: 12px 14px;
+        }
+
+        .detalhe-item .rotulo {
+            font-size: 0.72rem;
+            color: #64748b;
+            text-transform: uppercase;
+            font-weight: 700;
+            letter-spacing: 0.5px;
+            margin-bottom: 4px;
+        }
+
+        .detalhe-item .valor {
+            color: #f1f5f9;
+            font-size: 0.92rem;
+            font-weight: 600;
+            word-break: break-word;
+        }
+
+        .detalhe-item.full { grid-column: 1 / -1; }
+
+        .detalhe-mensagem {
+            background: #0f172a;
+            border: 1px solid #334155;
+            border-radius: 10px;
+            padding: 16px;
+            color: #cbd5e1;
+            font-size: 0.9rem;
+            line-height: 1.6;
+            white-space: pre-wrap;
+            word-break: break-word;
+            margin-bottom: 20px;
+        }
+
+        .modal-actions {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 14px;
+            margin-bottom: 16px;
+        }
+
+        .campo-acao label {
+            display: block;
+            color: #94a3b8;
+            font-size: 0.78rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 6px;
+        }
+
+        .campo-acao select,
+        .campo-acao textarea {
+            width: 100%;
+            background: #0f172a;
+            border: 1px solid #334155;
+            border-radius: 8px;
+            color: #f1f5f9;
+            padding: 10px 12px;
+            font-size: 0.9rem;
+            outline: none;
+            font-family: inherit;
+        }
+
+        .campo-acao textarea { resize: vertical; min-height: 90px; }
+
+        .campo-acao select:focus,
+        .campo-acao textarea:focus { border-color: #3b82f6; }
+
+        .modal-footer {
+            display: flex;
+            gap: 12px;
+            justify-content: flex-end;
+            flex-wrap: wrap;
+        }
+
+        .btn {
+            border: none;
+            border-radius: 8px;
+            padding: 11px 20px;
+            font-size: 0.9rem;
+            font-weight: 700;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            transition: all 0.2s;
+            font-family: inherit;
+        }
+
+        .btn-primario {
+            background: linear-gradient(135deg, #3b82f6, #2563eb);
+            color: #fff;
+        }
+
+        .btn-primario:hover { box-shadow: 0 0 20px rgba(59, 130, 246, 0.5); transform: scale(1.02); }
+
+        .btn-secundario {
+            background: #334155;
+            color: #e2e8f0;
+        }
+
+        .btn-secundario:hover { background: #475569; }
+
+        .btn-perigo {
+            background: rgba(239, 68, 68, 0.15);
+            color: #f87171;
+            border: 1px solid rgba(239, 68, 68, 0.4);
+        }
+
+        .btn-perigo:hover { background: rgba(239, 68, 68, 0.25); }
+
+        .btn:disabled { opacity: 0.6; cursor: not-allowed; transform: none; }
+
+        /* ==================== TOAST ==================== */
+        .toast {
+            position: fixed;
+            bottom: 24px;
+            right: 24px;
+            background: #1e293b;
+            border: 1px solid #334155;
+            border-left: 4px solid #3b82f6;
+            border-radius: 10px;
+            padding: 14px 18px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+            transform: translateX(150%);
+            transition: transform 0.3s ease;
+            z-index: 3000;
+            max-width: 380px;
+        }
+
+        .toast.show { transform: translateX(0); }
+        .toast.sucesso { border-left-color: #22c55e; }
+        .toast.erro { border-left-color: #ef4444; }
+
+        .toast i { font-size: 1.2rem; }
+        .toast.sucesso i { color: #4ade80; }
+        .toast.erro i { color: #f87171; }
+        .toast .texto { font-size: 0.88rem; color: #e2e8f0; }
+
+        /* ==================== RESPONSIVIDADE ==================== */
+        @media (max-width: 1024px) {
+            .navbar { padding: 0.8rem 1.5rem; }
+            .nav-links { gap: 1.5rem; }
+            .btn-discord { padding: 0.6rem 1.2rem; font-size: 0.85rem; }
+            .stats-grid { grid-template-columns: repeat(2, 1fr); }
+        }
+
+        @media (max-width: 860px) {
+            .nav-links {
+                display: none;
+                width: 100%;
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 1rem;
+                padding: 1.5rem 0 0.5rem 0;
+                border-top: 1px solid rgba(255, 215, 0, 0.15);
+                margin-top: 1rem;
+            }
+
+            .nav-links.active { display: flex; }
+            .nav-links li { width: 100%; }
+            .nav-links li a { display: flex; width: 100%; padding: 0.6rem 0; font-size: 1.1rem; }
+            .menu-toggle { display: block; }
+            .navbar { justify-content: space-between; }
+            .btn-discord { margin-left: auto; margin-right: 1rem; }
+
+            .admin-hero h1 { font-size: 1.9rem; }
+            .modal-actions { grid-template-columns: 1fr; }
+            .detalhe-grid { grid-template-columns: 1fr; }
+        }
+
+        @media (max-width: 480px) {
+            .navbar { padding: 0.7rem 1rem; }
+            .logo { font-size: 1.5rem; }
+            .logo i { font-size: 1.3rem; }
+            .btn-discord { padding: 0.5rem 1rem; font-size: 0.8rem; }
+            .btn-discord span { display: none; }
+            .btn-discord i { font-size: 1.2rem; margin: 0; }
+            .admin-hero h1 { font-size: 1.5rem; }
+            .stats-grid { grid-template-columns: 1fr; }
+            .filtros { width: 100%; }
+            .filtros select, .filtros input { width: 100%; }
+            .toast { left: 16px; right: 16px; max-width: none; }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- ==================== MENU PRINCIPAL ==================== -->
+    <div class="menu-container">
+        <nav class="navbar">
+            <div class="logo">
+                <i class="fas fa-cow"></i>
+                MM<span>Quase Tudo</span>
+            </div>
+
+            <button class="menu-toggle" id="menuToggle" aria-label="Abrir menu">
+                <i class="fas fa-bars"></i>
+            </button>
+
+            <ul class="nav-links" id="navLinks">
+                <li><a href="./index.html"><i class="fas fa-house"></i> Início</a></li>
+                <li><a href="./noticias.html"><i class="fas fa-newspaper"></i> Notícias</a></li>
+                <li><a href="./jogos/ranking/ranking002.html"><i class="fas fa-trophy"></i> Classificações</a></li>
+                <li><a href="./eventos.html"><i class="fas fa-calendar-days"></i> Eventos</a></li>
+                <li><a href="./download.html"><i class="fas fa-download"></i> Downloads</a></li>
+                <li><a href="./suporte.html"><i class="fas fa-headset"></i> Suporte</a></li>
+                <li><a href="./adm_suporte.html"><i class="fas fa-shield-halved"></i> Admin</a></li>
+                <li><a href="./loja.html"><i class="fas fa-cart-shopping"></i> Loja</a></li>
+                <li><a href="./cadastro.html"><i class="fas fa-user-plus"></i> Cadastro</a></li>
+                <li><a href="./login.html"><i class="fas fa-sign-in-alt"></i> Login</a></li>
+            </ul>
+
+            <a href="https://discord.gg/ATtu4z9Ewt" class="btn-discord" target="_blank" rel="noopener">
+                <i class="fab fa-discord"></i>
+                <span>Jogue Agora</span>
+            </a>
+        </nav>
+    </div>
+
+    <!-- ==================== HERO ==================== -->
+    <section class="admin-hero">
+        <h1><i class="fas fa-shield-halved"></i>Painel de Suporte</h1>
+        <p>Gerencie todos os tickets abertos pela central de suporte.</p>
+    </section>
+
+    <!-- ==================== STATS ==================== -->
+    <section class="stats-grid">
+        <div class="stat-card">
+            <div class="icone azul"><i class="fas fa-ticket"></i></div>
+            <div class="info">
+                <div class="valor" id="statTotal">0</div>
+                <div class="rotulo">Total</div>
+            </div>
+        </div>
+        <div class="stat-card">
+            <div class="icone amarelo"><i class="fas fa-folder-open"></i></div>
+            <div class="info">
+                <div class="valor" id="statAbertos">0</div>
+                <div class="rotulo">Abertos</div>
+            </div>
+        </div>
+        <div class="stat-card">
+            <div class="icone verde"><i class="fas fa-circle-check"></i></div>
+            <div class="info">
+                <div class="valor" id="statResolvidos">0</div>
+                <div class="rotulo">Resolvidos</div>
+            </div>
+        </div>
+        <div class="stat-card">
+            <div class="icone vermelho"><i class="fas fa-fire"></i></div>
+            <div class="info">
+                <div class="valor" id="statUrgentes">0</div>
+                <div class="rotulo">Urgentes</div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ==================== TOOLBAR ==================== -->
+    <section class="toolbar">
+        <div class="filtros">
+            <select id="filtroStatus">
+                <option value="">Todos os status</option>
+                <option value="aberto">Aberto</option>
+                <option value="em_andamento">Em andamento</option>
+                <option value="resolvido">Resolvido</option>
+                <option value="fechado">Fechado</option>
+            </select>
+
+            <select id="filtroPrioridade">
+                <option value="">Todas as prioridades</option>
+                <option value="baixa">Baixa</option>
+                <option value="normal">Normal</option>
+                <option value="alta">Alta</option>
+                <option value="urgente">Urgente</option>
+            </select>
+
+            <select id="filtroCategoria">
+                <option value="">Todas as categorias</option>
+                <option value="conta">Conta</option>
+                <option value="pagamento">Pagamento / Loja</option>
+                <option value="bug">Bug / Erro</option>
+                <option value="sugestao">Sugestão</option>
+                <option value="denuncia">Denúncia</option>
+                <option value="outro">Outro</option>
+            </select>
+
+            <input type="text" id="busca" placeholder="Buscar por nome, assunto, email...">
+        </div>
+
+        <button class="btn-atualizar" id="btnAtualizar">
+            <i class="fas fa-rotate" id="iconeAtualizar"></i>
+            <span>Atualizar</span>
+        </button>
+    </section>
+
+    <!-- ==================== TABELA ==================== -->
+    <section class="tabela-wrapper">
+        <div class="tabela-card">
+            <div class="tabela-header">
+                <h2><i class="fas fa-list"></i> Tickets</h2>
+                <span class="contador" id="contador">0 tickets</span>
+            </div>
+
+            <div class="tabela-scroll">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>#</th>
+                            <th>Nome</th>
+                            <th>Assunto</th>
+                            <th>Categoria</th>
+                            <th>Prioridade</th>
+                            <th>Status</th>
+                            <th>Data</th>
+                            <th>Ações</th>
+                        </tr>
+                    </thead>
+                    <tbody id="corpoTabela">
+                        <!-- Preenchido via JS -->
+                    </tbody>
+                </table>
+            </div>
+
+            <div class="estado-vazio" id="estadoVazio" style="display: none;">
+                <i class="fas fa-inbox"></i>
+                <p>Nenhum ticket encontrado.</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- ==================== MODAL ==================== -->
+    <div class="modal-overlay" id="modalOverlay">
+        <div class="modal">
+            <div class="modal-header">
+                <h2><i class="fas fa-ticket"></i> Ticket <span id="modalId">#</span></h2>
+                <button class="btn-fechar" id="btnFecharModal">
+                    <i class="fas fa-xmark"></i>
+                </button>
+            </div>
+
+            <div class="modal-body">
+                <div class="detalhe-grid">
+                    <div class="detalhe-item">
+                        <div class="rotulo">Nome</div>
+                        <div class="valor" id="modalNome">—</div>
+                    </div>
+                    <div class="detalhe-item">
+                        <div class="rotulo">Login no jogo</div>
+                        <div class="valor" id="modalLogin">—</div>
+                    </div>
+                    <div class="detalhe-item">
+                        <div class="rotulo">Email</div>
+                        <div class="valor" id="modalEmail">—</div>
+                    </div>
+                    <div class="detalhe-item">
+                        <div class="rotulo">Categoria</div>
+                        <div class="valor" id="modalCategoria">—</div>
+                    </div>
+                    <div class="detalhe-item full">
+                        <div class="rotulo">Assunto</div>
+                        <div class="valor" id="modalAssunto">—</div>
+                    </div>
+                    <div class="detalhe-item">
+                        <div class="rotulo">Criado em</div>
+                        <div class="valor" id="modalData">—</div>
+                    </div>
+                    <div class="detalhe-item">
+                        <div class="rotulo">ID do usuário</div>
+                        <div class="valor" id="modalUserId">—</div>
+                    </div>
+                </div>
+
+                <div class="detalhe-mensagem" id="modalMensagem">—</div>
+
+                <div class="modal-actions">
+                    <div class="campo-acao">
+                        <label for="modalStatus">Status</label>
+                        <select id="modalStatus">
+                            <option value="aberto">Aberto</option>
+                            <option value="em_andamento">Em andamento</option>
+                            <option value="resolvido">Resolvido</option>
+                            <option value="fechado">Fechado</option>
+                        </select>
+                    </div>
+
+                    <div class="campo-acao">
+                        <label for="modalPrioridade">Prioridade</label>
+                        <select id="modalPrioridade">
+                            <option value="baixa">Baixa</option>
+                            <option value="normal">Normal</option>
+                            <option value="alta">Alta</option>
+                            <option value="urgente">Urgente</option>
+                        </select>
+                    </div>
+
+                    <div class="campo-acao full" style="grid-column: 1 / -1;">
+                        <label for="modalResposta">Resposta / Anotação interna</label>
+                        <textarea id="modalResposta" placeholder="Escreva uma resposta ou observação sobre este ticket..."></textarea>
+                    </div>
+                </div>
+            </div>
+
+            <div class="modal-footer">
+                <button class="btn btn-perigo" id="btnExcluirTicket">
+                    <i class="fas fa-trash"></i> Excluir
+                </button>
+                <button class="btn btn-secundario" id="btnCancelarModal">
+                    <i class="fas fa-xmark"></i> Cancelar
+                </button>
+                <button class="btn btn-primario" id="btnSalvarTicket">
+                    <i class="fas fa-floppy-disk"></i> Salvar alterações
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- ==================== TOAST ==================== -->
+    <div class="toast" id="toast">
+        <i class="fas fa-circle-check" id="toastIcone"></i>
+        <span class="texto" id="toastTexto">Mensagem</span>
+    </div>
+
+    <!-- ==================== JAVASCRIPT ==================== -->
+    <script>
+        /* ==================== CONFIGURAÇÃO SUPABASE ==================== */
+        const SUPABASE_URL = 'https://xrcxvizzdumcxbylmkvn.supabase.co';
+        const SUPABASE_ANON_KEY = 'sb_publishable_E-g3G3wW4EySbCsXLXp8KQ_FnmERMcD';
+
+        const supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+        /* ==================== MENU TOGGLE ==================== */
+        const menuToggle = document.getElementById('menuToggle');
+        const navLinks = document.getElementById('navLinks');
+
+        menuToggle.addEventListener('click', () => {
+            navLinks.classList.toggle('active');
+            const icon = menuToggle.querySelector('i');
+            icon.classList.toggle('fa-bars');
+            icon.classList.toggle('fa-times');
+        });
+
+        navLinks.querySelectorAll('a').forEach(link => {
+            link.addEventListener('click', () => {
+                if (window.innerWidth <= 860) {
+                    navLinks.classList.remove('active');
+                    const icon = menuToggle.querySelector('i');
+                    icon.classList.add('fa-bars');
+                    icon.classList.remove('fa-times');
+                }
+            });
+        });
+
+        /* ==================== ESTADO GLOBAL ==================== */
+        let todosTickets = [];
+        let ticketAtual = null;
+
+        /* ==================== REFERÊNCIAS DOM ==================== */
+        const corpoTabela = document.getElementById('corpoTabela');
+        const estadoVazio = document.getElementById('estadoVazio');
+        const contador = document.getElementById('contador');
+        const filtroStatus = document.getElementById('filtroStatus');
+        const filtroPrioridade = document.getElementById('filtroPrioridade');
+        const filtroCategoria = document.getElementById('filtroCategoria');
+        const busca = document.getElementById('busca');
+        const btnAtualizar = document.getElementById('btnAtualizar');
+        const iconeAtualizar = document.getElementById('iconeAtualizar');
+
+        const modalOverlay = document.getElementById('modalOverlay');
+        const modalId = document.getElementById('modalId');
+        const modalNome = document.getElementById('modalNome');
+        const modalLogin = document.getElementById('modalLogin');
+        const modalEmail = document.getElementById('modalEmail');
+        const modalCategoria = document.getElementById('modalCategoria');
+        const modalAssunto = document.getElementById('modalAssunto');
+        const modalData = document.getElementById('modalData');
+        const modalUserId = document.getElementById('modalUserId');
+        const modalMensagem = document.getElementById('modalMensagem');
+        const modalStatus = document.getElementById('modalStatus');
+        const modalPrioridade = document.getElementById('modalPrioridade');
+        const modalResposta = document.getElementById('modalResposta');
+        const btnSalvarTicket = document.getElementById('btnSalvarTicket');
+        const btnExcluirTicket = document.getElementById('btnExcluirTicket');
+        const btnFecharModal = document.getElementById('btnFecharModal');
+        const btnCancelarModal = document.getElementById('btnCancelarModal');
+
+        const toast = document.getElementById('toast');
+        const toastIcone = document.getElementById('toastIcone');
+        const toastTexto = document.getElementById('toastTexto');
+
+        /* ==================== UTILITÁRIOS ==================== */
+        function mostrarToast(tipo, texto) {
+            toast.classList.remove('show', 'sucesso', 'erro');
+            toast.classList.add(tipo === 'sucesso' ? 'sucesso' : 'erro');
+            toastIcone.className = tipo === 'sucesso'
+                ? 'fas fa-circle-check'
+                : 'fas fa-circle-exclamation';
+            toastTexto.textContent = texto;
+            toast.classList.add('show');
+
+            setTimeout(() => toast.classList.remove('show'), 4000);
+        }
+
+        function formatarData(isoString) {
+            if (!isoString) return '—';
+            try {
+                const data = new Date(isoString);
+                return data.toLocaleString('pt-BR', {
+                    day: '2-digit',
+                    month: '2-digit',
+                    year: 'numeric',
+                    hour: '2-digit',
+                    minute: '2-digit'
+                });
+            } catch {
+                return isoString;
+            }
+        }
+
+        function labelCategoria(cat) {
+            const mapa = {
+                conta: 'Conta',
+                pagamento: 'Pagamento / Loja',
+                bug: 'Bug / Erro',
+                sugestao: 'Sugestão',
+                denuncia: 'Denúncia',
+                outro: 'Outro'
+            };
+            return mapa[cat] || cat || '—';
+        }
+
+        function labelStatus(status) {
+            const mapa = {
+                aberto: 'Aberto',
+                em_andamento: 'Em andamento',
+                resolvido: 'Resolvido',
+                fechado: 'Fechado'
+            };
+            return mapa[status] || status || '—';
+        }
+
+        function labelPrioridade(prio) {
+            const mapa = {
+                baixa: 'Baixa',
+                normal: 'Normal',
+                alta: 'Alta',
+                urgente: 'Urgente'
+            };
+            return mapa[prio] || prio || '—';
+        }
+
+        /* ==================== CARREGAR TICKETS ==================== */
+        async function carregarTickets() {
+            iconeAtualizar.classList.add('loading');
+            btnAtualizar.disabled = true;
+
+            try {
+                const { data, error } = await supabaseClient
+                    .from('suporte_tickets')
+                    .select('*')
+                    .order('id', { ascending: false });
+
+                if (error) throw error;
+
+                todosTickets = data || [];
+                aplicarFiltros();
+
+            } catch (err) {
+                console.error('[Admin Suporte] Erro ao carregar:', err);
+                mostrarToast('erro', 'Erro ao carregar tickets: ' + err.message);
+                corpoTabela.innerHTML = '';
+                estadoVazio.style.display = 'block';
+                contador.textContent = '0 tickets';
+            } finally {
+                iconeAtualizar.classList.remove('loading');
+                btnAtualizar.disabled = false;
+            }
+        }
+
+        /* ==================== FILTROS ==================== */
+        function aplicarFiltros() {
+            const status = filtroStatus.value;
+            const prioridade = filtroPrioridade.value;
+            const categoria = filtroCategoria.value;
+            const termo = busca.value.trim().toLowerCase();
+
+            let filtrados = todosTickets.filter(t => {
+                if (status && t.status !== status) return false;
+                if (prioridade && t.prioridade !== prioridade) return false;
+                if (categoria && t.categoria !== categoria) return false;
+
+                if (termo) {
+                    const alvo = [
+                        t.nome,
+                        t.login,
+                        t.email,
+                        t.assunto,
+                        t.mensagem,
+                        String(t.id)
+                    ].filter(Boolean).join(' ').toLowerCase();
+
+                    if (!alvo.includes(termo)) return false;
+                }
+
+                return true;
+            });
+
+            renderizarTabela(filtrados);
+            atualizarStats();
+        }
+
+        /* ==================== RENDERIZAR TABELA ==================== */
+        function renderizarTabela(tickets) {
+            corpoTabela.innerHTML = '';
+
+            if (!tickets.length) {
+                estadoVazio.style.display = 'block';
+                contador.textContent = '0 tickets';
+                return;
+            }
+
+            estadoVazio.style.display = 'none';
+            contador.textContent = `${tickets.length} ticket${tickets.length !== 1 ? 's' : ''}`;
+
+            tickets.forEach(t => {
+                const tr = document.createElement('tr');
+                tr.dataset.id = t.id;
+
+                tr.innerHTML = `
+                    <td class="td-id">#${t.id}</td>
+                    <td>${escapeHtml(t.nome || '—')}</td>
+                    <td class="td-assunto">${escapeHtml(t.assunto || '—')}</td>
+                    <td>${escapeHtml(labelCategoria(t.categoria))}</td>
+                    <td><span class="badge prio-${t.prioridade || 'normal'}">${labelPrioridade(t.prioridade)}</span></td>
+                    <td><span class="badge status-${t.status || 'aberto'}">${labelStatus(t.status)}</span></td>
+                    <td>${formatarData(t.created_at)}</td>
+                    <td>
+                        <div class="acoes">
+                            <button class="btn-acao abrir" title="Abrir ticket">
+                                <i class="fas fa-eye"></i>
+                            </button>
+                            <button class="btn-acao excluir" title="Excluir ticket" data-id="${t.id}">
+                                <i class="fas fa-trash"></i>
+                            </button>
+                        </div>
+                    </td>
+                `;
+
+                tr.addEventListener('click', (e) => {
+                    if (e.target.closest('.btn-acao.excluir')) return;
+                    abrirModal(t.id);
+                });
+
+                const btnExcluir = tr.querySelector('.btn-acao.excluir');
+                btnExcluir.addEventListener('click', async (e) => {
+                    e.stopPropagation();
+                    if (confirm(`Excluir o ticket #${t.id}? Essa ação não pode ser desfeita.`)) {
+                        await excluirTicket(t.id);
+                    }
+                });
+
+                corpoTabela.appendChild(tr);
+            });
+        }
+
+        function escapeHtml(str) {
+            if (!str) return '';
+            const div = document.createElement('div');
+            div.textContent = str;
+            return div.innerHTML;
+        }
+
+        /* ==================== STATS ==================== */
+        function atualizarStats() {
+            const total = todosTickets.length;
+            const abertos = todosTickets.filter(t => t.status === 'aberto' || t.status === 'em_andamento').length;
+            const resolvidos = todosTickets.filter(t => t.status === 'resolvido' || t.status === 'fechado').length;
+            const urgentes = todosTickets.filter(t => t.prioridade === 'urgente').length;
+
+            document.getElementById('statTotal').textContent = total;
+            document.getElementById('statAbertos').textContent = abertos;
+            document.getElementById('statResolvidos').textContent = resolvidos;
+            document.getElementById('statUrgentes').textContent = urgentes;
+        }
+
+        /* ==================== MODAL ==================== */
+        function abrirModal(id) {
+            const t = todosTickets.find(x => x.id === id);
+            if (!t) return;
+
+            ticketAtual = t;
+
+            modalId.textContent = '#' + t.id;
+            modalNome.textContent = t.nome || '—';
+            modalLogin.textContent = t.login || '—';
+            modalEmail.textContent = t.email || '—';
+            modalCategoria.textContent = labelCategoria(t.categoria);
+            modalAssunto.textContent = t.assunto || '—';
+            modalData.textContent = formatarData(t.created_at);
+            modalUserId.textContent = t.user_id || '—';
+            modalMensagem.textContent = t.mensagem || '—';
+
+            modalStatus.value = t.status || 'aberto';
+            modalPrioridade.value = t.prioridade || 'normal';
+            modalResposta.value = t.resposta || '';
+
+            modalOverlay.classList.add('show');
+        }
+
+        function fecharModal() {
+            modalOverlay.classList.remove('show');
+            ticketAtual = null;
+        }
+
+        btnFecharModal.addEventListener('click', fecharModal);
+        btnCancelarModal.addEventListener('click', fecharModal);
+
+        modalOverlay.addEventListener('click', (e) => {
+            if (e.target === modalOverlay) fecharModal();
+        });
+
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape' && modalOverlay.classList.contains('show')) fecharModal();
+        });
+
+        /* ==================== SALVAR ALTERAÇÕES ==================== */
+        btnSalvarTicket.addEventListener('click', async () => {
+            if (!ticketAtual) return;
+
+            const novoStatus = modalStatus.value;
+            const novaPrioridade = modalPrioridade.value;
+            const resposta = modalResposta.value.trim() || null;
+
+            btnSalvarTicket.disabled = true;
+            btnSalvarTicket.innerHTML = '<span class="loading"></span> Salvando...';
+
+            try {
+                const { error } = await supabaseClient
+                    .from('suporte_tickets')
+                    .update({
+                        status: novoStatus,
+                        prioridade: novaPrioridade,
+                        resposta: resposta
+                    })
+                    .eq('id', ticketAtual.id);
+
+                if (error) throw error;
+
+                mostrarToast('sucesso', `Ticket #${ticketAtual.id} atualizado!`);
+                fecharModal();
+                await carregarTickets();
+
+            } catch (err) {
+                console.error('[Admin Suporte] Erro ao salvar:', err);
+                mostrarToast('erro', 'Erro ao salvar: ' + err.message);
+            } finally {
+                btnSalvarTicket.disabled = false;
+                btnSalvarTicket.innerHTML = '<i class="fas fa-floppy-disk"></i> Salvar alterações';
+            }
+        });
+
+        /* ==================== EXCLUIR TICKET ==================== */
+        async function excluirTicket(id) {
+            try {
+                const { error } = await supabaseClient
+                    .from('suporte_tickets')
+                    .delete()
+                    .eq('id', id);
+
+                if (error) throw error;
+
+                mostrarToast('sucesso', `Ticket #${id} excluído.`);
+                fecharModal();
+                await carregarTickets();
+
+            } catch (err) {
+                console.error('[Admin Suporte] Erro ao excluir:', err);
+                mostrarToast('erro', 'Erro ao excluir: ' + err.message);
+            }
+        }
+
+        btnExcluirTicket.addEventListener('click', async () => {
+            if (!ticketAtual) return;
+            if (confirm(`Excluir o ticket #${ticketAtual.id}? Essa ação não pode ser desfeita.`)) {
+                await excluirTicket(ticketAtual.id);
+            }
+        });
+
+        /* ==================== EVENTOS DE FILTRO ==================== */
+        filtroStatus.addEventListener('change', aplicarFiltros);
+        filtroPrioridade.addEventListener('change', aplicarFiltros);
+        filtroCategoria.addEventListener('change', aplicarFiltros);
+        busca.addEventListener('input', aplicarFiltros);
+
+        btnAtualizar.addEventListener('click', carregarTickets);
+
+        /* ==================== INICIALIZAÇÃO ==================== */
+        carregarTickets();
+    </script>
+</body>
+</html>
