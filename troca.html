@@ -161,7 +161,6 @@
 </header>
 
 <main>
-  <!-- ============ CRIAR ============ -->
   <section class="panel">
     <h2>➕ Nova negociação</h2>
     <p class="sub">Você é o <strong>vendedor</strong>. Ao criar, um código secreto de 6 dígitos é gerado — só entregue ele ao comprador depois de confirmar o dinheiro.</p>
@@ -207,7 +206,6 @@
     </form>
   </section>
 
-  <!-- ============ LISTA ============ -->
   <section>
     <div class="lista-head">
       <h2>📋 Negociações</h2>
@@ -223,7 +221,6 @@
 
 <div id="toasts"></div>
 
-<!-- ============ MODAL DO CÓDIGO ============ -->
 <div class="modal hidden" id="modal">
   <div class="modal-box">
     <h2>🔐 Código de liberação</h2>
@@ -250,10 +247,14 @@ const TABELA_TROCAS     = 'Trocas';
 const { createClient } = supabase;
 const db = createClient(SUPABASE_URL, SUPABASE_KEY);
 
-// Chaves da sessão usadas pelo login.html do portal
-const SESSION_KEY           = 'usuario_logado';
-const SESSION_TIMESTAMP_KEY = 'session_timestamp';
-const SESSION_DURATION      = 24 * 60 * 60 * 1000; // 24h
+const SESSION_KEYS = [
+  'usuario_logado','usuarioLogado','user','usuario','jogador',
+  'session','sessao','login','portal_bolsa_user','user_data','dados_usuario'
+];
+const TIMESTAMP_KEYS = [
+  'session_timestamp','login_time','timestamp','login_timestamp','session_time'
+];
+const SESSION_DURATION = 24 * 60 * 60 * 1000;
 
 const STATUS = {
   aguardando_pagamento: { txt: 'Aguardando pagamento', cls: 'warn' },
@@ -278,17 +279,14 @@ let statusInterval   = null;
    HELPERS
 ============================================================ */
 const $ = (s) => document.querySelector(s);
-
 const esc = (s) => String(s ?? '').replace(/[&<>"']/g, c =>
   ({ '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;' }[c]));
-
 const money = (v) => Number(v || 0).toLocaleString('pt-BR', { style:'currency', currency:'BRL' });
 const dataHora = (v) => v ? new Date(v).toLocaleString('pt-BR') : '—';
 
 function gerarCodigo() {
   return String(Math.floor(Math.random() * 1000000)).padStart(6, '0');
 }
-
 function uuid() {
   if (window.crypto?.randomUUID) return crypto.randomUUID();
   return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, c => {
@@ -296,7 +294,6 @@ function uuid() {
     return (c === 'x' ? r : (r & 0x3) | 0x8).toString(16);
   });
 }
-
 async function hash(str) {
   try {
     if (window.crypto?.subtle) {
@@ -308,7 +305,6 @@ async function hash(str) {
   for (let i = 0; i < str.length; i++) { h ^= str.charCodeAt(i); h = Math.imul(h, 16777619); }
   return 'fb' + (h >>> 0).toString(16).padStart(8, '0');
 }
-
 function toast(msg, tipo = '') {
   const el = document.createElement('div');
   el.className = 'toast ' + tipo;
@@ -317,29 +313,62 @@ function toast(msg, tipo = '') {
   setTimeout(() => { el.style.opacity = '0'; el.style.transition = '.3s'; }, 2800);
   setTimeout(() => el.remove(), 3200);
 }
-
 async function logAtividade(acao, detalhes) {
   try {
     await db.from(TABELA_ATIVIDADES).insert({
       usuario: usuarioLogado?.login || 'anonimo',
-      acao,
-      detalhes: JSON.stringify(detalhes || {}),
+      acao, detalhes: JSON.stringify(detalhes || {}),
       criado_em: new Date().toISOString()
     });
   } catch (e) { console.warn('logAtividade falhou:', e); }
 }
 
 /* ============================================================
-   SESSÃO DO PORTAL (lida do localStorage — igual ao login.html)
+   LER SESSÃO — tenta TODAS as chaves conhecidas
 ============================================================ */
 function lerSessao() {
-  const ts  = localStorage.getItem(SESSION_TIMESTAMP_KEY);
-  const raw = localStorage.getItem(SESSION_KEY);
-  if (!ts || !raw) return null;
-  const t = parseInt(ts, 10);
-  if (isNaN(t)) return null;
-  if (Date.now() - t >= SESSION_DURATION) return null; // expirada
-  try { return JSON.parse(raw); } catch (_) { return null; }
+  for (const key of SESSION_KEYS) {
+    const raw = localStorage.getItem(key);
+    if (!raw) continue;
+    try {
+      const obj = JSON.parse(raw);
+      const u = obj?.user || obj?.usuario || obj;
+      if (u && (u.login || u.nome || u.email || u.id)) {
+        for (const tkey of TIMESTAMP_KEYS) {
+          const ts = localStorage.getItem(tkey);
+          if (ts) {
+            const t = parseInt(ts, 10);
+            if (!isNaN(t) && (Date.now() - t) >= SESSION_DURATION) return null;
+          }
+        }
+        return {
+          id:    u.id,
+          login: u.login || u.nome || u.email?.split('@')[0] || u.username,
+          nome:  u.nome || u.login || u.email?.split('@')[0] || u.username,
+          email: u.email
+        };
+      }
+    } catch (_) {
+      if (raw.length > 0 && raw.length < 100) {
+        return { login: raw, nome: raw };
+      }
+    }
+  }
+  for (let i = 0; i < localStorage.length; i++) {
+    const k = localStorage.key(i);
+    if (k && k.startsWith('sb-') && k.endsWith('-auth-token')) {
+      try {
+        const obj = JSON.parse(localStorage.getItem(k));
+        const u = obj?.user || obj?.session?.user;
+        if (u) {
+          const login = u.user_metadata?.login || u.user_metadata?.nick ||
+                        u.user_metadata?.nome || u.email?.split('@')[0];
+          return { id: u.id, login, nome: login, email: u.email };
+        }
+      } catch (_) {}
+    }
+  }
+  return null;
 }
 
 function identificarUsuario() {
@@ -355,24 +384,17 @@ function identificarUsuario() {
     return null;
   }
 
-  usuarioLogado = {
-    id:       u.id,
-    login:    u.login,
-    nome:     u.nome || u.login,
-    email:    u.email,
-    saldo:    u.saldo || 0,
-    carteira: u.carteira || {}
-  };
+  usuarioLogado = u;
 
   area.innerHTML = `
     <div class="user-info">
-      <span>👤 <span class="nick">${esc(usuarioLogado.nome)}</span></span>
+      <span>👤 <span class="nick">${esc(u.nome)}</span></span>
       <button class="btn mini ghost danger" id="btn-sair">Sair</button>
     </div>`;
 
   $('#btn-sair').addEventListener('click', () => {
-    localStorage.removeItem(SESSION_KEY);
-    localStorage.removeItem(SESSION_TIMESTAMP_KEY);
+    SESSION_KEYS.forEach(k => localStorage.removeItem(k));
+    TIMESTAMP_KEYS.forEach(k => localStorage.removeItem(k));
     location.reload();
   });
 
@@ -380,9 +402,7 @@ function identificarUsuario() {
 }
 
 /* ============================================================
-   STATUS SUPABASE (online / offline)
-   Usa HEAD em /rest/v1/ — não depende de nenhuma coluna existir.
-   Qualquer resposta HTTP < 500 prova que o servidor está acessível.
+   STATUS SUPABASE
 ============================================================ */
 function atualizarStatus(online, msg) {
   const el = $('#statusSupabase');
@@ -391,7 +411,6 @@ function atualizarStatus(online, msg) {
   el.innerHTML = `<span class="dot"></span> ${online ? 'Supabase online' : 'Supabase offline'}`;
   if (msg) console.warn('[StatusSupabase]', msg);
 }
-
 async function verificarSupabase() {
   try {
     const resp = await fetch(`${SUPABASE_URL}/rest/v1/`, {
@@ -401,15 +420,9 @@ async function verificarSupabase() {
         'Authorization': `Bearer ${SUPABASE_KEY}`
       },
       signal: (typeof AbortSignal !== 'undefined' && AbortSignal.timeout)
-        ? AbortSignal.timeout(5000)
-        : undefined
+        ? AbortSignal.timeout(5000) : undefined
     });
-
-    // Qualquer HTTP < 500 significa servidor acessível (200, 401, 404...)
-    if (resp.status < 500) {
-      atualizarStatus(true);
-      return true;
-    }
+    if (resp.status < 500) { atualizarStatus(true); return true; }
     atualizarStatus(false, 'HTTP ' + resp.status);
     return false;
   } catch (e) {
@@ -417,15 +430,14 @@ async function verificarSupabase() {
     return false;
   }
 }
-
 function iniciarMonitorStatus() {
   if (statusInterval) clearInterval(statusInterval);
   verificarSupabase();
-  statusInterval = setInterval(verificarSupabase, 30000); // a cada 30s
+  statusInterval = setInterval(verificarSupabase, 30000);
 }
 
 /* ============================================================
-   MOCHILA — buscar inventário do jogador logado
+   MOCHILA
 ============================================================ */
 async function carregarMochila() {
   const aviso  = $('#mochila-aviso');
@@ -484,14 +496,12 @@ async function carregarMochila() {
 
 function extrairTodosItens(d) {
   const todos = {};
-
-  if (d.carteira && typeof d.carteira === 'object') {
+  if (d.carteira && typeof d.carteira === 'object' && !Array.isArray(d.carteira)) {
     Object.keys(d.carteira).forEach(k => {
       const q = Number(d.carteira[k]) || 0;
       if (q > 0) todos[k] = (todos[k] || 0) + q;
     });
   }
-
   if (Number(d.seeds) > 0)     todos['Sementes'] = (todos['Sementes'] || 0) + Number(d.seeds);
   if (Number(d.stock) > 0)     todos['Milho']    = (todos['Milho']    || 0) + Number(d.stock);
   if (Number(d.buckets) > 0)   todos['Balde']    = (todos['Balde']    || 0) + Number(d.buckets);
@@ -516,7 +526,7 @@ function extrairTodosItens(d) {
 }
 
 /* ============================================================
-   INICIALIZAÇÃO
+   INIT
 ============================================================ */
 document.addEventListener('DOMContentLoaded', async () => {
   bindEventos();
@@ -530,6 +540,11 @@ document.addEventListener('DOMContentLoaded', async () => {
   } else {
     render();
   }
+
+  console.log('=== TROCA DEBUG ===');
+  Object.keys(localStorage).forEach(k => {
+    console.log('localStorage["' + k + '"] =', localStorage.getItem(k));
+  });
 });
 
 function bindEventos() {
@@ -537,12 +552,10 @@ function bindEventos() {
     mostrarTodas = e.target.checked;
     render();
   });
-
   $('#btn-refresh').addEventListener('click', () => {
     verificarSupabase();
     carregar();
   });
-
   $('#form').addEventListener('submit', criarNegociacao);
 
   $('#item-select').addEventListener('change', (e) => {
@@ -559,7 +572,6 @@ function bindEventos() {
   });
 
   $('#lista').addEventListener('click', onAcaoLista);
-
   $('#btn-fechar-modal').addEventListener('click', () => $('#modal').classList.add('hidden'));
   $('#btn-copiar-modal').addEventListener('click', () => copiar(codigoModalAtual));
   $('#modal').addEventListener('click', (e) => {
@@ -644,15 +656,9 @@ function cardHTML(r) {
   let acoes = '';
 
   if (r.status === 'aguardando_pagamento') {
-    if (euVendedor) {
-      acoes += `<button class="btn ok" data-acao="pago" data-id="${r.id}">💰 Já recebi o pagamento</button>`;
-    }
-    if (euComprador) {
-      acoes += `<div class="aviso">⏳ Faça o pagamento combinado e aguarde o vendedor confirmar o recebimento.</div>`;
-    }
-    if (euVendedor || euComprador) {
-      acoes += `<button class="btn ghost danger" data-acao="cancelar" data-id="${r.id}">Cancelar</button>`;
-    }
+    if (euVendedor) acoes += `<button class="btn ok" data-acao="pago" data-id="${r.id}">💰 Já recebi o pagamento</button>`;
+    if (euComprador) acoes += `<div class="aviso">⏳ Faça o pagamento combinado e aguarde o vendedor confirmar o recebimento.</div>`;
+    if (euVendedor || euComprador) acoes += `<button class="btn ghost danger" data-acao="cancelar" data-id="${r.id}">Cancelar</button>`;
   }
   else if (r.status === 'pagamento_confirmado') {
     if (euVendedor) {
@@ -692,30 +698,24 @@ function cardHTML(r) {
         <span class="badge ${st.cls}">${esc(st.txt)}</span>
         <span class="data">${dataHora(r.criado_em)}</span>
       </div>
-
       <h3>${esc(r.item)} ${Number(r.quantidade) > 1 ? `× ${esc(r.quantidade)}` : ''}</h3>
-
       <div class="linha"><span>Preço</span><strong class="preco">${money(r.preco)}</strong></div>
       <div class="linha"><span>Vendedor</span><strong>${esc(r.vendedor)}${euVendedor ? ' (você)' : ''}</strong></div>
       <div class="linha"><span>Comprador</span><strong>${esc(r.comprador)}${euComprador ? ' (você)' : ''}</strong></div>
       ${r.pago_em ? `<div class="linha"><span>Pago em</span><strong>${dataHora(r.pago_em)}</strong></div>` : ''}
       ${Number(r.tentativas) > 0 ? `<div class="linha"><span>Tentativas erradas</span><strong>${esc(r.tentativas)}</strong></div>` : ''}
-
       ${r.observacao ? `<div class="obs">${esc(r.observacao)}</div>` : ''}
-
       <div class="acoes">${acoes}</div>
     </div>`;
 }
 
 /* ============================================================
-   AÇÕES DA LISTA
+   AÇÕES
 ============================================================ */
 async function onAcaoLista(e) {
   const btn = e.target.closest('[data-acao]');
   if (!btn) return;
-
   const { acao, id, cod } = btn.dataset;
-
   if (acao === 'copiar')   return copiar(cod);
   if (acao === 'pago')     return confirmarPagamento(id, btn);
   if (acao === 'liberar')  return liberarItem(id, btn);
@@ -725,14 +725,11 @@ async function onAcaoLista(e) {
 async function confirmarPagamento(id, btn) {
   if (!confirm('Confirmar que você RECEBEU o pagamento?\n\nSó faça isso com o dinheiro já na sua conta/mão.')) return;
   btn.disabled = true;
-
   const { error } = await db.from(TABELA_TROCAS)
     .update({ status: 'pagamento_confirmado', pago_em: new Date().toISOString() })
     .eq('id', id);
-
   btn.disabled = false;
   if (error) return toast('Erro: ' + error.message, 'err');
-
   const r = cache.find(x => x.id === id);
   logAtividade('troca_pagamento_confirmado', { id, item: r?.item, preco: r?.preco });
   toast('Pagamento confirmado! Entregue o código ao comprador.', 'ok');
@@ -742,31 +739,22 @@ async function confirmarPagamento(id, btn) {
 async function liberarItem(id, btn) {
   const input = document.querySelector(`[data-codinput="${id}"]`);
   const code  = (input?.value || '').trim();
-
   if (!/^\d{6}$/.test(code)) return toast('Digite os 6 dígitos do código.', 'err');
-
   const r = cache.find(x => x.id === id);
   if (!r) return toast('Negociação não encontrada.', 'err');
-
-  if (Number(r.tentativas) >= 5) {
-    toast('Limite de tentativas atingido. Contate o vendedor.', 'err');
-    return;
-  }
+  if (Number(r.tentativas) >= 5) { toast('Limite de tentativas atingido.', 'err'); return; }
 
   btn.disabled = true;
   btn.textContent = 'Verificando...';
-
   const h = await hash(code);
 
   if (h !== r.codigo_hash) {
-    await db.from(TABELA_TROCAS)
-      .update({ tentativas: Number(r.tentativas || 0) + 1 })
-      .eq('id', id);
+    await db.from(TABELA_TROCAS).update({ tentativas: Number(r.tentativas || 0) + 1 }).eq('id', id);
     btn.disabled = false;
     btn.textContent = 'Liberar item';
     input.value = '';
     input.focus();
-    toast('❌ Código incorreto. Confira com o vendedor.', 'err');
+    toast('❌ Código incorreto.', 'err');
     carregar();
     return;
   }
@@ -774,11 +762,9 @@ async function liberarItem(id, btn) {
   const { error } = await db.from(TABELA_TROCAS)
     .update({ status: 'concluida', concluido_em: new Date().toISOString() })
     .eq('id', id);
-
   btn.disabled = false;
   btn.textContent = 'Liberar item';
   if (error) return toast('Erro: ' + error.message, 'err');
-
   logAtividade('troca_concluida', { id, item: r.item, preco: r.preco, vendedor: r.vendedor });
   localStorage.removeItem('ts_cod_' + id);
   toast('✅ Código validado! Negociação concluída.', 'ok');
@@ -786,23 +772,18 @@ async function liberarItem(id, btn) {
 }
 
 async function cancelar(id) {
-  if (!confirm('Cancelar esta negociação? Essa ação não pode ser desfeita.')) return;
-
-  const { error } = await db.from(TABELA_TROCAS)
-    .update({ status: 'cancelada' })
-    .eq('id', id);
-
+  if (!confirm('Cancelar esta negociação?')) return;
+  const { error } = await db.from(TABELA_TROCAS).update({ status: 'cancelada' }).eq('id', id);
   if (error) return toast('Erro: ' + error.message, 'err');
   toast('Negociação cancelada.', '');
   carregar();
 }
 
 /* ============================================================
-   CRIAR NEGOCIAÇÃO
+   CRIAR
 ============================================================ */
 async function criarNegociacao(e) {
   e.preventDefault();
-
   if (!usuarioLogado) return toast('Faça login no portal primeiro.', 'err');
 
   const vendedor  = usuarioLogado.login;
@@ -818,9 +799,8 @@ async function criarNegociacao(e) {
 
   if (mochilaCarregada) {
     const inv = inventario.find(i => i.nome === item);
-    if (inv && qtd > inv.quantidade) {
+    if (inv && qtd > inv.quantidade)
       return toast(`Você só tem ${inv.quantidade} unidade(s) de "${item}".`, 'err');
-    }
   }
 
   const btn = e.target.querySelector('button[type="submit"]');
@@ -831,25 +811,17 @@ async function criarNegociacao(e) {
   const codigo = gerarCodigo();
   const codigo_hash = await hash(codigo);
 
-  const payload = {
-    id,
-    vendedor,
-    comprador,
-    item,
-    quantidade: qtd,
-    preco,
+  const { error } = await db.from(TABELA_TROCAS).insert({
+    id, vendedor, comprador, item,
+    quantidade: qtd, preco,
     observacao: obs || null,
     status: 'aguardando_pagamento',
-    codigo_hash,
-    tentativas: 0,
+    codigo_hash, tentativas: 0,
     criado_em: new Date().toISOString()
-  };
-
-  const { error } = await db.from(TABELA_TROCAS).insert(payload);
+  });
 
   btn.disabled = false;
   btn.textContent = '🔐 Criar e gerar código';
-
   if (error) return toast('Erro: ' + error.message, 'err');
 
   localStorage.setItem('ts_cod_' + id, codigo);
@@ -865,7 +837,7 @@ async function criarNegociacao(e) {
 }
 
 /* ============================================================
-   MODAL DO CÓDIGO
+   MODAL
 ============================================================ */
 function abrirModalCodigo(codigo) {
   codigoModalAtual = codigo;
