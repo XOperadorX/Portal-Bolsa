@@ -24,9 +24,20 @@
   }
   .brand{font-size:20px;font-weight:800;letter-spacing:.3px;display:flex;align-items:center;gap:8px}
   .brand small{font-weight:400;font-size:12px;color:var(--mut);margin-left:6px}
-  .user{display:flex;gap:8px;align-items:center}
+  .header-right{display:flex;align-items:center;gap:14px;flex-wrap:wrap}
   .user-info{display:flex;align-items:center;gap:8px;font-size:14px}
   .user-info .nick{font-weight:700;color:#4ade80}
+  .status-supabase{
+    font-size:12px;font-weight:600;padding:5px 10px;border-radius:8px;
+    background:var(--card2);border:1px solid var(--line);color:var(--mut);
+    display:flex;align-items:center;gap:6px;white-space:nowrap;
+  }
+  .status-supabase.online{color:#86efac;border-color:rgba(34,197,94,.5)}
+  .status-supabase.offline{color:#fca5a5;border-color:rgba(239,68,68,.5)}
+  .status-supabase .dot{width:8px;height:8px;border-radius:50%;background:#64748b}
+  .status-supabase.online .dot{background:#22c55e;box-shadow:0 0 6px #22c55e}
+  .status-supabase.offline .dot{background:#ef4444;box-shadow:0 0 6px #ef4444}
+
   input,select,textarea{
     background:var(--card2);border:1px solid var(--line);color:var(--txt);
     padding:10px 12px;border-radius:10px;font-size:14px;font-family:inherit;outline:none;width:100%;
@@ -36,7 +47,7 @@
   button{font-family:inherit;cursor:pointer;border:none;border-radius:10px;transition:.15s}
   .btn{
     padding:10px 16px;font-size:14px;font-weight:600;background:var(--card2);
-    color:var(--txt);border:1px solid var(--line);
+    color:var(--txt);border:1px solid var(--line);text-decoration:none;display:inline-block;
   }
   .btn:hover{filter:brightness(1.2)}
   .btn:active{transform:scale(.98)}
@@ -139,8 +150,13 @@
 
 <header>
   <div class="brand">🛡️ TrocaSegura <small>negociação segura entre jogadores</small></div>
-  <div class="user" id="user-area">
-    <span style="color:var(--mut);font-size:13px"><span class="loading"></span>Verificando sessão…</span>
+  <div class="header-right">
+    <div class="status-supabase" id="statusSupabase">
+      <span class="dot"></span> Verificando…
+    </div>
+    <div id="user-area">
+      <span style="color:var(--mut);font-size:13px"><span class="loading"></span>Verificando sessão…</span>
+    </div>
   </div>
 </header>
 
@@ -150,7 +166,6 @@
     <h2>➕ Nova negociação</h2>
     <p class="sub">Você é o <strong>vendedor</strong>. Ao criar, um código secreto de 6 dígitos é gerado — só entregue ele ao comprador depois de confirmar o dinheiro.</p>
 
-    <!-- Aviso de mochila -->
     <div id="mochila-aviso" style="margin-bottom:14px;display:none"></div>
 
     <form id="form">
@@ -159,7 +174,6 @@
         <input id="comprador" placeholder="Ex: ZezinhoPro" maxlength="30" required />
       </div>
 
-      <!-- Seleção de item da mochila -->
       <div class="campo">
         <label for="item-select">Item da mochila 🎒</label>
         <select id="item-select">
@@ -236,6 +250,11 @@ const TABELA_TROCAS     = 'Trocas';
 const { createClient } = supabase;
 const db = createClient(SUPABASE_URL, SUPABASE_KEY);
 
+// Chaves da sessão usadas pelo login.html
+const SESSION_KEY           = 'usuario_logado';
+const SESSION_TIMESTAMP_KEY = 'session_timestamp';
+const SESSION_DURATION      = 24 * 60 * 60 * 1000; // 24h
+
 const STATUS = {
   aguardando_pagamento: { txt: 'Aguardando pagamento', cls: 'warn' },
   pagamento_confirmado: { txt: 'Pagamento confirmado', cls: 'info' },
@@ -246,13 +265,14 @@ const STATUS = {
 /* ============================================================
    ESTADO
 ============================================================ */
-let usuarioLogado   = null;   // { login, nick, email, id }
+let usuarioLogado   = null;   // { id, login, nome, email, ... }
 let mostrarTodas    = false;
 let cache           = [];
 let codigoModalAtual = '';
-
 let inventario       = [];
 let mochilaCarregada = false;
+let statusOnline     = false;
+let statusInterval   = null;
 
 /* ============================================================
    HELPERS
@@ -310,52 +330,82 @@ async function logAtividade(acao, detalhes) {
 }
 
 /* ============================================================
-   SESSÃO DO PORTAL (Supabase Auth)
+   SESSÃO DO PORTAL (lida do localStorage — igual ao login.html)
 ============================================================ */
-async function identificarUsuario() {
+function lerSessao() {
+  const ts = localStorage.getItem(SESSION_TIMESTAMP_KEY);
+  const raw = localStorage.getItem(SESSION_KEY);
+  if (!ts || !raw) return null;
+  const t = parseInt(ts, 10);
+  if (isNaN(t)) return null;
+  if (Date.now() - t >= SESSION_DURATION) return null; // expirada
+  try { return JSON.parse(raw); } catch (_) { return null; }
+}
+
+function identificarUsuario() {
   const area = $('#user-area');
+  const u = lerSessao();
 
-  const { data: { session }, error } = await db.auth.getSession();
-
-  if (error || !session) {
+  if (!u || !u.login) {
+    usuarioLogado = null;
     area.innerHTML = `
       <span style="color:#fbbf24;font-size:13px">⚠️ Não logado</span>
-      <a class="btn pri" href="https://xoperadorx.github.io/Portal-Bolsa/login.html">
-        Fazer login
-      </a>`;
+      <a class="btn pri" href="https://xoperadorx.github.io/Portal-Bolsa/login.html"
+         style="margin-left:8px">Fazer login</a>`;
     return null;
   }
 
-  // Extrai o login a partir do user_metadata (ajuste conforme seu portal)
-  const u = session.user;
-  const meta = u.user_metadata || {};
-  const login =
-    meta.login ||
-    meta.username ||
-    meta.nick ||
-    meta.nome ||
-    (u.email ? u.email.split('@')[0] : null) ||
-    u.email;
-
-  if (!login) {
-    area.innerHTML = `<span style="color:#f87171;font-size:13px">⚠️ Login não identificado</span>`;
-    return null;
-  }
-
-  usuarioLogado = { id: u.id, email: u.email, login, nick: meta.nick || login };
+  usuarioLogado = {
+    id:    u.id,
+    login: u.login,
+    nome:  u.nome || u.login,
+    email: u.email,
+    saldo: u.saldo || 0,
+    carteira: u.carteira || {}
+  };
 
   area.innerHTML = `
     <div class="user-info">
-      <span>👤 <span class="nick">${esc(usuarioLogado.nick)}</span></span>
+      <span>👤 <span class="nick">${esc(usuarioLogado.nome)}</span></span>
       <button class="btn mini ghost danger" id="btn-sair">Sair</button>
     </div>`;
 
-  $('#btn-sair').addEventListener('click', async () => {
-    await db.auth.signOut();
+  $('#btn-sair').addEventListener('click', () => {
+    localStorage.removeItem(SESSION_KEY);
+    localStorage.removeItem(SESSION_TIMESTAMP_KEY);
     location.reload();
   });
 
   return usuarioLogado;
+}
+
+/* ============================================================
+   STATUS SUPABASE (online / offline)
+============================================================ */
+function atualizarStatus(online, msg) {
+  const el = $('#statusSupabase');
+  statusOnline = online;
+  el.className = 'status-supabase ' + (online ? 'online' : 'offline');
+  el.innerHTML = `<span class="dot"></span> ${online ? 'Supabase online' : 'Supabase offline'}`;
+  if (msg) console.warn('[StatusSupabase]', msg);
+}
+
+async function verificarSupabase() {
+  try {
+    const { error } = await db.from(TABELA).select('id').limit(1);
+    if (error) { atualizarStatus(false, error.message); return false; }
+    atualizarStatus(true);
+    return true;
+  } catch (e) {
+    atualizarStatus(false, e.message);
+    return false;
+  }
+}
+
+function iniciarMonitorStatus() {
+  if (statusInterval) clearInterval(statusInterval);
+  verificarSupabase();
+  statusInterval = setInterval(verificarSupabase, 30000); // a cada 30s
 }
 
 /* ============================================================
@@ -372,6 +422,13 @@ async function carregarMochila() {
         <br><a href="https://xoperadorx.github.io/Portal-Bolsa/login.html">Ir para o Login →</a>
       </div>`;
     select.innerHTML = '<option value="">— Faça login —</option>';
+    return;
+  }
+
+  if (!statusOnline) {
+    aviso.style.display = 'block';
+    aviso.innerHTML = `<div class="erro-box">⚠️ Supabase offline. Não foi possível carregar a mochila.</div>`;
+    select.innerHTML = '<option value="">— Offline —</option>';
     return;
   }
 
@@ -416,11 +473,9 @@ async function carregarMochila() {
   }
 }
 
-/* Extrai itens de todas as fontes possíveis na tabela Geral */
 function extrairTodosItens(d) {
   const todos = {};
 
-  // carteira (jsonb)
   if (d.carteira && typeof d.carteira === 'object') {
     Object.keys(d.carteira).forEach(k => {
       const q = Number(d.carteira[k]) || 0;
@@ -428,14 +483,12 @@ function extrairTodosItens(d) {
     });
   }
 
-  // colunas diretas
   if (Number(d.seeds) > 0)     todos['Sementes'] = (todos['Sementes'] || 0) + Number(d.seeds);
   if (Number(d.stock) > 0)     todos['Milho']    = (todos['Milho']    || 0) + Number(d.stock);
   if (Number(d.buckets) > 0)   todos['Balde']    = (todos['Balde']    || 0) + Number(d.buckets);
   if (Number(d.planted) > 0)   todos['Planta']   = (todos['Planta']   || 0) + Number(d.planted);
   if (Number(d.harvested) > 0) todos['Colheita'] = (todos['Colheita'] || 0) + Number(d.harvested);
 
-  // itens (jsonb) — array ou objeto
   if (Array.isArray(d.itens)) {
     d.itens.forEach(item => {
       if (item && item.nome) {
@@ -458,10 +511,16 @@ function extrairTodosItens(d) {
 ============================================================ */
 document.addEventListener('DOMContentLoaded', async () => {
   bindEventos();
-  await identificarUsuario();
-  carregar();
-  inscreverRealtime();
-  carregarMochila();
+  identificarUsuario();
+  iniciarMonitorStatus();
+
+  if (usuarioLogado) {
+    await carregarMochila();
+    carregar();
+    inscreverRealtime();
+  } else {
+    render();
+  }
 });
 
 function bindEventos() {
@@ -470,10 +529,12 @@ function bindEventos() {
     render();
   });
 
-  $('#btn-refresh').addEventListener('click', carregar);
+  $('#btn-refresh').addEventListener('click', () => {
+    verificarSupabase();
+    carregar();
+  });
   $('#form').addEventListener('submit', criarNegociacao);
 
-  // Ao escolher um item no dropdown, preenche os campos
   $('#item-select').addEventListener('change', (e) => {
     const opt = e.target.selectedOptions[0];
     if (!opt || !opt.value) {
@@ -500,6 +561,13 @@ function bindEventos() {
    SUPABASE — LEITURA
 ============================================================ */
 async function carregar() {
+  if (!usuarioLogado) return;
+
+  if (!statusOnline) {
+    $('#erro').innerHTML = `<div class="erro-box">⚠️ Supabase offline — não foi possível carregar as negociações.</div>`;
+    return;
+  }
+
   const { data, error } = await db
     .from(TABELA_TROCAS)
     .select('*')
@@ -523,6 +591,7 @@ async function carregar() {
 
 let rtTimer = null;
 function inscreverRealtime() {
+  if (!usuarioLogado) return;
   db.channel('trocas-rt')
     .on('postgres_changes',
         { event: '*', schema: 'public', table: TABELA_TROCAS },
@@ -538,16 +607,15 @@ function inscreverRealtime() {
 ============================================================ */
 function render() {
   const lista = $('#lista');
-  const nick = usuarioLogado?.nick || usuarioLogado?.login;
 
-  if (!nick) {
+  if (!usuarioLogado) {
     lista.innerHTML = `<div class="vazio">🔒 Faça login no portal para ver suas negociações.</div>`;
     return;
   }
 
   let rows = cache;
   if (!mostrarTodas) {
-    rows = rows.filter(r => r.vendedor === nick || r.comprador === nick);
+    rows = rows.filter(r => r.vendedor === usuarioLogado.login || r.comprador === usuarioLogado.login);
   }
 
   if (!rows.length) {
@@ -555,10 +623,11 @@ function render() {
     return;
   }
 
-  lista.innerHTML = rows.map(r => cardHTML(r, nick)).join('');
+  lista.innerHTML = rows.map(cardHTML).join('');
 }
 
-function cardHTML(r, nick) {
+function cardHTML(r) {
+  const nick = usuarioLogado?.login;
   const euVendedor  = r.vendedor  === nick;
   const euComprador = r.comprador === nick;
   const st = STATUS[r.status] || { txt: r.status, cls: 'warn' };
@@ -585,7 +654,7 @@ function cardHTML(r, nick) {
              <code>${esc(cod)}</code>
              <button class="btn mini" data-acao="copiar" data-cod="${esc(cod)}">📋 Copiar</button>
            </div>`
-        : `<div class="aviso err">⚠️ Código não disponível neste dispositivo. Ele foi gerado no aparelho onde a negociação foi criada.</div>`;
+        : `<div class="aviso err">⚠️ Código não disponível neste dispositivo.</div>`;
       acoes += `<button class="btn ghost danger" data-acao="cancelar" data-id="${r.id}">Cancelar</button>`;
     }
     if (euComprador) {
@@ -725,8 +794,9 @@ async function criarNegociacao(e) {
   e.preventDefault();
 
   if (!usuarioLogado) return toast('Faça login no portal primeiro.', 'err');
+  if (!statusOnline) return toast('Supabase offline. Tente novamente.', 'err');
 
-  const vendedor  = usuarioLogado.nick || usuarioLogado.login;
+  const vendedor  = usuarioLogado.login;
   const comprador = $('#comprador').value.trim();
   const item      = $('#item').value.trim();
   const qtd       = Math.max(1, parseInt($('#qtd').value, 10) || 1);
