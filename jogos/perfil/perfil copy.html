@@ -264,7 +264,6 @@ const sb = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 let usuario = null;
 let perfilLiberado = false;
 let codigosCache = [];
-let codigosUsados = [];   // códigos já usados por este usuário
 
 // ---------- Elementos ----------
 const $statusLock = document.getElementById('statusLock');
@@ -339,28 +338,6 @@ function carregarUsuarioLogado() {
   return true;
 }
 
-// ---------- Carregar dados do usuário no banco (codigos_usados) ----------
-async function carregarDadosUsuario() {
-  try {
-    const { data, error } = await sb
-      .from(TABELA)
-      .select('codigos_usados')
-      .eq('login', usuario.login)
-      .maybeSingle();
-
-    if (error) {
-      console.warn('Erro ao carregar dados do usuário:', error);
-      codigosUsados = [];
-      return;
-    }
-
-    codigosUsados = Array.isArray(data?.codigos_usados) ? data.codigos_usados : [];
-  } catch (e) {
-    console.error('Erro ao carregar dados do usuário:', e);
-    codigosUsados = [];
-  }
-}
-
 // ---------- Carregar códigos de resgate ----------
 async function carregarCodigos() {
   try {
@@ -398,19 +375,8 @@ async function resgatarCodigo() {
   $btnResgatar.innerHTML = '<span class="spinner"></span>Verificando...';
 
   try {
-    // Recarrega códigos e dados do usuário para pegar os mais recentes
+    // Recarrega códigos para pegar os mais recentes
     await carregarCodigos();
-    await carregarDadosUsuario();
-
-    // 🔒 Verifica se o usuário JÁ usou este código
-    const jaUsado = codigosUsados.some(
-      c => (c.codigo || '').toUpperCase() === codigo
-    );
-
-    if (jaUsado) {
-      mostrarMensagem('❌ Você já utilizou este código. Cada código só pode ser usado uma vez.', 'erro');
-      return;
-    }
 
     const codigoEncontrado = codigosCache.find(
       c => (c.codigo || '').toUpperCase() === codigo
@@ -442,32 +408,15 @@ async function resgatarCodigo() {
       codigosCache[idx].usos = (codigosCache[idx].usos || 0) + 1;
     }
 
-    // Registra o código como usado por este usuário
-    codigosUsados.push({
-      codigo: codigo,
-      data: new Date().toISOString()
-    });
-
-    // Salva no banco: códigos (usos) + usuário (codigos_usados)
-    const { error: updateCodigosError } = await sb
+    // Salva no banco
+    const { error: updateError } = await sb
       .from(TABELA)
       .update({ codigos_resgate: codigosCache })
       .eq('id', 1);
 
-    if (updateCodigosError) {
-      console.error('Erro ao salvar uso do código:', updateCodigosError);
+    if (updateError) {
+      console.error('Erro ao salvar uso do código:', updateError);
       mostrarMensagem('⚠️ Código válido, mas houve erro ao registrar o uso.', 'erro');
-      return;
-    }
-
-    const { error: updateUsuarioError } = await sb
-      .from(TABELA)
-      .update({ codigos_usados: codigosUsados })
-      .eq('login', usuario.login);
-
-    if (updateUsuarioError) {
-      console.error('Erro ao salvar códigos usados:', updateUsuarioError);
-      mostrarMensagem('⚠️ Código válido, mas houve erro ao registrar no seu perfil.', 'erro');
       return;
     }
 
@@ -566,10 +515,8 @@ async function inicializar() {
 
   bloquearPerfil();
   await carregarCodigos();
-  await carregarDadosUsuario();
 
   console.log('✅ Página carregada. Códigos disponíveis:', codigosCache.length);
-  console.log('📌 Códigos já usados por você:', codigosUsados.length);
 }
 
 inicializar();
