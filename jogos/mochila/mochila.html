@@ -27,8 +27,6 @@
   .header-right{display:flex;align-items:center;gap:14px;flex-wrap:wrap}
   .user-info{display:flex;align-items:center;gap:8px;font-size:14px}
   .user-info .nick{font-weight:700;color:#4ade80}
-  .saldo{font-size:13px;color:var(--mut)}
-  .saldo strong{color:#4ade80;font-weight:700}
   .btn{
     padding:9px 14px;font-size:13.5px;font-weight:600;background:var(--card2);
     color:var(--txt);border:1px solid var(--line);border-radius:10px;
@@ -89,6 +87,11 @@
   }
   .erro-box a{color:#4f8cff;text-decoration:none}
   .erro-box a:hover{text-decoration:underline}
+  .debug{
+    background:var(--card2);border:1px solid var(--line);border-radius:10px;
+    padding:12px;font-family:ui-monospace,monospace;font-size:12px;color:var(--mut);
+    margin-bottom:16px;white-space:pre-wrap;word-break:break-all;
+  }
   .loading{
     display:inline-block;width:14px;height:14px;border:2px solid var(--mut);
     border-top-color:var(--pri);border-radius:50%;animation:spin .7s linear infinite;
@@ -121,6 +124,7 @@
     </div>
   </div>
 
+  <div id="debug" class="debug" style="display:none"></div>
   <div id="conteudo">
     <div class="vazio"><span class="loading"></span>Carregando dados…</div>
   </div>
@@ -137,11 +141,30 @@ const TABELA       = 'Geral';
 const { createClient } = supabase;
 const db = createClient(SUPABASE_URL, SUPABASE_KEY);
 
-const SESSION_KEY           = 'usuario_logado';
-const SESSION_TIMESTAMP_KEY = 'session_timestamp';
-const SESSION_DURATION      = 24 * 60 * 60 * 1000; // 24h
+/* Chaves possíveis — testa todas até achar a que tem dados */
+const SESSION_KEYS = [
+  'usuario_logado',
+  'usuarioLogado',
+  'user',
+  'usuario',
+  'jogador',
+  'session',
+  'sessao',
+  'login',
+  'portal_bolsa_user',
+  'user_data',
+  'dados_usuario'
+];
+const TIMESTAMP_KEYS = [
+  'session_timestamp',
+  'login_time',
+  'timestamp',
+  'login_timestamp',
+  'session_time'
+];
+const SESSION_DURATION = 24 * 60 * 60 * 1000; // 24h
 
-/* Emojis por tipo de item */
+/* Emojis */
 const EMOJIS = {
   'Espada':'⚔️','Poção':'🧪','Escudo':'🛡️','Anel':'💍','Cristal':'💎',
   'Mapa':'🗺️','Chave':'🔑','Machado':'🪓','Capa':'🧥','Armadura':'🛡️',
@@ -164,43 +187,90 @@ const esc = (s) => String(s ?? '').replace(/[&<>"']/g, c =>
   ({ '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;' }[c]));
 const money = (v) => Number(v || 0).toLocaleString('pt-BR', { style:'currency', currency:'BRL' });
 
-function lerSessao() {
-  const ts  = localStorage.getItem(SESSION_TIMESTAMP_KEY);
-  const raw = localStorage.getItem(SESSION_KEY);
+function mostrarDebug(msg) {
+  const el = $('#debug');
+  el.style.display = 'block';
+  el.textContent += msg + '\n';
+}
 
-  // Sessão do portal (usuario_logado)
-  if (ts && raw) {
-    const t = parseInt(ts, 10);
-    if (!isNaN(t) && (Date.now() - t) < SESSION_DURATION) {
-      try { return JSON.parse(raw); } catch (_) {}
+/* ============================================================
+   LER SESSÃO — tenta TODAS as chaves conhecidas
+============================================================ */
+function lerSessao() {
+  // 1. Tenta cada chave de sessão conhecida
+  for (const key of SESSION_KEYS) {
+    const raw = localStorage.getItem(key);
+    if (!raw) continue;
+    try {
+      const obj = JSON.parse(raw);
+
+      // Aceita formato direto { login, nome, email } ou dentro de .user
+      const u = obj?.user || obj?.usuario || obj;
+
+      if (u && (u.login || u.nome || u.email || u.id)) {
+        // Verifica timestamp se existir
+        for (const tkey of TIMESTAMP_KEYS) {
+          const ts = localStorage.getItem(tkey);
+          if (ts) {
+            const t = parseInt(ts, 10);
+            if (!isNaN(t) && (Date.now() - t) >= SESSION_DURATION) {
+              console.warn(`[mochila] Sessão de ${key} expirada`);
+              return null;
+            }
+          }
+        }
+        mostrarDebug(`✅ Sessão encontrada em localStorage["${key}"]`);
+        return {
+          id:    u.id,
+          login: u.login || u.nome || u.email?.split('@')[0] || u.username,
+          nome:  u.nome || u.login || u.email?.split('@')[0] || u.username,
+          email: u.email
+        };
+      }
+    } catch (e) {
+      // Não é JSON, tenta usar como string pura
+      if (raw.length > 0 && raw.length < 100) {
+        mostrarDebug(`✅ Sessão (string) encontrada em localStorage["${key}"]`);
+        return { login: raw, nome: raw };
+      }
     }
   }
-  // Fallback: procura qualquer chave sb-*-auth-token
+
+  // 2. Fallback: procura chave sb-*-auth-token (Supabase Auth)
   for (let i = 0; i < localStorage.length; i++) {
     const k = localStorage.key(i);
     if (k && k.startsWith('sb-') && k.endsWith('-auth-token')) {
       try {
         const obj = JSON.parse(localStorage.getItem(k));
         const u = obj?.user || obj?.session?.user;
-        if (u) return {
-          id: u.id,
-          login: u.user_metadata?.login || u.user_metadata?.nick || u.email?.split('@')[0],
-          nome:  u.user_metadata?.nome  || u.user_metadata?.nick || u.email?.split('@')[0],
-          email: u.email
-        };
+        if (u) {
+          const login = u.user_metadata?.login ||
+                        u.user_metadata?.nick ||
+                        u.user_metadata?.nome ||
+                        u.email?.split('@')[0];
+          mostrarDebug(`✅ Sessão Supabase Auth em "${k}"`);
+          return { id: u.id, login, nome: login, email: u.email };
+        }
       } catch (_) {}
     }
   }
+
+  // 3. Último recurso: mostra todas as chaves para o usuário diagnosticar
+  mostrarDebug('❌ Nenhuma chave de sessão encontrada.');
+  mostrarDebug('Chaves disponíveis no localStorage:');
+  Object.keys(localStorage).forEach(k => {
+    mostrarDebug('  • ' + k + ' = ' + (localStorage.getItem(k) || '').slice(0, 80));
+  });
   return null;
 }
 
 /* ============================================================
-   EXTRAIR ITENS DE TODAS AS FONTES
+   EXTRAIR ITENS
 ============================================================ */
 function extrairItens(d) {
   const itens = [];
 
-  // 1. carteira (JSONB objeto: { "Nome": qtd })
+  // 1. carteira (JSONB objeto)
   if (d.carteira && typeof d.carteira === 'object' && !Array.isArray(d.carteira)) {
     Object.entries(d.carteira).forEach(([nome, qtd]) => {
       const q = Number(qtd) || 0;
@@ -208,7 +278,7 @@ function extrairItens(d) {
     });
   }
 
-  // 2. itens (JSONB array: [{ nome, quantidade }])
+  // 2. itens (array)
   if (Array.isArray(d.itens)) {
     d.itens.forEach(it => {
       if (it && it.nome) {
@@ -217,7 +287,7 @@ function extrairItens(d) {
       }
     });
   }
-  // 3. itens (JSONB objeto: { "Nome": qtd })
+  // 3. itens (objeto)
   else if (d.itens && typeof d.itens === 'object') {
     Object.entries(d.itens).forEach(([nome, qtd]) => {
       const q = Number(qtd) || 0;
@@ -225,20 +295,16 @@ function extrairItens(d) {
     });
   }
 
-  // 4. Colunas numéricas diretas
+  // 4. Colunas numéricas
   const diretas = {
-    seeds: 'Sementes',
-    stock: 'Milho',
-    buckets: 'Balde',
-    planted: 'Planta',
-    harvested: 'Colheita'
+    seeds: 'Sementes', stock: 'Milho', buckets: 'Balde',
+    planted: 'Planta', harvested: 'Colheita'
   };
   Object.entries(diretas).forEach(([col, nome]) => {
     const q = Number(d[col]) || 0;
     if (q > 0) itens.push({ nome, quantidade: q, tipo: 'recurso' });
   });
 
-  // Ordena por quantidade desc
   itens.sort((a, b) => b.quantidade - a.quantidade);
   return itens;
 }
@@ -293,8 +359,8 @@ function renderUsuario(u) {
     <button class="btn ghost danger" id="btn-sair">Sair</button>
   `;
   $('#btn-sair').addEventListener('click', () => {
-    localStorage.removeItem(SESSION_KEY);
-    localStorage.removeItem(SESSION_TIMESTAMP_KEY);
+    SESSION_KEYS.forEach(k => localStorage.removeItem(k));
+    TIMESTAMP_KEYS.forEach(k => localStorage.removeItem(k));
     location.href = 'https://xoperadorx.github.io/Portal-Bolsa/login.html';
   });
 }
@@ -304,7 +370,7 @@ function mostrarErro(msg) {
 }
 
 /* ============================================================
-   CARREGAR DADOS
+   CARREGAR
 ============================================================ */
 async function carregar() {
   const u = lerSessao();
@@ -315,7 +381,8 @@ async function carregar() {
       <a class="btn pri" href="https://xoperadorx.github.io/Portal-Bolsa/login.html">Fazer login</a>`;
     mostrarErro(`⚠️ Nenhuma sessão ativa encontrada.
       <br><br>Faça login no portal primeiro:
-      <a href="https://xoperadorx.github.io/Portal-Bolsa/login.html">login.html</a>`);
+      <a href="https://xoperadorx.github.io/Portal-Bolsa/login.html">login.html</a>
+      <br><br>Depois volte para esta página.`);
     return;
   }
 
@@ -334,7 +401,7 @@ async function carregar() {
 
   if (!data || data.length === 0) {
     mostrarErro(`⚠️ Jogador <strong>${esc(u.login)}</strong> não encontrado na tabela <code>${TABELA}</code>.
-      <br><br>Cadastre o jogador no banco de dados ou verifique se o login está correto.`);
+      <br><br>Certifique-se de que o jogador existe no banco ou rode o SQL de população.`);
     return;
   }
 
@@ -351,6 +418,13 @@ async function carregar() {
 ============================================================ */
 document.addEventListener('DOMContentLoaded', () => {
   $('#busca').addEventListener('input', (e) => renderItens(e.target.value));
+
+  // Log de diagnóstico (visível no console)
+  console.log('=== MOCHILA DEBUG ===');
+  Object.keys(localStorage).forEach(k => {
+    console.log('localStorage["' + k + '"] =', localStorage.getItem(k));
+  });
+
   carregar();
 });
 </script>
