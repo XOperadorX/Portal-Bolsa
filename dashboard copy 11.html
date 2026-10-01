@@ -698,186 +698,6 @@
         }
 
         /* ============================================================
-           BARRINHA DE REGENERAÇÃO DE STAMINA (sm_atual < 10)
-           ============================================================ */
-        .stamina-regen-container {
-            display: none;
-            margin: 20px auto;
-            max-width: 1300px;
-            padding: 14px 18px;
-            background: rgba(239, 68, 68, 0.08);
-            border: 1px solid rgba(239, 68, 68, 0.35);
-            border-radius: 14px;
-            animation: regenPulse 2s ease-in-out infinite;
-        }
-
-        .stamina-regen-container.active { display: block; }
-
-        @keyframes regenPulse {
-            0%, 100% {
-                border-color: rgba(239, 68, 68, 0.35);
-                box-shadow: 0 0 0 rgba(239, 68, 68, 0);
-            }
-            50% {
-                border-color: rgba(239, 68, 68, 0.7);
-                box-shadow: 0 0 22px rgba(239, 68, 68, 0.25);
-            }
-        }
-
-        .regen-header {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            gap: 10px;
-            margin-bottom: 10px;
-            flex-wrap: wrap;
-        }
-
-        .regen-titulo {
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            color: #fca5a5;
-            font-weight: 700;
-            font-size: 0.9rem;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-        }
-
-        .regen-titulo i {
-            font-size: 1.1rem;
-            animation: boltShake 1.5s ease-in-out infinite;
-        }
-
-        @keyframes boltShake {
-            0%, 100% { transform: rotate(0deg) scale(1); }
-            25%      { transform: rotate(-12deg) scale(1.15); }
-            75%      { transform: rotate(12deg) scale(1.15); }
-        }
-
-        .regen-tempo {
-            font-family: 'Orbitron', monospace;
-            font-size: 1rem;
-            font-weight: 900;
-            color: #f5c542;
-            text-shadow: 0 0 12px rgba(245, 197, 66, 0.5);
-            background: rgba(245, 197, 66, 0.12);
-            padding: 4px 14px;
-            border-radius: 20px;
-            border: 1px solid rgba(245, 197, 66, 0.35);
-            letter-spacing: 1.5px;
-        }
-
-        .regen-barra-wrapper {
-            position: relative;
-            width: 100%;
-            height: 16px;
-            background: rgba(0, 0, 0, 0.45);
-            border-radius: 10px;
-            overflow: hidden;
-            border: 1px solid rgba(255, 255, 255, 0.08);
-        }
-
-        .regen-barra-fill {
-            height: 100%;
-            width: 0%;
-            background: linear-gradient(90deg, #ef4444, #f59e0b, #f5c542, #22c55e);
-            background-size: 300% 100%;
-            border-radius: 10px;
-            transition: width 1s linear;
-            animation: gradientShift 3s ease infinite;
-            box-shadow: 0 0 14px rgba(245, 197, 66, 0.5);
-            position: relative;
-            overflow: hidden;
-        }
-
-        @keyframes gradientShift {
-            0%, 100% { background-position: 0% 50%; }
-            50%      { background-position: 100% 50%; }
-        }
-
-        .regen-barra-fill::after {
-            content: '';
-            position: absolute;
-            inset: 0;
-            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.45), transparent);
-            animation: shimmerBar 2s infinite;
-        }
-
-        @keyframes shimmerBar {
-            0%   { transform: translateX(-100%); }
-            100% { transform: translateX(100%); }
-        }
-
-        .regen-info {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-top: 8px;
-            font-size: 0.78rem;
-            color: #94a3b8;
-            gap: 10px;
-            flex-wrap: wrap;
-            font-weight: 600;
-        }
-
-        .regen-info .sm-atual { color: #fca5a5; font-weight: 800; }
-        .regen-info .sm-alvo  { color: #86efac; font-weight: 800; }
-
-        .regen-aviso {
-            margin-top: 10px;
-            padding: 9px 12px;
-            background: rgba(245, 197, 66, 0.08);
-            border-left: 3px solid #f5c542;
-            border-radius: 6px;
-            font-size: 0.75rem;
-            color: #cbd5e1;
-            line-height: 1.5;
-        }
-
-        .regen-aviso i { color: #f5c542; margin-right: 5px; }
-
-        /* ============================================================
-           BLOQUEIO DE JOGO (sm < 10)
-           ============================================================ */
-        .game-card.bloqueado {
-            opacity: 0.45;
-            cursor: not-allowed !important;
-            filter: grayscale(0.75);
-            position: relative;
-        }
-
-        .game-card.bloqueado::after {
-            content: '🔒 BLOQUEADO';
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%) rotate(-12deg);
-            background: rgba(239, 68, 68, 0.95);
-            color: #fff;
-            font-size: 0.72rem;
-            font-weight: 900;
-            padding: 7px 16px;
-            border-radius: 8px;
-            letter-spacing: 1.2px;
-            white-space: nowrap;
-            box-shadow: 0 6px 18px rgba(0, 0, 0, 0.55);
-            z-index: 10;
-        }
-
-        .game-card.bloqueado:hover {
-            transform: none !important;
-            border-color: rgba(255, 255, 255, 0.08) !important;
-            box-shadow: none !important;
-        }
-
-        @keyframes shake {
-            0%, 100% { transform: translateX(0); }
-            25%      { transform: translateX(-9px); }
-            75%      { transform: translateX(9px); }
-        }
-
-        /* ============================================================
            RESPONSIVIDADE
            ============================================================ */
         @media (max-width: 700px) {
@@ -910,20 +730,14 @@
             .btc-widget { padding: 3px 8px 3px 6px; margin-right: 4px; border-radius: 6px; }
             .btc-icon { font-size: 13px; }
             .btc-value { font-size: 10px; }
-
-            .stamina-regen-container { padding: 12px 14px; }
-            .regen-titulo { font-size: 0.78rem; }
-            .regen-tempo { font-size: 0.85rem; padding: 3px 10px; }
-            .regen-barra-wrapper { height: 13px; }
-            .regen-info { font-size: 0.7rem; }
-            .regen-aviso { font-size: 0.7rem; }
-            .game-card.bloqueado::after { font-size: 0.6rem; padding: 5px 10px; }
         }
 
         /* ============================================================
-           👑 BOTÃO ADMIN
+           👑 BOTÃO ADMIN — escondido por padrão, aparece se cadeado = true
            ============================================================ */
-        #btnAdmin { display: none; }
+        #btnAdmin {
+            display: none;
+        }
 
         #btnAdmin.visivel {
             display: inline-flex;
@@ -934,7 +748,9 @@
         }
 
         @keyframes adminPulse {
-            0%, 100% { box-shadow: 0 0 10px rgba(139, 92, 246, 0.6); }
+            0%, 100% {
+                box-shadow: 0 0 10px rgba(139, 92, 246, 0.6);
+            }
             50% {
                 box-shadow: 0 0 20px rgba(139, 92, 246, 1),
                             0 0 30px rgba(112, 0, 255, 0.6);
@@ -1013,35 +829,6 @@
 
     <div id="offlineRegenSlot"></div>
 
-    <!-- ============================================================
-         BARRINHA DE REGENERAÇÃO DE STAMINA
-         Aparece automaticamente quando sm_atual < 10
-         ============================================================ -->
-    <div class="stamina-regen-container" id="staminaRegenContainer">
-        <div class="regen-header">
-            <div class="regen-titulo">
-                <i class="fas fa-bolt"></i>
-                <span>REGENERANDO STAMINA</span>
-            </div>
-            <div class="regen-tempo" id="regenTempo">--:--:--</div>
-        </div>
-
-        <div class="regen-barra-wrapper">
-            <div class="regen-barra-fill" id="regenBarraFill"></div>
-        </div>
-
-        <div class="regen-info">
-            <span>⚡ <span class="sm-atual" id="regenSmAtual">0</span> / <span class="sm-alvo" id="regenSmAlvo">10</span> SM</span>
-            <span id="regenMensagem">Aguarde para jogar...</span>
-        </div>
-
-        <div class="regen-aviso">
-            <i class="fas fa-info-circle"></i>
-            Precisas de <strong>10 STAMINA</strong> para entrar num jogo.
-            A regeneração só ocorre <strong>offline</strong> — ao sair da conta.
-        </div>
-    </div>
-
     <div class="level-widget" id="levelWidget">
         <div class="lw-header">
             <div class="lw-badge">
@@ -1116,6 +903,7 @@
             <div class="game-icon">📄</div>
             <div class="game-title">Papelão</div>
         </a>
+
     </main>
 
     <div class="activity-log">
@@ -1141,6 +929,7 @@
     <script type="module">
         // ============================================================
         // DASHBOARD — INTEGRADO COM OFFLINE-REGEN COMPARTILHADO
+        // Login direto na tabela "Geral" (sem Supabase Auth)
         // ============================================================
         import { OfflineRegen, REGEN_CONFIG } from './shared/offline-regen.js';
 
@@ -1159,30 +948,9 @@
             localStorage.removeItem(SESSION_TIMESTAMP_KEY);
         }
 
+        // Cliente Supabase (usa o global do CDN)
         const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
-        // ============================================================
-        // CONFIGURAÇÕES DE REGENERAÇÃO
-        // ============================================================
-        const REGEN_CFG = {
-            SM_MINIMA_JOGO: 10,
-            SM_POR_MINUTO: 2,
-            HP_POR_MINUTO: 1,
-            MP_POR_MINUTO: 1,
-            MAX_HORAS_OFFLINE: 24,
-            INTERVALO_MS: 1000
-        };
-
-        const regenState = {
-            intervalo: null,
-            smAtual: 0,
-            smMax: 100,
-            ativo: false
-        };
-
-        // ============================================================
-        // CLASSE LEVEL SYSTEM
-        // ============================================================
         class LevelSystem {
             constructor() {
                 this.nivel = 1;
@@ -1227,8 +995,11 @@
                 this.staminaInterval = null;
                 this._processandoJogo = false;
                 this.ultimaVezOnline = Date.now();
+
+                // Módulo compartilhado de regeneração offline
                 this.offlineRegen = null;
 
+                // binds
                 this.treinar = this.treinar.bind(this);
                 this.descansar = this.descansar.bind(this);
                 this.resetar = this.resetar.bind(this);
@@ -1265,6 +1036,9 @@
                 return titulo;
             }
 
+            // ============================================================
+            // OFFLINE REGEN — MÓDULO COMPARTILHADO
+            // ============================================================
             async iniciarOfflineRegen() {
                 if (!this.usuario || !this.usuario.login) return;
 
@@ -1283,7 +1057,6 @@
                         this.hp = dados.hp;
                         this.mp = dados.mp;
                         this.atualizarUI();
-                        sincronizarRegenState();
                     }
                 });
 
@@ -1295,9 +1068,11 @@
                 this.hp = snap.hp;
                 this.mp = snap.mp;
                 this.atualizarUI();
-                sincronizarRegenState();
             }
 
+            // ============================================================
+            // ADMIN
+            // ============================================================
             async verificarAdmin() {
                 const btnAdmin = document.getElementById('btnAdmin');
                 if (!btnAdmin) return;
@@ -1324,6 +1099,7 @@
                     if (data && data.cadeado === true) {
                         btnAdmin.style.display = 'inline-flex';
                         btnAdmin.classList.add('visivel');
+                        console.log('👑 ADMIN LIBERADO para', this.usuario.login);
                     } else {
                         btnAdmin.style.display = 'none';
                         btnAdmin.classList.remove('visivel');
@@ -1334,6 +1110,9 @@
                 }
             }
 
+            // ============================================================
+            // LOGS
+            // ============================================================
             addLog(mensagem, tipo = 'info') {
                 const now = new Date();
                 const timeStr = now.toLocaleTimeString('pt-BR', {
@@ -1345,7 +1124,9 @@
                 });
 
                 if (this.atividades.length > 50) this.atividades = this.atividades.slice(0, 50);
+
                 this.renderLog();
+
                 if (this.usuario && this.supabaseOnline) this.salvarLog(mensagem, tipo);
             }
 
@@ -1415,6 +1196,9 @@
                 }
             }
 
+            // ============================================================
+            // AÇÕES DE NÍVEL
+            // ============================================================
             treinar() {
                 if (this.sm < 10) {
                     this.mostrarToast('⚡ Stamina insuficiente! Descanse.', 'erro');
@@ -1452,7 +1236,7 @@
                 this.addLog(`🏋️ Treinou +${ganho} EXP (Nível ${this.nivel})`, 'info');
 
                 if (this.offlineRegen) this.offlineRegen.onSmReduzida(this.sm, this.getSmMax());
-                sincronizarRegenState();
+
                 this.salvarComDelay();
                 return true;
             }
@@ -1472,7 +1256,7 @@
                 this.addLog(`🛌 Descansou (+${hpRestaurado} HP, +${mpRestaurado} MP, +${smRestaurado} SM)`, 'info');
 
                 if (this.offlineRegen) this.offlineRegen.onSmAumentada(this.sm);
-                sincronizarRegenState();
+
                 this.salvarComDelay();
                 return true;
             }
@@ -1492,11 +1276,14 @@
                 this.addLog('🔄 Nível resetado para 1', 'info');
 
                 if (this.offlineRegen) this.offlineRegen.onSmAumentada(this.sm);
-                sincronizarRegenState();
+
                 this.salvarComDelay();
                 return true;
             }
 
+            // ============================================================
+            // SALVAMENTO
+            // ============================================================
             salvarComDelay() {
                 if (this.saveTimeout) clearTimeout(this.saveTimeout);
                 this.saveTimeout = setTimeout(() => {
@@ -1505,6 +1292,9 @@
                 }, 500);
             }
 
+            // ============================================================
+            // 🎮 CLIQUE EM JOGO — BLOQUEIO SE STAMINA < 10
+            // ============================================================
             async gastarStaminaParaJogar(event) {
                 event.preventDefault();
                 event.stopPropagation();
@@ -1519,26 +1309,20 @@
                 if (this._processandoJogo) return;
                 this._processandoJogo = true;
 
-                // ✅ BLOQUEIA SE STAMINA < 10
-                if (this.sm < REGEN_CFG.SM_MINIMA_JOGO) {
-                    const faltam = REGEN_CFG.SM_MINIMA_JOGO - this.sm;
-                    this.mostrarToast(
-                        `⚡ Stamina insuficiente! Faltam ${faltam} SM. Aguarda a regeneração offline.`,
-                        'erro'
-                    );
-                    this.addLog(`❌ Tentou entrar em ${gameName} com ${this.sm} SM (< 10)`, 'erro');
+                // ✅ CORREÇÃO PRINCIPAL: BLOQUEIA SE STAMINA ATUAL < 10
+                if (this.sm < 10) {
+                    this.mostrarToast('⚡ Stamina insuficiente! Mínimo de 10 para entrar. Descanse ou aguarde a regeneração.', 'erro');
+                    this.addLog(`❌ Tentou entrar em ${gameName} com stamina ${this.sm} (< 10)`, 'erro');
                     this._processandoJogo = false;
-
-                    const c = document.getElementById('staminaRegenContainer');
-                    if (c) c.scrollIntoView({ behavior: 'smooth', block: 'center' });
                     return;
                 }
 
-                // ✅ Custo = 50% da stamina ATUAL
+                // ✅ Custo = 10% da stamina ATUAL (mínimo 1 para nunca travar em 0)
                 const custoStamina = Math.max(1, Math.floor(this.sm * 0.50));
 
+                // Verificação extra de segurança (não deve ocorrer se sm >= 10)
                 if (this.sm < custoStamina || this.sm <= 0) {
-                    this.mostrarToast('⚠️ Stamina insuficiente! Descansa primeiro.', 'erro');
+                    this.mostrarToast('⚠️ Stamina insuficiente! Descanse primeiro.', 'erro');
                     this._processandoJogo = false;
                     return;
                 }
@@ -1555,7 +1339,7 @@
                     if (loadingTitle) loadingTitle.textContent = `Entrando em ${gameName}...`;
                     if (loadingSub) loadingSub.textContent = 'Preparando sua aventura';
                     if (loadingStamina) {
-                        loadingStamina.textContent = `⚡ -${custoStamina} STAMINA — ${this.sm} → ${this.sm - custoStamina}`;
+                        loadingStamina.textContent = `⚡ -${custoStamina} STAMINA (10%) — ${this.sm} → ${this.sm - custoStamina}`;
                     }
                     if (loadingProgressFill) loadingProgressFill.style.width = '0%';
                     loadingOverlay.classList.add('active');
@@ -1583,12 +1367,12 @@
 
                 if (this.offlineRegen) {
                     this.offlineRegen.onSmReduzida(this.sm, this.getSmMax());
-                    if (typeof this.offlineRegen.render === 'function') this.offlineRegen.render();
+                    if (typeof this.offlineRegen.render === 'function') {
+                        this.offlineRegen.render();
+                    }
                 }
 
-                sincronizarRegenState();
-
-                const msg = `🎮 Entrou em ${gameName} (-${custoStamina} SM: ${staminaAntes} → ${this.sm})`;
+                const msg = `🎮 Entrou em ${gameName} (-${custoStamina} SM [10%]: ${staminaAntes} → ${this.sm})`;
                 this.addLog(msg, 'info');
 
                 try {
@@ -1685,6 +1469,9 @@
                 }
             }
 
+            // ============================================================
+            // CARREGAMENTO
+            // ============================================================
             async carregar(usuario) {
                 this.usuario = usuario;
 
@@ -1724,6 +1511,7 @@
 
                         this.atualizarUI();
                         await this.carregarLogs(usuario.login);
+
                         await this.iniciarOfflineRegen();
 
                         this.salvarComDelay();
@@ -1784,6 +1572,9 @@
                 }
             }
 
+            // ============================================================
+            // MINERAÇÃO
+            // ============================================================
             minerar() {
                 if (!this.usuario) {
                     this.mostrarToast('❌ Faça login primeiro!', 'erro');
@@ -1827,6 +1618,9 @@
                 }, 3000);
             }
 
+            // ============================================================
+            // UI
+            // ============================================================
             atualizarUI() {
                 const expProx = this.getExpProximo();
                 const pct = Math.min((this.experiencia / expProx) * 100, 100);
@@ -1897,6 +1691,9 @@
                 }, 3000);
             }
 
+            // ============================================================
+            // CONEXÃO
+            // ============================================================
             async verificarConexao() {
                 try {
                     const { error } = await supabase.from(TABELA).select('login').limit(1);
@@ -1929,6 +1726,7 @@
                     card.removeEventListener('click', this.gastarStaminaParaJogar);
                     card.addEventListener('click', this.gastarStaminaParaJogar);
                 });
+                console.log(`🎮 ${gameCards.length} jogos configurados (bloqueio se stamina < 10)`);
             }
 
             iniciarRecuperacaoStamina() {
@@ -1936,18 +1734,27 @@
                 this.staminaInterval = setInterval(() => {
                     const smMax = this.getSmMax();
                     if (this.sm < smMax) {
-                        // NÃO regenera online — apenas atualiza ultima_vez_online
+                        this.sm = Math.min(this.sm + REGEN_CONFIG.REGEN_ONLINE_PER_TICK, smMax);
                         this.ultimaVezOnline = Date.now();
+                        this.atualizarUI();
+
+                        if (this.offlineRegen) this.offlineRegen.onSmAumentada(this.sm);
+
+                        if (this.usuario && this.supabaseOnline) this.salvar();
                     } else {
                         this.ultimaVezOnline = Date.now();
                     }
-                }, 30000);
+                }, REGEN_CONFIG.REGEN_ONLINE_INTERVAL_MS);
             }
 
+            // ============================================================
+            // CARREGAR DADOS DO USUÁRIO — VIA SESSÃO LOCAL (SEM AUTH)
+            // ============================================================
             async loadUserData() {
                 try {
                     const raw = localStorage.getItem(SESSION_KEY);
                     if (!raw) {
+                        console.warn('⚠️ Sessão local inexistente.');
                         this.setFallbackUser();
                         return false;
                     }
@@ -1956,11 +1763,13 @@
                     try {
                         sessao = JSON.parse(raw);
                     } catch {
+                        console.warn('⚠️ Sessão local corrompida.');
                         this.setFallbackUser();
                         return false;
                     }
 
                     if (!sessao?.login) {
+                        console.warn('⚠️ Sessão sem login.');
                         this.setFallbackUser();
                         return false;
                     }
@@ -1972,6 +1781,7 @@
                         .maybeSingle();
 
                     if (error || !profile) {
+                        console.error('❌ Perfil não encontrado:', error);
                         this.setFallbackUser();
                         return false;
                     }
@@ -2031,168 +1841,14 @@
         }
 
         // ============================================================
-        // SISTEMA DE BARRINHA DE REGENERAÇÃO
-        // ============================================================
-
-        function calcularTempoRestante(smAtual) {
-            const faltando = Math.max(0, REGEN_CFG.SM_MINIMA_JOGO - smAtual);
-            if (faltando <= 0) {
-                return { segundos: 0, texto: 'PRONTO!', pronto: true };
-            }
-            const segundos = Math.ceil((faltando / REGEN_CFG.SM_POR_MINUTO) * 60);
-            const h = Math.floor(segundos / 3600);
-            const m = Math.floor((segundos % 3600) / 60);
-            const s = segundos % 60;
-            const texto = `${String(h).padStart(2,'0')}:${String(m).padStart(2,'0')}:${String(s).padStart(2,'0')}`;
-            return { segundos, texto, pronto: false };
-        }
-
-        function atualizarBarraRegeneracao() {
-            const container = document.getElementById('staminaRegenContainer');
-            if (!container) return;
-
-            const tempoEl   = document.getElementById('regenTempo');
-            const fillEl    = document.getElementById('regenBarraFill');
-            const smAtualEl = document.getElementById('regenSmAtual');
-            const smAlvoEl  = document.getElementById('regenSmAlvo');
-            const msgEl     = document.getElementById('regenMensagem');
-
-            const sm = regenState.smAtual;
-            const alvo = REGEN_CFG.SM_MINIMA_JOGO;
-
-            if (sm < alvo) {
-                container.classList.add('active');
-                regenState.ativo = true;
-            } else {
-                container.classList.remove('active');
-                regenState.ativo = false;
-                document.querySelectorAll('.game-card').forEach(c => c.classList.remove('bloqueado'));
-                return;
-            }
-
-            const tempo = calcularTempoRestante(sm);
-
-            if (tempoEl) {
-                tempoEl.textContent = tempo.texto;
-                tempoEl.style.color = tempo.pronto ? '#22c55e' : '#f5c542';
-            }
-
-            const progresso = Math.min(100, (sm / alvo) * 100);
-            if (fillEl) fillEl.style.width = progresso + '%';
-
-            if (smAtualEl) smAtualEl.textContent = sm;
-            if (smAlvoEl)  smAlvoEl.textContent  = alvo;
-
-            if (msgEl) {
-                if (tempo.pronto) {
-                    msgEl.textContent = '✅ Pronto para jogar!';
-                    msgEl.style.color = '#22c55e';
-                } else {
-                    msgEl.textContent = `Faltam ${alvo - sm} SM para jogar`;
-                    msgEl.style.color = '#fca5a5';
-                }
-            }
-
-            document.querySelectorAll('.game-card').forEach(card => {
-                if (sm < alvo) card.classList.add('bloqueado');
-                else          card.classList.remove('bloqueado');
-            });
-        }
-
-        function sincronizarRegenState() {
-            if (!window.levelSystem) return;
-            regenState.smAtual = window.levelSystem.sm || 0;
-            regenState.smMax   = window.levelSystem.getSmMax ? window.levelSystem.getSmMax() : 100;
-            atualizarBarraRegeneracao();
-        }
-
-        function iniciarContadorRegen() {
-            if (regenState.intervalo) clearInterval(regenState.intervalo);
-            regenState.intervalo = setInterval(() => {
-                sincronizarRegenState();
-            }, REGEN_CFG.INTERVALO_MS);
-        }
-
-        async function ativarRegenOffline() {
-            if (!window.levelSystem || !window.levelSystem.usuario) return false;
-            const login = window.levelSystem.usuario.login;
-            if (!login) return false;
-
-            try {
-                const { data, error } = await supabase.rpc('ativar_regen_offline', { p_login: login });
-                if (error) {
-                    console.warn('⚠️ RPC falhou, usando update direto:', error);
-                    await supabase.from('Geral').update({
-                        offline_regen_start: new Date().toISOString(),
-                        ultima_vez_online: new Date().toISOString()
-                    }).eq('login', login);
-                } else {
-                    console.log('✅ Regeneração offline ativada:', data);
-                }
-                return true;
-            } catch (e) {
-                console.error('❌ Erro ao ativar regen offline:', e);
-                try {
-                    await supabase.from('Geral').update({
-                        offline_regen_start: new Date().toISOString(),
-                        ultima_vez_online: new Date().toISOString()
-                    }).eq('login', login);
-                } catch {}
-                return false;
-            }
-        }
-
-        async function processarRegenAoEntrar() {
-            if (!window.levelSystem || !window.levelSystem.usuario) return;
-            const login = window.levelSystem.usuario.login;
-            if (!login) return;
-
-            try {
-                const { data, error } = await supabase.rpc('calcular_regen_offline', { p_login: login });
-
-                if (error) {
-                    console.warn('⚠️ Erro ao processar regen:', error);
-                    return;
-                }
-
-                if (!data || !data.sucesso) return;
-
-                if (data.regenerou) {
-                    window.levelSystem.hp = data.hp_atual;
-                    window.levelSystem.mp = data.mp_atual;
-                    window.levelSystem.sm = data.sm_atual;
-
-                    if (window.levelSystem.offlineRegen) {
-                        window.levelSystem.offlineRegen.onSmAumentada(data.sm_atual);
-                    }
-
-                    window.levelSystem.atualizarUI();
-
-                    const horas = data.horas_offline || 0;
-                    let msg = '👋 Bem-vindo de volta! ';
-                    if (data.restaurou_tudo) {
-                        msg += `${horas.toFixed(1)}h offline. HP, MP e SM restaurados ao MÁXIMO!`;
-                    } else {
-                        msg += `${horas.toFixed(1)}h offline.`;
-                    }
-                    window.levelSystem.mostrarToast(msg, 'sucesso');
-                    window.levelSystem.addLog(`🔄 Regen offline (${horas.toFixed(2)}h): HP ${data.hp_atual}, MP ${data.mp_atual}, SM ${data.sm_atual}`, 'info');
-                }
-
-                sincronizarRegenState();
-            } catch (e) {
-                console.error('❌ Erro ao processar regen:', e);
-            }
-        }
-
-        // ============================================================
-        // VERIFICAÇÃO DE SESSÃO
+        // VERIFICAÇÃO DE SESSÃO — APENAS LOCAL (24h)
         // ============================================================
         async function verificarSessao() {
             const timestamp = localStorage.getItem(SESSION_TIMESTAMP_KEY);
             const usuarioLogado = localStorage.getItem(SESSION_KEY);
 
             if (!timestamp || !usuarioLogado) {
+                console.warn('⚠️ Sessão inexistente. Redirecionando...');
                 window.location.href = 'login.html';
                 return false;
             }
@@ -2201,14 +1857,17 @@
             const decorrido = Date.now() - loginTime;
 
             if (decorrido >= SESSION_DURATION) {
+                console.warn('⏰ Sessão expirada (24h). Redirecionando...');
                 limparSessao();
                 window.location.href = 'login.html';
                 return false;
             }
 
             const restante = SESSION_DURATION - decorrido;
+            console.log(`⏰ Sessão válida por mais ${Math.round(restante / 1000 / 60)} minutos`);
 
             setTimeout(() => {
+                console.warn('⏰ Sessão expirou. Redirecionando...');
                 limparSessao();
                 window.location.href = 'login.html';
             }, restante);
@@ -2228,12 +1887,8 @@
 
             setTimeout(async () => {
                 await levelSystem.loadUserData();
-                setTimeout(async () => {
-                    await processarRegenAoEntrar();
+                setTimeout(() => {
                     levelSystem.configurarEventosDosJogos();
-                    iniciarContadorRegen();
-                    sincronizarRegenState();
-                    interceptarCliquesJogos();
                 }, 500);
             }, 300);
 
@@ -2243,30 +1898,27 @@
             const btnSair = document.getElementById('btnSair');
             const btnReconnect = document.getElementById('btnReconnectSupabase');
 
+            // ============================================================
+            // LOGOUT — APENAS LOCAL (SEM SUPABASE AUTH)
+            // ============================================================
             if (btnSair) {
                 const novoBtnSair = btnSair.cloneNode(true);
                 btnSair.parentNode.replaceChild(novoBtnSair, btnSair);
 
                 novoBtnSair.addEventListener('click', async function() {
-                    if (!confirm('Tem certeza que deseja sair?\n\n⚡ HP, MP e STAMINA começarão a regenerar automaticamente.')) return;
-
-                    novoBtnSair.disabled = true;
-                    novoBtnSair.textContent = 'Saindo...';
+                    if (!confirm('Tem certeza que deseja sair?')) return;
 
                     try {
                         if (levelSystem.usuario && levelSystem.supabaseOnline) {
                             await levelSystem.salvar();
                         }
-                        await ativarRegenOffline();
-
+                    } catch (e) {
+                        console.warn('Erro ao salvar antes de sair:', e);
+                    } finally {
                         if (levelSystem.offlineRegen) {
                             levelSystem.offlineRegen.destroy();
                             levelSystem.offlineRegen = null;
                         }
-                        limparSessao();
-                        window.location.href = 'login.html';
-                    } catch (e) {
-                        console.warn('Erro ao sair:', e);
                         limparSessao();
                         window.location.href = 'login.html';
                     }
@@ -2298,48 +1950,13 @@
                 if (saveInterval) clearInterval(saveInterval);
                 if (levelSystem.mineracaoInterval) clearInterval(levelSystem.mineracaoInterval);
                 if (levelSystem.staminaInterval) clearInterval(levelSystem.staminaInterval);
-                if (regenState.intervalo) clearInterval(regenState.intervalo);
             });
         });
 
-        // ============================================================
-        // INTERCEPTA CLIQUES NOS CARDS DE JOGOS
-        // ============================================================
-        function interceptarCliquesJogos() {
-            document.querySelectorAll('.game-card').forEach(card => {
-                const novo = card.cloneNode(true);
-                card.parentNode.replaceChild(novo, card);
-
-                novo.addEventListener('click', function (e) {
-                    if (regenState.smAtual < REGEN_CFG.SM_MINIMA_JOGO) {
-                        e.preventDefault();
-                        e.stopPropagation();
-
-                        novo.style.animation = 'shake 0.5s';
-                        setTimeout(() => { novo.style.animation = ''; }, 500);
-
-                        if (window.levelSystem) {
-                            window.levelSystem.mostrarToast(
-                                `⚡ Stamina insuficiente! Faltam ${REGEN_CFG.SM_MINIMA_JOGO - regenState.smAtual} SM.`,
-                                'erro'
-                            );
-                        }
-
-                        const c = document.getElementById('staminaRegenContainer');
-                        if (c) c.scrollIntoView({ behavior: 'smooth', block: 'center' });
-                        return false;
-                    }
-
-                    if (window.levelSystem && window.levelSystem.gastarStaminaParaJogar) {
-                        window.levelSystem.gastarStaminaParaJogar.call(this, e);
-                    }
-                });
-            });
-        }
-
         window.levelSystem = levelSystem;
 
-        console.log('📊 Dashboard integrado com regeneração offline + barrinha de stamina!');
+        console.log('📊 Dashboard integrado com OfflineRegen compartilhado + login direto na tabela "Geral" + sessão 24h!');
+        console.log('🎮 Bloqueio de entrada: stamina < 10 | Consumo: 50% do valor ATUAL por clique');
     </script>
 </body>
 </html>
