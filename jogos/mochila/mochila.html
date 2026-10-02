@@ -1,916 +1,432 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
-    <title>🎒 Mochila</title>
-    <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-            user-select: none;
-            -webkit-tap-highlight-color: transparent;
-        }
-        body {
-            background: #0b0e14;
-            font-family: 'Segoe UI', system-ui, sans-serif;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            min-height: 100vh;
-            padding: 16px;
-            touch-action: manipulation;
-        }
-        #app {
-            max-width: 520px;
-            width: 100%;
-            background: #1a1f2a;
-            border-radius: 24px;
-            padding: 20px 18px 28px;
-            box-shadow: 0 20px 60px rgba(0,0,0,0.8);
-            border: 1px solid #2a3344;
-        }
-        h1 {
-            font-size: 28px;
-            color: #f0e8d0;
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            margin-bottom: 8px;
-            flex-wrap: wrap;
-        }
-        h1 small {
-            font-size: 14px;
-            font-weight: 400;
-            color: #8892a8;
-            margin-left: auto;
-        }
-        .usuario-info {
-            background: #0f141e;
-            border-radius: 12px;
-            padding: 8px 14px;
-            margin-bottom: 12px;
-            border: 1px solid #2a3344;
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            gap: 10px;
-        }
-        .usuario-info .user {
-            color: #b0baca;
-            font-size: 14px;
-        }
-        .usuario-info .user strong {
-            color: #f0e8d0;
-        }
-        .usuario-info .btn-voltar {
-            color: #fff;
-            background: #2a3344;
-            border: 1px solid #3a4458;
-            padding: 4px 14px;
-            border-radius: 20px;
-            font-size: 12px;
-            cursor: pointer;
-            transition: all 0.2s;
-            touch-action: manipulation;
-            text-decoration: none;
-            display: inline-block;
-        }
-        .usuario-info .btn-voltar:hover {
-            background: #3a4458;
-        }
-        .usuario-info .btn-voltar:active {
-            transform: scale(0.94);
-        }
-        .saldo-box {
-            background: #0f141e;
-            border-radius: 16px;
-            padding: 12px 18px;
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            border: 1px solid #2a3344;
-            margin-bottom: 20px;
-        }
-        .saldo-box span {
-            font-size: 18px;
-            color: #b0baca;
-        }
-        .saldo-box .valor {
-            font-size: 28px;
-            font-weight: 800;
-            color: #f0c040;
-            letter-spacing: 0.5px;
-        }
-        .saldo-box .moeda {
-            font-size: 22px;
-            margin-right: 6px;
-        }
-        .loading {
-            text-align: center;
-            color: #8892a8;
-            padding: 20px;
-            font-size: 14px;
-        }
-        .loading .spinner {
-            display: inline-block;
-            animation: spin 1s linear infinite;
-            font-size: 24px;
-        }
-        @keyframes spin {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(360deg); }
-        }
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>🎒 Mochila</title>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<style>
+  *{box-sizing:border-box}
+  :root{
+    --bg:#0a0e16; --card:#121a28; --card2:#18222f; --line:#233046;
+    --txt:#e7eefb; --mut:#8ea0bb; --pri:#4f8cff; --pri2:#2f6fe0;
+    --ok:#22c55e; --warn:#f59e0b; --err:#ef4444;
+  }
+  body{
+    margin:0;font-family:system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;
+    background:radial-gradient(1200px 600px at 50% -10%,#16233a 0%,var(--bg) 60%);
+    color:var(--txt);min-height:100vh;padding-bottom:40px;
+  }
+  header{
+    display:flex;flex-wrap:wrap;gap:12px;align-items:center;justify-content:space-between;
+    padding:16px 22px;border-bottom:1px solid var(--line);
+    background:rgba(10,14,22,.75);backdrop-filter:blur(10px);position:sticky;top:0;z-index:20;
+  }
+  .brand{font-size:20px;font-weight:800;display:flex;align-items:center;gap:8px}
+  .brand small{font-weight:400;font-size:12px;color:var(--mut);margin-left:6px}
+  .header-right{display:flex;align-items:center;gap:14px;flex-wrap:wrap}
+  .user-info{display:flex;align-items:center;gap:8px;font-size:14px}
+  .user-info .nick{font-weight:700;color:#4ade80}
+  .btn{
+    padding:9px 14px;font-size:13.5px;font-weight:600;background:var(--card2);
+    color:var(--txt);border:1px solid var(--line);border-radius:10px;
+    text-decoration:none;display:inline-block;cursor:pointer;transition:.15s;
+  }
+  .btn:hover{filter:brightness(1.2)}
+  .btn.pri{background:linear-gradient(180deg,var(--pri),var(--pri2));border-color:transparent;color:#fff}
+  .btn.ghost{background:transparent}
+  .btn.danger{color:#ff8b8b;border-color:#5a2530}
 
-        .lista-itens {
-            display: flex;
-            flex-direction: column;
-            gap: 8px;
-            margin-top: 6px;
-            max-height: 380px;
-            overflow-y: auto;
-            padding-right: 4px;
-        }
-        .lista-itens::-webkit-scrollbar {
-            width: 4px;
-        }
-        .lista-itens::-webkit-scrollbar-thumb {
-            background: #3a4458;
-            border-radius: 10px;
-        }
-        .item {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            background: #0f141e;
-            padding: 10px 14px;
-            border-radius: 14px;
-            border: 1px solid #2a3344;
-            transition: background 0.15s;
-        }
-        .item .info {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            flex: 1;
-            flex-wrap: wrap;
-        }
-        .item .info .emoji {
-            font-size: 28px;
-            line-height: 1;
-        }
-        .item .info .nome {
-            font-weight: 600;
-            color: #e0e8f0;
-            font-size: 16px;
-        }
-        .item .info .qtd {
-            color: #8892a8;
-            font-size: 14px;
-            margin-left: 4px;
-        }
-        .item .info .valor-unit {
-            font-size: 12px;
-            color: #f0c040;
-            background: rgba(240, 192, 64, 0.1);
-            padding: 2px 10px;
-            border-radius: 20px;
-            border: 1px solid rgba(240, 192, 64, 0.2);
-        }
-        .item .info .origem {
-            font-size: 10px;
-            color: #5a6478;
-            background: #1a1f2a;
-            padding: 2px 8px;
-            border-radius: 10px;
-            border: 1px solid #2a3344;
-        }
-        .vazio {
-            text-align: center;
-            color: #5a6478;
-            padding: 30px 0;
-            font-size: 16px;
-        }
-        .nav-links {
-            display: flex;
-            gap: 12px;
-            margin-top: 20px;
-            flex-wrap: wrap;
-        }
-        .nav-links a {
-            flex: 1;
-            text-align: center;
-            padding: 12px 0;
-            border-radius: 40px;
-            background: #2a3344;
-            color: #c8d0e0;
-            text-decoration: none;
-            font-weight: 600;
-            font-size: 15px;
-            transition: background 0.15s, transform 0.1s;
-            touch-action: manipulation;
-            border: 1px solid #3a4458;
-        }
-        .nav-links a:active {
-            transform: scale(0.94);
-        }
-        .nav-links a.fazenda {
-            background: linear-gradient(135deg, #27ae60, #1e8449);
-            border-color: #27ae60;
-            color: #fff;
-        }
+  main{max-width:1100px;margin:24px auto;padding:0 18px}
 
-        /* SISTEMA DE NÍVEL - WIDGET */
-        .level-widget {
-            background: #0f141e;
-            border-radius: 16px;
-            padding: 16px 18px 18px;
-            border: 1px solid #2a3344;
-            margin-bottom: 18px;
-        }
-        .lw-header {
-            display: flex;
-            align-items: center;
-            gap: 14px;
-            flex-wrap: wrap;
-        }
-        .lw-badge {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            background: #1a1f2a;
-            padding: 6px 14px 6px 10px;
-            border-radius: 40px;
-            border: 1px solid #2a3344;
-        }
-        .lw-badge .lw-num {
-            font-size: 28px;
-            font-weight: 800;
-            color: #f0c040;
-            background: #0b0e14;
-            border-radius: 50%;
-            width: 44px;
-            height: 44px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            border: 1px solid #f0c040;
-        }
-        .lw-badge .lw-label {
-            font-size: 10px;
-            color: #5a6478;
-            letter-spacing: 1px;
-        }
-        .lw-badge .lw-title {
-            font-size: 14px;
-            font-weight: 600;
-            color: #e0e8f0;
-        }
-        .lw-exp {
-            flex: 1;
-            min-width: 120px;
-        }
-        .lw-bar {
-            background: #1a1f2a;
-            border-radius: 20px;
-            height: 10px;
-            overflow: hidden;
-            border: 1px solid #2a3344;
-        }
-        .lw-fill {
-            height: 100%;
-            width: 0%;
-            background: linear-gradient(90deg, #f0c040, #f5a623);
-            border-radius: 20px;
-            transition: width 0.4s ease;
-        }
-        .lw-text {
-            display: flex;
-            justify-content: space-between;
-            font-size: 12px;
-            color: #8892a8;
-            margin-top: 4px;
-        }
-        .lw-text .lw-cur {
-            color: #f0e8d0;
-        }
-        .lw-text .lw-nxt {
-            color: #f0c040;
-        }
+  .resumo{
+    display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:12px;
+    background:var(--card);border:1px solid var(--line);border-radius:16px;padding:18px;margin-bottom:20px;
+  }
+  .stat{text-align:center}
+  .stat .v{font-size:22px;font-weight:800}
+  .stat .l{font-size:11.5px;color:var(--mut);text-transform:uppercase;letter-spacing:.6px;margin-top:4px}
 
-        .lw-stats {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 6px 12px;
-            margin-top: 14px;
-            padding-top: 12px;
-            border-top: 1px solid #1a1f2a;
-            font-size: 12px;
-            color: #8892a8;
-        }
-        .lw-stats span {
-            display: flex;
-            align-items: center;
-            gap: 4px;
-            background: #1a1f2a;
-            padding: 2px 10px 2px 6px;
-            border-radius: 20px;
-            border: 1px solid #2a3344;
-        }
-        .lw-stats .hp-c { color: #e74c3c; font-weight: 600; }
-        .lw-stats .mp-c { color: #3498db; font-weight: 600; }
-        .lw-stats .sm-c { color: #2ecc71; font-weight: 600; }
-        .lw-stats .atk-c { color: #e67e22; font-weight: 600; }
-        .lw-stats .def-c { color: #5dade2; font-weight: 600; }
-        .lw-stats .mag-c { color: #9b59b6; font-weight: 600; }
+  .barra{
+    display:flex;flex-wrap:wrap;gap:10px;align-items:center;justify-content:space-between;
+    margin-bottom:16px;
+  }
+  .barra h2{margin:0;font-size:17px}
+  .busca{max-width:280px;width:100%}
+  input{
+    background:var(--card2);border:1px solid var(--line);color:var(--txt);
+    padding:10px 12px;border-radius:10px;font-size:14px;outline:none;width:100%;
+    font-family:inherit;
+  }
+  input:focus{border-color:var(--pri);box-shadow:0 0 0 3px rgba(79,140,255,.15)}
 
-        /* NOVOS WIDGETS DE RECURSOS */
-        .recursos-grid {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 10px;
-            margin-bottom: 18px;
-        }
-        .recurso-card {
-            background: #0f141e;
-            border-radius: 14px;
-            padding: 12px 14px;
-            border: 1px solid #2a3344;
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
-        .recurso-card .rc-emoji {
-            font-size: 26px;
-            line-height: 1;
-        }
-        .recurso-card .rc-info {
-            display: flex;
-            flex-direction: column;
-            gap: 2px;
-        }
-        .recurso-card .rc-label {
-            font-size: 10px;
-            color: #5a6478;
-            letter-spacing: 0.5px;
-            text-transform: uppercase;
-        }
-        .recurso-card .rc-valor {
-            font-size: 16px;
-            font-weight: 700;
-            color: #f0e8d0;
-        }
-        .recurso-card .rc-valor.btc { color: #f7931a; }
-        .recurso-card .rc-valor.mumu { color: #e74c3c; }
-        .recurso-card .rc-valor.hash { color: #9b59b6; }
-        .recurso-card .rc-valor.saldo { color: #f0c040; }
+  .grid{
+    display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:12px;
+  }
+  .item{
+    background:var(--card);border:1px solid var(--line);border-radius:14px;
+    padding:14px;display:flex;flex-direction:column;gap:8px;animation:up .25s ease;
+  }
+  @keyframes up{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
+  .item-top{display:flex;justify-content:space-between;align-items:center;gap:8px}
+  .item .emoji{font-size:26px;line-height:1}
+  .item .qtd{
+    font-size:12px;font-weight:700;background:var(--card2);
+    border:1px solid var(--line);border-radius:999px;padding:3px 9px;color:#fbbf24;
+  }
+  .item .nome{font-size:14px;font-weight:600;line-height:1.3;word-break:break-word}
+  .item .tipo{font-size:11px;color:var(--mut);text-transform:uppercase;letter-spacing:.5px}
 
-        .cadeado-box {
-            background: #0f141e;
-            border-radius: 14px;
-            padding: 12px 18px;
-            border: 1px solid #2a3344;
-            margin-bottom: 18px;
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-        }
-        .cadeado-box .cd-label {
-            font-size: 14px;
-            color: #b0baca;
-        }
-        .cadeado-box .cd-status {
-            font-size: 16px;
-            font-weight: 700;
-            padding: 4px 14px;
-            border-radius: 20px;
-        }
-        .cadeado-box .cd-status.aberto {
-            color: #2ecc71;
-            background: rgba(46, 204, 113, 0.1);
-            border: 1px solid rgba(46, 204, 113, 0.3);
-        }
-        .cadeado-box .cd-status.fechado {
-            color: #e74c3c;
-            background: rgba(231, 76, 60, 0.1);
-            border: 1px solid rgba(231, 76, 60, 0.3);
-        }
-
-        @media (max-width: 420px) {
-            #app { padding: 14px 12px 20px; }
-            h1 { font-size: 22px; }
-            .saldo-box .valor { font-size: 22px; }
-            .item .info .emoji { font-size: 22px; }
-            .item .info .nome { font-size: 14px; }
-            .lw-badge .lw-num { width: 36px; height: 36px; font-size: 22px; }
-            .recursos-grid { grid-template-columns: 1fr; }
-        }
-        @media (max-width: 360px) {
-            .item { flex-wrap: wrap; gap: 6px; }
-            .lw-header { flex-direction: column; align-items: stretch; }
-            .lw-badge { justify-content: center; }
-        }
-    </style>
+  .vazio,.erro-box{
+    text-align:center;color:var(--mut);padding:40px 20px;font-size:14px;
+    border:1px dashed var(--line);border-radius:14px;
+  }
+  .erro-box{
+    background:rgba(239,68,68,.1);border-color:rgba(239,68,68,.35);color:#fca5a5;
+    text-align:left;padding:16px 18px;line-height:1.6;
+  }
+  .erro-box a{color:#4f8cff;text-decoration:none}
+  .erro-box a:hover{text-decoration:underline}
+  .debug{
+    background:var(--card2);border:1px solid var(--line);border-radius:10px;
+    padding:12px;font-family:ui-monospace,monospace;font-size:12px;color:var(--mut);
+    margin-bottom:16px;white-space:pre-wrap;word-break:break-all;
+  }
+  .loading{
+    display:inline-block;width:14px;height:14px;border:2px solid var(--mut);
+    border-top-color:var(--pri);border-radius:50%;animation:spin .7s linear infinite;
+    vertical-align:middle;margin-right:6px;
+  }
+  @keyframes spin{to{transform:rotate(360deg)}}
+</style>
 </head>
 <body>
-<div id="app">
-    <h1>
-        🎒 Mochila
-        <small id="itens-count">0 itens</small>
-    </h1>
 
-    <div class="usuario-info" id="usuarioInfo">
-        <span class="user">👤 <strong id="usuarioNome">Carregando...</strong></span>
-        <a href="../../dashboard.html" class="btn-voltar">🏠 Voltar</a>
+<header>
+  <div class="brand">🎒 Mochila <small id="total-itens">0 itens</small></div>
+  <div class="header-right">
+    <div class="user-info" id="user-area">
+      <span style="color:var(--mut);font-size:13px">
+        <span class="loading"></span>Carregando…
+      </span>
     </div>
+    <a class="btn ghost" href="https://xoperadorx.github.io/Portal-Bolsa/">🏠 Voltar</a>
+  </div>
+</header>
 
-    <!-- SALDO PRINCIPAL -->
-    <div class="saldo-box">
-        <span><span class="moeda">💰</span> Saldo</span>
-        <span class="valor" id="saldo-display">0,00</span>
+<main>
+  <div class="resumo" id="resumo"></div>
+
+  <div class="barra">
+    <h2>🎒 Meus itens</h2>
+    <div class="busca">
+      <input id="busca" placeholder="🔍 Buscar item…" autocomplete="off" />
     </div>
+  </div>
 
-    <!-- NOVOS RECURSOS -->
-    <div class="recursos-grid">
-        <div class="recurso-card">
-            <span class="rc-emoji">₿</span>
-            <div class="rc-info">
-                <span class="rc-label">Bitcoin</span>
-                <span class="rc-valor btc" id="btc-display">0.00000000</span>
-            </div>
-        </div>
-        <div class="recurso-card">
-            <span class="rc-emoji">🐄</span>
-            <div class="rc-info">
-                <span class="rc-label">Mumu</span>
-                <span class="rc-valor mumu" id="mumu-display">0,00</span>
-            </div>
-        </div>
-        <div class="recurso-card">
-            <span class="rc-emoji">⚡</span>
-            <div class="rc-info">
-                <span class="rc-label">Poder Hash</span>
-                <span class="rc-valor hash" id="hash-display">1.0</span>
-            </div>
-        </div>
-        <div class="recurso-card">
-            <span class="rc-emoji">🏦</span>
-            <div class="rc-info">
-                <span class="rc-label">Poupança</span>
-                <span class="rc-valor saldo" id="poupanca-display">0,00</span>
-            </div>
-        </div>
-    </div>
-
-    <!-- PROVENTOS PENDENTES -->
-    <div class="recurso-card" style="margin-bottom: 18px;">
-        <span class="rc-emoji">📊</span>
-        <div class="rc-info">
-            <span class="rc-label">Proventos Pendentes</span>
-            <span class="rc-valor saldo" id="proventos-display">0,00</span>
-        </div>
-    </div>
-
-    <!-- CADEADO -->
-    <div class="cadeado-box">
-        <span class="cd-label">🔒 Status da Conta</span>
-        <span class="cd-status aberto" id="cadeado-status">Aberto</span>
-    </div>
-
-    <!-- SISTEMA DE NÍVEL -->
-    <div class="level-widget" id="levelWidget">
-        <div class="lw-header">
-            <div class="lw-badge">
-                <span class="lw-num" id="lwNivel">1</span>
-                <div>
-                    <div class="lw-label">NÍVEL</div>
-                    <div class="lw-title" id="lwTitulo">🌱 Iniciante</div>
-                </div>
-            </div>
-            <div class="lw-exp">
-                <div class="lw-bar">
-                    <div class="lw-fill" id="lwExpFill" style="width:0%"></div>
-                </div>
-                <div class="lw-text">
-                    <span class="lw-cur" id="lwExpAtual">0</span>
-                    <span>/ <span class="lw-nxt" id="lwExpProx">100</span> EXP</span>
-                </div>
-            </div>
-        </div>
-
-        <div class="lw-stats">
-            <span>❤️ HP<span class="hp-c" id="lwHp">100/100</span></span>
-            <span>💧 MANA<span class="mp-c" id="lwMp">50/50</span></span>
-            <span>⚡ STAMINA<span class="sm-c" id="lwSm">100/100</span></span>
-            <span>⚔️ FORCA<span class="atk-c" id="lwAtk">15</span></span>
-            <span>🛡️ DEFESA<span class="def-c" id="lwDef">10</span></span>
-            <span>🔮 MAGIA<span class="mag-c" id="lwMag">8</span></span>
-        </div>
-    </div>
-
-    <div class="loading" id="loading-indicator">
-        <span class="spinner">🔄</span> Carregando dados...
-    </div>
-
-    <div class="lista-itens" id="lista-itens">
-        <!-- itens renderizados via JS -->
-    </div>
-</div>
+  <div id="debug" class="debug" style="display:none"></div>
+  <div id="conteudo">
+    <div class="vazio"><span class="loading"></span>Carregando dados…</div>
+  </div>
+</main>
 
 <script>
-    (function() {
-        'use strict';
+/* ============================================================
+   CONFIG
+============================================================ */
+const SUPABASE_URL = 'https://xrcxvizzdumcxbylmkvn.supabase.co';
+const SUPABASE_KEY = 'sb_publishable_E-g3G3wW4EySbCsXLXp8KQ_FnmERMcD';
+const TABELA       = 'Geral';
 
-        // ============================================================
-        // CONFIGURAÇÕES SUPABASE
-        // ============================================================
-        const SUPABASE_URL = 'https://xrcxvizzdumcxbylmkvn.supabase.co';
-        const SUPABASE_KEY = 'sb_publishable_E-g3G3wW4EySbCsXLXp8KQ_FnmERMcD';
-        const TABELA = 'Geral';
+const { createClient } = supabase;
+const db = createClient(SUPABASE_URL, SUPABASE_KEY);
 
-        const POLL_INTERVAL = 5000;
+/* Chaves possíveis — testa todas até achar a que tem dados */
+const SESSION_KEYS = [
+  'usuario_logado',
+  'usuarioLogado',
+  'user',
+  'usuario',
+  'jogador',
+  'session',
+  'sessao',
+  'login',
+  'portal_bolsa_user',
+  'user_data',
+  'dados_usuario'
+];
+const TIMESTAMP_KEYS = [
+  'session_timestamp',
+  'login_time',
+  'timestamp',
+  'login_timestamp',
+  'session_time'
+];
+const SESSION_DURATION = 24 * 60 * 60 * 1000; // 24h
 
-        // ============================================================
-        // REFERÊNCIAS DOS ELEMENTOS
-        // ============================================================
-        const saldoDisplay = document.getElementById('saldo-display');
-        const itensCount = document.getElementById('itens-count');
-        const listaItens = document.getElementById('lista-itens');
-        const loadingIndicator = document.getElementById('loading-indicator');
-        const usuarioNome = document.getElementById('usuarioNome');
+/* Emojis */
+const EMOJIS = {
+  'Espada':'⚔️','Poção':'🧪','Escudo':'🛡️','Anel':'💍','Cristal':'💎',
+  'Mapa':'🗺️','Chave':'🔑','Machado':'🪓','Capa':'🧥','Armadura':'🛡️',
+  'Arco':'🏹','Flecha':'🎯','Elixir':'⚗️','Bota':'👢','Amuleto':'📿',
+  'Sementes':'🌱','Milho':'🌽','Balde':'🪣','Planta':'🌿','Colheita':'🌾'
+};
 
-        const btcDisplay = document.getElementById('btc-display');
-        const mumuDisplay = document.getElementById('mumu-display');
-        const hashDisplay = document.getElementById('hash-display');
-        const poupancaDisplay = document.getElementById('poupanca-display');
-        const proventosDisplay = document.getElementById('proventos-display');
-        const cadeadoStatus = document.getElementById('cadeado-status');
+function emojiItem(nome) {
+  for (const [k, v] of Object.entries(EMOJIS)) {
+    if (nome.toLowerCase().includes(k.toLowerCase())) return v;
+  }
+  return '📦';
+}
 
-        // ============================================================
-        // ESTADO
-        // ============================================================
-        const state = {
-            usuarioLogado: null,
-            dadosUsuario: null,
-            isLoading: false,
-            supabaseOnline: true,
-            pollTimer: null
+/* ============================================================
+   HELPERS
+============================================================ */
+const $ = (s) => document.querySelector(s);
+const esc = (s) => String(s ?? '').replace(/[&<>"']/g, c =>
+  ({ '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;' }[c]));
+const money = (v) => Number(v || 0).toLocaleString('pt-BR', { style:'currency', currency:'BRL' });
+
+function mostrarDebug(msg) {
+  const el = $('#debug');
+  el.style.display = 'block';
+  el.textContent += msg + '\n';
+}
+
+/* ============================================================
+   LER SESSÃO — tenta TODAS as chaves conhecidas
+============================================================ */
+function lerSessao() {
+  // 1. Tenta cada chave de sessão conhecida
+  for (const key of SESSION_KEYS) {
+    const raw = localStorage.getItem(key);
+    if (!raw) continue;
+    try {
+      const obj = JSON.parse(raw);
+
+      // Aceita formato direto { login, nome, email } ou dentro de .user
+      const u = obj?.user || obj?.usuario || obj;
+
+      if (u && (u.login || u.nome || u.email || u.id)) {
+        // Verifica timestamp se existir
+        for (const tkey of TIMESTAMP_KEYS) {
+          const ts = localStorage.getItem(tkey);
+          if (ts) {
+            const t = parseInt(ts, 10);
+            if (!isNaN(t) && (Date.now() - t) >= SESSION_DURATION) {
+              console.warn(`[mochila] Sessão de ${key} expirada`);
+              return null;
+            }
+          }
+        }
+        mostrarDebug(`✅ Sessão encontrada em localStorage["${key}"]`);
+        return {
+          id:    u.id,
+          login: u.login || u.nome || u.email?.split('@')[0] || u.username,
+          nome:  u.nome || u.login || u.email?.split('@')[0] || u.username,
+          email: u.email
         };
+      }
+    } catch (e) {
+      // Não é JSON, tenta usar como string pura
+      if (raw.length > 0 && raw.length < 100) {
+        mostrarDebug(`✅ Sessão (string) encontrada em localStorage["${key}"]`);
+        return { login: raw, nome: raw };
+      }
+    }
+  }
 
-        // ============================================================
-        // FUNÇÕES DE USUÁRIO
-        // ============================================================
-        function getUsuarioLogado() {
-            try {
-                const data = localStorage.getItem('usuario_logado');
-                if (data) return JSON.parse(data);
-                return null;
-            } catch (e) {
-                return null;
-            }
+  // 2. Fallback: procura chave sb-*-auth-token (Supabase Auth)
+  for (let i = 0; i < localStorage.length; i++) {
+    const k = localStorage.key(i);
+    if (k && k.startsWith('sb-') && k.endsWith('-auth-token')) {
+      try {
+        const obj = JSON.parse(localStorage.getItem(k));
+        const u = obj?.user || obj?.session?.user;
+        if (u) {
+          const login = u.user_metadata?.login ||
+                        u.user_metadata?.nick ||
+                        u.user_metadata?.nome ||
+                        u.email?.split('@')[0];
+          mostrarDebug(`✅ Sessão Supabase Auth em "${k}"`);
+          return { id: u.id, login, nome: login, email: u.email };
         }
+      } catch (_) {}
+    }
+  }
 
-        // ============================================================
-        // FUNÇÕES DE ACESSO AO SUPABASE
-        // ============================================================
-        async function buscarDadosUsuario(login) {
-            try {
-                const response = await fetch(
-                    `${SUPABASE_URL}/rest/v1/${TABELA}?login=eq.${encodeURIComponent(login)}`, {
-                        headers: {
-                            'apikey': SUPABASE_KEY,
-                            'Authorization': `Bearer ${SUPABASE_KEY}`
-                        }
-                    }
-                );
+  // 3. Último recurso: mostra todas as chaves para o usuário diagnosticar
+  mostrarDebug('❌ Nenhuma chave de sessão encontrada.');
+  mostrarDebug('Chaves disponíveis no localStorage:');
+  Object.keys(localStorage).forEach(k => {
+    mostrarDebug('  • ' + k + ' = ' + (localStorage.getItem(k) || '').slice(0, 80));
+  });
+  return null;
+}
 
-                if (!response.ok) {
-                    if (response.status === 404) return null;
-                    throw new Error(`Erro ${response.status}`);
-                }
+/* ============================================================
+   EXTRAIR ITENS
+============================================================ */
+function extrairItens(d) {
+  const itens = [];
 
-                const data = await response.json();
-                if (!data || data.length === 0) return null;
-                return data[0];
-            } catch (error) {
-                console.error('❌ Erro ao buscar dados:', error);
-                throw error;
-            }
-        }
+  // 1. carteira (JSONB objeto)
+  if (d.carteira && typeof d.carteira === 'object' && !Array.isArray(d.carteira)) {
+    Object.entries(d.carteira).forEach(([nome, qtd]) => {
+      const q = Number(qtd) || 0;
+      if (q > 0) itens.push({ nome, quantidade: q, tipo: 'carteira' });
+    });
+  }
 
-        // ============================================================
-        // EMOJIS E VALORES (apenas exibição)
-        // ============================================================
-        function getEmoji(nome) {
-            const mapa = {
-                'Madeira': '🪵',
-                'Pedra': '🪨',
-                'Ouro': '💎',
-                'Poção': '🧪',
-                'Balde': '🪣',
-                'Sementes': '🌰',
-                'Milho': '🌽',
-                'Planta': '🌱',
-                'Colheita': '🌾',
-                'Ovos': '🥚',
-                'Galinhas': '🐔',
-                'Pintinhos': '🐣'
-            };
-            return mapa[nome] || '📦';
-        }
+  // 2. itens (array)
+  if (Array.isArray(d.itens)) {
+    d.itens.forEach(it => {
+      if (it && it.nome) {
+        const q = Number(it.quantidade) || 0;
+        if (q > 0) itens.push({ nome: it.nome, quantidade: q, tipo: 'item' });
+      }
+    });
+  }
+  // 3. itens (objeto)
+  else if (d.itens && typeof d.itens === 'object') {
+    Object.entries(d.itens).forEach(([nome, qtd]) => {
+      const q = Number(qtd) || 0;
+      if (q > 0) itens.push({ nome, quantidade: q, tipo: 'item' });
+    });
+  }
 
-        function getValorItem(nome) {
-            const valores = {
-                'Madeira': 10,
-                'Pedra': 15,
-                'Ouro': 50,
-                'Poção': 25,
-                'Balde': 12,
-                'Sementes': 5,
-                'Milho': 10,
-                'Planta': 0,
-                'Colheita': 0,
-                'Ovos': 3,
-                'Galinhas': 25,
-                'Pintinhos': 15
-            };
-            return valores[nome] || 10;
-        }
+  // 4. Colunas numéricas
+  const diretas = {
+    seeds: 'Sementes', stock: 'Milho', buckets: 'Balde',
+    planted: 'Planta', harvested: 'Colheita'
+  };
+  Object.entries(diretas).forEach(([col, nome]) => {
+    const q = Number(d[col]) || 0;
+    if (q > 0) itens.push({ nome, quantidade: q, tipo: 'recurso' });
+  });
 
-        function getOrigemItem(nome) {
-            const itensFazendinha = ['Sementes', 'Milho', 'Planta', 'Colheita', 'Ovos', 'Galinhas', 'Pintinhos'];
-            return itensFazendinha.includes(nome) ? '🌾 Milharal' : '🎒 Carteira';
-        }
+  itens.sort((a, b) => b.quantidade - a.quantidade);
+  return itens;
+}
 
-        // ============================================================
-        // EXTRAIR ITENS — SEM fazendinha_dados
-        // ============================================================
-        function extrairTodosItens(dadosUsuario) {
-            const todosItens = {};
+/* ============================================================
+   RENDER
+============================================================ */
+let TODOS_ITENS = [];
 
-            // ---------- CARTEIRA (jsonb) ----------
-            if (dadosUsuario.carteira && typeof dadosUsuario.carteira === 'object') {
-                Object.keys(dadosUsuario.carteira).forEach(key => {
-                    const qtd = Number(dadosUsuario.carteira[key]) || 0;
-                    if (qtd > 0) {
-                        todosItens[key] = (todosItens[key] || 0) + qtd;
-                    }
-                });
-            }
+function renderResumo(d) {
+  $('#resumo').innerHTML = `
+    <div class="stat"><div class="v">${money(d.saldo)}</div><div class="l">💰 Saldo</div></div>
+    <div class="stat"><div class="v">${Number(d.seeds) || 0}</div><div class="l">🌱 Sementes</div></div>
+    <div class="stat"><div class="v">${Number(d.stock) || 0}</div><div class="l">🌽 Milho</div></div>
+    <div class="stat"><div class="v">${Number(d.buckets) || 0}</div><div class="l">🪣 Baldes</div></div>
+    <div class="stat"><div class="v">${Number(d.planted) || 0}</div><div class="l">🌿 Plantados</div></div>
+    <div class="stat"><div class="v">${Number(d.harvested) || 0}</div><div class="l">🌾 Colhidos</div></div>
+  `;
+}
 
-            // ---------- COLUNAS DIRETAS DO BANCO ----------
-            const seeds     = Number(dadosUsuario.seeds)     || 0;
-            const stock     = Number(dadosUsuario.stock)     || 0;
-            const buckets   = Number(dadosUsuario.buckets)   || 0;
-            const planted   = Number(dadosUsuario.planted)   || 0;
-            const harvested = Number(dadosUsuario.harvested) || 0;
+function renderItens(filtro = '') {
+  const conteudo = $('#conteudo');
+  const q = filtro.trim().toLowerCase();
+  const filtrados = q
+    ? TODOS_ITENS.filter(i => i.nome.toLowerCase().includes(q))
+    : TODOS_ITENS;
 
-            if (seeds > 0)     todosItens['Sementes'] = (todosItens['Sementes'] || 0) + seeds;
-            if (stock > 0)     todosItens['Milho']    = (todosItens['Milho']    || 0) + stock;
-            if (buckets > 0)   todosItens['Balde']    = (todosItens['Balde']    || 0) + buckets;
-            if (planted > 0)   todosItens['Planta']   = (todosItens['Planta']   || 0) + planted;
-            if (harvested > 0) todosItens['Colheita'] = (todosItens['Colheita'] || 0) + harvested;
+  if (!filtrados.length) {
+    conteudo.innerHTML = TODOS_ITENS.length === 0
+      ? `<div class="vazio">🎒 Mochila vazia. Nenhum item encontrado.</div>`
+      : `<div class="vazio">🔍 Nenhum item corresponde à busca.</div>`;
+    return;
+  }
 
-            // ---------- ITENS (jsonb) ----------
-            if (Array.isArray(dadosUsuario.itens)) {
-                dadosUsuario.itens.forEach(item => {
-                    if (item && item.nome) {
-                        const qtd = Number(item.quantidade) || 0;
-                        if (qtd > 0) {
-                            todosItens[item.nome] = (todosItens[item.nome] || 0) + qtd;
-                        }
-                    }
-                });
-            } else if (dadosUsuario.itens && typeof dadosUsuario.itens === 'object') {
-                Object.keys(dadosUsuario.itens).forEach(key => {
-                    const qtd = Number(dadosUsuario.itens[key]) || 0;
-                    if (qtd > 0) {
-                        todosItens[key] = (todosItens[key] || 0) + qtd;
-                    }
-                });
-            }
+  conteudo.innerHTML = `<div class="grid">${
+    filtrados.map(it => `
+      <div class="item">
+        <div class="item-top">
+          <span class="emoji">${emojiItem(it.nome)}</span>
+          <span class="qtd">×${it.quantidade}</span>
+        </div>
+        <div class="nome">${esc(it.nome)}</div>
+        <div class="tipo">${esc(it.tipo)}</div>
+      </div>
+    `).join('')
+  }</div>`;
+}
 
-            return Object.entries(todosItens).map(([nome, quantidade]) => ({
-                nome,
-                quantidade
-            }));
-        }
+function renderUsuario(u) {
+  $('#user-area').innerHTML = `
+    <span>👤 <span class="nick">${esc(u.nome || u.login)}</span></span>
+    <button class="btn ghost danger" id="btn-sair">Sair</button>
+  `;
+  $('#btn-sair').addEventListener('click', () => {
+    SESSION_KEYS.forEach(k => localStorage.removeItem(k));
+    TIMESTAMP_KEYS.forEach(k => localStorage.removeItem(k));
+    location.href = 'https://xoperadorx.github.io/Portal-Bolsa/login.html';
+  });
+}
 
-        // ============================================================
-        // RENDER
-        // ============================================================
-        function render() {
-            if (!state.dadosUsuario) {
-                loadingIndicator.style.display = 'block';
-                listaItens.innerHTML = '';
-                saldoDisplay.textContent = '0,00';
-                itensCount.textContent = '0 itens';
-                return;
-            }
+function mostrarErro(msg) {
+  $('#conteudo').innerHTML = `<div class="erro-box">${msg}</div>`;
+}
 
-            loadingIndicator.style.display = 'none';
+/* ============================================================
+   CARREGAR
+============================================================ */
+async function carregar() {
+  const u = lerSessao();
 
-            const saldo = parseFloat(state.dadosUsuario.saldo) || 0;
-            const itens = extrairTodosItens(state.dadosUsuario);
+  if (!u || !u.login) {
+    $('#user-area').innerHTML = `
+      <span style="color:#fbbf24;font-size:13px">⚠️ Não logado</span>
+      <a class="btn pri" href="https://xoperadorx.github.io/Portal-Bolsa/login.html">Fazer login</a>`;
+    mostrarErro(`⚠️ Nenhuma sessão ativa encontrada.
+      <br><br>Faça login no portal primeiro:
+      <a href="https://xoperadorx.github.io/Portal-Bolsa/login.html">login.html</a>
+      <br><br>Depois volte para esta página.`);
+    return;
+  }
 
-            const nome = state.dadosUsuario.nome || state.dadosUsuario.login || 'Usuário';
-            usuarioNome.textContent = nome;
+  renderUsuario(u);
 
-            saldoDisplay.textContent = saldo.toFixed(2);
-            itensCount.textContent = `${itens.length} itens`;
+  const { data, error } = await db
+    .from(TABELA)
+    .select('*')
+    .eq('login', u.login)
+    .limit(1);
 
-            // ---- RECURSOS ----
-            const btc = parseFloat(state.dadosUsuario.btc) || 0;
-            const mumu = parseFloat(state.dadosUsuario.mumu) || 0;
-            const poderHash = parseFloat(state.dadosUsuario.poder_hash) || 1.0;
-            const poupanca = parseFloat(state.dadosUsuario.saldo_poupanca) || 0;
-            const proventos = parseFloat(state.dadosUsuario.proventos_pendentes) || 0;
-            const cadeado = state.dadosUsuario.cadeado === true;
+  if (error) {
+    mostrarErro(`⚠️ Erro ao consultar o banco: <strong>${esc(error.message)}</strong>`);
+    return;
+  }
 
-            btcDisplay.textContent = btc.toFixed(8);
-            mumuDisplay.textContent = mumu.toFixed(2);
-            hashDisplay.textContent = poderHash.toFixed(2);
-            poupancaDisplay.textContent = poupanca.toFixed(2);
-            proventosDisplay.textContent = proventos.toFixed(2);
+  if (!data || data.length === 0) {
+    mostrarErro(`⚠️ Jogador <strong>${esc(u.login)}</strong> não encontrado na tabela <code>${TABELA}</code>.
+      <br><br>Certifique-se de que o jogador existe no banco ou rode o SQL de população.`);
+    return;
+  }
 
-            if (cadeado) {
-                cadeadoStatus.textContent = '🔒 Fechado';
-                cadeadoStatus.className = 'cd-status fechado';
-            } else {
-                cadeadoStatus.textContent = '🔓 Aberto';
-                cadeadoStatus.className = 'cd-status aberto';
-            }
+  const d = data[0];
+  renderResumo(d);
 
-            if (itens.length === 0) {
-                listaItens.innerHTML = `<div class="vazio">👜 Mochila vazia<br><small>Vá à fazenda para ganhar itens!</small></div>`;
-                return;
-            }
+  TODOS_ITENS = extrairItens(d);
+  $('#total-itens').textContent = `${TODOS_ITENS.length} itens`;
+  renderItens();
+}
 
-            listaItens.innerHTML = itens.map(item => `
-                <div class="item" data-nome="${item.nome}">
-                    <div class="info">
-                        <span class="emoji">${getEmoji(item.nome)}</span>
-                        <span class="nome">${item.nome}</span>
-                        <span class="qtd">×${item.quantidade}</span>
-                        <span class="valor-unit">${getValorItem(item.nome)}💰</span>
-                        <span class="origem">${getOrigemItem(item.nome)}</span>
-                    </div>
-                </div>
-            `).join('');
-        }
+/* ============================================================
+   INIT
+============================================================ */
+document.addEventListener('DOMContentLoaded', () => {
+  $('#busca').addEventListener('input', (e) => renderItens(e.target.value));
 
-        // ============================================================
-        // ATUALIZAR WIDGET DE NÍVEL
-        // ============================================================
-        function atualizarLevelWidget(dados) {
-            if (!dados) return;
+  // Log de diagnóstico (visível no console)
+  console.log('=== MOCHILA DEBUG ===');
+  Object.keys(localStorage).forEach(k => {
+    console.log('localStorage["' + k + '"] =', localStorage.getItem(k));
+  });
 
-            const nivel       = Number(dados.nivel)       || 0;
-            const experiencia = Number(dados.experiencia) || 0;
-            const expProx     = Number(dados.exp_proximo) || Number(dados.exp_next) || 100;
-
-            const atkBase = Number(dados.ataque_base) || Number(dados.atk) || 0;
-            const defBase = Number(dados.defesa_base) || Number(dados.def) || 0;
-            const magBase = Number(dados.magia_base)  || Number(dados.mag) || 0;
-
-            const maxHp = Number(dados.hp_max) || Number(dados.max_hp) || 100;
-            const maxMp = Number(dados.mp_max) || Number(dados.max_mp) || 50;
-            const maxSm = Number(dados.sm_max) || Number(dados.max_sm) || 100;
-
-            const hp = Number(dados.hp_atual) || Number(dados.hp) || maxHp;
-            const mp = Number(dados.mp_atual) || Number(dados.mp) || maxMp;
-            const sm = Number(dados.sm_atual) || Number(dados.sm) || maxSm;
-
-            const pct = expProx > 0 ? Math.min((experiencia / expProx) * 100, 100) : 0;
-
-            document.getElementById('lwNivel').textContent = nivel;
-            document.getElementById('lwTitulo').textContent = getTitulo(nivel);
-            document.getElementById('lwExpFill').style.width = pct + '%';
-            document.getElementById('lwExpAtual').textContent = experiencia;
-            document.getElementById('lwExpProx').textContent = expProx;
-
-            document.getElementById('lwHp').textContent = `${hp}/${maxHp}`;
-            document.getElementById('lwMp').textContent = `${mp}/${maxMp}`;
-            document.getElementById('lwSm').textContent = `${sm}/${maxSm}`;
-            document.getElementById('lwAtk').textContent = atkBase;
-            document.getElementById('lwDef').textContent = defBase;
-            document.getElementById('lwMag').textContent = magBase;
-        }
-
-        function getTitulo(nivel) {
-            const titulos = [
-                { min: 0,   titulo: '🌱 Iniciante' },
-                { min: 5,   titulo: '🌿 Aprendiz' },
-                { min: 10,  titulo: '⚔️ Guerreiro' },
-                { min: 20,  titulo: '🛡️ Mestre' },
-                { min: 35,  titulo: '🏆 Lendário' },
-                { min: 50,  titulo: '👑 Herói' },
-                { min: 75,  titulo: '⚡ Deus da Guerra' },
-                { min: 100, titulo: '🌟 Imortal' },
-            ];
-            let titulo = titulos[0].titulo;
-            for (const t of titulos) {
-                if (nivel >= t.min) titulo = t.titulo;
-            }
-            return titulo;
-        }
-
-        // ============================================================
-        // CARREGAR DADOS
-        // ============================================================
-        async function carregarDados() {
-            if (!state.usuarioLogado) {
-                console.warn('⚠️ Nenhum usuário logado');
-                return;
-            }
-
-            try {
-                state.isLoading = true;
-                loadingIndicator.style.display = 'block';
-
-                state.dadosUsuario = await buscarDadosUsuario(state.usuarioLogado.login);
-
-                if (!state.dadosUsuario) {
-                    console.warn('⚠️ Usuário não encontrado no banco');
-                }
-
-                render();
-                atualizarLevelWidget(state.dadosUsuario);
-
-            } catch (error) {
-                console.error('❌ Erro ao carregar dados:', error);
-            } finally {
-                state.isLoading = false;
-                loadingIndicator.style.display = 'none';
-            }
-        }
-
-        // ============================================================
-        // VERIFICAR CONEXÃO
-        // ============================================================
-        async function verificarConexao() {
-            try {
-                const response = await fetch(`${SUPABASE_URL}/rest/v1/${TABELA}?select=id&limit=1`, {
-                    headers: {
-                        'apikey': SUPABASE_KEY,
-                        'Authorization': `Bearer ${SUPABASE_KEY}`
-                    }
-                });
-                state.supabaseOnline = response.ok;
-                console.log(state.supabaseOnline ? '✅ Supabase Online' : '❌ Supabase Offline');
-                return state.supabaseOnline;
-            } catch {
-                state.supabaseOnline = false;
-                console.log('❌ Supabase Offline');
-                return false;
-            }
-        }
-
-        // ============================================================
-        // INICIALIZAÇÃO
-        // ============================================================
-        async function init() {
-            await verificarConexao();
-
-            const usuario = getUsuarioLogado();
-
-            if (!usuario || !usuario.login) {
-                console.warn('⚠️ Usuário não logado, redirecionando para login...');
-                window.location.href = 'login.html';
-                return;
-            }
-
-            state.usuarioLogado = usuario;
-            usuarioNome.textContent = usuario.nome || usuario.login;
-
-            console.log('👤 Usuário logado:', usuario.login);
-
-            await carregarDados();
-
-            if (state.pollTimer) clearInterval(state.pollTimer);
-            state.pollTimer = setInterval(() => {
-                if (!document.hidden) {
-                    carregarDados();
-                }
-            }, POLL_INTERVAL);
-
-            console.log('🎒 Mochila carregada com Supabase!');
-        }
-
-        // ============================================================
-        // INICIAR
-        // ============================================================
-        document.addEventListener('DOMContentLoaded', init);
-
-        document.addEventListener('visibilitychange', () => {
-            if (!document.hidden && state.usuarioLogado) {
-                carregarDados();
-            }
-        });
-
-        console.log('🎒 Mochila iniciada!');
-    })();
+  carregar();
+});
 </script>
 </body>
 </html>
