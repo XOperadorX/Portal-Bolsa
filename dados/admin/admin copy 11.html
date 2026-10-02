@@ -55,7 +55,6 @@
     </script>
 
     <link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@400;600;700&family=Orbitron:wght@400;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
 
     <style>
         :root {
@@ -235,105 +234,6 @@
             background: linear-gradient(135deg, #dc2626, #b91c1c);
             box-shadow: 0 0 15px rgba(220, 38, 38, 0.6);
         }
-
-        /* ============ MENU DE BOTÕES ADM ============ */
-        .admin-menu-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
-            gap: 14px;
-            margin-bottom: 28px;
-        }
-
-        .admin-menu-btn {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            background: var(--card-bg);
-            border: 1px solid rgba(255, 255, 255, 0.08);
-            border-radius: 14px;
-            padding: 14px 18px;
-            text-decoration: none;
-            color: #e0e8f0;
-            font-weight: 600;
-            font-size: 0.95rem;
-            transition: all 0.25s ease;
-            position: relative;
-            overflow: hidden;
-            box-shadow: 0 4px 14px rgba(0, 0, 0, 0.3);
-        }
-
-        .admin-menu-btn::before {
-            content: '';
-            position: absolute;
-            inset: 0;
-            background: linear-gradient(135deg, rgba(0, 240, 255, 0.08), transparent);
-            opacity: 0;
-            transition: opacity 0.25s;
-        }
-
-        .admin-menu-btn:hover {
-            transform: translateY(-3px);
-            border-color: var(--neon-blue);
-            box-shadow: 0 8px 28px rgba(0, 240, 255, 0.2);
-            color: #fff;
-        }
-
-        .admin-menu-btn:hover::before {
-            opacity: 1;
-        }
-
-        .admin-menu-btn .menu-icon {
-            width: 42px;
-            height: 42px;
-            border-radius: 12px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 1.15rem;
-            flex-shrink: 0;
-            position: relative;
-            z-index: 1;
-        }
-
-        .admin-menu-btn .menu-label {
-            position: relative;
-            z-index: 1;
-            display: flex;
-            flex-direction: column;
-            line-height: 1.25;
-        }
-
-        .admin-menu-btn .menu-label .titulo {
-            font-family: 'Orbitron', sans-serif;
-            font-size: 0.82rem;
-            letter-spacing: 0.5px;
-            color: #fff;
-        }
-
-        .admin-menu-btn .menu-label .subtitulo {
-            font-size: 0.72rem;
-            color: #7e8aa1;
-            font-weight: 500;
-        }
-
-        /* Cores por categoria */
-        .admin-menu-btn[data-cor="azul"] .menu-icon    { background: rgba(59, 130, 246, 0.15); color: #60a5fa; }
-        .admin-menu-btn[data-cor="roxo"] .menu-icon    { background: rgba(139, 92, 246, 0.15); color: #a78bfa; }
-        .admin-menu-btn[data-cor="verde"] .menu-icon   { background: rgba(34, 197, 94, 0.15);  color: #4ade80; }
-        .admin-menu-btn[data-cor="amarelo"] .menu-icon { background: rgba(245, 197, 66, 0.15); color: #f5c542; }
-        .admin-menu-btn[data-cor="vermelho"] .menu-icon{ background: rgba(239, 68, 68, 0.15);  color: #f87171; }
-        .admin-menu-btn[data-cor="ciano"] .menu-icon   { background: rgba(0, 240, 255, 0.15);  color: #00f0ff; }
-        .admin-menu-btn[data-cor="laranja"] .menu-icon { background: rgba(247, 147, 26, 0.15); color: #f7931a; }
-        .admin-menu-btn[data-cor="rosa"] .menu-icon    { background: rgba(255, 0, 170, 0.15);  color: #ff00aa; }
-
-        .admin-menu-btn[data-cor="azul"]:hover    { border-color: #3b82f6; box-shadow: 0 8px 28px rgba(59, 130, 246, 0.25); }
-        .admin-menu-btn[data-cor="roxo"]:hover    { border-color: #8b5cf6; box-shadow: 0 8px 28px rgba(139, 92, 246, 0.25); }
-        .admin-menu-btn[data-cor="verde"]:hover   { border-color: #22c55e; box-shadow: 0 8px 28px rgba(34, 197, 94, 0.25); }
-        .admin-menu-btn[data-cor="amarelo"]:hover { border-color: #f5c542; box-shadow: 0 8px 28px rgba(245, 197, 66, 0.25); }
-        .admin-menu-btn[data-cor="vermelho"]:hover{ border-color: #ef4444; box-shadow: 0 8px 28px rgba(239, 68, 68, 0.25); }
-        .admin-menu-btn[data-cor="ciano"]:hover   { border-color: #00f0ff; box-shadow: 0 8px 28px rgba(0, 240, 255, 0.25); }
-        .admin-menu-btn[data-cor="laranja"]:hover { border-color: #f7931a; box-shadow: 0 8px 28px rgba(247, 147, 26, 0.25); }
-        .admin-menu-btn[data-cor="rosa"]:hover    { border-color: #ff00aa; box-shadow: 0 8px 28px rgba(255, 0, 170, 0.25); }
 
         /* --- CARDS (painel ADM) --- */
         .container {
@@ -636,8 +536,13 @@
         }
 
         @keyframes pulse-status {
-            0%, 100% { opacity: 1; }
-            50% { opacity: 0.6; }
+            0%,
+            100% {
+                opacity: 1;
+            }
+            50% {
+                opacity: 0.6;
+            }
         }
 
         .status-dot {
@@ -654,8 +559,15 @@
         }
 
         @keyframes pulse-dot-online {
-            0%, 100% { opacity: 1; transform: scale(1); }
-            50% { opacity: 0.5; transform: scale(0.8); }
+            0%,
+            100% {
+                opacity: 1;
+                transform: scale(1);
+            }
+            50% {
+                opacity: 0.5;
+                transform: scale(0.8);
+            }
         }
 
         .status-label {
@@ -682,8 +594,12 @@
         }
 
         @keyframes spin {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(360deg); }
+            0% {
+                transform: rotate(0deg);
+            }
+            100% {
+                transform: rotate(360deg);
+            }
         }
 
         .btn:disabled {
@@ -709,12 +625,32 @@
             transition: all 0.2s;
         }
 
-        .acao-botoes .add { background: #10b981; color: white; }
-        .acao-botoes .add:hover { background: #059669; }
-        .acao-botoes .remove { background: #ef4444; color: white; }
-        .acao-botoes .remove:hover { background: #dc2626; }
-        .acao-botoes .set { background: #3b82f6; color: white; }
-        .acao-botoes .set:hover { background: #2563eb; }
+        .acao-botoes .add {
+            background: #10b981;
+            color: white;
+        }
+
+        .acao-botoes .add:hover {
+            background: #059669;
+        }
+
+        .acao-botoes .remove {
+            background: #ef4444;
+            color: white;
+        }
+
+        .acao-botoes .remove:hover {
+            background: #dc2626;
+        }
+
+        .acao-botoes .set {
+            background: #3b82f6;
+            color: white;
+        }
+
+        .acao-botoes .set:hover {
+            background: #2563eb;
+        }
 
         /* ============ BOTÃO DELETAR (TABELA) ============ */
         .acao-botoes .delete {
@@ -768,9 +704,20 @@
             font-size: 0.9rem;
         }
 
-        .selic-alta { background: #ef4444; color: white; }
-        .selic-baixa { background: #10b981; color: white; }
-        .selic-media { background: #f59e0b; color: white; }
+        .selic-alta {
+            background: #ef4444;
+            color: white;
+        }
+
+        .selic-baixa {
+            background: #10b981;
+            color: white;
+        }
+
+        .selic-media {
+            background: #f59e0b;
+            color: white;
+        }
 
         .selic-impacto {
             padding: 12px 16px;
@@ -779,9 +726,23 @@
             font-weight: 600;
         }
 
-        .impacto-compra { background: #0f2a1a; color: #6bff9e; border-left: 4px solid #10b981; }
-        .impacto-venda { background: #2a0f1a; color: #ff6b6b; border-left: 4px solid #ef4444; }
-        .impacto-neutral { background: #1f1f0f; color: #ffd66b; border-left: 4px solid #f59e0b; }
+        .impacto-compra {
+            background: #0f2a1a;
+            color: #6bff9e;
+            border-left: 4px solid #10b981;
+        }
+
+        .impacto-venda {
+            background: #2a0f1a;
+            color: #ff6b6b;
+            border-left: 4px solid #ef4444;
+        }
+
+        .impacto-neutral {
+            background: #1f1f0f;
+            color: #ffd66b;
+            border-left: 4px solid #f59e0b;
+        }
 
         /* Estatísticas */
         .stat-box {
@@ -806,13 +767,33 @@
             margin-top: 6px;
         }
 
-        .stat-box .stat-green { color: var(--neon-green); }
-        .stat-box .stat-blue { color: var(--neon-blue); }
-        .stat-box .stat-gold { color: #f59e0b; }
-        .stat-box .stat-red { color: #ef4444; }
-        .stat-box .stat-cyan { color: #22d3ee; }
-        .stat-box .stat-purple { color: #a78bfa; }
-        .stat-box .stat-orange { color: #f7931a; }
+        .stat-box .stat-green {
+            color: var(--neon-green);
+        }
+
+        .stat-box .stat-blue {
+            color: var(--neon-blue);
+        }
+
+        .stat-box .stat-gold {
+            color: #f59e0b;
+        }
+
+        .stat-box .stat-red {
+            color: #ef4444;
+        }
+
+        .stat-box .stat-cyan {
+            color: #22d3ee;
+        }
+
+        .stat-box .stat-purple {
+            color: #a78bfa;
+        }
+
+        .stat-box .stat-orange {
+            color: #f7931a;
+        }
 
         /* Cor da senha */
         .senha-texto {
@@ -851,6 +832,47 @@
             text-shadow: 0 0 8px rgba(247, 147, 26, 0.3);
         }
 
+        @media (max-width: 768px) {
+            .form-row {
+                grid-template-columns: 1fr;
+            }
+            .header-actions {
+                width: 100%;
+                justify-content: flex-start;
+                margin-left: 0;
+                margin-top: 8px;
+            }
+            .status-container {
+                width: 100%;
+                justify-content: flex-start;
+            }
+            .btn-back {
+                margin-left: 0;
+            }
+            .selic-atual {
+                font-size: 1.8rem;
+            }
+            .nav-bar {
+                flex-direction: column;
+                align-items: stretch;
+            }
+            .nav-links {
+                justify-content: center;
+            }
+            .nav-buttons {
+                justify-content: center;
+            }
+            .user-profile {
+                padding: 4px 12px 4px 8px;
+            }
+            .user-info .user-nick {
+                font-size: 0.8rem;
+            }
+            table {
+                min-width: 500px;
+            }
+        }
+
         /* ===== CÓDIGOS DE RESGATE ===== */
         .codigos-card {
             border-left: 6px solid var(--neon-green);
@@ -880,53 +902,28 @@
             font-weight: 700;
         }
 
-        .codigo-status.ativo { background: #10b981; color: #fff; }
-        .codigo-status.inativo { background: #ef4444; color: #fff; }
-        .codigo-status.esgotado { background: #f59e0b; color: #fff; }
-
-        .acao-botoes .toggle { background: #3b82f6; color: white; }
-        .acao-botoes .toggle:hover { background: #2563eb; }
-
-        /* ===== SEÇÃO TÍTULO ===== */
-        .section-title {
-            font-family: 'Orbitron', sans-serif;
-            font-size: 1rem;
-            color: #8ab4e8;
-            letter-spacing: 1.5px;
-            text-transform: uppercase;
-            margin-bottom: 16px;
-            padding-left: 12px;
-            border-left: 4px solid var(--neon-blue);
+        .codigo-status.ativo {
+            background: #10b981;
+            color: #fff;
         }
 
-        @media (max-width: 768px) {
-            .form-row { grid-template-columns: 1fr; }
-            .header-actions {
-                width: 100%;
-                justify-content: flex-start;
-                margin-left: 0;
-                margin-top: 8px;
-            }
-            .status-container {
-                width: 100%;
-                justify-content: flex-start;
-            }
-            .btn-back { margin-left: 0; }
-            .selic-atual { font-size: 1.8rem; }
-            .nav-bar {
-                flex-direction: column;
-                align-items: stretch;
-            }
-            .nav-links { justify-content: center; }
-            .nav-buttons { justify-content: center; }
-            .user-profile { padding: 4px 12px 4px 8px; }
-            .user-info .user-nick { font-size: 0.8rem; }
-            table { min-width: 500px; }
-            .admin-menu-grid { grid-template-columns: 1fr 1fr; }
+        .codigo-status.inativo {
+            background: #ef4444;
+            color: #fff;
         }
 
-        @media (max-width: 480px) {
-            .admin-menu-grid { grid-template-columns: 1fr; }
+        .codigo-status.esgotado {
+            background: #f59e0b;
+            color: #fff;
+        }
+
+        .acao-botoes .toggle {
+            background: #3b82f6;
+            color: white;
+        }
+
+        .acao-botoes .toggle:hover {
+            background: #2563eb;
         }
     </style>
 </head>
@@ -951,66 +948,6 @@
     <div class="container">
         <!-- Mensagens -->
         <div id="mensagem" class="mensagem"></div>
-
-        <!-- ==================== MENU DE BOTÕES ADMIN ==================== -->
-        <div class="section-title">🧭 Painéis Administrativos</div>
-        <div class="admin-menu-grid">
-            <a href="./001admin.html" class="admin-menu-btn" data-cor="ciano">
-                <div class="menu-icon"><i class="fas fa-database"></i></div>
-                <div class="menu-label">
-                    <span class="titulo">Tabela Geral</span>
-                    <span class="subtitulo">CRUD completo</span>
-                </div>
-            </a>
-
-            <a href="./adm_cadastro.html" class="admin-menu-btn" data-cor="azul">
-                <div class="menu-icon"><i class="fas fa-users-gear"></i></div>
-                <div class="menu-label">
-                    <span class="titulo">Cadastros</span>
-                    <span class="subtitulo">Contas & usuários</span>
-                </div>
-            </a>
-
-            <a href="./adm_suporte.html" class="admin-menu-btn" data-cor="verde">
-                <div class="menu-icon"><i class="fas fa-headset"></i></div>
-                <div class="menu-label">
-                    <span class="titulo">Suporte</span>
-                    <span class="subtitulo">Tickets</span>
-                </div>
-            </a>
-
-            <a href="./admin-bolsa.html" class="admin-menu-btn" data-cor="amarelo">
-                <div class="menu-icon"><i class="fas fa-chart-line"></i></div>
-                <div class="menu-label">
-                    <span class="titulo">Bolsa</span>
-                    <span class="subtitulo">Selic & ativos</span>
-                </div>
-            </a>
-
-            <a href="./admin-mercado.html" class="admin-menu-btn" data-cor="laranja">
-                <div class="menu-icon"><i class="fas fa-store"></i></div>
-                <div class="menu-label">
-                    <span class="titulo">Mercado</span>
-                    <span class="subtitulo">Preços & estoque</span>
-                </div>
-            </a>
-
-            <a href="./delete.html" class="admin-menu-btn" data-cor="vermelho">
-                <div class="menu-icon"><i class="fas fa-trash-can"></i></div>
-                <div class="menu-label">
-                    <span class="titulo">Deletar</span>
-                    <span class="subtitulo">Realtime + Delete</span>
-                </div>
-            </a>
-
-            <a href="./sys.html" class="admin-menu-btn" data-cor="roxo">
-                <div class="menu-icon"><i class="fas fa-gear"></i></div>
-                <div class="menu-label">
-                    <span class="titulo">Sistema</span>
-                    <span class="subtitulo">Configurações</span>
-                </div>
-            </a>
-        </div>
 
         <!-- ==================== SELIC - CONTROLE ==================== -->
         <div class="card selic-card">
@@ -1052,63 +989,62 @@
                 </div>
             </div>
         </div>
+                <!-- ==================== CÓDIGOS DE RESGATE ==================== -->
+                <div class="card codigos-card">
+                    <h2>🎁 CÓDIGOS DE RESGATE</h2>
+                    <p style="color: #8a99ad; margin-bottom: 16px; font-size: 0.9rem;">
+                        Crie códigos que os usuários podem resgatar na página de saldo.
+                        Você pode dar <strong style="color:var(--neon-green);">Mumu</strong> e/ou
+                        <strong style="color:var(--neon-blue);">Saldo R$</strong>.
+                        <br><small style="color:#f59e0b;">💡 Valores negativos são aceitos (ex: -0.01) para penalidades.</small>
+                    </p>
 
-        <!-- ==================== CÓDIGOS DE RESGATE ==================== -->
-        <div class="card codigos-card">
-            <h2>🎁 CÓDIGOS DE RESGATE</h2>
-            <p style="color: #8a99ad; margin-bottom: 16px; font-size: 0.9rem;">
-                Crie códigos que os usuários podem resgatar na página de saldo.
-                Você pode dar <strong style="color:var(--neon-green);">Mumu</strong> e/ou
-                <strong style="color:var(--neon-blue);">Saldo R$</strong>.
-                <br><small style="color:#f59e0b;">💡 Valores negativos são aceitos (ex: -0.01) para penalidades.</small>
-            </p>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="codigoInput">Código (ex: BEMVINDO2026)</label>
+                            <input type="text" id="codigoInput" placeholder="Digite o código" maxlength="30" style="text-transform: uppercase;">
+                        </div>
+                        <div class="form-group">
+                            <label for="codigoMumu">Recompensa Mumu (pode ser negativo)</label>
+                            <input type="number" id="codigoMumu" placeholder="0.00" step="0.01" value="0">
+                        </div>
+                    </div>
 
-            <div class="form-row">
-                <div class="form-group">
-                    <label for="codigoInput">Código (ex: BEMVINDO2026)</label>
-                    <input type="text" id="codigoInput" placeholder="Digite o código" maxlength="30" style="text-transform: uppercase;">
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="codigoSaldo">Recompensa Saldo R$ (pode ser negativo)</label>
+                            <input type="number" id="codigoSaldo" placeholder="0.00" step="0.01" value="0">
+                        </div>
+                        <div class="form-group">
+                            <label for="codigoLimite">Limite de usos (0 = ilimitado)</label>
+                            <input type="number" id="codigoLimite" placeholder="0" min="0" value="0">
+                        </div>
+                    </div>
+
+                    <div style="display: flex; gap: 10px; flex-wrap: wrap; margin-bottom: 20px;">
+                        <button class="btn btn-success" id="btnCriarCodigo">➕ Criar Código</button>
+                        <button class="btn btn-warning" id="btnCancelarEdicao" style="display:none;">❌ Cancelar Edição</button>
+                        <button class="btn btn-secondary" id="btnRecarregarCodigos">🔄 Recarregar Lista</button>
+                    </div>
+
+                    <h3 style="color: #fff; font-size: 1rem; margin-bottom: 12px;">📋 Códigos Existentes</h3>
+                    <div class="table-wrapper">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Código</th>
+                                    <th>Mumu</th>
+                                    <th>Saldo R$</th>
+                                    <th>Usos</th>
+                                    <th>Limite</th>
+                                    <th>Status</th>
+                                    <th>Ações</th>
+                                </tr>
+                            </thead>
+                            <tbody id="tabelaCodigos"></tbody>
+                        </table>
+                    </div>
                 </div>
-                <div class="form-group">
-                    <label for="codigoMumu">Recompensa Mumu (pode ser negativo)</label>
-                    <input type="number" id="codigoMumu" placeholder="0.00" step="0.01" value="0">
-                </div>
-            </div>
-
-            <div class="form-row">
-                <div class="form-group">
-                    <label for="codigoSaldo">Recompensa Saldo R$ (pode ser negativo)</label>
-                    <input type="number" id="codigoSaldo" placeholder="0.00" step="0.01" value="0">
-                </div>
-                <div class="form-group">
-                    <label for="codigoLimite">Limite de usos (0 = ilimitado)</label>
-                    <input type="number" id="codigoLimite" placeholder="0" min="0" value="0">
-                </div>
-            </div>
-
-            <div style="display: flex; gap: 10px; flex-wrap: wrap; margin-bottom: 20px;">
-                <button class="btn btn-success" id="btnCriarCodigo">➕ Criar Código</button>
-                <button class="btn btn-warning" id="btnCancelarEdicao" style="display:none;">❌ Cancelar Edição</button>
-                <button class="btn btn-secondary" id="btnRecarregarCodigos">🔄 Recarregar Lista</button>
-            </div>
-
-            <h3 style="color: #fff; font-size: 1rem; margin-bottom: 12px;">📋 Códigos Existentes</h3>
-            <div class="table-wrapper">
-                <table>
-                    <thead>
-                        <tr>
-                            <th>Código</th>
-                            <th>Mumu</th>
-                            <th>Saldo R$</th>
-                            <th>Usos</th>
-                            <th>Limite</th>
-                            <th>Status</th>
-                            <th>Ações</th>
-                        </tr>
-                    </thead>
-                    <tbody id="tabelaCodigos"></tbody>
-                </table>
-            </div>
-        </div>
 
         <!-- Buscar Usuário -->
         <div class="card">
@@ -1501,7 +1437,7 @@
             }
         }
 
-        // ============ atualizar MUMU (não saldo) ============
+        // ============ NOVO: atualizar MUMU (não saldo) ============
         async function atualizarMumu(id, novoMumu) {
             try {
                 const { data, error } = await supabase
@@ -2200,268 +2136,272 @@
             }
         }
 
-        // ==================== CÓDIGOS DE RESGATE ====================
-        let codigoEditando = null;
+                        // ==================== CÓDIGOS DE RESGATE ====================
+                let codigoEditando = null; // código em edição (null = modo criação)
 
-        async function carregarCodigos() {
-            try {
-                const { data, error } = await supabase
-                    .from(TABELA)
-                    .select('codigos_resgate')
-                    .eq('id', 1)
-                    .single();
+                async function carregarCodigos() {
+                    try {
+                        const { data, error } = await supabase
+                            .from(TABELA)
+                            .select('codigos_resgate')
+                            .eq('id', 1)
+                            .single();
 
-                if (error) {
-                    console.warn('Erro ao carregar códigos:', error);
-                    codigosCache = [];
-                    renderizarTabelaCodigos();
-                    return [];
+                        if (error) {
+                            console.warn('Erro ao carregar códigos:', error);
+                            codigosCache = [];
+                            renderizarTabelaCodigos();
+                            return [];
+                        }
+
+                        codigosCache = Array.isArray(data?.codigos_resgate) ? data.codigos_resgate : [];
+                        renderizarTabelaCodigos();
+                        return codigosCache;
+                    } catch (e) {
+                        console.error('Erro ao carregar códigos:', e);
+                        codigosCache = [];
+                        renderizarTabelaCodigos();
+                        return [];
+                    }
                 }
 
-                codigosCache = Array.isArray(data?.codigos_resgate) ? data.codigos_resgate : [];
-                renderizarTabelaCodigos();
-                return codigosCache;
-            } catch (e) {
-                console.error('Erro ao carregar códigos:', e);
-                codigosCache = [];
-                renderizarTabelaCodigos();
-                return [];
-            }
-        }
+                function renderizarTabelaCodigos() {
+                    const tbody = document.getElementById('tabelaCodigos');
+                    if (!tbody) return;
 
-        function renderizarTabelaCodigos() {
-            const tbody = document.getElementById('tabelaCodigos');
-            if (!tbody) return;
+                    if (!codigosCache || codigosCache.length === 0) {
+                        tbody.innerHTML = `<tr><td colspan="7" style="padding: 20px; color: #8a99ad; text-align: center;">Nenhum código criado ainda.</td></tr>`;
+                        return;
+                    }
 
-            if (!codigosCache || codigosCache.length === 0) {
-                tbody.innerHTML = `<tr><td colspan="7" style="padding: 20px; color: #8a99ad; text-align: center;">Nenhum código criado ainda.</td></tr>`;
-                return;
-            }
+                    const ordenados = [...codigosCache].sort(
+                        (a, b) => new Date(b.criado_em || 0) - new Date(a.criado_em || 0)
+                    );
 
-            const ordenados = [...codigosCache].sort(
-                (a, b) => new Date(b.criado_em || 0) - new Date(a.criado_em || 0)
-            );
+                    tbody.innerHTML = ordenados.map(c => {
+                        const usos = c.usos || 0;
+                        const limite = c.limite || 0;
+                        const esgotado = limite > 0 && usos >= limite;
 
-            tbody.innerHTML = ordenados.map(c => {
-                const usos = c.usos || 0;
-                const limite = c.limite || 0;
-                const esgotado = limite > 0 && usos >= limite;
+                        let statusClasse = 'ativo';
+                        let statusTexto = 'Ativo';
+                        if (esgotado) { statusClasse = 'esgotado'; statusTexto = 'Esgotado'; }
+                        else if (c.ativo === false) { statusClasse = 'inativo'; statusTexto = 'Inativo'; }
 
-                let statusClasse = 'ativo';
-                let statusTexto = 'Ativo';
-                if (esgotado) { statusClasse = 'esgotado'; statusTexto = 'Esgotado'; }
-                else if (c.ativo === false) { statusClasse = 'inativo'; statusTexto = 'Inativo'; }
+                        const mumuVal = Number(c.mumu) || 0;
+                        const saldoVal = Number(c.saldo) || 0;
+                        const mumuColor = mumuVal < 0 ? '#ef4444' : 'var(--neon-green)';
+                        const saldoColor = saldoVal < 0 ? '#ef4444' : 'var(--neon-blue)';
+                        const emEdicao = codigoEditando === c.codigo;
 
-                const mumuVal = Number(c.mumu) || 0;
-                const saldoVal = Number(c.saldo) || 0;
-                const mumuColor = mumuVal < 0 ? '#ef4444' : 'var(--neon-green)';
-                const saldoColor = saldoVal < 0 ? '#ef4444' : 'var(--neon-blue)';
-                const emEdicao = codigoEditando === c.codigo;
+                        return `
+                            <tr style="${emEdicao ? 'background: rgba(245,158,11,0.1);' : ''}">
+                                <td><span class="codigo-badge">${c.codigo}</span></td>
+                                <td style="color: ${mumuColor}; font-weight: 600;">${mumuVal.toFixed(2)}</td>
+                                <td style="color: ${saldoColor}; font-weight: 600;">R$ ${saldoVal.toFixed(2)}</td>
+                                <td>${usos}</td>
+                                <td>${limite === 0 ? '∞' : limite}</td>
+                                <td><span class="codigo-status ${statusClasse}">${statusTexto}</span></td>
+                                <td>
+                                    <div class="acao-botoes">
+                                        <button class="set" onclick="window.editarCodigo('${c.codigo}')" title="Editar valores">✏️</button>
+                                        <button class="toggle" onclick="window.alternarCodigo('${c.codigo}')">
+                                            ${c.ativo === false ? '✅' : '⏸️'}
+                                        </button>
+                                        <button class="delete" onclick="window.deletarCodigo('${c.codigo}')">🗑️</button>
+                                    </div>
+                                </td>
+                            </tr>
+                        `;
+                    }).join('');
+                }
 
-                return `
-                    <tr style="${emEdicao ? 'background: rgba(245,158,11,0.1);' : ''}">
-                        <td><span class="codigo-badge">${c.codigo}</span></td>
-                        <td style="color: ${mumuColor}; font-weight: 600;">${mumuVal.toFixed(2)}</td>
-                        <td style="color: ${saldoColor}; font-weight: 600;">R$ ${saldoVal.toFixed(2)}</td>
-                        <td>${usos}</td>
-                        <td>${limite === 0 ? '∞' : limite}</td>
-                        <td><span class="codigo-status ${statusClasse}">${statusTexto}</span></td>
-                        <td>
-                            <div class="acao-botoes">
-                                <button class="set" onclick="window.editarCodigo('${c.codigo}')" title="Editar valores">✏️</button>
-                                <button class="toggle" onclick="window.alternarCodigo('${c.codigo}')">
-                                    ${c.ativo === false ? '✅' : '⏸️'}
-                                </button>
-                                <button class="delete" onclick="window.deletarCodigo('${c.codigo}')">🗑️</button>
-                            </div>
-                        </td>
-                    </tr>
-                `;
-            }).join('');
-        }
+                async function salvarCodigosNoBanco() {
+                    try {
+                        const { error } = await supabase
+                            .from(TABELA)
+                            .update({ codigos_resgate: codigosCache })
+                            .eq('id', 1);
 
-        async function salvarCodigosNoBanco() {
-            try {
-                const { error } = await supabase
-                    .from(TABELA)
-                    .update({ codigos_resgate: codigosCache })
-                    .eq('id', 1);
+                        if (error) throw error;
+                        return true;
+                    } catch (e) {
+                        console.error('Erro ao salvar códigos:', e);
+                        mostrarMensagem('❌ Erro ao salvar códigos no banco.', 'erro');
+                        return false;
+                    }
+                }
 
-                if (error) throw error;
-                return true;
-            } catch (e) {
-                console.error('Erro ao salvar códigos:', e);
-                mostrarMensagem('❌ Erro ao salvar códigos no banco.', 'erro');
-                return false;
-            }
-        }
+                async function criarCodigo() {
+                    const codigoInput = document.getElementById('codigoInput');
+                    const mumuInput = document.getElementById('codigoMumu');
+                    const saldoInput = document.getElementById('codigoSaldo');
+                    const limiteInput = document.getElementById('codigoLimite');
 
-        async function criarCodigo() {
-            const codigoInput = document.getElementById('codigoInput');
-            const mumuInput = document.getElementById('codigoMumu');
-            const saldoInput = document.getElementById('codigoSaldo');
-            const limiteInput = document.getElementById('codigoLimite');
+                    const codigo = (codigoInput.value || '').trim().toUpperCase().replace(/\s+/g, '');
+                    const mumu = parseFloat(mumuInput.value) || 0;
+                    const saldo = parseFloat(saldoInput.value) || 0;
+                    const limite = parseInt(limiteInput.value) || 0;
 
-            const codigo = (codigoInput.value || '').trim().toUpperCase().replace(/\s+/g, '');
-            const mumu = parseFloat(mumuInput.value) || 0;
-            const saldo = parseFloat(saldoInput.value) || 0;
-            const limite = parseInt(limiteInput.value) || 0;
+                    if (!codigo || codigo.length < 3) {
+                        mostrarMensagem('⚠️ O código deve ter pelo menos 3 caracteres.', 'erro');
+                        return;
+                    }
+                    if (!/^[A-Z0-9_-]+$/.test(codigo)) {
+                        mostrarMensagem('⚠️ Use apenas letras, números, _ ou -.', 'erro');
+                        return;
+                    }
+                    // Aceita negativos, mas exige que pelo menos um seja diferente de zero
+                    if (mumu === 0 && saldo === 0) {
+                        mostrarMensagem('⚠️ Defina pelo menos uma recompensa (Mumu ou Saldo R$) diferente de zero.', 'erro');
+                        return;
+                    }
 
-            if (!codigo || codigo.length < 3) {
-                mostrarMensagem('⚠️ O código deve ter pelo menos 3 caracteres.', 'erro');
-                return;
-            }
-            if (!/^[A-Z0-9_-]+$/.test(codigo)) {
-                mostrarMensagem('⚠️ Use apenas letras, números, _ ou -.', 'erro');
-                return;
-            }
-            if (mumu === 0 && saldo === 0) {
-                mostrarMensagem('⚠️ Defina pelo menos uma recompensa (Mumu ou Saldo R$) diferente de zero.', 'erro');
-                return;
-            }
+                    // ===== MODO EDIÇÃO =====
+                    if (codigoEditando) {
+                        const idx = codigosCache.findIndex(c => c.codigo === codigoEditando);
+                        if (idx === -1) {
+                            mostrarMensagem('❌ Código em edição não encontrado.', 'erro');
+                            codigoEditando = null;
+                            return;
+                        }
 
-            if (codigoEditando) {
-                const idx = codigosCache.findIndex(c => c.codigo === codigoEditando);
-                if (idx === -1) {
-                    mostrarMensagem('❌ Código em edição não encontrado.', 'erro');
+                        // Se o código foi alterado, verifica duplicidade
+                        if (codigo !== codigoEditando && codigosCache.some(c => c.codigo === codigo)) {
+                            mostrarMensagem('⚠️ Já existe um código com esse nome.', 'erro');
+                            return;
+                        }
+
+                        codigosCache[idx] = {
+                            ...codigosCache[idx],
+                            codigo: codigo,
+                            mumu: mumu,
+                            saldo: saldo,
+                            limite: limite,
+                            atualizado_em: new Date().toISOString()
+                        };
+
+                        const ok = await salvarCodigosNoBanco();
+                        if (ok) {
+                            mostrarMensagem(`✅ Código "${codigo}" atualizado com sucesso!`, 'sucesso');
+                            cancelarEdicaoCodigo();
+                        }
+                        return;
+                    }
+
+                    // ===== MODO CRIAÇÃO =====
+                    if (codigosCache.some(c => (c.codigo || '').toUpperCase() === codigo)) {
+                        mostrarMensagem('⚠️ Já existe um código com esse nome.', 'erro');
+                        return;
+                    }
+
+                    const novoCodigo = {
+                        codigo: codigo,
+                        mumu: mumu,
+                        saldo: saldo,
+                        limite: limite,
+                        usos: 0,
+                        ativo: true,
+                        criado_em: new Date().toISOString()
+                    };
+
+                    codigosCache.push(novoCodigo);
+
+                    const ok = await salvarCodigosNoBanco();
+                    if (ok) {
+                        mostrarMensagem(`✅ Código "${codigo}" criado com sucesso!`, 'sucesso');
+                        limparFormularioCodigo();
+                        renderizarTabelaCodigos();
+                    } else {
+                        codigosCache = codigosCache.filter(c => c.codigo !== codigo);
+                    }
+                }
+
+                function limparFormularioCodigo() {
+                    document.getElementById('codigoInput').value = '';
+                    document.getElementById('codigoMumu').value = 0;
+                    document.getElementById('codigoSaldo').value = 0;
+                    document.getElementById('codigoLimite').value = 0;
+                }
+
+                function cancelarEdicaoCodigo() {
                     codigoEditando = null;
-                    return;
+                    limparFormularioCodigo();
+                    document.getElementById('btnCriarCodigo').textContent = '➕ Criar Código';
+                    document.getElementById('btnCancelarEdicao').style.display = 'none';
+                    document.getElementById('codigoInput').disabled = false;
+                    renderizarTabelaCodigos();
                 }
 
-                if (codigo !== codigoEditando && codigosCache.some(c => c.codigo === codigo)) {
-                    mostrarMensagem('⚠️ Já existe um código com esse nome.', 'erro');
-                    return;
-                }
+                window.editarCodigo = function(codigo) {
+                    const c = codigosCache.find(x => x.codigo === codigo);
+                    if (!c) return;
 
-                codigosCache[idx] = {
-                    ...codigosCache[idx],
-                    codigo: codigo,
-                    mumu: mumu,
-                    saldo: saldo,
-                    limite: limite,
-                    atualizado_em: new Date().toISOString()
+                    codigoEditando = codigo;
+
+                    document.getElementById('codigoInput').value = c.codigo;
+                    document.getElementById('codigoInput').disabled = true; // não permite alterar o nome
+                    document.getElementById('codigoMumu').value = c.mumu ?? 0;
+                    document.getElementById('codigoSaldo').value = c.saldo ?? 0;
+                    document.getElementById('codigoLimite').value = c.limite ?? 0;
+
+                    document.getElementById('btnCriarCodigo').textContent = '💾 Salvar Alterações';
+                    document.getElementById('btnCancelarEdicao').style.display = 'inline-block';
+
+                    renderizarTabelaCodigos();
+                    document.getElementById('codigoMumu').focus();
+                    mostrarMensagem(`✏️ Editando código "${codigo}". Altere os valores e clique em Salvar.`, 'info');
                 };
 
-                const ok = await salvarCodigosNoBanco();
-                if (ok) {
-                    mostrarMensagem(`✅ Código "${codigo}" atualizado com sucesso!`, 'sucesso');
+                window.alternarCodigo = async function(codigo) {
+                    const idx = codigosCache.findIndex(c => c.codigo === codigo);
+                    if (idx === -1) return;
+
+                    codigosCache[idx].ativo = codigosCache[idx].ativo === false ? true : false;
+
+                    const ok = await salvarCodigosNoBanco();
+                    if (ok) {
+                        mostrarMensagem(`✅ Código "${codigo}" ${codigosCache[idx].ativo ? 'ativado' : 'pausado'}.`, 'sucesso');
+                        renderizarTabelaCodigos();
+                    }
+                };
+
+                window.deletarCodigo = async function(codigo) {
+                    if (!confirm(`Tem certeza que deseja deletar o código "${codigo}"?`)) return;
+
+                    const backup = [...codigosCache];
+                    codigosCache = codigosCache.filter(c => c.codigo !== codigo);
+
+                    const ok = await salvarCodigosNoBanco();
+                    if (ok) {
+                        mostrarMensagem(`🗑️ Código "${codigo}" deletado.`, 'sucesso');
+                        if (codigoEditando === codigo) cancelarEdicaoCodigo();
+                        renderizarTabelaCodigos();
+                    } else {
+                        codigosCache = backup;
+                    }
+                };
+
+                // ==================== EVENTOS CÓDIGOS DE RESGATE ====================
+                document.getElementById('btnCriarCodigo').addEventListener('click', criarCodigo);
+                document.getElementById('btnCancelarEdicao').addEventListener('click', cancelarEdicaoCodigo);
+                document.getElementById('btnRecarregarCodigos').addEventListener('click', async () => {
                     cancelarEdicaoCodigo();
-                }
-                return;
-            }
-
-            if (codigosCache.some(c => (c.codigo || '').toUpperCase() === codigo)) {
-                mostrarMensagem('⚠️ Já existe um código com esse nome.', 'erro');
-                return;
-            }
-
-            const novoCodigo = {
-                codigo: codigo,
-                mumu: mumu,
-                saldo: saldo,
-                limite: limite,
-                usos: 0,
-                ativo: true,
-                criado_em: new Date().toISOString()
-            };
-
-            codigosCache.push(novoCodigo);
-
-            const ok = await salvarCodigosNoBanco();
-            if (ok) {
-                mostrarMensagem(`✅ Código "${codigo}" criado com sucesso!`, 'sucesso');
-                limparFormularioCodigo();
-                renderizarTabelaCodigos();
-            } else {
-                codigosCache = codigosCache.filter(c => c.codigo !== codigo);
-            }
-        }
-
-        function limparFormularioCodigo() {
-            document.getElementById('codigoInput').value = '';
-            document.getElementById('codigoMumu').value = 0;
-            document.getElementById('codigoSaldo').value = 0;
-            document.getElementById('codigoLimite').value = 0;
-        }
-
-        function cancelarEdicaoCodigo() {
-            codigoEditando = null;
-            limparFormularioCodigo();
-            document.getElementById('btnCriarCodigo').textContent = '➕ Criar Código';
-            document.getElementById('btnCancelarEdicao').style.display = 'none';
-            document.getElementById('codigoInput').disabled = false;
-            renderizarTabelaCodigos();
-        }
-
-        window.editarCodigo = function(codigo) {
-            const c = codigosCache.find(x => x.codigo === codigo);
-            if (!c) return;
-
-            codigoEditando = codigo;
-
-            document.getElementById('codigoInput').value = c.codigo;
-            document.getElementById('codigoInput').disabled = true;
-            document.getElementById('codigoMumu').value = c.mumu ?? 0;
-            document.getElementById('codigoSaldo').value = c.saldo ?? 0;
-            document.getElementById('codigoLimite').value = c.limite ?? 0;
-
-            document.getElementById('btnCriarCodigo').textContent = '💾 Salvar Alterações';
-            document.getElementById('btnCancelarEdicao').style.display = 'inline-block';
-
-            renderizarTabelaCodigos();
-            document.getElementById('codigoMumu').focus();
-            mostrarMensagem(`✏️ Editando código "${codigo}". Altere os valores e clique em Salvar.`, 'info');
-        };
-
-        window.alternarCodigo = async function(codigo) {
-            const idx = codigosCache.findIndex(c => c.codigo === codigo);
-            if (idx === -1) return;
-
-            codigosCache[idx].ativo = codigosCache[idx].ativo === false ? true : false;
-
-            const ok = await salvarCodigosNoBanco();
-            if (ok) {
-                mostrarMensagem(`✅ Código "${codigo}" ${codigosCache[idx].ativo ? 'ativado' : 'pausado'}.`, 'sucesso');
-                renderizarTabelaCodigos();
-            }
-        };
-
-        window.deletarCodigo = async function(codigo) {
-            if (!confirm(`Tem certeza que deseja deletar o código "${codigo}"?`)) return;
-
-            const backup = [...codigosCache];
-            codigosCache = codigosCache.filter(c => c.codigo !== codigo);
-
-            const ok = await salvarCodigosNoBanco();
-            if (ok) {
-                mostrarMensagem(`🗑️ Código "${codigo}" deletado.`, 'sucesso');
-                if (codigoEditando === codigo) cancelarEdicaoCodigo();
-                renderizarTabelaCodigos();
-            } else {
-                codigosCache = backup;
-            }
-        };
-
-        // ==================== EVENTOS CÓDIGOS DE RESGATE ====================
-        document.getElementById('btnCriarCodigo').addEventListener('click', criarCodigo);
-        document.getElementById('btnCancelarEdicao').addEventListener('click', cancelarEdicaoCodigo);
-        document.getElementById('btnRecarregarCodigos').addEventListener('click', async () => {
-            cancelarEdicaoCodigo();
-            await carregarCodigos();
-            mostrarMensagem('🔄 Lista de códigos recarregada.', 'info');
-        });
-        document.getElementById('codigoInput').addEventListener('keypress', (e) => {
-            if (e.key === 'Enter') criarCodigo();
-        });
-        document.getElementById('codigoMumu').addEventListener('keypress', (e) => {
-            if (e.key === 'Enter') criarCodigo();
-        });
-        document.getElementById('codigoSaldo').addEventListener('keypress', (e) => {
-            if (e.key === 'Enter') criarCodigo();
-        });
-        document.getElementById('codigoLimite').addEventListener('keypress', (e) => {
-            if (e.key === 'Enter') criarCodigo();
-        });
+                    await carregarCodigos();
+                    mostrarMensagem('🔄 Lista de códigos recarregada.', 'info');
+                });
+                document.getElementById('codigoInput').addEventListener('keypress', (e) => {
+                    if (e.key === 'Enter') criarCodigo();
+                });
+                document.getElementById('codigoMumu').addEventListener('keypress', (e) => {
+                    if (e.key === 'Enter') criarCodigo();
+                });
+                document.getElementById('codigoSaldo').addEventListener('keypress', (e) => {
+                    if (e.key === 'Enter') criarCodigo();
+                });
+                document.getElementById('codigoLimite').addEventListener('keypress', (e) => {
+                    if (e.key === 'Enter') criarCodigo();
+                });
 
         // ==================== CARREGAR DADOS ====================
         async function carregarDados() {
@@ -2522,6 +2462,16 @@
             if (e.key === 'Enter') {
                 document.getElementById('btnAtualizarSelic').click();
             }
+        });
+
+        // ==================== EVENTOS CÓDIGOS DE RESGATE ====================
+        document.getElementById('btnCriarCodigo').addEventListener('click', criarCodigo);
+        document.getElementById('btnRecarregarCodigos').addEventListener('click', async () => {
+            await carregarCodigos();
+            mostrarMensagem('🔄 Lista de códigos recarregada.', 'info');
+        });
+        document.getElementById('codigoInput').addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') criarCodigo();
         });
 
         // ==================== INICIALIZAÇÃO ====================

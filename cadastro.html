@@ -510,6 +510,10 @@
             nivel: 1, experiencia: 0, exp_proximo: 100, exp: 0, exp_next: 100
         };
 
+        // ==================== CARGO INICIAL ====================
+        // Código do cargo atribuído automaticamente no cadastro.
+        const CARGO_INICIAL_CODIGO = 'user';
+
         // ==================== SESSÃO LOCAL (24h) ====================
         const SESSION_KEY = 'usuario_logado';
         const SESSION_TIMESTAMP_KEY = 'session_timestamp';
@@ -779,6 +783,44 @@
             });
         }
 
+        // ==================== CARGO ====================
+        // Busca o id do cargo pelo código. Se não existir, tenta criar.
+        async function obterCargoId(codigo) {
+            // 1) Tenta buscar
+            const { data, error } = await supabaseClient
+                .from('cargos')
+                .select('id, codigo')
+                .eq('codigo', codigo)
+                .limit(1)
+                .maybeSingle();
+
+            if (error) {
+                console.error('Erro ao buscar cargo:', error);
+                return null;
+            }
+            if (data) return data.id;
+
+            // 2) Cargo não existe? Tenta criar um padrão.
+            console.warn(`Cargo "${codigo}" não encontrado. Tentando criar...`);
+            const { data: novoCargo, error: erroInsertCargo } = await supabaseClient
+                .from('cargos')
+                .insert({
+                    codigo: codigo,
+                    nome: 'Usuário',
+                    nivel: 0,
+                    cor: '#cccccc',
+                    is_vip: false
+                })
+                .select('id')
+                .single();
+
+            if (erroInsertCargo) {
+                console.error('Erro ao criar cargo padrão:', erroInsertCargo);
+                return null;
+            }
+            return novoCargo.id;
+        }
+
         // ==================== CADASTRO ====================
         async function fazerCadastro(dados) {
             try {
@@ -925,7 +967,41 @@
                     return false;
                 }
 
-                // 6) Sessão
+                // 6) Atribui cargo "user" ao novo usuário (se ainda não tiver)
+                try {
+                    const cargoId = await obterCargoId(CARGO_INICIAL_CODIGO);
+
+                    if (cargoId) {
+                        const { error: erroCargo } = await supabaseClient
+                            .from('usuario_cargos')
+                            .upsert(
+                                {
+                                    usuario_id: inserido.id,
+                                    cargo_id: cargoId,
+                                    ativo: true,
+                                    inicio: new Date().toISOString()
+                                },
+                                {
+                                    onConflict: 'usuario_id,cargo_id',
+                                    ignoreDuplicates: false
+                                }
+                            );
+
+                        if (erroCargo) {
+                            console.error('Erro ao atribuir cargo:', erroCargo);
+                            // Não bloqueia o cadastro; o usuário já foi criado.
+                        } else {
+                            console.log(`✅ Cargo "${CARGO_INICIAL_CODIGO}" atribuído ao usuário ${inserido.id}.`);
+                        }
+                    } else {
+                        console.warn('⚠️ Cargo inicial não encontrado/criado. Usuário criado sem cargo.');
+                    }
+                } catch (eCargo) {
+                    console.error('Exceção ao atribuir cargo:', eCargo);
+                    // Não bloqueia o cadastro.
+                }
+
+                // 7) Sessão
                 const usuarioSessao = {
                     id: inserido.id,
                     login: inserido.login,
