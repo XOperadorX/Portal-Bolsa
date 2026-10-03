@@ -916,11 +916,12 @@
         const TABELA = 'Geral';
         const supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
-        /* ==================== MAPA DE PREÇOS FIXOS (VIP1..VIP9 = 10..90) ==================== */
-        const PRECOS_FIXOS = {};
-        for (let i = 1; i <= 9; i++) {
-            PRECOS_FIXOS[`VIP${i}`] = i * 10.00;
-        }
+        /* ==================== MAPA DE PREÇOS FIXOS (sobrescreve o banco) ==================== */
+        /* Se a tabela `cargos` já tiver os preços corretos, pode deixar vazio {} */
+        const PRECOS_FIXOS = {
+            'VIP1': 10.00, 'VIP2': 20.00, 'VIP3': 30.00,
+            'VIP4': 40.00, 'VIP5': 50.00, 'VIP6': 60.00, 'VIP7': 70.00
+        };
 
         /* ==================== TOAST ==================== */
         const toast = document.getElementById('toast');
@@ -982,6 +983,7 @@
                         }
                     }
 
+                    // Atualiza o localStorage com o mumu mais recente
                     if (profile.mumu !== undefined) {
                         const rawLS = localStorage.getItem('usuario_logado');
                         if (rawLS) {
@@ -1068,6 +1070,7 @@
                 if (error) throw error;
 
                 produtos = (data || []).map(c => {
+                    // Aplica preço fixo se existir no mapa, senão usa o do banco
                     const preco = PRECOS_FIXOS[c.codigo] !== undefined
                         ? PRECOS_FIXOS[c.codigo]
                         : parseFloat(c.preco || 0);
@@ -1116,7 +1119,7 @@
             }
 
             grid.innerHTML = lista.map(p => {
-                const tag = p.nivel >= 9 ? 'Melhor Valor'
+                const tag = p.nivel >= 8 ? 'Melhor Valor'
                           : p.nivel >= 6 ? 'Popular'
                           : p.nivel === 1 ? 'Novo' : null;
 
@@ -1225,6 +1228,7 @@
             try {
                 const agora = new Date().toISOString();
 
+                // 1) Busca dados atualizados do usuário (mumu)
                 const { data: usuario, error: errUser } = await supabaseClient
                     .from(TABELA)
                     .select('id, login, nome, email, mumu')
@@ -1245,6 +1249,7 @@
                     return;
                 }
 
+                // 2) Debita o valor do mumu
                 const novoMumu = mumuAtual - preco;
 
                 const { error: errUpdate } = await supabaseClient
@@ -1254,9 +1259,11 @@
 
                 if (errUpdate) throw errUpdate;
 
+                // 3) Atualiza localStorage
                 logado.mumu = novoMumu;
                 localStorage.setItem('usuario_logado', JSON.stringify(logado));
 
+                // 4) Monta a mensagem do ticket
                 const mensagem = [
                     '🛒 COMPRA NA LOJA — PAGO COM MUMU',
                     '',
@@ -1273,6 +1280,7 @@
                     '✅ Pagamento debitado automaticamente. Aguardando liberação da equipe.'
                 ].join('\n');
 
+                // 5) Cria ticket
                 const { data: ticketCriado, error: errTicket } = await supabaseClient
                     .from('suporte_tickets')
                     .insert([{
@@ -1294,6 +1302,7 @@
 
                 if (errTicket) throw errTicket;
 
+                // 6) Registra em compras
                 try {
                     await supabaseClient.from('compras').insert([{
                         user_login: usuario.login || '',
@@ -1308,6 +1317,7 @@
                     console.warn('[Loja] Erro ao inserir em compras:', e.message);
                 }
 
+                // 7) Atualiza o saldo exibido na navbar (mumu)
                 const saldoEl = document.getElementById('saldo');
                 if (saldoEl) {
                     saldoEl.textContent = new Intl.NumberFormat('pt-BR', {

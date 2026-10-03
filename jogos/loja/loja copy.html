@@ -595,6 +595,71 @@
 
         .btn:disabled { opacity: 0.6; cursor: not-allowed; transform: none; }
 
+        /* ==================== CAIXA PIX ==================== */
+        .pix-box {
+            background: #0f172a;
+            border: 1px solid #f5c542;
+            border-radius: 10px;
+            padding: 12px 14px;
+            margin-bottom: 10px;
+            box-shadow: 0 0 20px rgba(245, 197, 66, 0.15);
+        }
+
+        .pix-box .rotulo {
+            font-size: 0.7rem;
+            color: #f5c542;
+            text-transform: uppercase;
+            font-weight: 700;
+            letter-spacing: 0.5px;
+            margin-bottom: 4px;
+        }
+
+        .pix-linha {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-top: 6px;
+        }
+
+        .pix-valor {
+            font-family: 'Courier New', monospace;
+            color: #f5c542;
+            font-size: 0.95rem;
+            font-weight: 700;
+            word-break: break-all;
+            flex: 1;
+        }
+
+        .btn-copiar-pix {
+            background: rgba(245, 197, 66, 0.15);
+            border: 1px solid rgba(245, 197, 66, 0.5);
+            color: #f5c542;
+            padding: 8px 14px;
+            border-radius: 20px;
+            cursor: pointer;
+            font-weight: 700;
+            font-family: 'Rajdhani', sans-serif;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            transition: all 0.2s;
+            white-space: nowrap;
+        }
+
+        .btn-copiar-pix:hover {
+            background: rgba(245, 197, 66, 0.25);
+            box-shadow: 0 0 15px rgba(245, 197, 66, 0.4);
+        }
+
+        .pix-instrucao {
+            font-size: 0.75rem;
+            color: #94a3b8;
+            margin-top: 8px;
+            line-height: 1.4;
+        }
+
+        .pix-instrucao strong { color: #4ade80; }
+
         /* ==================== TOAST ==================== */
         .toast {
             position: fixed;
@@ -778,6 +843,8 @@
             .produtos-grid { grid-template-columns: 1fr; }
             .loja-header h1 { font-size: 1.5rem; }
             .toast { left: 16px; right: 16px; max-width: none; }
+            .pix-linha { flex-direction: column; align-items: stretch; }
+            .btn-copiar-pix { justify-content: center; }
         }
     </style>
 </head>
@@ -797,7 +864,11 @@
             </div>
         </div>
 
+
+
         <div class="nav-buttons">
+
+
             <a href="../../dados/admin/admin.html" id="btnAdmin" class="btn-bolsa"
                style="display:none; background: linear-gradient(135deg, #7000ff, #8b5cf6);">
                👑 Admin
@@ -854,15 +925,31 @@
                     <div class="valor" id="compraDuracao">—</div>
                 </div>
 
+                <!-- Chave Pix fixa -->
+                <div class="pix-box">
+                    <div class="rotulo"><i class="fas fa-key"></i> Chave Pix para pagamento</div>
+                    <div class="pix-linha">
+                        <div class="pix-valor" id="compraChavePix">—</div>
+                        <button type="button" class="btn-copiar-pix" id="btnCopiarChavePix">
+                            <i class="fas fa-copy"></i> Copiar
+                        </button>
+                    </div>
+                    <div class="pix-instrucao">
+                        Faça o pagamento nessa chave e clique em
+                        <strong>"Já Paguei — Enviar Comprovante"</strong>.
+                        Nossa equipe confirmará o recebimento e liberará sua compra.
+                    </div>
+                </div>
+
                 <div class="campo-acao">
                     <label for="compraObs">Observação (opcional)</label>
                     <textarea id="compraObs" placeholder="Algo que a equipe precise saber..."></textarea>
                 </div>
 
                 <div class="modal-aviso">
-                    Ao confirmar, o valor será <strong>descontado do seu saldo Mumu</strong>.
-                    Um <strong>ticket de suporte</strong> será aberto com status
-                    <strong>"Em andamento"</strong> para a equipe liberar sua compra.
+                    Ao confirmar, um <strong>ticket de suporte</strong> será aberto com status
+                    <strong>"Em andamento"</strong> e <strong>aguardando pagamento</strong>.
+                    Você será notificado quando a equipe confirmar o Pix.
                 </div>
             </div>
 
@@ -871,7 +958,7 @@
                     <i class="fas fa-xmark"></i> Cancelar
                 </button>
                 <button class="btn btn-primario" id="btnConfirmarCompra">
-                    <i class="fas fa-paper-plane"></i> Confirmar Compra
+                    <i class="fas fa-paper-plane"></i> Já Paguei — Enviar Comprovante
                 </button>
             </div>
         </div>
@@ -916,11 +1003,9 @@
         const TABELA = 'Geral';
         const supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
-        /* ==================== MAPA DE PREÇOS FIXOS (VIP1..VIP9 = 10..90) ==================== */
-        const PRECOS_FIXOS = {};
-        for (let i = 1; i <= 9; i++) {
-            PRECOS_FIXOS[`VIP${i}`] = i * 10.00;
-        }
+        /* ==================== CHAVE PIX FIXA ==================== */
+        /* ⚠️ TROQUE ABAIXO PELA SUA CHAVE PIX REAL */
+        const CHAVE_PIX_FIXA = 'a7f3c9e1-4b2d-4f8a-9c1e-5d6b8a0f2e3c';
 
         /* ==================== TOAST ==================== */
         const toast = document.getElementById('toast');
@@ -952,14 +1037,16 @@
                 const sessao = JSON.parse(raw);
                 if (!sessao?.login) return;
 
+                // Preenche com dados básicos da sessão imediatamente
                 const avatar = document.getElementById('userAvatar');
                 const nick = document.getElementById('userNick');
                 if (avatar) avatar.textContent = sessao.login.charAt(0).toUpperCase();
                 if (nick) nick.textContent = sessao.nome || sessao.login;
 
+                // Busca dados atualizados no Supabase
                 const { data: profile } = await supabaseClient
                     .from(TABELA)
-                    .select('nome, login, saldo, btc, cadeado, mumu')
+                    .select('nome, login, saldo, btc, cadeado')
                     .eq('login', sessao.login)
                     .maybeSingle();
 
@@ -974,22 +1061,12 @@
                     const btcEl = document.getElementById('btcTotal');
                     if (btcEl) btcEl.textContent = (profile.btc || 0).toFixed(8);
 
+                    // Botão Admin
                     if (profile.cadeado === true) {
                         const btnAdmin = document.getElementById('btnAdmin');
                         if (btnAdmin) {
                             btnAdmin.style.display = 'inline-flex';
                             btnAdmin.classList.add('visivel');
-                        }
-                    }
-
-                    if (profile.mumu !== undefined) {
-                        const rawLS = localStorage.getItem('usuario_logado');
-                        if (rawLS) {
-                            try {
-                                const ls = JSON.parse(rawLS);
-                                ls.mumu = profile.mumu;
-                                localStorage.setItem('usuario_logado', JSON.stringify(ls));
-                            } catch (e) {}
                         }
                     }
                 }
@@ -1067,23 +1144,17 @@
 
                 if (error) throw error;
 
-                produtos = (data || []).map(c => {
-                    const preco = PRECOS_FIXOS[c.codigo] !== undefined
-                        ? PRECOS_FIXOS[c.codigo]
-                        : parseFloat(c.preco || 0);
-
-                    return {
-                        id: c.id,
-                        codigo: c.codigo,
-                        nome: c.nome,
-                        nivel: c.nivel,
-                        cor: c.cor || '#f5c542',
-                        duracao_meses: c.duracao_meses || 1,
-                        preco: preco,
-                        descricao: c.descricao || `Benefícios exclusivos do ${c.nome}.`,
-                        categoria: 'vip'
-                    };
-                });
+                produtos = (data || []).map(c => ({
+                    id: c.id,
+                    codigo: c.codigo,
+                    nome: c.nome,
+                    nivel: c.nivel,
+                    cor: c.cor || '#f5c542',
+                    duracao_meses: c.duracao_meses || 1,
+                    preco: parseFloat(c.preco || 0),
+                    descricao: c.descricao || `Benefícios exclusivos do ${c.nome}.`,
+                    categoria: 'vip'
+                }));
 
                 renderizarProdutos();
 
@@ -1116,7 +1187,7 @@
             }
 
             grid.innerHTML = lista.map(p => {
-                const tag = p.nivel >= 9 ? 'Melhor Valor'
+                const tag = p.nivel >= 8 ? 'Melhor Valor'
                           : p.nivel >= 6 ? 'Popular'
                           : p.nivel === 1 ? 'Novo' : null;
 
@@ -1162,6 +1233,8 @@
         const compraProduto = document.getElementById('compraProduto');
         const compraPreco = document.getElementById('compraPreco');
         const compraDuracao = document.getElementById('compraDuracao');
+        const compraChavePix = document.getElementById('compraChavePix');
+        const btnCopiarChavePix = document.getElementById('btnCopiarChavePix');
         const compraObs = document.getElementById('compraObs');
         const btnConfirmarCompra = document.getElementById('btnConfirmarCompra');
         const btnCancelarCompra = document.getElementById('btnCancelarCompra');
@@ -1182,6 +1255,7 @@
             compraProduto.textContent = p.nome;
             compraPreco.textContent = `R$ ${p.preco.toFixed(2).replace('.', ',')}`;
             compraDuracao.textContent = `${p.duracao_meses} mês(es)`;
+            compraChavePix.textContent = CHAVE_PIX_FIXA;
             compraObs.value = '';
             modalCompra.classList.add('show');
         }
@@ -1190,6 +1264,17 @@
             modalCompra.classList.remove('show');
             produtoSelecionado = null;
         }
+
+        btnCopiarChavePix.addEventListener('click', () => {
+            navigator.clipboard.writeText(CHAVE_PIX_FIXA).then(() => {
+                mostrarToast('sucesso', '📋 Chave Pix copiada!');
+                const original = btnCopiarChavePix.innerHTML;
+                btnCopiarChavePix.innerHTML = '<i class="fas fa-check"></i> Copiado!';
+                setTimeout(() => { btnCopiarChavePix.innerHTML = original; }, 1500);
+            }).catch(() => {
+                mostrarToast('erro', 'Não foi possível copiar. Copie manualmente.');
+            });
+        });
 
         btnFecharCompra.addEventListener('click', fecharModalCompra);
         btnCancelarCompra.addEventListener('click', fecharModalCompra);
@@ -1203,7 +1288,7 @@
             }
         });
 
-        /* ==================== CONFIRMAR COMPRA (com desconto no mumu) ==================== */
+        /* ==================== CONFIRMAR COMPRA ==================== */
         btnConfirmarCompra.addEventListener('click', async () => {
             if (!produtoSelecionado) return;
 
@@ -1212,76 +1297,39 @@
                 logado = JSON.parse(localStorage.getItem('usuario_logado') || '{}');
             } catch (e) {}
 
-            if (!logado.login) {
-                mostrarToast('erro', 'Sessão expirada. Faça login novamente.');
-                return;
-            }
-
             const obs = compraObs.value.trim();
 
             btnConfirmarCompra.disabled = true;
-            btnConfirmarCompra.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Processando...';
+            btnConfirmarCompra.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Enviando...';
 
             try {
                 const agora = new Date().toISOString();
 
-                const { data: usuario, error: errUser } = await supabaseClient
-                    .from(TABELA)
-                    .select('id, login, nome, email, mumu')
-                    .eq('login', logado.login)
-                    .maybeSingle();
-
-                if (errUser) throw errUser;
-                if (!usuario) throw new Error('Usuário não encontrado.');
-
-                const mumuAtual = Number(usuario.mumu || 0);
-                const preco = Number(produtoSelecionado.preco);
-
-                if (mumuAtual < preco) {
-                    mostrarToast('erro',
-                        `Saldo Mumu insuficiente. Você tem ${mumuAtual.toFixed(2)} e precisa de ${preco.toFixed(2)}.`);
-                    btnConfirmarCompra.disabled = false;
-                    btnConfirmarCompra.innerHTML = '<i class="fas fa-paper-plane"></i> Confirmar Compra';
-                    return;
-                }
-
-                const novoMumu = mumuAtual - preco;
-
-                const { error: errUpdate } = await supabaseClient
-                    .from(TABELA)
-                    .update({ mumu: novoMumu })
-                    .eq('login', logado.login);
-
-                if (errUpdate) throw errUpdate;
-
-                logado.mumu = novoMumu;
-                localStorage.setItem('usuario_logado', JSON.stringify(logado));
-
                 const mensagem = [
-                    '🛒 COMPRA NA LOJA — PAGO COM MUMU',
+                    '🛒 COMPRA NA LOJA — AGUARDANDO PAGAMENTO',
                     '',
                     `Produto: ${produtoSelecionado.nome} (${produtoSelecionado.codigo})`,
                     `Nível: ${produtoSelecionado.nivel}`,
-                    `Preço: R$ ${preco.toFixed(2).replace('.', ',')}`,
+                    `Preço: R$ ${produtoSelecionado.preco.toFixed(2).replace('.', ',')}`,
                     `Duração: ${produtoSelecionado.duracao_meses} mês(es)`,
                     '',
-                    `💰 Saldo Mumu antes: ${mumuAtual.toFixed(2)}`,
-                    `💰 Saldo Mumu depois: ${novoMumu.toFixed(2)}`,
+                    `💳 PIX para pagamento: ${CHAVE_PIX_FIXA}`,
                     '',
                     obs ? `Observação do cliente:\n${obs}` : 'Sem observações.',
                     '',
-                    '✅ Pagamento debitado automaticamente. Aguardando liberação da equipe.'
+                    '⏳ Status: aguardando confirmação do pagamento pelo admin.'
                 ].join('\n');
 
+                // 1) Cria ticket
                 const { data: ticketCriado, error: errTicket } = await supabaseClient
                     .from('suporte_tickets')
                     .insert([{
-                        user_id: usuario.id || usuario.login,
-                        nome: usuario.nome || usuario.login,
-                        login: usuario.login || '',
-                        email: usuario.email || '',
+                        user_id: logado.id || logado.login || null,
+                        nome: logado.nome || logado.login || 'Cliente',
+                        login: logado.login || '',
+                        email: logado.email || '',
                         categoria: 'pagamento',
-                        assunto: `[LOJA] ${produtoSelecionado.nome} — R$ ${preco.toFixed(2)}`,
+                        assunto: `[LOJA] ${produtoSelecionado.nome} — R$ ${produtoSelecionado.preco.toFixed(2)}`,
                         mensagem: mensagem,
                         prioridade: 'alta',
                         status: 'em_andamento',
@@ -1294,13 +1342,14 @@
 
                 if (errTicket) throw errTicket;
 
+                // 2) Registra em compras
                 try {
                     await supabaseClient.from('compras').insert([{
-                        user_login: usuario.login || '',
+                        user_login: logado.login || '',
                         cargo_codigo: produtoSelecionado.codigo,
                         cargo_nome: produtoSelecionado.nome,
-                        preco: preco,
-                        status: 'pago',
+                        preco: produtoSelecionado.preco,
+                        status: 'aguardando_pagamento',
                         ticket_id: ticketCriado?.id || null,
                         created_at: agora
                     }]);
@@ -1308,31 +1357,23 @@
                     console.warn('[Loja] Erro ao inserir em compras:', e.message);
                 }
 
-                const saldoEl = document.getElementById('saldo');
-                if (saldoEl) {
-                    saldoEl.textContent = new Intl.NumberFormat('pt-BR', {
-                        style: 'currency', currency: 'BRL'
-                    }).format(novoMumu);
-                }
-
-                btnConfirmarCompra.innerHTML = '<i class="fas fa-check"></i> Compra Realizada!';
+                btnConfirmarCompra.innerHTML = '<i class="fas fa-check"></i> Enviado!';
                 btnConfirmarCompra.style.background = 'linear-gradient(135deg, #22c55e, #16a34a)';
 
-                mostrarToast('sucesso',
-                    `✅ Compra confirmada! R$ ${preco.toFixed(2)} debitados. Ticket #${ticketCriado.id} aberto.`);
+                mostrarToast('sucesso', `✅ Ticket #${ticketCriado.id} aberto. Aguarde a confirmação do Pix.`);
 
                 setTimeout(() => {
                     fecharModalCompra();
                     btnConfirmarCompra.disabled = false;
-                    btnConfirmarCompra.innerHTML = '<i class="fas fa-paper-plane"></i> Confirmar Compra';
+                    btnConfirmarCompra.innerHTML = '<i class="fas fa-paper-plane"></i> Já Paguei — Enviar Comprovante';
                     btnConfirmarCompra.style.background = '';
-                }, 1800);
+                }, 1500);
 
             } catch (err) {
                 console.error('[Loja] Erro ao comprar:', err);
-                mostrarToast('erro', 'Erro ao processar compra: ' + err.message);
+                mostrarToast('erro', 'Erro ao registrar compra: ' + err.message);
                 btnConfirmarCompra.disabled = false;
-                btnConfirmarCompra.innerHTML = '<i class="fas fa-paper-plane"></i> Confirmar Compra';
+                btnConfirmarCompra.innerHTML = '<i class="fas fa-paper-plane"></i> Já Paguei — Enviar Comprovante';
             }
         });
 
