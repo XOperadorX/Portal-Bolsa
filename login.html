@@ -314,302 +314,234 @@
     </div>
 
     <!-- ==================== SCRIPTS ==================== -->
-    <script>
-        // ==================== MENU MOBILE ====================
-        (function() {
-            const toggleBtn = document.getElementById('menuToggle');
-            const navLinks = document.getElementById('navLinks');
-
-            if (toggleBtn && navLinks) {
-                toggleBtn.addEventListener('click', function(e) {
-                    e.stopPropagation();
-                    navLinks.classList.toggle('active');
-                    const icon = toggleBtn.querySelector('i');
-                    if (navLinks.classList.contains('active')) {
-                        icon.classList.remove('fa-bars');
-                        icon.classList.add('fa-times');
-                    } else {
-                        icon.classList.remove('fa-times');
-                        icon.classList.add('fa-bars');
-                    }
-                });
-
-                navLinks.querySelectorAll('a').forEach(link => {
-                    link.addEventListener('click', () => {
-                        if (window.innerWidth <= 860) {
-                            navLinks.classList.remove('active');
-                            const icon = toggleBtn.querySelector('i');
-                            icon.classList.remove('fa-times');
-                            icon.classList.add('fa-bars');
-                        }
-                    });
-                });
-
-                document.addEventListener('click', function(event) {
-                    if (window.innerWidth <= 860 && navLinks.classList.contains('active')) {
-                        const isClickInsideNav = navLinks.contains(event.target);
-                        const isClickOnToggle = toggleBtn.contains(event.target);
-                        if (!isClickInsideNav && !isClickOnToggle) {
-                            navLinks.classList.remove('active');
-                            const icon = toggleBtn.querySelector('i');
-                            icon.classList.remove('fa-times');
-                            icon.classList.add('fa-bars');
-                        }
-                    }
-                });
-            }
-        })();
-
-        // ==================== SUPABASE ====================
-        const SUPABASE_URL = 'https://xrcxvizzdumcxbylmkvn.supabase.co';
-        const SUPABASE_KEY = 'sb_publishable_E-g3G3wW4EySbCsXLXp8KQ_FnmERMcD';
-        const TABELA = 'Geral';
-
-        const supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
-
-        // ==================== SESSÃO LOCAL (24h) ====================
-        const SESSION_KEY = 'usuario_logado';
-        const SESSION_TIMESTAMP_KEY = 'session_timestamp';
-        const SESSION_DURATION = 24 * 60 * 60 * 1000;
-
-        function salvarSessao(usuario) {
-            localStorage.setItem(SESSION_KEY, JSON.stringify(usuario));
-            localStorage.setItem(SESSION_TIMESTAMP_KEY, Date.now().toString());
-        }
-        function sessaoValida() {
-            const ts = localStorage.getItem(SESSION_TIMESTAMP_KEY);
-            const u = localStorage.getItem(SESSION_KEY);
-            if (!ts || !u) return false;
-            const t = parseInt(ts, 10);
-            if (isNaN(t)) return false;
-            return (Date.now() - t) < SESSION_DURATION;
-        }
-
-        // ==================== ELEMENTOS ====================
-        const formLogin       = document.getElementById('formLogin');
-        const loginInput      = document.getElementById('login');
-        const senhaInput      = document.getElementById('senha');
-        const btnLogin        = document.getElementById('btnLogin');
-        const mensagemErro    = document.getElementById('mensagemErro');
-        const mensagemSucesso = document.getElementById('mensagemSucesso');
-        const statusSupabase  = document.getElementById('statusSupabase');
-        const regenInfoBox    = document.getElementById('regenInfoBox');
-        const regenInfoTexto  = document.getElementById('regenInfoTexto');
-
-        // ==================== MENSAGENS ====================
-        function mostrarErro(m) {
-            mensagemErro.textContent = m;
-            mensagemErro.className = 'mensagem-erro show';
-            mensagemSucesso.className = 'mensagem-sucesso';
-        }
-        function mostrarSucesso(m) {
-            mensagemSucesso.textContent = m;
-            mensagemSucesso.className = 'mensagem-sucesso show';
-            mensagemErro.className = 'mensagem-erro';
-        }
-        function ocultarMensagens() {
-            mensagemErro.className = 'mensagem-erro';
-            mensagemSucesso.className = 'mensagem-sucesso';
-        }
-        function mostrarRegenInfo(texto) {
-            if (!regenInfoBox) return;
-            regenInfoTexto.textContent = texto;
-            regenInfoBox.classList.add('show');
-        }
-        function ocultarRegenInfo() {
-            if (!regenInfoBox) return;
-            regenInfoBox.classList.remove('show');
-        }
-
-        // ==================== CONEXÃO ====================
-        async function verificarSupabase() {
-            try {
-                const { error } = await supabaseClient.from(TABELA).select('id').limit(1);
-                if (error) {
-                    console.error('Erro Supabase:', error);
-                    if (statusSupabase) {
-                        statusSupabase.textContent = '⚠️ Erro: ' + error.message;
-                        statusSupabase.className = 'status-supabase offline';
-                    }
-                    return false;
+<script>
+    // ==================== MENU MOBILE (inalterado) ====================
+    (function() {
+        const toggleBtn = document.getElementById('menuToggle');
+        const navLinks  = document.getElementById('navLinks');
+        if (toggleBtn && navLinks) {
+            toggleBtn.addEventListener('click', function(e) {
+                e.stopPropagation();
+                navLinks.classList.toggle('active');
+                const icon = toggleBtn.querySelector('i');
+                if (navLinks.classList.contains('active')) {
+                    icon.classList.remove('fa-bars'); icon.classList.add('fa-times');
+                } else {
+                    icon.classList.remove('fa-times'); icon.classList.add('fa-bars');
                 }
-                if (statusSupabase) {
-                    statusSupabase.textContent = '✅ Conectado ao Supabase';
-                    statusSupabase.className = 'status-supabase online';
+            });
+            navLinks.querySelectorAll('a').forEach(link => {
+                link.addEventListener('click', () => {
+                    if (window.innerWidth <= 860) {
+                        navLinks.classList.remove('active');
+                        const icon = toggleBtn.querySelector('i');
+                        icon.classList.remove('fa-times'); icon.classList.add('fa-bars');
+                    }
+                });
+            });
+            document.addEventListener('click', function(event) {
+                if (window.innerWidth <= 860 && navLinks.classList.contains('active')) {
+                    const inNav = navLinks.contains(event.target);
+                    const inTog = toggleBtn.contains(event.target);
+                    if (!inNav && !inTog) {
+                        navLinks.classList.remove('active');
+                        const icon = toggleBtn.querySelector('i');
+                        icon.classList.remove('fa-times'); icon.classList.add('fa-bars');
+                    }
                 }
-                return true;
-            } catch (e) {
-                console.error('Erro de conexão:', e);
+            });
+        }
+    })();
+
+    // ==================== SUPABASE ====================
+    const SUPABASE_URL = 'https://xrcxvizzdumcxbylmkvn.supabase.co';
+    // ⚠️ TROQUE pela SUA NOVA chave após rotacionar
+    const SUPABASE_KEY = 'sb_publishable_E-g3G3wW4EySbCsXLXp8KQ_FnmERMcD';
+    const supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+
+    // ==================== SESSÃO ====================
+    const SESSION_KEY = 'usuario_logado';
+    const SESSION_TIMESTAMP_KEY = 'session_timestamp';
+    const SESSION_DURATION = 24 * 60 * 60 * 1000;
+
+    function salvarSessao(usuario) {
+        localStorage.setItem(SESSION_KEY, JSON.stringify(usuario));
+        localStorage.setItem(SESSION_TIMESTAMP_KEY, Date.now().toString());
+    }
+    function sessaoValida() {
+        const ts = localStorage.getItem(SESSION_TIMESTAMP_KEY);
+        const u = localStorage.getItem(SESSION_KEY);
+        if (!ts || !u) return false;
+        const t = parseInt(ts, 10);
+        if (isNaN(t)) return false;
+        return (Date.now() - t) < SESSION_DURATION;
+    }
+
+    // ==================== ELEMENTOS ====================
+    const formLogin       = document.getElementById('formLogin');
+    const loginInput      = document.getElementById('login');
+    const senhaInput      = document.getElementById('senha');
+    const btnLogin        = document.getElementById('btnLogin');
+    const mensagemErro    = document.getElementById('mensagemErro');
+    const mensagemSucesso = document.getElementById('mensagemSucesso');
+    const statusSupabase  = document.getElementById('statusSupabase');
+    const regenInfoBox    = document.getElementById('regenInfoBox');
+    const regenInfoTexto  = document.getElementById('regenInfoTexto');
+
+    // ==================== MENSAGENS ====================
+    function mostrarErro(m) {
+        mensagemErro.textContent = m;
+        mensagemErro.className = 'mensagem-erro show';
+        mensagemSucesso.className = 'mensagem-sucesso';
+    }
+    function mostrarSucesso(m) {
+        mensagemSucesso.textContent = m;
+        mensagemSucesso.className = 'mensagem-sucesso show';
+        mensagemErro.className = 'mensagem-erro';
+    }
+    function ocultarMensagens() {
+        mensagemErro.className = 'mensagem-erro';
+        mensagemSucesso.className = 'mensagem-sucesso';
+    }
+    function mostrarRegenInfo(texto) {
+        if (!regenInfoBox) return;
+        regenInfoTexto.textContent = texto;
+        regenInfoBox.classList.add('show');
+    }
+    function ocultarRegenInfo() {
+        if (!regenInfoBox) return;
+        regenInfoBox.classList.remove('show');
+    }
+
+    // ==================== CONEXÃO ====================
+    async function verificarSupabase() {
+        try {
+            const { error } = await supabaseClient.from('cargos').select('id').limit(1);
+            if (error) {
+                console.error('Erro Supabase:', error);
                 if (statusSupabase) {
-                    statusSupabase.textContent = '❌ Erro: ' + e.message;
+                    statusSupabase.textContent = '⚠️ Erro: ' + error.message;
                     statusSupabase.className = 'status-supabase offline';
                 }
                 return false;
             }
+            if (statusSupabase) {
+                statusSupabase.textContent = '✅ Conectado ao Supabase';
+                statusSupabase.className = 'status-supabase online';
+            }
+            return true;
+        } catch (e) {
+            console.error('Erro de conexão:', e);
+            if (statusSupabase) {
+                statusSupabase.textContent = '❌ Erro: ' + e.message;
+                statusSupabase.className = 'status-supabase offline';
+            }
+            return false;
         }
+    }
 
-        // ==================== REGENERAÇÃO OFFLINE ====================
-        // Chama a função SQL calcular_regen_offline() para aplicar
-        // a regeneração acumulada enquanto o usuário estava offline.
-        async function aplicarRegeneracaoOffline(login) {
-            try {
-                console.log('🔄 Verificando regeneração offline para:', login);
-
-                const { data, error } = await supabaseClient.rpc('calcular_regen_offline', {
-                    p_login: login
-                });
-
-                if (error) {
-                    console.warn('⚠️ Erro ao chamar calcular_regen_offline:', error);
-                    // Fallback: tenta atualizar direto (sem regen)
-                    await supabaseClient
-                        .from(TABELA)
-                        .update({
-                            offline_regen_start: null,
-                            ultima_vez_online: new Date().toISOString()
-                        })
-                        .eq('login', login);
-                    return null;
-                }
-
-                if (!data || !data.sucesso) {
-                    console.warn('⚠️ Resposta inválida:', data);
-                    return null;
-                }
-
-                if (data.regenerou) {
-                    const horas = data.horas_offline || 0;
-                    const msg = data.restaurou_tudo
-                        ? `✨ ${horas.toFixed(1)}h offline — HP, MP e STAMINA restaurados ao MÁXIMO!`
-                        : `✨ ${horas.toFixed(1)}h offline — atributos regenerados!`;
-                    console.log('✅', msg, data);
-                    mostrarRegenInfo(msg);
-                } else {
-                    console.log('ℹ️ Sem regeneração pendente.');
-                }
-
-                return data;
-            } catch (e) {
-                console.error('❌ Erro ao aplicar regeneração:', e);
+    // ==================== REGENERAÇÃO OFFLINE (RPC opcional) ====================
+    async function aplicarRegeneracaoOffline(login) {
+        try {
+            const { data, error } = await supabaseClient.rpc('calcular_regen_offline', { p_login: login });
+            if (error) {
+                console.warn('⚠️ calcular_regen_offline indisponível:', error.message);
                 return null;
             }
+            if (!data || !data.sucesso) return null;
+            if (data.regenerou) {
+                const horas = data.horas_offline || 0;
+                const msg = data.restaurou_tudo
+                    ? `✨ ${horas.toFixed(1)}h offline — HP, MP e STAMINA restaurados ao MÁXIMO!`
+                    : `✨ ${horas.toFixed(1)}h offline — atributos regenerados!`;
+                mostrarRegenInfo(msg);
+            }
+            return data;
+        } catch (e) {
+            console.warn('⚠️ Regen offline falhou:', e);
+            return null;
         }
+    }
 
-        // ==================== LOGIN ====================
-        async function fazerLogin(login, senha) {
-            try {
-                console.log('🔎 Tentando login:', login);
+    // ==================== LOGIN VIA RPC ====================
+    async function fazerLogin(login, senha) {
+        try {
+            const { data, error } = await supabaseClient.rpc('login_usuario', {
+                p_login: login,
+                p_senha: senha
+            });
 
-                const { data: usuarios, error } = await supabaseClient
-                    .from(TABELA)
-                    .select('*')
-                    .ilike('login', login.trim());
-
-                console.log('📦 Encontrados:', usuarios?.length, '| erro:', error);
-
-                if (error) {
-                    console.error('Erro Supabase:', error);
-                    mostrarErro('❌ Erro ao consultar usuário. (' + error.message + ')');
-                    return false;
-                }
-
-                if (!usuarios || usuarios.length === 0) {
-                    mostrarErro('❌ Login não encontrado.');
-                    return false;
-                }
-
-                const u = usuarios[0];
-
-                const senhaBanco = String(u.senha ?? '').trim();
-                const senhaDigitada = String(senha).trim();
-
-                console.log('🔐 Comparando senhas...', senhaBanco === senhaDigitada);
-
-                if (senhaBanco !== senhaDigitada) {
-                    mostrarErro('❌ Senha incorreta.');
-                    return false;
-                }
-
-                if (u.bloqueado === true) {
-                    mostrarErro('🚫 Sua conta está bloqueada. Contate o suporte.');
-                    return false;
-                }
-
-                // ✅ SESSÃO
-                const usuario = {
-                    id: u.id,
-                    login: u.login,
-                    nome: u.nome,
-                    email: u.email,
-                    saldo: u.saldo || 0,
-                    saldo_poupanca: u.saldo_poupanca || 0,
-                    carteira: u.carteira || {},
-                    cadeado: u.cadeado === true
-                };
-                salvarSessao(usuario);
-
-                // ✅ APLICA REGENERAÇÃO OFFLINE (antes de redirecionar)
-                mostrarSucesso('✅ Login OK! Verificando regeneração...');
-
-                const regenResult = await aplicarRegeneracaoOffline(u.login);
-
-                if (regenResult && regenResult.regenerou) {
-                    // Aguarda 2s mostrando a mensagem de regen
-                    setTimeout(() => {
-                        window.location.href = 'dashboard.html';
-                    }, 2000);
-                } else {
-                    // Sem regen — vai rápido
-                    setTimeout(() => {
-                        window.location.href = 'dashboard.html';
-                    }, 800);
-                }
-
-                return true;
-            } catch (e) {
-                console.error('Erro inesperado:', e);
-                mostrarErro('❌ Erro ao realizar login. Tente novamente.');
+            if (error) {
+                console.error('Erro RPC login_usuario:', error);
+                mostrarErro('❌ Erro ao consultar usuário. (' + error.message + ')');
                 return false;
             }
+
+            if (!data || !data.ok) {
+                mostrarErro('❌ ' + ((data && data.erro) || 'Login ou senha incorretos.'));
+                return false;
+            }
+
+            // Sessão local
+            const usuario = {
+                id:    data.id,
+                login: data.login,
+                nome:  data.nome,
+                email: data.email,
+                saldo: data.saldo || 0,
+                saldo_poupanca: data.saldo_poupanca || 0,
+                carteira: data.carteira || {},
+                cadeado: data.cadeado === true
+            };
+            salvarSessao(usuario);
+
+            mostrarSucesso('✅ Login OK! Verificando regeneração...');
+
+            const regenResult = await aplicarRegeneracaoOffline(data.login);
+            const delay = (regenResult && regenResult.regenerou) ? 2000 : 800;
+            setTimeout(() => { window.location.href = 'dashboard.html'; }, delay);
+
+            return true;
+        } catch (e) {
+            console.error('Erro inesperado:', e);
+            mostrarErro('❌ Erro ao realizar login. Tente novamente.');
+            return false;
         }
+    }
 
-        // ==================== EVENTOS ====================
-        formLogin.addEventListener('submit', async (e) => {
-            e.preventDefault();
-            ocultarMensagens();
-            ocultarRegenInfo();
+    // ==================== EVENTOS ====================
+    formLogin.addEventListener('submit', async (e) => {
+        e.preventDefault();
+        ocultarMensagens();
+        ocultarRegenInfo();
 
-            const login = loginInput.value.trim();
-            const senha = senhaInput.value.trim();
+        const login = loginInput.value.trim();
+        const senha = senhaInput.value.trim();
 
-            if (!login || !senha) {
-                mostrarErro('⚠️ Preencha todos os campos!');
-                return;
-            }
+        if (!login || !senha) { mostrarErro('⚠️ Preencha todos os campos!'); return; }
 
-            btnLogin.disabled = true;
-            btnLogin.innerHTML = '<span class="loading"></span> Entrando...';
+        btnLogin.disabled = true;
+        btnLogin.innerHTML = '<span class="loading"></span> Entrando...';
 
-            const online = await verificarSupabase();
-            if (!online) {
-                mostrarErro('❌ Sem conexão com o banco de dados. Verifique o console (F12).');
-                btnLogin.disabled = false;
-                btnLogin.innerHTML = '🔐 Entrar';
-                return;
-            }
-
-            await fazerLogin(login, senha);
-
+        const online = await verificarSupabase();
+        if (!online) {
+            mostrarErro('❌ Sem conexão com o banco de dados. Verifique o console (F12).');
             btnLogin.disabled = false;
             btnLogin.innerHTML = '🔐 Entrar';
-        });
-
-        // ==================== INICIALIZAÇÃO ====================
-        verificarSupabase();
-
-        if (sessaoValida()) {
-            window.location.href = 'dashboard.html';
+            return;
         }
-    </script>
+
+        await fazerLogin(login, senha);
+
+        btnLogin.disabled = false;
+        btnLogin.innerHTML = '🔐 Entrar';
+    });
+
+    // ==================== INICIALIZAÇÃO ====================
+    verificarSupabase();
+    if (sessaoValida()) {
+        window.location.href = 'dashboard.html';
+    }
+</script>
 </body>
 </html>

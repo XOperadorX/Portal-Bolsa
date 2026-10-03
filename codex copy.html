@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MIR4 — Codex Completo do Livro de Equipamento</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
+        body { background: #1a1a2e; color: #e6e6e6; line-height: 1.6; padding: 20px; max-width: 1100px; margin: 0 auto; }
+        h1 { color: #ffd700; text-align: center; margin-bottom: 30px; border-bottom: 2px solid #ffd700; padding-bottom: 15px; }
+        h2 { color: #93ccff; margin: 30px 0 15px; }
+        h3 { color: #7ee7b8; margin: 18px 0 10px; }
+        .card { background: #16213e; border-radius: 10px; padding: 22px; margin-bottom: 22px; box-shadow: 0 4px 14px rgba(0,0,0,0.4); }
+        table { width: 100%; border-collapse: collapse; margin: 15px 0; }
+        th, td { padding: 11px 14px; text-align: left; border-bottom: 1px solid #2e4057; font-size: 0.95em; }
+        th { background: #0f3460; color: #ffd700; }
+        .comum { color: #ffffff; }
+        .incomum { color: #4cd964; }
+        .raro { color: #0099ff; }
+        .epico { color: #b066ff; }
+        .lendario { color: #ffd700; font-weight: bold; }
+        .check { color: #4cd964; font-weight: bold; }
+        .cross { color: #ff6b6b; font-weight: bold; }
+        ul, ol { margin-left: 28px; margin-bottom: 12px; }
+        li { margin-bottom: 6px; }
+        .destaque { background: rgba(255, 215, 0, 0.1); border-left: 4px solid #ffd700; padding: 14px 18px; margin: 18px 0; border-radius: 0 6px 6px 0; }
+        .prioridade-alta { border-left: 4px solid #ff6b6b; background: rgba(255,107,107,0.08); padding: 10px 14px; margin: 8px 0; }
+        .prioridade-media { border-left: 4px solid #ffd700; background: rgba(255,215,0,0.08); padding: 10px 14px; margin: 8px 0; }
+        .prioridade-baixa { border-left: 4px solid #4cd964; background: rgba(76,217,100,0.08); padding: 10px 14px; margin: 8px 0; }
+        .sistema-tag { display: inline-block; background: #0f3460; padding: 3px 10px; border-radius: 12px; margin-right: 8px; font-size: 0.85em; }
+        footer { text-align: center; margin-top: 40px; color: #888; font-size: 0.9em; padding-top: 20px; border-top: 1px solid #2e4057; }
+        .resumo-bonus { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 12px; margin: 15px 0; }
+        .bonus-item { background: #0f3460; padding: 12px; border-radius: 8px; text-align: center; }
+        .bonus-valor { font-size: 1.3em; font-weight: bold; color: #ffd700; margin-top: 4px; }
+    </style>
+</head>
+<body>
+
+<h1>📖 MIR4 — Codex Completo do Livro de Equipamento</h1>
+
+<div class="card">
+    <h2>ℹ️ O que é o Codex</h2>
+    <p>É um sistema de coleção permanente: ao <strong>registrar</strong> um equipamento, você ganha <strong>bônus de atributos para TODOS os personagens da conta</strong>. Após registrar, venda ou desmonte o item — o bônus permanece.</p>
+    
+    <h3>Acesso</h3>
+    <p><span class="sistema-tag">Menu</span> → <span class="sistema-tag">Codex</span> → <span class="sistema-tag">Equipamento</span></p>
+</div>
+
+<div class="card">
+    <h2>🎯 Tiers, Raridades e Valores Base</h2>
+    <table>
+        <tr><th>Grau</th><th>Cor</th><th>Aprimoramento Máx.</th><th>Pontos por item</th><th>Prioridade</th></tr>
+        <tr class="comum"><td>Comum</td><td>⬜ Branca</td><td>+5</td><td>1</td><td>Baixa — completar apenas</td></tr>
+        <tr class="incomum"><td>Incomum</td><td>🟩 Verde</td><td>+8</td><td>3</td><td>Média — registrar quando sobrar</td></tr>
+        <tr class="raro"><td>Raro</td><td>🟦 Azul</td><td>+12</td><td>8</td><td>Alta — prioridade</td></tr>
+        <tr class="epico"><td>Épico</td><td>🟪 Roxa</td><td>+15</td><td>20</td><td>Muito Alta — essencial</td></tr>
+        <tr class="lendario"><td>Lendário</td><td>🟨 Dourada</td><td>+20</td><td>50</td><td>Máxima — registrar imediatamente</td></tr>
+    </table>
+</div>
+
+<div class="card">
+    <h2>📋 Categorias e Bônus por Conjunto</h2>
+
+    <h3>🔹 Página 1 — Equipamento Principal</h3>
+    <table>
+        <tr><th>Peça</th><th>Bônus individual (máx tier)</th><th>Bônus Conjunto Completo</th></tr>
+        <tr><td>Arma</td><td>Ataque +12~45</td><td rowspan="6" style="color:#ffd700; font-weight:bold;">Ataque +60 • Defesa +40 • HP +800 • Taxa Crítica +2%</td></tr>
+        <tr><td>Arma Secundária</td><td>Ataque +8~30 • Defesa +5~18</td></tr>
+        <tr><td>Elmo</td><td>Defesa +10~38 • HP +50~200</td></tr>
+        <tr><td>Armadura</td><td>Defesa +15~55 • HP +100~400</td></tr>
+        <tr><td>Luvas</td><td>Defesa +6~22 • Acerto +8~25</td></tr>
+        <tr><td>Botas</td><td>Defesa +6~22 • Esquiva +8~25</td></tr>
+        <tr><td>Cinto ✨</td><td>HP +40~150 • Regeneração de HP +2~8</td><td style="color:#7ee7b8;">HP +200 • Defesa +15</td></tr>
+    </table>
+
+    <h3>🔹 Página 2 — Acessórios</h3>
+    <table>
+        <tr><th>Peça</th><th>Bônus individual (máx tier)</th><th>Bônus Conjunto Completo</th></tr>
+        <tr><td>Colar</td><td>Ataque +10~35 • HP +30~120</td><td rowspan="4" style="color:#ffd700; font-weight:bold;">Ataque +50 • Acerto +30 • Dano Crítico +4%</td></tr>
+        <tr><td>Pulseira</td><td>Defesa +8~28 • Esquiva +6~20</td></tr>
+        <tr><td>Anel</td><td>Ataque +7~25 • Dano Crítico +1~3%</td></tr>
+        <tr><td>Brincos</td><td>Defesa +7~25 • Resistência Crítica +1~3%</td></tr>
+        <tr><td>Selo ✨</td><td>Ataque +5~18 • Defesa +5~18 • HP +50~150</td><td style="color:#7ee7b8;">Ataque +12 • Defesa +12 • HP +150</td></tr>
+    </table>
+
+    <div class="destaque">
+        <strong>📌 Nota:</strong> Valores variam conforme o <strong>Tier/Nível</strong> do equipamento. Quanto maior o nível e a raridade, maior o bônus concedido. Os valores acima referem-se aos tiers mais altos do jogo.
+    </div>
+</div>
+
+<div class="card">
+    <h2>⚡ Ordem de Prioridade para Registro</h2>
+    
+    <div class="prioridade-alta">
+        <strong>🔴 PRIORIDADE 1 — Registrar IMEDIATAMENTE</strong>
+        <ul>
+            <li>✅ Itens <span class="lendario">Lendários (Dourados)</span> — qualquer peça</li>
+            <li>✅ Itens <span class="epico">Épicos (Roxos)</span> — Arma e Arma Secundária primeiro</li>
+            <li>✅ Conjuntos incompletos que faltam APENAS 1 peça para fechar</li>
+        </ul>
+    </div>
+
+    <div class="prioridade-media">
+        <strong>🟡 PRIORIDADE 2 — Registrar em seguida</strong>
+        <ul>
+            <li>✅ Itens <span class="raro">Raros (Azuis)</span> — todas as peças</li>
+            <li>✅ Épicos restantes: Armadura → Colar → Anel → Elmo → outros</li>
+            <li>✅ Cinto e Selo (novos conjuntos — bônus acumulável extra)</li>
+        </ul>
+    </div>
+
+    <div class="prioridade-baixa">
+        <strong>🟢 PRIORIDADE 3 — Registrar por último</strong>
+        <ul>
+            <li>✅ Itens <span class="incomum">Incomuns (Verdes)</span> — apenas quando sobrarem</li>
+            <li>✅ Itens <span class="comum">Comuns (Brancos)</span> — só para completar o progresso; desmonte o resto</li>
+        </ul>
+    </div>
+</div>
+
+<div class="card">
+    <h2>📊 Resumo dos Bônus Máximos (Codex Completo)</h2>
+    <div class="resumo-bonus">
+        <div class="bonus-item">Ataque<div class="bonus-valor">+300+</div></div>
+        <div class="bonus-item">Defesa<div class="bonus-valor">+200+</div></div>
+        <div class="bonus-item">HP<div class="bonus-valor">+2.500+</div></div>
+        <div class="bonus-item">Dano Crítico<div class="bonus-valor">+8%+</div></div>
+        <div class="bonus-item">Esquiva/Acerto<div class="bonus-valor">+60+</div></div>
+    </div>
+    <p style="margin-top:15px; font-size:0.9em; color:#aaa;">* Valores aproximados considerando todos os tiers e conjuntos completos.</p>
+</div>
+
+<div class="card">
+    <h2>💡 Dicas Práticas</h2>
+    <ol>
+        <li><strong>Regra de Ouro:</strong> Registre SEMPRE antes de vender, desmontar ou equipar em outro personagem — o bônus é permanente!</li>
+        <li><strong>Foco primeiro:</strong> Feche os conjuntos de nível mais alto primeiro. Um conjunto completo de Tier 15 > itens avulsos de Tier 20.</li>
+        <li><strong>Duplicatas:</strong> Tem 2 itens iguais? Registre um e desmonte o outro para obter Pó de Pedra Mágica.</li>
+        <li><strong>Itens de Evento:</strong> Atenção — alguns itens promocionais <em>não podem</em> ser registrados. Verifique antes de descartar.</li>
+        <li><strong>Encantamento:</strong> Itens já registrados podem ser encantados normalmente sem afetar o Codex — o registro é feito no item base.</li>
+        <li><strong>Conta toda:</strong> O progresso é único por conta. O que registrar com um personagem já vale para todos os outros.</li>
+    </ol>
+</div>
+
+<div class="card">
+    <h2>⚠️ Resolução de Problemas Comuns</h2>
+    <div class="destaque">
+        <p><span class="cross">❌</span> <strong>"Vendi e perdi o bônus?"</strong> → <span class="check">NÃO!</span> Após o registro, o item pode ser descartado que o bônus fica para sempre.</p>
+        <p><span class="cross">❌</span> <strong>"Não consigo registrar"</strong> → Verifique: (1) item já registrado? (2) é item de evento? (3) nível mínimo do personagem? (4) tem espaço no Codex?</p>
+        <p><span class="cross">❌</span> <strong>"Não vejo os valores subindo"</strong> → Os bônus são aplicados automaticamente. Clique no ícone 🔍 nos atributos para ver o detalhamento.</p>
+        <p><span class="cross">❌</span> <strong>"Mudei de servidor e sumiu?"</strong> → O Codex é vinculado à conta, não ao servidor. O progresso permanece em todos os servidores.</p>
+    </div>
+</div>
+
+<footer>
+    📖 Guia MIR4 — Codex Completo do Livro de Equipamento | Atualizado: Outubro/2026<br>
+    Salve este arquivo e consulte sempre que precisar!
+</footer>
+
+</body>
+</html>

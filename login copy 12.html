@@ -1,0 +1,615 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login — MM Quase Tudo</title>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,400;14..32,600;14..32,700;14..32,800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Inter', 'Segoe UI', sans-serif; }
+
+        body {
+            min-height: 100vh;
+            background: linear-gradient(135deg, #002e5d 0%, #001a33 100%);
+            color: #e0e0e0;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* ==================== MENU ==================== */
+        .menu-container {
+            width: 100%;
+            background-color: rgb(0, 43, 173);
+            backdrop-filter: blur(8px);
+            border-bottom: 1px solid rgba(255, 215, 0, 0.2);
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.6);
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+        }
+
+        .navbar {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 0.9rem 2rem;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            flex-wrap: wrap;
+        }
+
+        .logo {
+            font-size: 1.8rem;
+            font-weight: 800;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+            color: #ffffff;
+            text-shadow: 0 0 10px rgba(255, 215, 0, 0.5);
+            display: flex;
+            align-items: center;
+            gap: 0.3rem;
+        }
+        .logo span { color: #f5c542; font-weight: 900; }
+        .logo i { color: #f5c542; font-size: 1.6rem; margin-right: 0.2rem; }
+
+        .nav-links {
+            display: flex;
+            align-items: center;
+            gap: 2.2rem;
+            list-style: none;
+            margin: 0;
+            padding: 0;
+        }
+        .nav-links li a {
+            text-decoration: none;
+            color: #d0d0d0;
+            font-weight: 600;
+            font-size: 1rem;
+            letter-spacing: 0.3px;
+            transition: all 0.2s ease;
+            padding: 0.5rem 0;
+            position: relative;
+            display: inline-flex;
+            align-items: center;
+        }
+        .nav-links li a i {
+            margin-right: 8px;
+            font-size: 0.95em;
+            color: #f5c542;
+            transition: color 0.2s ease, transform 0.2s ease;
+        }
+        .nav-links li a:hover i { color: #ffffff; transform: scale(1.1); }
+        .nav-links li a::after {
+            content: '';
+            position: absolute;
+            bottom: 0; left: 0;
+            width: 0; height: 2px;
+            background: #f5c542;
+            transition: width 0.25s ease;
+        }
+        .nav-links li a:hover { color: #ffffff; }
+        .nav-links li a:hover::after { width: 100%; }
+
+        .btn-discord {
+            background: linear-gradient(135deg, #f5c542 0%, #d4a017 100%);
+            border: none;
+            border-radius: 40px;
+            color: #0b0e14;
+            font-weight: 700;
+            font-size: 0.9rem;
+            padding: 0.7rem 1.6rem;
+            display: flex;
+            align-items: center;
+            gap: 0.6rem;
+            cursor: pointer;
+            transition: transform 0.2s, box-shadow 0.2s;
+            box-shadow: 0 0 15px rgba(245, 197, 66, 0.3);
+            text-decoration: none;
+            letter-spacing: 0.3px;
+            white-space: nowrap;
+        }
+        .btn-discord:hover {
+            transform: scale(1.03);
+            box-shadow: 0 0 25px rgba(245, 197, 66, 0.6);
+            background: linear-gradient(135deg, #f7d25c 0%, #e0b020 100%);
+        }
+
+        .menu-toggle {
+            display: none;
+            background: transparent;
+            border: none;
+            color: #f5c542;
+            font-size: 1.8rem;
+            cursor: pointer;
+            padding: 0.3rem 0.6rem;
+        }
+
+        /* ==================== LOGIN ==================== */
+        .login-wrapper {
+            flex: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 40px 20px;
+        }
+
+        .login-container {
+            width: 100%;
+            max-width: 420px;
+            background: #1e293b;
+            border: 1px solid #334155;
+            border-radius: 16px;
+            padding: 40px 32px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.5);
+        }
+
+        h1 { color: #f1f5f9; font-size: 26px; text-align: center; margin-bottom: 8px; }
+        .subtitle { color: #94a3b8; font-size: 14px; text-align: center; margin-bottom: 28px; }
+        .form-group { margin-bottom: 18px; }
+        .form-group label { display: block; color: #cbd5e1; font-size: 14px; margin-bottom: 6px; font-weight: 500; }
+        .form-group input {
+            width: 100%; padding: 12px 14px; background: #0f172a;
+            border: 1px solid #334155; border-radius: 8px; color: #f1f5f9;
+            font-size: 15px; outline: none; transition: border-color 0.2s;
+        }
+        .form-group input:focus { border-color: #3b82f6; box-shadow: 0 0 0 3px rgba(59,130,246,0.2); }
+        #btnLogin {
+            width: 100%; padding: 13px; background: linear-gradient(135deg, #3b82f6, #2563eb);
+            color: #fff; border: none; border-radius: 8px; font-size: 16px;
+            font-weight: 600; cursor: pointer; margin-top: 8px;
+            transition: opacity 0.2s;
+        }
+        #btnLogin:disabled { opacity: 0.6; cursor: not-allowed; }
+        .loading {
+            display: inline-block; width: 14px; height: 14px;
+            border: 2px solid rgba(255,255,255,0.3); border-top-color: #fff;
+            border-radius: 50%; animation: spin 0.6s linear infinite;
+            vertical-align: middle; margin-right: 6px;
+        }
+        @keyframes spin { to { transform: rotate(360deg); } }
+        .mensagem-erro, .mensagem-sucesso {
+            display: none; padding: 12px 14px; border-radius: 8px;
+            font-size: 14px; margin-bottom: 16px; text-align: center;
+        }
+        .mensagem-erro.show {
+            display: block; background: rgba(239,68,68,0.15);
+            border: 1px solid #ef4444; color: #fca5a5;
+        }
+        .mensagem-sucesso.show {
+            display: block; background: rgba(34,197,94,0.15);
+            border: 1px solid #22c55e; color: #86efac;
+        }
+        .status-supabase {
+            margin-top: 20px; padding: 10px; border-radius: 8px;
+            font-size: 13px; text-align: center; color: #94a3b8;
+            background: #0f172a; border: 1px solid #334155;
+        }
+        .status-supabase.online { color: #86efac; border-color: #22c55e; }
+        .status-supabase.offline { color: #fca5a5; border-color: #ef4444; }
+
+        .links-recuperar {
+            display: flex; justify-content: space-between;
+            margin-top: 14px; font-size: 13px;
+        }
+        .links-recuperar a { color: #94a3b8; text-decoration: none; }
+        .links-recuperar a:hover { color: #60a5fa; text-decoration: underline; }
+
+        /* ==================== INFO REGEN ==================== */
+        .regen-info-box {
+            display: none;
+            margin-top: 16px;
+            padding: 12px 14px;
+            background: rgba(34, 197, 94, 0.1);
+            border: 1px solid rgba(34, 197, 94, 0.35);
+            border-radius: 8px;
+            font-size: 13px;
+            color: #86efac;
+            line-height: 1.5;
+            text-align: center;
+        }
+        .regen-info-box.show { display: block; }
+        .regen-info-box i { color: #22c55e; margin-right: 6px; }
+
+        /* ==================== RESPONSIVIDADE ==================== */
+        @media (max-width: 1024px) {
+            .navbar { padding: 0.8rem 1.5rem; }
+            .nav-links { gap: 1.5rem; }
+            .btn-discord { padding: 0.6rem 1.2rem; font-size: 0.85rem; }
+        }
+        @media (max-width: 860px) {
+            .nav-links {
+                display: none;
+                width: 100%;
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 1rem;
+                padding: 1.5rem 0 0.5rem 0;
+                border-top: 1px solid rgba(255, 215, 0, 0.15);
+                margin-top: 1rem;
+            }
+            .nav-links.active { display: flex; }
+            .nav-links li { width: 100%; }
+            .nav-links li a { display: flex; width: 100%; padding: 0.6rem 0; font-size: 1.1rem; }
+            .menu-toggle { display: block; }
+            .navbar { justify-content: space-between; }
+            .btn-discord { margin-left: auto; margin-right: 1rem; }
+        }
+        @media (max-width: 480px) {
+            .navbar { padding: 0.7rem 1rem; }
+            .logo { font-size: 1.5rem; }
+            .logo i { font-size: 1.3rem; }
+            .btn-discord { padding: 0.5rem 1rem; font-size: 0.8rem; }
+            .btn-discord span { display: none; }
+            .btn-discord i { font-size: 1.2rem; margin: 0; }
+            .login-container { padding: 30px 20px; }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- ==================== MENU ==================== -->
+    <div class="menu-container">
+        <nav class="navbar">
+            <div class="logo">
+                <i class="fas fa-cow"></i>
+                MM<span>Quase Tudo</span>
+            </div>
+
+            <button class="menu-toggle" id="menuToggle" aria-label="Abrir menu">
+                <i class="fas fa-bars"></i>
+            </button>
+
+            <ul class="nav-links" id="navLinks">
+                <li><a href="./index.html"><i class="fas fa-house"></i> Início</a></li>
+                <li><a href="./noticias.html"><i class="fas fa-newspaper"></i> Notícias</a></li>
+                <li><a href="./jogos/ranking/ranking002.html"><i class="fas fa-trophy"></i> Classificações</a></li>
+                <li><a href="./eventos.html"><i class="fas fa-calendar-days"></i> Eventos</a></li>
+                <li><a href="./download.html"><i class="fas fa-download"></i> Downloads</a></li>
+                <li><a href="./suporte.html"><i class="fas fa-headset"></i> Suporte</a></li>
+                <li><a href="./loja.html"><i class="fas fa-cart-shopping"></i> Loja</a></li>
+                <li><a href="./cadastro.html"><i class="fas fa-user-plus"></i> Cadastro</a></li>
+                <li><a href="./login.html"><i class="fas fa-sign-in-alt"></i> Login</a></li>
+            </ul>
+
+            <a href="https://discord.gg/ATtu4z9Ewt" class="btn-discord" target="_blank">
+                <i class="fab fa-discord"></i>
+                <span>Jogue Agora</span>
+            </a>
+        </nav>
+    </div>
+
+    <!-- ==================== LOGIN ==================== -->
+    <div class="login-wrapper">
+        <div class="login-container">
+            <h1>🔐 Entrar</h1>
+            <p class="subtitle">Acesse sua conta para continuar</p>
+
+            <div id="mensagemErro" class="mensagem-erro"></div>
+            <div id="mensagemSucesso" class="mensagem-sucesso"></div>
+
+            <form id="formLogin" autocomplete="on">
+                <div class="form-group">
+                    <label for="login">Login</label>
+                    <input type="text" id="login" placeholder="MoitaPR" autocomplete="username" required>
+                </div>
+                <div class="form-group">
+                    <label for="senha">Senha</label>
+                    <input type="password" id="senha" placeholder="••••••••" autocomplete="current-password" required>
+                </div>
+                <button type="submit" id="btnLogin">🔐 Entrar</button>
+            </form>
+
+            <!-- ✅ BOX DE INFORMAÇÃO DE REGENERAÇÃO -->
+            <div id="regenInfoBox" class="regen-info-box">
+                <i class="fas fa-bolt"></i>
+                <span id="regenInfoTexto">Regenerando atributos...</span>
+            </div>
+
+            <div id="statusSupabase" class="status-supabase">Verificando conexão...</div>
+        </div>
+    </div>
+
+    <!-- ==================== SCRIPTS ==================== -->
+    <script>
+        // ==================== MENU MOBILE ====================
+        (function() {
+            const toggleBtn = document.getElementById('menuToggle');
+            const navLinks = document.getElementById('navLinks');
+
+            if (toggleBtn && navLinks) {
+                toggleBtn.addEventListener('click', function(e) {
+                    e.stopPropagation();
+                    navLinks.classList.toggle('active');
+                    const icon = toggleBtn.querySelector('i');
+                    if (navLinks.classList.contains('active')) {
+                        icon.classList.remove('fa-bars');
+                        icon.classList.add('fa-times');
+                    } else {
+                        icon.classList.remove('fa-times');
+                        icon.classList.add('fa-bars');
+                    }
+                });
+
+                navLinks.querySelectorAll('a').forEach(link => {
+                    link.addEventListener('click', () => {
+                        if (window.innerWidth <= 860) {
+                            navLinks.classList.remove('active');
+                            const icon = toggleBtn.querySelector('i');
+                            icon.classList.remove('fa-times');
+                            icon.classList.add('fa-bars');
+                        }
+                    });
+                });
+
+                document.addEventListener('click', function(event) {
+                    if (window.innerWidth <= 860 && navLinks.classList.contains('active')) {
+                        const isClickInsideNav = navLinks.contains(event.target);
+                        const isClickOnToggle = toggleBtn.contains(event.target);
+                        if (!isClickInsideNav && !isClickOnToggle) {
+                            navLinks.classList.remove('active');
+                            const icon = toggleBtn.querySelector('i');
+                            icon.classList.remove('fa-times');
+                            icon.classList.add('fa-bars');
+                        }
+                    }
+                });
+            }
+        })();
+
+        // ==================== SUPABASE ====================
+        const SUPABASE_URL = 'https://xrcxvizzdumcxbylmkvn.supabase.co';
+        const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InhyY3h2aXp6ZHVtY3hieWxta3ZuIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODY2NjA0NzIsImV4cCI6MjEwMjIzNjQ3Mn0.ohB4tW0UQ-k1PcwoZxm4u9XSGNLsFphv1_UwTWoklOM';
+        const TABELA = 'Geral';
+
+        const supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+
+        // ==================== SESSÃO LOCAL (24h) ====================
+        const SESSION_KEY = 'usuario_logado';
+        const SESSION_TIMESTAMP_KEY = 'session_timestamp';
+        const SESSION_DURATION = 24 * 60 * 60 * 1000;
+
+        function salvarSessao(usuario) {
+            localStorage.setItem(SESSION_KEY, JSON.stringify(usuario));
+            localStorage.setItem(SESSION_TIMESTAMP_KEY, Date.now().toString());
+        }
+        function sessaoValida() {
+            const ts = localStorage.getItem(SESSION_TIMESTAMP_KEY);
+            const u = localStorage.getItem(SESSION_KEY);
+            if (!ts || !u) return false;
+            const t = parseInt(ts, 10);
+            if (isNaN(t)) return false;
+            return (Date.now() - t) < SESSION_DURATION;
+        }
+
+        // ==================== ELEMENTOS ====================
+        const formLogin       = document.getElementById('formLogin');
+        const loginInput      = document.getElementById('login');
+        const senhaInput      = document.getElementById('senha');
+        const btnLogin        = document.getElementById('btnLogin');
+        const mensagemErro    = document.getElementById('mensagemErro');
+        const mensagemSucesso = document.getElementById('mensagemSucesso');
+        const statusSupabase  = document.getElementById('statusSupabase');
+        const regenInfoBox    = document.getElementById('regenInfoBox');
+        const regenInfoTexto  = document.getElementById('regenInfoTexto');
+
+        // ==================== MENSAGENS ====================
+        function mostrarErro(m) {
+            mensagemErro.textContent = m;
+            mensagemErro.className = 'mensagem-erro show';
+            mensagemSucesso.className = 'mensagem-sucesso';
+        }
+        function mostrarSucesso(m) {
+            mensagemSucesso.textContent = m;
+            mensagemSucesso.className = 'mensagem-sucesso show';
+            mensagemErro.className = 'mensagem-erro';
+        }
+        function ocultarMensagens() {
+            mensagemErro.className = 'mensagem-erro';
+            mensagemSucesso.className = 'mensagem-sucesso';
+        }
+        function mostrarRegenInfo(texto) {
+            if (!regenInfoBox) return;
+            regenInfoTexto.textContent = texto;
+            regenInfoBox.classList.add('show');
+        }
+        function ocultarRegenInfo() {
+            if (!regenInfoBox) return;
+            regenInfoBox.classList.remove('show');
+        }
+
+        // ==================== CONEXÃO ====================
+        async function verificarSupabase() {
+            try {
+                const { error } = await supabaseClient.from(TABELA).select('id').limit(1);
+                if (error) {
+                    console.error('Erro Supabase:', error);
+                    if (statusSupabase) {
+                        statusSupabase.textContent = '⚠️ Erro: ' + error.message;
+                        statusSupabase.className = 'status-supabase offline';
+                    }
+                    return false;
+                }
+                if (statusSupabase) {
+                    statusSupabase.textContent = '✅ Conectado ao Supabase';
+                    statusSupabase.className = 'status-supabase online';
+                }
+                return true;
+            } catch (e) {
+                console.error('Erro de conexão:', e);
+                if (statusSupabase) {
+                    statusSupabase.textContent = '❌ Erro: ' + e.message;
+                    statusSupabase.className = 'status-supabase offline';
+                }
+                return false;
+            }
+        }
+
+        // ==================== REGENERAÇÃO OFFLINE ====================
+        // Chama a função SQL calcular_regen_offline() para aplicar
+        // a regeneração acumulada enquanto o usuário estava offline.
+        async function aplicarRegeneracaoOffline(login) {
+            try {
+                console.log('🔄 Verificando regeneração offline para:', login);
+
+                const { data, error } = await supabaseClient.rpc('calcular_regen_offline', {
+                    p_login: login
+                });
+
+                if (error) {
+                    console.warn('⚠️ Erro ao chamar calcular_regen_offline:', error);
+                    // Fallback: tenta atualizar direto (sem regen)
+                    await supabaseClient
+                        .from(TABELA)
+                        .update({
+                            offline_regen_start: null,
+                            ultima_vez_online: new Date().toISOString()
+                        })
+                        .eq('login', login);
+                    return null;
+                }
+
+                if (!data || !data.sucesso) {
+                    console.warn('⚠️ Resposta inválida:', data);
+                    return null;
+                }
+
+                if (data.regenerou) {
+                    const horas = data.horas_offline || 0;
+                    const msg = data.restaurou_tudo
+                        ? `✨ ${horas.toFixed(1)}h offline — HP, MP e STAMINA restaurados ao MÁXIMO!`
+                        : `✨ ${horas.toFixed(1)}h offline — atributos regenerados!`;
+                    console.log('✅', msg, data);
+                    mostrarRegenInfo(msg);
+                } else {
+                    console.log('ℹ️ Sem regeneração pendente.');
+                }
+
+                return data;
+            } catch (e) {
+                console.error('❌ Erro ao aplicar regeneração:', e);
+                return null;
+            }
+        }
+
+        // ==================== LOGIN ====================
+        async function fazerLogin(login, senha) {
+            try {
+                console.log('🔎 Tentando login:', login);
+
+                const { data: usuarios, error } = await supabaseClient
+                    .from(TABELA)
+                    .select('*')
+                    .ilike('login', login.trim());
+
+                console.log('📦 Encontrados:', usuarios?.length, '| erro:', error);
+
+                if (error) {
+                    console.error('Erro Supabase:', error);
+                    mostrarErro('❌ Erro ao consultar usuário. (' + error.message + ')');
+                    return false;
+                }
+
+                if (!usuarios || usuarios.length === 0) {
+                    mostrarErro('❌ Login não encontrado.');
+                    return false;
+                }
+
+                const u = usuarios[0];
+
+                const senhaBanco = String(u.senha ?? '').trim();
+                const senhaDigitada = String(senha).trim();
+
+                console.log('🔐 Comparando senhas...', senhaBanco === senhaDigitada);
+
+                if (senhaBanco !== senhaDigitada) {
+                    mostrarErro('❌ Senha incorreta.');
+                    return false;
+                }
+
+                if (u.bloqueado === true) {
+                    mostrarErro('🚫 Sua conta está bloqueada. Contate o suporte.');
+                    return false;
+                }
+
+                // ✅ SESSÃO
+                const usuario = {
+                    id: u.id,
+                    login: u.login,
+                    nome: u.nome,
+                    email: u.email,
+                    saldo: u.saldo || 0,
+                    saldo_poupanca: u.saldo_poupanca || 0,
+                    carteira: u.carteira || {},
+                    cadeado: u.cadeado === true
+                };
+                salvarSessao(usuario);
+
+                // ✅ APLICA REGENERAÇÃO OFFLINE (antes de redirecionar)
+                mostrarSucesso('✅ Login OK! Verificando regeneração...');
+
+                const regenResult = await aplicarRegeneracaoOffline(u.login);
+
+                if (regenResult && regenResult.regenerou) {
+                    // Aguarda 2s mostrando a mensagem de regen
+                    setTimeout(() => {
+                        window.location.href = 'dashboard.html';
+                    }, 2000);
+                } else {
+                    // Sem regen — vai rápido
+                    setTimeout(() => {
+                        window.location.href = 'dashboard.html';
+                    }, 800);
+                }
+
+                return true;
+            } catch (e) {
+                console.error('Erro inesperado:', e);
+                mostrarErro('❌ Erro ao realizar login. Tente novamente.');
+                return false;
+            }
+        }
+
+        // ==================== EVENTOS ====================
+        formLogin.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            ocultarMensagens();
+            ocultarRegenInfo();
+
+            const login = loginInput.value.trim();
+            const senha = senhaInput.value.trim();
+
+            if (!login || !senha) {
+                mostrarErro('⚠️ Preencha todos os campos!');
+                return;
+            }
+
+            btnLogin.disabled = true;
+            btnLogin.innerHTML = '<span class="loading"></span> Entrando...';
+
+            const online = await verificarSupabase();
+            if (!online) {
+                mostrarErro('❌ Sem conexão com o banco de dados. Verifique o console (F12).');
+                btnLogin.disabled = false;
+                btnLogin.innerHTML = '🔐 Entrar';
+                return;
+            }
+
+            await fazerLogin(login, senha);
+
+            btnLogin.disabled = false;
+            btnLogin.innerHTML = '🔐 Entrar';
+        });
+
+        // ==================== INICIALIZAÇÃO ====================
+        verificarSupabase();
+
+        if (sessaoValida()) {
+            window.location.href = 'dashboard.html';
+        }
+    </script>
+</body>
+</html>

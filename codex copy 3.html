@@ -1,0 +1,359 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MIR4 — Codex do Jogador</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
+        :root {
+            --fundo-escuro: #0f1419;
+            --fundo-card: #1a1f2e;
+            --dourado: #ffd700;
+            --azul-claro: #66b2ff;
+            --verde: #4cd964;
+            --azul: #0099ff;
+            --roxo: #b066ff;
+            --vermelho: #ff6b6b;
+            --cinza: #888;
+            --borda: #2c3442;
+        }
+        body { background: linear-gradient(135deg, #0f1419 0%, #1a1f2e 100%); min-height: 100vh; color: #e6e6e6; padding: 20px; }
+        .container { max-width: 1200px; margin: 0 auto; }
+        header { text-align: center; margin-bottom: 30px; }
+        h1 { color: var(--dourado); font-size: 2em; text-shadow: 0 0 10px rgba(255,215,0,0.3); }
+        .subtitulo { color: var(--cinza); margin-top: 5px; }
+
+        .abas { display: flex; gap: 10px; margin-bottom: 20px; border-bottom: 2px solid var(--borda); padding-bottom: 0; }
+        .aba { padding: 12px 24px; background: transparent; border: none; color: var(--cinza); cursor: pointer; font-size: 1em; border-bottom: 3px solid transparent; transition: all 0.2s; }
+        .aba.ativa { color: var(--dourado); border-bottom: 3px solid var(--dourado); }
+        .aba:hover { color: #fff; }
+
+        .grade { display: grid; grid-template-columns: 280px 1fr; gap: 20px; }
+        @media (max-width: 900px) { .grade { grid-template-columns: 1fr; } }
+
+        .painel { background: var(--fundo-card); border-radius: 12px; border: 1px solid var(--borda); padding: 20px; box-shadow: 0 4px 15px rgba(0,0,0,0.4); }
+        .painel h2 { color: var(--azul-claro); margin-bottom: 18px; font-size: 1.2em; border-bottom: 1px solid var(--borda); padding-bottom: 10px; }
+
+        .item-codex {
+            background: #252b3b; border-radius: 8px; padding: 12px; margin-bottom: 10px; border-left: 4px solid;
+            transition: transform 0.2s, box-shadow 0.2s; cursor: pointer;
+        }
+        .item-codex:hover { transform: translateY(-2px); box-shadow: 0 4px 12px rgba(0,0,0,0.3); }
+        .item-comum { border-color: #fff; }
+        .item-incomum { border-color: var(--verde); }
+        .item-raro { border-color: var(--azul); }
+        .item-epico { border-color: var(--roxo); }
+        .item-lendario { border-color: var(--dourado); box-shadow: 0 0 8px rgba(255,215,0,0.2); }
+        .item-registrado { opacity: 0.7; }
+        .item-registrado::after { content: "✓"; color: var(--verde); font-weight: bold; float: right; font-size: 1.2em; }
+
+        .etiqueta { display: inline-block; padding: 2px 8px; border-radius: 10px; font-size: 0.75em; margin-right: 5px; }
+        .et-comum { background: #444; color: #fff; }
+        .et-incomum { background: rgba(76,217,100,0.2); color: var(--verde); }
+        .et-raro { background: rgba(0,153,255,0.2); color: var(--azul); }
+        .et-epico { background: rgba(176,102,255,0.2); color: var(--roxo); }
+        .et-lendario { background: rgba(255,215,0,0.2); color: var(--dourado); }
+
+        .barra-progresso { height: 8px; background: #2c3442; border-radius: 4px; overflow: hidden; margin: 8px 0; }
+        .barra-preenchida { height: 100%; border-radius: 4px; transition: width 0.3s; }
+
+        .grupo-form { margin-bottom: 15px; }
+        label { display: block; margin-bottom: 5px; color: #ccc; font-size: 0.9em; }
+        input, select { width: 100%; padding: 10px; background: #252b3b; border: 1px solid var(--borda); border-radius: 6px; color: #fff; font-size: 0.95em; }
+        button.registrar {
+            width: 100%; padding: 12px; background: linear-gradient(90deg, #b8860b, var(--dourado));
+            border: none; border-radius: 8px; color: #000; font-weight: bold; font-size: 1em;
+            cursor: pointer; transition: transform 0.2s;
+        }
+        button.registrar:hover { transform: scale(1.02); }
+        button.registrar:disabled { background: #444; color: #888; cursor: not-allowed; transform: none; }
+
+        .grade-bonus { display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; margin-top: 15px; }
+        .bonus-card { background: #252b3b; padding: 12px; border-radius: 8px; text-align: center; }
+        .bonus-valor { font-size: 1.4em; font-weight: bold; color: var(--dourado); margin-top: 4px; }
+
+        .aviso { padding: 10px 14px; border-radius: 6px; margin-top: 15px; font-size: 0.9em; }
+        .aviso-sucesso { background: rgba(76,217,100,0.1); border-left: 3px solid var(--verde); color: #b8f0c8; }
+        .aviso-info { background: rgba(102,178,255,0.1); border-left: 3px solid var(--azul-claro); color: #b8d8f0; }
+
+        .linha { display: flex; justify-content: space-between; padding: 6px 0; border-bottom: 1px solid #2c3442; font-size: 0.9em; }
+        .info-pequena { font-size: 0.8em; color: var(--cinza); margin-top: 5px; }
+    </style>
+</head>
+<body>
+<div class="container">
+    <header>
+        <h1>📖 Códice de Equipamentos</h1>
+        <p class="subtitulo">Registre itens e ganhe bônus permanentes para todos os personagens</p>
+    </header>
+
+    <div class="abas">
+        <button class="aba ativa" onclick="trocarAba('principal')">Equipamento Principal</button>
+        <button class="aba" onclick="trocarAba('acessorios')">Acessórios</button>
+        <button class="aba" onclick="trocarAba('resumo')">Resumo de Bônus</button>
+    </div>
+
+    <div class="grade" id="conteudo-principal">
+        <!-- Painel Esquerdo: Formulário de Registro -->
+        <div class="painel">
+            <h2>➕ Registrar Item</h2>
+            <div class="grupo-form">
+                <label>Nome do Item</label>
+                <input type="text" id="item-nome" placeholder="Ex: Espada Dourada — Tier 15">
+            </div>
+            <div class="grupo-form">
+                <label>Tipo de Peça</label>
+                <select id="item-tipo">
+                    <option value="Arma">Arma</option>
+                    <option value="Arma Secundária">Arma Secundária</option>
+                    <option value="Elmo">Elmo</option>
+                    <option value="Armadura">Armadura</option>
+                    <option value="Luvas">Luvas</option>
+                    <option value="Botas">Botas</option>
+                    <option value="Cinto">Cinto</option>
+                    <option value="Colar">Colar</option>
+                    <option value="Anel">Anel</option>
+                    <option value="Brincos">Brincos</option>
+                    <option value="Selo">Selo</option>
+                </select>
+            </div>
+            <div class="grupo-form">
+                <label>Raridade</label>
+                <select id="item-raridade" onchange="atualizarBonus()">
+                    <option value="comum">⬜ Comum</option>
+                    <option value="incomum">🟩 Incomum</option>
+                    <option value="raro">🟦 Raro</option>
+                    <option value="epico">🟪 Épico</option>
+                    <option value="lendario">🟨 Lendário</option>
+                </select>
+            </div>
+            <div class="grupo-form">
+                <label>Tier / Nível</label>
+                <input type="number" id="item-tier" value="10" min="1" max="20" oninput="atualizarBonus()">
+            </div>
+
+            <div class="aviso aviso-info" id="preview-bonus">
+                <strong>Bônus estimado:</strong><br>
+                Ataque: +0 | Defesa: +0 | HP: +0
+            </div>
+
+            <button class="registrar" onclick="registrarItem()">✅ Registrar no Códice</button>
+
+            <div class="info-pequena">
+                Ao registrar, o item pode ser descartado — o bônus fica para sempre.
+            </div>
+        </div>
+
+        <!-- Painel Direito: Itens Registrados -->
+        <div class="painel">
+            <h2>📋 Itens Registrados <span id="contagem">(0/24)</span></h2>
+            
+            <div style="margin-bottom: 15px;">
+                <div style="display: flex; justify-content: space-between; font-size: 0.9em; margin-bottom: 4px;">
+                    <span>Progresso Geral</span>
+                    <span id="porcentagem">0%</span>
+                </div>
+                <div class="barra-progresso">
+                    <div class="barra-preenchida" id="barra-progresso" style="width: 0%; background: linear-gradient(90deg, var(--roxo), var(--dourado));"></div>
+                </div>
+            </div>
+
+            <div id="lista-itens">
+                <p style="color: var(--cinza); text-align: center; padding: 20px;">Nenhum item registrado ainda.<br>Use o formulário ao lado para começar.</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Resumo de Bônus (inicialmente escondido) -->
+    <div class="painel" id="conteudo-resumo" style="display: none; margin-top: 20px;">
+        <h2>🏆 Bônus Permanentes — Sua Conta</h2>
+        <div class="grade-bonus">
+            <div class="bonus-card">
+                Ataque Total
+                <div class="bonus-valor" id="resumo-atk">+0</div>
+            </div>
+            <div class="bonus-card">
+                Defesa Total
+                <div class="bonus-valor" id="resumo-def">+0</div>
+            </div>
+            <div class="bonus-card">
+                HP Máximo
+                <div class="bonus-valor" id="resumo-hp">+0</div>
+            </div>
+            <div class="bonus-card">
+                Taxa Crítica
+                <div class="bonus-valor" id="resumo-crit">+0%</div>
+            </div>
+        </div>
+
+        <h3 style="margin-top: 25px; color: var(--azul-claro);">Conjuntos Completos</h3>
+        <div id="conjuntos-completos" style="margin-top: 10px;">
+            <p style="color: var(--cinza);">Nenhum conjunto completo ainda.</p>
+        </div>
+    </div>
+
+    <!-- Código SQL Gerado -->
+    <div class="painel" style="margin-top: 20px;">
+        <h2>🗄️ Comando SQL Gerado</h2>
+        <pre id="sql-gerado" style="background: #0f1419; padding: 14px; border-radius: 6px; color: #7ee7b8; font-size: 0.85em; max-height: 200px; overflow: auto;">-- Registre um item para ver o comando SQL aqui</pre>
+    </div>
+
+</div>
+
+<script>
+let itensRegistrados = [];
+const maxItens = 24; // quantidade total de vagas no Codex
+
+const tabelaValores = {
+    comum: { atk: [2,5], def: [1,3], hp: [10,30], prioridade: 3, classe: 'item-comum', etiqueta: 'et-comum' },
+    incomum: { atk: [5,12], def: [3,8], hp: [30,80], prioridade: 3, classe: 'item-incomum', etiqueta: 'et-incomum' },
+    raro: { atk: [12,25], def: [8,15], hp: [80,150], prioridade: 2, classe: 'item-raro', etiqueta: 'et-raro' },
+    epico: { atk: [25,40], def: [15,25], hp: [150,300], prioridade: 1, classe: 'item-epico', etiqueta: 'et-epico' },
+    lendario: { atk: [40,60], def: [25,40], hp: [300,500], prioridade: 1, classe: 'item-lendario', etiqueta: 'et-lendario' }
+};
+
+function calcularBonus(raridade, tier) {
+    const v = tabelaValores[raridade];
+    const fator = tier / 10;
+    return {
+        atk: Math.round((v.atk[0] + (v.atk[1] - v.atk[0]) * 0.5) * fator),
+        def: Math.round((v.def[0] + (v.def[1] - v.def[0]) * 0.5) * fator),
+        hp: Math.round((v.hp[0] + (v.hp[1] - v.hp[0]) * 0.5) * fator),
+        prioridade: v.prioridade
+    };
+}
+
+function atualizarBonus() {
+    const raridade = document.getElementById('item-raridade').value;
+    const tier = parseInt(document.getElementById('item-tier').value) || 1;
+    const b = calcularBonus(raridade, tier);
+    document.getElementById('preview-bonus').innerHTML = `
+        <strong>Bônus estimado:</strong><br>
+        ⚔️ Ataque: +${b.atk} | 🛡️ Defesa: +${b.def} | ❤️ HP: +${b.hp}
+    `;
+}
+
+function trocarAba(nome) {
+    document.querySelectorAll('.aba').forEach(a => a.classList.remove('ativa'));
+    event.target.classList.add('ativa');
+    
+    document.getElementById('conteudo-principal').style.display = nome === 'resumo' ? 'none' : 'grid';
+    document.getElementById('conteudo-resumo').style.display = nome === 'resumo' ? 'block' : 'none';
+}
+
+function registrarItem() {
+    const nome = document.getElementById('item-nome').value.trim();
+    const tipo = document.getElementById('item-tipo').value;
+    const raridade = document.getElementById('item-raridade').value;
+    const tier = parseInt(document.getElementById('item-tier').value) || 1;
+
+    if (!nome) { alert('Digite o nome do item!'); return; }
+
+    const bonus = calcularBonus(raridade, tier);
+    const idItem = `item_${Date.now()}`;
+    const dataRegistro = new Date().toISOString();
+
+    const item = {
+        id_item: idItem,
+        nome: nome,
+        tipo_peca: tipo,
+        raridade: raridade,
+        tier: tier,
+        bonus: { ataque: bonus.atk, defesa: bonus.def, hp: bonus.hp },
+        prioridade_registro: bonus.prioridade,
+        registrado_em: dataRegistro,
+        pode_descartar: true
+    };
+
+    itensRegistrados.push(item);
+    atualizarLista();
+    atualizarResumo();
+    gerarSQL(item);
+
+    // Limpar formulário
+    document.getElementById('item-nome').value = '';
+}
+
+function atualizarLista() {
+    const lista = document.getElementById('lista-itens');
+    if (itensRegistrados.length === 0) {
+        lista.innerHTML = '<p style="color: var(--cinza); text-align: center; padding: 20px;">Nenhum item registrado ainda.<br>Use o formulário ao lado para começar.</p>';
+        return;
+    }
+
+    // Ordenar por prioridade e tier
+    const ordenados = [...itensRegistrados].sort((a, b) => 
+        a.prioridade_registro - b.prioridade_registro || b.tier - a.tier
+    );
+
+    lista.innerHTML = ordenados.map(item => {
+        const v = tabelaValores[item.raridade];
+        return `
+        <div class="item-codex ${v.classe} item-registrado">
+            <span class="etiqueta ${v.etiqueta}">${item.raridade.charAt(0).toUpperCase() + item.raridade.slice(1)}</span>
+            <strong>${item.nome}</strong>
+            <div class="info-pequena">
+                ${item.tipo_peca} • Tier ${item.tier} | ⚔️+${item.bonus.ataque} 🛡️+${item.bonus.defesa} ❤️+${item.bonus.hp}
+            </div>
+        </div>`;
+    }).join('');
+
+    document.getElementById('contagem').textContent = `(${itensRegistrados.length}/${maxItens})`;
+    document.getElementById('barra-progresso').style.width = `${(itensRegistrados.length/maxItens)*100}%`;
+    document.getElementById('porcentagem').textContent = `${Math.round((itensRegistrados.length/maxItens)*100)}%`;
+}
+
+function atualizarResumo() {
+    const total = itensRegistrados.reduce((s, i) => ({
+        atk: s.atk + i.bonus.ataque,
+        def: s.def + i.bonus.defesa,
+        hp: s.hp + i.bonus.hp
+    }), { atk: 0, def: 0, hp: 0 });
+
+    document.getElementById('resumo-atk').textContent = `+${total.atk}`;
+    document.getElementById('resumo-def').textContent = `+${total.def}`;
+    document.getElementById('resumo-hp').textContent = `+${total.hp}`;
+}
+
+function gerarSQL(item) {
+    const jsonItem = JSON.stringify({
+        id_item: item.id_item,
+        nome: item.nome,
+        tipo_peca: item.tipo_peca,
+        raridade: item.raridade,
+        tier: item.tier,
+        bônus: item.bonus,
+        prioridade_registro: item.prioridade_registro,
+        registrado_em: item.registrado_em,
+        pode_descartar: item.pode_descartar
+    }, null, 2);
+
+    const sql = `-- Registrar item no Códice do usuário
+UPDATE "Geral"
+SET itens = itens || '${jsonItem.replace(/'/g, "''")}'::jsonb,
+    updated_at = CURRENT_TIMESTAMP
+WHERE login = 'usuario_aqui';
+
+-- Recalcular atributos com bônus
+WITH total_bonus AS (
+  SELECT
+    COALESCE(SUM((el->'bônus'->>'ataque')::integer), 0) AS atk,
+    COALESCE(SUM((el->'bônus'->>'defesa')::integer), 0) AS def,
+    COALESCE(SUM((el->'bônus'->>'hp')::integer), 0) AS hp
+  FROM "Geral", jsonb_array_elements(itens) el
+  WHERE login = 'usuario_aqui'
+)
+UPDATE "Geral"
+SET
+  atk = ataque_base + (SELECT atk FROM total_bonus),
+  def = defesa_base + (SELECT def FROM total_bonus),
+  hp_max = hp_max + (SELECT hp FROM total_bonus),
+  updated_at = CURRENT_TIMESTAMP
+WHERE login = 'usuario_aqui';`;
+
+    document.getElementById('sql-gerado').textContent = sql;
+}
+</script>
+</body>
+</html>

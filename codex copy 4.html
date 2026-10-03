@@ -1,0 +1,774 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MM Quase Tudo — Codex</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
+        :root {
+            --fundo-escuro: #0f1419;
+            --fundo-card: #1a1f2e;
+            --dourado: #ffd700;
+            --azul-claro: #66b2ff;
+            --verde: #4cd964;
+            --azul: #0099ff;
+            --roxo: #b066ff;
+            --vermelho: #ff6b6b;
+            --cinza: #888;
+            --borda: #2c3442;
+        }
+        body { background: linear-gradient(135deg, #0f1419 0%, #1a1f2e 100%); min-height: 100vh; color: #e6e6e6; padding: 20px; }
+        .container { max-width: 1200px; margin: 0 auto; }
+        header { text-align: center; margin-bottom: 30px; }
+        h1 { color: var(--dourado); font-size: 2em; text-shadow: 0 0 10px rgba(255,215,0,0.3); }
+        .subtitulo { color: var(--cinza); margin-top: 5px; }
+
+        .abas { display: flex; gap: 10px; margin-bottom: 20px; border-bottom: 2px solid var(--borda); padding-bottom: 0; flex-wrap: wrap; }
+        .aba { padding: 12px 24px; background: transparent; border: none; color: var(--cinza); cursor: pointer; font-size: 1em; border-bottom: 3px solid transparent; transition: all 0.2s; }
+        .aba.ativa { color: var(--dourado); border-bottom: 3px solid var(--dourado); }
+        .aba:hover { color: #fff; }
+
+        .grade { display: grid; grid-template-columns: 300px 1fr; gap: 20px; }
+        @media (max-width: 900px) { .grade { grid-template-columns: 1fr; } }
+
+        .painel { background: var(--fundo-card); border-radius: 12px; border: 1px solid var(--borda); padding: 22px; box-shadow: 0 4px 15px rgba(0,0,0,0.4); }
+        .painel h2 { color: var(--azul-claro); margin-bottom: 18px; font-size: 1.2em; border-bottom: 1px solid var(--borda); padding-bottom: 10px; }
+        .painel h3 { color: var(--verde); margin: 20px 0 10px; font-size: 1em; }
+
+        .item-codex {
+            background: #252b3b; border-radius: 8px; padding: 12px; margin-bottom: 10px; border-left: 4px solid;
+            transition: transform 0.2s;
+        }
+        .item-codex:hover { transform: translateY(-2px); }
+        .item-comum { border-color: #fff; }
+        .item-incomum { border-color: var(--verde); }
+        .item-raro { border-color: var(--azul); }
+        .item-epico { border-color: var(--roxo); }
+        .item-lendario { border-color: var(--dourado); box-shadow: 0 0 8px rgba(255,215,0,0.2); }
+        .item-registrado { opacity: 0.85; }
+        .item-registrado::after { content: "✓"; color: var(--verde); font-weight: bold; float: right; font-size: 1.2em; }
+        .conjunto-completo { border-right: 3px solid var(--dourado); }
+
+        .etiqueta { display: inline-block; padding: 2px 8px; border-radius: 10px; font-size: 0.75em; margin-right: 5px; }
+        .et-comum { background: #444; color: #fff; }
+        .et-incomum { background: rgba(76,217,100,0.2); color: var(--verde); }
+        .et-raro { background: rgba(0,153,255,0.2); color: var(--azul); }
+        .et-epico { background: rgba(176,102,255,0.2); color: var(--roxo); }
+        .et-lendario { background: rgba(255,215,0,0.2); color: var(--dourado); }
+
+        .barra-progresso { height: 10px; background: #2c3442; border-radius: 5px; overflow: hidden; margin: 10px 0; }
+        .barra-preenchida { height: 100%; border-radius: 5px; transition: width 0.4s ease; }
+
+        .grupo-form { margin-bottom: 14px; }
+        label { display: block; margin-bottom: 5px; color: #ccc; font-size: 0.9em; }
+        input, select { width: 100%; padding: 10px 12px; background: #252b3b; border: 1px solid var(--borda); border-radius: 6px; color: #fff; font-size: 0.95em; }
+        input:focus, select:focus { outline: none; border-color: var(--dourado); box-shadow: 0 0 0 2px rgba(255,215,0,0.2); }
+
+        button.registrar {
+            width: 100%; padding: 13px; background: linear-gradient(90deg, #b8860b, var(--dourado));
+            border: none; border-radius: 8px; color: #000; font-weight: bold; font-size: 1em;
+            cursor: pointer; transition: all 0.2s; margin-top: 5px;
+        }
+        button.registrar:hover { transform: scale(1.02); box-shadow: 0 4px 12px rgba(255,215,0,0.3); }
+        button.registrar:disabled { background: #444; color: #888; cursor: not-allowed; transform: none; box-shadow: none; }
+
+        .grade-bonus { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; margin: 15px 0; }
+        @media (max-width: 700px) { .grade-bonus { grid-template-columns: repeat(2, 1fr); } }
+        .bonus-card { background: #252b3b; padding: 15px 10px; border-radius: 8px; text-align: center; }
+        .bonus-valor { font-size: 1.5em; font-weight: bold; color: var(--dourado); margin-top: 5px; }
+
+        .aviso { padding: 12px 15px; border-radius: 6px; margin: 12px 0; font-size: 0.9em; line-height: 1.5; }
+        .aviso-sucesso { background: rgba(76,217,100,0.1); border-left: 3px solid var(--verde); color: #b8f0c8; }
+        .aviso-info { background: rgba(102,178,255,0.1); border-left: 3px solid var(--azul-claro); color: #b8d8f0; }
+        .aviso-erro { background: rgba(255,107,107,0.1); border-left: 3px solid var(--vermelho); color: #f0b8b8; }
+
+        pre { background: #0a0e14; padding: 16px; border-radius: 8px; overflow-x: auto; margin: 12px 0; font-size: 0.85em; line-height: 1.6; color: #7ee7b8; border: 1px solid var(--borda); max-height: 350px; overflow-y: auto; }
+        code { font-family: 'Consolas', 'Monaco', monospace; }
+
+        .linha { display: flex; justify-content: space-between; padding: 7px 0; border-bottom: 1px solid #2c3442; font-size: 0.9em; }
+        .info-pequena { font-size: 0.8em; color: var(--cinza); margin-top: 8px; line-height: 1.5; }
+        .destaque { background: rgba(255,215,0,0.08); border-left: 3px solid var(--dourado); padding: 12px 15px; margin: 15px 0; border-radius: 0 6px 6px 0; }
+        .sucesso { color: var(--verde); font-weight: bold; }
+        .alerta { color: var(--dourado); font-weight: bold; }
+        .erro { color: var(--vermelho); font-weight: bold; }
+        footer { text-align: center; margin-top: 40px; color: var(--cinza); font-size: 0.9em; padding-top: 20px; border-top: 1px solid var(--borda); }
+        .oculto { display: none !important; }
+    </style>
+</head>
+<body>
+<div class="container">
+    <header>
+        <h1>📖 Códice de Equipamentos </h1>
+        <p class="subtitulo">Interface de Registro + SQL pronto para sua tabela "Geral"</p>
+    </header>
+
+    <div class="abas">
+        <button class="aba ativa" onclick="trocarAba('registro')">➕ Registrar Item</button>
+        <button class="aba" onclick="trocarAba('itens')">📋 Itens Registrados</button>
+        <button class="aba" onclick="trocarAba('resumo')">🏆 Resumo de Bônus</button>
+        <button class="aba" onclick="trocarAba('sql')">🗄️ SQL do Banco</button>
+    </div>
+
+    <!-- ABA: REGISTRO -->
+    <div id="aba-registro" class="conteudo-aba">
+        <div class="grade">
+            <!-- Formulário -->
+            <div class="painel">
+                <h2>➕ Dados do Item</h2>
+                
+                <div class="grupo-form">
+                    <label>Login do Usuário (da tabela)</label>
+                    <input type="text" id="p_login" placeholder="ex: joao_aventureiro">
+                </div>
+
+                <div class="grupo-form">
+                    <label>Nome do Item</label>
+                    <input type="text" id="p_nome" placeholder="ex: Espada Dourada — Tier 15">
+                </div>
+
+                <div class="grupo-form">
+                    <label>ID Único do Item</label>
+                    <input type="text" id="p_id_item" placeholder="ex: arma_espada_t15_001">
+                </div>
+
+                <div class="grupo-form">
+                    <label>Tipo de Peça</label>
+                    <select id="p_tipo_peca">
+                        <option value="Arma">⚔️ Arma</option>
+                        <option value="Arma Secundária">🛡️ Arma Secundária</option>
+                        <option value="Elmo">⛑️ Elmo</option>
+                        <option value="Armadura">👕 Armadura</option>
+                        <option value="Luvas">🧤 Luvas</option>
+                        <option value="Botas">🥾 Botas</option>
+                        <option value="Cinto">🎗️ Cinto</option>
+                        <option value="Colar">📿 Colar</option>
+                        <option value="Pulseira">⌚ Pulseira</option>
+                        <option value="Anel">💍 Anel</option>
+                        <option value="Brincos">💎 Brincos</option>
+                        <option value="Selo">📜 Selo</option>
+                    </select>
+                </div>
+
+                <div class="grupo-form">
+                    <label>Raridade</label>
+                    <select id="p_raridade" onchange="atualizarPreview()">
+                        <option value="comum">⬜ Comum</option>
+                        <option value="incomum">🟩 Incomum</option>
+                        <option value="raro">🟦 Raro</option>
+                        <option value="epico">🟪 Épico</option>
+                        <option value="lendario">🟨 Lendário</option>
+                    </select>
+                </div>
+
+                <div class="grupo-form">
+                    <label>Tier / Nível</label>
+                    <input type="number" id="p_tier" value="10" min="1" max="20" oninput="atualizarPreview()">
+                </div>
+
+                <div class="grupo-form">
+                    <label>ID do Conjunto (mesmo para todas as peças)</label>
+                    <input type="text" id="p_id_conjunto" placeholder="ex: conj_guerreiro_t15">
+                </div>
+
+                <div class="grupo-form">
+                    <label>Nome do Conjunto</label>
+                    <input type="text" id="p_nome_conjunto" placeholder="ex: Guardião Dourado">
+                </div>
+
+                <div class="aviso aviso-info" id="preview_bonus">
+                    <strong>📊 Bônus Estimado:</strong><br>
+                    ⚔️ Ataque: +0 &nbsp;|&nbsp; 🛡️ Defesa: +0 &nbsp;|&nbsp; ❤️ HP: +0
+                </div>
+
+                <button class="registrar" onclick="gerarComandos()">📝 Gerar Comandos SQL</button>
+
+                <div class="info-pequena">
+                    💡 Após gerar, copie e execute no PostgreSQL.<br>
+                    O item será armazenado no campo <code>itens jsonb</code> da tabela "Geral".
+                </div>
+            </div>
+
+            <!-- Resultado SQL -->
+            <div class="painel">
+                <h2>🗄️ Comandos Prontos</h2>
+                <div id="resultado_sql">
+                    <p style="color: var(--cinza); text-align: center; padding: 30px;">
+                        Preencha os dados do item ao lado e clique em <strong>"Gerar Comandos SQL"</strong> para ver aqui.
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ABA: ITENS REGISTRADOS -->
+    <div id="aba-itens" class="conteudo-aba oculto">
+        <div class="painel">
+            <h2>📋 Itens Registrados <span id="contagem_itens">(0)</span></h2>
+            
+            <div style="margin-bottom: 20px;">
+                <div style="display: flex; justify-content: space-between; font-size: 0.9em; margin-bottom: 5px;">
+                    <span>Progresso Geral</span>
+                    <span id="porcentagem">0%</span>
+                </div>
+                <div class="barra-progresso">
+                    <div class="barra-preenchida" id="barra_progresso" style="width: 0%; background: linear-gradient(90deg, var(--roxo), var(--dourado));"></div>
+                </div>
+            </div>
+
+            <div id="lista_itens">
+                <p style="color: var(--cinza); text-align: center; padding: 30px;">
+                    Nenhum item registrado ainda.<br>
+                    Use a aba <strong>"Registrar Item"</strong> para começar.
+                </p>
+            </div>
+        </div>
+    </div>
+
+    <!-- ABA: RESUMO -->
+    <div id="aba-resumo" class="conteudo-aba oculto">
+        <div class="painel">
+            <h2>🏆 Bônus Acumulados</h2>
+            
+            <div class="grade-bonus">
+                <div class="bonus-card">
+                    ⚔️ Ataque
+                    <div class="bonus-valor" id="res_atk">+0</div>
+                </div>
+                <div class="bonus-card">
+                    🛡️ Defesa
+                    <div class="bonus-valor" id="res_def">+0</div>
+                </div>
+                <div class="bonus-card">
+                    ❤️ HP Máximo
+                    <div class="bonus-valor" id="res_hp">+0</div>
+                </div>
+                <div class="bonus-card">
+                    📦 Conjuntos Completos
+                    <div class="bonus-valor" id="res_conj">0</div>
+                </div>
+            </div>
+
+            <h3>📊 Detalhamento</h3>
+            <div id="detalhe_resumo">
+                <p style="color: var(--cinza);">Registre itens para ver o detalhamento.</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- ABA: ESTRUTURA SQL -->
+    <div id="aba-sql" class="conteudo-aba oculto">
+        <div class="painel">
+            <h2>🗄️ Estrutura da Tabela "Geral"</h2>
+            <p style="margin-bottom: 15px;">Seu banco já está pronto! Os itens são armazenados no campo <code>itens jsonb</code> como um array de objetos.</p>
+
+            <h3>📋 Campos Utilizados</h3>
+            <table style="margin: 15px 0;">
+                <tr><th>Campo</th><th>Tipo</th><th>Uso</th></tr>
+                <tr><td>login</td><td>VARCHAR(255)</td><td>Identifica o usuário</td></tr>
+                <tr><td>itens</td><td>jsonb</td><td>Armazena todos os itens do Códice</td></tr>
+                <tr><td>ataque_base</td><td>INTEGER</td><td>Valor base do personagem</td></tr>
+                <tr><td>defesa_base</td><td>INTEGER</td><td>Valor base do personagem</td></tr>
+                <tr><td>hp_max</td><td>INTEGER</td><td>Base + bônus acumulado</td></tr>
+                <tr><td>atk</td><td>NUMERIC(10,2)</td><td>Ataque final = base + bônus</td></tr>
+                <tr><td>def</td><td>NUMERIC(10,2)</td><td>Defesa final = base + bônus</td></tr>
+                <tr><td>updated_at</td><td>TIMESTAMP</td><td>Atualizado automaticamente pela trigger</td></tr>
+            </table>
+
+            <h3>🔧 Criar Função (Executar 1x)</h3>
+            <p style="font-size: 0.9em; color: var(--cinza); margin-bottom: 10px;">Copie e execute no PostgreSQL para criar a função de registro automático:</p>
+<pre id="codigo_funcao">-- ==================================================
+-- FUNÇÃO: registrar_item_codex
+-- Tabela alvo: public."Geral"
+-- Executar UMA VEZ apenas
+-- ==================================================
+CREATE OR REPLACE FUNCTION public.registrar_item_codex(
+  p_login          VARCHAR(255),
+  p_id_item        TEXT,
+  p_nome           TEXT,
+  p_tipo_peca      TEXT,
+  p_raridade       TEXT,
+  p_tier           INTEGER,
+  p_id_conjunto    TEXT,
+  p_nome_conjunto  TEXT,
+  p_bonus_ataque   INTEGER,
+  p_bonus_defesa   INTEGER,
+  p_bonus_hp       INTEGER
+)
+RETURNS TEXT AS $$
+DECLARE
+  v_item_json        JSONB;
+  v_existe           BOOLEAN;
+  v_total_pecas      INTEGER;
+  v_pecas_registradas INTEGER;
+  v_bonus_atk_item   INTEGER;
+  v_bonus_def_item   INTEGER;
+  v_bonus_hp_item    INTEGER;
+  v_bonus_atk_conj   INTEGER := 0;
+  v_bonus_def_conj   INTEGER := 0;
+  v_bonus_hp_conj    INTEGER := 0;
+  v_retorno          TEXT;
+BEGIN
+  -- Verificar usuário
+  SELECT EXISTS(SELECT 1 FROM public."Geral" WHERE login = p_login) INTO v_existe;
+  IF NOT v_existe THEN
+    RETURN 'ERRO: Usuário não encontrado: ' || p_login;
+  END IF;
+
+  -- Verificar item duplicado
+  SELECT EXISTS(
+    SELECT 1 FROM public."Geral", jsonb_array_elements(itens) AS i
+    WHERE login = p_login AND i->>'id_item' = p_id_item
+  ) INTO v_existe;
+  IF v_existe THEN
+    RETURN 'AVISO: Item já registrado — ' || p_nome;
+  END IF;
+
+  -- Definir total de peças por tipo de conjunto
+  v_total_pecas := CASE 
+    WHEN p_id_conjunto LIKE '%acess%' THEN 5
+    ELSE 7
+  END;
+
+  -- Calcular valores individuais
+  v_bonus_atk_item := p_bonus_ataque;
+  v_bonus_def_item := p_bonus_defesa;
+  v_bonus_hp_item  := p_bonus_hp;
+
+  -- Montar JSON do item
+  v_item_json = jsonb_build_object(
+    'id_item', p_id_item,
+    'nome', p_nome,
+    'tipo_peca', p_tipo_peca,
+    'raridade', p_raridade,
+    'tier', p_tier,
+    'registrado_em', NOW()::TEXT,
+    'bônus', jsonb_build_object(
+      'ataque', v_bonus_atk_item,
+      'defesa', v_bonus_def_item,
+      'hp', v_bonus_hp_item
+    ),
+    'conjunto', jsonb_build_object(
+      'id_conjunto', p_id_conjunto,
+      'nome_conjunto', p_nome_conjunto,
+      'completo', false
+    ),
+    'pode_descartar', true
+  );
+
+  -- Inserir item
+  UPDATE public."Geral"
+  SET itens = itens || v_item_json
+  WHERE login = p_login;
+
+  -- Contar peças do conjunto
+  SELECT COUNT(*) INTO v_pecas_registradas
+  FROM public."Geral", jsonb_array_elements(itens) AS i
+  WHERE login = p_login AND i->'conjunto'->>'id_conjunto' = p_id_conjunto;
+
+  -- Verificar conjunto completo
+  IF v_pecas_registradas = v_total_pecas THEN
+    -- Bônus extra de conjunto completo
+    v_bonus_atk_conj := CASE 
+      WHEN p_raridade = 'lendario' THEN 60
+      WHEN p_raridade = 'epico' THEN 40
+      WHEN p_raridade = 'raro' THEN 25
+      ELSE 10
+    END;
+    v_bonus_def_conj := CASE 
+      WHEN p_raridade = 'lendario' THEN 40
+      WHEN p_raridade = 'epico' THEN 27
+      WHEN p_raridade = 'raro' THEN 17
+      ELSE 7
+    END;
+    v_bonus_hp_conj := CASE 
+      WHEN p_raridade = 'lendario' THEN 800
+      WHEN p_raridade = 'epico' THEN 500
+      WHEN p_raridade = 'raro' THEN 300
+      ELSE 120
+    END;
+
+    -- Marcar todas as peças do conjunto como completo
+    UPDATE public."Geral" u
+    SET itens = jsonb_set(
+      itens,
+      ARRAY[(idx-1)::TEXT, 'conjunto'],
+      jsonb_build_object(
+        'id_conjunto', p_id_conjunto,
+        'nome_conjunto', p_nome_conjunto,
+        'completo', true
+      )
+    )
+    FROM generate_subscripts(u.itens, 1) AS idx
+    WHERE u.login = p_login
+      AND u.itens->(idx-1)->'conjunto'->>'id_conjunto' = p_id_conjunto;
+
+    v_retorno := '✅ SUCESSO: ' || p_nome || ' registrado! CONJUNTO COMPLETO: ' || p_nome_conjunto || 
+                 ' (+' || v_bonus_atk_conj || ' ATK, +' || v_bonus_def_conj || ' DEF, +' || v_bonus_hp_conj || ' HP)';
+  ELSE
+    v_retorno := '✅ SUCESSO: ' || p_nome || ' registrado! Progresso: ' || v_pecas_registradas || '/' || v_total_pecas;
+  END IF;
+
+  -- Recalcular atributos finais
+  WITH soma_bonus AS (
+    SELECT
+      -- Bônus de itens individuais
+      COALESCE(SUM((i->'bônus'->>'ataque')::integer), 0) AS atk_item,
+      COALESCE(SUM((i->'bônus'->>'defesa')::integer), 0) AS def_item,
+      COALESCE(SUM((i->'bônus'->>'hp')::integer), 0) AS hp_item,
+      -- Bônus de conjuntos completos
+      (SELECT COALESCE(SUM(CASE 
+         WHEN c.raridade = 'lendario' THEN 60
+         WHEN c.raridade = 'epico' THEN 40
+         WHEN c.raridade = 'raro' THEN 25
+         ELSE 10 END), 0)
+       FROM (SELECT DISTINCT ON (i2->'conjunto'->>'id_conjunto') 
+             i2->'conjunto'->>'id_conjunto' AS cid,
+             i2->>'raridade' AS raridade
+             FROM public."Geral" u2, jsonb_array_elements(u2.itens) AS i2
+             WHERE u2.login = p_login 
+               AND i2->'conjunto'->>'completo' = 'true') AS c
+      ) AS atk_conj,
+      (SELECT COALESCE(SUM(CASE 
+         WHEN c.raridade = 'lendario' THEN 40
+         WHEN c.raridade = 'epico' THEN 27
+         WHEN c.raridade = 'raro' THEN 17
+         ELSE 7 END), 0)
+       FROM (SELECT DISTINCT ON (i2->'conjunto'->>'id_conjunto') 
+             i2->'conjunto'->>'id_conjunto' AS cid,
+             i2->>'raridade' AS raridade
+             FROM public."Geral" u2, jsonb_array_elements(u2.itens) AS i2
+             WHERE u2.login = p_login 
+               AND i2->'conjunto'->>'completo' = 'true') AS c
+      ) AS def_conj,
+      (SELECT COALESCE(SUM(CASE 
+         WHEN c.raridade = 'lendario' THEN 800
+         WHEN c.raridade = 'epico' THEN 500
+         WHEN c.raridade = 'raro' THEN 300
+         ELSE 120 END), 0)
+       FROM (SELECT DISTINCT ON (i2->'conjunto'->>'id_conjunto') 
+             i2->'conjunto'->>'id_conjunto' AS cid,
+             i2->>'raridade' AS raridade
+             FROM public."Geral" u2, jsonb_array_elements(u2.itens) AS i2
+             WHERE u2.login = p_login 
+               AND i2->'conjunto'->>'completo' = 'true') AS c
+      ) AS hp_conj
+    FROM public."Geral", jsonb_array_elements(itens) AS i
+    WHERE login = p_login
+  )
+  UPDATE public."Geral"
+  SET
+    atk    = ataque_base + atk_item + atk_conj,
+    def    = defesa_base + def_item + def_conj,
+    hp_max = hp_max      + hp_item  + hp_conj
+  FROM soma_bonus
+  WHERE login = p_login;
+
+  RETURN v_retorno;
+END;
+$$ LANGUAGE plpgsql;
+
+-- ==================================================
+-- COMO USAR:
+-- SELECT public.registrar_item_codex(
+--   'login_do_usuario',
+--   'id_item_unico',
+--   'Nome do Item',
+--   'Arma',
+--   'lendario',
+--   15,
+--   'conj_exemplo_t15',
+--   'Nome do Conjunto',
+--   55, 35, 450
+-- );
+-- ==================================================</pre>
+        </div>
+    </div>
+
+</div>
+
+<script>
+// ==========================================
+// DADOS E CONFIGURAÇÕES
+// ==========================================
+const tabelaBonus = {
+    comum:   { minAtk: 2,  maxAtk: 5,   minDef: 1, maxDef: 3,   minHp: 10,  maxHp: 30,  prioridade: 3, classe: 'item-comum', etiq: 'et-comum' },
+    incomum: { minAtk: 5,  maxAtk: 12,  minDef: 3, maxDef: 8,   minHp: 30,  maxHp: 80,  prioridade: 3, classe: 'item-incomum', etiq: 'et-incomum' },
+    raro:    { minAtk: 12, maxAtk: 25,  minDef: 8, maxDef: 15,  minHp: 80,  maxHp: 150, prioridade: 2, classe: 'item-raro', etiq: 'et-raro' },
+    epico:   { minAtk: 25, maxAtk: 40,  minDef: 15,maxDef: 25,  minHp: 150, maxHp: 300, prioridade: 1, classe: 'item-epico', etiq: 'et-epico' },
+    lendario:{ minAtk: 40, maxAtk: 60,  minDef: 25,maxDef: 40,  minHp: 300, maxHp: 500, prioridade: 1, classe: 'item-lendario', etiq: 'et-lendario' }
+};
+
+const bonusConjunto = {
+    comum:   { atk: 10, def: 7, hp: 120 },
+    incomum: { atk: 10, def: 7, hp: 120 },
+    raro:    { atk: 25, def: 17, hp: 300 },
+    epico:   { atk: 40, def: 27, hp: 500 },
+    lendario:{ atk: 60, def: 40, hp: 800 }
+};
+
+let itensSalvos = [];
+
+// ==========================================
+// FUNÇÕES DE INTERFACE
+// ==========================================
+function trocarAba(nomeAba) {
+    document.querySelectorAll('.aba').forEach(aba => aba.classList.remove('ativa'));
+    event.target.classList.add('ativa');
+    
+    document.querySelectorAll('.conteudo-aba').forEach(div => div.classList.add('oculto'));
+    document.getElementById(`aba-${nomeAba}`).classList.remove('oculto');
+    
+    if (nomeAba === 'itens') renderizarListaItens();
+    if (nomeAba === 'resumo') atualizarResumo();
+}
+
+function calcularBonus(raridade, tier) {
+    const v = tabelaBonus[raridade];
+    const fator = tier / 10;
+    return {
+        atk: Math.round((v.minAtk + (v.maxAtk - v.minAtk) * 0.5) * fator),
+        def: Math.round((v.minDef + (v.maxDef - v.minDef) * 0.5) * fator),
+        hp: Math.round((v.minHp + (v.maxHp - v.minHp) * 0.5) * fator)
+    };
+}
+
+function atualizarPreview() {
+    const raridade = document.getElementById('p_raridade').value;
+    const tier = parseInt(document.getElementById('p_tier').value) || 1;
+    const b = calcularBonus(raridade, tier);
+    
+    document.getElementById('preview_bonus').innerHTML = `
+        <strong>📊 Bônus Estimado:</strong><br>
+        ⚔️ Ataque: +${b.atk} &nbsp;|&nbsp; 🛡️ Defesa: +${b.def} &nbsp;|&nbsp; ❤️ HP: +${b.hp}
+    `;
+}
+
+function gerarComandos() {
+    const login = document.getElementById('p_login').value.trim();
+    const nome = document.getElementById('p_nome').value.trim();
+    const idItem = document.getElementById('p_id_item').value.trim();
+    const tipoPeca = document.getElementById('p_tipo_peca').value;
+    const raridade = document.getElementById('p_raridade').value;
+    const tier = parseInt(document.getElementById('p_tier').value) || 10;
+    const idConjunto = document.getElementById('p_id_conjunto').value.trim();
+    const nomeConjunto = document.getElementById('p_nome_conjunto').value.trim();
+    
+    if (!login || !nome || !idItem || !idConjunto) {
+        document.getElementById('resultado_sql').innerHTML = `
+            <div class="aviso aviso-erro">
+                ⚠️ Preencha todos os campos obrigatórios!
+            </div>
+        `;
+        return;
+    }
+    
+    const bonus = calcularBonus(raridade, tier);
+    const dataRegistro = new Date().toISOString();
+    
+    // Salvar na lista local
+    const item = {
+        id_item: idItem,
+        nome: nome,
+        tipo_peca: tipoPeca,
+        raridade: raridade,
+        tier: tier,
+        id_conjunto: idConjunto,
+        nome_conjunto: nomeConjunto,
+        bonus: bonus,
+        registrado_em: dataRegistro,
+        pode_descartar: true
+    };
+    itensSalvos.push(item);
+    
+    // Gerar JSON formatado
+    const jsonItem = JSON.stringify({
+        id_item: idItem,
+        nome: nome,
+        tipo_peca: tipoPeca,
+        raridade: raridade,
+        tier: tier,
+        registrado_em: dataRegistro,
+        bônus: { ataque: bonus.atk, defesa: bonus.def, hp: bonus.hp },
+        conjunto: { id_conjunto: idConjunto, nome_conjunto: nomeConjunto, completo: false },
+        pode_descartar: true
+    }, null, 2);
+    
+    // Gerar comando da função
+    const comandoFuncao = `-- ==================================================
+-- Registrar Item via FUNÇÃO (Recomendado)
+-- ==================================================
+SELECT public.registrar_item_codex(
+  '${login}',
+  '${idItem}',
+  '${nome.replace(/'/g, "''")}',
+  '${tipoPeca}',
+  '${raridade}',
+  ${tier},
+  '${idConjunto}',
+  '${nomeConjunto.replace(/'/g, "''")}',
+  ${bonus.atk},
+  ${bonus.def},
+  ${bonus.hp}
+);`;
+
+    // Gerar UPDATE direto
+    const comandoDireto = `-- ==================================================
+-- Opção 2: Inserção Direta (sem função)
+-- ==================================================
+-- Passo 1: Inserir o item
+UPDATE public."Geral"
+SET itens = itens || '${jsonItem.replace(/'/g, "''")}'::jsonb,
+    updated_at = CURRENT_TIMESTAMP
+WHERE login = '${login}';
+
+-- Passo 2: Recalcular atributos
+WITH bonus_codex AS (
+  SELECT
+    COALESCE(SUM((item->'bônus'->>'ataque')::integer), 0) AS atk_item,
+    COALESCE(SUM((item->'bônus'->>'defesa')::integer), 0) AS def_item,
+    COALESCE(SUM((item->'bônus'->>'hp')::integer), 0) AS hp_item
+  FROM public."Geral", jsonb_array_elements(itens) AS item
+  WHERE login = '${login}'
+)
+UPDATE public."Geral"
+SET
+  atk    = ataque_base + atk_item,
+  def    = defesa_base + def_item,
+  hp_max = hp_max      + hp_item
+FROM bonus_codex
+WHERE login = '${login}';`;
+
+    // Exibir resultado
+    document.getElementById('resultado_sql').innerHTML = `
+        <div class="aviso aviso-sucesso">
+            ✅ Comandos gerados com sucesso! Copie e execute no PostgreSQL.
+        </div>
+        
+        <h3>📋 Método Recomendado (Função)</h3>
+        <p style="font-size: 0.85em; color: var(--cinza); margin-bottom: 8px;">
+            A função já deve ter sido criada na aba "SQL do Banco" (executar 1x).
+        </p>
+        <pre>${comandoFuncao}</pre>
+        
+        <h3>📋 Método Alternativo (Direto)</h3>
+        <pre>${comandoDireto}</pre>
+        
+        <div class="destaque">
+            <strong>📊 Dados do Item:</strong><br>
+            Login: <code>${login}</code><br>
+            Item: <code>${nome}</code> (${raridade} • Tier ${tier})<br>
+            Conjunto: <code>${nomeConjunto}</code> (<code>${idConjunto}</code>)<br>
+            Bônus: +${bonus.atk} ATK / +${bonus.def} DEF / +${bonus.hp} HP
+        </div>
+    `;
+}
+
+function renderizarListaItens() {
+    const lista = document.getElementById('lista_itens');
+    if (itensSalvos.length === 0) {
+        lista.innerHTML = `
+            <p style="color: var(--cinza); text-align: center; padding: 30px;">
+                Nenhum item registrado ainda.<br>
+                Use a aba <strong>"Registrar Item"</strong> para começar.
+            </p>
+        `;
+        document.getElementById('contagem_itens').textContent = '(0)';
+        document.getElementById('barra_progresso').style.width = '0%';
+        document.getElementById('porcentagem').textContent = '0%';
+        return;
+    }
+
+    // Ordenar por prioridade e tier
+    const ordenados = [...itensSalvos].sort((a, b) => {
+        const prioA = tabelaBonus[a.raridade].prioridade;
+        const prioB = tabelaBonus[b.raridade].prioridade;
+        return prioA - prioB || b.tier - a.tier;
+    });
+
+    lista.innerHTML = ordenados.map(item => {
+        const v = tabelaBonus[item.raridade];
+        return `
+            <div class="item-codex ${v.classe} item-registrado">
+                <span class="etiqueta ${v.etiq}">${item.raridade.charAt(0).toUpperCase() + item.raridade.slice(1)}</span>
+                <strong>${item.nome}</strong>
+                <div class="info-pequena">
+                    ${item.tipo_peca} • Tier ${item.tier} • ${item.nome_conjunto}<br>
+                    ⚔️+${item.bonus.atk} &nbsp; 🛡️+${item.bonus.def} &nbsp; ❤️+${item.bonus.hp}
+                </div>
+            </div>
+        `;
+    }).join('');
+
+    document.getElementById('contagem_itens').textContent = `(${itensSalvos.length})`;
+    const perc = Math.min(100, Math.round((itensSalvos.length / 24) * 100));
+    document.getElementById('barra_progresso').style.width = `${perc}%`;
+    document.getElementById('porcentagem').textContent = `${perc}%`;
+}
+
+function atualizarResumo() {
+    if (itensSalvos.length === 0) {
+        document.getElementById('res_atk').textContent = '+0';
+        document.getElementById('res_def').textContent = '+0';
+        document.getElementById('res_hp').textContent = '+0';
+        document.getElementById('res_conj').textContent = '0';
+        document.getElementById('detalhe_resumo').innerHTML = '<p style="color: var(--cinza);">Registre itens para ver o detalhamento.</p>';
+        return;
+    }
+
+    // Soma bônus individuais
+    const total = itensSalvos.reduce((s, i) => ({
+        atk: s.atk + i.bonus.atk,
+        def: s.def + i.bonus.def,
+        hp: s.hp + i.bonus.hp
+    }), { atk: 0, def: 0, hp: 0 });
+
+    // Contar conjuntos únicos
+    const conjuntosUnicos = [...new Set(itensSalvos.map(i => i.id_conjunto))];
+    const conjuntosCompletos = conjuntosUnicos.filter(cid => {
+        const pecas = itensSalvos.filter(i => i.id_conjunto === cid);
+        const totalPecas = cid.includes('acess') ? 5 : 7;
+        return pecas.length >= totalPecas;
+    });
+
+    // Bônus de conjuntos completos
+    const bonusConjTotal = conjuntosCompletos.reduce((s, cid) => {
+        const itemConj = itensSalvos.find(i => i.id_conjunto === cid);
+        const b = bonusConjunto[itemConj.raridade];
+        return { atk: s.atk + b.atk, def: s.def + b.def, hp: s.hp + b.hp };
+    }, { atk: 0, def: 0, hp: 0 });
+
+    document.getElementById('res_atk').textContent = `+${total.atk + bonusConjTotal.atk}`;
+    document.getElementById('res_def').textContent = `+${total.def + bonusConjTotal.def}`;
+    document.getElementById('res_hp').textContent = `+${total.hp + bonusConjTotal.hp}`;
+    document.getElementById('res_conj').textContent = `${conjuntosCompletos.length}/${conjuntosUnicos.length}`;
+
+    document.getElementById('detalhe_resumo').innerHTML = `
+        <div class="linha">
+            <span>Bônus de itens individuais</span>
+            <span>⚔️+${total.atk} &nbsp; 🛡️+${total.def} &nbsp; ❤️+${total.hp}</span>
+        </div>
+        <div class="linha">
+            <span>Bônus de conjuntos completos (${conjuntosCompletos.length})</span>
+            <span>⚔️+${bonusConjTotal.atk} &nbsp; 🛡️+${bonusConjTotal.def} &nbsp; ❤️+${bonusConjTotal.hp}</span>
+        </div>
+        <div class="linha" style="font-weight: bold; color: var(--dourado); border-top: 1px dashed #444; margin-top: 5px; padding-top: 10px;">
+            <span>TOTAL ACUMULADO</span>
+            <span>⚔️+${total.atk + bonusConjTotal.atk} &nbsp; 🛡️+${total.def + bonusConjTotal.def} &nbsp; ❤️+${total.hp + bonusConjTotal.hp}</span>
+        </div>
+        <p style="margin-top: 15px; font-size: 0.85em; color: var(--cinza);">
+            💡 Estes valores são somados aos campos <code>ataque_base</code>, <code>defesa_base</code> e <code>hp_max</code> do usuário na tabela "Geral".
+        </p>
+    `;
+}
+
+// Inicializar preview
+atualizarPreview();
+</script>
+
+<footer>
+    📖 Códice Completo + Integração PostgreSQL | Tabela: public."Geral" | Atualizado: Outubro/2026
+</footer>
+
+</body>
+</html>

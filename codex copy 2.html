@@ -1,0 +1,217 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MIR4 — Codex + Banco de Dados</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
+        body { background: #1a1a2e; color: #e6e6e6; line-height: 1.6; padding: 20px; max-width: 1100px; margin: 0 auto; }
+        h1 { color: #ffd700; text-align: center; margin-bottom: 30px; border-bottom: 2px solid #ffd700; padding-bottom: 15px; }
+        h2 { color: #93ccff; margin: 30px 0 15px; }
+        h3 { color: #7ee7b8; margin: 18px 0 10px; }
+        .card { background: #16213e; border-radius: 10px; padding: 22px; margin-bottom: 22px; box-shadow: 0 4px 14px rgba(0,0,0,0.4); }
+        table { width: 100%; border-collapse: collapse; margin: 15px 0; }
+        th, td { padding: 11px 14px; text-align: left; border-bottom: 1px solid #2e4057; font-size: 0.95em; }
+        th { background: #0f3460; color: #ffd700; }
+        .comum { color: #ffffff; }
+        .incomum { color: #4cd964; }
+        .raro { color: #0099ff; }
+        .epico { color: #b066ff; }
+        .lendario { color: #ffd700; font-weight: bold; }
+        pre { background: #0f3460; padding: 16px; border-radius: 8px; overflow-x: auto; margin: 12px 0; font-size: 0.9em; line-height: 1.5; }
+        code { color: #7ee7b8; font-family: 'Consolas', monospace; }
+        .destaque { background: rgba(255, 215, 0, 0.1); border-left: 4px solid #ffd700; padding: 14px 18px; margin: 18px 0; border-radius: 0 6px 6px 0; }
+        .prioridade-alta { border-left: 4px solid #ff6b6b; background: rgba(255,107,107,0.08); padding: 10px 14px; margin: 8px 0; }
+        .prioridade-media { border-left: 4px solid #ffd700; background: rgba(255,215,0,0.08); padding: 10px 14px; margin: 8px 0; }
+        .prioridade-baixa { border-left: 4px solid #4cd964; background: rgba(76,217,100,0.08); padding: 10px 14px; margin: 8px 0; }
+        .tag { display: inline-block; background: #2e4057; padding: 3px 10px; border-radius: 12px; margin-right: 6px; font-size: 0.85em; }
+        footer { text-align: center; margin-top: 40px; color: #888; font-size: 0.9em; padding-top: 20px; border-top: 1px solid #2e4057; }
+        .resumo-bonus { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 12px; margin: 15px 0; }
+        .bonus-item { background: #0f3460; padding: 12px; border-radius: 8px; text-align: center; }
+        .bonus-valor { font-size: 1.3em; font-weight: bold; color: #ffd700; margin-top: 4px; }
+    </style>
+</head>
+<body>
+
+<h1>📖 MIR4 — Codex + Banco de Dados</h1>
+
+<div class="card">
+    <h2>🗄️ Estrutura da Tabela: public."Geral"</h2>
+    <p>Os itens do Codex são armazenados no campo <code>itens jsonb</code> como um array de objetos.</p>
+    <pre><code>-- Campo já existente:
+itens jsonb DEFAULT '[]'::jsonb
+
+-- Cada item segue este formato:
+{
+  "id_item": "arma_ferro_t10_001",
+  "nome": "Espada de Ferro — Tier 10",
+  "categoria": "arma_principal",
+  "tipo_peca": "Arma",
+  "raridade": "epico",
+  "tier": 10,
+  "cor": "roxa",
+  "nivel_aprimoramento": 12,
+  "registrado_em": "2026-10-02T18:30:00-03:00",
+  "bônus": {
+    "ataque": 38,
+    "defesa": 12,
+    "hp": 150,
+    "taxa_critico": 0.5
+  },
+  "conjunto": {
+    "nome_conjunto": "Guerreiro Dourado",
+    "id_conjunto": "conj_guerreiro_t10",
+    "completo": false
+  },
+  "prioridade_registro": 1,
+  "pode_descartar": true,
+  "origem": "drop_masmorra"
+}</code></pre>
+</div>
+
+<div class="card">
+    <h2>🎯 Tabela de Valores por Raridade</h2>
+    <table>
+        <tr><th>Raridade</th><th>Prioridade</th><th>Ataque</th><th>Defesa</th><th>HP</th></tr>
+        <tr class="comum"><td>Comum (Branca)</td><td>3</td><td>2–5</td><td>1–3</td><td>10–30</td></tr>
+        <tr class="incomum"><td>Incomum (Verde)</td><td>3</td><td>5–12</td><td>3–8</td><td>30–80</td></tr>
+        <tr class="raro"><td>Raro (Azul)</td><td>2</td><td>12–25</td><td>8–15</td><td>80–150</td></tr>
+        <tr class="epico"><td>Épico (Roxa)</td><td>1</td><td>25–40</td><td>15–25</td><td>150–300</td></tr>
+        <tr class="lendario"><td>Lendário (Dourada)</td><td>1</td><td>40–60</td><td>25–40</td><td>300–500</td></tr>
+    </table>
+</div>
+
+<div class="card">
+    <h2>⚡ Ordem de Prioridade para Registro</h2>
+    
+    <div class="prioridade-alta">
+        <strong>🔴 PRIORIDADE 1 — Registrar IMEDIATAMENTE</strong>
+        <ul>
+            <li>Itens <span class="lendario">Lendários</span> — qualquer peça</li>
+            <li>Itens <span class="epico">Épicos</span> — Arma e Arma Secundária primeiro</li>
+            <li>Conjuntos faltando apenas 1 peça</li>
+        </ul>
+    </div>
+
+    <div class="prioridade-media">
+        <strong>🟡 PRIORIDADE 2 — Registrar em seguida</strong>
+        <ul>
+            <li>Itens <span class="raro">Raros (Azuis)</span> — todas as peças</li>
+            <li>Épicos restantes: Armadura → Colar → Anel → Elmo → outros</li>
+            <li>Cinto e Selo (bônus extra acumulável)</li>
+        </ul>
+    </div>
+
+    <div class="prioridade-baixa">
+        <strong>🟢 PRIORIDADE 3 — Registrar por último</strong>
+        <ul>
+            <li>Itens <span class="incomum">Incomuns (Verdes)</span> — quando sobrarem</li>
+            <li>Itens <span class="comum">Comuns (Brancos)</span> — só para completar; desmonte o resto</li>
+        </ul>
+    </div>
+</div>
+
+<div class="card">
+    <h2>📝 SQL — Inserir Item no Codex</h2>
+    <pre><code>-- Adiciona 1 item ao array do usuário
+UPDATE "Geral"
+SET itens = itens || '{
+  "id_item": "arma_ferro_t10_001",
+  "nome": "Espada de Ferro — Tier 10",
+  "categoria": "arma_principal",
+  "tipo_peca": "Arma",
+  "raridade": "epico",
+  "tier": 10,
+  "cor": "roxa",
+  "nivel_aprimoramento": 12,
+  "registrado_em": "2026-10-02T18:30:00-03:00",
+  "bônus": {
+    "ataque": 38,
+    "defesa": 12,
+    "hp": 150,
+    "taxa_critico": 0.5
+  },
+  "conjunto": {
+    "nome_conjunto": "Guerreiro Dourado",
+    "id_conjunto": "conj_guerreiro_t10",
+    "completo": false
+  },
+  "prioridade_registro": 1,
+  "pode_descartar": true
+}'::jsonb,
+updated_at = CURRENT_TIMESTAMP
+WHERE login = 'usuario_exemplo';</code></pre>
+</div>
+
+<div class="card">
+    <h2>📊 SQL — Calcular Bônus Total</h2>
+    <pre><code>-- Soma todos os bônus do Codex do usuário
+SELECT
+  login,
+  ataque_base + COALESCE(SUM((item->'bônus'->>'ataque')::numeric), 0) AS ataque_total,
+  defesa_base + COALESCE(SUM((item->'bônus'->>'defesa')::numeric), 0) AS defesa_total,
+  hp_max + COALESCE(SUM((item->'bônus'->>'hp')::numeric), 0) AS hp_max_total,
+  COUNT(*) AS itens_registrados
+FROM "Geral",
+     jsonb_array_elements(itens) AS item
+WHERE login = 'usuario_exemplo'
+GROUP BY login;</code></pre>
+</div>
+
+<div class="card">
+    <h2>🔄 SQL — Atualizar Atributos do Usuário</h2>
+    <pre><code>-- Recalcula atk/def/hp com bônus do Codex
+WITH bonus AS (
+  SELECT
+    COALESCE(SUM((item->'bônus'->>'ataque')::integer), 0) AS atk,
+    COALESCE(SUM((item->'bônus'->>'defesa')::integer), 0) AS def,
+    COALESCE(SUM((item->'bônus'->>'hp')::integer), 0) AS hp
+  FROM "Geral", jsonb_array_elements(itens) AS item
+  WHERE login = 'usuario_exemplo'
+)
+UPDATE "Geral"
+SET
+  atk = ataque_base + (SELECT atk FROM bonus),
+  def = defesa_base + (SELECT def FROM bonus),
+  hp_max = hp_max + (SELECT hp FROM bonus),
+  updated_at = CURRENT_TIMESTAMP
+WHERE login = 'usuario_exemplo';</code></pre>
+</div>
+
+<div class="card">
+    <h2>📋 SQL — Listar Itens Registrados</h2>
+    <pre><code>-- Exibe todos os itens do Codex em ordem de prioridade
+SELECT
+  item->>'nome' AS nome,
+  item->>'tipo_peca' AS peca,
+  item->>'raridade' AS raridade,
+  item->>'tier' AS tier,
+  (item->'bônus'->>'ataque')::integer AS bonus_atk,
+  CASE WHEN (item->>'pode_descartar')::boolean 
+       THEN '✅ Pode descartar' 
+       ELSE '⚠️ Manter' END AS status
+FROM "Geral", jsonb_array_elements(itens) AS item
+WHERE login = 'usuario_exemplo'
+ORDER BY
+  (item->>'prioridade_registro')::integer ASC,
+  (item->>'tier')::integer DESC;</code></pre>
+</div>
+
+<div class="card">
+    <h2>💡 Regras de Negócio</h2>
+    <ul>
+        <li><strong>Registro permanente:</strong> nunca remover itens do array — apenas marcar <code>pode_descartar: true</code></li>
+        <li><strong>Atributos dinâmicos:</strong> <code>atk</code>, <code>def</code>, <code>hp_max</code> = valor base + soma de todos os bônus</li>
+        <li><strong>Conjuntos completos:</strong> quando todas as peças de um mesmo <code>id_conjunto</code> forem registradas → aplicar bônus extra de conjunto</li>
+        <li><strong>Conta única:</strong> o Codex é por conta, não por personagem</li>
+    </ul>
+</div>
+
+<footer>
+    📖 MIR4 — Codex + Integração Banco de Dados PostgreSQL | Atualizado: Outubro/2026<br>
+    Salve como <code>mir4-codex-bd.html</code> e abra no navegador
+</footer>
+
+</body>
+</html>

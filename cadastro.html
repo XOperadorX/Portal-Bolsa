@@ -492,613 +492,294 @@
  
     </div>
 
-    <script>
-        // ==================== CONFIGURAÇÕES ====================
-        const SUPABASE_URL = 'https://xrcxvizzdumcxbylmkvn.supabase.co';
-        const SUPABASE_KEY = 'sb_publishable_E-g3G3wW4EySbCsXLXp8KQ_FnmERMcD';
-        const TABELA = 'Geral';
+<script>
+    // ==================== CONFIGURAÇÕES ====================
+    const SUPABASE_URL = 'https://xrcxvizzdumcxbylmkvn.supabase.co';
+    // ⚠️ TROQUE pela SUA NOVA chave após rotacionar
+    const SUPABASE_KEY = 'sb_publishable_E-g3G3wW4EySbCsXLXp8KQ_FnmERMcD';
+    const TABELA = 'Geral';
 
-        const supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+    const supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
-        // ==================== ATRIBUTOS INICIAIS ====================
-        const ATRIBUTOS_INICIAIS = {
-            hp: 50, max_hp: 50, hp_atual: 50, hp_max: 50,
-            mp: 25, max_mp: 25, mp_atual: 25, mp_max: 25,
-            sm: 50, max_sm: 50, sm_atual: 50, sm_max: 50,
-            atk: 8, ataque_base: 8, def: 6, defesa_base: 6,
-            mag: 4, magia_base: 4,
-            nivel: 1, experiencia: 0, exp_proximo: 100, exp: 0, exp_next: 100
-        };
+    // ==================== SESSÃO LOCAL (24h) ====================
+    const SESSION_KEY = 'usuario_logado';
+    const SESSION_TIMESTAMP_KEY = 'session_timestamp';
+    const SESSION_DURATION = 24 * 60 * 60 * 1000;
 
-        // ==================== CARGO INICIAL ====================
-        // Código do cargo atribuído automaticamente no cadastro.
-        const CARGO_INICIAL_CODIGO = 'user';
+    function salvarSessao(usuario) {
+        localStorage.setItem(SESSION_KEY, JSON.stringify(usuario));
+        localStorage.setItem(SESSION_TIMESTAMP_KEY, Date.now().toString());
+    }
+    function sessaoValida() {
+        const ts = localStorage.getItem(SESSION_TIMESTAMP_KEY);
+        const u = localStorage.getItem(SESSION_KEY);
+        if (!ts || !u) return false;
+        const t = parseInt(ts, 10);
+        if (isNaN(t)) return false;
+        return (Date.now() - t) < SESSION_DURATION;
+    }
 
-        // ==================== SESSÃO LOCAL (24h) ====================
-        const SESSION_KEY = 'usuario_logado';
-        const SESSION_TIMESTAMP_KEY = 'session_timestamp';
-        const SESSION_DURATION = 24 * 60 * 60 * 1000;
+    // ==================== ELEMENTOS ====================
+    const formCadastro    = document.getElementById('formCadastro');
+    const loginInput      = document.getElementById('login');
+    const senhaInput      = document.getElementById('senha');
+    const confirmarInput  = document.getElementById('confirmarSenha');
+    const btnCadastrar    = document.getElementById('btnCadastrar');
+    const mensagemErro    = document.getElementById('mensagemErro');
+    const mensagemSucesso = document.getElementById('mensagemSucesso');
 
-        function salvarSessao(usuario) {
-            localStorage.setItem(SESSION_KEY, JSON.stringify(usuario));
-            localStorage.setItem(SESSION_TIMESTAMP_KEY, Date.now().toString());
-        }
-
-        function sessaoValida() {
-            const ts = localStorage.getItem(SESSION_TIMESTAMP_KEY);
-            const u = localStorage.getItem(SESSION_KEY);
-            if (!ts || !u) return false;
-            const t = parseInt(ts, 10);
-            if (isNaN(t)) return false;
-            return (Date.now() - t) < SESSION_DURATION;
-        }
-
-        // ==================== ELEMENTOS ====================
-        const formCadastro    = document.getElementById('formCadastro');
-        const loginInput      = document.getElementById('login');
-        const senhaInput      = document.getElementById('senha');
-        const confirmarInput  = document.getElementById('confirmarSenha');
-        const btnCadastrar    = document.getElementById('btnCadastrar');
-        const mensagemErro    = document.getElementById('mensagemErro');
-        const mensagemSucesso = document.getElementById('mensagemSucesso');
-
-        // ==================== MENU TOGGLE ====================
-        const menuToggle = document.getElementById('menuToggle');
-        const navLinks   = document.getElementById('navLinks');
-
-        if (menuToggle && navLinks) {
-            menuToggle.addEventListener('click', () => {
-                const aberto = navLinks.classList.toggle('active');
-                menuToggle.setAttribute('aria-expanded', aberto ? 'true' : 'false');
-                const icon = menuToggle.querySelector('i');
-                if (icon) {
-                    icon.className = aberto ? 'fas fa-times' : 'fas fa-bars';
+    // ==================== MENU TOGGLE ====================
+    const menuToggle = document.getElementById('menuToggle');
+    const navLinks   = document.getElementById('navLinks');
+    if (menuToggle && navLinks) {
+        menuToggle.addEventListener('click', () => {
+            const aberto = navLinks.classList.toggle('active');
+            menuToggle.setAttribute('aria-expanded', aberto ? 'true' : 'false');
+            const icon = menuToggle.querySelector('i');
+            if (icon) icon.className = aberto ? 'fas fa-times' : 'fas fa-bars';
+        });
+        navLinks.querySelectorAll('a').forEach(link => {
+            link.addEventListener('click', () => {
+                if (window.innerWidth <= 860) {
+                    navLinks.classList.remove('active');
+                    menuToggle.setAttribute('aria-expanded', 'false');
+                    const icon = menuToggle.querySelector('i');
+                    if (icon) icon.className = 'fas fa-bars';
                 }
             });
+        });
+    }
 
-            navLinks.querySelectorAll('a').forEach(link => {
-                link.addEventListener('click', () => {
-                    if (window.innerWidth <= 860) {
-                        navLinks.classList.remove('active');
-                        menuToggle.setAttribute('aria-expanded', 'false');
-                        const icon = menuToggle.querySelector('i');
-                        if (icon) icon.className = 'fas fa-bars';
-                    }
-                });
-            });
-        }
+    // ==================== MENSAGENS ====================
+    const MSG_APARELHO_DUPLICADO = 'Esse Aparelho já está cadastrado aqui. Não é possível repetir.';
+    function mostrarErro(m) {
+        mensagemErro.textContent = m;
+        mensagemErro.className = 'mensagem-erro show';
+        mensagemSucesso.className = 'mensagem-sucesso';
+    }
+    function mostrarSucesso(m) {
+        mensagemSucesso.textContent = m;
+        mensagemSucesso.className = 'mensagem-sucesso show';
+        mensagemErro.className = 'mensagem-erro';
+    }
+    function ocultarMensagens() {
+        mensagemErro.className = 'mensagem-erro';
+        mensagemSucesso.className = 'mensagem-sucesso';
+    }
 
-        // ==================== MENSAGENS ====================
-        const MSG_APARELHO_DUPLICADO = 'Esse Aparelho já está cadastrado aqui. Não é possível repetir.';
+    // ==================== SHA-256 ====================
+    async function sha256(texto) {
+        const enc = new TextEncoder().encode(texto);
+        const buf = await crypto.subtle.digest('SHA-256', enc);
+        return Array.from(new Uint8Array(buf)).map(b => b.toString(16).padStart(2,'0')).join('');
+    }
 
-        function mostrarErro(m) {
-            mensagemErro.textContent = m;
-            mensagemErro.className = 'mensagem-erro show';
-            mensagemSucesso.className = 'mensagem-sucesso';
-        }
+    // ==================== CONEXÃO ====================
+    async function verificarSupabase() {
+        try {
+            const { error } = await supabaseClient.from('cargos').select('id').limit(1);
+            return !error;
+        } catch { return false; }
+    }
 
-        function mostrarSucesso(m) {
-            mensagemSucesso.textContent = m;
-            mensagemSucesso.className = 'mensagem-sucesso show';
-            mensagemErro.className = 'mensagem-erro';
-        }
+    // ==================== VALIDAÇÕES ====================
+    function validarLogin(v) { return /^[a-zA-Z0-9_]{3,20}$/.test(v); }
 
-        function ocultarMensagens() {
-            mensagemErro.className = 'mensagem-erro';
-            mensagemSucesso.className = 'mensagem-sucesso';
-        }
-
-        // ==================== SHA-256 ====================
-        async function sha256(texto) {
-            const enc = new TextEncoder().encode(texto);
-            const buf = await crypto.subtle.digest('SHA-256', enc);
-            return Array.from(new Uint8Array(buf))
-                .map(b => b.toString(16).padStart(2, '0'))
-                .join('');
-        }
-
-        // ==================== CONEXÃO ====================
-        async function verificarSupabase() {
-            try {
-                const { error } = await supabaseClient.from(TABELA).select('id').limit(1);
-                if (error) {
-                    return false;
+    // ==================== FINGERPRINT (inalterado) ====================
+    async function gerarFingerprint() {
+        const partes = [];
+        try {
+            const canvas = document.createElement('canvas');
+            canvas.width = 220; canvas.height = 50;
+            const ctx = canvas.getContext('2d');
+            ctx.textBaseline = 'top';
+            ctx.font = '14px "Arial"';
+            ctx.fillStyle = '#f60';
+            ctx.fillRect(125, 1, 62, 20);
+            ctx.fillStyle = '#069';
+            ctx.fillText('Fingerprint🎮🔥', 2, 15);
+            ctx.fillStyle = 'rgba(102,204,0,0.7)';
+            ctx.fillText('Fingerprint🎮🔥', 4, 17);
+            partes.push('canvas:' + canvas.toDataURL());
+        } catch { partes.push('canvas:err'); }
+        try {
+            const canvas = document.createElement('canvas');
+            const gl = canvas.getContext('webgl') || canvas.getContext('experimental-webgl');
+            if (gl) {
+                const dbg = gl.getExtension('WEBGL_debug_renderer_info');
+                if (dbg) {
+                    partes.push('gl_vendor:' + gl.getParameter(dbg.UNMASKED_VENDOR_WEBGL));
+                    partes.push('gl_renderer:' + gl.getParameter(dbg.UNMASKED_RENDERER_WEBGL));
                 }
-                return true;
-            } catch {
-                return false;
+                partes.push('gl_version:' + gl.getParameter(gl.VERSION));
+                partes.push('gl_ext:' + (gl.getSupportedExtensions() || []).sort().join(','));
             }
-        }
-
-        // ==================== VALIDAÇÕES ====================
-        function validarLogin(v) {
-            return /^[a-zA-Z0-9_]{3,20}$/.test(v);
-        }
-
-        // ==================== FINGERPRINT DO NAVEGADOR ====================
-        async function gerarFingerprint() {
-            const partes = [];
-
-            // 1) Canvas fingerprint
-            try {
-                const canvas = document.createElement('canvas');
-                canvas.width = 220; canvas.height = 50;
-                const ctx = canvas.getContext('2d');
-                ctx.textBaseline = 'top';
-                ctx.font = '14px "Arial"';
-                ctx.fillStyle = '#f60';
-                ctx.fillRect(125, 1, 62, 20);
-                ctx.fillStyle = '#069';
-                ctx.fillText('Fingerprint🎮🔥', 2, 15);
-                ctx.fillStyle = 'rgba(102,204,0,0.7)';
-                ctx.fillText('Fingerprint🎮🔥', 4, 17);
-                partes.push('canvas:' + canvas.toDataURL());
-            } catch { partes.push('canvas:err'); }
-
-            // 2) WebGL fingerprint
-            try {
-                const canvas = document.createElement('canvas');
-                const gl = canvas.getContext('webgl') || canvas.getContext('experimental-webgl');
-                if (gl) {
-                    const dbg = gl.getExtension('WEBGL_debug_renderer_info');
-                    if (dbg) {
-                        partes.push('gl_vendor:' + gl.getParameter(dbg.UNMASKED_VENDOR_WEBGL));
-                        partes.push('gl_renderer:' + gl.getParameter(dbg.UNMASKED_RENDERER_WEBGL));
-                    }
-                    partes.push('gl_version:' + gl.getParameter(gl.VERSION));
-                    partes.push('gl_ext:' + (gl.getSupportedExtensions() || []).sort().join(','));
-                }
-            } catch { partes.push('gl:err'); }
-
-            // 3) UA + Plataforma
-            partes.push('ua:' + navigator.userAgent);
-            partes.push('platform:' + (navigator.platform || ''));
-            partes.push('vendor:' + (navigator.vendor || ''));
-
-            // 4) Idioma
-            partes.push('lang:' + (navigator.language || ''));
-            partes.push('langs:' + (navigator.languages || []).join(','));
-
-            // 5) Timezone
-            try {
-                partes.push('tz:' + Intl.DateTimeFormat().resolvedOptions().timeZone);
-                partes.push('tz_off:' + new Date().getTimezoneOffset());
-            } catch { partes.push('tz:err'); }
-
-            // 6) Tela
-            partes.push('screen:' + screen.width + 'x' + screen.height);
-            partes.push('avail:' + screen.availWidth + 'x' + screen.availHeight);
-            partes.push('colorDepth:' + screen.colorDepth);
-            partes.push('pixelRatio:' + (window.devicePixelRatio || 1));
-
-            // 7) Hardware
-            partes.push('cores:' + (navigator.hardwareConcurrency || 0));
-            partes.push('mem:' + (navigator.deviceMemory || 0));
-            partes.push('touch:' + (navigator.maxTouchPoints || 0));
-
-            // 8) Plugins
-            try {
-                const plugins = Array.from(navigator.plugins || [])
-                    .map(p => p.name).sort().join(',');
-                partes.push('plugins:' + plugins);
-            } catch {}
-
-            // 9) Detecção de fontes instaladas
-            try {
-                const baseFonts = ['monospace', 'sans-serif', 'serif'];
-                const fontList = [
-                    'Arial','Arial Black','Comic Sans MS','Courier New','Georgia',
-                    'Impact','Lucida Console','Lucida Sans Unicode','Palatino Linotype',
-                    'Tahoma','Times New Roman','Trebuchet MS','Verdana','Webdings',
-                    'Calibri','Cambria','Candara','Consolas','Constantia','Corbel',
-                    'Franklin Gothic Medium','Gabriola','Leelawadee UI','Malgun Gothic',
-                    'Microsoft Sans Serif','MS Gothic','MV Boli','Nirmala UI','Segoe UI',
-                    'Segoe UI Emoji','SimSun','Sylfaen','Symbol','Wingdings','Yu Gothic'
-                ];
-                const span = document.createElement('span');
-                span.style.position = 'absolute';
-                span.style.left = '-9999px';
-                span.style.fontSize = '72px';
-                span.textContent = 'mmmmmmmmmmlli';
-                document.body.appendChild(span);
-
-                const baseSizes = {};
+        } catch { partes.push('gl:err'); }
+        partes.push('ua:' + navigator.userAgent);
+        partes.push('platform:' + (navigator.platform || ''));
+        partes.push('vendor:' + (navigator.vendor || ''));
+        partes.push('lang:' + (navigator.language || ''));
+        partes.push('langs:' + (navigator.languages || []).join(','));
+        try {
+            partes.push('tz:' + Intl.DateTimeFormat().resolvedOptions().timeZone);
+            partes.push('tz_off:' + new Date().getTimezoneOffset());
+        } catch { partes.push('tz:err'); }
+        partes.push('screen:' + screen.width + 'x' + screen.height);
+        partes.push('avail:' + screen.availWidth + 'x' + screen.availHeight);
+        partes.push('colorDepth:' + screen.colorDepth);
+        partes.push('pixelRatio:' + (window.devicePixelRatio || 1));
+        partes.push('cores:' + (navigator.hardwareConcurrency || 0));
+        partes.push('mem:' + (navigator.deviceMemory || 0));
+        partes.push('touch:' + (navigator.maxTouchPoints || 0));
+        try {
+            const plugins = Array.from(navigator.plugins || []).map(p => p.name).sort().join(',');
+            partes.push('plugins:' + plugins);
+        } catch {}
+        try {
+            const baseFonts = ['monospace', 'sans-serif', 'serif'];
+            const fontList = ['Arial','Arial Black','Comic Sans MS','Courier New','Georgia','Impact','Lucida Console','Lucida Sans Unicode','Palatino Linotype','Tahoma','Times New Roman','Trebuchet MS','Verdana','Webdings','Calibri','Cambria','Candara','Consolas','Constantia','Corbel','Franklin Gothic Medium','Gabriola','Leelawadee UI','Malgun Gothic','Microsoft Sans Serif','MS Gothic','MV Boli','Nirmala UI','Segoe UI','Segoe UI Emoji','SimSun','Sylfaen','Symbol','Wingdings','Yu Gothic'];
+            const span = document.createElement('span');
+            span.style.position = 'absolute';
+            span.style.left = '-9999px';
+            span.style.fontSize = '72px';
+            span.textContent = 'mmmmmmmmmmlli';
+            document.body.appendChild(span);
+            const baseSizes = {};
+            for (const bf of baseFonts) {
+                span.style.fontFamily = bf;
+                baseSizes[bf] = span.offsetWidth + 'x' + span.offsetHeight;
+            }
+            const detectadas = [];
+            for (const f of fontList) {
+                let enc = false;
                 for (const bf of baseFonts) {
-                    span.style.fontFamily = bf;
-                    baseSizes[bf] = span.offsetWidth + 'x' + span.offsetHeight;
+                    span.style.fontFamily = `'${f}',${bf}`;
+                    const tam = span.offsetWidth + 'x' + span.offsetHeight;
+                    if (tam !== baseSizes[bf]) { enc = true; break; }
                 }
-                const detectadas = [];
-                for (const f of fontList) {
-                    let encontrada = false;
-                    for (const bf of baseFonts) {
-                        span.style.fontFamily = `'${f}',${bf}`;
-                        const tam = span.offsetWidth + 'x' + span.offsetHeight;
-                        if (tam !== baseSizes[bf]) { encontrada = true; break; }
-                    }
-                    if (encontrada) detectadas.push(f);
-                }
-                document.body.removeChild(span);
-                partes.push('fonts:' + detectadas.join(','));
-            } catch {}
-
-            const raw = partes.join('||');
-            return await sha256('fp::' + raw);
-        }
-
-        // ==================== IP PÚBLICO ====================
-        async function obterIP() {
-            try {
-                const r = await fetch('https://api.ipify.org?format=json');
-                const j = await r.json();
-                return j.ip || 'desconhecido';
-            } catch {
-                return 'desconhecido';
+                if (enc) detectadas.push(f);
             }
-        }
+            document.body.removeChild(span);
+            partes.push('fonts:' + detectadas.join(','));
+        } catch {}
+        return await sha256('fp::' + partes.join('||'));
+    }
 
-        // ==================== MAC VIA WEBRTC ====================
-        function obterMAC() {
-            return new Promise((resolve) => {
-                let macEncontrado = 'desconhecido';
-                let finalizado = false;
+    // ==================== IP ====================
+    async function obterIP() {
+        try {
+            const r = await fetch('https://api.ipify.org?format=json');
+            const j = await r.json();
+            return j.ip || 'desconhecido';
+        } catch { return 'desconhecido'; }
+    }
 
-                const finalizar = (valor) => {
-                    if (finalizado) return;
-                    finalizado = true;
-                    resolve(valor);
+    // ==================== MAC ====================
+    function obterMAC() {
+        return new Promise((resolve) => {
+            let mac = 'desconhecido';
+            let fim = false;
+            const finalizar = (v) => { if (fim) return; fim = true; resolve(v); };
+            const t = setTimeout(() => finalizar(mac), 2500);
+            try {
+                const pc = new RTCPeerConnection({ iceServers: [{ urls: 'stun:stun.l.google.com:19302' }] });
+                pc.createDataChannel('');
+                pc.onicecandidate = (e) => {
+                    if (!e.candidate) return;
+                    const m = e.candidate.candidate.match(/([0-9a-f]{2}[-:]){5}[0-9a-f]{2}/i);
+                    if (m && mac === 'desconhecido') mac = m[0].toUpperCase();
                 };
+                pc.createOffer().then(o => pc.setLocalDescription(o)).catch(() => {});
+                setTimeout(() => { clearTimeout(t); try { pc.close(); } catch {} finalizar(mac); }, 2000);
+            } catch { clearTimeout(t); finalizar('desconhecido'); }
+        });
+    }
 
-                const timeout = setTimeout(() => finalizar(macEncontrado), 2500);
-
-                try {
-                    const pc = new RTCPeerConnection({
-                        iceServers: [{ urls: 'stun:stun.l.google.com:19302' }]
-                    });
-
-                    pc.createDataChannel('');
-
-                    pc.onicecandidate = (e) => {
-                        if (!e.candidate) return;
-                        const cand = e.candidate.candidate;
-                        const match = cand.match(/([0-9a-f]{2}[-:]){5}[0-9a-f]{2}/i);
-                        if (match && macEncontrado === 'desconhecido') {
-                            macEncontrado = match[0].toUpperCase();
-                        }
-                    };
-
-                    pc.createOffer()
-                        .then(o => pc.setLocalDescription(o))
-                        .catch(() => {});
-
-                    setTimeout(() => {
-                        clearTimeout(timeout);
-                        try { pc.close(); } catch {}
-                        finalizar(macEncontrado);
-                    }, 2000);
-
-                } catch {
-                    clearTimeout(timeout);
-                    finalizar('desconhecido');
-                }
+    // ==================== CADASTRO VIA RPC ====================
+    async function fazerCadastro(dados) {
+        try {
+            const { data, error } = await supabaseClient.rpc('criar_usuario', {
+                p_login:       dados.login,
+                p_senha:       dados.senha,
+                p_fingerprint: dados.fingerprint,
+                p_mac:         dados.mac_address,
+                p_ip:          dados.ip_address
             });
-        }
-
-        // ==================== CARGO ====================
-        // Busca o id do cargo pelo código. Se não existir, tenta criar.
-        async function obterCargoId(codigo) {
-            // 1) Tenta buscar
-            const { data, error } = await supabaseClient
-                .from('cargos')
-                .select('id, codigo')
-                .eq('codigo', codigo)
-                .limit(1)
-                .maybeSingle();
 
             if (error) {
-                console.error('Erro ao buscar cargo:', error);
-                return null;
-            }
-            if (data) return data.id;
-
-            // 2) Cargo não existe? Tenta criar um padrão.
-            console.warn(`Cargo "${codigo}" não encontrado. Tentando criar...`);
-            const { data: novoCargo, error: erroInsertCargo } = await supabaseClient
-                .from('cargos')
-                .insert({
-                    codigo: codigo,
-                    nome: 'Usuário',
-                    nivel: 0,
-                    cor: '#cccccc',
-                    is_vip: false
-                })
-                .select('id')
-                .single();
-
-            if (erroInsertCargo) {
-                console.error('Erro ao criar cargo padrão:', erroInsertCargo);
-                return null;
-            }
-            return novoCargo.id;
-        }
-
-        // ==================== CADASTRO ====================
-        async function fazerCadastro(dados) {
-            try {
-                // 1) Login já existe?
-                const { data: existeLogin, error: erroLogin } = await supabaseClient
-                    .from(TABELA)
-                    .select('id')
-                    .eq('login', dados.login)
-                    .limit(1)
-                    .maybeSingle();
-
-                if (erroLogin) {
-                    console.error('Erro ao verificar login:', erroLogin);
-                    mostrarErro('❌ Erro ao verificar login. Tente novamente.');
-                    return false;
-                }
-                if (existeLogin) {
-                    mostrarErro('❌ Este login já está em uso.');
-                    return false;
-                }
-
-                // 2) Fingerprint já cadastrado?
-                const { data: existeFP, error: erroFP } = await supabaseClient
-                    .from(TABELA)
-                    .select('id')
-                    .eq('fingerprint', dados.fingerprint)
-                    .limit(1)
-                    .maybeSingle();
-
-                if (erroFP) {
-                    console.error('Erro ao verificar fingerprint:', erroFP);
-                    mostrarErro('❌ Erro ao verificar dispositivo. Tente novamente.');
-                    return false;
-                }
-                if (existeFP) {
-                    mostrarErro(MSG_APARELHO_DUPLICADO);
-                    return false;
-                }
-
-                // 3) MAC + IP já cadastrado? (reforço secundário)
-                if (dados.mac_address !== 'desconhecido' && dados.ip_address !== 'desconhecido') {
-                    const { data: existeDisp, error: erroDisp } = await supabaseClient
-                        .from(TABELA)
-                        .select('id')
-                        .eq('mac_address', dados.mac_address)
-                        .eq('ip_address', dados.ip_address)
-                        .limit(1)
-                        .maybeSingle();
-
-                    if (erroDisp) {
-                        console.error('Erro ao verificar dispositivo:', erroDisp);
-                        mostrarErro('❌ Erro ao verificar dispositivo. Tente novamente.');
-                        return false;
-                    }
-                    if (existeDisp) {
-                        mostrarErro(MSG_APARELHO_DUPLICADO);
-                        return false;
-                    }
-                }
-
-                // 4) Senha em texto puro (apenas para testes)
-                // ⚠️ Em produção use bcrypt/Supabase Auth.
-
-                // 5) Novo usuário
-                const novoUsuario = {
-                    login: dados.login,
-                    senha: dados.senha,
-                    fingerprint: dados.fingerprint,
-                    mac_address: dados.mac_address,
-                    ip_address: dados.ip_address,
-                    saldo: 0,
-                    saldo_poupanca: 0,
-                    proventos_pendentes: 0,
-                    carteira: {},
-                    preco_medio_compra: {},
-                    proventos_por_ativo: {},
-                    seeds: 0, planted: 0, harvested: 0, buckets: 0, plot_data: [],
-                    nivel: ATRIBUTOS_INICIAIS.nivel,
-                    experiencia: ATRIBUTOS_INICIAIS.experiencia,
-                    exp_proximo: ATRIBUTOS_INICIAIS.exp_proximo,
-                    exp: ATRIBUTOS_INICIAIS.exp,
-                    exp_next: ATRIBUTOS_INICIAIS.exp_next,
-                    hp: ATRIBUTOS_INICIAIS.hp,
-                    max_hp: ATRIBUTOS_INICIAIS.max_hp,
-                    hp_atual: ATRIBUTOS_INICIAIS.hp_atual,
-                    hp_max: ATRIBUTOS_INICIAIS.hp_max,
-                    mp: ATRIBUTOS_INICIAIS.mp,
-                    max_mp: ATRIBUTOS_INICIAIS.max_mp,
-                    mp_atual: ATRIBUTOS_INICIAIS.mp_atual,
-                    mp_max: ATRIBUTOS_INICIAIS.mp_max,
-                    sm: ATRIBUTOS_INICIAIS.sm,
-                    max_sm: ATRIBUTOS_INICIAIS.max_sm,
-                    sm_atual: ATRIBUTOS_INICIAIS.sm_atual,
-                    sm_max: ATRIBUTOS_INICIAIS.sm_max,
-                    atk: ATRIBUTOS_INICIAIS.atk,
-                    ataque_base: ATRIBUTOS_INICIAIS.ataque_base,
-                    def: ATRIBUTOS_INICIAIS.def,
-                    defesa_base: ATRIBUTOS_INICIAIS.defesa_base,
-                    mag: ATRIBUTOS_INICIAIS.mag,
-                    magia_base: ATRIBUTOS_INICIAIS.magia_base,
-                    itens: [],
-                    historico: [],
-                    historico_trocas: [],
-                    codigos_resgate: [],
-                    codigos_usados: [],
-                    meta: {},
-                    fazendinha_dados: {},
-                    cadeado: false,
-                    bloqueado: false,
-                    stock: 0,
-                    total_upgrades: 0,
-                    fert_qty: 0,
-                    potion_qty: 0,
-                    mumu: 0
-                };
-
-                const { data: inserido, error: erroInsert } = await supabaseClient
-                    .from(TABELA)
-                    .insert(novoUsuario)
-                    .select('id, login, saldo, saldo_poupanca, carteira, nivel, experiencia, exp_proximo, hp, max_hp, hp_atual, hp_max, mp, max_mp, mp_atual, mp_max, sm, max_sm, sm_atual, sm_max, atk, ataque_base, def, defesa_base, mag, magia_base, exp, exp_next')
-                    .single();
-
-                // Tratamento de erro do insert
-                if (erroInsert) {
-                    console.error('Erro ao cadastrar:', erroInsert);
-
-                    const msg  = (erroInsert.message || '').toLowerCase();
-                    const code = erroInsert.code || '';
-
-                    const ehDuplicidade =
-                        code === '23505' ||
-                        msg.includes('duplicate key') ||
-                        msg.includes('unique constraint') ||
-                        msg.includes('idx_geral_mac') ||
-                        msg.includes('idx_geral_fingerprint') ||
-                        msg.includes('idx_geral_ip');
-
-                    if (ehDuplicidade) {
-                        mostrarErro(MSG_APARELHO_DUPLICADO);
-                        return false;
-                    }
-
-                    mostrarErro('❌ ' + (erroInsert.message || 'Erro ao criar conta.'));
-                    return false;
-                }
-
-                // 6) Atribui cargo "user" ao novo usuário (se ainda não tiver)
-                try {
-                    const cargoId = await obterCargoId(CARGO_INICIAL_CODIGO);
-
-                    if (cargoId) {
-                        const { error: erroCargo } = await supabaseClient
-                            .from('usuario_cargos')
-                            .upsert(
-                                {
-                                    usuario_id: inserido.id,
-                                    cargo_id: cargoId,
-                                    ativo: true,
-                                    inicio: new Date().toISOString()
-                                },
-                                {
-                                    onConflict: 'usuario_id,cargo_id',
-                                    ignoreDuplicates: false
-                                }
-                            );
-
-                        if (erroCargo) {
-                            console.error('Erro ao atribuir cargo:', erroCargo);
-                            // Não bloqueia o cadastro; o usuário já foi criado.
-                        } else {
-                            console.log(`✅ Cargo "${CARGO_INICIAL_CODIGO}" atribuído ao usuário ${inserido.id}.`);
-                        }
-                    } else {
-                        console.warn('⚠️ Cargo inicial não encontrado/criado. Usuário criado sem cargo.');
-                    }
-                } catch (eCargo) {
-                    console.error('Exceção ao atribuir cargo:', eCargo);
-                    // Não bloqueia o cadastro.
-                }
-
-                // 7) Sessão
-                const usuarioSessao = {
-                    id: inserido.id,
-                    login: inserido.login,
-                    saldo: inserido.saldo || 0,
-                    saldo_poupanca: inserido.saldo_poupanca || 0,
-                    carteira: inserido.carteira || {},
-                    nivel: inserido.nivel ?? ATRIBUTOS_INICIAIS.nivel,
-                    experiencia: inserido.experiencia ?? ATRIBUTOS_INICIAIS.experiencia,
-                    exp_proximo: inserido.exp_proximo ?? ATRIBUTOS_INICIAIS.exp_proximo,
-                    exp: inserido.exp ?? ATRIBUTOS_INICIAIS.exp,
-                    exp_next: inserido.exp_next ?? ATRIBUTOS_INICIAIS.exp_next,
-                    hp: inserido.hp ?? ATRIBUTOS_INICIAIS.hp,
-                    max_hp: inserido.max_hp ?? ATRIBUTOS_INICIAIS.max_hp,
-                    hp_atual: inserido.hp_atual ?? ATRIBUTOS_INICIAIS.hp_atual,
-                    hp_max: inserido.hp_max ?? ATRIBUTOS_INICIAIS.hp_max,
-                    mp: inserido.mp ?? ATRIBUTOS_INICIAIS.mp,
-                    max_mp: inserido.max_mp ?? ATRIBUTOS_INICIAIS.max_mp,
-                    mp_atual: inserido.mp_atual ?? ATRIBUTOS_INICIAIS.mp_atual,
-                    mp_max: inserido.mp_max ?? ATRIBUTOS_INICIAIS.mp_max,
-                    sm: inserido.sm ?? ATRIBUTOS_INICIAIS.sm,
-                    max_sm: inserido.max_sm ?? ATRIBUTOS_INICIAIS.max_sm,
-                    sm_atual: inserido.sm_atual ?? ATRIBUTOS_INICIAIS.sm_atual,
-                    sm_max: inserido.sm_max ?? ATRIBUTOS_INICIAIS.sm_max,
-                    atk: inserido.atk ?? ATRIBUTOS_INICIAIS.atk,
-                    ataque_base: inserido.ataque_base ?? ATRIBUTOS_INICIAIS.ataque_base,
-                    def: inserido.def ?? ATRIBUTOS_INICIAIS.def,
-                    defesa_base: inserido.defesa_base ?? ATRIBUTOS_INICIAIS.defesa_base,
-                    mag: inserido.mag ?? ATRIBUTOS_INICIAIS.mag,
-                    magia_base: inserido.magia_base ?? ATRIBUTOS_INICIAIS.magia_base
-                };
-                salvarSessao(usuarioSessao);
-
-                mostrarSucesso('✅ Conta criada! Redirecionando...');
-                setTimeout(() => { window.location.href = 'dashboard.html'; }, 1200);
-                return true;
-
-            } catch (e) {
-                console.error('Erro inesperado:', e);
-                mostrarErro('❌ ' + (e.message || 'Erro ao criar conta. Tente novamente.'));
+                console.error('Erro RPC criar_usuario:', error);
+                mostrarErro('❌ ' + (error.message || 'Erro ao criar conta.'));
                 return false;
             }
+
+            if (!data || !data.ok) {
+                const msg = (data && data.erro) ? data.erro : 'Erro ao criar conta.';
+                if (msg.toLowerCase().includes('aparelho') || msg.toLowerCase().includes('cadastrado')) {
+                    mostrarErro(MSG_APARELHO_DUPLICADO);
+                } else {
+                    mostrarErro('❌ ' + msg);
+                }
+                return false;
+            }
+
+            // Sucesso — cria sessão local
+            const usuarioSessao = {
+                id:    data.id,
+                login: data.login,
+                saldo: 0,
+                saldo_poupanca: 0,
+                carteira: {}
+            };
+            salvarSessao(usuarioSessao);
+
+            mostrarSucesso('✅ Conta criada! Redirecionando...');
+            setTimeout(() => { window.location.href = 'dashboard.html'; }, 1200);
+            return true;
+
+        } catch (e) {
+            console.error('Erro inesperado:', e);
+            mostrarErro('❌ ' + (e.message || 'Erro ao criar conta. Tente novamente.'));
+            return false;
         }
+    }
 
-        // ==================== EVENTOS ====================
-        formCadastro.addEventListener('submit', async (e) => {
-            e.preventDefault();
-            ocultarMensagens();
+    // ==================== EVENTOS ====================
+    formCadastro.addEventListener('submit', async (e) => {
+        e.preventDefault();
+        ocultarMensagens();
 
-            const login    = loginInput.value.trim().toLowerCase();
-            const senha    = senhaInput.value.trim();
-            const confirma = confirmarInput.value.trim();
+        const login    = loginInput.value.trim().toLowerCase();
+        const senha    = senhaInput.value.trim();
+        const confirma = confirmarInput.value.trim();
 
-            if (!login || !senha || !confirma) {
-                mostrarErro('⚠️ Preencha todos os campos!');
-                return;
-            }
-            if (!validarLogin(login)) {
-                mostrarErro('⚠️ Login inválido. Use 3 a 20 caracteres (letras, números e _).');
-                return;
-            }
-            if (senha.length < 6) {
-                mostrarErro('⚠️ A senha deve ter pelo menos 6 caracteres.');
-                return;
-            }
-            if (senha !== confirma) {
-                mostrarErro('⚠️ As senhas não coincidem.');
-                return;
-            }
+        if (!login || !senha || !confirma) { mostrarErro('⚠️ Preencha todos os campos!'); return; }
+        if (!validarLogin(login)) { mostrarErro('⚠️ Login inválido. Use 3 a 20 caracteres (letras, números e _).'); return; }
+        if (senha.length < 6) { mostrarErro('⚠️ A senha deve ter pelo menos 6 caracteres.'); return; }
+        if (senha !== confirma) { mostrarErro('⚠️ As senhas não coincidem.'); return; }
 
-            const online = await verificarSupabase();
-            if (!online) {
-                mostrarErro('❌ Sem conexão com o banco de dados.');
-                return;
-            }
+        const online = await verificarSupabase();
+        if (!online) { mostrarErro('❌ Sem conexão com o banco de dados.'); return; }
 
-            btnCadastrar.disabled = true;
-            btnCadastrar.innerHTML = '<span class="loading"></span> Verificando dispositivo...';
+        btnCadastrar.disabled = true;
+        btnCadastrar.innerHTML = '<span class="loading"></span> Verificando dispositivo...';
 
-            // Coleta oculta
-            const fingerprint = await gerarFingerprint();
-            const mac_address = await obterMAC();
-            const ip_address  = await obterIP();
+        const fingerprint = await gerarFingerprint();
+        const mac_address = await obterMAC();
+        const ip_address  = await obterIP();
 
-            btnCadastrar.innerHTML = '<span class="loading"></span> Criando conta...';
+        btnCadastrar.innerHTML = '<span class="loading"></span> Criando conta...';
 
-            await fazerCadastro({ login, senha, fingerprint, mac_address, ip_address });
+        await fazerCadastro({ login, senha, fingerprint, mac_address, ip_address });
 
-            btnCadastrar.disabled = false;
-            btnCadastrar.innerHTML = '📝 Criar conta';
-        });
+        btnCadastrar.disabled = false;
+        btnCadastrar.innerHTML = '📝 Criar conta';
+    });
 
-        // ==================== INICIALIZAÇÃO ====================
-        verificarSupabase();
-
-        if (sessaoValida()) {
-            window.location.href = 'dashboard.html';
-        }
-    </script>
+    // ==================== INICIALIZAÇÃO ====================
+    verificarSupabase();
+    if (sessaoValida()) {
+        window.location.href = 'dashboard.html';
+    }
+</script>
 </body>
 </html>

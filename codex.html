@@ -1,0 +1,864 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MM Quase Tudo — Codex</title>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
+        :root {
+            --fundo-escuro: #0f1419;
+            --fundo-card: #1a1f2e;
+            --dourado: #ffd700;
+            --azul-claro: #66b2ff;
+            --verde: #4cd964;
+            --azul: #0099ff;
+            --roxo: #b066ff;
+            --vermelho: #ff6b6b;
+            --cinza: #888;
+            --borda: #2c3442;
+        }
+        body { background: linear-gradient(135deg, #0f1419 0%, #1a1f2e 100%); min-height: 100vh; color: #e6e6e6; padding: 20px; }
+        .container { max-width: 1200px; margin: 0 auto; }
+
+        /* ========== TOPBAR / NAVEGAÇÃO ========== */
+        .topbar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: rgba(18, 21, 32, 0.85);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(0, 240, 255, 0.15);
+            padding: 10px 18px;
+            border-radius: 14px;
+            margin-bottom: 20px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.4);
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+
+        .topbar-brand {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-weight: 800;
+            font-size: 1.05em;
+            color: var(--dourado);
+            letter-spacing: 1px;
+            text-shadow: 0 0 10px rgba(255,215,0,0.3);
+        }
+
+        .topbar-actions {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
+        .btn-voltar {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 9px 18px;
+            background: linear-gradient(135deg, #00f0ff, #7000ff);
+            color: #fff;
+            border: none;
+            border-radius: 30px;
+            font-weight: 700;
+            font-size: 0.9em;
+            cursor: pointer;
+            text-decoration: none;
+            transition: all 0.25s;
+            box-shadow: 0 0 12px rgba(0, 240, 255, 0.35);
+        }
+
+        .btn-voltar:hover {
+            transform: translateY(-2px) scale(1.03);
+            box-shadow: 0 0 22px rgba(0, 240, 255, 0.7);
+        }
+
+        .topbar-user {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            background: rgba(0, 240, 255, 0.08);
+            padding: 6px 14px;
+            border-radius: 30px;
+            border: 1px solid rgba(0, 240, 255, 0.2);
+            font-size: 0.85em;
+            font-weight: 600;
+            color: #c8d0e0;
+        }
+
+        header { text-align: center; margin-bottom: 25px; }
+        h1 { color: var(--dourado); font-size: 2em; text-shadow: 0 0 10px rgba(255,215,0,0.3); }
+        .subtitulo { color: var(--cinza); margin-top: 5px; }
+
+        .abas { display: flex; gap: 10px; margin-bottom: 20px; border-bottom: 2px solid var(--borda); padding-bottom: 0; flex-wrap: wrap; }
+        .aba { padding: 12px 24px; background: transparent; border: none; color: var(--cinza); cursor: pointer; font-size: 1em; border-bottom: 3px solid transparent; transition: all 0.2s; }
+        .aba.ativa { color: var(--dourado); border-bottom: 3px solid var(--dourado); }
+        .aba:hover { color: #fff; }
+
+        .grade { display: grid; grid-template-columns: 1fr; gap: 20px; }
+
+        .painel { background: var(--fundo-card); border-radius: 12px; border: 1px solid var(--borda); padding: 22px; box-shadow: 0 4px 15px rgba(0,0,0,0.4); }
+        .painel h2 { color: var(--azul-claro); margin-bottom: 18px; font-size: 1.2em; border-bottom: 1px solid var(--borda); padding-bottom: 10px; }
+        .painel h3 { color: var(--verde); margin: 20px 0 10px; font-size: 1em; }
+
+        .item-codex {
+            background: #252b3b; border-radius: 8px; padding: 12px; margin-bottom: 10px; border-left: 4px solid;
+            transition: transform 0.2s;
+        }
+        .item-codex:hover { transform: translateY(-2px); }
+        .item-comum { border-color: #fff; }
+        .item-incomum { border-color: var(--verde); }
+        .item-raro { border-color: var(--azul); }
+        .item-epico { border-color: var(--roxo); }
+        .item-lendario { border-color: var(--dourado); box-shadow: 0 0 8px rgba(255,215,0,0.2); }
+        .item-registrado { opacity: 0.85; }
+        .item-registrado::after { content: "✓"; color: var(--verde); font-weight: bold; float: right; font-size: 1.2em; }
+
+        .etiqueta { display: inline-block; padding: 2px 8px; border-radius: 10px; font-size: 0.75em; margin-right: 5px; }
+        .et-comum { background: #444; color: #fff; }
+        .et-incomum { background: rgba(76,217,100,0.2); color: var(--verde); }
+        .et-raro { background: rgba(0,153,255,0.2); color: var(--azul); }
+        .et-epico { background: rgba(176,102,255,0.2); color: var(--roxo); }
+        .et-lendario { background: rgba(255,215,0,0.2); color: var(--dourado); }
+
+        .barra-progresso { height: 10px; background: #2c3442; border-radius: 5px; overflow: hidden; margin: 10px 0; }
+        .barra-preenchida { height: 100%; border-radius: 5px; transition: width 0.4s ease; }
+
+        .grade-bonus { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; margin: 15px 0; }
+        @media (max-width: 700px) { .grade-bonus { grid-template-columns: repeat(2, 1fr); } }
+        .bonus-card { background: #252b3b; padding: 15px 10px; border-radius: 8px; text-align: center; }
+        .bonus-valor { font-size: 1.5em; font-weight: bold; color: var(--dourado); margin-top: 5px; }
+
+        .aviso { padding: 12px 15px; border-radius: 6px; margin: 12px 0; font-size: 0.9em; line-height: 1.5; }
+        .aviso-sucesso { background: rgba(76,217,100,0.1); border-left: 3px solid var(--verde); color: #b8f0c8; }
+        .aviso-info { background: rgba(102,178,255,0.1); border-left: 3px solid var(--azul-claro); color: #b8d8f0; }
+        .aviso-erro { background: rgba(255,107,107,0.1); border-left: 3px solid var(--vermelho); color: #f0b8b8; }
+
+        .linha { display: flex; justify-content: space-between; padding: 7px 0; border-bottom: 1px solid #2c3442; font-size: 0.9em; }
+        .info-pequena { font-size: 0.8em; color: var(--cinza); margin-top: 8px; line-height: 1.5; }
+        .destaque { background: rgba(255,215,0,0.08); border-left: 3px solid var(--dourado); padding: 12px 15px; margin: 15px 0; border-radius: 0 6px 6px 0; }
+        footer { text-align: center; margin-top: 40px; color: var(--cinza); font-size: 0.9em; padding-top: 20px; border-top: 1px solid var(--borda); }
+        .oculto { display: none !important; }
+
+        /* ========== SEÇÃO DE ATIVOS DA BOLSA ========== */
+        .bolsa-tabs { display: flex; gap: 8px; margin-bottom: 15px; flex-wrap: wrap; }
+        .bolsa-tab {
+            padding: 8px 16px; background: #252b3b; border: 1px solid var(--borda);
+            border-radius: 20px; color: var(--cinza); cursor: pointer; font-size: 0.85em; transition: all 0.2s;
+        }
+        .bolsa-tab.ativa { background: rgba(245, 158, 11, 0.15); border-color: #f59e0b; color: #f59e0b; font-weight: bold; }
+        .bolsa-tab:hover { border-color: #f59e0b; color: #f59e0b; }
+
+        .bolsa-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 12px; }
+
+        .bolsa-item {
+            background: #252b3b; border-radius: 8px; padding: 14px; border-left: 4px solid #f59e0b;
+            transition: all 0.2s; position: relative;
+        }
+        .bolsa-item:hover { transform: translateY(-3px); box-shadow: 0 6px 20px rgba(245, 158, 11, 0.2); }
+
+        .bolsa-item-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; }
+        .bolsa-item-nome { font-weight: bold; color: #fff; font-size: 0.95em; }
+        .bolsa-item-tipo {
+            font-size: 0.7em; padding: 2px 8px; border-radius: 10px;
+            background: rgba(245, 158, 11, 0.2); color: #f59e0b; font-weight: bold;
+        }
+        .bolsa-item-info { font-size: 0.8em; color: var(--cinza); line-height: 1.6; }
+        .bolsa-item-info strong { color: #e6e6e6; }
+        .bolsa-item-preco { font-size: 1.1em; font-weight: bold; color: #4cd964; margin-top: 6px; }
+        .bolsa-item-variacao { font-size: 0.85em; font-weight: bold; }
+        .bolsa-item-variacao.positiva { color: #4cd964; }
+        .bolsa-item-variacao.negativa { color: #ff6b6b; }
+
+        .btn-registrar-bolsa {
+            width: 100%; margin-top: 10px; padding: 8px;
+            background: linear-gradient(90deg, #f59e0b, #d97706);
+            border: none; border-radius: 6px; color: #000; font-weight: bold;
+            font-size: 0.85em; cursor: pointer; transition: all 0.2s;
+        }
+        .btn-registrar-bolsa:hover { transform: scale(1.03); box-shadow: 0 4px 12px rgba(245, 158, 11, 0.4); }
+        .btn-registrar-bolsa:disabled { background: #444; color: #888; cursor: not-allowed; transform: none; box-shadow: none; }
+
+        .bolsa-loading { text-align: center; padding: 30px; color: var(--cinza); }
+        .bolsa-loading .spinner {
+            width: 40px; height: 40px; border: 3px solid rgba(245, 158, 11, 0.1);
+            border-top-color: #f59e0b; border-radius: 50%;
+            animation: spin 1s linear infinite; margin: 0 auto 15px;
+        }
+        @keyframes spin { to { transform: rotate(360deg); } }
+
+        .badge-registrado {
+            position: absolute; top: 8px; right: 8px;
+            background: rgba(76, 217, 100, 0.9); color: #000;
+            font-size: 0.65em; font-weight: bold; padding: 3px 10px;
+            border-radius: 20px; letter-spacing: 0.5px;
+        }
+
+        /* ========== INDICADOR TEMPO REAL ========== */
+        .rt-indicator { display: inline-flex; align-items: center; gap: 6px; font-size: 0.75em; color: var(--cinza); margin-left: 10px; }
+        .rt-dot { width: 8px; height: 8px; border-radius: 50%; background: #444; }
+        .rt-dot.ativo { background: #4cd964; box-shadow: 0 0 8px rgba(76, 217, 100, 0.6); animation: pulse 1.5s infinite; }
+        @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.4; } }
+    </style>
+</head>
+<body>
+<div class="container">
+
+    <!-- ========== TOPBAR COM BOTÃO VOLTAR ========== -->
+    <div class="topbar">
+        <div class="topbar-brand">📖 CÓDICE DE EQUIPAMENTOS</div>
+        <div class="topbar-actions">
+            <div class="topbar-user" id="topbarUser">👤 Visitante</div>
+            <a href="./dashboard.html" class="btn-voltar">🏠 Voltar ao Dashboard</a>
+        </div>
+    </div>
+
+    <header>
+        <h1>📖 Códice de Equipamentos</h1>
+        <p class="subtitulo">Ativos da Bolsa + Itens Registrados + Integração em Tempo Real</p>
+    </header>
+
+    <div class="abas">
+        <button class="aba ativa" onclick="trocarAba('bolsa')">📈 Ativos da Bolsa</button>
+        <button class="aba" onclick="trocarAba('itens')">📋 Itens Registrados</button>
+        <button class="aba" onclick="trocarAba('resumo')">🏆 Resumo de Bônus</button>
+    </div>
+
+    <!-- ABA: ATIVOS DA BOLSA -->
+    <div id="aba-bolsa" class="conteudo-aba">
+        <div class="painel">
+            <h2>📈 Ativos da Bolsa — BAEP</h2>
+            <p style="color: var(--cinza); margin-bottom: 15px; font-size: 0.9em;">
+                Todos os ativos são carregados <strong>exclusivamente do banco de dados</strong> (campo
+                <code>fazendinha_dados → bolsa_ativos</code> da tabela <code>Geral</code>).
+                Clique em <strong>"➕ Registrar no Codex"</strong> para adicioná-los ao seu inventário.
+            </p>
+
+            <div class="bolsa-tabs" id="bolsaTabs">
+                <button class="bolsa-tab ativa" data-cat="acoes">📈 Ações</button>
+                <button class="bolsa-tab" data-cat="fiis">🏢 FIIs</button>
+                <button class="bolsa-tab" data-cat="etfs">📊 ETFs</button>
+                <button class="bolsa-tab" data-cat="tesouro">🇧🇷 Tesouro</button>
+            </div>
+
+            <div id="bolsaConteudo">
+                <div class="bolsa-loading">
+                    <div class="spinner"></div>
+                    Carregando ativos da bolsa...
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ABA: ITENS REGISTRADOS -->
+    <div id="aba-itens" class="conteudo-aba oculto">
+        <div class="painel">
+            <h2>
+                📋 Itens Registrados <span id="contagem_itens">(0)</span>
+                <span class="rt-indicator">
+                    <span class="rt-dot" id="rt-dot-itens"></span>
+                    <span id="rt-status-itens">Tempo real</span>
+                </span>
+            </h2>
+
+            <div style="margin-bottom: 20px;">
+                <div style="display: flex; justify-content: space-between; font-size: 0.9em; margin-bottom: 5px;">
+                    <span>Progresso Geral</span>
+                    <span id="porcentagem">0%</span>
+                </div>
+                <div class="barra-progresso">
+                    <div class="barra-preenchida" id="barra_progresso" style="width: 0%; background: linear-gradient(90deg, var(--roxo), var(--dourado));"></div>
+                </div>
+            </div>
+
+            <div id="lista_itens">
+                <p style="color: var(--cinza); text-align: center; padding: 30px;">
+                    Nenhum item registrado ainda.<br>
+                    Use a aba <strong>"Ativos da Bolsa"</strong> para começar.
+                </p>
+            </div>
+        </div>
+    </div>
+
+    <!-- ABA: RESUMO -->
+    <div id="aba-resumo" class="conteudo-aba oculto">
+        <div class="painel">
+            <h2>🏆 Bônus Acumulados</h2>
+
+            <div class="grade-bonus">
+                <div class="bonus-card">
+                    ⚔️ Ataque
+                    <div class="bonus-valor" id="res_atk">+0</div>
+                </div>
+                <div class="bonus-card">
+                    🛡️ Defesa
+                    <div class="bonus-valor" id="res_def">+0</div>
+                </div>
+                <div class="bonus-card">
+                    ❤️ HP Máximo
+                    <div class="bonus-valor" id="res_hp">+0</div>
+                </div>
+                <div class="bonus-card">
+                    📦 Conjuntos Completos
+                    <div class="bonus-valor" id="res_conj">0</div>
+                </div>
+            </div>
+
+            <h3>📊 Detalhamento</h3>
+            <div id="detalhe_resumo">
+                <p style="color: var(--cinza);">Registre itens para ver o detalhamento.</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<footer>
+    📖 Códice de Equipamentos — Dados 100% do banco | Tabela: public."Geral"
+</footer>
+
+<script type="importmap">
+{
+    "imports": {
+        "@supabase/supabase-js": "https://esm.sh/@supabase/supabase-js@2"
+    }
+}
+</script>
+
+<script type="module">
+// ==========================================
+// SUPABASE
+// ==========================================
+import { createClient } from '@supabase/supabase-js';
+
+const SUPABASE_URL = 'https://xrcxvizzdumcxbylmkvn.supabase.co';
+const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InhyY3h2aXp6ZHVtY3hieWxta3ZuIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODY2NjA0NzIsImV4cCI6MjEwMjIzNjQ3Mn0.ohB4tW0UQ-k1PcwoZxm4u9XSGNLsFphv1_UwTWoklOM';
+const TABELA = 'Geral';
+const supabase = createClient(SUPABASE_URL, SUPABASE_KEY);
+
+// ==========================================
+// ESTADO
+// ==========================================
+let itensSalvos = [];
+let usuarioLogado = null;
+let ativosBolsa = { acoes: [], fiis: [], etfs: [], tesouro: [] };
+let categoriaAtual = 'acoes';
+let itensRegistradosIds = new Set();
+let realtimeChannel = null;
+let bolsaCarregada = false;
+
+// ==========================================
+// TABELAS DE BÔNUS
+// ==========================================
+const tabelaBonus = {
+    comum:   { minAtk: 2,  maxAtk: 5,   minDef: 1, maxDef: 3,   minHp: 10,  maxHp: 30,  prioridade: 3, classe: 'item-comum', etiq: 'et-comum' },
+    incomum: { minAtk: 5,  maxAtk: 12,  minDef: 3, maxDef: 8,   minHp: 30,  maxHp: 80,  prioridade: 3, classe: 'item-incomum', etiq: 'et-incomum' },
+    raro:    { minAtk: 12, maxAtk: 25,  minDef: 8, maxDef: 15,  minHp: 80,  maxHp: 150, prioridade: 2, classe: 'item-raro', etiq: 'et-raro' },
+    epico:   { minAtk: 25, maxAtk: 40,  minDef: 15,maxDef: 25,  minHp: 150, maxHp: 300, prioridade: 1, classe: 'item-epico', etiq: 'et-epico' },
+    lendario:{ minAtk: 40, maxAtk: 60,  minDef: 25,maxDef: 40,  minHp: 300, maxHp: 500, prioridade: 1, classe: 'item-lendario', etiq: 'et-lendario' }
+};
+
+// ==========================================
+// TROCA DE ABAS
+// ==========================================
+function trocarAba(nomeAba) {
+    document.querySelectorAll('.aba').forEach(aba => aba.classList.remove('ativa'));
+    document.querySelectorAll('.conteudo-aba').forEach(div => div.classList.add('oculto'));
+    document.getElementById(`aba-${nomeAba}`).classList.remove('oculto');
+
+    const botoes = document.querySelectorAll('.aba');
+    const mapa = { bolsa: 0, itens: 1, resumo: 2 };
+    if (mapa[nomeAba] !== undefined && botoes[mapa[nomeAba]]) {
+        botoes[mapa[nomeAba]].classList.add('ativa');
+    }
+
+    if (nomeAba === 'itens') {
+        carregarItensDoSupabase().then(() => renderizarListaItens());
+    }
+    if (nomeAba === 'resumo') {
+        carregarItensDoSupabase().then(() => atualizarResumo());
+    }
+    if (nomeAba === 'bolsa') carregarAtivosBolsa();
+}
+
+window.trocarAba = trocarAba;
+
+// ==========================================
+// CARREGAR USUÁRIO LOGADO
+// ==========================================
+async function carregarUsuarioLogado() {
+    try {
+        const chaves = ['usuario_logado', 'user', 'usuario', 'session', 'auth'];
+        for (const chave of chaves) {
+            const sessao = localStorage.getItem(chave);
+            if (sessao) {
+                try {
+                    const dados = JSON.parse(sessao);
+                    if (dados && (dados.login || dados.email || dados.nome)) {
+                        usuarioLogado = dados.login || dados.email || dados.nome;
+                        const nomeExibir = dados.nome || usuarioLogado;
+                        const elUser = document.getElementById('topbarUser');
+                        if (elUser) elUser.textContent = `👤 ${nomeExibir}`;
+                        console.log('✅ Usuário logado:', usuarioLogado);
+                        return;
+                    }
+                } catch (_) { /* ignora */ }
+            }
+        }
+        console.log('ℹ️ Usuário não encontrado na sessão.');
+        const elUser = document.getElementById('topbarUser');
+        if (elUser) elUser.textContent = '👤 Visitante';
+    } catch (e) {
+        console.warn('Não foi possível carregar usuário:', e);
+    }
+}
+
+// ==========================================
+// CARREGAR ITENS DO SUPABASE (SEMPRE DO BANCO)
+// ==========================================
+async function carregarItensDoSupabase() {
+    if (!usuarioLogado) {
+        itensSalvos = [];
+        itensRegistradosIds = new Set();
+        return;
+    }
+
+    try {
+        const { data, error } = await supabase
+            .from(TABELA)
+            .select('itens')
+            .eq('login', usuarioLogado)
+            .maybeSingle();
+
+        if (error) throw error;
+
+        if (data && data.itens && Array.isArray(data.itens)) {
+            itensSalvos = data.itens.map(i => {
+                const bonus = i.bonus || i.bônus || {};
+                const conjunto = i.conjunto || {};
+                return {
+                    id_item: i.id_item || i.id || '',
+                    nome: i.nome || 'Item sem nome',
+                    tipo_peca: i.tipo_peca || '',
+                    raridade: i.raridade || 'comum',
+                    tier: i.tier || 1,
+                    id_conjunto: conjunto.id_conjunto || i.id_conjunto || '',
+                    nome_conjunto: conjunto.nome_conjunto || i.nome_conjunto || '',
+                    bonus: {
+                        atk: bonus.ataque || bonus.atk || 0,
+                        def: bonus.defesa || bonus.def || 0,
+                        hp: bonus.hp || 0
+                    },
+                    registrado_em: i.registrado_em || null
+                };
+            });
+            itensRegistradosIds = new Set(itensSalvos.map(i => i.id_item));
+            console.log(`✅ ${itensSalvos.length} itens carregados para ${usuarioLogado}`);
+        } else {
+            itensSalvos = [];
+            itensRegistradosIds = new Set();
+        }
+    } catch (e) {
+        console.warn('Erro ao carregar itens:', e);
+        itensSalvos = [];
+        itensRegistradosIds = new Set();
+    }
+}
+
+// ==========================================
+// SUPABASE REALTIME — ATUALIZAÇÃO EM TEMPO REAL
+// ==========================================
+function iniciarRealtime() {
+    if (realtimeChannel) {
+        supabase.removeChannel(realtimeChannel);
+        realtimeChannel = null;
+    }
+
+    if (!usuarioLogado) {
+        atualizarStatusRealtime(false, 'Aguardando login...');
+        return;
+    }
+
+    realtimeChannel = supabase
+        .channel('codex-itens-' + usuarioLogado)
+        .on(
+            'postgres_changes',
+            {
+                event: '*',
+                schema: 'public',
+                table: TABELA,
+                filter: `login=eq.${usuarioLogado}`
+            },
+            async (payload) => {
+                console.log('🔄 Realtime update:', payload.eventType);
+                await carregarItensDoSupabase();
+                renderizarListaItens();
+                atualizarResumo();
+                renderizarAtivosBolsa();
+                piscarIndicadorRealtime();
+            }
+        )
+        .subscribe((status) => {
+            if (status === 'SUBSCRIBED') {
+                atualizarStatusRealtime(true, 'Conectado');
+            } else if (status === 'CHANNEL_ERROR' || status === 'TIMED_OUT') {
+                atualizarStatusRealtime(false, 'Reconectando...');
+            } else {
+                atualizarStatusRealtime(false, status);
+            }
+        });
+}
+
+function atualizarStatusRealtime(ativo, texto) {
+    const dotItens = document.getElementById('rt-dot-itens');
+    const statusItens = document.getElementById('rt-status-itens');
+    if (dotItens) dotItens.classList.toggle('ativo', ativo);
+    if (statusItens) statusItens.textContent = ativo ? '🟢 Tempo real' : '🔴 Offline';
+}
+
+function piscarIndicadorRealtime() {
+    const dotItens = document.getElementById('rt-dot-itens');
+    if (!dotItens) return;
+    dotItens.style.transform = 'scale(1.5)';
+    setTimeout(() => { dotItens.style.transform = 'scale(1)'; }, 300);
+}
+
+// ==========================================
+// CARREGAR ATIVOS DA BOLSA — DIRETO DO BANCO
+// ==========================================
+async function carregarAtivosBolsa() {
+    const container = document.getElementById('bolsaConteudo');
+    container.innerHTML = `
+        <div class="bolsa-loading">
+            <div class="spinner"></div>
+            Carregando ativos da bolsa do banco de dados...
+        </div>
+    `;
+
+    if (!usuarioLogado) {
+        container.innerHTML = `
+            <div class="aviso aviso-erro">
+                ⚠️ Nenhum usuário logado. Faça login para carregar os ativos da bolsa do banco.
+            </div>
+        `;
+        return;
+    }
+
+    try {
+        const { data, error } = await supabase
+            .from(TABELA)
+            .select('fazendinha_dados')
+            .eq('login', usuarioLogado)
+            .maybeSingle();
+
+        if (error) throw error;
+
+        const dadosBolsa = data?.fazendinha_dados?.bolsa_ativos;
+
+        if (dadosBolsa && typeof dadosBolsa === 'object') {
+            ativosBolsa = {
+                acoes: Array.isArray(dadosBolsa.acoes) ? dadosBolsa.acoes : [],
+                fiis: Array.isArray(dadosBolsa.fiis) ? dadosBolsa.fiis : [],
+                etfs: Array.isArray(dadosBolsa.etfs) ? dadosBolsa.etfs : [],
+                tesouro: Array.isArray(dadosBolsa.tesouro) ? dadosBolsa.tesouro : []
+            };
+            bolsaCarregada = true;
+            renderizarAtivosBolsa();
+            console.log('✅ Ativos da bolsa carregados do banco:', {
+                acoes: ativosBolsa.acoes.length,
+                fiis: ativosBolsa.fiis.length,
+                etfs: ativosBolsa.etfs.length,
+                tesouro: ativosBolsa.tesouro.length
+            });
+        } else {
+            ativosBolsa = { acoes: [], fiis: [], etfs: [], tesouro: [] };
+            bolsaCarregada = true;
+            container.innerHTML = `
+                <div class="aviso aviso-erro">
+                    ⚠️ O campo <code>fazendinha_dados → bolsa_ativos</code> não existe ou está vazio no banco de dados.<br>
+                    Os ativos precisam ser cadastrados no banco antes de aparecerem aqui.
+                </div>
+            `;
+        }
+    } catch (e) {
+        console.error('Erro ao carregar bolsa:', e);
+        container.innerHTML = `
+            <div class="aviso aviso-erro">
+                ❌ Erro ao carregar ativos do banco: ${e.message || 'Tente novamente.'}
+            </div>
+        `;
+    }
+}
+
+// ==========================================
+// RENDERIZAR ATIVOS DA BOLSA
+// ==========================================
+function renderizarAtivosBolsa() {
+    const container = document.getElementById('bolsaConteudo');
+    if (!container) return;
+    const ativos = ativosBolsa[categoriaAtual] || [];
+
+    if (ativos.length === 0) {
+        container.innerHTML = `
+            <div class="aviso aviso-info">
+                📭 Nenhum ativo nesta categoria (<strong>${categoriaAtual}</strong>) no banco de dados.
+            </div>
+        `;
+        return;
+    }
+
+    const tiposMap = { acoes: 'Ação', fiis: 'FII', etfs: 'ETF', tesouro: 'Tesouro' };
+
+    container.innerHTML = `
+        <div class="bolsa-grid">
+            ${ativos.map(ativo => {
+                const registrado = itensRegistradosIds.has(`bolsa_${ativo.id}`);
+                const variacao = typeof ativo.variacao === 'number' ? ativo.variacao : 0;
+                const preco = typeof ativo.preco === 'number' ? ativo.preco : 0;
+                const dy = typeof ativo.dy === 'number' ? ativo.dy : 0;
+                const variacaoClass = variacao >= 0 ? 'positiva' : 'negativa';
+                const variacaoSign = variacao >= 0 ? '+' : '';
+                const nomeSafe = (ativo.nome || '').replace(/'/g, "\\'");
+                return `
+                    <div class="bolsa-item" style="${registrado ? 'opacity: 0.7; border-left-color: #4cd964;' : ''}">
+                        ${registrado ? '<span class="badge-registrado">✓ REGISTRADO</span>' : ''}
+                        <div class="bolsa-item-header">
+                            <span class="bolsa-item-nome">${ativo.id}</span>
+                            <span class="bolsa-item-tipo">${tiposMap[categoriaAtual]}</span>
+                        </div>
+                        <div class="bolsa-item-info">
+                            <strong>${ativo.nome || '—'}</strong><br>
+                            DY Anual: <strong>${dy}%</strong>
+                        </div>
+                        <div class="bolsa-item-preco">
+                            R$ ${preco.toFixed(2)}
+                            <span class="bolsa-item-variacao ${variacaoClass}">${variacaoSign}${variacao.toFixed(2)}%</span>
+                        </div>
+                        <button class="btn-registrar-bolsa" 
+                                onclick="registrarAtivoBolsa('${ativo.id}', '${nomeSafe}', ${preco}, '${categoriaAtual}')"
+                                ${registrado ? 'disabled' : ''}>
+                            ${registrado ? '✓ Já Registrado' : '➕ Registrar no Codex'}
+                        </button>
+                    </div>
+                `;
+            }).join('')}
+        </div>
+    `;
+}
+
+window.renderizarAtivosBolsa = renderizarAtivosBolsa;
+
+// ==========================================
+// REGISTRAR ATIVO DA BOLSA
+// ==========================================
+window.registrarAtivoBolsa = async function(id, nome, preco, categoria) {
+    if (!usuarioLogado) {
+        alert('⚠️ Faça login primeiro!');
+        return;
+    }
+
+    const idItem = `bolsa_${id}`;
+    if (itensRegistradosIds.has(idItem)) {
+        alert('⚠️ Este ativo já está registrado no Codex!');
+        return;
+    }
+
+    const raridadeMap = { acoes: 'raro', fiis: 'epico', etfs: 'epico', tesouro: 'lendario' };
+    const tipoMap = { acoes: 'Ação', fiis: 'FII', etfs: 'ETF', tesouro: 'Tesouro' };
+    const raridade = raridadeMap[categoria] || 'raro';
+    const tipoPeca = tipoMap[categoria] || 'Ativo';
+
+    const tier = Math.min(20, Math.max(1, Math.floor(preco / 10)));
+
+    const bonusBase = {
+        raro:    { atk: 15, def: 10, hp: 100 },
+        epico:   { atk: 30, def: 20, hp: 250 },
+        lendario:{ atk: 50, def: 35, hp: 500 }
+    };
+    const b = bonusBase[raridade] || bonusBase.raro;
+    const fator = tier / 10;
+    const bonus = {
+        atk: Math.round(b.atk * fator),
+        def: Math.round(b.def * fator),
+        hp: Math.round(b.hp * fator)
+    };
+
+    const idConjunto = `bolsa_${categoria}_conj`;
+    const nomeConjunto = `Carteira ${tipoMap[categoria]}`;
+
+    const novoItem = {
+        id_item: idItem,
+        nome: `${nome} (${id})`,
+        tipo_peca: tipoPeca,
+        raridade: raridade,
+        tier: tier,
+        registrado_em: new Date().toISOString(),
+        bonus: { ataque: bonus.atk, defesa: bonus.def, hp: bonus.hp },
+        conjunto: { id_conjunto: idConjunto, nome_conjunto: nomeConjunto, completo: false },
+        pode_descartar: true
+    };
+
+    try {
+        const { data: userData, error: fetchError } = await supabase
+            .from(TABELA)
+            .select('itens')
+            .eq('login', usuarioLogado)
+            .maybeSingle();
+
+        if (fetchError) throw fetchError;
+
+        const itensAtuais = (userData && Array.isArray(userData.itens)) ? userData.itens : [];
+
+        if (itensAtuais.some(i => (i.id_item || i.id) === idItem)) {
+            itensRegistradosIds.add(idItem);
+            alert('⚠️ Este ativo já está registrado no Codex!');
+            return;
+        }
+
+        itensAtuais.push(novoItem);
+
+        const { error: updateError } = await supabase
+            .from(TABELA)
+            .update({ itens: itensAtuais, updated_at: new Date().toISOString() })
+            .eq('login', usuarioLogado);
+
+        if (updateError) throw updateError;
+
+        itensRegistradosIds.add(idItem);
+        await carregarItensDoSupabase();
+        renderizarAtivosBolsa();
+        renderizarListaItens();
+        atualizarResumo();
+
+        alert(`✅ ${nome} registrado no Codex!\n\nBônus: +${bonus.atk} ATK / +${bonus.def} DEF / +${bonus.hp} HP`);
+
+    } catch (e) {
+        console.error('Erro ao registrar:', e);
+        alert('❌ Erro ao registrar ativo: ' + (e.message || 'Tente novamente.'));
+    }
+};
+
+// ==========================================
+// RENDERIZAR LISTA DE ITENS
+// ==========================================
+function renderizarListaItens() {
+    const lista = document.getElementById('lista_itens');
+    if (!lista) return;
+
+    if (itensSalvos.length === 0) {
+        lista.innerHTML = `
+            <p style="color: var(--cinza); text-align: center; padding: 30px;">
+                Nenhum item registrado ainda.<br>
+                Use a aba <strong>"Ativos da Bolsa"</strong> para começar.
+            </p>
+        `;
+        document.getElementById('contagem_itens').textContent = '(0)';
+        document.getElementById('barra_progresso').style.width = '0%';
+        document.getElementById('porcentagem').textContent = '0%';
+        return;
+    }
+
+    const ordenados = [...itensSalvos].sort((a, b) => {
+        const prioA = tabelaBonus[a.raridade]?.prioridade || 3;
+        const prioB = tabelaBonus[b.raridade]?.prioridade || 3;
+        return prioA - prioB || b.tier - a.tier;
+    });
+
+    lista.innerHTML = ordenados.map(item => {
+        const v = tabelaBonus[item.raridade] || tabelaBonus.comum;
+        return `
+            <div class="item-codex ${v.classe} item-registrado">
+                <span class="etiqueta ${v.etiq}">${item.raridade.charAt(0).toUpperCase() + item.raridade.slice(1)}</span>
+                <strong>${item.nome}</strong>
+                <div class="info-pequena">
+                    ${item.tipo_peca} • Tier ${item.tier} • ${item.nome_conjunto}<br>
+                    ⚔️+${item.bonus.atk} 🛡️+${item.bonus.def} ❤️+${item.bonus.hp}
+                </div>
+            </div>
+        `;
+    }).join('');
+
+    document.getElementById('contagem_itens').textContent = `(${itensSalvos.length})`;
+    const perc = Math.min(100, Math.round((itensSalvos.length / 24) * 100));
+    document.getElementById('barra_progresso').style.width = `${perc}%`;
+    document.getElementById('porcentagem').textContent = `${perc}%`;
+}
+
+// ==========================================
+// ATUALIZAR RESUMO
+// ==========================================
+function atualizarResumo() {
+    if (itensSalvos.length === 0) {
+        document.getElementById('res_atk').textContent = '+0';
+        document.getElementById('res_def').textContent = '+0';
+        document.getElementById('res_hp').textContent = '+0';
+        document.getElementById('res_conj').textContent = '0';
+        document.getElementById('detalhe_resumo').innerHTML = '<p style="color: var(--cinza);">Registre itens para ver o detalhamento.</p>';
+        return;
+    }
+
+    const total = itensSalvos.reduce((s, i) => ({
+        atk: s.atk + (i.bonus?.atk || 0),
+        def: s.def + (i.bonus?.def || 0),
+        hp: s.hp + (i.bonus?.hp || 0)
+    }), { atk: 0, def: 0, hp: 0 });
+
+    const conjuntosUnicos = [...new Set(itensSalvos.map(i => i.id_conjunto).filter(Boolean))];
+    const conjuntosCompletos = conjuntosUnicos.filter(cid => {
+        const pecas = itensSalvos.filter(i => i.id_conjunto === cid);
+        const totalPecas = cid.includes('acess') ? 5 : 7;
+        return pecas.length >= totalPecas;
+    });
+
+    document.getElementById('res_atk').textContent = `+${total.atk}`;
+    document.getElementById('res_def').textContent = `+${total.def}`;
+    document.getElementById('res_hp').textContent = `+${total.hp}`;
+    document.getElementById('res_conj').textContent = `${conjuntosCompletos.length}/${conjuntosUnicos.length}`;
+
+    document.getElementById('detalhe_resumo').innerHTML = `
+        <div class="linha"><span>Total de Itens Registrados</span><span>${itensSalvos.length}</span></div>
+        <div class="linha"><span>Bônus de itens individuais</span><span>⚔️+${total.atk} 🛡️+${total.def} ❤️+${total.hp}</span></div>
+        <div class="linha" style="font-weight: bold; color: var(--dourado); border-top: 1px dashed #444; margin-top: 5px; padding-top: 10px;">
+            <span>TOTAL ACUMULADO</span><span>⚔️+${total.atk} 🛡️+${total.def} ❤️+${total.hp}</span>
+        </div>
+    `;
+}
+
+// ==========================================
+// INICIALIZAÇÃO
+// ==========================================
+async function init() {
+    await carregarUsuarioLogado();
+
+    if (usuarioLogado) {
+        await carregarItensDoSupabase();
+        iniciarRealtime();
+    } else {
+        atualizarStatusRealtime(false, 'Aguardando login...');
+    }
+
+    // Tabs da bolsa
+    document.querySelectorAll('.bolsa-tab').forEach(tab => {
+        tab.addEventListener('click', () => {
+            document.querySelectorAll('.bolsa-tab').forEach(t => t.classList.remove('ativa'));
+            tab.classList.add('ativa');
+            categoriaAtual = tab.dataset.cat;
+            renderizarAtivosBolsa();
+        });
+    });
+
+    // Carrega a bolsa (aba inicial)
+    await carregarAtivosBolsa();
+
+    console.log('📖 Codex inicializado!');
+    console.log('👤 Usuário:', usuarioLogado || 'não definido');
+}
+
+init();
+</script>
+</body>
+</html>
