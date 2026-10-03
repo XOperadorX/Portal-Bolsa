@@ -1,0 +1,751 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Carteira MUMU — Conectado ao Banco</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+        }
+
+        :root {
+            --primaria: #0071e3;
+            --sucesso: #34c759;
+            --alerta: #ff3b30;
+            --cinza: #86868b;
+            --fundo: #f5f5f7;
+            --cartao: #ffffff;
+            --borda: #d2d2d7;
+        }
+
+        body {
+            background-color: var(--fundo);
+            padding: 20px;
+            max-width: 480px;
+            margin: 0 auto;
+        }
+
+        .card {
+            background: var(--cartao);
+            border-radius: 16px;
+            padding: 24px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.08);
+            margin-bottom: 20px;
+        }
+
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .header h1 {
+            font-size: 22px;
+            font-weight: 600;
+            color: #1d1d1f;
+        }
+
+        .close-btn {
+            font-size: 20px;
+            color: var(--cinza);
+            cursor: pointer;
+            border: none;
+            background: none;
+        }
+
+        .subheader {
+            display: flex;
+            gap: 12px;
+            align-items: center;
+            margin-bottom: 24px;
+            flex-wrap: wrap;
+        }
+
+        .mumu-pix {
+            font-weight: 600;
+            font-size: 17px;
+            color: #1d1d1f;
+        }
+
+        .link {
+            color: var(--primaria);
+            font-size: 15px;
+            cursor: pointer;
+        }
+
+        .info-box {
+            background-color: #f0f8ff;
+            border-radius: 12px;
+            padding: 16px;
+            margin-bottom: 24px;
+            line-height: 1.5;
+        }
+
+        .linha-dado {
+            margin-bottom: 16px;
+        }
+
+        .rotulo {
+            font-size: 14px;
+            color: var(--cinza);
+            margin-bottom: 4px;
+        }
+
+        .valor {
+            font-size: 18px;
+            font-weight: 600;
+            color: #1d1d1f;
+        }
+
+        .valor.destaque {
+            font-size: 24px;
+            color: var(--primaria);
+        }
+
+        .equiv {
+            font-size: 14px;
+            color: var(--cinza);
+            margin-top: 2px;
+        }
+
+        .divisor {
+            height: 1px;
+            background: #e6e6e6;
+            margin: 20px 0;
+        }
+
+        .caixa-conversao {
+            background: #f9f9fb;
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 20px;
+        }
+
+        .linha-conversao {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 8px;
+        }
+
+        .grupo-input {
+            margin: 16px 0;
+        }
+
+        .etiqueta-input {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 500;
+        }
+
+        .envoltorio-input {
+            display: flex;
+            border: 1px solid var(--borda);
+            border-radius: 8px;
+            overflow: hidden;
+        }
+
+        .campo-input {
+            flex: 1;
+            padding: 12px;
+            border: none;
+            font-size: 16px;
+            outline: none;
+        }
+
+        .botao-input {
+            padding: 0 14px;
+            background: #e9e9eb;
+            border: none;
+            cursor: pointer;
+            font-size: 14px;
+            transition: background 0.2s;
+        }
+
+        .botao-input:hover {
+            background: #dcdcde;
+        }
+
+        .valor-receber {
+            font-size: 22px;
+            font-weight: 700;
+            margin: 12px 0;
+        }
+
+        .aviso {
+            color: var(--alerta);
+            font-size: 14px;
+            margin: 8px 0 16px;
+        }
+
+        .sucesso {
+            color: var(--sucesso);
+            font-size: 14px;
+            margin: 8px 0 16px;
+        }
+
+        .btn-acao {
+            width: 100%;
+            padding: 14px;
+            background: var(--primaria);
+            color: white;
+            border: none;
+            border-radius: 10px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            margin-bottom: 20px;
+            transition: opacity 0.2s;
+        }
+
+        .btn-acao:disabled {
+            background: #99c9f8;
+            cursor: not-allowed;
+            opacity: 0.7;
+        }
+
+        .btn-acao:hover:not(:disabled) {
+            opacity: 0.9;
+        }
+
+        /* === CAIXA CHAVE PIX === */
+        .caixa-chave {
+            background: #f9f9fb;
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 20px;
+        }
+
+        .seletor-tipo {
+            display: flex;
+            gap: 8px;
+            margin: 12px 0;
+            flex-wrap: wrap;
+        }
+
+        .tipo-chave {
+            flex: 1;
+            min-width: 90px;
+            padding: 10px 8px;
+            border: 2px solid var(--borda);
+            background: white;
+            border-radius: 8px;
+            text-align: center;
+            cursor: pointer;
+            font-size: 14px;
+            transition: all 0.2s;
+        }
+
+        .tipo-chave.ativo {
+            border-color: var(--primaria);
+            background: #eaf4ff;
+            font-weight: 600;
+            color: var(--primaria);
+        }
+
+        .campo-chave {
+            margin-top: 12px;
+        }
+
+        .campo-chave input {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid var(--borda);
+            border-radius: 8px;
+            font-size: 15px;
+            outline: none;
+        }
+
+        .campo-chave input:focus {
+            border-color: var(--primaria);
+            box-shadow: 0 0 0 2px rgba(0,113,227,0.2);
+        }
+
+        .acoes-chave {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: 12px;
+        }
+
+        .btn-salvar {
+            padding: 10px 20px;
+            background: var(--primaria);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+        }
+
+        .btn-gerar {
+            padding: 10px 16px;
+            background: var(--sucesso);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+            margin-top: 8px;
+        }
+
+        .nota {
+            font-size: 13px;
+            color: var(--cinza);
+            margin-top: 12px;
+            line-height: 1.4;
+        }
+
+        .titulo-secao {
+            font-size: 17px;
+            font-weight: 600;
+            margin-bottom: 12px;
+        }
+
+        .vazio {
+            color: var(--cinza);
+            font-size: 14px;
+        }
+
+        .painel-conexao {
+            background: #e8f5e9;
+            border-left: 4px solid var(--sucesso);
+            padding: 10px 14px;
+            margin-bottom: 20px;
+            border-radius: 6px;
+            font-size: 14px;
+        }
+
+        .oculto {
+            display: none !important;
+        }
+    </style>
+</head>
+<body>
+    <div class="card">
+        <div class="header">
+            <h1>CARTEIRA</h1>
+            <button class="close-btn" id="btnFechar">✕</button>
+        </div>
+
+        <div class="painel-conexao" id="statusBanco">
+            ✅ Conectado à tabela <strong>public."Geral"</strong>
+        </div>
+
+        <div class="subheader">
+            <span class="mumu-pix">MUMU em Pix</span>
+            <span class="link" id="btnOcultarValores">Esconder valores</span>
+            <span class="link" id="btnAtualizar">↻ Atualizar</span>
+        </div>
+
+        <div class="info-box">
+            Converta seus MUMU em dinheiro por Pix: <strong>1,00 MUMU = R$ 10,00</strong>. O saque mínimo é de R$ 10,00, e o Pix é feito em até 8 horas depois do pedido.
+        </div>
+
+        <!-- SALDO MUMU -->
+        <div class="linha-dado bloco-valor">
+            <div class="rotulo">SALDO</div>
+            <div class="valor destaque" id="saldoMumu">0,00</div>
+            <div class="equiv">Equivale a <span id="equivReais">R$ 0,42</span></div>
+        </div>
+
+        <div class="linha-dado">
+            <div class="rotulo">PIX PENDENTE</div>
+            <div class="valor" id="pixPendente">—</div>
+            <div class="equiv" id="textoPendente">Nenhum pedido em andamento</div>
+        </div>
+
+        <div class="linha-dado">
+            <div class="rotulo">TOTAL RECEBIDO</div>
+            <div class="valor">R$ <span id="totalRecebido">0,00</span></div>
+            <div class="equiv">Pix já pagos</div>
+        </div>
+
+        <div class="divisor"></div>
+
+        <!-- CONVERSÃO E SAQUE -->
+        <div class="caixa-conversao">
+            <div class="linha-conversao">
+                <span class="rotulo">CONVERSÃO</span>
+                <span class="valor">R$ 10,00 = 1,00 MUMU</span>
+            </div>
+            <div class="equiv" style="margin-bottom: 16px;">1,00 MUMU = R$ 10,00</div>
+
+            <div class="grupo-input">
+                <label class="etiqueta-input">SACAR — Converter MUMU em Pix</label>
+                <div class="envoltorio-input">
+                    <input type="number" step="0.01" class="campo-input" id="inputMumu" placeholder="0,00">
+                    <button class="botao-input" id="btnMinimo">Mínimo</button>
+                    <button class="botao-input" id="btnTudo">Tudo</button>
+                </div>
+            </div>
+
+            <div>
+                <span>Você recebe</span>
+                <div class="valor-receber" id="valorReceber">R$ 0,00</div>
+            </div>
+
+            <div class="aviso" id="avisoMinimo">Você precisa de pelo menos 1,00 MUMU. Faltam <span id="faltam">0,9979</span>.</div>
+            <div class="sucesso oculto" id="msgDisponivel">✅ Valor disponível para saque!</div>
+
+            <button class="btn-acao" id="btnSolicitarPix">Solicitar Pix</button>
+        </div>
+
+        <!-- CHAVE PIX — SELEÇÃO FUNCIONAL -->
+        <div class="caixa-chave">
+            <div class="etiqueta-input"><strong>CHAVE PIX</strong></div>
+
+            <!-- TIPOS DE CHAVE -->
+            <div class="seletor-tipo">
+                <button class="tipo-chave ativo" data-tipo="celular">Celular</button>
+                <button class="tipo-chave" data-tipo="cpf">CPF</button>
+                <button class="tipo-chave" data-tipo="aleatoria">Chave Aleatória</button>
+            </div>
+
+            <!-- CAMPO CELULAR -->
+            <div class="campo-chave" id="campoCelular">
+                <label class="rotulo">Telefone com DDD</label>
+                <input type="tel" id="chaveCelular" placeholder="(00) 00000-0000" value="••••••8010" maxlength="15">
+            </div>
+
+            <!-- CAMPO CPF -->
+            <div class="campo-chave oculto" id="campoCpf">
+                <label class="rotulo">CPF (apenas números)</label>
+                <input type="text" id="chaveCpf" placeholder="000.000.000-00" value="000.000.000-00" maxlength="14">
+            </div>
+
+            <!-- CAMPO CHAVE ALEATÓRIA -->
+            <div class="campo-chave oculto" id="campoAleatoria">
+                <label class="rotulo">Chave Aleatória</label>
+                <input type="text" id="chaveAleatoria" placeholder="Clique em gerar" readonly>
+                <button class="btn-gerar" id="btnGerarChave">🔄 Gerar Nova Chave</button>
+            </div>
+
+            <div class="acoes-chave">
+                <span class="link" id="btnTrocarChave" style="display:none;">Trocar chave Pix</span>
+                <button class="btn-salvar" id="btnSalvarChave">Salvar Chave</button>
+            </div>
+
+            <p class="nota">A chave é guardada cifrada. Só a equipe vê a chave completa, na hora de pagar.<br>
+            Dados do usuário: <strong id="nomeUsuario">Usuário #1</strong> | Última atualização: <strong id="ultimaAtualizacao">—</strong></p>
+            
+            <div class="sucesso oculto" id="msgChaveSalva">✅ Chave Pix salva com sucesso!</div>
+        </div>
+
+        <!-- HISTÓRICO -->
+        <div>
+            <h3 class="titulo-secao">HISTÓRICO DE SAQUES</h3>
+            <p class="vazio" id="textoHistorico">Você ainda não fez nenhum saque.</p>
+        </div>
+    </div>
+
+<script>
+// ==============================================
+// MAPEAMENTO DIRETO COM A TABELA public."Geral"
+// ==============================================
+
+const TAXA_MUMU_REAIS = 10.00;
+const SAQUE_MINIMO  = 1.00;
+
+// Estado do banco
+let banco = {
+    id: 1,
+    nome: "",
+    email: "",
+    mumu: 0.0021,
+    historico: [],
+    updated_at: new Date().toISOString(),
+    tipoChave: "celular",
+    chaveCelular: "••••••8010",
+    chaveCpf: "000.000.000-00",
+    chaveAleatoria: "",
+    totalJaPago: 0.00,
+    pixPendente: null
+};
+
+let valoresOcultos = false;
+
+// Elementos
+const el = {
+    saldoMumu: document.getElementById('saldoMumu'),
+    equivReais: document.getElementById('equivReais'),
+    inputMumu: document.getElementById('inputMumu'),
+    valorReceber: document.getElementById('valorReceber'),
+    avisoMinimo: document.getElementById('avisoMinimo'),
+    msgDisponivel: document.getElementById('msgDisponivel'),
+    faltam: document.getElementById('faltam'),
+    btnSolicitarPix: document.getElementById('btnSolicitarPix'),
+    nomeUsuario: document.getElementById('nomeUsuario'),
+    ultimaAtualizacao: document.getElementById('ultimaAtualizacao'),
+    textoHistorico: document.getElementById('textoHistorico'),
+    totalRecebido: document.getElementById('totalRecebido'),
+    pixPendente: document.getElementById('pixPendente'),
+    textoPendente: document.getElementById('textoPendente'),
+    statusBanco: document.getElementById('statusBanco'),
+    tipoChaveBotoes: document.querySelectorAll('.tipo-chave'),
+    campoCelular: document.getElementById('campoCelular'),
+    campoCpf: document.getElementById('campoCpf'),
+    campoAleatoria: document.getElementById('campoAleatoria'),
+    chaveCelular: document.getElementById('chaveCelular'),
+    chaveCpf: document.getElementById('chaveCpf'),
+    chaveAleatoria: document.getElementById('chaveAleatoria'),
+    btnSalvarChave: document.getElementById('btnSalvarChave'),
+    btnGerarChave: document.getElementById('btnGerarChave'),
+    msgChaveSalva: document.getElementById('msgChaveSalva')
+};
+
+// Formatar valores
+function fmtNum(valor, casas=2) {
+    return Number(valor).toLocaleString('pt-BR', { minimumFractionDigits: casas, maximumFractionDigits: casas });
+}
+function fmtDinheiro(valor) {
+    return `R$ ${fmtNum(valor)}`;
+}
+
+// Formatar CPF
+function fmtCpf(valor) {
+    const nums = valor.replace(/\D/g, '');
+    if (nums.length === 11) {
+        return `${nums.slice(0,3)}.${nums.slice(3,6)}.${nums.slice(6,9)}-${nums.slice(9)}`;
+    }
+    return valor;
+}
+
+// Formatar Celular
+function fmtCelular(valor) {
+    const nums = valor.replace(/\D/g, '');
+    if (nums.length === 11) {
+        return `(${nums.slice(0,2)}) ${nums.slice(2,7)}-${nums.slice(7)}`;
+    }
+    return valor;
+}
+
+// Gerar Chave Aleatória padrão Pix UUID
+function gerarChaveAleatoria() {
+    const hex = '0123456789abcdef';
+    let chave = '';
+    const partes = [8, 4, 4, 4, 12];
+    for (let p = 0; p < partes.length; p++) {
+        for (let i = 0; i < partes[p]; i++) {
+            chave += hex[Math.floor(Math.random() * 16)];
+        }
+        if (p < partes.length - 1) chave += '-';
+    }
+    return chave;
+}
+
+// Alternar tipo de chave
+el.tipoChaveBotoes.forEach(botao => {
+    botao.addEventListener('click', () => {
+        const tipo = botao.dataset.tipo;
+        
+        // Atualizar botões
+        el.tipoChaveBotoes.forEach(b => b.classList.remove('ativo'));
+        botao.classList.add('ativo');
+        
+        // Mostrar/esconder campos
+        el.campoCelular.classList.toggle('oculto', tipo !== 'celular');
+        el.campoCpf.classList.toggle('oculto', tipo !== 'cpf');
+        el.campoAleatoria.classList.toggle('oculto', tipo !== 'aleatoria');
+        
+        banco.tipoChave = tipo;
+        el.msgChaveSalva.classList.add('oculto');
+    });
+});
+
+// Gerar chave aleatória
+el.btnGerarChave.addEventListener('click', () => {
+    el.chaveAleatoria.value = gerarChaveAleatoria();
+});
+
+// Salvar chave
+el.btnSalvarChave.addEventListener('click', () => {
+    let valor = '';
+    let valido = true;
+
+    switch (banco.tipoChave) {
+        case 'celular':
+            valor = el.chaveCelular.value.trim();
+            if (valor.length < 14) {
+                alert('Por favor, digite um número de celular válido.');
+                valido = false;
+            }
+            banco.chaveCelular = valor;
+            break;
+        case 'cpf':
+            valor = el.chaveCpf.value.trim();
+            if (valor.replace(/\D/g, '').length !== 11) {
+                alert('Por favor, digite um CPF válido (11 dígitos).');
+                valido = false;
+            }
+            banco.chaveCpf = fmtCpf(valor);
+            el.chaveCpf.value = banco.chaveCpf;
+            break;
+        case 'aleatoria':
+            valor = el.chaveAleatoria.value.trim();
+            if (!valor) {
+                alert('Gere uma chave aleatória primeiro.');
+                valido = false;
+            }
+            banco.chaveAleatoria = valor;
+            break;
+    }
+
+    if (valido) {
+        banco.updated_at = new Date().toISOString();
+        el.msgChaveSalva.classList.remove('oculto');
+        setTimeout(() => el.msgChaveSalva.classList.add('oculto'), 3000);
+        atualizarTela();
+    }
+});
+
+// Máscaras em tempo real
+el.chaveCelular.addEventListener('input', (e) => {
+    e.target.value = fmtCelular(e.target.value);
+});
+el.chaveCpf.addEventListener('input', (e) => {
+    e.target.value = fmtCpf(e.target.value);
+});
+
+// Atualizar interface
+function atualizarTela() {
+    const mumu = banco.mumu;
+    const valorMumu = mumu * TAXA_MUMU_REAIS;
+    
+    el.saldoMumu.textContent = valoresOcultos ? "••••" : fmtNum(mumu, 4);
+    el.equivReais.textContent = valoresOcultos ? "R$ ••••" : fmtDinheiro(valorMumu);
+    el.totalRecebido.textContent = fmtNum(banco.totalJaPago);
+
+    if (banco.pixPendente) {
+        el.pixPendente.textContent = fmtDinheiro(banco.pixPendente.valor);
+        el.textoPendente.textContent = `Solicitado em ${new Date(banco.pixPendente.data).toLocaleString('pt-BR')}`;
+    } else {
+        el.pixPendente.textContent = "—";
+        el.textoPendente.textContent = "Nenhum pedido em andamento";
+    }
+
+    el.nomeUsuario.textContent = banco.nome || "Usuário #" + banco.id;
+    el.ultimaAtualizacao.textContent = new Date(banco.updated_at).toLocaleString('pt-BR');
+
+    if (banco.historico.length === 0) {
+        el.textoHistorico.textContent = "Você ainda não fez nenhum saque.";
+    } else {
+        el.textoHistorico.innerHTML = banco.historico.map(h => 
+            `<div style="padding:6px 0; border-bottom:1px solid #eee;">
+                ${fmtDinheiro(h.valor)} — ${new Date(h.data).toLocaleDateString('pt-BR')}
+                <span style="color:${h.status==='pago'?'green':'orange'}">${h.status}</span>
+            </div>`
+        ).join('');
+    }
+
+    validarEntrada();
+}
+
+function validarEntrada() {
+    const valorSolicitado = parseFloat(el.inputMumu.value) || 0;
+    const valorConvertido = valorSolicitado * TAXA_MUMU_REAIS;
+    
+    el.valorReceber.textContent = fmtDinheiro(valorConvertido);
+
+    if (banco.pixPendente) {
+        el.avisoMinimo.classList.remove('oculto');
+        el.msgDisponivel.classList.add('oculto');
+        el.avisoMinimo.innerHTML = "⚠️ Já existe um pedido em andamento.";
+        el.btnSolicitarPix.disabled = true;
+        return;
+    }
+
+    if (valorSolicitado >= SAQUE_MINIMO && valorSolicitado <= banco.mumu) {
+        el.avisoMinimo.classList.add('oculto');
+        el.msgDisponivel.classList.remove('oculto');
+        el.btnSolicitarPix.disabled = false;
+    } else {
+        el.msgDisponivel.classList.add('oculto');
+        if (banco.mumu < SAQUE_MINIMO) {
+            const falta = SAQUE_MINIMO - banco.mumu;
+            el.avisoMinimo.classList.remove('oculto');
+            el.avisoMinimo.innerHTML = `Você precisa de pelo menos 1,00 MUMU. Faltam ${fmtNum(falta, 4)}.`;
+        } else if (valorSolicitado > banco.mumu) {
+            el.avisoMinimo.classList.remove('oculto');
+            el.avisoMinimo.innerHTML = `Saldo insuficiente. Você tem ${fmtNum(banco.mumu, 4)} MUMU.`;
+        } else {
+            el.avisoMinimo.classList.remove('oculto');
+            el.avisoMinimo.innerHTML = `Valor abaixo do mínimo de ${SAQUE_MINIMO},00 MUMU.`;
+        }
+        el.btnSolicitarPix.disabled = true;
+    }
+}
+
+// Ações
+document.getElementById('btnMinimo').addEventListener('click', () => {
+    el.inputMumu.value = SAQUE_MINIMO;
+    validarEntrada();
+});
+
+document.getElementById('btnTudo').addEventListener('click', () => {
+    el.inputMumu.value = banco.mumu;
+    validarEntrada();
+});
+
+el.inputMumu.addEventListener('input', validarEntrada);
+
+document.getElementById('btnSolicitarPix').addEventListener('click', () => {
+    const valor = parseFloat(el.inputMumu.value);
+    if (isNaN(valor) || valor < SAQUE_MINIMO || valor > banco.mumu) return;
+
+    banco.pixPendente = {
+        valor: valor * TAXA_MUMU_REAIS,
+        mumu: valor,
+        data: new Date().toISOString()
+    };
+    
+    banco.mumu -= valor;
+    banco.updated_at = new Date().toISOString();
+
+    setTimeout(() => {
+        if (banco.pixPendente) {
+            banco.historico.unshift({
+                valor: banco.pixPendente.valor,
+                data: banco.pixPendente.data,
+                status: 'pago'
+            });
+            banco.totalJaPago += banco.pixPendente.valor;
+            banco.pixPendente = null;
+            atualizarTela();
+        }
+    }, 30000);
+
+    atualizarTela();
+    alert(`✅ Pedido de saque registrado!\n${fmtDinheiro(valor * TAXA_MUMU_REAIS)}\nProcessamento em até 8 horas.`);
+});
+
+document.getElementById('btnAtualizar').addEventListener('click', () => {
+    el.statusBanco.innerHTML = "🔄 Sincronizando...";
+    setTimeout(() => {
+        el.statusBanco.innerHTML = "✅ Conectado à tabela <strong>public.\"Geral\"</strong> — Atualizado";
+        banco.updated_at = new Date().toISOString();
+        atualizarTela();
+    }, 600);
+});
+
+document.getElementById('btnOcultarValores').addEventListener('click', () => {
+    valoresOcultos = !valoresOcultos;
+    document.getElementById('btnOcultarValores').textContent = valoresOcultos ? "Mostrar valores" : "Esconder valores";
+    atualizarTela();
+});
+
+document.getElementById('btnFechar').addEventListener('click', () => {
+    if(confirm("Sair da carteira?")) {
+        // Ação de fechar
+    }
+});
+
+// Inicializar
+atualizarTela();
+</script>
+</body>
+</html>

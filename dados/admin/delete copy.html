@@ -4,11 +4,432 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Geral · Realtime + Delete</title>
-
-    <link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@400;600;700&family=Orbitron:wght@400;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
-
     <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: system-ui, 'Segoe UI', Roboto, 'Helvetica Neue', sans-serif;
+        }
+        body {
+            background: linear-gradient(145deg, #eef4fa 0%, #dce8f2 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 1.5rem;
+        }
+        .card {
+            background: rgba(255, 255, 255, 0.92);
+            backdrop-filter: blur(10px);
+            border-radius: 2.5rem;
+            padding: 2.5rem 2rem;
+            max-width: 1150px;
+            width: 100%;
+            box-shadow: 0 25px 45px -12px rgba(0, 20, 30, 0.35), 0 1px 3px rgba(0,0,0,0.05);
+            border: 1px solid rgba(255,255,255,0.7);
+        }
+        h1 {
+            display: flex;
+            align-items: center;
+            gap: 0.65rem;
+            font-weight: 600;
+            font-size: 2rem;
+            letter-spacing: -0.02em;
+            color: #0b2b3d;
+            margin-bottom: 0.35rem;
+        }
+        h1::before {
+            content: "📡";
+            font-size: 2rem;
+            filter: drop-shadow(0 2px 4px rgba(0,0,0,0.1));
+        }
+        .subhead {
+            color: #2c5777;
+            font-size: 0.95rem;
+            font-weight: 400;
+            margin-bottom: 1.5rem;
+            border-left: 4px solid #3b82c4;
+            background: rgba(59, 130, 196, 0.06);
+            border-radius: 0 12px 12px 0;
+            padding: 0.7rem 1rem;
+            line-height: 1.4;
+        }
+        .subhead code {
+            background: #1e2f3f;
+            color: #c7e0ff;
+            padding: 0.2rem 0.5rem;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            font-family: 'JetBrains Mono', monospace;
+            margin: 0 0.2rem;
+            font-weight: 500;
+        }
+
+        /* Indicador de conexão realtime */
+        .realtime-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            background: #e4f3eb;
+            color: #1e6b4a;
+            padding: 0.4rem 1rem;
+            border-radius: 40px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            border: 1px solid #b8e0cc;
+            margin-bottom: 1.5rem;
+        }
+        .realtime-badge .dot {
+            width: 9px;
+            height: 9px;
+            border-radius: 50%;
+            background: #2e7d5e;
+            box-shadow: 0 0 0 3px rgba(46,125,94,0.25);
+            animation: pulse 1.8s infinite;
+        }
+        .realtime-badge.offline {
+            background: #fce9e7;
+            color: #8f2b20;
+            border-color: #f0c8c4;
+        }
+        .realtime-badge.offline .dot {
+            background: #c0392b;
+            box-shadow: 0 0 0 3px rgba(192,57,43,0.25);
+            animation: none;
+        }
+        @keyframes pulse {
+            0%   { box-shadow: 0 0 0 0 rgba(46,125,94,0.5); }
+            70%  { box-shadow: 0 0 0 8px rgba(46,125,94,0); }
+            100% { box-shadow: 0 0 0 0 rgba(46,125,94,0); }
+        }
+
+        /* Barra de ferramentas */
+        .toolbar {
+            display: flex;
+            flex-wrap: wrap;
+            align-items: center;
+            justify-content: space-between;
+            gap: 1rem;
+            margin-bottom: 1.2rem;
+        }
+        .search-box {
+            flex: 1 1 260px;
+            padding: 0.75rem 1.2rem;
+            border-radius: 40px;
+            border: 1px solid #cddbe8;
+            background: white;
+            font-size: 0.95rem;
+            outline: none;
+            transition: box-shadow 0.15s, border-color 0.15s;
+        }
+        .search-box:focus {
+            box-shadow: 0 0 0 4px rgba(59,130,196,0.15);
+            border-color: #3b82c4;
+        }
+        .stats {
+            display: flex;
+            gap: 1rem;
+            font-size: 0.85rem;
+            color: #2c5777;
+            background: #eef4fa;
+            padding: 0.5rem 1.2rem;
+            border-radius: 40px;
+            border: 1px solid #d4e3f0;
+            white-space: nowrap;
+        }
+        .stats strong {
+            color: #0b2b3d;
+        }
+        .btn-refresh {
+            background: white;
+            border: 1px solid #cddbe8;
+            border-radius: 40px;
+            padding: 0.6rem 1.2rem;
+            font-size: 0.85rem;
+            font-weight: 500;
+            color: #1f4a64;
+            cursor: pointer;
+            transition: all 0.12s;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.4rem;
+        }
+        .btn-refresh:hover {
+            background: #eef4fa;
+            border-color: #3b82c4;
+        }
+
+        /* Tabela */
+        .table-wrapper {
+            overflow-x: auto;
+            border-radius: 24px;
+            background: white;
+            border: 1px solid #e2ebf3;
+            box-shadow: inset 0 1px 4px rgba(0,0,0,0.02);
+            max-height: 480px;
+            overflow-y: auto;
+        }
+        .table-wrapper::-webkit-scrollbar {
+            width: 10px;
+            height: 10px;
+        }
+        .table-wrapper::-webkit-scrollbar-track {
+            background: #eef4fa;
+            border-radius: 10px;
+        }
+        .table-wrapper::-webkit-scrollbar-thumb {
+            background: #b6c9d9;
+            border-radius: 10px;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 0.92rem;
+        }
+        thead {
+            position: sticky;
+            top: 0;
+            background: #f2f8ff;
+            z-index: 2;
+            box-shadow: 0 1px 0 #d4e3f0;
+        }
+        th {
+            text-align: left;
+            padding: 1rem 1.2rem;
+            font-weight: 600;
+            color: #163a4e;
+            font-size: 0.8rem;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            white-space: nowrap;
+        }
+        td {
+            padding: 0.9rem 1.2rem;
+            border-bottom: 1px solid #edf3f8;
+            color: #1e3f52;
+            vertical-align: middle;
+        }
+        tbody tr {
+            transition: background 0.12s;
+        }
+        tbody tr:hover {
+            background: #f5faff;
+        }
+        .id-badge {
+            display: inline-block;
+            background: #2f5e7a;
+            color: white;
+            font-weight: 600;
+            font-size: 0.75rem;
+            font-family: 'JetBrains Mono', monospace;
+            padding: 0.25rem 0.7rem;
+            border-radius: 40px;
+            letter-spacing: 0.3px;
+            min-width: 40px;
+            text-align: center;
+        }
+        .login-cell {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.85rem;
+            color: #0b2b3d;
+            background: #f0f6fc;
+            padding: 0.2rem 0.6rem;
+            border-radius: 20px;
+            display: inline-block;
+            border: 1px solid #d9e8f5;
+        }
+        .nome-cell {
+            font-weight: 500;
+            color: #0b2b3d;
+        }
+        .empty-row td {
+            text-align: center;
+            padding: 3rem 1rem;
+            color: #7a9bb0;
+            font-size: 1rem;
+        }
+
+        /* Botão de excluir */
+        .btn-delete {
+            background: transparent;
+            border: 1px solid #f0d6d3;
+            border-radius: 30px;
+            padding: 0.4rem 0.9rem;
+            font-size: 0.8rem;
+            cursor: pointer;
+            transition: all 0.12s;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.3rem;
+            font-weight: 500;
+            color: #b03024;
+        }
+        .btn-delete:hover {
+            background: #fce9e7;
+            border-color: #c0392b;
+            transform: translateY(-1px);
+        }
+        .btn-delete:disabled {
+            opacity: 0.4;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        /* Destaque para novos registros */
+        @keyframes flashNew {
+            0%   { background: #d4edda; }
+            100% { background: transparent; }
+        }
+        tbody tr.new-record {
+            animation: flashNew 2s ease-out;
+        }
+
+        /* Rodapé / status */
+        .status-bar {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-top: 1.5rem;
+            padding: 1rem 1.2rem;
+            border-radius: 20px;
+            background: #eef4fa;
+            border-left: 6px solid #3b82c4;
+            font-size: 0.9rem;
+            color: #0d3142;
+            transition: all 0.2s;
+            flex-wrap: wrap;
+            gap: 0.8rem;
+        }
+        .status-bar.success {
+            border-left-color: #2e7d5e;
+            background: #e4f3eb;
+        }
+        .status-bar.error {
+            border-left-color: #c0392b;
+            background: #fce9e7;
+        }
+        .status-message {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.85rem;
+            background: rgba(255,255,255,0.5);
+            padding: 0.4rem 0.9rem;
+            border-radius: 40px;
+        }
+        .status-title {
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-size: 0.85rem;
+            text-transform: uppercase;
+            letter-spacing: 0.04em;
+            opacity: 0.85;
+        }
+
+        /* Modal de confirmação */
+        .modal-overlay {
+            position: fixed;
+            inset: 0;
+            background: rgba(10, 25, 35, 0.5);
+            backdrop-filter: blur(4px);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 1.5rem;
+            z-index: 1000;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.2s;
+        }
+        .modal-overlay.active {
+            opacity: 1;
+            pointer-events: auto;
+        }
+        .modal {
+            background: white;
+            border-radius: 2rem;
+            padding: 2rem;
+            max-width: 480px;
+            width: 100%;
+            box-shadow: 0 30px 60px -15px rgba(0,0,0,0.4);
+            transform: scale(0.95);
+            transition: transform 0.2s;
+        }
+        .modal-overlay.active .modal {
+            transform: scale(1);
+        }
+        .modal h2 {
+            font-size: 1.4rem;
+            color: #0b2b3d;
+            margin-bottom: 0.8rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        .modal p {
+            color: #2c5777;
+            font-size: 0.95rem;
+            line-height: 1.6;
+            margin-bottom: 1.5rem;
+        }
+        .modal p strong {
+            color: #b03024;
+            font-family: 'JetBrains Mono', monospace;
+            background: #fce9e7;
+            padding: 0.1rem 0.5rem;
+            border-radius: 8px;
+        }
+        .modal-actions {
+            display: flex;
+            gap: 0.8rem;
+            justify-content: flex-end;
+        }
+        .btn-modal {
+            padding: 0.75rem 1.6rem;
+            border-radius: 40px;
+            font-weight: 600;
+            font-size: 0.95rem;
+            cursor: pointer;
+            border: none;
+            transition: all 0.12s;
+        }
+        .btn-cancel {
+            background: #eef4fa;
+            color: #1f4a64;
+            border: 1px solid #d4e3f0;
+        }
+        .btn-cancel:hover {
+            background: #e2ebf3;
+        }
+        .btn-confirm {
+            background: linear-gradient(135deg, #c0392b, #a82315);
+            color: white;
+            box-shadow: 0 6px 14px -6px rgba(192, 57, 43, 0.5);
+        }
+        .btn-confirm:hover {
+            background: #b03024;
+        }
+        .btn-confirm:disabled {
+            opacity: 0.6;
+            cursor: wait;
+        }
+
+        @media (max-width: 600px) {
+            .card { padding: 1.8rem 1.2rem; }
+            h1 { font-size: 1.5rem; }
+            th, td { padding: 0.7rem 0.8rem; }
+            .btn-delete span.label { display: none; }
+        }
+
+
+
+
+
+  <!-- ============================================================ -->
+    <!-- CSS 1 — NAVBAR CYBERPUNK (isolado do admin.html)             -->
+    <!-- ============================================================ -->
+    <style id="css-navbar-admin">
         :root {
             --bg-dark: #0a0b10;
             --card-bg: #121520;
@@ -18,49 +439,37 @@
             --text-color: #f0f4f8;
         }
 
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-            font-family: 'Rajdhani', sans-serif;
-        }
-
-        body {
-            background-color: var(--bg-dark);
-            color: var(--text-color);
-            background-image:
-                radial-gradient(circle at 15% 20%, rgba(112, 0, 255, 0.15) 0%, transparent 40%),
-                radial-gradient(circle at 85% 80%, rgba(0, 240, 255, 0.15) 0%, transparent 40%);
-            min-height: 100vh;
-            padding: 20px;
-        }
-
-        /* ==================== NAVBAR ==================== */
         .nav-bar {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            background: rgba(18, 21, 32, 0.8);
+            background: rgba(18, 21, 32, 0.85);
             backdrop-filter: blur(10px);
             border: 1px solid rgba(0, 240, 255, 0.2);
             padding: 12px 24px;
             border-radius: 16px;
-            margin: 0 auto 30px;
+            margin: 20px auto 30px;
             max-width: 1400px;
-            width: 100%;
+            width: calc(100% - 40px);
             box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
             flex-wrap: wrap;
             gap: 10px;
+            font-family: 'Inter', 'Segoe UI', sans-serif;
+            box-sizing: border-box;
         }
 
-        .nav-links {
+        .nav-bar * {
+            box-sizing: border-box;
+        }
+
+        .nav-bar .nav-links {
             display: flex;
             align-items: center;
             gap: 15px;
             flex-wrap: wrap;
         }
 
-        .nav-links a {
+        .nav-bar .nav-links a {
             color: #a0aec0;
             text-decoration: none;
             font-weight: 700;
@@ -71,17 +480,18 @@
             display: flex;
             align-items: center;
             gap: 6px;
+            font-family: 'Rajdhani', sans-serif;
         }
 
-        .nav-links a:hover,
-        .nav-links a.active {
+        .nav-bar .nav-links a:hover,
+        .nav-bar .nav-links a.active {
             color: #fff;
             background: rgba(0, 240, 255, 0.15);
             border: 1px solid var(--neon-blue);
             box-shadow: 0 0 10px rgba(0, 240, 255, 0.3);
         }
 
-        .user-profile {
+        .nav-bar .user-profile {
             display: flex;
             align-items: center;
             gap: 12px;
@@ -96,13 +506,13 @@
             cursor: default;
         }
 
-        .user-profile:hover {
+        .nav-bar .user-profile:hover {
             background: rgba(0, 240, 255, 0.15);
             border-color: var(--neon-blue);
             box-shadow: 0 0 15px rgba(0, 240, 255, 0.2);
         }
 
-        .user-avatar {
+        .nav-bar .user-avatar {
             background: linear-gradient(135deg, var(--neon-blue), var(--neon-purple));
             width: 36px;
             height: 36px;
@@ -115,20 +525,20 @@
             box-shadow: 0 0 10px rgba(0, 240, 255, 0.3);
         }
 
-        .user-info {
+        .nav-bar .user-info {
             display: flex;
             flex-direction: column;
             line-height: 1.2;
         }
 
-        .user-nick {
+        .nav-bar .user-nick {
             font-family: 'Orbitron', sans-serif;
             font-size: 0.9rem;
             letter-spacing: 0.5px;
             color: #fff;
         }
 
-        .user-balance {
+        .nav-bar .user-balance {
             font-size: 0.8rem;
             color: var(--neon-green);
             display: flex;
@@ -136,14 +546,14 @@
             gap: 4px;
         }
 
-        .nav-buttons {
+        .nav-bar .nav-buttons {
             display: flex;
             gap: 10px;
             align-items: center;
             flex-wrap: wrap;
         }
 
-        .btn-bolsa {
+        .nav-bar .btn-bolsa {
             background: linear-gradient(135deg, #00f0ff, #7000ff);
             color: white;
             border: none;
@@ -160,517 +570,21 @@
             font-family: 'Rajdhani', sans-serif;
         }
 
-        .btn-bolsa:hover {
+        .nav-bar .btn-bolsa:hover {
             transform: translateY(-2px) scale(1.02);
             box-shadow: 0 0 20px rgba(0, 240, 255, 0.8);
         }
 
-        /* ==================== CONTAINER / CARD PRINCIPAL ==================== */
-        .container {
-            max-width: 1400px;
-            margin: 0 auto;
-        }
-
-        .card {
-            background: var(--card-bg);
-            border: 1px solid rgba(255, 255, 255, 0.08);
-            border-radius: 16px;
-            padding: 24px;
-            margin-bottom: 28px;
-            box-shadow: 0 8px 22px rgba(0, 0, 0, 0.4);
-            transition: border-color 0.3s;
-        }
-
-        .card:hover {
-            border-color: rgba(0, 240, 255, 0.2);
-        }
-
-        .card h2 {
-            font-size: 1.4rem;
-            margin-bottom: 20px;
-            border-left: 5px solid var(--neon-blue);
-            padding-left: 14px;
-            color: #fff;
-            font-family: 'Orbitron', sans-serif;
-            letter-spacing: 1px;
-            text-shadow: 0 0 8px rgba(0, 240, 255, 0.2);
-            display: flex;
-            align-items: center;
-            gap: 0.65rem;
-        }
-
-        .card h2::before {
-            content: "📡";
-            font-size: 1.6rem;
-            filter: drop-shadow(0 2px 4px rgba(0,0,0,0.3));
-        }
-
-        .subhead {
-            color: #8ab4e8;
-            font-size: 0.95rem;
-            font-weight: 400;
-            margin-bottom: 1.5rem;
-            border-left: 4px solid var(--neon-blue);
-            background: rgba(0, 240, 255, 0.05);
-            border-radius: 0 12px 12px 0;
-            padding: 0.7rem 1rem;
-            line-height: 1.5;
-            font-family: 'Rajdhani', sans-serif;
-        }
-
-        .subhead code {
-            background: #1a1f2f;
-            color: var(--neon-blue);
-            padding: 0.2rem 0.6rem;
-            border-radius: 20px;
-            font-size: 0.85rem;
-            font-family: 'JetBrains Mono', monospace;
-            margin: 0 0.2rem;
-            font-weight: 500;
-            border: 1px solid rgba(0, 240, 255, 0.2);
-        }
-
-        /* ==================== BADGE REALTIME ==================== */
-        .realtime-badge {
-            display: inline-flex;
-            align-items: center;
-            gap: 0.5rem;
-            background: rgba(0, 255, 102, 0.08);
-            color: var(--neon-green);
-            padding: 0.4rem 1rem;
-            border-radius: 40px;
-            font-size: 0.8rem;
-            font-weight: 600;
-            border: 1px solid rgba(0, 255, 102, 0.3);
-            margin-bottom: 1.5rem;
-            font-family: 'Rajdhani', sans-serif;
-        }
-
-        .realtime-badge .dot {
-            width: 9px;
-            height: 9px;
-            border-radius: 50%;
-            background: var(--neon-green);
-            box-shadow: 0 0 0 3px rgba(0, 255, 102, 0.25);
-            animation: pulse 1.8s infinite;
-        }
-
-        .realtime-badge.offline {
-            background: rgba(239, 68, 68, 0.08);
-            color: #ef4444;
-            border-color: rgba(239, 68, 68, 0.3);
-        }
-
-        .realtime-badge.offline .dot {
-            background: #ef4444;
-            box-shadow: 0 0 0 3px rgba(239, 68, 68, 0.25);
-            animation: none;
-        }
-
-        @keyframes pulse {
-            0%   { box-shadow: 0 0 0 0 rgba(0, 255, 102, 0.5); }
-            70%  { box-shadow: 0 0 0 8px rgba(0, 255, 102, 0); }
-            100% { box-shadow: 0 0 0 0 rgba(0, 255, 102, 0); }
-        }
-
-        /* ==================== TOOLBAR ==================== */
-        .toolbar {
-            display: flex;
-            flex-wrap: wrap;
-            align-items: center;
-            justify-content: space-between;
-            gap: 1rem;
-            margin-bottom: 1.2rem;
-        }
-
-        .search-box {
-            flex: 1 1 260px;
-            padding: 0.75rem 1.2rem;
-            border-radius: 40px;
-            border: 1px solid #2a2f45;
-            background: #1a1f2f;
-            color: var(--text-color);
-            font-size: 0.95rem;
-            outline: none;
-            transition: box-shadow 0.15s, border-color 0.15s;
-            font-family: 'Rajdhani', sans-serif;
-        }
-
-        .search-box::placeholder {
-            color: #5a6a7a;
-        }
-
-        .search-box:focus {
-            box-shadow: 0 0 0 4px rgba(0, 240, 255, 0.15);
-            border-color: var(--neon-blue);
-        }
-
-        .stats {
-            display: flex;
-            gap: 1rem;
-            font-size: 0.85rem;
-            color: #8ab4e8;
-            background: #1a1f2f;
-            padding: 0.5rem 1.2rem;
-            border-radius: 40px;
-            border: 1px solid #2a2f45;
-            white-space: nowrap;
-        }
-
-        .stats strong {
-            color: var(--neon-blue);
-        }
-
-        .btn-refresh {
-            background: #1a1f2f;
-            border: 1px solid #2a2f45;
-            border-radius: 40px;
-            padding: 0.6rem 1.2rem;
-            font-size: 0.85rem;
-            font-weight: 600;
-            color: #8ab4e8;
-            cursor: pointer;
-            transition: all 0.15s;
-            display: inline-flex;
-            align-items: center;
-            gap: 0.4rem;
-            font-family: 'Rajdhani', sans-serif;
-        }
-
-        .btn-refresh:hover {
-            background: rgba(0, 240, 255, 0.1);
-            border-color: var(--neon-blue);
-            color: var(--neon-blue);
-        }
-
-        /* ==================== TABELA ==================== */
-        .table-wrapper {
-            overflow-x: auto;
-            border-radius: 16px;
-            background: #1a1f2f;
-            border: 1px solid #2a2f45;
-            box-shadow: inset 0 1px 4px rgba(0,0,0,0.2);
-            max-height: 480px;
-            overflow-y: auto;
-        }
-
-        .table-wrapper::-webkit-scrollbar {
-            width: 10px;
-            height: 10px;
-        }
-
-        .table-wrapper::-webkit-scrollbar-track {
-            background: #121520;
-            border-radius: 10px;
-        }
-
-        .table-wrapper::-webkit-scrollbar-thumb {
-            background: #2a2f45;
-            border-radius: 10px;
-        }
-
-        .table-wrapper::-webkit-scrollbar-thumb:hover {
-            background: #3a4060;
-        }
-
-        table {
-            width: 100%;
-            border-collapse: collapse;
-            font-size: 0.92rem;
-        }
-
-        thead {
-            position: sticky;
-            top: 0;
-            background: #121520;
-            z-index: 2;
-            box-shadow: 0 1px 0 #2a2f45;
-        }
-
-        th {
-            text-align: left;
-            padding: 1rem 1.2rem;
-            font-weight: 600;
-            color: #8ab4e8;
-            font-size: 0.8rem;
-            text-transform: uppercase;
-            letter-spacing: 0.05em;
-            white-space: nowrap;
-            font-family: 'Orbitron', sans-serif;
-        }
-
-        td {
-            padding: 0.9rem 1.2rem;
-            border-bottom: 1px solid #2a2f45;
-            color: #e0e8f0;
-            vertical-align: middle;
-        }
-
-        tbody tr {
-            transition: background 0.12s;
-        }
-
-        tbody tr:hover {
-            background: rgba(0, 240, 255, 0.04);
-        }
-
-        .id-badge {
-            display: inline-block;
-            background: #2f5e7a;
-            color: white;
-            font-weight: 600;
-            font-size: 0.75rem;
-            font-family: 'JetBrains Mono', monospace;
-            padding: 0.25rem 0.7rem;
-            border-radius: 40px;
-            letter-spacing: 0.3px;
-            min-width: 40px;
-            text-align: center;
-            box-shadow: 0 0 8px rgba(0, 240, 255, 0.15);
-        }
-
-        .login-cell {
-            font-family: 'JetBrains Mono', monospace;
-            font-size: 0.85rem;
-            color: #c7e0ff;
-            background: #1a1f2f;
-            padding: 0.2rem 0.6rem;
-            border-radius: 20px;
-            display: inline-block;
-            border: 1px solid #2a2f45;
-        }
-
-        .nome-cell {
-            font-weight: 600;
-            color: #fff;
-        }
-
-        .empty-row td {
-            text-align: center;
-            padding: 3rem 1rem;
-            color: #7a9bb0;
-            font-size: 1rem;
-        }
-
-        /* ==================== BOTÃO DELETAR ==================== */
-        .btn-delete {
-            background: linear-gradient(135deg, #7c3aed, #6d28d9);
-            color: white;
-            border: none;
-            border-radius: 30px;
-            padding: 0.4rem 0.9rem;
-            font-size: 0.8rem;
-            cursor: pointer;
-            transition: all 0.15s;
-            display: inline-flex;
-            align-items: center;
-            gap: 0.3rem;
-            font-weight: 600;
-            font-family: 'Rajdhani', sans-serif;
-            box-shadow: 0 0 12px rgba(124, 58, 237, 0.3);
-        }
-
-        .btn-delete:hover {
-            transform: translateY(-1px);
-            box-shadow: 0 0 20px rgba(124, 58, 237, 0.6);
-            background: linear-gradient(135deg, #6d28d9, #5b21b6);
-        }
-
-        .btn-delete:disabled {
-            opacity: 0.4;
-            cursor: not-allowed;
-            transform: none;
-        }
-
-        /* ==================== DESTAQUE NOVOS REGISTROS ==================== */
-        @keyframes flashNew {
-            0%   { background: rgba(0, 255, 102, 0.15); }
-            100% { background: transparent; }
-        }
-
-        tbody tr.new-record {
-            animation: flashNew 2s ease-out;
-        }
-
-        /* ==================== STATUS BAR ==================== */
-        .status-bar {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            margin-top: 1.5rem;
-            padding: 1rem 1.2rem;
-            border-radius: 16px;
-            background: #1a1f2f;
-            border-left: 6px solid var(--neon-blue);
-            font-size: 0.9rem;
-            color: #e0e8f0;
-            transition: all 0.2s;
-            flex-wrap: wrap;
-            gap: 0.8rem;
-        }
-
-        .status-bar.success {
-            border-left-color: var(--neon-green);
-            background: rgba(0, 255, 102, 0.06);
-        }
-
-        .status-bar.error {
-            border-left-color: #ef4444;
-            background: rgba(239, 68, 68, 0.06);
-        }
-
-        .status-message {
-            font-family: 'JetBrains Mono', monospace;
-            font-size: 0.85rem;
-            background: rgba(255,255,255,0.05);
-            padding: 0.4rem 0.9rem;
-            border-radius: 40px;
-            color: #c7e0ff;
-        }
-
-        .status-title {
-            font-weight: 600;
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-            font-size: 0.85rem;
-            text-transform: uppercase;
-            letter-spacing: 0.04em;
-            opacity: 0.85;
-            font-family: 'Orbitron', sans-serif;
-            color: #8ab4e8;
-        }
-
-        /* ==================== MODAL ==================== */
-        .modal-overlay {
-            position: fixed;
-            inset: 0;
-            background: rgba(10, 11, 16, 0.75);
-            backdrop-filter: blur(6px);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            padding: 1.5rem;
-            z-index: 1000;
-            opacity: 0;
-            pointer-events: none;
-            transition: opacity 0.2s;
-        }
-
-        .modal-overlay.active {
-            opacity: 1;
-            pointer-events: auto;
-        }
-
-        .modal {
-            background: var(--card-bg);
-            border: 1px solid rgba(124, 58, 237, 0.3);
-            border-radius: 20px;
-            padding: 2rem;
-            max-width: 480px;
-            width: 100%;
-            box-shadow: 0 30px 60px -15px rgba(0,0,0,0.6);
-            transform: scale(0.95);
-            transition: transform 0.2s;
-        }
-
-        .modal-overlay.active .modal {
-            transform: scale(1);
-        }
-
-        .modal h2 {
-            font-size: 1.4rem;
-            color: #fff;
-            margin-bottom: 0.8rem;
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-            font-family: 'Orbitron', sans-serif;
-            letter-spacing: 1px;
-        }
-
-        .modal p {
-            color: #8ab4e8;
-            font-size: 0.95rem;
-            line-height: 1.6;
-            margin-bottom: 1.5rem;
-        }
-
-        .modal p strong {
-            color: #ff6b6b;
-            font-family: 'JetBrains Mono', monospace;
-            background: rgba(239, 68, 68, 0.1);
-            padding: 0.1rem 0.5rem;
-            border-radius: 8px;
-            border: 1px solid rgba(239, 68, 68, 0.2);
-        }
-
-        .modal-actions {
-            display: flex;
-            gap: 0.8rem;
-            justify-content: flex-end;
-        }
-
-        .btn-modal {
-            padding: 0.75rem 1.6rem;
-            border-radius: 40px;
-            font-weight: 700;
-            font-size: 0.95rem;
-            cursor: pointer;
-            border: none;
-            transition: all 0.15s;
-            font-family: 'Rajdhani', sans-serif;
-            letter-spacing: 0.5px;
-        }
-
-        .btn-cancel {
-            background: #1a1f2f;
-            color: #8ab4e8;
-            border: 1px solid #2a2f45;
-        }
-
-        .btn-cancel:hover {
-            background: #2a2f45;
-            color: #fff;
-        }
-
-        .btn-confirm {
-            background: linear-gradient(135deg, #ef4444, #dc2626);
-            color: white;
-            box-shadow: 0 6px 14px -6px rgba(239, 68, 68, 0.5);
-        }
-
-        .btn-confirm:hover {
-            background: linear-gradient(135deg, #dc2626, #b91c1c);
-            box-shadow: 0 0 20px rgba(239, 68, 68, 0.6);
-        }
-
-        .btn-confirm:disabled {
-            opacity: 0.6;
-            cursor: wait;
-        }
-
-        /* ==================== RESPONSIVO ==================== */
         @media (max-width: 860px) {
-            .nav-bar {
-                flex-direction: column;
-                align-items: stretch;
-            }
-            .nav-links { justify-content: center; }
-            .nav-buttons { justify-content: center; }
+            .nav-bar { flex-direction: column; align-items: stretch; }
+            .nav-bar .nav-links { justify-content: center; }
+            .nav-bar .nav-buttons { justify-content: center; }
         }
-
-        @media (max-width: 600px) {
-            .card { padding: 1.8rem 1.2rem; }
-            .card h2 { font-size: 1.1rem; }
-            th, td { padding: 0.7rem 0.8rem; }
-            .btn-delete span.label { display: none; }
-            .stats { font-size: 0.75rem; padding: 0.4rem 0.8rem; }
-        }
-    </style>
+		
+		    </style>
 </head>
 <body>
-    <!-- ==================== NAVBAR ==================== -->
+    <!-- ==================== NAVBAR CYBERPUNK (do admin.html) ==================== -->
     <div class="nav-bar">
         <div class="nav-links">
             <a href="./admin.html" class="active">⚡ ADMIN</a>
@@ -686,57 +600,56 @@
             <button class="btn-bolsa" onclick="window.location.href='./admin.html'">🏠 Voltar</button>
         </div>
     </div>
+    <div class="card">
+        <h1>Geral · Realtime + Delete</h1>
+        <div class="subhead">
+            Supabase <code>xrcxvizzdumcxbylmkvn</code> ·
+            Tabela <code>public."Geral"</code> · Campos <code>id</code>, <code>nome</code>, <code>login</code>.
+        </div>
 
-    <!-- ==================== CONTEÚDO ==================== -->
-    <div class="container">
-        <div class="card">
-            <h2>Geral · Realtime + Delete</h2>
+        <div class="realtime-badge" id="realtimeBadge">
+            <span class="dot"></span>
+            <span id="realtimeLabel">Conectando...</span>
+        </div>
 
-
-            <div class="realtime-badge" id="realtimeBadge">
-                <span class="dot"></span>
-                <span id="realtimeLabel">Conectando...</span>
+        <div class="toolbar">
+            <input type="text" class="search-box" id="searchInput" placeholder="🔍 Buscar por id, nome ou login...">
+            <div class="stats">
+                <span>📋 Total: <strong id="totalCount">0</strong></span>
+                <span>🔎 Filtrados: <strong id="filteredCount">0</strong></span>
             </div>
+            <button class="btn-refresh" id="refreshBtn">🔄 Recarregar</button>
+        </div>
 
-            <div class="toolbar">
-                <input type="text" class="search-box" id="searchInput" placeholder="🔍 Buscar por id, nome ou login...">
-                <div class="stats">
-                    <span>📋 Total: <strong id="totalCount">0</strong></span>
-                    <span>🔎 Filtrados: <strong id="filteredCount">0</strong></span>
-                </div>
-                <button class="btn-refresh" id="refreshBtn">🔄 Recarregar</button>
+        <div class="table-wrapper">
+            <table>
+                <thead>
+                    <tr>
+                        <th style="width: 100px;">ID</th>
+                        <th>Nome</th>
+                        <th>Login</th>
+                        <th style="width: 140px; text-align: right;">Ações</th>
+                    </tr>
+                </thead>
+                <tbody id="tableBody">
+                    <tr class="empty-row">
+                        <td colspan="4">Carregando dados do Supabase...</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <div class="status-bar" id="statusBar">
+            <div class="status-title">
+                <span>📋</span> Status
             </div>
-
-            <div class="table-wrapper">
-                <table>
-                    <thead>
-                        <tr>
-                            <th style="width: 100px;">ID</th>
-                            <th>Nome</th>
-                            <th>Login</th>
-                            <th style="width: 140px; text-align: right;">Ações</th>
-                        </tr>
-                    </thead>
-                    <tbody id="tableBody">
-                        <tr class="empty-row">
-                            <td colspan="4">Carregando dados do Supabase...</td>
-                        </tr>
-                    </tbody>
-                </table>
-            </div>
-
-            <div class="status-bar" id="statusBar">
-                <div class="status-title">
-                    <span>📋</span> Status
-                </div>
-                <div class="status-message" id="statusMessage">
-                    Inicializando conexão em tempo real...
-                </div>
+            <div class="status-message" id="statusMessage">
+                Inicializando conexão em tempo real...
             </div>
         </div>
     </div>
 
-    <!-- ==================== MODAL ==================== -->
+    <!-- Modal de confirmação -->
     <div class="modal-overlay" id="modalOverlay">
         <div class="modal">
             <h2>⚠️ Confirmar exclusão</h2>
@@ -752,13 +665,12 @@
         </div>
     </div>
 
-    <!-- ==================== SCRIPT ==================== -->
     <script type="module">
         // ============================================================
         // CONFIGURAÇÃO DO SUPABASE
         // ============================================================
         const SUPABASE_URL = 'https://xrcxvizzdumcxbylmkvn.supabase.co';
-        const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InhyY3h2aXp6ZHVtY3hieWxta3ZuIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODY2NjA0NzIsImV4cCI6MjEwMjIzNjQ3Mn0.ohB4tW0UQ-k1PcwoZxm4u9XSGNLsFphv1_UwTWoklOM';
+        const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InhyY3h2aXp6ZHVtY3hieWxta3ZuIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODY2NjA0NzIsImV4cCI6MjEwMjIzNjQ3Mn0.ohB4tW0UQ-k1PcwoZxm4u9XSGNLsFphv1_UwTWoklOM'; // ← substitua
 
         import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/+esm';
         const supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);

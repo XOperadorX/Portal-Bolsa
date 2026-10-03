@@ -345,17 +345,186 @@
         font-size: 1.6rem;
       }
     }
-  </style>
+
+
+
+
+
+  <!-- ============================================================ -->
+    <!-- CSS 1 — NAVBAR CYBERPUNK (isolado do admin.html)             -->
+    <!-- ============================================================ -->
+    <style id="css-navbar-admin">
+        :root {
+            --bg-dark: #0a0b10;
+            --card-bg: #121520;
+            --neon-blue: #00f0ff;
+            --neon-purple: #7000ff;
+            --neon-green: #00ff66;
+            --text-color: #f0f4f8;
+        }
+
+        .nav-bar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: rgba(18, 21, 32, 0.85);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(0, 240, 255, 0.2);
+            padding: 12px 24px;
+            border-radius: 16px;
+            margin: 20px auto 30px;
+            max-width: 1400px;
+            width: calc(100% - 40px);
+            box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
+            flex-wrap: wrap;
+            gap: 10px;
+            font-family: 'Inter', 'Segoe UI', sans-serif;
+            box-sizing: border-box;
+        }
+
+        .nav-bar * {
+            box-sizing: border-box;
+        }
+
+        .nav-bar .nav-links {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            flex-wrap: wrap;
+        }
+
+        .nav-bar .nav-links a {
+            color: #a0aec0;
+            text-decoration: none;
+            font-weight: 700;
+            font-size: 1.1rem;
+            padding: 8px 16px;
+            border-radius: 8px;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            font-family: 'Rajdhani', sans-serif;
+        }
+
+        .nav-bar .nav-links a:hover,
+        .nav-bar .nav-links a.active {
+            color: #fff;
+            background: rgba(0, 240, 255, 0.15);
+            border: 1px solid var(--neon-blue);
+            box-shadow: 0 0 10px rgba(0, 240, 255, 0.3);
+        }
+
+        .nav-bar .user-profile {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            background: rgba(0, 240, 255, 0.08);
+            padding: 6px 16px 6px 12px;
+            border-radius: 40px;
+            border: 1px solid rgba(0, 240, 255, 0.2);
+            color: #fff;
+            font-weight: 600;
+            font-size: 0.95rem;
+            transition: all 0.3s;
+            cursor: default;
+        }
+
+        .nav-bar .user-profile:hover {
+            background: rgba(0, 240, 255, 0.15);
+            border-color: var(--neon-blue);
+            box-shadow: 0 0 15px rgba(0, 240, 255, 0.2);
+        }
+
+        .nav-bar .user-avatar {
+            background: linear-gradient(135deg, var(--neon-blue), var(--neon-purple));
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.2rem;
+            font-weight: bold;
+            box-shadow: 0 0 10px rgba(0, 240, 255, 0.3);
+        }
+
+        .nav-bar .user-info {
+            display: flex;
+            flex-direction: column;
+            line-height: 1.2;
+        }
+
+        .nav-bar .user-nick {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 0.9rem;
+            letter-spacing: 0.5px;
+            color: #fff;
+        }
+
+        .nav-bar .user-balance {
+            font-size: 0.8rem;
+            color: var(--neon-green);
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+
+        .nav-bar .nav-buttons {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+
+        .nav-bar .btn-bolsa {
+            background: linear-gradient(135deg, #00f0ff, #7000ff);
+            color: white;
+            border: none;
+            padding: 8px 18px;
+            border-radius: 40px;
+            font-weight: bold;
+            font-size: 0.9rem;
+            cursor: pointer;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            box-shadow: 0 0 12px rgba(0, 240, 255, 0.4);
+            font-family: 'Rajdhani', sans-serif;
+        }
+
+        .nav-bar .btn-bolsa:hover {
+            transform: translateY(-2px) scale(1.02);
+            box-shadow: 0 0 20px rgba(0, 240, 255, 0.8);
+        }
+
+        @media (max-width: 860px) {
+            .nav-bar { flex-direction: column; align-items: stretch; }
+            .nav-bar .nav-links { justify-content: center; }
+            .nav-bar .nav-buttons { justify-content: center; }
+        }
+		
+		    </style>
 </head>
 <body>
+    <!-- ==================== NAVBAR CYBERPUNK (do admin.html) ==================== -->
+    <div class="nav-bar">
+        <div class="nav-links">
+            <a href="./admin.html" class="active">⚡ ADMIN</a>
+        </div>
+        <div class="user-profile">
+            <div class="user-avatar">👑</div>
+            <div class="user-info">
+                <span class="user-nick" id="usuarioLogadoNav">ADM</span>
+                <span class="user-balance">Supabase <span id="statusSupabaseTextoNav">Online</span></span>
+            </div>
+        </div>
+        <div class="nav-buttons">
+            <button class="btn-bolsa" onclick="window.location.href='./admin.html'">🏠 Voltar</button>
+        </div>
+    </div>
 <div class="card" id="app">
-  <!-- cabeçalho com nome MMQuaseTudo -->
-  <div class="header">
-            <a href="../../dashboard.html" class="btn-voltar">🏠 Voltar</a>
-
-    <div class="logo-icon">🔒</div>
-    <span class="brand">MMQuaseTudo <small>· Cadeado</small></span>
-  </div>
 
   <h1>
     Cadeado

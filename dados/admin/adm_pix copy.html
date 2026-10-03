@@ -1,0 +1,973 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>👑 Painel Admin — Saques Pix</title>
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500;700;900&family=Rajdhani:wght@600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-dark: #0a0b10;
+            --card-bg: #121520;
+            --neon-blue: #00f0ff;
+            --neon-purple: #7000ff;
+            --neon-green: #00ff66;
+            --neon-pix: #00b894;
+            --neon-gold: #ffd700;
+            --neon-red: #ef4444;
+            --text-color: #f0f4f8;
+            --text-muted: #8a99ad;
+        }
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Rajdhani', sans-serif; }
+        body {
+            background-color: var(--bg-dark);
+            color: var(--text-color);
+            background-image:
+                radial-gradient(circle at 15% 20%, rgba(112, 0, 255, 0.15) 0%, transparent 40%),
+                radial-gradient(circle at 85% 80%, rgba(255, 215, 0, 0.08) 0%, transparent 40%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .nav-bar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: rgba(18, 21, 32, 0.85);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 215, 0, 0.3);
+            padding: 12px 24px;
+            border-radius: 16px;
+            margin-bottom: 20px;
+            max-width: 1400px;
+            margin-left: auto;
+            margin-right: auto;
+            box-shadow: 0 8px 32px rgba(0,0,0,0.37), 0 0 20px rgba(255, 215, 0, 0.1);
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+        .nav-links { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; }
+        .nav-links a {
+            color: #a0aec0; text-decoration: none;
+            font-weight: 700; font-size: 1rem;
+            padding: 8px 14px; border-radius: 8px;
+            transition: all 0.3s ease;
+            display: flex; align-items: center; gap: 6px;
+        }
+        .nav-links a:hover, .nav-links a.active {
+            color: #fff; background: rgba(255, 215, 0, 0.15);
+            border: 1px solid var(--neon-gold);
+            box-shadow: 0 0 10px rgba(255, 215, 0, 0.3);
+        }
+        .btn-bolsa {
+            background: linear-gradient(135deg, #ffd700, #b8860b);
+            color: #000; border: none;
+            padding: 8px 18px; border-radius: 40px;
+            font-weight: bold; font-size: 0.9rem;
+            cursor: pointer; transition: all 0.3s;
+            display: inline-flex; align-items: center; gap: 5px;
+            box-shadow: 0 0 12px rgba(255, 215, 0, 0.4);
+            text-decoration: none;
+            font-family: 'Rajdhani', sans-serif;
+        }
+        .btn-bolsa:hover { transform: translateY(-2px) scale(1.02); box-shadow: 0 0 20px rgba(255, 215, 0, 0.8); }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        .header-title {
+            text-align: center;
+            margin-bottom: 25px;
+        }
+        .header-title h1 {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 2rem;
+            color: #fff;
+            letter-spacing: 2px;
+            text-shadow: 0 0 20px var(--neon-gold), 0 0 40px rgba(255, 215, 0, 0.5);
+        }
+        .header-title p {
+            color: var(--text-muted);
+            font-size: 0.95rem;
+            margin-top: 5px;
+        }
+
+        /* ===== STATS CARDS ===== */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 14px;
+            margin-bottom: 25px;
+        }
+        .stat-card {
+            background: rgba(18, 21, 32, 0.85);
+            border-radius: 14px;
+            padding: 18px 20px;
+            border: 1px solid rgba(255, 255, 255, 0.06);
+            position: relative;
+            overflow: hidden;
+            transition: all 0.25s;
+        }
+        .stat-card:hover { transform: translateY(-3px); box-shadow: 0 8px 25px rgba(0,0,0,0.4); }
+        .stat-card::before {
+            content: '';
+            position: absolute;
+            top: 0; left: 0;
+            width: 4px; height: 100%;
+        }
+        .stat-card.pendente::before { background: #f59e0b; }
+        .stat-card.pago::before { background: var(--neon-green); }
+        .stat-card.total::before { background: var(--neon-blue); }
+        .stat-card.usuarios::before { background: var(--neon-purple); }
+
+        .stat-label {
+            font-size: 0.75rem;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            font-family: 'Orbitron', sans-serif;
+            font-weight: 600;
+        }
+        .stat-value {
+            font-family: 'Orbitron', monospace;
+            font-size: 1.6rem;
+            font-weight: 900;
+            color: #fff;
+            margin-top: 6px;
+        }
+        .stat-card.pendente .stat-value { color: #fbbf24; }
+        .stat-card.pago .stat-value { color: var(--neon-green); }
+        .stat-card.total .stat-value { color: var(--neon-blue); }
+        .stat-card.usuarios .stat-value { color: #a78bfa; }
+        .stat-sub {
+            font-size: 0.78rem;
+            color: var(--text-muted);
+            margin-top: 4px;
+        }
+
+        /* ===== FILTROS ===== */
+        .filters-bar {
+            background: rgba(18, 21, 32, 0.85);
+            border: 1px solid rgba(0, 240, 255, 0.15);
+            border-radius: 14px;
+            padding: 15px 20px;
+            margin-bottom: 20px;
+            display: flex;
+            gap: 12px;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+        .filters-bar label {
+            font-size: 0.8rem;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            font-weight: 600;
+            letter-spacing: 1px;
+        }
+        .filters-bar input,
+        .filters-bar select {
+            background: rgba(10, 11, 16, 0.7);
+            border: 2px solid rgba(0, 240, 255, 0.15);
+            border-radius: 8px;
+            padding: 8px 12px;
+            font-size: 0.9rem;
+            color: #fff;
+            outline: none;
+            font-family: 'Rajdhani', sans-serif;
+            transition: all 0.25s;
+            min-width: 150px;
+        }
+        .filters-bar input:focus,
+        .filters-bar select:focus {
+            border-color: var(--neon-blue);
+            box-shadow: 0 0 0 3px rgba(0, 240, 255, 0.1);
+        }
+        .filters-bar select option { background: #121520; color: #fff; }
+
+        .btn-refresh {
+            background: linear-gradient(135deg, #00f0ff, #7000ff);
+            color: #fff; border: none;
+            padding: 10px 20px;
+            border-radius: 10px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.25s;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            font-family: 'Rajdhani', sans-serif;
+            box-shadow: 0 0 15px rgba(0, 240, 255, 0.3);
+            margin-left: auto;
+        }
+        .btn-refresh:hover { transform: translateY(-2px); box-shadow: 0 0 25px rgba(0, 240, 255, 0.6); }
+
+        /* ===== TABELAS ===== */
+        .section-card {
+            background: rgba(18, 21, 32, 0.85);
+            border: 1px solid rgba(255, 255, 255, 0.06);
+            border-radius: 16px;
+            padding: 20px;
+            margin-bottom: 22px;
+        }
+        .section-title {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 1.1rem;
+            color: #fff;
+            letter-spacing: 1px;
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            text-shadow: 0 0 12px var(--neon-blue);
+        }
+        .section-title .badge-count {
+            background: rgba(0, 240, 255, 0.15);
+            color: var(--neon-blue);
+            font-size: 0.75rem;
+            padding: 2px 10px;
+            border-radius: 20px;
+            font-weight: 700;
+            font-family: 'Orbitron', sans-serif;
+            border: 1px solid rgba(0, 240, 255, 0.3);
+        }
+
+        .table-wrapper {
+            overflow-x: auto;
+            border-radius: 12px;
+            border: 1px solid rgba(255, 255, 255, 0.05);
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 0.85rem;
+            min-width: 700px;
+        }
+        thead {
+            background: rgba(10, 11, 16, 0.7);
+            position: sticky;
+            top: 0;
+            z-index: 1;
+        }
+        th {
+            padding: 12px 14px;
+            text-align: left;
+            color: var(--text-muted);
+            font-size: 0.72rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            font-family: 'Orbitron', sans-serif;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+            white-space: nowrap;
+        }
+        td {
+            padding: 12px 14px;
+            color: #c8d0e0;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.04);
+            vertical-align: middle;
+        }
+        tbody tr {
+            transition: all 0.2s;
+        }
+        tbody tr:hover {
+            background: rgba(0, 240, 255, 0.04);
+        }
+        tbody tr:last-child td { border-bottom: none; }
+
+        .user-cell {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .user-avatar-sm {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--neon-purple), var(--neon-blue));
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            font-size: 0.85rem;
+            color: #fff;
+            flex-shrink: 0;
+            box-shadow: 0 0 10px rgba(112, 0, 255, 0.4);
+        }
+        .user-name {
+            font-weight: 600;
+            color: #fff;
+            font-size: 0.88rem;
+        }
+        .user-login {
+            font-size: 0.72rem;
+            color: var(--text-muted);
+        }
+
+        .valor-pix {
+            font-family: 'Orbitron', monospace;
+            font-weight: 700;
+            color: var(--neon-green);
+            font-size: 0.95rem;
+        }
+        .valor-mumu {
+            font-family: 'Orbitron', monospace;
+            color: var(--neon-gold);
+            font-size: 0.82rem;
+        }
+
+        .chave-cell {
+            font-family: 'monospace', 'Courier New';
+            font-size: 0.8rem;
+            color: #c8d0e0;
+            background: rgba(10, 11, 16, 0.6);
+            padding: 4px 10px;
+            border-radius: 6px;
+            border: 1px solid rgba(0, 240, 255, 0.15);
+            display: inline-block;
+            max-width: 220px;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+
+        .status-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+            padding: 4px 10px;
+            border-radius: 20px;
+            font-size: 0.7rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            font-family: 'Orbitron', sans-serif;
+        }
+        .status-badge.pendente {
+            background: rgba(245, 158, 11, 0.15);
+            color: #fbbf24;
+            border: 1px solid rgba(245, 158, 11, 0.35);
+            animation: pulsePending 2s ease-in-out infinite;
+        }
+        @keyframes pulsePending {
+            0%, 100% { box-shadow: 0 0 0 rgba(245, 158, 11, 0); }
+            50% { box-shadow: 0 0 12px rgba(245, 158, 11, 0.4); }
+        }
+        .status-badge.pago {
+            background: rgba(16, 185, 129, 0.15);
+            color: #34d399;
+            border: 1px solid rgba(16, 185, 129, 0.35);
+        }
+
+        .data-cell {
+            font-size: 0.75rem;
+            color: var(--text-muted);
+            font-family: 'monospace', 'Courier New';
+            white-space: nowrap;
+        }
+
+        .actions-cell {
+            display: flex;
+            gap: 6px;
+            flex-wrap: wrap;
+        }
+        .btn-action {
+            padding: 6px 12px;
+            border: none;
+            border-radius: 6px;
+            font-size: 0.72rem;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.2s;
+            font-family: 'Rajdhani', sans-serif;
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+            white-space: nowrap;
+        }
+        .btn-pagar {
+            background: linear-gradient(135deg, #00b894, #00cec9);
+            color: #fff;
+            box-shadow: 0 0 10px rgba(0, 184, 148, 0.3);
+        }
+        .btn-pagar:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 0 18px rgba(0, 184, 148, 0.6);
+        }
+        .btn-recusar {
+            background: rgba(239, 68, 68, 0.15);
+            color: #fca5a5;
+            border: 1px solid rgba(239, 68, 68, 0.4);
+        }
+        .btn-recusar:hover {
+            background: rgba(239, 68, 68, 0.3);
+            color: #fff;
+            box-shadow: 0 0 15px rgba(239, 68, 68, 0.5);
+        }
+        .btn-copiar {
+            background: rgba(0, 240, 255, 0.1);
+            color: var(--neon-blue);
+            border: 1px solid rgba(0, 240, 255, 0.3);
+        }
+        .btn-copiar:hover {
+            background: rgba(0, 240, 255, 0.2);
+            color: #fff;
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 40px 20px;
+            color: var(--text-muted);
+            font-style: italic;
+        }
+        .empty-state .icon {
+            font-size: 3rem;
+            margin-bottom: 10px;
+            opacity: 0.5;
+        }
+
+        .loading-row {
+            text-align: center;
+            padding: 30px;
+            color: var(--text-muted);
+        }
+        .spinner {
+            display: inline-block;
+            width: 22px;
+            height: 22px;
+            border: 3px solid rgba(0, 240, 255, 0.2);
+            border-top-color: var(--neon-blue);
+            border-radius: 50%;
+            animation: spin 0.8s linear infinite;
+            vertical-align: middle;
+            margin-right: 10px;
+        }
+        @keyframes spin { to { transform: rotate(360deg); } }
+
+        .toast {
+            position: fixed;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%) translateY(100px);
+            background: rgba(18, 21, 32, 0.95);
+            backdrop-filter: blur(10px);
+            color: #fff;
+            padding: 12px 22px;
+            border-radius: 12px;
+            font-weight: 600;
+            font-size: 0.9rem;
+            box-shadow: 0 8px 32px rgba(0,0,0,0.5);
+            z-index: 9999;
+            transition: transform 0.3s ease, opacity 0.3s ease;
+            opacity: 0;
+            max-width: 90%;
+            text-align: center;
+            border-left: 4px solid var(--neon-blue);
+        }
+        .toast.show {
+            transform: translateX(-50%) translateY(0);
+            opacity: 1;
+        }
+        .toast.success { border-left-color: var(--neon-green); }
+        .toast.error { border-left-color: var(--neon-red); }
+        .toast.warn { border-left-color: #f59e0b; }
+
+        .oculto { display: none !important; }
+
+        @media (max-width: 700px) {
+            body { padding: 10px; }
+            .header-title h1 { font-size: 1.4rem; }
+            .stat-value { font-size: 1.3rem; }
+            .section-card { padding: 14px; }
+            .filters-bar { padding: 12px; }
+            .filters-bar input, .filters-bar select { min-width: 120px; font-size: 0.85rem; }
+            .btn-refresh { margin-left: 0; width: 100%; justify-content: center; }
+            .nav-bar { padding: 10px 14px; }
+            .nav-links a { font-size: 0.85rem; padding: 6px 10px; }
+        }
+    </style>
+</head>
+<body>
+
+    <nav class="nav-bar">
+        <div class="nav-links">
+            <a href="../../../dashboard.html">🏠 DASHBOARD</a>
+            <a href="#" class="active">👑 ADMIN</a>
+        </div>
+        <div class="nav-links">
+            <a href="../../../jogos/pix/pix.html" class="btn-bolsa">💸 PIX</a>
+        </div>
+    </nav>
+
+    <div class="container">
+        <div class="header-title">
+            <h1>👑 PAINEL ADMIN</h1>
+            <p>Gerencie saques, chaves Pix e usuários do sistema</p>
+        </div>
+
+        <!-- STATS -->
+        <div class="stats-grid">
+            <div class="stat-card pendente">
+                <div class="stat-label">🕐 Saques Pendentes</div>
+                <div class="stat-value" id="statPendentes">0</div>
+                <div class="stat-sub">Aguardando pagamento</div>
+            </div>
+            <div class="stat-card pago">
+                <div class="stat-label">✅ Total Pago</div>
+                <div class="stat-value" id="statTotalPago">R$ 0,00</div>
+                <div class="stat-sub">Somas confirmadas</div>
+            </div>
+            <div class="stat-card total">
+                <div class="stat-label">📊 Saques Hoje</div>
+                <div class="stat-value" id="statHoje">0</div>
+                <div class="stat-sub">Últimas 24 horas</div>
+            </div>
+            <div class="stat-card usuarios">
+                <div class="stat-label">👥 Usuários</div>
+                <div class="stat-value" id="statUsuarios">0</div>
+                <div class="stat-sub">Cadastrados</div>
+            </div>
+        </div>
+
+        <!-- FILTROS -->
+        <div class="filters-bar">
+            <label>🔍 Buscar:</label>
+            <input type="text" id="filtroBusca" placeholder="Nome, login ou chave Pix...">
+
+            <label>Status:</label>
+            <select id="filtroStatus">
+                <option value="todos">Todos</option>
+                <option value="pendente" selected>Pendentes</option>
+                <option value="pago">Pagos</option>
+            </select>
+
+            <button class="btn-refresh" id="btnRefresh">🔄 Atualizar</button>
+        </div>
+
+        <!-- SAQUES PENDENTES -->
+        <div class="section-card">
+            <h2 class="section-title">
+                🕐 SAQUES PENDENTES
+                <span class="badge-count" id="badgePendentes">0</span>
+            </h2>
+            <div class="table-wrapper">
+                <table id="tabelaPendentes">
+                    <thead>
+                        <tr>
+                            <th>Usuário</th>
+                            <th>Valor Pix</th>
+                            <th>MUMU Gasto</th>
+                            <th>Chave Pix</th>
+                            <th>Tipo</th>
+                            <th>Data</th>
+                            <th>Ações</th>
+                        </tr>
+                    </thead>
+                    <tbody id="tbodyPendentes">
+                        <tr><td colspan="7" class="loading-row"><span class="spinner"></span>Carregando saques...</td></tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- HISTÓRICO (PAGOS) -->
+        <div class="section-card">
+            <h2 class="section-title">
+                ✅ HISTÓRICO DE PAGOS
+                <span class="badge-count" id="badgePagos">0</span>
+            </h2>
+            <div class="table-wrapper">
+                <table id="tabelaPagos">
+                    <thead>
+                        <tr>
+                            <th>Usuário</th>
+                            <th>Valor Pix</th>
+                            <th>MUMU Gasto</th>
+                            <th>Chave Pix</th>
+                            <th>Tipo</th>
+                            <th>Data</th>
+                            <th>Status</th>
+                        </tr>
+                    </thead>
+                    <tbody id="tbodyPagos">
+                        <tr><td colspan="7" class="loading-row"><span class="spinner"></span>Carregando histórico...</td></tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <div class="toast" id="toast"></div>
+
+    <script>
+        // ============================================================
+        // CONFIGURAÇÃO
+        // ============================================================
+        const CONFIG = {
+            SUPABASE_URL: "https://xrcxvizzdumcxbylmkvn.supabase.co/rest/v1",
+            SUPABASE_KEY: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InhyY3h2aXp6ZHVtY3hieWxta3ZuIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODY2NjA0NzIsImV4cCI6MjEwMjIzNjQ3Mn0.ohB4tW0UQ-k1PcwoZxm4u9XSGNLsFphv1_UwTWoklOM"
+        };
+
+        let usuarioAtual = null;
+        let todosSaques = []; // lista unificada de saques (pendentes + pagos)
+        let todosUsuarios = [];
+
+        const el = {
+            statPendentes: document.getElementById('statPendentes'),
+            statTotalPago: document.getElementById('statTotalPago'),
+            statHoje: document.getElementById('statHoje'),
+            statUsuarios: document.getElementById('statUsuarios'),
+            filtroBusca: document.getElementById('filtroBusca'),
+            filtroStatus: document.getElementById('filtroStatus'),
+            btnRefresh: document.getElementById('btnRefresh'),
+            tbodyPendentes: document.getElementById('tbodyPendentes'),
+            tbodyPagos: document.getElementById('tbodyPagos'),
+            badgePendentes: document.getElementById('badgePendentes'),
+            badgePagos: document.getElementById('badgePagos'),
+            toast: document.getElementById('toast')
+        };
+
+        const _fmtNum = new Intl.NumberFormat('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+        const _fmtMumu = new Intl.NumberFormat('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 4 });
+        const fmtNum = (v) => _fmtNum.format(parseFloat(v || 0));
+        const fmtMumu = (v) => _fmtMumu.format(parseFloat(v || 0));
+        const fmtDinheiro = (v) => `R$ ${fmtNum(v)}`;
+
+        // ============================================================
+        // HELPERS
+        // ============================================================
+        function carregarUsuarioLogado() {
+            try {
+                const dados = localStorage.getItem('usuario_logado');
+                if (dados) { usuarioAtual = JSON.parse(dados); return true; }
+                return false;
+            } catch (e) { return false; }
+        }
+
+        function mostrarToast(msg, tipo = 'info') {
+            el.toast.textContent = msg;
+            el.toast.className = 'toast ' + tipo + ' show';
+            clearTimeout(window._toastTimer);
+            window._toastTimer = setTimeout(() => {
+                el.toast.classList.remove('show');
+            }, 3500);
+        }
+
+        function escapeHtml(str) {
+            return String(str || '').replace(/[&<>"']/g, c => ({
+                '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;'
+            }[c]));
+        }
+
+        async function supabaseFetch(url, opts = {}) {
+            const resp = await fetch(url, {
+                ...opts,
+                headers: {
+                    "apikey": CONFIG.SUPABASE_KEY,
+                    "Content-Type": "application/json",
+                    ...(opts.headers || {})
+                }
+            });
+            if (!resp.ok) throw new Error(`HTTP ${resp.status}`);
+            return resp;
+        }
+
+        // ============================================================
+        // CARREGAR TODOS OS USUÁRIOS E SAQUES
+        // ============================================================
+        async function carregarDados() {
+            try {
+                const resp = await supabaseFetch(
+                    `${CONFIG.SUPABASE_URL}/Geral?select=login,nome,mumu,saldo,historico_saques,pix_pendente,chave_pix,updated_at`
+                );
+                const dados = await resp.json();
+
+                todosUsuarios = Array.isArray(dados) ? dados : [];
+                todosSaques = [];
+
+                todosUsuarios.forEach(u => {
+                    const chave = u.chave_pix || {};
+                    const tipo = chave.tipo || '—';
+                    const chaveStr =
+                        tipo === 'celular'   ? (chave.celular || '—') :
+                        tipo === 'cpf'       ? (chave.cpf || '—') :
+                        tipo === 'aleatoria' ? (chave.aleatoria || '—') : '—';
+
+                    // Saques pendentes (pix_pendente é um único objeto)
+                    if (u.pix_pendente) {
+                        todosSaques.push({
+                            id: `${u.login}_pendente_${u.pix_pendente.data}`,
+                            login: u.login,
+                            nome: u.nome || u.login,
+                            valor: parseFloat(u.pix_pendente.valor || 0),
+                            mumu: parseFloat(u.pix_pendente.mumu || 0),
+                            data: u.pix_pendente.data,
+                            status: 'pendente',
+                            chaveTipo: tipo,
+                            chaveValor: chaveStr
+                        });
+                    }
+
+                    // Histórico
+                    if (Array.isArray(u.historico_saques)) {
+                        u.historico_saques.forEach((h, idx) => {
+                            todosSaques.push({
+                                id: `${u.login}_hist_${idx}_${h.data}`,
+                                login: u.login,
+                                nome: u.nome || u.login,
+                                valor: parseFloat(h.valor || 0),
+                                mumu: parseFloat(h.mumu || 0),
+                                data: h.data,
+                                status: h.status === 'pago' ? 'pago' : 'pendente',
+                                chaveTipo: tipo,
+                                chaveValor: chaveStr
+                            });
+                        });
+                    }
+                });
+
+                // Ordenar por data desc
+                todosSaques.sort((a, b) => new Date(b.data) - new Date(a.data));
+
+                atualizarStats();
+                renderizarTabelas();
+            } catch (e) {
+                console.error('Erro ao carregar dados:', e);
+                mostrarToast('❌ Erro ao carregar dados: ' + e.message, 'error');
+                el.tbodyPendentes.innerHTML = `<tr><td colspan="7" class="empty-state"><div class="icon">⚠️</div>Erro ao carregar dados</td></tr>`;
+                el.tbodyPagos.innerHTML = `<tr><td colspan="7" class="empty-state"><div class="icon">⚠️</div>Erro ao carregar dados</td></tr>`;
+            }
+        }
+
+        // ============================================================
+        // STATS
+        // ============================================================
+        function atualizarStats() {
+            const pendentes = todosSaques.filter(s => s.status === 'pendente');
+            const pagos = todosSaques.filter(s => s.status === 'pago');
+
+            el.statPendentes.textContent = pendentes.length;
+            el.statTotalPago.textContent = fmtDinheiro(pagos.reduce((a, s) => a + s.valor, 0));
+
+            const ontem = Date.now() - 24 * 60 * 60 * 1000;
+            const hoje = todosSaques.filter(s => new Date(s.data).getTime() > ontem).length;
+            el.statHoje.textContent = hoje;
+
+            el.statUsuarios.textContent = todosUsuarios.length;
+
+            el.badgePendentes.textContent = pendentes.length;
+            el.badgePagos.textContent = pagos.length;
+        }
+
+        // ============================================================
+        // RENDERIZAR TABELAS
+        // ============================================================
+        function aplicarFiltros(lista) {
+            const busca = (el.filtroBusca.value || '').toLowerCase().trim();
+            if (!busca) return lista;
+            return lista.filter(s =>
+                s.nome.toLowerCase().includes(busca) ||
+                s.login.toLowerCase().includes(busca) ||
+                s.chaveValor.toLowerCase().includes(busca)
+            );
+        }
+
+        function renderizarTabelas() {
+            const pendentes = aplicarFiltros(todosSaques.filter(s => s.status === 'pendente'));
+            const pagos = aplicarFiltros(todosSaques.filter(s => s.status === 'pago'));
+
+            renderTabelaPendentes(pendentes);
+            renderTabelaPagos(pagos);
+        }
+
+        function linhaUsuario(s) {
+            const letra = (s.nome || s.login || '?').charAt(0).toUpperCase();
+            return `
+                <div class="user-cell">
+                    <div class="user-avatar-sm">${escapeHtml(letra)}</div>
+                    <div>
+                        <div class="user-name">${escapeHtml(s.nome)}</div>
+                        <div class="user-login">${escapeHtml(s.login)}</div>
+                    </div>
+                </div>
+            `;
+        }
+
+        function renderTabelaPendentes(lista) {
+            if (lista.length === 0) {
+                el.tbodyPendentes.innerHTML = `<tr><td colspan="7" class="empty-state"><div class="icon">🎉</div>Nenhum saque pendente</td></tr>`;
+                return;
+            }
+            el.tbodyPendentes.innerHTML = lista.map(s => `
+                <tr data-id="${escapeHtml(s.id)}">
+                    <td>${linhaUsuario(s)}</td>
+                    <td><span class="valor-pix">${fmtDinheiro(s.valor)}</span></td>
+                    <td><span class="valor-mumu">🪙 ${fmtMumu(s.mumu)}</span></td>
+                    <td>
+                        <span class="chave-cell" title="${escapeHtml(s.chaveValor)}">${escapeHtml(s.chaveValor)}</span>
+                        <button class="btn-action btn-copiar" data-copiar="${escapeHtml(s.chaveValor)}" style="margin-left:6px;">📋</button>
+                    </td>
+                    <td>${escapeHtml(s.chaveTipo)}</td>
+                    <td class="data-cell">${new Date(s.data).toLocaleString('pt-BR')}</td>
+                    <td>
+                        <div class="actions-cell">
+                            <button class="btn-action btn-pagar" data-pagar="${escapeHtml(s.id)}">✅ Pagar</button>
+                            <button class="btn-action btn-recusar" data-recusar="${escapeHtml(s.id)}">❌ Recusar</button>
+                        </div>
+                    </td>
+                </tr>
+            `).join('');
+
+            // Eventos
+            el.tbodyPendentes.querySelectorAll('[data-pagar]').forEach(btn => {
+                btn.addEventListener('click', () => marcarComoPago(btn.dataset.pagar));
+            });
+            el.tbodyPendentes.querySelectorAll('[data-recusar]').forEach(btn => {
+                btn.addEventListener('click', () => recusarSaque(btn.dataset.recusar));
+            });
+            el.tbodyPendentes.querySelectorAll('[data-copiar]').forEach(btn => {
+                btn.addEventListener('click', () => {
+                    navigator.clipboard.writeText(btn.dataset.copiar);
+                    mostrarToast('📋 Chave Pix copiada!', 'success');
+                });
+            });
+        }
+
+        function renderTabelaPagos(lista) {
+            if (lista.length === 0) {
+                el.tbodyPagos.innerHTML = `<tr><td colspan="7" class="empty-state"><div class="icon">📭</div>Nenhum pagamento registrado</td></tr>`;
+                return;
+            }
+            el.tbodyPagos.innerHTML = lista.map(s => `
+                <tr>
+                    <td>${linhaUsuario(s)}</td>
+                    <td><span class="valor-pix">${fmtDinheiro(s.valor)}</span></td>
+                    <td><span class="valor-mumu">🪙 ${fmtMumu(s.mumu)}</span></td>
+                    <td><span class="chave-cell" title="${escapeHtml(s.chaveValor)}">${escapeHtml(s.chaveValor)}</span></td>
+                    <td>${escapeHtml(s.chaveTipo)}</td>
+                    <td class="data-cell">${new Date(s.data).toLocaleString('pt-BR')}</td>
+                    <td><span class="status-badge pago">✅ Pago</span></td>
+                </tr>
+            `).join('');
+        }
+
+        // ============================================================
+        // AÇÕES — PAGAR / RECUSAR
+        // ============================================================
+        async function marcarComoPago(id) {
+            const saque = todosSaques.find(s => s.id === id);
+            if (!saque) return;
+            if (!confirm(`Confirmar pagamento?\n\n👤 ${saque.nome}\n💰 ${fmtDinheiro(saque.valor)}\n🔑 ${saque.chaveValor}`)) return;
+
+            try {
+                const usuario = todosUsuarios.find(u => u.login === saque.login);
+                if (!usuario) throw new Error('Usuário não encontrado');
+
+                // Move pix_pendente → historico_saques com status 'pago'
+                const novoHistorico = Array.isArray(usuario.historico_saques) ? [...usuario.historico_saques] : [];
+                novoHistorico.push({
+                    valor: saque.valor,
+                    mumu: saque.mumu,
+                    data: saque.data,
+                    status: 'pago',
+                    pago_em: new Date().toISOString()
+                });
+
+                await supabaseFetch(
+                    `${CONFIG.SUPABASE_URL}/Geral?login=eq.${encodeURIComponent(saque.login)}`,
+                    {
+                        method: 'PATCH',
+                        body: JSON.stringify({
+                            pix_pendente: null,
+                            historico_saques: novoHistorico,
+                            updated_at: new Date().toISOString()
+                        })
+                    }
+                );
+
+                mostrarToast(`✅ Saque de ${fmtDinheiro(saque.valor)} marcado como pago!`, 'success');
+                await carregarDados();
+            } catch (e) {
+                console.error(e);
+                mostrarToast('❌ Erro ao marcar como pago: ' + e.message, 'error');
+            }
+        }
+
+        async function recusarSaque(id) {
+            const saque = todosSaques.find(s => s.id === id);
+            if (!saque) return;
+            if (!confirm(`Recusar este saque?\n\n👤 ${saque.nome}\n💰 ${fmtDinheiro(saque.valor)}\n\nO valor em MUMU será DEVOLVIDO ao usuário.`)) return;
+
+            try {
+                const usuario = todosUsuarios.find(u => u.login === saque.login);
+                if (!usuario) throw new Error('Usuário não encontrado');
+
+                // Devolve o MUMU e limpa o pix_pendente
+                const mumuAtual = parseFloat(usuario.mumu || 0);
+                const mumuDevolvido = mumuAtual + saque.mumu;
+
+                const novoHistorico = Array.isArray(usuario.historico_saques) ? [...usuario.historico_saques] : [];
+                novoHistorico.push({
+                    valor: saque.valor,
+                    mumu: saque.mumu,
+                    data: saque.data,
+                    status: 'recusado',
+                    recusado_em: new Date().toISOString()
+                });
+
+                await supabaseFetch(
+                    `${CONFIG.SUPABASE_URL}/Geral?login=eq.${encodeURIComponent(saque.login)}`,
+                    {
+                        method: 'PATCH',
+                        body: JSON.stringify({
+                            mumu: mumuDevolvido,
+                            pix_pendente: null,
+                            historico_saques: novoHistorico,
+                            updated_at: new Date().toISOString()
+                        })
+                    }
+                );
+
+                mostrarToast(`↩️ Saque recusado. ${fmtMumu(saque.mumu)} MUMU devolvidos para ${saque.nome}`, 'warn');
+                await carregarDados();
+            } catch (e) {
+                console.error(e);
+                mostrarToast('❌ Erro ao recusar saque: ' + e.message, 'error');
+            }
+        }
+
+        // ============================================================
+        // EVENTOS
+        // ============================================================
+        el.btnRefresh.addEventListener('click', async () => {
+            el.btnRefresh.textContent = '🔄 Carregando...';
+            el.btnRefresh.disabled = true;
+            await carregarDados();
+            el.btnRefresh.textContent = '🔄 Atualizar';
+            el.btnRefresh.disabled = false;
+            mostrarToast('✅ Dados atualizados!', 'success');
+        });
+
+        el.filtroBusca.addEventListener('input', renderizarTabelas);
+        el.filtroStatus.addEventListener('change', () => {
+            const v = el.filtroStatus.value;
+            document.querySelectorAll('.section-card')[1].classList.toggle('oculto', v === 'pendente');
+            document.querySelectorAll('.section-card')[2].classList.toggle('oculto', v === 'pago');
+        });
+
+        // ============================================================
+        // INICIALIZAÇÃO
+        // ============================================================
+        (async function init() {
+            if (!carregarUsuarioLogado()) {
+                window.location.href = '../../../login.html';
+                return;
+            }
+            await carregarDados();
+        })();
+
+        console.log('👑 Painel Admin iniciado');
+    </script>
+</body>
+</html>

@@ -8,11 +8,6 @@
     <!-- Font Awesome -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
 
-    <!-- Google Fonts -->
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@700&family=Rajdhani:wght@600;700&family=Inter:wght@400;600;700;800&display=swap" rel="stylesheet">
-
     <!-- Supabase JS (CDN) -->
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
@@ -31,6 +26,123 @@
             color: #e0e0e0;
             display: flex;
             flex-direction: column;
+        }
+
+        /* ==================== MENU ==================== */
+        .menu-container {
+            width: 100%;
+            background-color: rgb(0, 43, 173);
+            backdrop-filter: blur(8px);
+            border-bottom: 1px solid rgba(255, 215, 0, 0.2);
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.6);
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+        }
+
+        .navbar {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 0.9rem 2rem;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            flex-wrap: wrap;
+        }
+
+        .logo {
+            font-size: 1.8rem;
+            font-weight: 800;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+            color: #ffffff;
+            text-shadow: 0 0 10px rgba(255, 215, 0, 0.5);
+            display: flex;
+            align-items: center;
+            gap: 0.3rem;
+        }
+
+        .logo span { color: #f5c542; font-weight: 900; }
+        .logo i { color: #f5c542; font-size: 1.6rem; margin-right: 0.2rem; }
+
+        .nav-links {
+            display: flex;
+            align-items: center;
+            gap: 2.2rem;
+            list-style: none;
+            margin: 0;
+            padding: 0;
+        }
+
+        .nav-links li a {
+            text-decoration: none;
+            color: #d0d0d0;
+            font-weight: 600;
+            font-size: 1rem;
+            letter-spacing: 0.3px;
+            transition: all 0.2s ease;
+            padding: 0.5rem 0;
+            position: relative;
+            display: inline-flex;
+            align-items: center;
+        }
+
+        .nav-links li a i {
+            margin-right: 8px;
+            font-size: 0.95em;
+            color: #f5c542;
+            transition: color 0.2s ease, transform 0.2s ease;
+        }
+
+        .nav-links li a:hover i { color: #ffffff; transform: scale(1.1); }
+
+        .nav-links li a::after {
+            content: '';
+            position: absolute;
+            bottom: 0; left: 0;
+            width: 0; height: 2px;
+            background: #f5c542;
+            transition: width 0.25s ease;
+        }
+
+        .nav-links li a:hover { color: #ffffff; }
+        .nav-links li a:hover::after { width: 100%; }
+
+        .btn-discord {
+            background: linear-gradient(135deg, #f5c542 0%, #d4a017 100%);
+            border: none;
+            border-radius: 40px;
+            color: #0b0e14;
+            font-weight: 700;
+            font-size: 0.9rem;
+            padding: 0.7rem 1.6rem;
+            display: flex;
+            align-items: center;
+            gap: 0.6rem;
+            cursor: pointer;
+            transition: transform 0.2s, box-shadow 0.2s;
+            box-shadow: 0 0 15px rgba(245, 197, 66, 0.3);
+            text-decoration: none;
+            letter-spacing: 0.3px;
+            white-space: nowrap;
+        }
+
+        .btn-discord i { font-size: 1.1rem; }
+
+        .btn-discord:hover {
+            transform: scale(1.03);
+            box-shadow: 0 0 25px rgba(245, 197, 66, 0.6);
+            background: linear-gradient(135deg, #f7d25c 0%, #e0b020 100%);
+        }
+
+        .menu-toggle {
+            display: none;
+            background: transparent;
+            border: none;
+            color: #f5c542;
+            font-size: 1.8rem;
+            cursor: pointer;
+            padding: 0.3rem 0.6rem;
         }
 
         /* ==================== HERO ==================== */
@@ -314,6 +426,7 @@
         .btn-acao:hover { border-color: #f5c542; color: #f5c542; }
         .btn-acao.excluir:hover { border-color: #ef4444; color: #ef4444; }
 
+        /* Estado vazio / loading */
         .estado-vazio {
             padding: 60px 20px;
             text-align: center;
@@ -396,6 +509,7 @@
 
         .modal-body { padding: 24px; }
 
+        /* Abas */
         .abas {
             display: flex;
             gap: 6px;
@@ -467,6 +581,7 @@
             word-break: break-all;
         }
 
+        /* Formulário dentro do modal */
         .campo-acao {
             margin-bottom: 14px;
         }
@@ -602,6 +717,7 @@
         .toast.erro i { color: #f87171; }
         .toast .texto { font-size: 0.88rem; color: #e2e8f0; }
 
+        /* Loading spinner */
         .loading {
             display: inline-block;
             width: 14px; height: 14px;
@@ -615,17 +731,44 @@
 
         /* ==================== RESPONSIVIDADE ==================== */
         @media (max-width: 1024px) {
+            .navbar { padding: 0.8rem 1.5rem; }
+            .nav-links { gap: 1.5rem; }
+            .btn-discord { padding: 0.6rem 1.2rem; font-size: 0.85rem; }
             .stats-grid { grid-template-columns: repeat(2, 1fr); }
             .form-row-3 { grid-template-columns: 1fr 1fr; }
         }
 
         @media (max-width: 860px) {
+            .nav-links {
+                display: none;
+                width: 100%;
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 1rem;
+                padding: 1.5rem 0 0.5rem 0;
+                border-top: 1px solid rgba(255, 215, 0, 0.15);
+                margin-top: 1rem;
+            }
+
+            .nav-links.active { display: flex; }
+            .nav-links li { width: 100%; }
+            .nav-links li a { display: flex; width: 100%; padding: 0.6rem 0; font-size: 1.1rem; }
+            .menu-toggle { display: block; }
+            .navbar { justify-content: space-between; }
+            .btn-discord { margin-left: auto; margin-right: 1rem; }
+
             .admin-hero h1 { font-size: 1.9rem; }
             .detalhe-grid { grid-template-columns: 1fr; }
             .form-row, .form-row-3 { grid-template-columns: 1fr; }
         }
 
         @media (max-width: 480px) {
+            .navbar { padding: 0.7rem 1rem; }
+            .logo { font-size: 1.5rem; }
+            .logo i { font-size: 1.3rem; }
+            .btn-discord { padding: 0.5rem 1rem; font-size: 0.8rem; }
+            .btn-discord span { display: none; }
+            .btn-discord i { font-size: 1.2rem; margin: 0; }
             .admin-hero h1 { font-size: 1.5rem; }
             .stats-grid { grid-template-columns: 1fr; }
             .filtros { width: 100%; }
@@ -633,9 +776,11 @@
             .toast { left: 16px; right: 16px; max-width: none; }
         }
 
-        /* ============================================================ */
-        /* CSS NAVBAR CYBERPUNK                                         */
-        /* ============================================================ */
+
+          <!-- ============================================================ -->
+    <!-- CSS 1 — NAVBAR CYBERPUNK (isolado do admin.html)             -->
+    <!-- ============================================================ -->
+    <style id="css-navbar-admin">
         :root {
             --bg-dark: #0a0b10;
             --card-bg: #121520;
@@ -664,7 +809,9 @@
             box-sizing: border-box;
         }
 
-        .nav-bar * { box-sizing: border-box; }
+        .nav-bar * {
+            box-sizing: border-box;
+        }
 
         .nav-bar .nav-links {
             display: flex;
@@ -784,11 +931,14 @@
             .nav-bar .nav-links { justify-content: center; }
             .nav-bar .nav-buttons { justify-content: center; }
         }
+
+        
     </style>
 </head>
 <body>
 
-    <!-- ==================== NAVBAR CYBERPUNK ==================== -->
+
+    <!-- ==================== NAVBAR CYBERPUNK (do admin.html) ==================== -->
     <div class="nav-bar">
         <div class="nav-links">
             <a href="./admin.html" class="active">⚡ ADMIN</a>
@@ -893,7 +1043,9 @@
                             <th>Ações</th>
                         </tr>
                     </thead>
-                    <tbody id="corpoTabela"></tbody>
+                    <tbody id="corpoTabela">
+                        <!-- Preenchido via JS -->
+                    </tbody>
                 </table>
             </div>
 
@@ -1130,23 +1282,6 @@
                             </select>
                         </div>
                     </div>
-
-                    <!-- ===== NOVO: Dispositivo editável ===== -->
-                    <div class="campo-acao">
-                        <label for="editFingerprint">Fingerprint</label>
-                        <input type="text" id="editFingerprint" placeholder="Fingerprint do dispositivo">
-                    </div>
-
-                    <div class="form-row">
-                        <div class="campo-acao">
-                            <label for="editMac">MAC Address</label>
-                            <input type="text" id="editMac" placeholder="Ex: AA:BB:CC:DD:EE:FF">
-                        </div>
-                        <div class="campo-acao">
-                            <label for="editIp">IP Address</label>
-                            <input type="text" id="editIp" placeholder="Ex: 192.168.0.1">
-                        </div>
-                    </div>
                 </div>
             </div>
 
@@ -1181,6 +1316,28 @@
         const TABELA = 'Geral';
 
         const supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+        /* ==================== MENU TOGGLE ==================== */
+        const menuToggle = document.getElementById('menuToggle');
+        const navLinks = document.getElementById('navLinks');
+
+        menuToggle.addEventListener('click', () => {
+            navLinks.classList.toggle('active');
+            const icon = menuToggle.querySelector('i');
+            icon.classList.toggle('fa-bars');
+            icon.classList.toggle('fa-times');
+        });
+
+        navLinks.querySelectorAll('a').forEach(link => {
+            link.addEventListener('click', () => {
+                if (window.innerWidth <= 860) {
+                    navLinks.classList.remove('active');
+                    const icon = menuToggle.querySelector('i');
+                    icon.classList.add('fa-bars');
+                    icon.classList.remove('fa-times');
+                }
+            });
+        });
 
         /* ==================== ESTADO GLOBAL ==================== */
         let todosUsuarios = [];
@@ -1281,10 +1438,12 @@
             const termo = busca.value.trim().toLowerCase();
 
             let filtrados = todosUsuarios.filter(u => {
+                // Status
                 if (status === 'ativo' && (u.bloqueado === true)) return false;
                 if (status === 'bloqueado' && (u.bloqueado !== true)) return false;
                 if (status === 'cadeado' && (u.cadeado !== true)) return false;
 
+                // Faixa de nível
                 if (faixaNivel) {
                     const n = Number(u.nivel) || 0;
                     if (faixaNivel === '1-10' && !(n >= 1 && n <= 10)) return false;
@@ -1294,6 +1453,7 @@
                     if (faixaNivel === '101+' && !(n >= 101)) return false;
                 }
 
+                // Busca textual
                 if (termo) {
                     const alvo = [
                         u.id,
@@ -1398,7 +1558,7 @@
             usuarioAtual = u;
             modalId.textContent = '#' + u.id;
 
-            /* --- Aba Conta --- */
+            // Aba Conta
             document.getElementById('detId').textContent = u.id ?? '—';
             document.getElementById('detLogin').textContent = u.login || '—';
             document.getElementById('detSaldo').textContent = formatarMoeda(u.saldo);
@@ -1410,7 +1570,7 @@
             document.getElementById('detCarteira').textContent = JSON.stringify(u.carteira || {}, null, 2);
             document.getElementById('detItens').textContent = JSON.stringify(u.itens || [], null, 2);
 
-            /* --- Aba Atributos --- */
+            // Aba Atributos
             document.getElementById('detNivel').textContent = u.nivel ?? '—';
             document.getElementById('detExp').textContent = u.experiencia ?? u.exp ?? '—';
             document.getElementById('detHp').textContent = `${u.hp_atual ?? u.hp ?? '—'} / ${u.hp_max ?? u.max_hp ?? '—'}`;
@@ -1424,12 +1584,12 @@
             document.getElementById('detUpgrades').textContent = u.total_upgrades ?? '—';
             document.getElementById('detStock').textContent = u.stock ?? '—';
 
-            /* --- Aba Dispositivo --- */
+            // Aba Dispositivo
             document.getElementById('detFingerprint').textContent = u.fingerprint || '—';
             document.getElementById('detMac').textContent = u.mac_address || '—';
             document.getElementById('detIp').textContent = u.ip_address || '—';
 
-            /* --- Aba Editar --- */
+            // Aba Editar
             document.getElementById('editLogin').value = u.login || '';
             document.getElementById('editSenha').value = '';
             document.getElementById('editNivel').value = u.nivel ?? 1;
@@ -1447,12 +1607,7 @@
             document.getElementById('editBloqueado').value = u.bloqueado ? 'true' : 'false';
             document.getElementById('editCadeado').value = u.cadeado ? 'true' : 'false';
 
-            /* NOVO: Dispositivo */
-            document.getElementById('editFingerprint').value = u.fingerprint || '';
-            document.getElementById('editMac').value = u.mac_address || '';
-            document.getElementById('editIp').value = u.ip_address || '';
-
-            /* Resetar abas */
+            // Resetar abas
             document.querySelectorAll('.aba').forEach(a => a.classList.remove('ativa'));
             document.querySelector('.aba[data-aba="conta"]').classList.add('ativa');
             document.querySelectorAll('.painel').forEach(p => p.classList.remove('ativo'));
@@ -1519,14 +1674,10 @@
                 magia_base: parseInt(document.getElementById('editMag').value) || 0,
                 seeds: parseInt(document.getElementById('editSeeds').value) || 0,
                 bloqueado: document.getElementById('editBloqueado').value === 'true',
-                cadeado: document.getElementById('editCadeado').value === 'true',
-                /* NOVO: Dispositivo */
-                fingerprint: document.getElementById('editFingerprint').value.trim() || null,
-                mac_address: document.getElementById('editMac').value.trim() || null,
-                ip_address: document.getElementById('editIp').value.trim() || null
+                cadeado: document.getElementById('editCadeado').value === 'true'
             };
 
-            /* Senha (se preenchida) */
+            // Senha (se preenchida)
             const novaSenha = document.getElementById('editSenha').value.trim();
             if (novaSenha) {
                 if (novaSenha.length < 6) {

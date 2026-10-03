@@ -4,166 +4,84 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Saldo Mumu</title>
-    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500;700;900&family=Rajdhani:wght@600;700&display=swap" rel="stylesheet">
     <style>
-        :root {
-            --bg-dark: #0a0b10;
-            --card-bg: #121520;
-            --neon-blue: #00f0ff;
-            --neon-purple: #7000ff;
-            --neon-green: #00ff66;
-            --neon-gold: #ffd700;
-            --text-color: #f0f4f8;
-            --text-muted: #8a99ad;
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Roboto, sans-serif;
         }
-        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Rajdhani', sans-serif; }
         body {
-            background-color: var(--bg-dark);
-            color: var(--text-color);
-            background-image:
-                radial-gradient(circle at 15% 20%, rgba(112, 0, 255, 0.15) 0%, transparent 40%),
-                radial-gradient(circle at 85% 80%, rgba(0, 240, 255, 0.15) 0%, transparent 40%);
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
             padding: 20px;
         }
-
-        .nav-bar {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            background: rgba(18, 21, 32, 0.85);
-            backdrop-filter: blur(10px);
-            border: 1px solid rgba(0, 240, 255, 0.2);
-            padding: 12px 24px;
-            border-radius: 16px;
-            margin-bottom: 20px;
-            max-width: 900px;
-            margin-left: auto;
-            margin-right: auto;
-            box-shadow: 0 8px 32px rgba(0,0,0,0.37);
-            flex-wrap: wrap;
-            gap: 10px;
-        }
-        .nav-links { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; }
-        .nav-links a {
-            color: #a0aec0;
-            text-decoration: none;
-            font-weight: 700;
-            font-size: 1rem;
-            padding: 8px 14px;
-            border-radius: 8px;
-            transition: all 0.3s ease;
-            display: flex;
-            align-items: center;
-            gap: 6px;
-        }
-        .nav-links a:hover, .nav-links a.active {
-            color: #fff;
-            background: rgba(0, 240, 255, 0.15);
-            border: 1px solid var(--neon-blue);
-            box-shadow: 0 0 10px rgba(0, 240, 255, 0.3);
-        }
-
-        .btn-bolsa {
-            background: linear-gradient(135deg, #00f0ff, #7000ff);
-            color: white;
-            border: none;
-            padding: 8px 18px;
-            border-radius: 40px;
-            font-weight: bold;
-            font-size: 0.9rem;
-            cursor: pointer;
-            transition: all 0.3s;
-            display: inline-flex;
-            align-items: center;
-            gap: 5px;
-            box-shadow: 0 0 12px rgba(0, 240, 255, 0.4);
-            text-decoration: none;
-            font-family: 'Rajdhani', sans-serif;
-        }
-        .btn-bolsa:hover { transform: translateY(-2px) scale(1.02); box-shadow: 0 0 20px rgba(0, 240, 255, 0.8); }
-
-        .btn-pix {
-            background: linear-gradient(135deg, #00b894, #00cec9) !important;
-            color: #fff !important;
-            box-shadow: 0 0 12px rgba(0, 184, 148, 0.5) !important;
-            animation: pixGlow 2s ease-in-out infinite;
-        }
-        .btn-pix:hover {
-            box-shadow: 0 0 25px rgba(0, 184, 148, 0.9) !important;
-        }
-        @keyframes pixGlow {
-            0%, 100% { box-shadow: 0 0 12px rgba(0, 184, 148, 0.5); }
-            50% { box-shadow: 0 0 22px rgba(0, 184, 148, 0.9), 0 0 35px rgba(0, 184, 148, 0.4); }
-        }
-
         .card {
-            background: rgba(18, 21, 32, 0.92);
-            backdrop-filter: blur(10px);
-            border: 1px solid rgba(0, 240, 255, 0.15);
+            background: #fff;
             border-radius: 20px;
-            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.5);
-            padding: 35px 28px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.2);
+            padding: 40px 30px;
             text-align: center;
-            max-width: 900px;
-            margin: 0 auto;
+            max-width: 520px;
+            width: 100%;
+            position: relative;
         }
         .card h2 {
-            font-family: 'Orbitron', sans-serif;
-            color: #fff;
-            font-size: 1.6rem;
+            color: #333;
+            font-size: 1.5rem;
             margin-bottom: 8px;
-            letter-spacing: 1.5px;
-            text-shadow: 0 0 15px var(--neon-blue);
         }
-        .subtitulo { color: var(--text-muted); font-size: 0.95rem; margin-bottom: 25px; }
-
+        .subtitulo {
+            color: #666;
+            font-size: 0.95rem;
+            margin-bottom: 25px;
+        }
         .usuario-info {
-            color: #c8d0e0;
+            color: #555;
             font-size: 0.9rem;
             margin-bottom: 15px;
-            background: rgba(0, 240, 255, 0.06);
-            padding: 10px;
-            border-radius: 10px;
-            border: 1px solid rgba(0, 240, 255, 0.15);
+            background: #f5f5f5;
+            padding: 8px;
+            border-radius: 8px;
         }
-        .usuario-info strong { color: var(--neon-blue); }
+        .usuario-info strong { color: #333; }
 
         .saldos-grid {
             display: grid;
             grid-template-columns: 1fr 1fr;
-            gap: 14px;
+            gap: 12px;
             margin-bottom: 20px;
         }
         .saldo-container {
-            border-radius: 16px;
+            border-radius: 15px;
             padding: 22px 14px;
             text-align: center;
-            position: relative;
-            overflow: hidden;
         }
-        .saldo-container.mumu { background: linear-gradient(135deg, #ffd700, #ffb300); box-shadow: 0 0 25px rgba(255, 215, 0, 0.35); }
-        .saldo-container.reais { background: linear-gradient(135deg, #43e97b, #38f9d7); box-shadow: 0 0 25px rgba(67, 233, 123, 0.35); }
-        .saldo-label { font-size: 0.85rem; font-weight: 700; margin-bottom: 8px; font-family: 'Orbitron', sans-serif; letter-spacing: 1px; }
+        .saldo-container.mumu { background: linear-gradient(90deg, #ffd700, #ffb300); }
+        .saldo-container.reais { background: linear-gradient(90deg, #43e97b, #38f9d7); }
+        .saldo-label { font-size: 0.85rem; font-weight: 600; margin-bottom: 8px; }
         .saldo-container.mumu .saldo-label { color: #856d00; }
         .saldo-container.reais .saldo-label { color: #05664a; }
+
         .saldo-valor {
             color: #000;
             font-size: 1.6rem;
-            font-weight: 900;
+            font-weight: bold;
             letter-spacing: 0.5px;
             word-break: break-word;
-            font-family: 'Orbitron', monospace;
         }
         .saldo-valor .simbolo { font-size: 1.1rem; margin-right: 4px; }
 
-        .info { font-size: 0.85rem; color: var(--text-muted); margin-top: 10px; }
-        .carregando { color: #c8d0e0; font-style: italic; }
-        .erro { color: #ef4444; }
+        .info { font-size: 0.85rem; color: #888; margin-top: 10px; }
+        .carregando { color: #555; font-style: italic; }
+        .erro { color: #d32f2f; }
         .spinner {
             display: inline-block;
             width: 18px; height: 18px;
-            border: 3px solid rgba(255,255,255,0.3);
+            border: 3px solid rgba(255,255,255,0.5);
             border-top: 3px solid #856d00;
             border-radius: 50%;
             animation: spin 1s linear infinite;
@@ -171,77 +89,79 @@
             margin-right: 6px;
         }
         @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
-
         .offline-badge {
-            background: #ef4444; color: #fff;
-            font-size: 0.7rem; padding: 5px 12px;
+            background: #ff6b6b; color: #fff;
+            font-size: 0.7rem; padding: 4px 10px;
             border-radius: 20px; display: inline-block; margin-top: 8px;
-            font-weight: 700;
         }
         .online-badge {
-            background: #10b981; color: #fff;
-            font-size: 0.7rem; padding: 5px 12px;
+            background: #51cf66; color: #fff;
+            font-size: 0.7rem; padding: 4px 10px;
             border-radius: 20px; display: inline-block; margin-top: 8px;
-            font-weight: 700;
-            box-shadow: 0 0 12px rgba(16, 185, 129, 0.5);
+        }
+
+        .btn-voltar {
+            display: inline-flex; align-items: center; justify-content: center;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: #ffffff !important; text-decoration: none;
+            font-size: 0.95rem; font-weight: 500;
+            padding: 10px 20px; border-radius: 10px; margin-top: 25px;
+            box-shadow: 0 4px 12px rgba(102, 126, 234, 0.35);
+            transition: all 0.3s ease; border: none; cursor: pointer;
+        }
+        .btn-voltar:hover {
+            background: linear-gradient(135deg, #5a6fd6 0%, #6a4190 100%);
+            transform: translateY(-2px);
+            box-shadow: 0 6px 16px rgba(102, 126, 234, 0.45);
         }
 
         .troca-section { margin-top: 30px; text-align: left; }
-        .troca-section h3 {
-            color: #fff; font-size: 1.15rem; margin-bottom: 5px;
-            text-align: center; font-family: 'Orbitron', sans-serif;
-            letter-spacing: 1px;
-            text-shadow: 0 0 12px var(--neon-purple);
-        }
+        .troca-section h3 { color: #333; font-size: 1.1rem; margin-bottom: 5px; text-align: center; }
         .troca-section .regra {
-            font-size: 0.8rem; color: var(--text-muted); text-align: center;
+            font-size: 0.8rem; color: #888; text-align: center;
             margin-bottom: 18px; line-height: 1.5;
         }
         .pacotes-grid {
-            display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 12px;
+            display: grid; grid-template-columns: 1fr 1fr; gap: 12px;
         }
         .pacote {
-            background: rgba(30, 27, 48, 0.6);
-            border: 2px solid rgba(112, 0, 255, 0.35);
+            background: #f9f9ff; border: 2px solid #e0e0ff;
             border-radius: 14px; padding: 14px 10px; text-align: center;
             transition: all 0.25s ease;
             display: flex; flex-direction: column; justify-content: space-between;
         }
         .pacote:hover {
-            border-color: var(--neon-purple);
-            box-shadow: 0 0 20px rgba(112, 0, 255, 0.4);
+            border-color: #764ba2;
+            box-shadow: 0 6px 18px rgba(118, 75, 162, 0.18);
             transform: translateY(-2px);
         }
         .pacote .custo {
-            font-size: 0.78rem; color: var(--neon-blue);
-            font-weight: 700; margin-bottom: 6px;
-            font-family: 'Orbitron', sans-serif;
+            font-size: 0.78rem; color: #764ba2;
+            font-weight: 600; margin-bottom: 6px;
         }
         .pacote .ganho {
-            font-size: 1.2rem; font-weight: 900;
-            color: var(--neon-green); margin-bottom: 10px;
+            font-size: 1.2rem; font-weight: bold;
+            color: #2e7d32; margin-bottom: 10px;
         }
         .pacote .ganho small {
             font-size: 0.7rem; font-weight: 500;
-            color: #c8d0e0; display: block;
+            color: #555; display: block;
         }
         .pacote button {
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             color: #fff; border: none; padding: 8px 10px;
-            border-radius: 8px; font-size: 0.78rem; font-weight: 700;
+            border-radius: 8px; font-size: 0.78rem; font-weight: 600;
             cursor: pointer; transition: all 0.25s ease; width: 100%;
-            font-family: 'Rajdhani', sans-serif;
         }
         .pacote button:hover:not(:disabled) {
             background: linear-gradient(135deg, #5a6fd6 0%, #6a4190 100%);
             transform: scale(1.03);
-            box-shadow: 0 0 15px rgba(118, 75, 162, 0.6);
         }
-        .pacote button:disabled { background: #333a4a; cursor: not-allowed; opacity: 0.6; }
-        .pacote button.desfazer { background: linear-gradient(135deg, #ffc400, #f59e0b); margin-top: 6px; }
-        .pacote button.desfazer:hover:not(:disabled) { background: linear-gradient(135deg, #f59e0b, #d97706); box-shadow: 0 0 15px rgba(245, 158, 11, 0.6); }
+        .pacote button:disabled { background: #ccc; cursor: not-allowed; opacity: 0.7; }
+        .pacote button.desfazer { background: #ffc400; margin-top: 6px; }
+        .pacote button.desfazer:hover:not(:disabled) { background: #00ff40; }
         .pacote .aviso-desfazer {
-            font-size: 0.62rem; color: var(--text-muted);
+            font-size: 0.62rem; color: #999;
             margin-top: 4px; display: block;
         }
 
@@ -249,100 +169,83 @@
             margin-top: 15px; font-size: 0.85rem;
             padding: 10px; border-radius: 8px; display: none;
         }
-        .msg-troca.sucesso { background: rgba(16, 185, 129, 0.15); color: #34d399; display: block; border: 1px solid rgba(16, 185, 129, 0.4); }
-        .msg-troca.erro { background: rgba(239, 68, 68, 0.15); color: #fca5a5; display: block; border: 1px solid rgba(239, 68, 68, 0.4); }
-        .msg-troca.carregando { background: rgba(245, 158, 11, 0.15); color: #fbbf24; display: block; border: 1px solid rgba(245, 158, 11, 0.4); }
+        .msg-troca.sucesso { background: #e8f5e9; color: #2e7d32; display: block; }
+        .msg-troca.erro { background: #ffebee; color: #c62828; display: block; }
+        .msg-troca.carregando { background: #fff8e1; color: #856d00; display: block; }
 
         .historico-section { margin-top: 30px; text-align: left; }
         .historico-section h3 {
-            color: #fff; font-size: 1.15rem; margin-bottom: 12px;
+            color: #333; font-size: 1.1rem; margin-bottom: 12px;
             text-align: center; display: flex;
             align-items: center; justify-content: center; gap: 8px;
-            font-family: 'Orbitron', sans-serif;
-            letter-spacing: 1px;
-            text-shadow: 0 0 12px var(--neon-blue);
         }
         .historico-lista {
             max-height: 280px; overflow-y: auto;
-            border: 1px solid rgba(0, 240, 255, 0.12);
-            border-radius: 12px;
-            padding: 8px;
-            background: rgba(10, 11, 16, 0.6);
+            border: 1px solid #eee; border-radius: 12px;
+            padding: 8px; background: #fafafa;
         }
         .historico-lista::-webkit-scrollbar { width: 6px; }
-        .historico-lista::-webkit-scrollbar-track { background: rgba(255,255,255,0.02); border-radius: 10px; }
-        .historico-lista::-webkit-scrollbar-thumb { background: rgba(0,240,255,0.3); border-radius: 10px; }
+        .historico-lista::-webkit-scrollbar-track { background: #f1f1f1; border-radius: 10px; }
+        .historico-lista::-webkit-scrollbar-thumb { background: #c7c7c7; border-radius: 10px; }
         .historico-item {
             display: flex; align-items: center; justify-content: space-between;
             padding: 10px 12px; border-radius: 10px; margin-bottom: 6px;
-            background: rgba(30, 27, 48, 0.55);
-            border: 1px solid rgba(255,255,255,0.04);
+            background: #fff; box-shadow: 0 1px 4px rgba(0,0,0,0.06);
             font-size: 0.82rem; transition: all 0.2s ease;
         }
         .historico-item:last-child { margin-bottom: 0; }
-        .historico-item:hover { background: rgba(30, 27, 48, 0.85); box-shadow: 0 0 12px rgba(0, 240, 255, 0.15); }
-        .historico-item.troca { border-left: 4px solid var(--neon-purple); }
+        .historico-item:hover { box-shadow: 0 3px 10px rgba(0,0,0,0.1); }
+        .historico-item.troca { border-left: 4px solid #764ba2; }
         .historico-item.desfazer { border-left: 4px solid #ffc400; }
         .historico-item.resgate { border-left: 4px solid #00b894; }
         .historico-info { display: flex; flex-direction: column; gap: 2px; }
         .historico-tipo {
-            font-weight: 900; font-size: 0.75rem;
+            font-weight: 700; font-size: 0.75rem;
             text-transform: uppercase; letter-spacing: 0.5px;
-            font-family: 'Orbitron', sans-serif;
         }
-        .historico-item.troca .historico-tipo { color: #a78bfa; }
-        .historico-item.desfazer .historico-tipo { color: #fbbf24; }
-        .historico-item.resgate .historico-tipo { color: #34d399; }
-        .historico-detalhe { color: #c8d0e0; font-size: 0.8rem; }
+        .historico-item.troca .historico-tipo { color: #764ba2; }
+        .historico-item.desfazer .historico-tipo { color: #b8860b; }
+        .historico-item.resgate .historico-tipo { color: #00b894; }
+        .historico-detalhe { color: #555; font-size: 0.8rem; }
         .historico-data {
-            color: var(--text-muted); font-size: 0.7rem;
+            color: #999; font-size: 0.7rem;
             white-space: nowrap; margin-left: 8px;
         }
         .historico-vazio {
-            text-align: center; color: var(--text-muted); font-size: 0.85rem;
+            text-align: center; color: #aaa; font-size: 0.85rem;
             padding: 20px; font-style: italic;
         }
         .btn-limpar-historico {
-            background: none; border: 1px solid rgba(239, 68, 68, 0.3);
-            color: #fca5a5; font-size: 0.7rem;
-            padding: 6px 12px; border-radius: 8px;
+            background: none; border: 1px solid #ddd;
+            color: #999; font-size: 0.7rem;
+            padding: 4px 10px; border-radius: 6px;
             cursor: pointer; margin-top: 8px;
             transition: all 0.2s ease; width: 100%;
-            font-family: 'Rajdhani', sans-serif;
-            font-weight: 600;
         }
         .btn-limpar-historico:hover {
-            background: rgba(239, 68, 68, 0.2); border-color: rgba(239, 68, 68, 0.6);
+            background: #ffebee; border-color: #ffcdd2; color: #c62828;
         }
 
         .resgate-section { margin-top: 30px; text-align: left; }
         .resgate-section h3 {
-            color: #fff; font-size: 1.15rem;
+            color: #333; font-size: 1.1rem;
             margin-bottom: 5px; text-align: center;
-            font-family: 'Orbitron', sans-serif;
-            letter-spacing: 1px;
-            text-shadow: 0 0 12px #00b894;
         }
         .resgate-section .regra {
-            font-size: 0.8rem; color: var(--text-muted);
+            font-size: 0.8rem; color: #888;
             text-align: center; margin-bottom: 15px; line-height: 1.5;
         }
         .resgate-input-group { display: flex; gap: 8px; }
         .resgate-input-group input {
             flex: 1; padding: 12px 14px;
-            background: rgba(10, 11, 16, 0.7);
-            border: 2px solid rgba(0, 240, 255, 0.2);
-            border-radius: 10px;
-            font-size: 0.95rem; font-weight: 700;
-            color: #fff;
+            border: 2px solid #e0e0ff; border-radius: 10px;
+            font-size: 0.95rem; font-weight: 600;
             text-transform: uppercase; letter-spacing: 1px;
             transition: all 0.25s; outline: none; min-width: 0;
-            font-family: 'Rajdhani', sans-serif;
         }
-        .resgate-input-group input::placeholder { color: var(--text-muted); }
         .resgate-input-group input:focus {
-            border-color: var(--neon-blue);
-            box-shadow: 0 0 0 4px rgba(0, 240, 255, 0.15);
+            border-color: #764ba2;
+            box-shadow: 0 0 0 4px rgba(118, 75, 162, 0.15);
         }
         .btn-resgatar {
             background: linear-gradient(135deg, #00b894 0%, #00cec9 100%);
@@ -350,46 +253,34 @@
             border-radius: 10px; font-size: 0.9rem;
             font-weight: 700; cursor: pointer;
             transition: all 0.25s; white-space: nowrap;
-            font-family: 'Rajdhani', sans-serif;
         }
         .btn-resgatar:hover:not(:disabled) {
             transform: translateY(-2px);
-            box-shadow: 0 6px 18px rgba(0, 184, 148, 0.5);
+            box-shadow: 0 6px 18px rgba(0, 184, 148, 0.4);
         }
-        .btn-resgatar:disabled { background: #333a4a; cursor: not-allowed; opacity: 0.6; }
+        .btn-resgatar:disabled { background: #ccc; cursor: not-allowed; opacity: 0.7; }
         .msg-resgate {
             margin-top: 12px; font-size: 0.85rem;
             padding: 10px 14px; border-radius: 8px; display: none;
         }
-        .msg-resgate.sucesso { background: rgba(16, 185, 129, 0.15); color: #34d399; display: block; border: 1px solid rgba(16, 185, 129, 0.4); }
-        .msg-resgate.erro { background: rgba(239, 68, 68, 0.15); color: #fca5a5; display: block; border: 1px solid rgba(239, 68, 68, 0.4); }
-        .msg-resgate.carregando { background: rgba(245, 158, 11, 0.15); color: #fbbf24; display: block; border: 1px solid rgba(245, 158, 11, 0.4); }
+        .msg-resgate.sucesso { background: #e8f5e9; color: #2e7d32; display: block; }
+        .msg-resgate.erro { background: #ffebee; color: #c62828; display: block; }
+        .msg-resgate.carregando { background: #fff8e1; color: #856d00; display: block; }
 
-        @media (max-width: 600px) {
-            .pacotes-grid { grid-template-columns: 1fr 1fr; }
+        @media (max-width: 420px) {
+            .pacotes-grid { grid-template-columns: 1fr; }
             .saldos-grid { grid-template-columns: 1fr; }
             .historico-item { flex-direction: column; align-items: flex-start; gap: 4px; }
             .historico-data { margin-left: 0; }
             .resgate-input-group { flex-direction: column; }
         }
-        @media (max-width: 400px) {
-            .pacotes-grid { grid-template-columns: 1fr; }
-        }
     </style>
 </head>
 <body>
 
-    <nav class="nav-bar">
-        <div class="nav-links">
-            <a href="../../dashboard.html">🏠 DASHBOARD</a>
-            <a href="#" class="active">💰 MUMU</a>
-        </div>
-        <div class="nav-links">
-            <a href="../pix/pix.html" class="btn-bolsa btn-pix">💸 PIX</a>
-        </div>
-    </nav>
-
     <div class="card">
+        <a href="../../dashboard.html" class="btn-voltar">🏠 Voltar</a>
+
         <h2>💰 Seus Saldos</h2>
         <p class="subtitulo">Moeda Mumu & Saldo em Reais</p>
 
@@ -399,13 +290,13 @@
 
         <div class="saldos-grid">
             <div class="saldo-container mumu">
-                <div class="saldo-label">🪙 MUMU</div>
+                <div class="saldo-label">🪙 Mumu</div>
                 <div class="saldo-valor" id="saldoMumu">
                     <span class="carregando"><span class="spinner"></span></span>
                 </div>
             </div>
             <div class="saldo-container reais">
-                <div class="saldo-label">💵 SALDO (R$)</div>
+                <div class="saldo-label">💵 Saldo (R$)</div>
                 <div class="saldo-valor" id="saldoReais">
                     <span class="carregando"><span class="spinner"></span></span>
                 </div>
@@ -503,6 +394,9 @@
             MAX_HISTORICO: 50
         };
 
+        // ============================================================
+        // ESTADO GLOBAL
+        // ============================================================
         let usuarioAtual = null;
         let intervaloAtualizacao = null;
         let intervaloSessao = null;
@@ -514,15 +408,27 @@
         let codigosUsados = [];
         let historicoHashAtual = '';
 
-        const _fmtMoeda = new Intl.NumberFormat('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+        // Formatter memoizado (performance no polling)
+        const _fmtMoeda = new Intl.NumberFormat('pt-BR', {
+            minimumFractionDigits: 2,
+            maximumFractionDigits: 2
+        });
         const formatarMoeda = (v) => _fmtMoeda.format(parseFloat(v || 0));
 
+        // ============================================================
+        // HELPERS
+        // ============================================================
         function carregarUsuarioLogado() {
             try {
                 const dados = localStorage.getItem('usuario_logado');
-                if (dados) { usuarioAtual = JSON.parse(dados); return true; }
+                if (dados) {
+                    usuarioAtual = JSON.parse(dados);
+                    return true;
+                }
                 return false;
-            } catch (e) { return false; }
+            } catch (e) {
+                return false;
+            }
         }
 
         function mostrarStatusConexao(online) {
@@ -539,14 +445,22 @@
         function formatarData(data) {
             if (!data) return '--';
             const d = new Date(data);
-            return d.toLocaleString('pt-BR', { day: '2-digit', month: '2-digit', year: 'numeric', hour: '2-digit', minute: '2-digit', second: '2-digit' });
+            return d.toLocaleString('pt-BR', {
+                day: '2-digit', month: '2-digit', year: 'numeric',
+                hour: '2-digit', minute: '2-digit', second: '2-digit'
+            });
         }
+
         function formatarDataCurta(data) {
             if (!data) return '--';
             const d = new Date(data);
-            return d.toLocaleString('pt-BR', { day: '2-digit', month: '2-digit', hour: '2-digit', minute: '2-digit' });
+            return d.toLocaleString('pt-BR', {
+                day: '2-digit', month: '2-digit',
+                hour: '2-digit', minute: '2-digit'
+            });
         }
 
+        // Retry exponencial (rede instável) — usado só em GET
         async function fetchComRetry(url, opts, tentativas = 3) {
             let ultimoErro;
             for (let i = 0; i < tentativas; i++) {
@@ -556,36 +470,52 @@
                     return r;
                 } catch (e) {
                     ultimoErro = e;
-                    if (i < tentativas - 1) await new Promise(res => setTimeout(res, 1000 * Math.pow(2, i)));
+                    if (i < tentativas - 1) {
+                        await new Promise(res => setTimeout(res, 1000 * Math.pow(2, i)));
+                    }
                 }
             }
             throw ultimoErro;
         }
 
         function bloquearBotoes(bloquear) {
-            document.querySelectorAll('.btn-trocar, .btn-desfazer, .btn-resgatar').forEach(b => { b.disabled = bloquear; });
+            document.querySelectorAll('.btn-trocar, .btn-desfazer, .btn-resgatar')
+                .forEach(b => { b.disabled = bloquear; });
             if (!bloquear) atualizarBotoesPacotes();
         }
 
+        // ============================================================
+        // MENSAGENS
+        // ============================================================
         function mostrarMensagemTroca(texto, tipo) {
             const el = document.getElementById('msgTroca');
             el.textContent = texto;
             el.className = 'msg-troca ' + tipo;
-            if (tipo === 'sucesso' || tipo === 'erro') setTimeout(() => { el.className = 'msg-troca'; }, 5000);
+            if (tipo === 'sucesso' || tipo === 'erro') {
+                setTimeout(() => { el.className = 'msg-troca'; }, 5000);
+            }
         }
+
         function mostrarMsgResgate(texto, tipo) {
             const el = document.getElementById('msgResgate');
             el.textContent = texto;
             el.className = 'msg-resgate ' + tipo;
-            if (tipo === 'sucesso' || tipo === 'erro') setTimeout(() => { el.className = 'msg-resgate'; }, 6000);
+            if (tipo === 'sucesso' || tipo === 'erro') {
+                setTimeout(() => { el.className = 'msg-resgate'; }, 6000);
+            }
         }
 
+        // ============================================================
+        // UI — RENDER
+        // ============================================================
         function atualizarBotoesPacotes() {
             document.querySelectorAll('.btn-trocar').forEach(btn => {
-                btn.disabled = saldoMumuAtual < parseFloat(btn.dataset.mumu);
+                const custo = parseFloat(btn.dataset.mumu);
+                btn.disabled = saldoMumuAtual < custo;
             });
             document.querySelectorAll('.btn-desfazer').forEach(btn => {
-                btn.disabled = saldoReaisAtual < parseFloat(btn.dataset.saldo);
+                const custoSaldo = parseFloat(btn.dataset.saldo);
+                btn.disabled = saldoReaisAtual < custoSaldo;
             });
         }
 
@@ -606,9 +536,16 @@
         function renderizarHistorico() {
             const lista = document.getElementById('historicoLista');
             const btnLimpar = document.getElementById('btnLimparHistorico');
+
             const todos = [...historicoTrocas];
             codigosUsados.forEach(c => {
-                todos.push({ tipo: 'resgate', data: c.data, mumuGanho: c.mumu || 0, saldoGanho: c.saldo || 0, codigo: c.codigo });
+                todos.push({
+                    tipo: 'resgate',
+                    data: c.data,
+                    mumuGanho: c.mumu || 0,
+                    saldoGanho: c.saldo || 0,
+                    codigo: c.codigo
+                });
             });
 
             if (todos.length === 0) {
@@ -622,6 +559,7 @@
                 btnLimpar.style.display = 'none';
                 return;
             }
+
             btnLimpar.style.display = 'block';
 
             const ordenado = todos.sort((a, b) => new Date(b.data) - new Date(a.data));
@@ -632,6 +570,7 @@
             lista.replaceChildren();
             ordenado.forEach(item => {
                 let classe, icone, rotulo, detalhe;
+
                 if (item.tipo === 'troca') {
                     classe = 'troca'; icone = '🔄'; rotulo = 'Troca';
                     detalhe = `${formatarMoeda(item.mumuGasto)} Mumu → R$ ${formatarMoeda(item.saldoGanho)}`;
@@ -646,25 +585,37 @@
                     if (item.saldoGanho > 0) partes.push(`R$ ${formatarMoeda(item.saldoGanho)}`);
                     detalhe = partes.join(' + ') || 'Sem recompensa';
                 }
+
                 const div = document.createElement('div');
                 div.className = `historico-item ${classe}`;
+
                 const info = document.createElement('div');
                 info.className = 'historico-info';
+
                 const tipoEl = document.createElement('span');
                 tipoEl.className = 'historico-tipo';
                 tipoEl.textContent = `${icone} ${rotulo}`;
+
                 const detEl = document.createElement('span');
                 detEl.className = 'historico-detalhe';
                 detEl.textContent = detalhe;
-                info.appendChild(tipoEl); info.appendChild(detEl);
+
+                info.appendChild(tipoEl);
+                info.appendChild(detEl);
+
                 const dataEl = document.createElement('span');
                 dataEl.className = 'historico-data';
                 dataEl.textContent = formatarDataCurta(item.data);
-                div.appendChild(info); div.appendChild(dataEl);
+
+                div.appendChild(info);
+                div.appendChild(dataEl);
                 lista.appendChild(div);
             });
         }
 
+        // ============================================================
+        // BUSCAR SALDO (GET)
+        // ============================================================
         async function buscarSaldo() {
             if (!usuarioAtual || !usuarioAtual.login) {
                 document.getElementById('saldoMumu').replaceChildren(
@@ -685,10 +636,22 @@
             try {
                 const resposta = await fetchComRetry(
                     `${CONFIG.SUPABASE_URL}/Geral?login=eq.${encodeURIComponent(usuarioAtual.login)}&select=mumu,saldo,updated_at,nome,historico_trocas,codigos_usados`,
-                    { method: "GET", headers: { "apikey": CONFIG.SUPABASE_KEY, "Content-Type": "application/json" } }
+                    {
+                        method: "GET",
+                        headers: {
+                            "apikey": CONFIG.SUPABASE_KEY,
+                            "Content-Type": "application/json"
+                        }
+                    }
                 );
+
                 const dados = await resposta.json();
-                if (!dados || dados.length === 0) { exibirSaldos(0, 0); mostrarStatusConexao(true); return; }
+
+                if (!dados || dados.length === 0) {
+                    exibirSaldos(0, 0);
+                    mostrarStatusConexao(true);
+                    return;
+                }
 
                 const mumu = parseFloat(dados[0].mumu || 0);
                 const reais = parseFloat(dados[0].saldo || 0);
@@ -696,20 +659,25 @@
                 const historico = dados[0].historico_trocas || [];
                 const usados = dados[0].codigos_usados || [];
 
-                saldoMumuAtual = mumu; saldoReaisAtual = reais;
+                saldoMumuAtual = mumu;
+                saldoReaisAtual = reais;
                 historicoTrocas = Array.isArray(historico) ? historico : [];
                 codigosUsados = Array.isArray(usados) ? usados : [];
 
                 if (nome !== usuarioAtual.nome) usuarioAtual.nome = nome;
-                usuarioAtual.mumu = mumu; usuarioAtual.saldo = reais;
+                usuarioAtual.mumu = mumu;
+                usuarioAtual.saldo = reais;
                 localStorage.setItem('usuario_logado', JSON.stringify(usuarioAtual));
 
                 exibirSaldos(mumu, reais);
                 renderizarHistorico();
+
                 const dataBanco = dados[0].updated_at ? new Date(dados[0].updated_at) : new Date();
                 elemData.textContent = formatarData(dataBanco);
+
                 mostrarStatusConexao(true);
                 atualizarBotoesPacotes();
+
             } catch (erro) {
                 if (usuarioAtual.mumu !== undefined || usuarioAtual.saldo !== undefined) {
                     saldoMumuAtual = parseFloat(usuarioAtual.mumu || 0);
@@ -717,137 +685,279 @@
                     exibirSaldos(saldoMumuAtual, saldoReaisAtual);
                     elemData.textContent = formatarData(new Date()) + ' (dados locais)';
                     elemErro.textContent = "⚠️ Usando dados salvos localmente";
-                    atualizarBotoesPacotes(); renderizarHistorico();
+                    atualizarBotoesPacotes();
+                    renderizarHistorico();
                 } else {
                     exibirSaldos(0, 0);
                     elemErro.textContent = `Detalhe: ${erro.message}`;
                 }
                 mostrarStatusConexao(false);
-            } finally { estaAtualizando = false; }
+            } finally {
+                estaAtualizando = false;
+            }
         }
 
+        // ============================================================
+        // RPC HELPER
+        // ============================================================
         async function chamarRPC(nome, payload) {
             const resp = await fetch(`${CONFIG.SUPABASE_URL}/rpc/${nome}`, {
                 method: 'POST',
-                headers: { "apikey": CONFIG.SUPABASE_KEY, "Content-Type": "application/json" },
+                headers: {
+                    "apikey": CONFIG.SUPABASE_KEY,
+                    "Content-Type": "application/json"
+                },
                 body: JSON.stringify(payload)
             });
             let json;
             try { json = await resp.json(); } catch { json = {}; }
-            if (!resp.ok) throw new Error(json.message || json.error || `Erro HTTP ${resp.status}`);
+            if (!resp.ok) {
+                throw new Error(json.message || json.error || `Erro HTTP ${resp.status}`);
+            }
             return json;
         }
 
+        // ============================================================
+        // TROCA — RPC
+        // ============================================================
         async function trocarMumuPorSaldo(mumuGasto, saldoGanho) {
-            if (!usuarioAtual || !usuarioAtual.login) { mostrarMensagemTroca('Sessão expirada.', 'erro'); return; }
+            if (!usuarioAtual || !usuarioAtual.login) {
+                mostrarMensagemTroca('Sessão expirada.', 'erro'); return;
+            }
             if (operacaoEmAndamento) return;
             if (!confirm(`Confirmar troca?\n\n🪙 ${formatarMoeda(mumuGasto)} Mumu → 💵 R$ ${formatarMoeda(saldoGanho)}`)) return;
 
-            operacaoEmAndamento = true; bloquearBotoes(true);
+            operacaoEmAndamento = true;
+            bloquearBotoes(true);
             mostrarMensagemTroca('Processando troca...', 'carregando');
+
             try {
-                const json = await chamarRPC('trocar_mumu_por_saldo', { p_login: usuarioAtual.login, p_mumu_gasto: mumuGasto, p_saldo_ganho: saldoGanho });
-                saldoMumuAtual = parseFloat(json.mumu); saldoReaisAtual = parseFloat(json.saldo);
-                usuarioAtual.mumu = saldoMumuAtual; usuarioAtual.saldo = saldoReaisAtual;
+                const json = await chamarRPC('trocar_mumu_por_saldo', {
+                    p_login: usuarioAtual.login,
+                    p_mumu_gasto: mumuGasto,
+                    p_saldo_ganho: saldoGanho
+                });
+
+                saldoMumuAtual = parseFloat(json.mumu);
+                saldoReaisAtual = parseFloat(json.saldo);
+                usuarioAtual.mumu = saldoMumuAtual;
+                usuarioAtual.saldo = saldoReaisAtual;
                 localStorage.setItem('usuario_logado', JSON.stringify(usuarioAtual));
-                exibirSaldos(saldoMumuAtual, saldoReaisAtual); atualizarBotoesPacotes();
+
+                exibirSaldos(saldoMumuAtual, saldoReaisAtual);
+                atualizarBotoesPacotes();
                 await buscarSaldo();
+
                 mostrarMensagemTroca(`✅ Troca realizada! ${formatarMoeda(mumuGasto)} Mumu → R$ ${formatarMoeda(saldoGanho)}`, 'sucesso');
-            } catch (erro) { mostrarMensagemTroca(`❌ ${erro.message}`, 'erro'); }
-            finally { operacaoEmAndamento = false; bloquearBotoes(false); }
+
+            } catch (erro) {
+                mostrarMensagemTroca(`❌ ${erro.message}`, 'erro');
+            } finally {
+                operacaoEmAndamento = false;
+                bloquearBotoes(false);
+            }
         }
 
+        // ============================================================
+        // DESFAZER — RPC
+        // ============================================================
         async function desfazerTroca(saldoGasto, mumuGanho) {
-            if (!usuarioAtual || !usuarioAtual.login) { mostrarMensagemTroca('Sessão expirada.', 'erro'); return; }
+            if (!usuarioAtual || !usuarioAtual.login) {
+                mostrarMensagemTroca('Sessão expirada.', 'erro'); return;
+            }
             if (operacaoEmAndamento) return;
             if (!confirm(`Desfazer troca?\n\n💵 R$ ${formatarMoeda(saldoGasto)} → 🪙 ${formatarMoeda(mumuGanho)} Mumu\n\n⚠️ Você recebe 50% do valor original.`)) return;
 
-            operacaoEmAndamento = true; bloquearBotoes(true);
+            operacaoEmAndamento = true;
+            bloquearBotoes(true);
             mostrarMensagemTroca('Processando desfazer...', 'carregando');
+
             try {
-                const json = await chamarRPC('desfazer_troca', { p_login: usuarioAtual.login, p_saldo_gasto: saldoGasto, p_mumu_ganho: mumuGanho });
-                saldoMumuAtual = parseFloat(json.mumu); saldoReaisAtual = parseFloat(json.saldo);
-                usuarioAtual.mumu = saldoMumuAtual; usuarioAtual.saldo = saldoReaisAtual;
+                const json = await chamarRPC('desfazer_troca', {
+                    p_login: usuarioAtual.login,
+                    p_saldo_gasto: saldoGasto,
+                    p_mumu_ganho: mumuGanho
+                });
+
+                saldoMumuAtual = parseFloat(json.mumu);
+                saldoReaisAtual = parseFloat(json.saldo);
+                usuarioAtual.mumu = saldoMumuAtual;
+                usuarioAtual.saldo = saldoReaisAtual;
                 localStorage.setItem('usuario_logado', JSON.stringify(usuarioAtual));
-                exibirSaldos(saldoMumuAtual, saldoReaisAtual); atualizarBotoesPacotes();
+
+                exibirSaldos(saldoMumuAtual, saldoReaisAtual);
+                atualizarBotoesPacotes();
                 await buscarSaldo();
+
                 mostrarMensagemTroca(`✅ Troca desfeita! R$ ${formatarMoeda(saldoGasto)} → ${formatarMoeda(mumuGanho)} Mumu`, 'sucesso');
-            } catch (erro) { mostrarMensagemTroca(`❌ ${erro.message}`, 'erro'); }
-            finally { operacaoEmAndamento = false; bloquearBotoes(false); }
+
+            } catch (erro) {
+                mostrarMensagemTroca(`❌ ${erro.message}`, 'erro');
+            } finally {
+                operacaoEmAndamento = false;
+                bloquearBotoes(false);
+            }
         }
 
+        // ============================================================
+        // RESGATE — RPC
+        // ============================================================
         async function resgatarCodigo() {
             const input = document.getElementById('inputCodigo');
             const codigo = (input.value || '').trim().toUpperCase();
-            if (!codigo) { mostrarMsgResgate('⚠️ Digite um código para resgatar.', 'erro'); return; }
-            if (!usuarioAtual || !usuarioAtual.login) { mostrarMsgResgate('❌ Sessão expirada. Faça login novamente.', 'erro'); return; }
+
+            if (!codigo) {
+                mostrarMsgResgate('⚠️ Digite um código para resgatar.', 'erro');
+                return;
+            }
+            if (!usuarioAtual || !usuarioAtual.login) {
+                mostrarMsgResgate('❌ Sessão expirada. Faça login novamente.', 'erro');
+                return;
+            }
             if (operacaoEmAndamento) return;
 
-            operacaoEmAndamento = true; bloquearBotoes(true);
+            operacaoEmAndamento = true;
+            bloquearBotoes(true);
             mostrarMsgResgate('🔍 Verificando código...', 'carregando');
+
             try {
-                const json = await chamarRPC('resgatar_codigo', { p_login: usuarioAtual.login, p_codigo: codigo });
-                saldoMumuAtual = parseFloat(json.mumu); saldoReaisAtual = parseFloat(json.saldo);
-                usuarioAtual.mumu = saldoMumuAtual; usuarioAtual.saldo = saldoReaisAtual;
+                const json = await chamarRPC('resgatar_codigo', {
+                    p_login: usuarioAtual.login,
+                    p_codigo: codigo
+                });
+
+                saldoMumuAtual = parseFloat(json.mumu);
+                saldoReaisAtual = parseFloat(json.saldo);
+                usuarioAtual.mumu = saldoMumuAtual;
+                usuarioAtual.saldo = saldoReaisAtual;
                 localStorage.setItem('usuario_logado', JSON.stringify(usuarioAtual));
-                exibirSaldos(saldoMumuAtual, saldoReaisAtual); atualizarBotoesPacotes();
+
+                exibirSaldos(saldoMumuAtual, saldoReaisAtual);
+                atualizarBotoesPacotes();
                 await buscarSaldo();
+
                 const partes = [];
                 if (json.bonusMumu > 0) partes.push(`${formatarMoeda(json.bonusMumu)} Mumu`);
                 if (json.bonusSaldo > 0) partes.push(`R$ ${formatarMoeda(json.bonusSaldo)}`);
                 mostrarMsgResgate(`✅ Código resgatado! Você ganhou ${partes.join(' + ')}`, 'sucesso');
+
                 input.value = '';
-            } catch (erro) { mostrarMsgResgate(`❌ ${erro.message}`, 'erro'); }
-            finally { operacaoEmAndamento = false; bloquearBotoes(false); }
+
+            } catch (erro) {
+                mostrarMsgResgate(`❌ ${erro.message}`, 'erro');
+            } finally {
+                operacaoEmAndamento = false;
+                bloquearBotoes(false);
+            }
         }
 
+        // ============================================================
+        // HISTÓRICO — LIMPAR (continua usando PATCH simples)
+        // ============================================================
         async function limparHistorico() {
             if (operacaoEmAndamento) return;
             if (!confirm('Tem certeza que deseja limpar todo o histórico?')) return;
-            operacaoEmAndamento = true; bloquearBotoes(true);
+
+            operacaoEmAndamento = true;
+            bloquearBotoes(true);
             try {
-                await fetch(`${CONFIG.SUPABASE_URL}/Geral?login=eq.${encodeURIComponent(usuarioAtual.login)}`, {
-                    method: "PATCH",
-                    headers: { "apikey": CONFIG.SUPABASE_KEY, "Content-Type": "application/json" },
-                    body: JSON.stringify({ historico_trocas: [], codigos_usados: [] })
-                });
-                historicoTrocas = []; codigosUsados = []; historicoHashAtual = '';
+                await fetch(
+                    `${CONFIG.SUPABASE_URL}/Geral?login=eq.${encodeURIComponent(usuarioAtual.login)}`,
+                    {
+                        method: "PATCH",
+                        headers: {
+                            "apikey": CONFIG.SUPABASE_KEY,
+                            "Content-Type": "application/json"
+                        },
+                        body: JSON.stringify({
+                            historico_trocas: [],
+                            codigos_usados: []
+                        })
+                    }
+                );
+
+                historicoTrocas = [];
+                codigosUsados = [];
+                historicoHashAtual = '';
                 renderizarHistorico();
                 mostrarMensagemTroca('🗑️ Histórico limpo!', 'sucesso');
-            } catch (e) { mostrarMensagemTroca(`❌ Erro ao limpar: ${e.message}`, 'erro'); }
-            finally { operacaoEmAndamento = false; bloquearBotoes(false); }
+            } catch (e) {
+                mostrarMensagemTroca(`❌ Erro ao limpar: ${e.message}`, 'erro');
+            } finally {
+                operacaoEmAndamento = false;
+                bloquearBotoes(false);
+            }
         }
 
+        // ============================================================
+        // POLLING & SESSÃO
+        // ============================================================
         function iniciarPolling() {
             if (intervaloAtualizacao) clearInterval(intervaloAtualizacao);
             intervaloAtualizacao = setInterval(buscarSaldo, CONFIG.INTERVALO_POLLING);
         }
-        function pararPolling() { if (intervaloAtualizacao) { clearInterval(intervaloAtualizacao); intervaloAtualizacao = null; } }
+
+        function pararPolling() {
+            if (intervaloAtualizacao) {
+                clearInterval(intervaloAtualizacao);
+                intervaloAtualizacao = null;
+            }
+        }
+
         function iniciarVerificacaoSessao() {
             if (intervaloSessao) clearInterval(intervaloSessao);
             intervaloSessao = setInterval(() => {
-                if (!carregarUsuarioLogado()) { pararPolling(); window.location.href = 'login.html'; }
+                if (!carregarUsuarioLogado()) {
+                    pararPolling();
+                    window.location.href = 'login.html';
+                }
             }, CONFIG.INTERVALO_SESSAO);
         }
 
+        // ============================================================
+        // EVENTOS
+        // ============================================================
         document.addEventListener('DOMContentLoaded', () => {
             document.querySelectorAll('.btn-trocar').forEach(btn => {
-                btn.addEventListener('click', () => trocarMumuPorSaldo(parseFloat(btn.dataset.mumu), parseFloat(btn.dataset.saldo)));
+                btn.addEventListener('click', () => {
+                    trocarMumuPorSaldo(parseFloat(btn.dataset.mumu), parseFloat(btn.dataset.saldo));
+                });
             });
+
             document.querySelectorAll('.btn-desfazer').forEach(btn => {
-                btn.addEventListener('click', () => desfazerTroca(parseFloat(btn.dataset.saldo), parseFloat(btn.dataset.mumu)));
+                btn.addEventListener('click', () => {
+                    desfazerTroca(parseFloat(btn.dataset.saldo), parseFloat(btn.dataset.mumu));
+                });
             });
+
             document.getElementById('btnLimparHistorico').addEventListener('click', limparHistorico);
             document.getElementById('btnResgatar').addEventListener('click', resgatarCodigo);
-            document.getElementById('inputCodigo').addEventListener('keypress', (e) => { if (e.key === 'Enter') resgatarCodigo(); });
+
+            document.getElementById('inputCodigo').addEventListener('keypress', (e) => {
+                if (e.key === 'Enter') resgatarCodigo();
+            });
+
+            // Pausa polling quando a aba está oculta
             document.addEventListener('visibilitychange', () => {
-                if (document.hidden) { pararPolling(); }
-                else { buscarSaldo(); iniciarPolling(); }
+                if (document.hidden) {
+                    pararPolling();
+                } else {
+                    buscarSaldo();
+                    iniciarPolling();
+                }
             });
         });
 
-        if (!carregarUsuarioLogado()) { window.location.href = 'login.html'; }
-        else { buscarSaldo(); iniciarPolling(); iniciarVerificacaoSessao(); }
+        // ============================================================
+        // BOOTSTRAP
+        // ============================================================
+        if (!carregarUsuarioLogado()) {
+            window.location.href = 'login.html';
+        } else {
+            buscarSaldo();
+            iniciarPolling();
+            iniciarVerificacaoSessao();
+        }
 
         console.log('🔄 Sistema de saldo Mumu (RPC) iniciado');
     </script>

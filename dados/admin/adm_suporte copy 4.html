@@ -3,12 +3,10 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Suporte & Pix | Admin</title>
+    <title>Admin | MM Quase Tudo</title>
 
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-
-    <link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@400;600;700&family=Orbitron:wght@400;700&display=swap" rel="stylesheet">
 
     <style>
         /* ==================== RESET E BASE ==================== */
@@ -22,268 +20,127 @@
             flex-direction: column;
         }
 
-        /* ==================== NAVBAR CYBERPUNK (do admin.html) ==================== */
-        :root {
-            --bg-dark: #0a0b10;
-            --card-bg: #121520;
-            --neon-blue: #00f0ff;
-            --neon-purple: #7000ff;
-            --neon-green: #00ff66;
-            --text-color: #f0f4f8;
+        /* ==================== MENU ==================== */
+        .menu-container {
+            width: 100%;
+            background-color: rgb(0, 43, 173);
+            backdrop-filter: blur(8px);
+            border-bottom: 1px solid rgba(255, 215, 0, 0.2);
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.6);
+            position: sticky;
+            top: 0;
+            z-index: 1000;
         }
 
-        .nav-bar {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            background: rgba(18, 21, 32, 0.85);
-            backdrop-filter: blur(10px);
-            border: 1px solid rgba(0, 240, 255, 0.2);
-            padding: 12px 24px;
-            border-radius: 16px;
-            margin: 20px auto 30px;
+        .navbar {
             max-width: 1400px;
-            width: calc(100% - 40px);
-            box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
+            margin: 0 auto;
+            padding: 0.9rem 2rem;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
             flex-wrap: wrap;
-            gap: 10px;
         }
+
+        .logo {
+            font-size: 1.8rem;
+            font-weight: 800;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+            color: #ffffff;
+            text-shadow: 0 0 10px rgba(255, 215, 0, 0.5);
+            display: flex;
+            align-items: center;
+            gap: 0.3rem;
+        }
+
+        .logo span { color: #f5c542; font-weight: 900; }
+        .logo i { color: #f5c542; font-size: 1.6rem; margin-right: 0.2rem; }
 
         .nav-links {
             display: flex;
             align-items: center;
-            gap: 15px;
-            flex-wrap: wrap;
+            gap: 2.2rem;
+            list-style: none;
+            margin: 0;
+            padding: 0;
         }
 
-        .nav-links a {
-            color: #a0aec0;
+        .nav-links li a {
             text-decoration: none;
-            font-weight: 700;
-            font-size: 1.1rem;
-            padding: 8px 16px;
-            border-radius: 8px;
-            transition: all 0.3s ease;
-            display: flex;
-            align-items: center;
-            gap: 6px;
-            font-family: 'Rajdhani', sans-serif;
-        }
-
-        .nav-links a:hover,
-        .nav-links a.active {
-            color: #fff;
-            background: rgba(0, 240, 255, 0.15);
-            border: 1px solid var(--neon-blue);
-            box-shadow: 0 0 10px rgba(0, 240, 255, 0.3);
-        }
-
-        .user-profile {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            background: rgba(0, 240, 255, 0.08);
-            padding: 6px 16px 6px 12px;
-            border-radius: 40px;
-            border: 1px solid rgba(0, 240, 255, 0.2);
-            color: #fff;
+            color: #d0d0d0;
             font-weight: 600;
-            font-size: 0.95rem;
-            transition: all 0.3s;
-            cursor: default;
-        }
-
-        .user-profile:hover {
-            background: rgba(0, 240, 255, 0.15);
-            border-color: var(--neon-blue);
-            box-shadow: 0 0 15px rgba(0, 240, 255, 0.2);
-        }
-
-        .user-avatar {
-            background: linear-gradient(135deg, var(--neon-blue), var(--neon-purple));
-            width: 36px;
-            height: 36px;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 1.2rem;
-            font-weight: bold;
-            box-shadow: 0 0 10px rgba(0, 240, 255, 0.3);
-        }
-
-        .user-info {
-            display: flex;
-            flex-direction: column;
-            line-height: 1.2;
-        }
-
-        .user-nick {
-            font-family: 'Orbitron', sans-serif;
-            font-size: 0.9rem;
-            letter-spacing: 0.5px;
-            color: #fff;
-        }
-
-        .user-balance {
-            font-size: 0.8rem;
-            color: var(--neon-green);
-            display: flex;
-            align-items: center;
-            gap: 4px;
-        }
-
-        .nav-buttons {
-            display: flex;
-            gap: 10px;
-            align-items: center;
-            flex-wrap: wrap;
-        }
-
-        .btn-bolsa {
-            background: linear-gradient(135deg, #00f0ff, #7000ff);
-            color: white;
-            border: none;
-            padding: 8px 18px;
-            border-radius: 40px;
-            font-weight: bold;
-            font-size: 0.9rem;
-            cursor: pointer;
-            transition: all 0.3s;
-            display: flex;
-            align-items: center;
-            gap: 5px;
-            box-shadow: 0 0 12px rgba(0, 240, 255, 0.4);
-            font-family: 'Rajdhani', sans-serif;
-        }
-
-        .btn-bolsa:hover {
-            transform: translateY(-2px) scale(1.02);
-            box-shadow: 0 0 20px rgba(0, 240, 255, 0.8);
-        }
-
-        /* ==================== MENU DE BOTÕES ADMIN ==================== */
-        .section-title {
-            font-family: 'Orbitron', sans-serif;
             font-size: 1rem;
-            color: #8ab4e8;
-            letter-spacing: 1.5px;
-            text-transform: uppercase;
-            margin-bottom: 16px;
-            padding-left: 12px;
-            border-left: 4px solid var(--neon-blue);
-            max-width: 1400px;
-            margin-left: auto;
-            margin-right: auto;
-            padding-left: 12px;
-        }
-
-        .admin-menu-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
-            gap: 14px;
-            margin: 0 auto 28px;
-            max-width: 1400px;
-            width: calc(100% - 40px);
-            padding: 0 20px;
-        }
-
-        .admin-menu-btn {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            background: var(--card-bg);
-            border: 1px solid rgba(255, 255, 255, 0.08);
-            border-radius: 14px;
-            padding: 14px 18px;
-            text-decoration: none;
-            color: #e0e8f0;
-            font-weight: 600;
-            font-size: 0.95rem;
-            transition: all 0.25s ease;
+            letter-spacing: 0.3px;
+            transition: all 0.2s ease;
+            padding: 0.5rem 0;
             position: relative;
-            overflow: hidden;
-            box-shadow: 0 4px 14px rgba(0, 0, 0, 0.3);
-            font-family: 'Rajdhani', sans-serif;
+            display: inline-flex;
+            align-items: center;
         }
 
-        .admin-menu-btn::before {
+        .nav-links li a i {
+            margin-right: 8px;
+            font-size: 0.95em;
+            color: #f5c542;
+            transition: color 0.2s ease, transform 0.2s ease;
+        }
+
+        .nav-links li a:hover i { color: #ffffff; transform: scale(1.1); }
+
+        .nav-links li a::after {
             content: '';
             position: absolute;
-            inset: 0;
-            background: linear-gradient(135deg, rgba(0, 240, 255, 0.08), transparent);
-            opacity: 0;
-            transition: opacity 0.25s;
+            bottom: 0; left: 0;
+            width: 0; height: 2px;
+            background: #f5c542;
+            transition: width 0.25s ease;
         }
 
-        .admin-menu-btn:hover {
-            transform: translateY(-3px);
-            border-color: var(--neon-blue);
-            box-shadow: 0 8px 28px rgba(0, 240, 255, 0.2);
-            color: #fff;
-        }
+        .nav-links li a:hover { color: #ffffff; }
+        .nav-links li a:hover::after { width: 100%; }
 
-        .admin-menu-btn:hover::before {
-            opacity: 1;
-        }
-
-        .admin-menu-btn .menu-icon {
-            width: 42px;
-            height: 42px;
-            border-radius: 12px;
+        .btn-discord {
+            background: linear-gradient(135deg, #f5c542 0%, #d4a017 100%);
+            border: none;
+            border-radius: 40px;
+            color: #0b0e14;
+            font-weight: 700;
+            font-size: 0.9rem;
+            padding: 0.7rem 1.6rem;
             display: flex;
             align-items: center;
-            justify-content: center;
-            font-size: 1.15rem;
-            flex-shrink: 0;
-            position: relative;
-            z-index: 1;
+            gap: 0.6rem;
+            cursor: pointer;
+            transition: transform 0.2s, box-shadow 0.2s;
+            box-shadow: 0 0 15px rgba(245, 197, 66, 0.3);
+            text-decoration: none;
+            letter-spacing: 0.3px;
+            white-space: nowrap;
         }
 
-        .admin-menu-btn .menu-label {
-            position: relative;
-            z-index: 1;
-            display: flex;
-            flex-direction: column;
-            line-height: 1.25;
+        .btn-discord i { font-size: 1.1rem; }
+
+        .btn-discord:hover {
+            transform: scale(1.03);
+            box-shadow: 0 0 25px rgba(245, 197, 66, 0.6);
+            background: linear-gradient(135deg, #f7d25c 0%, #e0b020 100%);
         }
 
-        .admin-menu-btn .menu-label .titulo {
-            font-family: 'Orbitron', sans-serif;
-            font-size: 0.82rem;
-            letter-spacing: 0.5px;
-            color: #fff;
+        .menu-toggle {
+            display: none;
+            background: transparent;
+            border: none;
+            color: #f5c542;
+            font-size: 1.8rem;
+            cursor: pointer;
+            padding: 0.3rem 0.6rem;
         }
-
-        .admin-menu-btn .menu-label .subtitulo {
-            font-size: 0.72rem;
-            color: #7e8aa1;
-            font-weight: 500;
-        }
-
-        /* Cores por categoria */
-        .admin-menu-btn[data-cor="azul"] .menu-icon    { background: rgba(59, 130, 246, 0.15); color: #60a5fa; }
-        .admin-menu-btn[data-cor="roxo"] .menu-icon    { background: rgba(139, 92, 246, 0.15); color: #a78bfa; }
-        .admin-menu-btn[data-cor="verde"] .menu-icon   { background: rgba(34, 197, 94, 0.15);  color: #4ade80; }
-        .admin-menu-btn[data-cor="amarelo"] .menu-icon { background: rgba(245, 197, 66, 0.15); color: #f5c542; }
-        .admin-menu-btn[data-cor="vermelho"] .menu-icon{ background: rgba(239, 68, 68, 0.15);  color: #f87171; }
-        .admin-menu-btn[data-cor="ciano"] .menu-icon   { background: rgba(0, 240, 255, 0.15);  color: #00f0ff; }
-        .admin-menu-btn[data-cor="laranja"] .menu-icon { background: rgba(247, 147, 26, 0.15); color: #f7931a; }
-        .admin-menu-btn[data-cor="rosa"] .menu-icon    { background: rgba(255, 0, 170, 0.15);  color: #ff00aa; }
-
-        .admin-menu-btn[data-cor="azul"]:hover    { border-color: #3b82f6; box-shadow: 0 8px 28px rgba(59, 130, 246, 0.25); }
-        .admin-menu-btn[data-cor="roxo"]:hover    { border-color: #8b5cf6; box-shadow: 0 8px 28px rgba(139, 92, 246, 0.25); }
-        .admin-menu-btn[data-cor="verde"]:hover   { border-color: #22c55e; box-shadow: 0 8px 28px rgba(34, 197, 94, 0.25); }
-        .admin-menu-btn[data-cor="amarelo"]:hover { border-color: #f5c542; box-shadow: 0 8px 28px rgba(245, 197, 66, 0.25); }
-        .admin-menu-btn[data-cor="vermelho"]:hover{ border-color: #ef4444; box-shadow: 0 8px 28px rgba(239, 68, 68, 0.25); }
-        .admin-menu-btn[data-cor="ciano"]:hover   { border-color: #00f0ff; box-shadow: 0 8px 28px rgba(0, 240, 255, 0.25); }
-        .admin-menu-btn[data-cor="laranja"]:hover { border-color: #f7931a; box-shadow: 0 8px 28px rgba(247, 147, 26, 0.25); }
-        .admin-menu-btn[data-cor="rosa"]:hover    { border-color: #ff00aa; box-shadow: 0 8px 28px rgba(255, 0, 170, 0.25); }
 
         /* ==================== HERO ==================== */
         .admin-hero {
             text-align: center;
-            padding: 20px 20px 20px;
+            padding: 40px 20px 20px;
             max-width: 900px;
             margin: 0 auto;
         }
@@ -295,7 +152,6 @@
             letter-spacing: 1px;
             text-shadow: 0 0 15px rgba(245, 197, 66, 0.4);
             margin-bottom: 10px;
-            font-family: 'Orbitron', sans-serif;
         }
 
         .admin-hero h1 i { color: #f5c542; margin-right: 12px; }
@@ -395,7 +251,6 @@
             font-weight: 800;
             color: #f1f5f9;
             line-height: 1.1;
-            font-family: 'Orbitron', sans-serif;
         }
 
         .stat-card .info .rotulo {
@@ -505,7 +360,6 @@
             display: flex;
             align-items: center;
             gap: 10px;
-            font-family: 'Orbitron', sans-serif;
         }
 
         .tabela-header h2 i { color: #f5c542; }
@@ -582,6 +436,7 @@
         .badge.prio-alta { background: rgba(249, 115, 22, 0.15); color: #fb923c; border: 1px solid rgba(249, 115, 22, 0.4); }
         .badge.prio-urgente { background: rgba(239, 68, 68, 0.15); color: #f87171; border: 1px solid rgba(239, 68, 68, 0.4); }
 
+        /* PIX — badges */
         .status-badge {
             display: inline-flex;
             align-items: center;
@@ -755,6 +610,12 @@
             display: inline-block;
             white-space: nowrap;
         }
+        .limite-cell {
+            font-family: 'Courier New', monospace;
+            font-size: 0.78rem;
+            color: #60a5fa;
+            white-space: nowrap;
+        }
 
         .estado-vazio {
             padding: 60px 20px;
@@ -816,7 +677,6 @@
             display: flex;
             align-items: center;
             gap: 10px;
-            font-family: 'Orbitron', sans-serif;
         }
 
         .modal-header h2 i { color: #f5c542; }
@@ -1035,6 +895,12 @@
 
         .btn-perigo:hover { background: rgba(239, 68, 68, 0.25); }
 
+        .btn-sucesso {
+            background: linear-gradient(135deg, #00b894, #00cec9);
+            color: #fff;
+        }
+        .btn-sucesso:hover { box-shadow: 0 0 20px rgba(0, 184, 148, 0.5); transform: scale(1.02); }
+
         .btn:disabled { opacity: 0.6; cursor: not-allowed; transform: none; }
 
         /* ==================== TOAST ==================== */
@@ -1070,22 +936,45 @@
 
         /* ==================== RESPONSIVIDADE ==================== */
         @media (max-width: 1024px) {
+            .navbar { padding: 0.8rem 1.5rem; }
+            .nav-links { gap: 1.5rem; }
+            .btn-discord { padding: 0.6rem 1.2rem; font-size: 0.85rem; }
             .stats-grid { grid-template-columns: repeat(2, 1fr); }
         }
 
         @media (max-width: 860px) {
-            .nav-bar { flex-direction: column; align-items: stretch; }
-            .nav-links { justify-content: center; }
-            .nav-buttons { justify-content: center; }
+            .nav-links {
+                display: none;
+                width: 100%;
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 1rem;
+                padding: 1.5rem 0 0.5rem 0;
+                border-top: 1px solid rgba(255, 215, 0, 0.15);
+                margin-top: 1rem;
+            }
+
+            .nav-links.active { display: flex; }
+            .nav-links li { width: 100%; }
+            .nav-links li a { display: flex; width: 100%; padding: 0.6rem 0; font-size: 1.1rem; }
+            .menu-toggle { display: block; }
+            .navbar { justify-content: space-between; }
+            .btn-discord { margin-left: auto; margin-right: 1rem; }
+
             .admin-hero h1 { font-size: 1.9rem; }
             .modal-actions { grid-template-columns: 1fr; }
             .detalhe-grid { grid-template-columns: 1fr; }
             .abas { padding: 10px 10px 0; }
             .aba-btn { padding: 12px 16px; font-size: 0.85rem; }
-            .admin-menu-grid { grid-template-columns: 1fr 1fr; }
         }
 
         @media (max-width: 480px) {
+            .navbar { padding: 0.7rem 1rem; }
+            .logo { font-size: 1.5rem; }
+            .logo i { font-size: 1.3rem; }
+            .btn-discord { padding: 0.5rem 1rem; font-size: 0.8rem; }
+            .btn-discord span { display: none; }
+            .btn-discord i { font-size: 1.2rem; margin: 0; }
             .admin-hero h1 { font-size: 1.5rem; }
             .stats-grid { grid-template-columns: 1fr; }
             .filtros { width: 100%; }
@@ -1096,30 +985,42 @@
             .abas { flex-direction: column; }
             .aba-btn { border-radius: 10px; border-bottom: 1px solid #334155; top: 0; }
             .aba-btn.ativa { border-bottom: 1px solid #334155; box-shadow: none; }
-            .admin-menu-grid { grid-template-columns: 1fr; }
         }
     </style>
 </head>
 <body>
 
-    <!-- ==================== NAVBAR CYBERPUNK (do admin.html) ==================== -->
-    <div class="nav-bar">
-        <div class="nav-links">
-            <a href="./admin.html" class="active">⚡ ADMIN</a>
-        </div>
-        <div class="user-profile">
-            <div class="user-avatar">👑</div>
-            <div class="user-info">
-                <span class="user-nick" id="usuarioLogadoNav">ADM</span>
-                <span class="user-balance">Supabase <span id="statusSupabaseTextoNav">Online</span></span>
+    <!-- ==================== MENU ==================== -->
+    <div class="menu-container">
+        <nav class="navbar">
+            <div class="logo">
+                <i class="fas fa-cow"></i>
+                MM<span>Quase Tudo</span>
             </div>
-        </div>
-        <div class="nav-buttons">
-            <button class="btn-bolsa" onclick="window.location.href='./admin.html'">🏠 Voltar</button>
-        </div>
+
+            <button class="menu-toggle" id="menuToggle" aria-label="Abrir menu">
+                <i class="fas fa-bars"></i>
+            </button>
+
+            <ul class="nav-links" id="navLinks">
+                <li><a href="./index.html"><i class="fas fa-house"></i> Início</a></li>
+                <li><a href="./noticias.html"><i class="fas fa-newspaper"></i> Notícias</a></li>
+                <li><a href="./jogos/ranking/ranking002.html"><i class="fas fa-trophy"></i> Classificações</a></li>
+                <li><a href="./eventos.html"><i class="fas fa-calendar-days"></i> Eventos</a></li>
+                <li><a href="./download.html"><i class="fas fa-download"></i> Downloads</a></li>
+                <li><a href="./suporte.html"><i class="fas fa-headset"></i> Suporte</a></li>
+                <li><a href="./adm_suporte.html"><i class="fas fa-shield-halved"></i> Admin</a></li>
+                <li><a href="./loja.html"><i class="fas fa-cart-shopping"></i> Loja</a></li>
+                <li><a href="./cadastro.html"><i class="fas fa-user-plus"></i> Cadastro</a></li>
+                <li><a href="./login.html"><i class="fas fa-sign-in-alt"></i> Login</a></li>
+            </ul>
+
+            <a href="https://discord.gg/ATtu4z9Ewt" class="btn-discord" target="_blank" rel="noopener">
+                <i class="fab fa-discord"></i>
+                <span>Jogue Agora</span>
+            </a>
+        </nav>
     </div>
-
-
 
     <!-- ==================== HERO ==================== -->
     <section class="admin-hero">
@@ -1248,6 +1149,7 @@
     ============================================================ -->
     <div class="aba-conteudo" id="aba-pix">
 
+        <!-- STATS PIX -->
         <section class="stats-grid">
             <div class="stat-card">
                 <div class="icone amarelo"><i class="fas fa-clock"></i></div>
@@ -1297,6 +1199,7 @@
         </section>
 
         <section class="tabela-wrapper">
+            <!-- SAQUES PENDENTES -->
             <div class="tabela-card" id="cardPendentes">
                 <div class="tabela-header">
                     <h2><i class="fas fa-clock"></i> Saques Pendentes</h2>
@@ -1326,6 +1229,7 @@
                 </div>
             </div>
 
+            <!-- HISTÓRICO (PAGOS) -->
             <div class="tabela-card" id="cardPagos">
                 <div class="tabela-header">
                     <h2><i class="fas fa-circle-check"></i> Histórico de Pagos</h2>
@@ -1464,7 +1368,9 @@
             </div>
 
             <div class="modal-body">
-                <div class="detalhe-grid" id="pixDetalhesGrid"></div>
+                <div class="detalhe-grid" id="pixDetalhesGrid">
+                    <!-- preenchido dinamicamente -->
+                </div>
 
                 <div class="modal-footer" style="padding: 0; padding-top: 8px;">
                     <button class="btn btn-secundario" id="btnFecharPixModal2">
@@ -1490,18 +1396,27 @@
 
         const supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
-        /* ==================== PERFIL NAVBAR ==================== */
-        (function preencherUsuarioNav() {
-            try {
-                const dados = localStorage.getItem('usuario_logado');
-                if (dados) {
-                    const u = JSON.parse(dados);
-                    const nome = u.nome || u.login || 'ADM';
-                    const el = document.getElementById('usuarioLogadoNav');
-                    if (el) el.textContent = nome;
+        /* ==================== MENU TOGGLE ==================== */
+        const menuToggle = document.getElementById('menuToggle');
+        const navLinks = document.getElementById('navLinks');
+
+        menuToggle.addEventListener('click', () => {
+            navLinks.classList.toggle('active');
+            const icon = menuToggle.querySelector('i');
+            icon.classList.toggle('fa-bars');
+            icon.classList.toggle('fa-times');
+        });
+
+        navLinks.querySelectorAll('a').forEach(link => {
+            link.addEventListener('click', () => {
+                if (window.innerWidth <= 860) {
+                    navLinks.classList.remove('active');
+                    const icon = menuToggle.querySelector('i');
+                    icon.classList.add('fa-bars');
+                    icon.classList.remove('fa-times');
                 }
-            } catch (e) {}
-        })();
+            });
+        });
 
         /* ==================== ABAS ==================== */
         const abaBtns = document.querySelectorAll('.aba-btn');
@@ -1883,7 +1798,7 @@
         });
 
         /* ============================================================
-           ABA PIX
+           ABA PIX — Estado e referências
         ============================================================ */
         let todosSaques = [];
         let todosUsuariosPix = [];
@@ -1899,6 +1814,7 @@
         const cardPendentes = document.getElementById('cardPendentes');
         const cardPagos = document.getElementById('cardPagos');
 
+        // Modal PIX
         const modalPixOverlay = document.getElementById('modalPixOverlay');
         const pixDetalhesGrid = document.getElementById('pixDetalhesGrid');
         const btnFecharModalPix = document.getElementById('btnFecharModalPix');
@@ -1910,6 +1826,7 @@
             if (e.target === modalPixOverlay) modalPixOverlay.classList.remove('show');
         });
 
+        /* ==================== CARREGAR DADOS PIX ==================== */
         async function carregarDadosPix() {
             iconeAtualizarPix.classList.add('loading');
             btnRefreshPix.disabled = true;
@@ -1933,8 +1850,9 @@
 
                     const limiteInfo = u.limite_saque || {};
                     const limiteUsado = parseFloat(limiteInfo.total_sacado_hoje || 0);
-                    const limiteDiario = parseFloat(limiteInfo.limite_diario || 500);
+                    const limiteDiario = parseFloat(limiteInfo.limite_diario || 5);
 
+                    // Pendente
                     if (u.pix_pendente) {
                         const p = u.pix_pendente;
                         todosSaques.push({
@@ -1956,6 +1874,7 @@
                         });
                     }
 
+                    // Histórico
                     if (Array.isArray(u.historico_saques)) {
                         u.historico_saques.forEach((h, idx) => {
                             const st = h.status === 'pago' ? 'pago' :
@@ -1996,6 +1915,7 @@
             }
         }
 
+        /* ==================== STATS PIX ==================== */
         function atualizarStatsPix() {
             const pendentes = todosSaques.filter(s => s.status === 'pendente');
             const pagos = todosSaques.filter(s => s.status === 'pago');
@@ -2013,6 +1933,7 @@
             badgePagos.textContent = pagos.length;
         }
 
+        /* ==================== FILTROS PIX ==================== */
         function aplicarFiltrosPix(lista) {
             const busca = (filtroBuscaPix.value || '').toLowerCase().trim();
             if (!busca) return lista;
@@ -2138,6 +2059,7 @@
             });
         }
 
+        /* ==================== MODAL DETALHES PIX ==================== */
         function abrirModalPix(id) {
             const s = todosSaques.find(x => x.id === id);
             if (!s) return;
@@ -2201,6 +2123,7 @@
             modalPixOverlay.classList.add('show');
         }
 
+        /* ==================== AÇÕES PIX ==================== */
         async function marcarComoPago(id) {
             const saque = todosSaques.find(s => s.id === id);
             if (!saque) return;
@@ -2313,6 +2236,7 @@
             }
         }
 
+        /* ==================== EVENTOS PIX ==================== */
         btnRefreshPix.addEventListener('click', async () => {
             await carregarDadosPix();
             mostrarToast('sucesso', '✅ Saques atualizados!');

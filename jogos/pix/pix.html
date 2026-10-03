@@ -1,0 +1,1749 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Carteira MUMU — Pix</title>
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500;700;900&family=Rajdhani:wght@600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-dark: #0a0b10;
+            --card-bg: #121520;
+            --neon-blue: #00f0ff;
+            --neon-purple: #7000ff;
+            --neon-green: #00ff66;
+            --neon-pix: #00b894;
+            --text-color: #f0f4f8;
+            --text-muted: #8a99ad;
+        }
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Rajdhani', sans-serif; }
+        body {
+            background-color: var(--bg-dark);
+            color: var(--text-color);
+            background-image:
+                radial-gradient(circle at 15% 20%, rgba(0, 184, 148, 0.1) 0%, transparent 40%),
+                radial-gradient(circle at 85% 80%, rgba(0, 240, 255, 0.1) 0%, transparent 40%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .nav-bar {
+            display: flex; justify-content: space-between; align-items: center;
+            background: rgba(18, 21, 32, 0.85);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(0, 240, 255, 0.2);
+            padding: 12px 24px; border-radius: 16px; margin-bottom: 20px;
+            max-width: 900px; margin-left: auto; margin-right: auto;
+            box-shadow: 0 8px 32px rgba(0,0,0,0.37);
+            flex-wrap: wrap; gap: 10px;
+        }
+        .nav-links { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; }
+        .nav-links a {
+            color: #a0aec0; text-decoration: none;
+            font-weight: 700; font-size: 1rem;
+            padding: 8px 14px; border-radius: 8px;
+            transition: all 0.3s ease;
+            display: flex; align-items: center; gap: 6px;
+        }
+        .nav-links a:hover, .nav-links a.active {
+            color: #fff; background: rgba(0, 240, 255, 0.15);
+            border: 1px solid var(--neon-blue);
+            box-shadow: 0 0 10px rgba(0, 240, 255, 0.3);
+        }
+        .btn-pix {
+            background: linear-gradient(135deg, #00b894, #00cec9) !important;
+            color: #fff !important;
+            box-shadow: 0 0 12px rgba(0, 184, 148, 0.5) !important;
+            animation: pixGlow 2s ease-in-out infinite;
+        }
+        @keyframes pixGlow {
+            0%, 100% { box-shadow: 0 0 12px rgba(0, 184, 148, 0.5); }
+            50% { box-shadow: 0 0 22px rgba(0, 184, 148, 0.9), 0 0 35px rgba(0, 184, 148, 0.4); }
+        }
+
+        .user-profile {
+            display: flex; align-items: center; gap: 12px;
+            background: rgba(0, 184, 148, 0.08);
+            padding: 6px 16px 6px 8px;
+            border-radius: 40px;
+            border: 1px solid rgba(0, 184, 148, 0.25);
+            color: #fff; font-weight: 600; font-size: 0.95rem;
+            transition: all 0.3s; cursor: default;
+        }
+        .user-profile:hover {
+            background: rgba(0, 184, 148, 0.15);
+            border-color: var(--neon-pix);
+            box-shadow: 0 0 15px rgba(0, 184, 148, 0.25);
+        }
+        .user-avatar {
+            background: linear-gradient(135deg, var(--neon-pix), var(--neon-blue));
+            width: 36px; height: 36px; border-radius: 50%;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 1.2rem; font-weight: bold;
+            box-shadow: 0 0 10px rgba(0, 184, 148, 0.4);
+            flex-shrink: 0;
+        }
+        .user-info { display: flex; flex-direction: column; line-height: 1.2; }
+        .user-nick {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 0.85rem; letter-spacing: 0.5px; color: #fff;
+        }
+        .saldo-nav {
+            font-size: 0.78rem; color: var(--neon-green);
+            display: flex; align-items: center; gap: 4px;
+        }
+
+        .card {
+            background: rgba(18, 21, 32, 0.92);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(0, 240, 255, 0.15);
+            border-radius: 20px;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.5);
+            padding: 30px 28px;
+            max-width: 900px;
+            margin: 0 auto;
+        }
+
+        .header {
+            display: flex; justify-content: space-between; align-items: center;
+            margin-bottom: 20px; flex-wrap: wrap; gap: 10px;
+        }
+        .header h1 {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 1.5rem; color: #fff;
+            letter-spacing: 1.5px;
+            text-shadow: 0 0 15px var(--neon-pix);
+        }
+        .close-btn {
+            font-size: 20px; color: var(--text-muted);
+            cursor: pointer; border: none; background: none;
+            transition: all 0.2s;
+        }
+        .close-btn:hover { color: #fff; transform: rotate(90deg); }
+
+        .painel-conexao {
+            background: rgba(16, 185, 129, 0.12);
+            border-left: 4px solid var(--neon-pix);
+            padding: 10px 14px; margin-bottom: 20px;
+            border-radius: 8px; font-size: 0.85rem;
+            color: #34d399; font-weight: 600;
+        }
+
+        .subheader {
+            display: flex; gap: 16px; align-items: center;
+            margin-bottom: 20px; flex-wrap: wrap;
+        }
+        .subheader .link {
+            color: var(--neon-pix); font-size: 0.85rem;
+            cursor: pointer; font-weight: 600;
+            transition: all 0.2s;
+        }
+        .subheader .link:hover { color: #fff; text-shadow: 0 0 10px var(--neon-pix); }
+
+        .info-box {
+            background: rgba(0, 184, 148, 0.08);
+            border: 1px solid rgba(0, 184, 148, 0.2);
+            border-radius: 12px;
+            padding: 16px; margin-bottom: 24px;
+            line-height: 1.6; font-size: 0.88rem; color: #c8d0e0;
+        }
+        .info-box strong { color: var(--neon-pix); }
+
+        .linha-dado { margin-bottom: 16px; }
+        .rotulo {
+            font-size: 0.75rem; color: var(--text-muted);
+            margin-bottom: 4px; text-transform: uppercase;
+            letter-spacing: 1px; font-weight: 600;
+            font-family: 'Orbitron', sans-serif;
+        }
+        .valor {
+            font-size: 1.1rem; font-weight: 700;
+            color: #fff; font-family: 'Orbitron', monospace;
+        }
+        .valor.destaque {
+            font-size: 1.8rem; color: var(--neon-pix);
+            text-shadow: 0 0 20px rgba(0, 184, 148, 0.4);
+        }
+        .equiv { font-size: 0.82rem; color: var(--text-muted); margin-top: 4px; }
+
+        .divisor {
+            height: 1px;
+            background: linear-gradient(90deg, transparent, rgba(0, 240, 255, 0.2), transparent);
+            margin: 24px 0;
+        }
+
+        .caixa-conversao {
+            background: rgba(30, 27, 48, 0.5);
+            border: 1px solid rgba(112, 0, 255, 0.2);
+            border-radius: 14px;
+            padding: 20px; margin-bottom: 20px;
+        }
+        .linha-conversao {
+            display: flex; justify-content: space-between;
+            margin-bottom: 8px; align-items: center;
+            flex-wrap: wrap; gap: 8px;
+        }
+
+        .grupo-input { margin: 16px 0; }
+        .etiqueta-input {
+            display: block; margin-bottom: 8px;
+            font-weight: 600; font-size: 0.85rem; color: #c8d0e0;
+        }
+        .envoltorio-input {
+            display: flex;
+            border: 2px solid rgba(0, 240, 255, 0.2);
+            border-radius: 10px; overflow: hidden;
+            background: rgba(10, 11, 16, 0.7);
+            transition: all 0.25s;
+        }
+        .envoltorio-input:focus-within {
+            border-color: var(--neon-pix);
+            box-shadow: 0 0 0 4px rgba(0, 184, 148, 0.15);
+        }
+        .campo-input {
+            flex: 1; padding: 12px;
+            border: none; background: transparent;
+            font-size: 1rem; color: #fff;
+            outline: none; font-family: 'Rajdhani', sans-serif;
+            font-weight: 600;
+        }
+        .campo-input::placeholder { color: var(--text-muted); }
+        .botao-input {
+            padding: 0 14px; background: rgba(0, 240, 255, 0.1);
+            border: none; border-left: 1px solid rgba(0, 240, 255, 0.15);
+            cursor: pointer; font-size: 0.8rem;
+            color: var(--neon-blue); font-weight: 700;
+            transition: all 0.2s;
+            font-family: 'Rajdhani', sans-serif;
+        }
+        .botao-input:hover { background: rgba(0, 240, 255, 0.2); color: #fff; }
+
+        .valor-receber {
+            font-size: 1.6rem; font-weight: 900;
+            margin: 12px 0; color: var(--neon-green);
+            font-family: 'Orbitron', monospace;
+            text-shadow: 0 0 15px rgba(0, 255, 102, 0.3);
+        }
+
+        /* ===== PAINEL DETALHADO DE TAXA ===== */
+        .painel-taxa {
+            background: rgba(10, 11, 16, 0.6);
+            border: 1px dashed rgba(0, 240, 255, 0.25);
+            border-radius: 12px;
+            padding: 14px 16px;
+            margin: 16px 0;
+        }
+        .painel-taxa .linha-taxa {
+            display: flex; justify-content: space-between;
+            align-items: center; padding: 6px 0;
+            font-size: 0.88rem;
+            border-bottom: 1px solid rgba(0, 240, 255, 0.08);
+        }
+        .painel-taxa .linha-taxa:last-child { border-bottom: none; }
+        .painel-taxa .linha-taxa .label {
+            color: #a0aec0; display: flex; align-items: center; gap: 6px;
+        }
+        .painel-taxa .linha-taxa .value {
+            color: #fff; font-weight: 700;
+            font-family: 'Orbitron', monospace;
+            font-size: 0.9rem;
+        }
+        .painel-taxa .linha-taxa.total {
+            margin-top: 6px; padding-top: 10px;
+            border-top: 2px solid rgba(0, 184, 148, 0.3);
+            border-bottom: none;
+        }
+        .painel-taxa .linha-taxa.total .label {
+            color: var(--neon-green); font-weight: 700;
+            font-family: 'Orbitron', sans-serif;
+            letter-spacing: 0.5px;
+        }
+        .painel-taxa .linha-taxa.total .value {
+            color: var(--neon-green); font-size: 1.15rem;
+            text-shadow: 0 0 12px rgba(0, 255, 102, 0.4);
+        }
+        .painel-taxa .linha-taxa .value.desconto { color: #fca5a5; }
+        .painel-taxa .linha-taxa .value.taxa { color: #fbbf24; }
+
+        /* ===== PAINEL DE LIMITE DIÁRIO ===== */
+        .painel-limite {
+            background: rgba(112, 0, 255, 0.08);
+            border: 1px solid rgba(112, 0, 255, 0.25);
+            border-radius: 12px;
+            padding: 14px 16px;
+            margin: 16px 0;
+        }
+        .painel-limite .titulo-limite {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 0.8rem; color: var(--neon-purple);
+            letter-spacing: 1px; font-weight: 700;
+            margin-bottom: 10px;
+            text-transform: uppercase;
+            display: flex; align-items: center; gap: 6px;
+        }
+        .painel-limite .linha-limite {
+            display: flex; justify-content: space-between;
+            align-items: center; padding: 4px 0;
+            font-size: 0.85rem;
+        }
+        .painel-limite .linha-limite .label { color: #a0aec0; }
+        .painel-limite .linha-limite .value {
+            color: #fff; font-weight: 700;
+            font-family: 'Orbitron', monospace;
+            font-size: 0.85rem;
+        }
+        .barra-limite {
+            height: 8px;
+            background: rgba(10, 11, 16, 0.7);
+            border-radius: 10px;
+            overflow: hidden;
+            margin: 10px 0 6px;
+            border: 1px solid rgba(112, 0, 255, 0.2);
+        }
+        .barra-limite-preenchida {
+            height: 100%;
+            background: linear-gradient(90deg, #7000ff, #00f0ff);
+            border-radius: 10px;
+            transition: width 0.4s ease, background 0.4s ease;
+            width: 0%;
+        }
+        .barra-limite-preenchida.alerta {
+            background: linear-gradient(90deg, #f59e0b, #fbbf24);
+        }
+        .barra-limite-preenchida.cheio {
+            background: linear-gradient(90deg, #ef4444, #f87171);
+        }
+        .limite-aviso {
+            font-size: 0.75rem; color: var(--text-muted);
+            margin-top: 4px;
+            display: flex; justify-content: space-between;
+        }
+        .limite-aviso strong { color: #fff; }
+
+        .aviso {
+            color: #fca5a5; font-size: 0.82rem;
+            margin: 8px 0 16px; padding: 8px 12px;
+            background: rgba(239, 68, 68, 0.1);
+            border-radius: 8px;
+            border: 1px solid rgba(239, 68, 68, 0.2);
+        }
+        .sucesso {
+            color: #34d399; font-size: 0.82rem;
+            margin: 8px 0 16px; padding: 8px 12px;
+            background: rgba(16, 185, 129, 0.1);
+            border-radius: 8px;
+            border: 1px solid rgba(16, 185, 129, 0.2);
+        }
+
+        .aviso-chave-obrigatoria {
+            background: rgba(245, 158, 11, 0.12);
+            border: 1px solid rgba(245, 158, 11, 0.4);
+            border-left: 4px solid #f59e0b;
+            border-radius: 10px;
+            padding: 12px 14px; margin: 8px 0 16px;
+            font-size: 0.85rem; color: #fbbf24; font-weight: 600;
+            display: flex; align-items: center; gap: 8px;
+            animation: pulseAviso 2s ease-in-out infinite;
+        }
+        @keyframes pulseAviso {
+            0%, 100% { box-shadow: 0 0 0 rgba(245, 158, 11, 0); }
+            50% { box-shadow: 0 0 15px rgba(245, 158, 11, 0.3); }
+        }
+
+        .btn-acao {
+            width: 100%; padding: 14px;
+            background: linear-gradient(135deg, #00b894, #00cec9);
+            color: white; border: none;
+            border-radius: 12px; font-size: 1rem;
+            font-weight: 700; cursor: pointer;
+            margin-bottom: 20px; transition: all 0.25s;
+            font-family: 'Rajdhani', sans-serif;
+            box-shadow: 0 4px 15px rgba(0, 184, 148, 0.4);
+        }
+        .btn-acao:disabled {
+            background: #333a4a; cursor: not-allowed;
+            opacity: 0.6; box-shadow: none;
+        }
+        .btn-acao:hover:not(:disabled) {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(0, 184, 148, 0.6);
+        }
+
+        .caixa-chave {
+            background: rgba(30, 27, 48, 0.5);
+            border: 1px solid rgba(112, 0, 255, 0.2);
+            border-radius: 14px;
+            padding: 20px; margin-bottom: 20px;
+        }
+
+        .seletor-tipo {
+            display: flex; gap: 8px; margin: 12px 0;
+            flex-wrap: wrap;
+        }
+        .tipo-chave {
+            flex: 1; min-width: 90px;
+            padding: 10px 8px;
+            border: 2px solid rgba(112, 0, 255, 0.3);
+            background: rgba(10, 11, 16, 0.5);
+            border-radius: 10px;
+            text-align: center; cursor: pointer;
+            font-size: 0.85rem; color: #c8d0e0;
+            font-weight: 600; transition: all 0.25s;
+            font-family: 'Rajdhani', sans-serif;
+        }
+        .tipo-chave.ativo {
+            border-color: var(--neon-purple);
+            background: rgba(112, 0, 255, 0.2);
+            color: #fff;
+            box-shadow: 0 0 15px rgba(112, 0, 255, 0.4);
+        }
+
+        .campo-chave { margin-top: 12px; }
+        .campo-chave input {
+            width: 100%; padding: 12px;
+            background: rgba(10, 11, 16, 0.7);
+            border: 2px solid rgba(0, 240, 255, 0.15);
+            border-radius: 10px;
+            font-size: 0.95rem; color: #fff;
+            outline: none; font-family: 'Rajdhani', sans-serif;
+            transition: all 0.25s;
+        }
+        .campo-chave input:focus {
+            border-color: var(--neon-blue);
+            box-shadow: 0 0 0 4px rgba(0, 240, 255, 0.1);
+        }
+        /* Estados de validação */
+        .campo-chave input.cpf-valido {
+            border-color: #22c55e;
+            box-shadow: 0 0 0 4px rgba(34, 197, 94, 0.15);
+        }
+        .campo-chave input.cpf-invalido {
+            border-color: #ef4444;
+            box-shadow: 0 0 0 4px rgba(239, 68, 68, 0.15);
+        }
+        .cpf-feedback {
+            font-size: 0.75rem; margin-top: 6px;
+            display: flex; align-items: center; gap: 4px;
+            min-height: 16px;
+        }
+        .cpf-feedback.ok { color: #4ade80; }
+        .cpf-feedback.erro { color: #f87171; }
+
+        .acoes-chave {
+            display: flex; justify-content: space-between;
+            align-items: center; margin-top: 12px;
+            flex-wrap: wrap; gap: 10px;
+        }
+        .btn-salvar {
+            padding: 10px 20px;
+            background: linear-gradient(135deg, #00b894, #00cec9);
+            color: white; border: none;
+            border-radius: 8px; font-weight: 700;
+            cursor: pointer; transition: all 0.25s;
+            font-family: 'Rajdhani', sans-serif;
+        }
+        .btn-salvar:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 18px rgba(0, 184, 148, 0.5);
+        }
+
+        .nota {
+            font-size: 0.78rem; color: var(--text-muted);
+            margin-top: 12px; line-height: 1.5;
+        }
+        .nota strong { color: #c8d0e0; }
+
+        .chave-status {
+            display: inline-flex; align-items: center;
+            gap: 6px; font-size: 0.78rem;
+            padding: 4px 10px; border-radius: 20px;
+            font-weight: 700; margin-top: 8px;
+        }
+        .chave-status.ok {
+            background: rgba(16, 185, 129, 0.15);
+            color: #34d399;
+            border: 1px solid rgba(16, 185, 129, 0.3);
+        }
+        .chave-status.falta {
+            background: rgba(239, 68, 68, 0.15);
+            color: #fca5a5;
+            border: 1px solid rgba(239, 68, 68, 0.3);
+        }
+
+        .titulo-secao {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 1.1rem; font-weight: 700;
+            margin-bottom: 12px; color: #fff;
+            letter-spacing: 1px;
+            text-shadow: 0 0 12px var(--neon-blue);
+        }
+        .vazio {
+            color: var(--text-muted); font-size: 0.85rem;
+            font-style: italic; padding: 10px 0;
+        }
+
+        .historico-item {
+            display: flex; justify-content: space-between;
+            padding: 10px 12px; border-radius: 10px;
+            margin-bottom: 6px;
+            background: rgba(30, 27, 48, 0.5);
+            border-left: 3px solid var(--neon-pix);
+            font-size: 0.82rem;
+            align-items: center;
+            flex-wrap: wrap; gap: 8px;
+        }
+        .historico-item .status {
+            font-size: 0.7rem;
+            padding: 2px 8px;
+            border-radius: 20px;
+            font-weight: 700;
+            text-transform: uppercase;
+        }
+        .status.pago { background: rgba(16, 185, 129, 0.2); color: #34d399; }
+        .status.pendente { background: rgba(245, 158, 11, 0.2); color: #fbbf24; }
+        .status.recusado { background: rgba(239, 68, 68, 0.2); color: #f87171; }
+
+        /* ===== PEDIDO PENDENTE EM DESTAQUE NO HISTÓRICO ===== */
+        .historico-item.pendente-destaque {
+            background: rgba(245, 158, 11, 0.08);
+            border-left: 4px solid #f59e0b;
+            box-shadow: 0 0 15px rgba(245, 158, 11, 0.15);
+            animation: pulsePendente 2.5s ease-in-out infinite;
+        }
+        @keyframes pulsePendente {
+            0%, 100% { box-shadow: 0 0 15px rgba(245, 158, 11, 0.15); }
+            50%      { box-shadow: 0 0 25px rgba(245, 158, 11, 0.35); }
+        }
+        .historico-item.pendente-destaque .status.pendente {
+            background: rgba(245, 158, 11, 0.25);
+            color: #fbbf24;
+            border: 1px solid rgba(245, 158, 11, 0.5);
+        }
+
+        .oculto { display: none !important; }
+
+        /* ===== TOAST ===== */
+        .toast {
+            position: fixed; bottom: 24px; right: 24px;
+            background: rgba(18, 21, 32, 0.98);
+            border: 1px solid rgba(0, 184, 148, 0.4);
+            border-left: 4px solid var(--neon-pix);
+            border-radius: 12px;
+            padding: 14px 18px;
+            display: flex; align-items: center; gap: 12px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+            transform: translateX(150%);
+            transition: transform 0.35s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            z-index: 3000; max-width: 380px;
+            backdrop-filter: blur(10px);
+        }
+        .toast.show { transform: translateX(0); }
+        .toast.sucesso { border-left-color: #22c55e; border-color: rgba(34, 197, 94, 0.4); }
+        .toast.erro { border-left-color: #ef4444; border-color: rgba(239, 68, 68, 0.4); }
+        .toast.warn { border-left-color: #f59e0b; border-color: rgba(245, 158, 11, 0.4); }
+        .toast .toast-icon { font-size: 1.4rem; flex-shrink: 0; }
+        .toast.sucesso .toast-icon { color: #4ade80; }
+        .toast.erro .toast-icon { color: #f87171; }
+        .toast.warn .toast-icon { color: #fbbf24; }
+        .toast .toast-content { display: flex; flex-direction: column; gap: 2px; }
+        .toast .toast-title {
+            font-weight: 800; font-size: 0.9rem;
+            color: #fff; font-family: 'Orbitron', sans-serif;
+            letter-spacing: 0.5px;
+        }
+        .toast .toast-msg {
+            font-size: 0.82rem; color: #c8d0e0; line-height: 1.4;
+        }
+
+        @media (max-width: 600px) {
+            .card { padding: 20px 16px; }
+            .header h1 { font-size: 1.2rem; }
+            .valor.destaque { font-size: 1.5rem; }
+            .seletor-tipo { flex-direction: column; }
+            .tipo-chave { min-width: auto; }
+            .acoes-chave { flex-direction: column; align-items: stretch; }
+            .btn-salvar { width: 100%; }
+            .user-profile { padding: 4px 12px 4px 6px; }
+            .user-nick { font-size: 0.72rem; }
+            .user-avatar { width: 30px; height: 30px; font-size: 1rem; }
+            .toast { left: 16px; right: 16px; max-width: none; }
+        }
+    </style>
+</head>
+<body>
+
+    <nav class="nav-bar">
+        <div class="nav-links">
+            <a href="../../dashboard.html">🏠 DASHBOARD</a>
+            <a href="../mumu/mumu.html">💰 MUMU</a>
+            <a href="#" class="active btn-pix">💸 PIX</a>
+        </div>
+
+        <div class="user-profile" id="userProfileNav">
+            <div class="user-avatar" id="userAvatarNav">👤</div>
+            <div class="user-info">
+                <span class="user-nick" id="userNickNav">Carregando...</span>
+                <span class="saldo-nav" id="saldoNav">🪙 0,00 MUMU</span>
+            </div>
+        </div>
+    </nav>
+
+    <div class="card">
+        <div class="header">
+            <h1>💸 CARTEIRA PIX</h1>
+            <button class="close-btn" id="btnFechar">✕</button>
+        </div>
+
+        <div class="painel-conexao" id="statusBanco">
+            ✅ Conectado à tabela <strong>public."Geral"</strong>
+        </div>
+
+        <div class="subheader">
+            <span class="link" id="btnOcultarValores">👁️ Esconder valores</span>
+            <span class="link" id="btnAtualizar">↻ Atualizar</span>
+        </div>
+
+        <div class="info-box">
+            Converta seus MUMU em dinheiro por Pix: <strong>10,00 MUMU = R$ 5,00</strong>.
+            O saque mínimo é de <strong>R$ 1,00</strong>, e o Pix é feito em até <strong>8 horas</strong> depois do pedido.
+        </div>
+
+        <div class="linha-dado bloco-valor">
+            <div class="rotulo">SALDO MUMU</div>
+            <div class="valor destaque" id="saldoMumu">0,00</div>
+            <div class="equiv">Equivale a <span id="equivReais">R$ 0,00</span></div>
+        </div>
+
+        <div class="linha-dado">
+            <div class="rotulo">PIX PENDENTE</div>
+            <div class="valor" id="pixPendente">—</div>
+            <div class="equiv" id="textoPendente">Nenhum pedido em andamento</div>
+        </div>
+
+        <div class="linha-dado">
+            <div class="rotulo">TOTAL RECEBIDO</div>
+            <div class="valor" style="color: var(--neon-green);">R$ <span id="totalRecebido">0,00</span></div>
+            <div class="equiv">Pix já pagos</div>
+        </div>
+
+        <div class="divisor"></div>
+
+        <div class="caixa-conversao">
+            <div class="linha-conversao">
+                <span class="rotulo" style="margin-bottom:0;">CONVERSÃO</span>
+                <span class="valor" style="color: var(--neon-pix); font-size: 0.95rem;">10,00 MUMU = R$ 5,00</span>
+            </div>
+            <div class="equiv" style="margin-bottom: 16px;">10,00 MUMU = R$ 5,00 saldo</div>
+
+            <div class="grupo-input">
+                <label class="etiqueta-input">SACAR — Converter MUMU em Pix</label>
+                <div class="envoltorio-input">
+                    <input type="number" step="0.01" class="campo-input" id="inputMumu" placeholder="0,00">
+                    <button class="botao-input" id="btnMinimo">Mínimo</button>
+                    <button class="botao-input" id="btnTudo">Tudo</button>
+                </div>
+            </div>
+
+            <div>
+                <span style="font-size: 0.85rem; color: var(--text-muted);">Você recebe</span>
+                <div class="valor-receber" id="valorReceber">R$ 0,00</div>
+            </div>
+
+            <!-- ===== PAINEL DETALHADO DE TAXA ===== -->
+            <div class="painel-taxa" id="painelTaxa">
+                <div class="linha-taxa">
+                    <span class="label">🪙 MUMU solicitado</span>
+                    <span class="value" id="taxaMumuSolicitado">0,00 MUMU</span>
+                </div>
+                <div class="linha-taxa">
+                    <span class="label">📊 Taxa de conversão</span>
+                    <span class="value" id="taxaConversao">10,00 MUMU = R$ 5,00</span>
+                </div>
+                <div class="linha-taxa">
+                    <span class="label">💵 Valor bruto em R$</span>
+                    <span class="value" id="taxaValorBruto">R$ 0,00</span>
+                </div>
+                <div class="linha-taxa">
+                    <span class="label">🏦 Taxa administrativa</span>
+                    <span class="value taxa" id="taxaAdministrativa">R$ 0,00 (0%)</span>
+                </div>
+                <div class="linha-taxa">
+                    <span class="label">➖ Desconto total</span>
+                    <span class="value desconto" id="taxaDescontoTotal">- R$ 0,00</span>
+                </div>
+                <div class="linha-taxa total">
+                    <span class="label">✅ VALOR LÍQUIDO A RECEBER</span>
+                    <span class="value" id="taxaValorLiquido">R$ 0,00</span>
+                </div>
+            </div>
+
+            <!-- ===== PAINEL DE LIMITE DIÁRIO ===== -->
+            <div class="painel-limite" id="painelLimite">
+                <div class="titulo-limite">
+                    <span>🛡️</span>
+                    <span>Limite diário de saque</span>
+                </div>
+                <div class="linha-limite">
+                    <span class="label">📅 Limite do dia</span>
+                    <span class="value" id="limiteDiario">R$ 500,00</span>
+                </div>
+                <div class="linha-limite">
+                    <span class="label">💸 Já sacado hoje</span>
+                    <span class="value" id="limiteUsadoHoje">R$ 0,00</span>
+                </div>
+                <div class="linha-limite">
+                    <span class="label">✅ Disponível hoje</span>
+                    <span class="value" style="color: var(--neon-green);" id="limiteRestanteHoje">R$ 500,00</span>
+                </div>
+                <div class="barra-limite">
+                    <div class="barra-limite-preenchida" id="barraLimite"></div>
+                </div>
+                <div class="limite-aviso">
+                    <span>Reseta à meia-noite</span>
+                    <span><strong id="limitePercentual">0%</strong> usado</span>
+                </div>
+            </div>
+
+            <div class="aviso-chave-obrigatoria oculto" id="avisoChaveObrigatoria">
+                <span>🔒</span>
+                <span>Cadastre uma <strong>Chave Pix</strong> abaixo antes de solicitar o saque.</span>
+            </div>
+
+            <div class="aviso" id="avisoMinimo">Você precisa de pelo menos 2,00 MUMU. Faltam <span id="faltam">0,99</span>.</div>
+            <div class="sucesso oculto" id="msgDisponivel">✅ Valor disponível para saque!</div>
+
+            <button class="btn-acao" id="btnSolicitarPix">🔒 Cadastre uma Chave Pix Primeiro</button>
+        </div>
+
+        <div class="caixa-chave">
+            <div class="etiqueta-input"><strong>CHAVE PIX</strong></div>
+
+            <div class="seletor-tipo">
+                <button class="tipo-chave ativo" data-tipo="celular">📱 Celular</button>
+                <button class="tipo-chave" data-tipo="cpf">🪪 CPF</button>
+                <button class="tipo-chave" data-tipo="aleatoria">🔑 Aleatória</button>
+            </div>
+
+            <div class="campo-chave" id="campoCelular">
+                <label class="rotulo">Telefone com DDD</label>
+                <input type="tel" id="chaveCelular" placeholder="(00) 00000-0000" value="" maxlength="15">
+                <div class="cpf-feedback" id="feedbackCelular"></div>
+            </div>
+
+            <div class="campo-chave oculto" id="campoCpf">
+                <label class="rotulo">CPF (apenas números)</label>
+                <input type="text" id="chaveCpf" placeholder="000.000.000-00" value="" maxlength="14">
+                <div class="cpf-feedback" id="feedbackCpf"></div>
+            </div>
+
+            <div class="campo-chave oculto" id="campoAleatoria">
+                <label class="rotulo">Chave Aleatória</label>
+                <input type="text" id="chaveAleatoria" placeholder="Cole sua chave aleatória aqui">
+                <div class="cpf-feedback" id="feedbackAleatoria"></div>
+            </div>
+
+            <div class="acoes-chave">
+                <span class="link" id="btnTrocarChave" style="display:none; color: var(--neon-pix); cursor: pointer;">Trocar chave Pix</span>
+                <button class="btn-salvar" id="btnSalvarChave">💾 Salvar Chave</button>
+            </div>
+
+            <div id="chaveStatus" class="chave-status falta">
+                <span>⚠️</span>
+                <span>Nenhuma chave cadastrada</span>
+            </div>
+
+            <p class="nota">A chave é guardada de forma segura. Só a equipe vê a chave completa, na hora de pagar.<br>
+            Dados do usuário: <strong id="nomeUsuario">Usuário</strong> | Última atualização: <strong id="ultimaAtualizacao">—</strong></p>
+
+            <div class="sucesso oculto" id="msgChaveSalva">✅ Chave Pix salva com sucesso!</div>
+        </div>
+
+        <div>
+            <h3 class="titulo-secao">📜 HISTÓRICO DE SAQUES</h3>
+            <div id="textoHistorico" class="vazio">Você ainda não fez nenhum saque.</div>
+        </div>
+    </div>
+
+    <!-- ===== TOAST ===== -->
+    <div class="toast" id="toast">
+        <span class="toast-icon" id="toastIcon">✅</span>
+        <div class="toast-content">
+            <span class="toast-title" id="toastTitle">Sucesso!</span>
+            <span class="toast-msg" id="toastMsg">Mensagem</span>
+        </div>
+    </div>
+
+    <script>
+        // ============================================================
+        // CONFIGURAÇÃO SUPABASE
+        // ============================================================
+        const CONFIG = {
+            SUPABASE_URL: "https://xrcxvizzdumcxbylmkvn.supabase.co/rest/v1",
+            SUPABASE_KEY: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InhyY3h2aXp6ZHVtY3hieWxta3ZuIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODY2NjA0NzIsImV4cCI6MjEwMjIzNjQ3Mn0.ohB4tW0UQ-k1PcwoZxm4u9XSGNLsFphv1_UwTWoklOM",
+            INTERVALO_POLLING: 10000,
+            TICKET_CATEGORIA: 'pagamento'
+        };
+
+        // ============================================================
+        // TAXAS
+        // ============================================================
+        const TAXA_MUMU_REAIS = 0.50;
+        const SAQUE_MINIMO_MUMU = 2.00;
+        const TAXA_ADMIN_PERCENT = 0.00; // 0% = sem desconto
+        const LIMITE_DIARIO_PADRAO = 500.00; // R$ 500,00 por dia
+
+        let usuarioAtual = null;
+        let valoresOcultos = false;
+        let banco = {
+            id: 1, nome: "", login: "", mumu: 0,
+            historico: [],
+            updated_at: new Date().toISOString(),
+            tipoChave: "celular",
+            chaveCelular: "", chaveCpf: "", chaveAleatoria: "",
+            totalJaPago: 0.00,
+            pixPendente: null,
+            limite_saque: {
+                data: "",
+                total_sacado_hoje: 0.00,
+                limite_diario: LIMITE_DIARIO_PADRAO
+            }
+        };
+
+        let intervaloAtualizacao = null;
+        let estaAtualizando = false;
+        let operacaoEmAndamento = false;
+
+        const _fmtNum = new Intl.NumberFormat('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+        const _fmtMumu = new Intl.NumberFormat('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+        const fmtNum = (v) => _fmtNum.format(parseFloat(v || 0));
+        const fmtMumu = (v) => _fmtMumu.format(parseFloat(v || 0));
+        const fmtDinheiro = (v) => `R$ ${fmtNum(v)}`;
+
+        // ============================================================
+        // VALIDAÇÃO REAL DE CPF
+        // ============================================================
+        function validarCPF(cpf) {
+            const nums = String(cpf || '').replace(/\D/g, '');
+            if (nums.length !== 11) return false;
+            if (/^(\d)\1{10}$/.test(nums)) return false;
+
+            let soma = 0;
+            for (let i = 0; i < 9; i++) soma += parseInt(nums[i]) * (10 - i);
+            let resto = (soma * 10) % 11;
+            if (resto === 10) resto = 0;
+            if (resto !== parseInt(nums[9])) return false;
+
+            soma = 0;
+            for (let i = 0; i < 10; i++) soma += parseInt(nums[i]) * (11 - i);
+            resto = (soma * 10) % 11;
+            if (resto === 10) resto = 0;
+            if (resto !== parseInt(nums[10])) return false;
+
+            return true;
+        }
+
+        // ============================================================
+        // CONTROLE DE LIMITE DIÁRIO
+        // ============================================================
+        function hojeISO() {
+            const d = new Date();
+            const ano = d.getFullYear();
+            const mes = String(d.getMonth() + 1).padStart(2, '0');
+            const dia = String(d.getDate()).padStart(2, '0');
+            return `${ano}-${mes}-${dia}`;
+        }
+
+        function normalizarLimiteSaque() {
+            const hoje = hojeISO();
+            if (!banco.limite_saque || typeof banco.limite_saque !== 'object') {
+                banco.limite_saque = {
+                    data: hoje,
+                    total_sacado_hoje: 0.00,
+                    limite_diario: LIMITE_DIARIO_PADRAO
+                };
+                return;
+            }
+            if (banco.limite_saque.data !== hoje) {
+                banco.limite_saque.data = hoje;
+                banco.limite_saque.total_sacado_hoje = 0.00;
+            }
+            if (!banco.limite_saque.limite_diario) {
+                banco.limite_saque.limite_diario = LIMITE_DIARIO_PADRAO;
+            }
+        }
+
+        function getLimiteInfo() {
+            normalizarLimiteSaque();
+            const limite = parseFloat(banco.limite_saque.limite_diario) || LIMITE_DIARIO_PADRAO;
+            const usado = parseFloat(banco.limite_saque.total_sacado_hoje) || 0;
+            const restante = Math.max(0, limite - usado);
+            const percentual = limite > 0 ? Math.min(100, (usado / limite) * 100) : 0;
+            return { limite, usado, restante, percentual };
+        }
+
+        // ============================================================
+        // CÁLCULO DETALHADO DE TAXA
+        // ============================================================
+        function calcularTaxaDetalhada(mumuSolicitado) {
+            const mumu = parseFloat(mumuSolicitado) || 0;
+            const valorBruto = mumu * TAXA_MUMU_REAIS;
+            const taxaAdmin = valorBruto * (TAXA_ADMIN_PERCENT / 100);
+            const descontoTotal = taxaAdmin;
+            const valorLiquido = valorBruto - descontoTotal;
+            return {
+                mumu: mumu,
+                valorBruto: valorBruto,
+                taxaAdmin: taxaAdmin,
+                taxaAdminPercent: TAXA_ADMIN_PERCENT,
+                descontoTotal: descontoTotal,
+                valorLiquido: valorLiquido
+            };
+        }
+
+        const el = {
+            saldoMumu: document.getElementById('saldoMumu'),
+            equivReais: document.getElementById('equivReais'),
+            inputMumu: document.getElementById('inputMumu'),
+            valorReceber: document.getElementById('valorReceber'),
+            avisoMinimo: document.getElementById('avisoMinimo'),
+            msgDisponivel: document.getElementById('msgDisponivel'),
+            faltam: document.getElementById('faltam'),
+            btnSolicitarPix: document.getElementById('btnSolicitarPix'),
+            nomeUsuario: document.getElementById('nomeUsuario'),
+            ultimaAtualizacao: document.getElementById('ultimaAtualizacao'),
+            textoHistorico: document.getElementById('textoHistorico'),
+            totalRecebido: document.getElementById('totalRecebido'),
+            pixPendente: document.getElementById('pixPendente'),
+            textoPendente: document.getElementById('textoPendente'),
+            statusBanco: document.getElementById('statusBanco'),
+            tipoChaveBotoes: document.querySelectorAll('.tipo-chave'),
+            campoCelular: document.getElementById('campoCelular'),
+            campoCpf: document.getElementById('campoCpf'),
+            campoAleatoria: document.getElementById('campoAleatoria'),
+            chaveCelular: document.getElementById('chaveCelular'),
+            chaveCpf: document.getElementById('chaveCpf'),
+            chaveAleatoria: document.getElementById('chaveAleatoria'),
+            feedbackCelular: document.getElementById('feedbackCelular'),
+            feedbackCpf: document.getElementById('feedbackCpf'),
+            feedbackAleatoria: document.getElementById('feedbackAleatoria'),
+            btnSalvarChave: document.getElementById('btnSalvarChave'),
+            msgChaveSalva: document.getElementById('msgChaveSalva'),
+            avisoChaveObrigatoria: document.getElementById('avisoChaveObrigatoria'),
+            chaveStatus: document.getElementById('chaveStatus'),
+            userAvatarNav: document.getElementById('userAvatarNav'),
+            userNickNav: document.getElementById('userNickNav'),
+            saldoNav: document.getElementById('saldoNav'),
+            taxaMumuSolicitado: document.getElementById('taxaMumuSolicitado'),
+            taxaConversao: document.getElementById('taxaConversao'),
+            taxaValorBruto: document.getElementById('taxaValorBruto'),
+            taxaAdministrativa: document.getElementById('taxaAdministrativa'),
+            taxaDescontoTotal: document.getElementById('taxaDescontoTotal'),
+            taxaValorLiquido: document.getElementById('taxaValorLiquido'),
+            limiteDiario: document.getElementById('limiteDiario'),
+            limiteUsadoHoje: document.getElementById('limiteUsadoHoje'),
+            limiteRestanteHoje: document.getElementById('limiteRestanteHoje'),
+            barraLimite: document.getElementById('barraLimite'),
+            limitePercentual: document.getElementById('limitePercentual'),
+            toast: document.getElementById('toast'),
+            toastIcon: document.getElementById('toastIcon'),
+            toastTitle: document.getElementById('toastTitle'),
+            toastMsg: document.getElementById('toastMsg')
+        };
+
+        // ============================================================
+        // HELPERS
+        // ============================================================
+        function carregarUsuarioLogado() {
+            try {
+                const dados = localStorage.getItem('usuario_logado');
+                if (dados) { usuarioAtual = JSON.parse(dados); return true; }
+                return false;
+            } catch (e) { return false; }
+        }
+
+        function fmtCpf(valor) {
+            const nums = valor.replace(/\D/g, '').slice(0, 11);
+            if (nums.length === 11) return `${nums.slice(0,3)}.${nums.slice(3,6)}.${nums.slice(6,9)}-${nums.slice(9)}`;
+            if (nums.length > 9) return `${nums.slice(0,3)}.${nums.slice(3,6)}.${nums.slice(6,9)}-${nums.slice(9)}`;
+            if (nums.length > 6) return `${nums.slice(0,3)}.${nums.slice(3,6)}.${nums.slice(6)}`;
+            if (nums.length > 3) return `${nums.slice(0,3)}.${nums.slice(3)}`;
+            return nums;
+        }
+        function fmtCelular(valor) {
+            const nums = valor.replace(/\D/g, '').slice(0, 11);
+            if (nums.length === 11) return `(${nums.slice(0,2)}) ${nums.slice(2,7)}-${nums.slice(7)}`;
+            if (nums.length > 7) return `(${nums.slice(0,2)}) ${nums.slice(2,7)}-${nums.slice(7)}`;
+            if (nums.length > 2) return `(${nums.slice(0,2)}) ${nums.slice(2)}`;
+            if (nums.length > 0) return `(${nums}`;
+            return nums;
+        }
+
+        function temChavePixValida() {
+            if (banco.tipoChave === 'celular') return banco.chaveCelular.replace(/\D/g, '').length >= 10;
+            if (banco.tipoChave === 'cpf')     return validarCPF(banco.chaveCpf);
+            if (banco.tipoChave === 'aleatoria') return banco.chaveAleatoria.trim().length > 0;
+            return false;
+        }
+
+        function getChaveCompleta() {
+            if (banco.tipoChave === 'celular') return banco.chaveCelular;
+            if (banco.tipoChave === 'cpf')     return banco.chaveCpf;
+            if (banco.tipoChave === 'aleatoria') return banco.chaveAleatoria;
+            return '';
+        }
+
+        function getChaveFormatada() {
+            return `[${banco.tipoChave}] ${getChaveCompleta()}`;
+        }
+
+        async function fetchComRetry(url, opts, tentativas = 3) {
+            let ultimoErro;
+            for (let i = 0; i < tentativas; i++) {
+                try {
+                    const r = await fetch(url, opts);
+                    if (!r.ok) {
+                        let detalhe = '';
+                        try { detalhe = await r.text(); } catch {}
+                        throw new Error(`HTTP ${r.status}${detalhe ? ' — ' + detalhe : ''}`);
+                    }
+                    return r;
+                } catch (e) {
+                    ultimoErro = e;
+                    if (i < tentativas - 1) await new Promise(res => setTimeout(res, 1000 * Math.pow(2, i)));
+                }
+            }
+            throw ultimoErro;
+        }
+
+        // ============================================================
+        // TOAST
+        // ============================================================
+        let toastTimer = null;
+        function mostrarToast(tipo, titulo, msg) {
+            el.toast.className = 'toast';
+            el.toast.classList.add(tipo);
+            el.toastIcon.textContent = tipo === 'sucesso' ? '✅' : tipo === 'erro' ? '❌' : '⚠️';
+            el.toastTitle.textContent = titulo;
+            el.toastMsg.textContent = msg;
+
+            void el.toast.offsetWidth;
+            el.toast.classList.add('show');
+
+            clearTimeout(toastTimer);
+            toastTimer = setTimeout(() => el.toast.classList.remove('show'), 5000);
+        }
+
+        // ============================================================
+        // PERFIL NAVBAR
+        // ============================================================
+        function atualizarPerfilNavbar() {
+            const nome = banco.nome || usuarioAtual?.nome || usuarioAtual?.login || 'Usuário';
+            const letra = nome.charAt(0).toUpperCase();
+
+            if (el.userAvatarNav) el.userAvatarNav.textContent = letra;
+            if (el.userNickNav) el.userNickNav.textContent = nome;
+            if (el.saldoNav) {
+                const mumuFmt = valoresOcultos ? '••••' : fmtMumu(banco.mumu);
+                el.saldoNav.textContent = `🪙 ${mumuFmt} MUMU`;
+            }
+        }
+
+        // ============================================================
+        // CARREGAR DADOS DO BANCO
+        // ============================================================
+        async function carregarDadosBanco() {
+            if (!usuarioAtual || !usuarioAtual.login) return;
+            if (estaAtualizando) return;
+            estaAtualizando = true;
+
+            try {
+                const resp = await fetchComRetry(
+                    `${CONFIG.SUPABASE_URL}/Geral?login=eq.${encodeURIComponent(usuarioAtual.login)}&select=mumu,nome,updated_at,historico_saques,pix_pendente,chave_pix,limite_saque`,
+                    { method: "GET", headers: { "apikey": CONFIG.SUPABASE_KEY, "Content-Type": "application/json" } }
+                );
+                const dados = await resp.json();
+
+                if (dados && dados.length > 0) {
+                    const d = dados[0];
+                    banco.mumu = parseFloat(d.mumu || 0);
+                    banco.nome = d.nome || usuarioAtual.nome || usuarioAtual.login;
+                    banco.login = usuarioAtual.login;
+                    banco.updated_at = d.updated_at || new Date().toISOString();
+                    banco.historico = Array.isArray(d.historico_saques) ? d.historico_saques : [];
+                    banco.pixPendente = d.pix_pendente || null;
+
+                    if (d.chave_pix) {
+                        banco.tipoChave = d.chave_pix.tipo || 'celular';
+                        banco.chaveCelular = d.chave_pix.celular || '';
+                        banco.chaveCpf = d.chave_pix.cpf || '';
+                        banco.chaveAleatoria = d.chave_pix.aleatoria || '';
+                    }
+
+                    if (d.limite_saque && typeof d.limite_saque === 'object') {
+                        banco.limite_saque = {
+                            data: d.limite_saque.data || hojeISO(),
+                            total_sacado_hoje: parseFloat(d.limite_saque.total_sacado_hoje || 0),
+                            limite_diario: parseFloat(d.limite_saque.limite_diario || LIMITE_DIARIO_PADRAO)
+                        };
+                    } else {
+                        banco.limite_saque = {
+                            data: hojeISO(),
+                            total_sacado_hoje: 0.00,
+                            limite_diario: LIMITE_DIARIO_PADRAO
+                        };
+                    }
+                    normalizarLimiteSaque();
+
+                    banco.totalJaPago = banco.historico
+                        .filter(h => h.status === 'pago')
+                        .reduce((acc, h) => acc + (parseFloat(h.valor) || 0), 0);
+
+                    atualizarTela();
+                    el.statusBanco.innerHTML = '✅ Conectado à tabela <strong>public."Geral"</strong>';
+                } else {
+                    el.statusBanco.innerHTML = '⚠️ Usuário não encontrado na tabela';
+                }
+            } catch (e) {
+                console.error('Erro ao carregar dados:', e);
+                el.statusBanco.innerHTML = '❌ Erro de conexão — usando dados locais';
+            } finally {
+                estaAtualizando = false;
+            }
+        }
+
+        // ============================================================
+        // ATUALIZAR TELA
+        // ============================================================
+        function atualizarTela() {
+            const mumu = banco.mumu;
+            const valorMumu = mumu * TAXA_MUMU_REAIS;
+
+            el.saldoMumu.textContent = valoresOcultos ? "••••" : fmtMumu(mumu);
+            el.equivReais.textContent = valoresOcultos ? "R$ ••••" : fmtDinheiro(valorMumu);
+            el.totalRecebido.textContent = fmtNum(banco.totalJaPago);
+
+            if (banco.pixPendente) {
+                el.pixPendente.textContent = fmtDinheiro(banco.pixPendente.valor);
+                el.textoPendente.textContent = `Solicitado em ${new Date(banco.pixPendente.data).toLocaleString('pt-BR')}`;
+                el.pixPendente.style.color = '#fbbf24';
+            } else {
+                el.pixPendente.textContent = "—";
+                el.textoPendente.textContent = "Nenhum pedido em andamento";
+                el.pixPendente.style.color = '#fff';
+            }
+
+            el.nomeUsuario.textContent = banco.nome || "Usuário";
+            el.ultimaAtualizacao.textContent = new Date(banco.updated_at).toLocaleString('pt-BR');
+
+            // ============================================================
+            // HISTÓRICO UNIFICADO (pendente + finalizados)
+            // ============================================================
+            const temPendente = !!banco.pixPendente;
+            const temHistorico = banco.historico.length > 0;
+
+            if (!temPendente && !temHistorico) {
+                el.textoHistorico.innerHTML = "Você ainda não fez nenhum saque.";
+                el.textoHistorico.className = "vazio";
+            } else {
+                el.textoHistorico.className = "";
+                let html = "";
+
+                // 1) PEDIDO PENDENTE (se existir)
+                if (temPendente) {
+                    const p = banco.pixPendente;
+                    const dataFmt = new Date(p.data).toLocaleString('pt-BR');
+                    const chaveFmt = p.chave
+                        ? `🔑 ${p.chave}`
+                        : (banco.tipoChave ? `🔑 [${banco.tipoChave}] ${getChaveCompleta()}` : '');
+
+                    html += `
+                        <div class="historico-item pendente-destaque">
+                            <div style="display:flex; flex-direction:column; gap:6px; flex:1;">
+                                <div style="display:flex; align-items:center; gap:8px; flex-wrap:wrap;">
+                                    <strong style="color:#fbbf24; font-size:1rem;">${fmtDinheiro(p.valor)}</strong>
+                                    <span style="color:var(--text-muted); font-size:0.78rem;">— ${dataFmt}</span>
+                                </div>
+                                <div style="font-size:0.78rem; color:#fbbf24; font-weight:700; display:flex; align-items:center; gap:6px;">
+                                    <span>⚠️</span>
+                                    <span>Já existe um pedido em andamento</span>
+                                </div>
+                                ${chaveFmt ? `<div style="font-size:0.72rem; color:#8a99ad;">${chaveFmt}</div>` : ''}
+                                ${p.ticket_id ? `<div style="font-size:0.72rem; color:#8a99ad;">🎫 Ticket #${p.ticket_id}</div>` : ''}
+                            </div>
+                            <span class="status pendente">⚠️ Em andamento</span>
+                        </div>
+                    `;
+                }
+
+                // 2) HISTÓRICO FINALIZADO
+                if (temHistorico) {
+                    html += banco.historico
+                        .slice()
+                        .reverse()
+                        .map(h => {
+                            const st = h.status || 'pendente';
+                            const stClass = st === 'pago' ? 'pago' : st === 'recusado' ? 'recusado' : 'pendente';
+                            const stIcon = st === 'pago' ? '✅' : st === 'recusado' ? '❌' : '⏳';
+                            const stLabel = st === 'pago' ? 'Pago' : st === 'recusado' ? 'Recusado' : 'Pendente';
+                            return `
+                                <div class="historico-item">
+                                    <span><strong>${fmtDinheiro(h.valor)}</strong> — ${new Date(h.data).toLocaleDateString('pt-BR')}</span>
+                                    <span class="status ${stClass}">${stIcon} ${stLabel}</span>
+                                </div>
+                            `;
+                        }).join('');
+                }
+
+                el.textoHistorico.innerHTML = html;
+            }
+
+            el.chaveCelular.value = banco.chaveCelular || '';
+            el.chaveCpf.value = banco.chaveCpf || '';
+            el.chaveAleatoria.value = banco.chaveAleatoria || '';
+
+            el.tipoChaveBotoes.forEach(b => {
+                b.classList.toggle('ativo', b.dataset.tipo === banco.tipoChave);
+            });
+            el.campoCelular.classList.toggle('oculto', banco.tipoChave !== 'celular');
+            el.campoCpf.classList.toggle('oculto', banco.tipoChave !== 'cpf');
+            el.campoAleatoria.classList.toggle('oculto', banco.tipoChave !== 'aleatoria');
+
+            atualizarStatusChave();
+            atualizarPerfilNavbar();
+            atualizarPainelLimite();
+            validarEntrada();
+        }
+
+        function atualizarStatusChave() {
+            const temChave = temChavePixValida();
+            if (temChave) {
+                el.chaveStatus.className = 'chave-status ok';
+                el.chaveStatus.innerHTML = `<span>✅</span><span>Chave Pix cadastrada (${banco.tipoChave})</span>`;
+            } else {
+                el.chaveStatus.className = 'chave-status falta';
+                el.chaveStatus.innerHTML = `<span>⚠️</span><span>Nenhuma chave cadastrada</span>`;
+            }
+        }
+
+        // ============================================================
+        // PAINEL DE LIMITE DIÁRIO
+        // ============================================================
+        function atualizarPainelLimite() {
+            const info = getLimiteInfo();
+
+            el.limiteDiario.textContent = fmtDinheiro(info.limite);
+            el.limiteUsadoHoje.textContent = fmtDinheiro(info.usado);
+            el.limiteRestanteHoje.textContent = fmtDinheiro(info.restante);
+            el.limitePercentual.textContent = `${info.percentual.toFixed(1)}%`;
+
+            el.barraLimite.style.width = `${info.percentual}%`;
+            el.barraLimite.classList.remove('alerta', 'cheio');
+            if (info.percentual >= 100) {
+                el.barraLimite.classList.add('cheio');
+            } else if (info.percentual >= 70) {
+                el.barraLimite.classList.add('alerta');
+            }
+        }
+
+        // ============================================================
+        // VALIDAR ENTRADA
+        // ============================================================
+        function validarEntrada() {
+            const valorSolicitado = parseFloat(el.inputMumu.value) || 0;
+            const calc = calcularTaxaDetalhada(valorSolicitado);
+            const temChave = temChavePixValida();
+            const limite = getLimiteInfo();
+
+            el.valorReceber.textContent = fmtDinheiro(calc.valorLiquido);
+
+            el.taxaMumuSolicitado.textContent = `${fmtMumu(calc.mumu)} MUMU`;
+            el.taxaConversao.textContent = `10,00 MUMU = R$ 5,00`;
+            el.taxaValorBruto.textContent = fmtDinheiro(calc.valorBruto);
+            el.taxaAdministrativa.textContent = `${fmtDinheiro(calc.taxaAdmin)} (${calc.taxaAdminPercent.toFixed(2)}%)`;
+            el.taxaDescontoTotal.textContent = `- ${fmtDinheiro(calc.descontoTotal)}`;
+            el.taxaValorLiquido.textContent = fmtDinheiro(calc.valorLiquido);
+
+            if (!temChave) {
+                el.avisoChaveObrigatoria.classList.remove('oculto');
+                el.avisoMinimo.classList.add('oculto');
+                el.msgDisponivel.classList.add('oculto');
+                el.btnSolicitarPix.disabled = true;
+                el.btnSolicitarPix.textContent = '🔒 Cadastre uma Chave Pix Primeiro';
+                return;
+            }
+
+            el.avisoChaveObrigatoria.classList.add('oculto');
+
+            if (banco.pixPendente) {
+                el.avisoMinimo.classList.remove('oculto');
+                el.msgDisponivel.classList.add('oculto');
+                el.avisoMinimo.innerHTML = "⚠️ Já existe um pedido em andamento.";
+                el.btnSolicitarPix.disabled = true;
+                el.btnSolicitarPix.textContent = 'Solicitar Pix';
+                return;
+            }
+
+            if (valorSolicitado < SAQUE_MINIMO_MUMU) {
+                el.msgDisponivel.classList.add('oculto');
+                el.avisoMinimo.classList.remove('oculto');
+                if (banco.mumu < SAQUE_MINIMO_MUMU) {
+                    const falta = SAQUE_MINIMO_MUMU - banco.mumu;
+                    el.avisoMinimo.innerHTML = `Você precisa de pelo menos ${fmtMumu(SAQUE_MINIMO_MUMU)} MUMU. Faltam ${fmtMumu(falta)}.`;
+                } else {
+                    el.avisoMinimo.innerHTML = `Valor abaixo do mínimo de ${fmtMumu(SAQUE_MINIMO_MUMU)} MUMU.`;
+                }
+                el.btnSolicitarPix.disabled = true;
+                el.btnSolicitarPix.textContent = '💸 Solicitar Pix';
+                return;
+            }
+
+            if (valorSolicitado > banco.mumu) {
+                el.msgDisponivel.classList.add('oculto');
+                el.avisoMinimo.classList.remove('oculto');
+                el.avisoMinimo.innerHTML = `Saldo insuficiente. Você tem ${fmtMumu(banco.mumu)} MUMU.`;
+                el.btnSolicitarPix.disabled = true;
+                el.btnSolicitarPix.textContent = '💸 Solicitar Pix';
+                return;
+            }
+
+            if (calc.valorLiquido > limite.restante) {
+                el.msgDisponivel.classList.add('oculto');
+                el.avisoMinimo.classList.remove('oculto');
+                el.avisoMinimo.innerHTML =
+                    `🛡️ Limite diário excedido. Você ainda pode sacar <strong>${fmtDinheiro(limite.restante)}</strong> hoje.`;
+                el.btnSolicitarPix.disabled = true;
+                el.btnSolicitarPix.textContent = '🛡️ Limite diário atingido';
+                return;
+            }
+
+            el.avisoMinimo.classList.add('oculto');
+            el.msgDisponivel.classList.remove('oculto');
+            el.msgDisponivel.innerHTML =
+                `✅ Valor disponível! Você recebe <strong>${fmtDinheiro(calc.valorLiquido)}</strong> líquido.`;
+            el.btnSolicitarPix.disabled = false;
+            el.btnSolicitarPix.textContent = '💸 Solicitar Pix';
+        }
+
+        // ============================================================
+        // SALVAR DADOS
+        // ============================================================
+        async function salvarDados() {
+            if (!usuarioAtual || !usuarioAtual.login) return;
+            try {
+                await fetch(`${CONFIG.SUPABASE_URL}/Geral?login=eq.${encodeURIComponent(usuarioAtual.login)}`, {
+                    method: "PATCH",
+                    headers: { "apikey": CONFIG.SUPABASE_KEY, "Content-Type": "application/json" },
+                    body: JSON.stringify({
+                        mumu: banco.mumu,
+                        historico_saques: banco.historico,
+                        pix_pendente: banco.pixPendente,
+                        chave_pix: {
+                            tipo: banco.tipoChave,
+                            celular: banco.chaveCelular,
+                            cpf: banco.chaveCpf,
+                            aleatoria: banco.chaveAleatoria
+                        },
+                        limite_saque: banco.limite_saque,
+                        updated_at: new Date().toISOString()
+                    })
+                });
+            } catch (e) { console.error('Erro ao salvar:', e); }
+        }
+
+        // ============================================================
+        // CRIAR TICKET DE SUPORTE
+        // ============================================================
+        async function criarTicketSaque(valorMumu, valorReais, chaveTipo, chaveValor, calc) {
+            if (!usuarioAtual || !usuarioAtual.login) return null;
+
+            const nome = banco.nome || usuarioAtual.nome || usuarioAtual.login;
+            const email = usuarioAtual.email || `${usuarioAtual.login}@mmquasetudo.local`;
+
+            const payload = {
+                nome: nome,
+                login: usuarioAtual.login,
+                email: email,
+                categoria: CONFIG.TICKET_CATEGORIA,
+                prioridade: 'alta',
+                assunto: `💸 Saque Pix - ${fmtDinheiro(calc.valorLiquido)}`,
+                mensagem:
+                    `📌 SOLICITAÇÃO DE SAQUE PIX\n` +
+                    `━━━━━━━━━━━━━━━━━━━━━━━━━\n` +
+                    `👤 Usuário: ${nome}\n` +
+                    `🔑 Login: ${usuarioAtual.login}\n` +
+                    `📧 Email: ${email}\n` +
+                    `━━━━━━━━━━━━━━━━━━━━━━━━━\n` +
+                    `🪙 MUMU gasto: ${fmtMumu(valorMumu)} MUMU\n` +
+                    `📊 Taxa de conversão: 10,00 MUMU = R$ 5,00\n` +
+                    `💵 Valor bruto: ${fmtDinheiro(calc.valorBruto)}\n` +
+                    `🏦 Taxa administrativa: ${fmtDinheiro(calc.taxaAdmin)} (${calc.taxaAdminPercent.toFixed(2)}%)\n` +
+                    `➖ Desconto total: ${fmtDinheiro(calc.descontoTotal)}\n` +
+                    `✅ VALOR LÍQUIDO: ${fmtDinheiro(calc.valorLiquido)}\n` +
+                    `━━━━━━━━━━━━━━━━━━━━━━━━━\n` +
+                    `🔐 CHAVE PIX PARA PAGAMENTO:\n` +
+                    `Tipo: ${chaveTipo}\n` +
+                    `Chave: ${chaveValor}\n` +
+                    `━━━━━━━━━━━━━━━━━━━━━━━━━\n` +
+                    `🕐 Solicitado em: ${new Date().toLocaleString('pt-BR')}\n\n` +
+                    `⚠️ Aguardando processamento (até 8 horas).`,
+                status: 'aberto',
+                user_id: null
+            };
+
+            try {
+                const resp = await fetch(`${CONFIG.SUPABASE_URL}/suporte_tickets`, {
+                    method: 'POST',
+                    headers: {
+                        "apikey": CONFIG.SUPABASE_KEY,
+                        "Content-Type": "application/json",
+                        "Prefer": "return=representation"
+                    },
+                    body: JSON.stringify(payload)
+                });
+
+                if (!resp.ok) {
+                    const erro = await resp.text();
+                    console.warn('⚠️ Falha ao criar ticket:', resp.status, erro);
+                    return null;
+                }
+
+                const data = await resp.json();
+                const ticketId = Array.isArray(data) && data[0] ? data[0].id : null;
+                console.log('✅ Ticket de saque criado:', ticketId);
+                return ticketId;
+
+            } catch (e) {
+                console.error('❌ Exceção ao criar ticket:', e);
+                return null;
+            }
+        }
+
+        // ============================================================
+        // EVENTOS — SELEÇÃO DE TIPO DE CHAVE
+        // ============================================================
+        el.tipoChaveBotoes.forEach(botao => {
+            botao.addEventListener('click', () => {
+                const tipo = botao.dataset.tipo;
+                el.tipoChaveBotoes.forEach(b => b.classList.remove('ativo'));
+                botao.classList.add('ativo');
+                el.campoCelular.classList.toggle('oculto', tipo !== 'celular');
+                el.campoCpf.classList.toggle('oculto', tipo !== 'cpf');
+                el.campoAleatoria.classList.toggle('oculto', tipo !== 'aleatoria');
+                banco.tipoChave = tipo;
+                el.msgChaveSalva.classList.add('oculto');
+                atualizarStatusChave();
+                validarEntrada();
+            });
+        });
+
+        // ============================================================
+        // VALIDAÇÃO EM TEMPO REAL
+        // ============================================================
+        function validarFeedbackCelular(valor) {
+            const nums = valor.replace(/\D/g, '');
+            if (nums.length === 0) {
+                el.feedbackCelular.textContent = '';
+                el.chaveCelular.classList.remove('cpf-valido', 'cpf-invalido');
+                return;
+            }
+            if (nums.length === 11) {
+                el.feedbackCelular.className = 'cpf-feedback ok';
+                el.feedbackCelular.textContent = '✅ Celular válido';
+                el.chaveCelular.classList.add('cpf-valido');
+                el.chaveCelular.classList.remove('cpf-invalido');
+            } else if (nums.length >= 10) {
+                el.feedbackCelular.className = 'cpf-feedback ok';
+                el.feedbackCelular.textContent = '✅ Celular válido (fixo)';
+                el.chaveCelular.classList.add('cpf-valido');
+                el.chaveCelular.classList.remove('cpf-invalido');
+            } else {
+                el.feedbackCelular.className = 'cpf-feedback erro';
+                el.feedbackCelular.textContent = `⚠️ Faltam ${11 - nums.length} dígito(s)`;
+                el.chaveCelular.classList.add('cpf-invalido');
+                el.chaveCelular.classList.remove('cpf-valido');
+            }
+        }
+
+        function validarFeedbackCpf(valor) {
+            const nums = valor.replace(/\D/g, '');
+            if (nums.length === 0) {
+                el.feedbackCpf.textContent = '';
+                el.chaveCpf.classList.remove('cpf-valido', 'cpf-invalido');
+                return;
+            }
+            if (nums.length < 11) {
+                el.feedbackCpf.className = 'cpf-feedback erro';
+                el.feedbackCpf.textContent = `⚠️ Faltam ${11 - nums.length} dígito(s)`;
+                el.chaveCpf.classList.add('cpf-invalido');
+                el.chaveCpf.classList.remove('cpf-valido');
+                return;
+            }
+            if (validarCPF(nums)) {
+                el.feedbackCpf.className = 'cpf-feedback ok';
+                el.feedbackCpf.textContent = '✅ CPF válido';
+                el.chaveCpf.classList.add('cpf-valido');
+                el.chaveCpf.classList.remove('cpf-invalido');
+            } else {
+                el.feedbackCpf.className = 'cpf-feedback erro';
+                el.feedbackCpf.textContent = '❌ CPF inválido (dígito verificador não confere)';
+                el.chaveCpf.classList.add('cpf-invalido');
+                el.chaveCpf.classList.remove('cpf-valido');
+            }
+        }
+
+        function validarFeedbackAleatoria(valor) {
+            const v = valor.trim();
+            if (v.length === 0) {
+                el.feedbackAleatoria.textContent = '';
+                el.chaveAleatoria.classList.remove('cpf-valido', 'cpf-invalido');
+                return;
+            }
+            if (v.length >= 32) {
+                el.feedbackAleatoria.className = 'cpf-feedback ok';
+                el.feedbackAleatoria.textContent = '✅ Chave aleatória válida';
+                el.chaveAleatoria.classList.add('cpf-valido');
+                el.chaveAleatoria.classList.remove('cpf-invalido');
+            } else {
+                el.feedbackAleatoria.className = 'cpf-feedback erro';
+                el.feedbackAleatoria.textContent = `⚠️ Chave muito curta (${v.length}/32)`;
+                el.chaveAleatoria.classList.add('cpf-invalido');
+                el.chaveAleatoria.classList.remove('cpf-valido');
+            }
+        }
+
+        // ============================================================
+        // SALVAR CHAVE
+        // ============================================================
+        el.btnSalvarChave.addEventListener('click', async () => {
+            let valor = ''; let valido = true;
+
+            switch (banco.tipoChave) {
+                case 'celular':
+                    valor = el.chaveCelular.value.trim();
+                    if (valor.replace(/\D/g, '').length < 10) {
+                        alert('Por favor, digite um número de celular válido.');
+                        valido = false;
+                    }
+                    banco.chaveCelular = valor;
+                    break;
+                case 'cpf':
+                    valor = el.chaveCpf.value.trim();
+                    if (!validarCPF(valor)) {
+                        alert('CPF inválido. Verifique os dígitos e tente novamente.');
+                        valido = false;
+                    }
+                    banco.chaveCpf = fmtCpf(valor);
+                    el.chaveCpf.value = banco.chaveCpf;
+                    break;
+                case 'aleatoria':
+                    valor = el.chaveAleatoria.value.trim();
+                    if (valor.length < 32) {
+                        alert('Chave aleatória muito curta. O padrão tem 32+ caracteres.');
+                        valido = false;
+                    }
+                    banco.chaveAleatoria = valor;
+                    break;
+            }
+
+            if (valido) {
+                banco.updated_at = new Date().toISOString();
+                await salvarDados();
+                el.msgChaveSalva.classList.remove('oculto');
+                setTimeout(() => el.msgChaveSalva.classList.add('oculto'), 3000);
+                atualizarTela();
+                mostrarToast('sucesso', '🔑 Chave salva', 'Sua chave Pix foi salva com sucesso.');
+            }
+        });
+
+        // ============================================================
+        // EVENTOS — INPUTS DE CHAVE
+        // ============================================================
+        el.chaveCelular.addEventListener('input', (e) => {
+            e.target.value = fmtCelular(e.target.value);
+            banco.chaveCelular = e.target.value;
+            validarFeedbackCelular(e.target.value);
+            atualizarStatusChave();
+            validarEntrada();
+        });
+        el.chaveCpf.addEventListener('input', (e) => {
+            e.target.value = fmtCpf(e.target.value);
+            banco.chaveCpf = e.target.value;
+            validarFeedbackCpf(e.target.value);
+            atualizarStatusChave();
+            validarEntrada();
+        });
+        el.chaveAleatoria.addEventListener('input', (e) => {
+            banco.chaveAleatoria = e.target.value;
+            validarFeedbackAleatoria(e.target.value);
+            atualizarStatusChave();
+            validarEntrada();
+        });
+
+        // ============================================================
+        // BOTÕES DE ATALHO
+        // ============================================================
+        document.getElementById('btnMinimo').addEventListener('click', () => {
+            el.inputMumu.value = SAQUE_MINIMO_MUMU;
+            validarEntrada();
+        });
+        document.getElementById('btnTudo').addEventListener('click', () => {
+            const limite = getLimiteInfo();
+            const maxMumuPorLimite = limite.restante / TAXA_MUMU_REAIS;
+            const valorFinal = Math.min(banco.mumu, maxMumuPorLimite);
+            el.inputMumu.value = valorFinal.toFixed(2);
+            validarEntrada();
+        });
+        el.inputMumu.addEventListener('input', validarEntrada);
+
+        // ============================================================
+        // SOLICITAR PIX
+        // ============================================================
+        el.btnSolicitarPix.addEventListener('click', async () => {
+            if (!temChavePixValida()) {
+                mostrarToast('warn', 'Chave Pix necessária', 'Cadastre uma Chave Pix antes de solicitar o saque.');
+                return;
+            }
+            const valor = parseFloat(el.inputMumu.value);
+            if (isNaN(valor) || valor < SAQUE_MINIMO_MUMU || valor > banco.mumu) return;
+            if (operacaoEmAndamento) return;
+
+            const calc = calcularTaxaDetalhada(valor);
+            const limite = getLimiteInfo();
+            const chaveCompleta = getChaveCompleta();
+
+            if (calc.valorLiquido > limite.restante) {
+                mostrarToast('erro', '🛡️ Limite diário excedido',
+                    `Você ainda pode sacar ${fmtDinheiro(limite.restante)} hoje.`);
+                return;
+            }
+
+            const msgConfirm =
+                `Confirmar saque?\n\n` +
+                `━━━━━━━━━━━━━━━━━━━━━\n` +
+                `🪙 MUMU solicitado: ${fmtMumu(calc.mumu)} MUMU\n` +
+                `📊 Taxa: 10,00 MUMU = R$ 5,00\n` +
+                `💵 Valor bruto: ${fmtDinheiro(calc.valorBruto)}\n` +
+                `🏦 Taxa administrativa: ${fmtDinheiro(calc.taxaAdmin)} (${calc.taxaAdminPercent.toFixed(2)}%)\n` +
+                `➖ Desconto total: ${fmtDinheiro(calc.descontoTotal)}\n` +
+                `✅ VALOR LÍQUIDO: ${fmtDinheiro(calc.valorLiquido)}\n` +
+                `━━━━━━━━━━━━━━━━━━━━━\n` +
+                `🛡️ Limite diário: ${fmtDinheiro(limite.usado)} / ${fmtDinheiro(limite.limite)}\n` +
+                `📉 Restará: ${fmtDinheiro(limite.restante - calc.valorLiquido)}\n` +
+                `━━━━━━━━━━━━━━━━━━━━━\n` +
+                `🔑 Chave: ${getChaveFormatada()}\n\n` +
+                `Um ticket de suporte será aberto automaticamente.`;
+
+            if (!confirm(msgConfirm)) return;
+
+            operacaoEmAndamento = true;
+            el.btnSolicitarPix.disabled = true;
+            el.btnSolicitarPix.textContent = 'Processando...';
+
+            try {
+                const ticketId = await criarTicketSaque(
+                    valor,
+                    calc.valorLiquido,
+                    banco.tipoChave,
+                    chaveCompleta,
+                    calc
+                );
+
+                banco.pixPendente = {
+                    valor: calc.valorLiquido,
+                    mumu: valor,
+                    valor_bruto: calc.valorBruto,
+                    taxa_admin: calc.taxaAdmin,
+                    data: new Date().toISOString(),
+                    ticket_id: ticketId,
+                    chave: getChaveFormatada()   // 🆕 chave usada
+                };
+                banco.mumu -= valor;
+
+                normalizarLimiteSaque();
+                banco.limite_saque.total_sacado_hoje =
+                    parseFloat(banco.limite_saque.total_sacado_hoje || 0) + calc.valorLiquido;
+
+                banco.updated_at = new Date().toISOString();
+
+                await salvarDados();
+                atualizarTela();
+
+                if (ticketId) {
+                    mostrarToast(
+                        'sucesso',
+                        '✅ Saque solicitado!',
+                        `Ticket #${ticketId} — ${fmtDinheiro(calc.valorLiquido)} líquido. Processamento em até 8h.`
+                    );
+                } else {
+                    mostrarToast(
+                        'warn',
+                        '⚠️ Saque registrado',
+                        `Mas não conseguimos abrir o ticket. Entre em contato com ${fmtDinheiro(calc.valorLiquido)}.`
+                    );
+                }
+
+            } catch (e) {
+                console.error('Erro ao solicitar saque:', e);
+                mostrarToast('erro', '❌ Erro ao solicitar', 'Tente novamente em instantes.');
+            } finally {
+                operacaoEmAndamento = false;
+                validarEntrada();
+            }
+        });
+
+        // ============================================================
+        // OUTROS BOTÕES
+        // ============================================================
+        document.getElementById('btnAtualizar').addEventListener('click', async () => {
+            el.statusBanco.innerHTML = "🔄 Sincronizando...";
+            await carregarDadosBanco();
+            el.statusBanco.innerHTML = "✅ Conectado à tabela <strong>public.\"Geral\"</strong> — Atualizado";
+            mostrarToast('sucesso', '🔄 Atualizado', 'Dados recarregados do servidor.');
+        });
+
+        document.getElementById('btnOcultarValores').addEventListener('click', () => {
+            valoresOcultos = !valoresOcultos;
+            document.getElementById('btnOcultarValores').textContent = valoresOcultos ? "👁️ Mostrar valores" : "👁️ Esconder valores";
+            atualizarTela();
+        });
+
+        document.getElementById('btnFechar').addEventListener('click', () => {
+            if (confirm("Sair da carteira?")) window.location.href = '../../dashboard.html';
+        });
+
+        // ============================================================
+        // POLLING
+        // ============================================================
+        function iniciarPolling() {
+            if (intervaloAtualizacao) clearInterval(intervaloAtualizacao);
+            intervaloAtualizacao = setInterval(carregarDadosBanco, CONFIG.INTERVALO_POLLING);
+        }
+        function pararPolling() {
+            if (intervaloAtualizacao) { clearInterval(intervaloAtualizacao); intervaloAtualizacao = null; }
+        }
+
+        document.addEventListener('visibilitychange', () => {
+            if (document.hidden) pararPolling();
+            else { carregarDadosBanco(); iniciarPolling(); }
+        });
+
+        // ============================================================
+        // INICIALIZAÇÃO
+        // ============================================================
+        if (!carregarUsuarioLogado()) {
+            window.location.href = '../../login.html';
+        } else {
+            const nomeInicial = usuarioAtual.nome || usuarioAtual.login || 'Usuário';
+            if (el.userNickNav) el.userNickNav.textContent = nomeInicial;
+            if (el.userAvatarNav) el.userAvatarNav.textContent = nomeInicial.charAt(0).toUpperCase();
+            if (el.nomeUsuario) el.nomeUsuario.textContent = nomeInicial;
+
+            carregarDadosBanco();
+            iniciarPolling();
+            atualizarTela();
+        }
+
+        console.log('💸 Carteira Pix — histórico com pendente em destaque');
+    </script>
+</body>
+</html>
