@@ -1,0 +1,1241 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Suporte | MM Quase Tudo</title>
+
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+    <style>
+        /* ==================== RESET E BASE ==================== */
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Inter', 'Segoe UI', sans-serif; }
+
+        body {
+            min-height: 100vh;
+            background: linear-gradient(135deg, #002e5d 0%, #001a33 100%);
+            color: #e0e0e0;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* ==================== MENU ==================== */
+        .menu-container {
+            width: 100%;
+            background-color: rgb(0, 43, 173);
+            backdrop-filter: blur(8px);
+            border-bottom: 1px solid rgba(255, 215, 0, 0.2);
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.6);
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+        }
+
+        .navbar {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 0.9rem 2rem;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            flex-wrap: wrap;
+        }
+
+        .logo {
+            font-size: 1.8rem;
+            font-weight: 800;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+            color: #ffffff;
+            text-shadow: 0 0 10px rgba(255, 215, 0, 0.5);
+            display: flex;
+            align-items: center;
+            gap: 0.3rem;
+        }
+
+        .logo span { color: #f5c542; font-weight: 900; }
+        .logo i { color: #f5c542; font-size: 1.6rem; margin-right: 0.2rem; }
+
+        .nav-links {
+            display: flex;
+            align-items: center;
+            gap: 2.2rem;
+            list-style: none;
+            margin: 0;
+            padding: 0;
+        }
+
+        .nav-links li a {
+            text-decoration: none;
+            color: #d0d0d0;
+            font-weight: 600;
+            font-size: 1rem;
+            letter-spacing: 0.3px;
+            transition: all 0.2s ease;
+            padding: 0.5rem 0;
+            position: relative;
+            display: inline-flex;
+            align-items: center;
+        }
+
+        .nav-links li a i {
+            margin-right: 8px;
+            font-size: 0.95em;
+            color: #f5c542;
+            transition: color 0.2s ease, transform 0.2s ease;
+        }
+
+        .nav-links li a:hover i { color: #ffffff; transform: scale(1.1); }
+
+        .nav-links li a::after {
+            content: '';
+            position: absolute;
+            bottom: 0; left: 0;
+            width: 0; height: 2px;
+            background: #f5c542;
+            transition: width 0.25s ease;
+        }
+
+        .nav-links li a:hover { color: #ffffff; }
+        .nav-links li a:hover::after { width: 100%; }
+
+        .btn-discord {
+            background: linear-gradient(135deg, #f5c542 0%, #d4a017 100%);
+            border: none;
+            border-radius: 40px;
+            color: #0b0e14;
+            font-weight: 700;
+            font-size: 0.9rem;
+            padding: 0.7rem 1.6rem;
+            display: flex;
+            align-items: center;
+            gap: 0.6rem;
+            cursor: pointer;
+            transition: transform 0.2s, box-shadow 0.2s;
+            box-shadow: 0 0 15px rgba(245, 197, 66, 0.3);
+            text-decoration: none;
+            letter-spacing: 0.3px;
+            white-space: nowrap;
+        }
+
+        .btn-discord i { font-size: 1.1rem; }
+
+        .btn-discord:hover {
+            transform: scale(1.03);
+            box-shadow: 0 0 25px rgba(245, 197, 66, 0.6);
+            background: linear-gradient(135deg, #f7d25c 0%, #e0b020 100%);
+        }
+
+        .menu-toggle {
+            display: none;
+            background: transparent;
+            border: none;
+            color: #f5c542;
+            font-size: 1.8rem;
+            cursor: pointer;
+            padding: 0.3rem 0.6rem;
+        }
+
+        /* ==================== HERO ==================== */
+        .suporte-hero {
+            text-align: center;
+            padding: 50px 20px 30px;
+            max-width: 900px;
+            margin: 0 auto;
+        }
+
+        .suporte-hero h1 {
+            font-size: 2.6rem;
+            color: #ffffff;
+            font-weight: 800;
+            letter-spacing: 1px;
+            text-shadow: 0 0 15px rgba(245, 197, 66, 0.4);
+            margin-bottom: 12px;
+        }
+
+        .suporte-hero h1 i { color: #f5c542; margin-right: 12px; }
+
+        .suporte-hero p {
+            color: #a0b4d0;
+            font-size: 1.05rem;
+            line-height: 1.6;
+        }
+
+        /* ==================== LAYOUT PRINCIPAL ==================== */
+        .suporte-wrapper {
+            flex: 1;
+            max-width: 1400px;
+            width: 100%;
+            margin: 0 auto;
+            padding: 20px 20px 60px;
+            display: grid;
+            grid-template-columns: 1.2fr 1fr;
+            gap: 30px;
+        }
+
+        /* ==================== CARDS BASE ==================== */
+        .card {
+            background: #1e293b;
+            border: 1px solid #334155;
+            border-radius: 16px;
+            padding: 28px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+        }
+
+        .card h2 {
+            color: #f1f5f9;
+            font-size: 1.4rem;
+            font-weight: 700;
+            margin-bottom: 6px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .card h2 i { color: #f5c542; }
+
+        .card .subtitulo {
+            color: #94a3b8;
+            font-size: 0.9rem;
+            margin-bottom: 24px;
+        }
+
+        /* ==================== FORMULÁRIO ==================== */
+        .form-group { margin-bottom: 18px; }
+
+        .form-group label {
+            display: block;
+            color: #cbd5e1;
+            font-size: 0.9rem;
+            margin-bottom: 6px;
+            font-weight: 600;
+        }
+
+        .form-group label .obrigatorio { color: #ef4444; margin-left: 3px; }
+
+        .form-group input,
+        .form-group select,
+        .form-group textarea {
+            width: 100%;
+            padding: 12px 14px;
+            background: #0f172a;
+            border: 1px solid #334155;
+            border-radius: 8px;
+            color: #f1f5f9;
+            font-size: 0.95rem;
+            outline: none;
+            transition: border-color 0.2s, box-shadow 0.2s;
+            font-family: inherit;
+        }
+
+        .form-group textarea { resize: vertical; min-height: 120px; }
+
+        .form-group input:focus,
+        .form-group select:focus,
+        .form-group textarea:focus {
+            border-color: #3b82f6;
+            box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.2);
+        }
+
+        .form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 14px;
+        }
+
+        /* ==================== BOTÃO ENVIAR ==================== */
+        .btn-enviar {
+            width: 100%;
+            padding: 14px;
+            background: linear-gradient(135deg, #3b82f6, #2563eb);
+            color: #fff;
+            border: none;
+            border-radius: 8px;
+            font-size: 1rem;
+            font-weight: 700;
+            cursor: pointer;
+            margin-top: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+
+        .btn-enviar:hover:not(:disabled) {
+            transform: scale(1.02);
+            box-shadow: 0 0 25px rgba(59, 130, 246, 0.5);
+        }
+
+        .btn-enviar:disabled { opacity: 0.6; cursor: not-allowed; }
+
+        .loading {
+            display: inline-block;
+            width: 14px; height: 14px;
+            border: 2px solid rgba(255,255,255,0.3);
+            border-top-color: #fff;
+            border-radius: 50%;
+            animation: spin 0.6s linear infinite;
+        }
+
+        @keyframes spin { to { transform: rotate(360deg); } }
+
+        /* ==================== MENSAGENS ==================== */
+        .mensagem {
+            display: none;
+            padding: 12px 16px;
+            border-radius: 8px;
+            font-size: 0.9rem;
+            margin-bottom: 18px;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .mensagem.show { display: flex; }
+
+        .mensagem.sucesso {
+            background: rgba(34, 197, 94, 0.15);
+            border: 1px solid #22c55e;
+            color: #86efac;
+        }
+
+        .mensagem.erro {
+            background: rgba(239, 68, 68, 0.15);
+            border: 1px solid #ef4444;
+            color: #fca5a5;
+        }
+
+        /* ==================== HISTÓRICO DE TICKETS ==================== */
+        .historico-lista {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            max-height: 420px;
+            overflow-y: auto;
+            padding-right: 4px;
+        }
+
+        .historico-lista::-webkit-scrollbar { width: 6px; }
+        .historico-lista::-webkit-scrollbar-track { background: #0f172a; border-radius: 4px; }
+        .historico-lista::-webkit-scrollbar-thumb { background: #334155; border-radius: 4px; }
+        .historico-lista::-webkit-scrollbar-thumb:hover { background: #f5c542; }
+
+        .ticket-item {
+            background: #0f172a;
+            border: 1px solid #334155;
+            border-left: 4px solid #3b82f6;
+            border-radius: 10px;
+            padding: 14px 16px;
+            transition: transform 0.2s, border-color 0.2s;
+        }
+
+        .ticket-item:hover {
+            transform: translateX(4px);
+            border-color: #f5c542;
+        }
+
+        .ticket-item.status-aberto { border-left-color: #3b82f6; }
+        .ticket-item.status-em_andamento { border-left-color: #f5c542; }
+        .ticket-item.status-resolvido { border-left-color: #22c55e; }
+        .ticket-item.status-fechado { border-left-color: #94a3b8; }
+
+        .ticket-item .topo {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 6px;
+            flex-wrap: wrap;
+        }
+
+        .ticket-item .id {
+            color: #f5c542;
+            font-weight: 800;
+            font-size: 0.85rem;
+        }
+
+        .ticket-item .assunto {
+            color: #f1f5f9;
+            font-weight: 600;
+            font-size: 0.92rem;
+            flex: 1;
+            min-width: 120px;
+        }
+
+        .ticket-item .meta {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 10px;
+            font-size: 0.78rem;
+            color: #94a3b8;
+            flex-wrap: wrap;
+        }
+
+        .ticket-item .resposta-admin {
+            margin-top: 10px;
+            padding: 10px 12px;
+            background: rgba(59, 130, 246, 0.08);
+            border-left: 3px solid #3b82f6;
+            border-radius: 6px;
+            font-size: 0.83rem;
+            color: #cbd5e1;
+            line-height: 1.5;
+        }
+
+        .ticket-item .resposta-admin strong {
+            color: #60a5fa;
+            display: block;
+            margin-bottom: 4px;
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+            font-size: 0.7rem;
+            font-weight: 700;
+            padding: 3px 9px;
+            border-radius: 20px;
+            text-transform: uppercase;
+            letter-spacing: 0.4px;
+            white-space: nowrap;
+        }
+
+        .badge::before {
+            content: '';
+            width: 6px; height: 6px;
+            border-radius: 50%;
+            background: currentColor;
+        }
+
+        .badge.status-aberto { background: rgba(59, 130, 246, 0.15); color: #60a5fa; border: 1px solid rgba(59, 130, 246, 0.4); }
+        .badge.status-em_andamento { background: rgba(245, 197, 66, 0.15); color: #f5c542; border: 1px solid rgba(245, 197, 66, 0.4); }
+        .badge.status-resolvido { background: rgba(34, 197, 94, 0.15); color: #4ade80; border: 1px solid rgba(34, 197, 94, 0.4); }
+        .badge.status-fechado { background: rgba(148, 163, 184, 0.15); color: #94a3b8; border: 1px solid rgba(148, 163, 184, 0.4); }
+
+        .historico-vazio {
+            text-align: center;
+            padding: 30px 10px;
+            color: #64748b;
+            font-size: 0.88rem;
+        }
+
+        .historico-vazio i {
+            font-size: 2.2rem;
+            display: block;
+            margin-bottom: 10px;
+            color: #334155;
+        }
+
+        /* Campo de busca no histórico */
+        .historico-busca {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 16px;
+            align-items: center;
+        }
+
+        .historico-busca input {
+            flex: 1;
+            padding: 10px 12px;
+            background: #0f172a;
+            border: 1px solid #334155;
+            border-radius: 8px;
+            color: #f1f5f9;
+            font-size: 0.88rem;
+            outline: none;
+            font-family: inherit;
+        }
+
+        .historico-busca input:focus { border-color: #3b82f6; }
+
+        .historico-busca button {
+            padding: 10px 14px;
+            background: #334155;
+            border: 1px solid #334155;
+            border-radius: 8px;
+            color: #f5c542;
+            cursor: pointer;
+            font-size: 0.88rem;
+            font-weight: 600;
+            transition: all 0.2s;
+        }
+
+        .historico-busca button:hover { background: #475569; border-color: #f5c542; }
+
+        /* ==================== FAQ ==================== */
+        .faq-item { border-bottom: 1px solid #334155; }
+        .faq-item:last-child { border-bottom: none; }
+
+        .faq-pergunta {
+            width: 100%;
+            background: transparent;
+            border: none;
+            color: #f1f5f9;
+            font-size: 0.95rem;
+            font-weight: 600;
+            text-align: left;
+            padding: 16px 0;
+            cursor: pointer;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 12px;
+            transition: color 0.2s;
+        }
+
+        .faq-pergunta:hover { color: #f5c542; }
+
+        .faq-pergunta i {
+            color: #f5c542;
+            transition: transform 0.3s;
+            flex-shrink: 0;
+        }
+
+        .faq-item.aberta .faq-pergunta i { transform: rotate(180deg); }
+
+        .faq-resposta {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.35s ease, padding 0.35s ease;
+            color: #94a3b8;
+            font-size: 0.88rem;
+            line-height: 1.6;
+        }
+
+        .faq-item.aberta .faq-resposta {
+            max-height: 400px;
+            padding-bottom: 16px;
+        }
+
+        /* ==================== CANAIS ==================== */
+        .canais-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 14px;
+            margin-top: 20px;
+        }
+
+        .canal-card {
+            background: #0f172a;
+            border: 1px solid #334155;
+            border-radius: 12px;
+            padding: 18px;
+            text-decoration: none;
+            color: inherit;
+            transition: transform 0.2s, border-color 0.2s, box-shadow 0.2s;
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+        }
+
+        .canal-card:hover {
+            transform: translateY(-4px);
+            border-color: #f5c542;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.4);
+        }
+
+        .canal-card i { font-size: 1.6rem; color: #f5c542; margin-bottom: 4px; }
+        .canal-card .titulo { color: #f1f5f9; font-size: 0.95rem; font-weight: 700; }
+        .canal-card .descricao { color: #94a3b8; font-size: 0.8rem; line-height: 1.4; }
+
+        /* ==================== STATUS SISTEMA ==================== */
+        .status-lista { list-style: none; margin-top: 18px; }
+
+        .status-lista li {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 12px 0;
+            border-bottom: 1px solid #334155;
+            font-size: 0.9rem;
+        }
+
+        .status-lista li:last-child { border-bottom: none; }
+
+        .status-lista .servico {
+            color: #cbd5e1;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .status-lista .servico i { color: #f5c542; width: 16px; }
+
+        .status-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            font-size: 0.75rem;
+            font-weight: 700;
+            padding: 4px 10px;
+            border-radius: 20px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .status-badge.online { background: rgba(34, 197, 94, 0.15); color: #86efac; border: 1px solid rgba(34, 197, 94, 0.4); }
+        .status-badge.manutencao { background: rgba(245, 197, 66, 0.15); color: #f5c542; border: 1px solid rgba(245, 197, 66, 0.4); }
+        .status-badge.offline { background: rgba(239, 68, 68, 0.15); color: #fca5a5; border: 1px solid rgba(239, 68, 68, 0.4); }
+
+        .status-badge::before {
+            content: '';
+            width: 8px; height: 8px;
+            border-radius: 50%;
+            background: currentColor;
+            display: inline-block;
+        }
+
+        /* ==================== COLUNA DIREITA ==================== */
+        .coluna-direita { display: flex; flex-direction: column; gap: 30px; }
+
+        /* ==================== RESPONSIVIDADE ==================== */
+        @media (max-width: 1024px) {
+            .navbar { padding: 0.8rem 1.5rem; }
+            .nav-links { gap: 1.5rem; }
+            .btn-discord { padding: 0.6rem 1.2rem; font-size: 0.85rem; }
+            .suporte-wrapper { grid-template-columns: 1fr; }
+        }
+
+        @media (max-width: 860px) {
+            .nav-links {
+                display: none;
+                width: 100%;
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 1rem;
+                padding: 1.5rem 0 0.5rem 0;
+                border-top: 1px solid rgba(255, 215, 0, 0.15);
+                margin-top: 1rem;
+            }
+
+            .nav-links.active { display: flex; }
+            .nav-links li { width: 100%; }
+            .nav-links li a { display: flex; width: 100%; padding: 0.6rem 0; font-size: 1.1rem; }
+            .menu-toggle { display: block; }
+            .navbar { justify-content: space-between; }
+            .btn-discord { margin-left: auto; margin-right: 1rem; }
+
+            .suporte-hero h1 { font-size: 2rem; }
+        }
+
+        @media (max-width: 480px) {
+            .navbar { padding: 0.7rem 1rem; }
+            .logo { font-size: 1.5rem; }
+            .logo i { font-size: 1.3rem; }
+            .btn-discord { padding: 0.5rem 1rem; font-size: 0.8rem; }
+            .btn-discord span { display: none; }
+            .btn-discord i { font-size: 1.2rem; margin: 0; }
+            .suporte-hero h1 { font-size: 1.6rem; }
+            .card { padding: 20px; }
+            .form-row { grid-template-columns: 1fr; }
+            .canais-grid { grid-template-columns: 1fr; }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- ==================== MENU ==================== -->
+    <div class="menu-container">
+        <nav class="navbar">
+            <div class="logo">
+                <i class="fas fa-cow"></i>
+                MM<span>Quase Tudo</span>
+            </div>
+
+            <button class="menu-toggle" id="menuToggle" aria-label="Abrir menu">
+                <i class="fas fa-bars"></i>
+            </button>
+
+            <ul class="nav-links" id="navLinks">
+                <li><a href="./index.html"><i class="fas fa-house"></i> Início</a></li>
+                <li><a href="./noticias.html"><i class="fas fa-newspaper"></i> Notícias</a></li>
+                <li><a href="./jogos/ranking/ranking002.html"><i class="fas fa-trophy"></i> Classificações</a></li>
+                <li><a href="./eventos.html"><i class="fas fa-calendar-days"></i> Eventos</a></li>
+                <li><a href="./download.html"><i class="fas fa-download"></i> Downloads</a></li>
+                <li><a href="./suporte.html"><i class="fas fa-headset"></i> Suporte</a></li>
+                <li><a href="./loja.html"><i class="fas fa-cart-shopping"></i> Loja</a></li>
+                <li><a href="./cadastro.html"><i class="fas fa-user-plus"></i> Cadastro</a></li>
+                <li><a href="./login.html"><i class="fas fa-sign-in-alt"></i> Login</a></li>
+            </ul>
+
+            <a href="https://discord.gg/ATtu4z9Ewt" class="btn-discord" target="_blank" rel="noopener">
+                <i class="fab fa-discord"></i>
+                <span>Jogue Agora</span>
+            </a>
+        </nav>
+    </div>
+
+    <!-- ==================== HERO ==================== -->
+    <section class="suporte-hero">
+        <h1><i class="fas fa-headset"></i>Central de Suporte</h1>
+        <p>Precisa de ajuda? Abra um ticket, consulte o FAQ ou entre em contato pelos nossos canais oficiais.</p>
+    </section>
+
+    <!-- ==================== CONTEÚDO ==================== -->
+    <main class="suporte-wrapper">
+
+        <!-- COLUNA ESQUERDA -->
+        <div style="display: flex; flex-direction: column; gap: 30px;">
+
+            <!-- FORMULÁRIO -->
+            <section class="card">
+                <h2><i class="fas fa-ticket"></i>Abrir um Ticket</h2>
+                <p class="subtitulo">Preencha o formulário e nossa equipe responderá o mais rápido possível.</p>
+
+                <div class="mensagem sucesso" id="msgSucesso">
+                    <i class="fas fa-circle-check"></i>
+                    <span id="txtSucesso">Ticket enviado com sucesso!</span>
+                </div>
+                <div class="mensagem erro" id="msgErro">
+                    <i class="fas fa-circle-exclamation"></i>
+                    <span id="txtErro">Erro ao enviar. Tente novamente.</span>
+                </div>
+
+                <form id="formSuporte">
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="nome">Nome <span class="obrigatorio">*</span></label>
+                            <input type="text" id="nome" name="nome" placeholder="Seu nome completo" required maxlength="120">
+                        </div>
+                        <div class="form-group">
+                            <label for="login">Login no jogo</label>
+                            <input type="text" id="login" name="login" placeholder="Seu login" maxlength="60">
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="email">Email <span class="obrigatorio">*</span></label>
+                        <input type="email" id="email" name="email" placeholder="seu@email.com" required maxlength="150">
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="categoria">Categoria <span class="obrigatorio">*</span></label>
+                            <select id="categoria" name="categoria" required>
+                                <option value="">Selecione...</option>
+                                <option value="conta">Problema com conta</option>
+                                <option value="pagamento">Pagamento / Loja</option>
+                                <option value="bug">Bug / Erro no jogo</option>
+                                <option value="sugestao">Sugestão</option>
+                                <option value="denuncia">Denúncia</option>
+                                <option value="outro">Outro</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="prioridade">Prioridade</label>
+                            <select id="prioridade" name="prioridade">
+                                <option value="baixa">Baixa</option>
+                                <option value="normal" selected>Normal</option>
+                                <option value="alta">Alta</option>
+                                <option value="urgente">Urgente</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="assunto">Assunto <span class="obrigatorio">*</span></label>
+                        <input type="text" id="assunto" name="assunto" placeholder="Resumo do problema" required maxlength="200">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="mensagem">Mensagem <span class="obrigatorio">*</span></label>
+                        <textarea id="mensagem" name="mensagem" placeholder="Descreva detalhadamente o que aconteceu..." required maxlength="2000"></textarea>
+                    </div>
+
+                    <button type="submit" class="btn-enviar" id="btnEnviar">
+                        <i class="fas fa-paper-plane"></i>
+                        <span>Enviar Ticket</span>
+                    </button>
+                </form>
+            </section>
+
+            <!-- ✅ NOVO: HISTÓRICO DE TICKETS -->
+            <section class="card">
+                <h2><i class="fas fa-clock-rotate-left"></i>Meus Tickets</h2>
+                <p class="subtitulo">Acompanhe o status dos seus tickets em tempo real.</p>
+
+                <div class="historico-busca">
+                    <input type="text" id="buscaHistorico" placeholder="Digite seu login ou email para ver seus tickets...">
+                    <button id="btnBuscarHistorico"><i class="fas fa-search"></i></button>
+                </div>
+
+                <div class="historico-lista" id="historicoLista">
+                    <div class="historico-vazio">
+                        <i class="fas fa-inbox"></i>
+                        Informe seu login ou email para carregar seus tickets.
+                    </div>
+                </div>
+            </section>
+
+        </div>
+
+        <!-- COLUNA DIREITA -->
+        <div class="coluna-direita">
+
+            <!-- FAQ -->
+            <section class="card">
+                <h2><i class="fas fa-circle-question"></i>Perguntas Frequentes</h2>
+                <p class="subtitulo">Clique para expandir as respostas.</p>
+
+                <div class="faq-item">
+                    <button class="faq-pergunta">
+                        Como recupero minha senha?
+                        <i class="fas fa-chevron-down"></i>
+                    </button>
+                    <div class="faq-resposta">
+                        Acesse a página de login e clique em "Esqueci minha senha". Você receberá um link de redefinição no email cadastrado.
+                    </div>
+                </div>
+
+                <div class="faq-item">
+                    <button class="faq-pergunta">
+                        Meu saldo não atualizou, o que fazer?
+                        <i class="fas fa-chevron-down"></i>
+                    </button>
+                    <div class="faq-resposta">
+                        Aguarde alguns minutos e recarregue a página. Se o problema persistir, abra um ticket com a categoria "Pagamento / Loja" informando o horário e valor.
+                    </div>
+                </div>
+
+                <div class="faq-item">
+                    <button class="faq-pergunta">
+                        Perdi meus itens após uma atualização
+                        <i class="fas fa-chevron-down"></i>
+                    </button>
+                    <div class="faq-resposta">
+                        Nossos sistemas mantêm backup automático. Abra um ticket com categoria "Bug / Erro no jogo" e informe seu login e quais itens sumiram.
+                    </div>
+                </div>
+
+                <div class="faq-item">
+                    <button class="faq-pergunta">
+                        Como entro em contato direto?
+                        <i class="fas fa-chevron-down"></i>
+                    </button>
+                    <div class="faq-resposta">
+                        Use os canais oficiais abaixo. O Discord é o meio mais rápido para respostas em tempo real.
+                    </div>
+                </div>
+
+                <div class="faq-item">
+                    <button class="faq-pergunta">
+                        Quanto tempo leva para responderem?
+                        <i class="fas fa-chevron-down"></i>
+                    </button>
+                    <div class="faq-resposta">
+                        Tickets de prioridade normal são respondidos em até 24h úteis. Prioridade alta/urgente em até 4h.
+                    </div>
+                </div>
+            </section>
+
+            <!-- CANAIS -->
+            <section class="card">
+                <h2><i class="fas fa-comments"></i>Canais de Atendimento</h2>
+                <p class="subtitulo">Escolha o canal que preferir.</p>
+
+                <div class="canais-grid">
+                    <a href="https://discord.gg/ATtu4z9Ewt" target="_blank" rel="noopener" class="canal-card">
+                        <i class="fab fa-discord"></i>
+                        <span class="titulo">Discord</span>
+                        <span class="descricao">Atendimento em tempo real</span>
+                    </a>
+
+                    <a href="mailto:suporte@mmquasetudo.com" class="canal-card">
+                        <i class="fas fa-envelope"></i>
+                        <span class="titulo">Email</span>
+                        <span class="descricao">suporte@mmquasetudo.com</span>
+                    </a>
+
+                    <a href="#" class="canal-card" onclick="return false;">
+                        <i class="fab fa-whatsapp"></i>
+                        <span class="titulo">WhatsApp</span>
+                        <span class="descricao">Em breve</span>
+                    </a>
+
+                    <a href="#" class="canal-card" onclick="return false;">
+                        <i class="fas fa-book"></i>
+                        <span class="titulo">Documentação</span>
+                        <span class="descricao">Guias e tutoriais</span>
+                    </a>
+                </div>
+            </section>
+
+            <!-- STATUS -->
+            <section class="card">
+                <h2><i class="fas fa-signal"></i>Status do Sistema</h2>
+                <p class="subtitulo">Monitoramento em tempo real dos serviços.</p>
+
+                <ul class="status-lista">
+                    <li>
+                        <span class="servico"><i class="fas fa-server"></i> Servidor Principal</span>
+                        <span class="status-badge online">Online</span>
+                    </li>
+                    <li>
+                        <span class="servico"><i class="fas fa-database"></i> Banco de Dados</span>
+                        <span class="status-badge online" id="statusBanco">Online</span>
+                    </li>
+                    <li>
+                        <span class="servico"><i class="fas fa-cart-shopping"></i> Loja</span>
+                        <span class="status-badge online">Online</span>
+                    </li>
+                    <li>
+                        <span class="servico"><i class="fas fa-trophy"></i> Rankings</span>
+                        <span class="status-badge manutencao">Manutenção</span>
+                    </li>
+                </ul>
+            </section>
+
+        </div>
+    </main>
+
+    <!-- ==================== JAVASCRIPT ==================== -->
+    <script>
+        /* ==================== CONFIGURAÇÃO SUPABASE ==================== */
+        const SUPABASE_URL = 'https://xrcxvizzdumcxbylmkvn.supabase.co';
+        const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InhyY3h2aXp6ZHVtY3hieWxta3ZuIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODY2NjA0NzIsImV4cCI6MjEwMjIzNjQ3Mn0.ohB4tW0UQ-k1PcwoZxm4u9XSGNLsFphv1_UwTWoklOM';
+
+        const supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+        /* ==================== MENU TOGGLE ==================== */
+        const menuToggle = document.getElementById('menuToggle');
+        const navLinks = document.getElementById('navLinks');
+
+        menuToggle.addEventListener('click', () => {
+            navLinks.classList.toggle('active');
+            const icon = menuToggle.querySelector('i');
+            icon.classList.toggle('fa-bars');
+            icon.classList.toggle('fa-times');
+        });
+
+        navLinks.querySelectorAll('a').forEach(link => {
+            link.addEventListener('click', () => {
+                if (window.innerWidth <= 860) {
+                    navLinks.classList.remove('active');
+                    const icon = menuToggle.querySelector('i');
+                    icon.classList.add('fa-bars');
+                    icon.classList.remove('fa-times');
+                }
+            });
+        });
+
+        /* ==================== FAQ ACCORDION ==================== */
+        document.querySelectorAll('.faq-pergunta').forEach(btn => {
+            btn.addEventListener('click', () => {
+                const item = btn.parentElement;
+                const jaAberta = item.classList.contains('aberta');
+                document.querySelectorAll('.faq-item').forEach(i => i.classList.remove('aberta'));
+                if (!jaAberta) item.classList.add('aberta');
+            });
+        });
+
+        /* ==================== UTILITÁRIOS ==================== */
+        function escapeHtml(str) {
+            if (!str) return '';
+            const div = document.createElement('div');
+            div.textContent = str;
+            return div.innerHTML;
+        }
+
+        function formatarData(isoString) {
+            if (!isoString) return '—';
+            try {
+                return new Date(isoString).toLocaleString('pt-BR', {
+                    day: '2-digit', month: '2-digit', year: 'numeric',
+                    hour: '2-digit', minute: '2-digit'
+                });
+            } catch { return isoString; }
+        }
+
+        function labelStatus(status) {
+            const mapa = {
+                aberto: 'Aberto',
+                em_andamento: 'Em andamento',
+                resolvido: 'Resolvido',
+                fechado: 'Fechado'
+            };
+            return mapa[status] || status || '—';
+        }
+
+        function labelCategoria(cat) {
+            const mapa = {
+                conta: 'Conta',
+                pagamento: 'Pagamento / Loja',
+                bug: 'Bug / Erro',
+                sugestao: 'Sugestão',
+                denuncia: 'Denúncia',
+                outro: 'Outro'
+            };
+            return mapa[cat] || cat || '—';
+        }
+
+        /* ==================== FORMULÁRIO DE SUPORTE ==================== */
+        const form = document.getElementById('formSuporte');
+        const btnEnviar = document.getElementById('btnEnviar');
+        const msgSucesso = document.getElementById('msgSucesso');
+        const msgErro = document.getElementById('msgErro');
+        const txtSucesso = document.getElementById('txtSucesso');
+        const txtErro = document.getElementById('txtErro');
+
+        function mostrarMensagem(tipo, texto) {
+            msgSucesso.classList.remove('show');
+            msgErro.classList.remove('show');
+
+            if (tipo === 'sucesso') {
+                txtSucesso.textContent = texto;
+                msgSucesso.classList.add('show');
+            } else {
+                txtErro.textContent = texto;
+                msgErro.classList.add('show');
+            }
+
+            setTimeout(() => {
+                msgSucesso.classList.remove('show');
+                msgErro.classList.remove('show');
+            }, 6000);
+        }
+
+        function setCarregando(carregando) {
+            if (carregando) {
+                btnEnviar.disabled = true;
+                btnEnviar.innerHTML = '<span class="loading"></span><span>Enviando...</span>';
+            } else {
+                btnEnviar.disabled = false;
+                btnEnviar.innerHTML = '<i class="fas fa-paper-plane"></i><span>Enviar Ticket</span>';
+            }
+        }
+
+        form.addEventListener('submit', async (e) => {
+            e.preventDefault();
+
+            const dados = {
+                nome: document.getElementById('nome').value.trim(),
+                login: document.getElementById('login').value.trim() || null,
+                email: document.getElementById('email').value.trim().toLowerCase(),
+                categoria: document.getElementById('categoria').value,
+                prioridade: document.getElementById('prioridade').value,
+                assunto: document.getElementById('assunto').value.trim(),
+                mensagem: document.getElementById('mensagem').value.trim(),
+                status: 'aberto'
+            };
+
+            if (!dados.nome || !dados.email || !dados.categoria || !dados.assunto || !dados.mensagem) {
+                mostrarMensagem('erro', 'Preencha todos os campos obrigatórios.');
+                return;
+            }
+
+            if (dados.mensagem.length < 10) {
+                mostrarMensagem('erro', 'A mensagem precisa ter ao menos 10 caracteres.');
+                return;
+            }
+
+            setCarregando(true);
+
+            try {
+                let userId = null;
+                if (dados.login) {
+                    const { data: usuario } = await supabaseClient
+                        .from('Geral')
+                        .select('id')
+                        .eq('login', dados.login)
+                        .maybeSingle();
+                    if (usuario) userId = usuario.id;
+                }
+
+                const { data, error } = await supabaseClient
+                    .from('suporte_tickets')
+                    .insert([{ ...dados, user_id: userId }])
+                    .select()
+                    .single();
+
+                if (error) throw error;
+
+                setCarregando(false);
+                mostrarMensagem('sucesso', `Ticket #${data.id} enviado com sucesso! Responderemos em breve.`);
+                form.reset();
+
+                // Atualiza o histórico automaticamente se o login/email estiver preenchido
+                if (dados.login || dados.email) {
+                    document.getElementById('buscaHistorico').value = dados.login || dados.email;
+                    carregarHistorico(dados.login, dados.email);
+                }
+
+            } catch (err) {
+                console.error('[Suporte] Erro ao enviar ticket:', err);
+                setCarregando(false);
+
+                let msg = 'Erro ao enviar o ticket. Tente novamente.';
+                if (err.code === '42P01') msg = 'Tabela "suporte_tickets" não encontrada. Execute o SQL no Supabase.';
+                else if (err.code === '42501') msg = 'Sem permissão para inserir. Verifique as políticas RLS.';
+                else if (err.message) msg = 'Erro: ' + err.message;
+
+                mostrarMensagem('erro', msg);
+            }
+        });
+
+        /* ==================== ✅ HISTÓRICO DE TICKETS ==================== */
+        const historicoLista = document.getElementById('historicoLista');
+        const buscaHistorico = document.getElementById('buscaHistorico');
+        const btnBuscarHistorico = document.getElementById('btnBuscarHistorico');
+
+        async function carregarHistorico(loginFiltro, emailFiltro) {
+            const login = (loginFiltro || '').trim();
+            const email = (emailFiltro || '').trim().toLowerCase();
+
+            if (!login && !email) {
+                historicoLista.innerHTML = `
+                    <div class="historico-vazio">
+                        <i class="fas fa-inbox"></i>
+                        Informe seu login ou email para carregar seus tickets.
+                    </div>`;
+                return;
+            }
+
+            historicoLista.innerHTML = `
+                <div class="historico-vazio">
+                    <i class="fas fa-spinner fa-spin"></i>
+                    Carregando tickets...
+                </div>`;
+
+            try {
+                // Monta a query: busca por login OU email
+                let query = supabaseClient
+                    .from('suporte_tickets')
+                    .select('*')
+                    .order('id', { ascending: false })
+                    .limit(50);
+
+                if (login && email) {
+                    // Usa OR: login = valor OU email = valor
+                    query = query.or(`login.eq.${login},email.eq.${email}`);
+                } else if (login) {
+                    query = query.eq('login', login);
+                } else {
+                    query = query.eq('email', email);
+                }
+
+                const { data, error } = await query;
+
+                if (error) throw error;
+
+                if (!data || data.length === 0) {
+                    historicoLista.innerHTML = `
+                        <div class="historico-vazio">
+                            <i class="fas fa-inbox"></i>
+                            Nenhum ticket encontrado para "<strong>${escapeHtml(login || email)}</strong>".
+                        </div>`;
+                    return;
+                }
+
+                historicoLista.innerHTML = '';
+
+                data.forEach(t => {
+                    const div = document.createElement('div');
+                    div.className = `ticket-item status-${t.status || 'aberto'}`;
+
+                    let respostaHtml = '';
+                    if (t.resposta && t.resposta.trim()) {
+                        respostaHtml = `
+                            <div class="resposta-admin">
+                                <strong><i class="fas fa-reply"></i> Resposta da equipe</strong>
+                                ${escapeHtml(t.resposta)}
+                            </div>`;
+                    }
+
+                    div.innerHTML = `
+                        <div class="topo">
+                            <span class="id">#${t.id}</span>
+                            <span class="assunto">${escapeHtml(t.assunto || '—')}</span>
+                        </div>
+                        <div class="meta">
+                            <span><i class="fas fa-tag"></i> ${escapeHtml(labelCategoria(t.categoria))}</span>
+                            <span><i class="fas fa-calendar"></i> ${formatarData(t.created_at)}</span>
+                            <span class="badge status-${t.status || 'aberto'}">${labelStatus(t.status)}</span>
+                        </div>
+                        ${respostaHtml}
+                    `;
+
+                    historicoLista.appendChild(div);
+                });
+
+            } catch (err) {
+                console.error('[Histórico] Erro:', err);
+                historicoLista.innerHTML = `
+                    <div class="historico-vazio">
+                        <i class="fas fa-circle-exclamation"></i>
+                        Erro ao carregar tickets: ${escapeHtml(err.message)}
+                    </div>`;
+            }
+        }
+
+        btnBuscarHistorico.addEventListener('click', () => {
+            const valor = buscaHistorico.value.trim();
+            if (!valor) {
+                historicoLista.innerHTML = `
+                    <div class="historico-vazio">
+                        <i class="fas fa-inbox"></i>
+                        Digite seu login ou email para buscar.
+                    </div>`;
+                return;
+            }
+
+            // Detecta se é email (contém @) ou login
+            const isEmail = valor.includes('@');
+            if (isEmail) {
+                carregarHistorico(null, valor);
+            } else {
+                carregarHistorico(valor, null);
+            }
+        });
+
+        buscaHistorico.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') {
+                e.preventDefault();
+                btnBuscarHistorico.click();
+            }
+        });
+
+        // Carrega automaticamente se houver login/email salvo no formulário
+        (function autoCarregar() {
+            const loginSalvo = document.getElementById('login').value.trim();
+            const emailSalvo = document.getElementById('email').value.trim();
+            if (loginSalvo || emailSalvo) {
+                buscaHistorico.value = loginSalvo || emailSalvo;
+                carregarHistorico(loginSalvo, emailSalvo);
+            }
+        })();
+
+        /* ==================== VERIFICAÇÃO DE STATUS ==================== */
+        async function verificarStatus() {
+            const badge = document.getElementById('statusBanco');
+
+            try {
+                const inicio = Date.now();
+                const { error } = await supabaseClient
+                    .from('suporte_tickets')
+                    .select('id', { count: 'exact', head: true });
+
+                const latencia = Date.now() - inicio;
+
+                if (error) throw error;
+
+                badge.className = 'status-badge online';
+                badge.textContent = `Online (${latencia}ms)`;
+
+            } catch (err) {
+                console.error('[Status] Erro:', err);
+                badge.className = 'status-badge offline';
+                badge.textContent = 'Offline';
+            }
+        }
+
+        verificarStatus();
+        setInterval(verificarStatus, 30000);
+    </script>
+</body>
+</html>

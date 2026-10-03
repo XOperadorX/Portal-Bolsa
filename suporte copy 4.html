@@ -137,53 +137,6 @@
             padding: 0.3rem 0.6rem;
         }
 
-        /* ==================== ABAS ==================== */
-        .abas {
-            max-width: 1400px;
-            width: 100%;
-            margin: 0 auto;
-            padding: 20px 20px 0;
-            display: flex;
-            gap: 10px;
-            flex-wrap: wrap;
-        }
-
-        .aba-btn {
-            background: #1e293b;
-            border: 1px solid #334155;
-            border-radius: 10px 10px 0 0;
-            color: #94a3b8;
-            padding: 14px 24px;
-            font-size: 0.95rem;
-            font-weight: 700;
-            cursor: pointer;
-            display: inline-flex;
-            align-items: center;
-            gap: 10px;
-            transition: all 0.2s;
-            font-family: inherit;
-            border-bottom: none;
-            position: relative;
-            top: 1px;
-        }
-
-        .aba-btn i { color: #f5c542; }
-
-        .aba-btn:hover { color: #e2e8f0; background: #263449; }
-
-        .aba-btn.ativa {
-            background: #1e293b;
-            color: #ffffff;
-            border-color: #334155;
-            border-bottom: 1px solid #1e293b;
-            box-shadow: 0 -4px 12px rgba(0, 0, 0, 0.2);
-        }
-
-        .aba-btn.ativa i { color: #f5c542; }
-
-        .aba-conteudo { display: none; }
-        .aba-conteudo.ativa { display: block; }
-
         /* ==================== HERO ==================== */
         .suporte-hero {
             text-align: center;
@@ -465,11 +418,6 @@
         .badge.status-resolvido { background: rgba(34, 197, 94, 0.15); color: #4ade80; border: 1px solid rgba(34, 197, 94, 0.4); }
         .badge.status-fechado { background: rgba(148, 163, 184, 0.15); color: #94a3b8; border: 1px solid rgba(148, 163, 184, 0.4); }
 
-        .badge.prio-baixa { background: rgba(148, 163, 184, 0.15); color: #94a3b8; border: 1px solid rgba(148, 163, 184, 0.4); }
-        .badge.prio-normal { background: rgba(59, 130, 246, 0.15); color: #60a5fa; border: 1px solid rgba(59, 130, 246, 0.4); }
-        .badge.prio-alta { background: rgba(249, 115, 22, 0.15); color: #fb923c; border: 1px solid rgba(249, 115, 22, 0.4); }
-        .badge.prio-urgente { background: rgba(239, 68, 68, 0.15); color: #f87171; border: 1px solid rgba(239, 68, 68, 0.4); }
-
         .historico-vazio {
             text-align: center;
             padding: 30px 10px;
@@ -519,7 +467,7 @@
 
         .historico-busca button:hover { background: #475569; border-color: #f5c542; }
 
-        /* ==================== TABELA DE TICKETS ==================== */
+        /* ==================== TABELA DE TICKETS (NOVO) ==================== */
         .tabela-wrapper {
             max-width: 1400px;
             width: 100%;
@@ -597,7 +545,6 @@
 
         .td-id { color: #f5c542; font-weight: 700; }
         .td-assunto { color: #f1f5f9; font-weight: 600; max-width: 260px; }
-        .td-resposta { max-width: 280px; color: #94a3b8; font-size: 0.82rem; }
 
         .tabela-card .estado-vazio {
             padding: 60px 20px;
@@ -607,37 +554,6 @@
 
         .tabela-card .estado-vazio i { font-size: 3rem; margin-bottom: 14px; color: #334155; }
         .tabela-card .estado-vazio p { font-size: 1rem; }
-
-        /* ==================== TOOLBAR ADMIN ==================== */
-        .toolbar {
-            max-width: 1400px;
-            width: 100%;
-            margin: 0 auto;
-            padding: 10px 20px 0;
-            display: flex;
-            justify-content: flex-end;
-        }
-
-        .btn-atualizar {
-            background: #1e293b;
-            border: 1px solid #334155;
-            border-radius: 8px;
-            color: #f5c542;
-            padding: 10px 16px;
-            font-size: 0.9rem;
-            font-weight: 600;
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            transition: all 0.2s;
-            font-family: inherit;
-        }
-
-        .btn-atualizar:hover { border-color: #f5c542; background: #263449; }
-        .btn-atualizar:disabled { opacity: 0.5; cursor: not-allowed; }
-
-        .btn-atualizar .fa-rotate.loading { animation: spin 0.8s linear infinite; }
 
         /* ==================== FAQ ==================== */
         .faq-item { border-bottom: 1px solid #334155; }
@@ -658,7 +574,6 @@
             align-items: center;
             gap: 12px;
             transition: color 0.2s;
-            font-family: inherit;
         }
 
         .faq-pergunta:hover { color: #f5c542; }
@@ -766,181 +681,6 @@
         /* ==================== COLUNA DIREITA ==================== */
         .coluna-direita { display: flex; flex-direction: column; gap: 30px; }
 
-        /* ==================== MODAL (somente leitura) ==================== */
-        .modal-overlay {
-            position: fixed;
-            inset: 0;
-            background: rgba(0, 0, 0, 0.7);
-            backdrop-filter: blur(4px);
-            display: none;
-            align-items: center;
-            justify-content: center;
-            z-index: 2000;
-            padding: 20px;
-        }
-
-        .modal-overlay.show { display: flex; }
-
-        .modal {
-            background: #1e293b;
-            border: 1px solid #334155;
-            border-radius: 16px;
-            width: 100%;
-            max-width: 680px;
-            max-height: 90vh;
-            overflow-y: auto;
-            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.6);
-            animation: modalIn 0.25s ease;
-        }
-
-        @keyframes modalIn {
-            from { opacity: 0; transform: translateY(20px) scale(0.98); }
-            to { opacity: 1; transform: translateY(0) scale(1); }
-        }
-
-        .modal-header {
-            padding: 20px 24px;
-            border-bottom: 1px solid #334155;
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            gap: 12px;
-            position: sticky;
-            top: 0;
-            background: #1e293b;
-            z-index: 2;
-        }
-
-        .modal-header h2 {
-            font-size: 1.2rem;
-            color: #f1f5f9;
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
-
-        .modal-header h2 i { color: #f5c542; }
-
-        .btn-fechar {
-            background: transparent;
-            border: none;
-            color: #94a3b8;
-            font-size: 1.4rem;
-            cursor: pointer;
-            width: 36px; height: 36px;
-            border-radius: 8px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            transition: all 0.2s;
-        }
-
-        .btn-fechar:hover { background: #334155; color: #f1f5f9; }
-
-        .modal-body { padding: 24px; }
-
-        .detalhe-grid {
-            display: grid;
-            grid-template-columns: repeat(2, 1fr);
-            gap: 16px;
-            margin-bottom: 20px;
-        }
-
-        .detalhe-item {
-            background: #0f172a;
-            border: 1px solid #334155;
-            border-radius: 10px;
-            padding: 12px 14px;
-        }
-
-        .detalhe-item .rotulo {
-            font-size: 0.72rem;
-            color: #64748b;
-            text-transform: uppercase;
-            font-weight: 700;
-            letter-spacing: 0.5px;
-            margin-bottom: 4px;
-        }
-
-        .detalhe-item .valor {
-            color: #f1f5f9;
-            font-size: 0.92rem;
-            font-weight: 600;
-            word-break: break-word;
-        }
-
-        .detalhe-item.full { grid-column: 1 / -1; }
-
-        .detalhe-mensagem {
-            background: #0f172a;
-            border: 1px solid #334155;
-            border-radius: 10px;
-            padding: 16px;
-            color: #cbd5e1;
-            font-size: 0.9rem;
-            line-height: 1.6;
-            white-space: pre-wrap;
-            word-break: break-word;
-            margin-bottom: 20px;
-        }
-
-        .detalhe-mensagem .titulo {
-            font-size: 0.72rem;
-            color: #64748b;
-            text-transform: uppercase;
-            font-weight: 700;
-            letter-spacing: 0.5px;
-            margin-bottom: 8px;
-            display: block;
-        }
-
-        .resposta-bloco {
-            background: rgba(59, 130, 246, 0.08);
-            border: 1px solid rgba(59, 130, 246, 0.3);
-            border-left: 3px solid #3b82f6;
-            border-radius: 10px;
-            padding: 16px;
-            color: #cbd5e1;
-            font-size: 0.9rem;
-            line-height: 1.6;
-            white-space: pre-wrap;
-            word-break: break-word;
-            margin-bottom: 20px;
-        }
-
-        .resposta-bloco .titulo {
-            font-size: 0.72rem;
-            color: #60a5fa;
-            text-transform: uppercase;
-            font-weight: 700;
-            letter-spacing: 0.5px;
-            margin-bottom: 8px;
-            display: block;
-        }
-
-        .modal-footer {
-            display: flex;
-            justify-content: flex-end;
-            padding: 0 24px 24px;
-        }
-
-        .btn {
-            border: none;
-            border-radius: 8px;
-            padding: 11px 20px;
-            font-size: 0.9rem;
-            font-weight: 700;
-            cursor: pointer;
-            display: inline-flex;
-            align-items: center;
-            gap: 8px;
-            transition: all 0.2s;
-            font-family: inherit;
-        }
-
-        .btn-secundario { background: #334155; color: #e2e8f0; }
-        .btn-secundario:hover { background: #475569; }
-
         /* ==================== RESPONSIVIDADE ==================== */
         @media (max-width: 1024px) {
             .navbar { padding: 0.8rem 1.5rem; }
@@ -969,9 +709,6 @@
             .btn-discord { margin-left: auto; margin-right: 1rem; }
 
             .suporte-hero h1 { font-size: 2rem; }
-            .detalhe-grid { grid-template-columns: 1fr; }
-            .abas { padding: 10px 10px 0; }
-            .aba-btn { padding: 12px 16px; font-size: 0.85rem; }
         }
 
         @media (max-width: 480px) {
@@ -985,9 +722,6 @@
             .card { padding: 20px; }
             .form-row { grid-template-columns: 1fr; }
             .canais-grid { grid-template-columns: 1fr; }
-            .abas { flex-direction: column; }
-            .aba-btn { border-radius: 10px; border-bottom: 1px solid #334155; top: 0; }
-            .aba-btn.ativa { border-bottom: 1px solid #334155; box-shadow: none; }
         }
     </style>
 </head>
@@ -1024,385 +758,262 @@
         </nav>
     </div>
 
-    <!-- ==================== ABAS ==================== -->
-    <div class="abas">
-        <button class="aba-btn ativa" data-aba="suporte">
-            <i class="fas fa-headset"></i> Suporte ao Jogador
-        </button>
-        <button class="aba-btn" data-aba="admin">
-            <i class="fas fa-shield-halved"></i> Todos os Tickets
-        </button>
-    </div>
+    <!-- ==================== HERO ==================== -->
+    <section class="suporte-hero">
+        <h1><i class="fas fa-headset"></i>Central de Suporte</h1>
+        <p>Precisa de ajuda? Abra um ticket, consulte o FAQ ou entre em contato pelos nossos canais oficiais.</p>
+    </section>
 
-    <!-- ==================== ABA SUPORTE ==================== -->
-    <div class="aba-conteudo ativa" id="aba-suporte">
+    <!-- ==================== CONTEÚDO ==================== -->
+    <main class="suporte-wrapper">
 
-        <!-- HERO -->
-        <section class="suporte-hero">
-            <h1><i class="fas fa-headset"></i>Central de Suporte</h1>
-            <p>Precisa de ajuda? Abra um ticket, consulte o FAQ ou entre em contato pelos nossos canais oficiais.</p>
-        </section>
+        <!-- COLUNA ESQUERDA -->
+        <div style="display: flex; flex-direction: column; gap: 30px;">
 
-        <!-- CONTEÚDO -->
-        <main class="suporte-wrapper">
+            <!-- FORMULÁRIO -->
+            <section class="card">
+                <h2><i class="fas fa-ticket"></i>Abrir um Ticket</h2>
+                <p class="subtitulo">Preencha o formulário e nossa equipe responderá o mais rápido possível.</p>
 
-            <!-- COLUNA ESQUERDA -->
-            <div style="display: flex; flex-direction: column; gap: 30px;">
+                <div class="mensagem sucesso" id="msgSucesso">
+                    <i class="fas fa-circle-check"></i>
+                    <span id="txtSucesso">Ticket enviado com sucesso!</span>
+                </div>
+                <div class="mensagem erro" id="msgErro">
+                    <i class="fas fa-circle-exclamation"></i>
+                    <span id="txtErro">Erro ao enviar. Tente novamente.</span>
+                </div>
 
-                <!-- FORMULÁRIO -->
-                <section class="card">
-                    <h2><i class="fas fa-ticket"></i>Abrir um Ticket</h2>
-                    <p class="subtitulo">Preencha o formulário e nossa equipe responderá o mais rápido possível.</p>
-
-                    <div class="mensagem sucesso" id="msgSucesso">
-                        <i class="fas fa-circle-check"></i>
-                        <span id="txtSucesso">Ticket enviado com sucesso!</span>
-                    </div>
-                    <div class="mensagem erro" id="msgErro">
-                        <i class="fas fa-circle-exclamation"></i>
-                        <span id="txtErro">Erro ao enviar. Tente novamente.</span>
-                    </div>
-
-                    <form id="formSuporte">
-                        <div class="form-row">
-                            <div class="form-group">
-                                <label for="nome">Nome <span class="obrigatorio">*</span></label>
-                                <input type="text" id="nome" name="nome" placeholder="Seu nome completo" required maxlength="120">
-                            </div>
-                            <div class="form-group">
-                                <label for="login">Login no jogo</label>
-                                <input type="text" id="login" name="login" placeholder="Seu login" maxlength="60">
-                            </div>
-                        </div>
-
+                <form id="formSuporte">
+                    <div class="form-row">
                         <div class="form-group">
-                            <label for="email">Email <span class="obrigatorio">*</span></label>
-                            <input type="email" id="email" name="email" placeholder="seu@email.com" required maxlength="150">
+                            <label for="nome">Nome <span class="obrigatorio">*</span></label>
+                            <input type="text" id="nome" name="nome" placeholder="Seu nome completo" required maxlength="120">
                         </div>
-
-                        <div class="form-row">
-                            <div class="form-group">
-                                <label for="categoria">Categoria <span class="obrigatorio">*</span></label>
-                                <select id="categoria" name="categoria" required>
-                                    <option value="">Selecione...</option>
-                                    <option value="conta">Problema com conta</option>
-                                    <option value="pagamento">Pagamento / Loja</option>
-                                    <option value="bug">Bug / Erro no jogo</option>
-                                    <option value="sugestao">Sugestão</option>
-                                    <option value="denuncia">Denúncia</option>
-                                    <option value="outro">Outro</option>
-                                </select>
-                            </div>
-                            <div class="form-group">
-                                <label for="prioridade">Prioridade</label>
-                                <select id="prioridade" name="prioridade">
-                                    <option value="baixa">Baixa</option>
-                                    <option value="normal" selected>Normal</option>
-                                    <option value="alta">Alta</option>
-                                    <option value="urgente">Urgente</option>
-                                </select>
-                            </div>
-                        </div>
-
                         <div class="form-group">
-                            <label for="assunto">Assunto <span class="obrigatorio">*</span></label>
-                            <input type="text" id="assunto" name="assunto" placeholder="Resumo do problema" required maxlength="200">
+                            <label for="login">Login no jogo</label>
+                            <input type="text" id="login" name="login" placeholder="Seu login" maxlength="60">
                         </div>
+                    </div>
 
+                    <div class="form-group">
+                        <label for="email">Email <span class="obrigatorio">*</span></label>
+                        <input type="email" id="email" name="email" placeholder="seu@email.com" required maxlength="150">
+                    </div>
+
+                    <div class="form-row">
                         <div class="form-group">
-                            <label for="mensagem">Mensagem <span class="obrigatorio">*</span></label>
-                            <textarea id="mensagem" name="mensagem" placeholder="Descreva detalhadamente o que aconteceu..." required maxlength="2000"></textarea>
+                            <label for="categoria">Categoria <span class="obrigatorio">*</span></label>
+                            <select id="categoria" name="categoria" required>
+                                <option value="">Selecione...</option>
+                                <option value="conta">Problema com conta</option>
+                                <option value="pagamento">Pagamento / Loja</option>
+                                <option value="bug">Bug / Erro no jogo</option>
+                                <option value="sugestao">Sugestão</option>
+                                <option value="denuncia">Denúncia</option>
+                                <option value="outro">Outro</option>
+                            </select>
                         </div>
-
-                        <button type="submit" class="btn-enviar" id="btnEnviar">
-                            <i class="fas fa-paper-plane"></i>
-                            <span>Enviar Ticket</span>
-                        </button>
-                    </form>
-                </section>
-
-                <!-- HISTÓRICO DE TICKETS (cards) -->
-                <section class="card">
-                    <h2><i class="fas fa-clock-rotate-left"></i>Meus Tickets</h2>
-                    <p class="subtitulo">Acompanhe o status dos seus tickets em tempo real.</p>
-
-                    <div class="historico-busca">
-                        <input type="text" id="buscaHistorico" placeholder="Digite seu login ou email para ver seus tickets...">
-                        <button id="btnBuscarHistorico"><i class="fas fa-search"></i></button>
-                    </div>
-
-                    <div class="historico-lista" id="historicoLista">
-                        <div class="historico-vazio">
-                            <i class="fas fa-inbox"></i>
-                            Informe seu login ou email para carregar seus tickets.
+                        <div class="form-group">
+                            <label for="prioridade">Prioridade</label>
+                            <select id="prioridade" name="prioridade">
+                                <option value="baixa">Baixa</option>
+                                <option value="normal" selected>Normal</option>
+                                <option value="alta">Alta</option>
+                                <option value="urgente">Urgente</option>
+                            </select>
                         </div>
                     </div>
-                </section>
 
+                    <div class="form-group">
+                        <label for="assunto">Assunto <span class="obrigatorio">*</span></label>
+                        <input type="text" id="assunto" name="assunto" placeholder="Resumo do problema" required maxlength="200">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="mensagem">Mensagem <span class="obrigatorio">*</span></label>
+                        <textarea id="mensagem" name="mensagem" placeholder="Descreva detalhadamente o que aconteceu..." required maxlength="2000"></textarea>
+                    </div>
+
+                    <button type="submit" class="btn-enviar" id="btnEnviar">
+                        <i class="fas fa-paper-plane"></i>
+                        <span>Enviar Ticket</span>
+                    </button>
+                </form>
+            </section>
+
+            <!-- HISTÓRICO DE TICKETS (cards) -->
+            <section class="card">
+                <h2><i class="fas fa-clock-rotate-left"></i>Meus Tickets</h2>
+                <p class="subtitulo">Acompanhe o status dos seus tickets em tempo real.</p>
+
+                <div class="historico-busca">
+                    <input type="text" id="buscaHistorico" placeholder="Digite seu login ou email para ver seus tickets...">
+                    <button id="btnBuscarHistorico"><i class="fas fa-search"></i></button>
+                </div>
+
+                <div class="historico-lista" id="historicoLista">
+                    <div class="historico-vazio">
+                        <i class="fas fa-inbox"></i>
+                        Informe seu login ou email para carregar seus tickets.
+                    </div>
+                </div>
+            </section>
+
+        </div>
+
+        <!-- COLUNA DIREITA -->
+        <div class="coluna-direita">
+
+            <!-- FAQ -->
+            <section class="card">
+                <h2><i class="fas fa-circle-question"></i>Perguntas Frequentes</h2>
+                <p class="subtitulo">Clique para expandir as respostas.</p>
+
+                <div class="faq-item">
+                    <button class="faq-pergunta">
+                        Como recupero minha senha?
+                        <i class="fas fa-chevron-down"></i>
+                    </button>
+                    <div class="faq-resposta">
+                        Acesse a página de login e clique em "Esqueci minha senha". Você receberá um link de redefinição no email cadastrado.
+                    </div>
+                </div>
+
+                <div class="faq-item">
+                    <button class="faq-pergunta">
+                        Meu saldo não atualizou, o que fazer?
+                        <i class="fas fa-chevron-down"></i>
+                    </button>
+                    <div class="faq-resposta">
+                        Aguarde alguns minutos e recarregue a página. Se o problema persistir, abra um ticket com a categoria "Pagamento / Loja" informando o horário e valor.
+                    </div>
+                </div>
+
+                <div class="faq-item">
+                    <button class="faq-pergunta">
+                        Perdi meus itens após uma atualização
+                        <i class="fas fa-chevron-down"></i>
+                    </button>
+                    <div class="faq-resposta">
+                        Nossos sistemas mantêm backup automático. Abra um ticket com categoria "Bug / Erro no jogo" e informe seu login e quais itens sumiram.
+                    </div>
+                </div>
+
+                <div class="faq-item">
+                    <button class="faq-pergunta">
+                        Como entro em contato direto?
+                        <i class="fas fa-chevron-down"></i>
+                    </button>
+                    <div class="faq-resposta">
+                        Use os canais oficiais abaixo. O Discord é o meio mais rápido para respostas em tempo real.
+                    </div>
+                </div>
+
+                <div class="faq-item">
+                    <button class="faq-pergunta">
+                        Quanto tempo leva para responderem?
+                        <i class="fas fa-chevron-down"></i>
+                    </button>
+                    <div class="faq-resposta">
+                        Tickets de prioridade normal são respondidos em até 24h úteis. Prioridade alta/urgente em até 4h.
+                    </div>
+                </div>
+            </section>
+
+            <!-- CANAIS -->
+            <section class="card">
+                <h2><i class="fas fa-comments"></i>Canais de Atendimento</h2>
+                <p class="subtitulo">Escolha o canal que preferir.</p>
+
+                <div class="canais-grid">
+                    <a href="https://discord.gg/ATtu4z9Ewt" target="_blank" rel="noopener" class="canal-card">
+                        <i class="fab fa-discord"></i>
+                        <span class="titulo">Discord</span>
+                        <span class="descricao">Atendimento em tempo real</span>
+                    </a>
+
+                    <a href="mailto:suporte@mmquasetudo.com" class="canal-card">
+                        <i class="fas fa-envelope"></i>
+                        <span class="titulo">Email</span>
+                        <span class="descricao">suporte@mmquasetudo.com</span>
+                    </a>
+
+                    <a href="#" class="canal-card" onclick="return false;">
+                        <i class="fab fa-whatsapp"></i>
+                        <span class="titulo">WhatsApp</span>
+                        <span class="descricao">Em breve</span>
+                    </a>
+
+                    <a href="#" class="canal-card" onclick="return false;">
+                        <i class="fas fa-book"></i>
+                        <span class="titulo">Documentação</span>
+                        <span class="descricao">Guias e tutoriais</span>
+                    </a>
+                </div>
+            </section>
+
+            <!-- STATUS -->
+            <section class="card">
+                <h2><i class="fas fa-signal"></i>Status do Sistema</h2>
+                <p class="subtitulo">Monitoramento em tempo real dos serviços.</p>
+
+                <ul class="status-lista">
+                    <li>
+                        <span class="servico"><i class="fas fa-server"></i> Servidor Principal</span>
+                        <span class="status-badge online">Online</span>
+                    </li>
+                    <li>
+                        <span class="servico"><i class="fas fa-database"></i> Banco de Dados</span>
+                        <span class="status-badge online" id="statusBanco">Online</span>
+                    </li>
+                    <li>
+                        <span class="servico"><i class="fas fa-cart-shopping"></i> Loja</span>
+                        <span class="status-badge online">Online</span>
+                    </li>
+                    <li>
+                        <span class="servico"><i class="fas fa-trophy"></i> Rankings</span>
+                        <span class="status-badge manutencao">Manutenção</span>
+                    </li>
+                </ul>
+            </section>
+
+        </div>
+    </main>
+
+    <!-- ==================== TABELA DE TICKETS (NOVO) ==================== -->
+    <section class="tabela-wrapper">
+        <div class="tabela-card">
+            <div class="tabela-header">
+                <h2><i class="fas fa-list"></i> Meus Tickets</h2>
+                <span class="contador" id="contador">0 tickets</span>
             </div>
 
-            <!-- COLUNA DIREITA -->
-            <div class="coluna-direita">
-
-                <!-- FAQ -->
-                <section class="card">
-                    <h2><i class="fas fa-circle-question"></i>Perguntas Frequentes</h2>
-                    <p class="subtitulo">Clique para expandir as respostas.</p>
-
-                    <div class="faq-item">
-                        <button class="faq-pergunta">
-                            Como recupero minha senha?
-                            <i class="fas fa-chevron-down"></i>
-                        </button>
-                        <div class="faq-resposta">
-                            Acesse a página de login e clique em "Esqueci minha senha". Você receberá um link de redefinição no email cadastrado.
-                        </div>
-                    </div>
-
-                    <div class="faq-item">
-                        <button class="faq-pergunta">
-                            Meu saldo não atualizou, o que fazer?
-                            <i class="fas fa-chevron-down"></i>
-                        </button>
-                        <div class="faq-resposta">
-                            Aguarde alguns minutos e recarregue a página. Se o problema persistir, abra um ticket com a categoria "Pagamento / Loja" informando o horário e valor.
-                        </div>
-                    </div>
-
-                    <div class="faq-item">
-                        <button class="faq-pergunta">
-                            Perdi meus itens após uma atualização
-                            <i class="fas fa-chevron-down"></i>
-                        </button>
-                        <div class="faq-resposta">
-                            Nossos sistemas mantêm backup automático. Abra um ticket com categoria "Bug / Erro no jogo" e informe seu login e quais itens sumiram.
-                        </div>
-                    </div>
-
-                    <div class="faq-item">
-                        <button class="faq-pergunta">
-                            Como entro em contato direto?
-                            <i class="fas fa-chevron-down"></i>
-                        </button>
-                        <div class="faq-resposta">
-                            Use os canais oficiais abaixo. O Discord é o meio mais rápido para respostas em tempo real.
-                        </div>
-                    </div>
-
-                    <div class="faq-item">
-                        <button class="faq-pergunta">
-                            Quanto tempo leva para responderem?
-                            <i class="fas fa-chevron-down"></i>
-                        </button>
-                        <div class="faq-resposta">
-                            Tickets de prioridade normal são respondidos em até 24h úteis. Prioridade alta/urgente em até 4h.
-                        </div>
-                    </div>
-                </section>
-
-                <!-- CANAIS -->
-                <section class="card">
-                    <h2><i class="fas fa-comments"></i>Canais de Atendimento</h2>
-                    <p class="subtitulo">Escolha o canal que preferir.</p>
-
-                    <div class="canais-grid">
-                        <a href="https://discord.gg/ATtu4z9Ewt" target="_blank" rel="noopener" class="canal-card">
-                            <i class="fab fa-discord"></i>
-                            <span class="titulo">Discord</span>
-                            <span class="descricao">Atendimento em tempo real</span>
-                        </a>
-
-                        <a href="mailto:suporte@mmquasetudo.com" class="canal-card">
-                            <i class="fas fa-envelope"></i>
-                            <span class="titulo">Email</span>
-                            <span class="descricao">suporte@mmquasetudo.com</span>
-                        </a>
-
-                        <a href="#" class="canal-card" onclick="return false;">
-                            <i class="fab fa-whatsapp"></i>
-                            <span class="titulo">WhatsApp</span>
-                            <span class="descricao">Em breve</span>
-                        </a>
-
-                        <a href="#" class="canal-card" onclick="return false;">
-                            <i class="fas fa-book"></i>
-                            <span class="titulo">Documentação</span>
-                            <span class="descricao">Guias e tutoriais</span>
-                        </a>
-                    </div>
-                </section>
-
-                <!-- STATUS -->
-                <section class="card">
-                    <h2><i class="fas fa-signal"></i>Status do Sistema</h2>
-                    <p class="subtitulo">Monitoramento em tempo real dos serviços.</p>
-
-                    <ul class="status-lista">
-                        <li>
-                            <span class="servico"><i class="fas fa-server"></i> Servidor Principal</span>
-                            <span class="status-badge online">Online</span>
-                        </li>
-                        <li>
-                            <span class="servico"><i class="fas fa-database"></i> Banco de Dados</span>
-                            <span class="status-badge online" id="statusBanco">Online</span>
-                        </li>
-                        <li>
-                            <span class="servico"><i class="fas fa-cart-shopping"></i> Loja</span>
-                            <span class="status-badge online">Online</span>
-                        </li>
-                        <li>
-                            <span class="servico"><i class="fas fa-trophy"></i> Rankings</span>
-                            <span class="status-badge manutencao">Manutenção</span>
-                        </li>
-                    </ul>
-                </section>
-
-            </div>
-        </main>
-
-        <!-- TABELA DE TICKETS DO USUÁRIO -->
-        <section class="tabela-wrapper">
-            <div class="tabela-card">
-                <div class="tabela-header">
-                    <h2><i class="fas fa-list"></i> Meus Tickets</h2>
-                    <span class="contador" id="contador">0 tickets</span>
-                </div>
-
-                <div class="tabela-scroll">
-                    <table>
-                        <thead>
-                            <tr>
-                                <th>#</th>
-                                <th>Assunto</th>
-                                <th>Categoria</th>
-                                <th>Prioridade</th>
-                                <th>Status</th>
-                                <th>Data</th>
-                                <th>Resposta</th>
-                            </tr>
-                        </thead>
-                        <tbody id="corpoTabela">
-                            <!-- Preenchido via JS -->
-                        </tbody>
-                    </table>
-                </div>
-
-                <div class="estado-vazio" id="estadoVazio" style="display: none;">
-                    <i class="fas fa-inbox"></i>
-                    <p>Nenhum ticket encontrado. Use a busca acima para carregar seus tickets.</p>
-                </div>
-            </div>
-        </section>
-    </div>
-
-    <!-- ==================== ABA ADMIN ==================== -->
-    <div class="aba-conteudo" id="aba-admin">
-
-        <!-- TOOLBAR -->
-        <section class="toolbar">
-            <button class="btn-atualizar" id="btnAtualizar">
-                <i class="fas fa-rotate" id="iconeAtualizar"></i>
-                <span>Atualizar</span>
-            </button>
-        </section>
-
-        <!-- TABELA ADMIN -->
-        <section class="tabela-wrapper">
-            <div class="tabela-card">
-                <div class="tabela-header">
-                    <h2><i class="fas fa-list"></i> Todos os Tickets</h2>
-                    <span class="contador" id="contadorAdmin">0 tickets</span>
-                </div>
-
-                <div class="tabela-scroll">
-                    <table>
-                        <thead>
-                            <tr>
-                                <th>#</th>
-                                <th>Nome</th>
-                                <th>Categoria</th>
-                                <th>Prioridade</th>
-                                <th>Status</th>
-                                <th>Data</th>
-                                <th>Resposta</th>
-                            </tr>
-                        </thead>
-                        <tbody id="corpoTabelaAdmin"></tbody>
-                    </table>
-                </div>
-
-                <div class="estado-vazio" id="estadoVazioAdmin" style="display: none;">
-                    <i class="fas fa-inbox"></i>
-                    <p>Nenhum ticket encontrado.</p>
-                </div>
-            </div>
-        </section>
-    </div>
-
-    <!-- ==================== MODAL (SOMENTE VISUALIZAÇÃO) ==================== -->
-    <div class="modal-overlay" id="modalOverlay">
-        <div class="modal">
-            <div class="modal-header">
-                <h2><i class="fas fa-ticket"></i> Ticket <span id="modalId">#</span></h2>
-                <button class="btn-fechar" id="btnFecharModal">
-                    <i class="fas fa-xmark"></i>
-                </button>
+            <div class="tabela-scroll">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>#</th>
+                            <th>Assunto</th>
+                            <th>Categoria</th>
+                            <th>Prioridade</th>
+                            <th>Status</th>
+                            <th>Data</th>
+                            <th>Resposta</th>
+                        </tr>
+                    </thead>
+                    <tbody id="corpoTabela">
+                        <!-- Preenchido via JS -->
+                    </tbody>
+                </table>
             </div>
 
-            <div class="modal-body">
-                <div class="detalhe-grid">
-                    <div class="detalhe-item">
-                        <div class="rotulo">Nome</div>
-                        <div class="valor" id="modalNome">—</div>
-                    </div>
-                    <div class="detalhe-item">
-                        <div class="rotulo">Categoria</div>
-                        <div class="valor" id="modalCategoria">—</div>
-                    </div>
-                    <div class="detalhe-item full">
-                        <div class="rotulo">Assunto</div>
-                        <div class="valor" id="modalAssunto">—</div>
-                    </div>
-                    <div class="detalhe-item">
-                        <div class="rotulo">Status</div>
-                        <div class="valor" id="modalStatusLabel">—</div>
-                    </div>
-                    <div class="detalhe-item">
-                        <div class="rotulo">Prioridade</div>
-                        <div class="valor" id="modalPrioridadeLabel">—</div>
-                    </div>
-                    <div class="detalhe-item">
-                        <div class="rotulo">Criado em</div>
-                        <div class="valor" id="modalData">—</div>
-                    </div>
-                    <div class="detalhe-item">
-                        <div class="rotulo">Atualizado em</div>
-                        <div class="valor" id="modalUpdated">—</div>
-                    </div>
-                    <div class="detalhe-item full">
-                        <div class="rotulo">ID do usuário</div>
-                        <div class="valor" id="modalUserId">—</div>
-                    </div>
-                </div>
-
-                <div class="detalhe-mensagem">
-                    <span class="titulo"><i class="fas fa-comment"></i> Mensagem do usuário</span>
-                    <div id="modalMensagem">—</div>
-                </div>
-
-                <div class="resposta-bloco" id="modalRespostaBloco" style="display: none;">
-                    <span class="titulo"><i class="fas fa-reply"></i> Resposta da equipe</span>
-                    <div id="modalResposta">—</div>
-                </div>
-            </div>
-
-            <div class="modal-footer">
-                <button class="btn btn-secundario" id="btnFecharModalFooter">
-                    <i class="fas fa-xmark"></i> Fechar
-                </button>
+            <div class="estado-vazio" id="estadoVazio" style="display: none;">
+                <i class="fas fa-inbox"></i>
+                <p>Nenhum ticket encontrado. Use a busca acima para carregar seus tickets.</p>
             </div>
         </div>
-    </div>
+    </section>
 
     <!-- ==================== JAVASCRIPT ==================== -->
     <script>
@@ -1430,27 +1041,6 @@
                     const icon = menuToggle.querySelector('i');
                     icon.classList.add('fa-bars');
                     icon.classList.remove('fa-times');
-                }
-            });
-        });
-
-        /* ==================== ABAS ==================== */
-        const abaBtns = document.querySelectorAll('.aba-btn');
-        const abaConteudos = document.querySelectorAll('.aba-conteudo');
-
-        abaBtns.forEach(btn => {
-            btn.addEventListener('click', () => {
-                const aba = btn.dataset.aba;
-
-                abaBtns.forEach(b => b.classList.remove('ativa'));
-                abaConteudos.forEach(c => c.classList.remove('ativa'));
-
-                btn.classList.add('ativa');
-                document.getElementById('aba-' + aba).classList.add('ativa');
-
-                // Se abrir admin, recarrega tickets
-                if (aba === 'admin') {
-                    carregarTicketsAdmin();
                 }
             });
         });
@@ -1600,12 +1190,11 @@
                 mostrarMensagem('sucesso', `Ticket #${data.id} enviado com sucesso! Responderemos em breve.`);
                 form.reset();
 
+                // Atualiza o histórico automaticamente se o login/email estiver preenchido
                 if (dados.login || dados.email) {
                     document.getElementById('buscaHistorico').value = dados.login || dados.email;
                     carregarHistorico(dados.login, dados.email);
                 }
-
-                carregarTicketsAdmin();
 
             } catch (err) {
                 console.error('[Suporte] Erro ao enviar ticket:', err);
@@ -1803,137 +1392,6 @@
             }
         })();
 
-        /* ==================== ADMIN - TICKETS ==================== */
-        let todosTicketsAdmin = [];
-
-        const corpoTabelaAdmin = document.getElementById('corpoTabelaAdmin');
-        const estadoVazioAdmin = document.getElementById('estadoVazioAdmin');
-        const contadorAdmin = document.getElementById('contadorAdmin');
-        const btnAtualizar = document.getElementById('btnAtualizar');
-        const iconeAtualizar = document.getElementById('iconeAtualizar');
-
-        const modalOverlay = document.getElementById('modalOverlay');
-        const modalId = document.getElementById('modalId');
-        const modalNome = document.getElementById('modalNome');
-        const modalCategoria = document.getElementById('modalCategoria');
-        const modalAssunto = document.getElementById('modalAssunto');
-        const modalStatusLabel = document.getElementById('modalStatusLabel');
-        const modalPrioridadeLabel = document.getElementById('modalPrioridadeLabel');
-        const modalData = document.getElementById('modalData');
-        const modalUpdated = document.getElementById('modalUpdated');
-        const modalUserId = document.getElementById('modalUserId');
-        const modalMensagem = document.getElementById('modalMensagem');
-        const modalRespostaBloco = document.getElementById('modalRespostaBloco');
-        const modalResposta = document.getElementById('modalResposta');
-
-        const btnFecharModal = document.getElementById('btnFecharModal');
-        const btnFecharModalFooter = document.getElementById('btnFecharModalFooter');
-
-        async function carregarTicketsAdmin() {
-            iconeAtualizar.classList.add('loading');
-            btnAtualizar.disabled = true;
-
-            try {
-                const { data, error } = await supabaseClient
-                    .from('suporte_tickets')
-                    .select('*')
-                    .order('id', { ascending: false });
-
-                if (error) throw error;
-
-                todosTicketsAdmin = data || [];
-                renderizarTabelaAdmin(todosTicketsAdmin);
-
-            } catch (err) {
-                console.error('[Admin] Erro ao carregar:', err);
-                corpoTabelaAdmin.innerHTML = '';
-                estadoVazioAdmin.style.display = 'block';
-                contadorAdmin.textContent = '0 tickets';
-            } finally {
-                iconeAtualizar.classList.remove('loading');
-                btnAtualizar.disabled = false;
-            }
-        }
-
-        function renderizarTabelaAdmin(tickets) {
-            corpoTabelaAdmin.innerHTML = '';
-
-            if (!tickets.length) {
-                estadoVazioAdmin.style.display = 'block';
-                contadorAdmin.textContent = '0 tickets';
-                return;
-            }
-
-            estadoVazioAdmin.style.display = 'none';
-            contadorAdmin.textContent = `${tickets.length} ticket${tickets.length !== 1 ? 's' : ''}`;
-
-            tickets.forEach(t => {
-                const tr = document.createElement('tr');
-                tr.dataset.id = t.id;
-
-                const resposta = (t.resposta && t.resposta.trim())
-                    ? escapeHtml(t.resposta)
-                    : '<span style="color:#64748b;">—</span>';
-
-                tr.innerHTML = `
-                    <td class="td-id">#${t.id}</td>
-                    <td>${escapeHtml(t.nome || '—')}</td>
-                    <td>${escapeHtml(labelCategoria(t.categoria))}</td>
-                    <td><span class="badge prio-${t.prioridade || 'normal'}">${labelPrioridade(t.prioridade)}</span></td>
-                    <td><span class="badge status-${t.status || 'aberto'}">${labelStatus(t.status)}</span></td>
-                    <td>${formatarData(t.created_at)}</td>
-                    <td class="td-resposta">${resposta}</td>
-                `;
-
-                tr.addEventListener('click', () => abrirModal(t.id));
-
-                corpoTabelaAdmin.appendChild(tr);
-            });
-        }
-
-        function abrirModal(id) {
-            const t = todosTicketsAdmin.find(x => x.id === id);
-            if (!t) return;
-
-            modalId.textContent = '#' + t.id;
-            modalNome.textContent = t.nome || '—';
-            modalCategoria.textContent = labelCategoria(t.categoria);
-            modalAssunto.textContent = t.assunto || '—';
-            modalStatusLabel.textContent = labelStatus(t.status);
-            modalPrioridadeLabel.textContent = labelPrioridade(t.prioridade);
-            modalData.textContent = formatarData(t.created_at);
-            modalUpdated.textContent = formatarData(t.updated_at);
-            modalUserId.textContent = t.user_id || '—';
-            modalMensagem.textContent = t.mensagem || '—';
-
-            if (t.resposta && t.resposta.trim()) {
-                modalRespostaBloco.style.display = 'block';
-                modalResposta.textContent = t.resposta;
-            } else {
-                modalRespostaBloco.style.display = 'none';
-                modalResposta.textContent = '';
-            }
-
-            modalOverlay.classList.add('show');
-        }
-
-        function fecharModal() {
-            modalOverlay.classList.remove('show');
-        }
-
-        btnFecharModal.addEventListener('click', fecharModal);
-        btnFecharModalFooter.addEventListener('click', fecharModal);
-
-        modalOverlay.addEventListener('click', (e) => {
-            if (e.target === modalOverlay) fecharModal();
-        });
-
-        document.addEventListener('keydown', (e) => {
-            if (e.key === 'Escape' && modalOverlay.classList.contains('show')) fecharModal();
-        });
-
-        btnAtualizar.addEventListener('click', carregarTicketsAdmin);
-
         /* ==================== VERIFICAÇÃO DE STATUS ==================== */
         async function verificarStatus() {
             const badge = document.getElementById('statusBanco');
@@ -1960,9 +1418,6 @@
 
         verificarStatus();
         setInterval(verificarStatus, 30000);
-
-        /* ==================== INICIALIZAÇÃO ==================== */
-        carregarTicketsAdmin();
     </script>
 </body>
 </html>

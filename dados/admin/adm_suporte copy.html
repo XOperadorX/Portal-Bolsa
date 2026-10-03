@@ -5,12 +5,20 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Admin Suporte | MM Quase Tudo</title>
 
+    <!-- Font Awesome -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+
+    <!-- Supabase JS (CDN) -->
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
     <style>
         /* ==================== RESET E BASE ==================== */
-        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Inter', 'Segoe UI', sans-serif; }
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Inter', 'Segoe UI', sans-serif;
+        }
 
         body {
             min-height: 100vh;
@@ -156,7 +164,11 @@
 
         .admin-hero h1 i { color: #f5c542; margin-right: 12px; }
 
-        .admin-hero p { color: #a0b4d0; font-size: 1rem; line-height: 1.6; }
+        .admin-hero p {
+            color: #a0b4d0;
+            font-size: 1rem;
+            line-height: 1.6;
+        }
 
         /* ==================== DASHBOARD STATS ==================== */
         .stats-grid {
@@ -181,10 +193,14 @@
             transition: transform 0.2s, border-color 0.2s;
         }
 
-        .stat-card:hover { transform: translateY(-3px); border-color: #f5c542; }
+        .stat-card:hover {
+            transform: translateY(-3px);
+            border-color: #f5c542;
+        }
 
         .stat-card .icone {
-            width: 52px; height: 52px;
+            width: 52px;
+            height: 52px;
             border-radius: 12px;
             display: flex;
             align-items: center;
@@ -247,7 +263,9 @@
         }
 
         .filtros select:focus,
-        .filtros input:focus { border-color: #3b82f6; }
+        .filtros input:focus {
+            border-color: #3b82f6;
+        }
 
         .filtros input { min-width: 220px; }
 
@@ -266,9 +284,14 @@
             transition: all 0.2s;
         }
 
-        .btn-atualizar:hover { border-color: #f5c542; background: #263449; }
+        .btn-atualizar:hover {
+            border-color: #f5c542;
+            background: #263449;
+        }
 
-        .btn-atualizar .fa-rotate.loading { animation: spin 0.8s linear infinite; }
+        .btn-atualizar .fa-rotate.loading {
+            animation: spin 0.8s linear infinite;
+        }
 
         @keyframes spin { to { transform: rotate(360deg); } }
 
@@ -310,9 +333,14 @@
 
         .tabela-header h2 i { color: #f5c542; }
 
-        .tabela-header .contador { color: #94a3b8; font-size: 0.85rem; }
+        .tabela-header .contador {
+            color: #94a3b8;
+            font-size: 0.85rem;
+        }
 
-        .tabela-scroll { overflow-x: auto; }
+        .tabela-scroll {
+            overflow-x: auto;
+        }
 
         table {
             width: 100%;
@@ -372,17 +400,22 @@
             background: currentColor;
         }
 
+        /* Status */
         .badge.status-aberto { background: rgba(59, 130, 246, 0.15); color: #60a5fa; border: 1px solid rgba(59, 130, 246, 0.4); }
         .badge.status-em_andamento { background: rgba(245, 197, 66, 0.15); color: #f5c542; border: 1px solid rgba(245, 197, 66, 0.4); }
         .badge.status-resolvido { background: rgba(34, 197, 94, 0.15); color: #4ade80; border: 1px solid rgba(34, 197, 94, 0.4); }
         .badge.status-fechado { background: rgba(148, 163, 184, 0.15); color: #94a3b8; border: 1px solid rgba(148, 163, 184, 0.4); }
 
+        /* Prioridade */
         .badge.prio-baixa { background: rgba(148, 163, 184, 0.15); color: #94a3b8; border: 1px solid rgba(148, 163, 184, 0.4); }
         .badge.prio-normal { background: rgba(59, 130, 246, 0.15); color: #60a5fa; border: 1px solid rgba(59, 130, 246, 0.4); }
         .badge.prio-alta { background: rgba(249, 115, 22, 0.15); color: #fb923c; border: 1px solid rgba(249, 115, 22, 0.4); }
         .badge.prio-urgente { background: rgba(239, 68, 68, 0.15); color: #f87171; border: 1px solid rgba(239, 68, 68, 0.4); }
 
-        .acoes { display: flex; gap: 6px; }
+        .acoes {
+            display: flex;
+            gap: 6px;
+        }
 
         .btn-acao {
             width: 34px; height: 34px;
@@ -401,6 +434,7 @@
         .btn-acao:hover { border-color: #f5c542; color: #f5c542; }
         .btn-acao.excluir:hover { border-color: #ef4444; color: #ef4444; }
 
+        /* Estado vazio / loading */
         .estado-vazio {
             padding: 60px 20px;
             text-align: center;
@@ -563,75 +597,11 @@
         .campo-acao select:focus,
         .campo-acao textarea:focus { border-color: #3b82f6; }
 
-        /* ✅ NOVO: Ações rápidas de status */
-        .acoes-rapidas {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 10px;
-            margin-bottom: 18px;
-            padding: 14px;
-            background: #0f172a;
-            border: 1px solid #334155;
-            border-radius: 10px;
-        }
-
-        .acoes-rapidas .label-rapido {
-            width: 100%;
-            font-size: 0.72rem;
-            color: #64748b;
-            text-transform: uppercase;
-            font-weight: 700;
-            letter-spacing: 0.5px;
-            margin-bottom: 4px;
-        }
-
-        .btn-rapido {
-            flex: 1;
-            min-width: 130px;
-            padding: 10px 14px;
-            border-radius: 8px;
-            border: 1px solid #334155;
-            background: #1e293b;
-            color: #e2e8f0;
-            font-size: 0.85rem;
-            font-weight: 700;
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 8px;
-            transition: all 0.2s;
-            font-family: inherit;
-        }
-
-        .btn-rapido i { font-size: 0.95rem; }
-
-        .btn-rapido.em-andamento {
-            border-color: rgba(245, 197, 66, 0.5);
-            color: #f5c542;
-        }
-
-        .btn-rapido.em-andamento:hover {
-            background: rgba(245, 197, 66, 0.15);
-            box-shadow: 0 0 15px rgba(245, 197, 66, 0.3);
-        }
-
-        .btn-rapido.resolvido {
-            border-color: rgba(34, 197, 94, 0.5);
-            color: #4ade80;
-        }
-
-        .btn-rapido.resolvido:hover {
-            background: rgba(34, 197, 94, 0.15);
-            box-shadow: 0 0 15px rgba(34, 197, 94, 0.3);
-        }
-
         .modal-footer {
             display: flex;
             gap: 12px;
             justify-content: flex-end;
             flex-wrap: wrap;
-            padding: 0 24px 24px;
         }
 
         .btn {
@@ -655,7 +625,11 @@
 
         .btn-primario:hover { box-shadow: 0 0 20px rgba(59, 130, 246, 0.5); transform: scale(1.02); }
 
-        .btn-secundario { background: #334155; color: #e2e8f0; }
+        .btn-secundario {
+            background: #334155;
+            color: #e2e8f0;
+        }
+
         .btn-secundario:hover { background: #475569; }
 
         .btn-perigo {
@@ -741,14 +715,12 @@
             .filtros { width: 100%; }
             .filtros select, .filtros input { width: 100%; }
             .toast { left: 16px; right: 16px; max-width: none; }
-            .acoes-rapidas { flex-direction: column; }
-            .btn-rapido { min-width: 100%; }
         }
     </style>
 </head>
 <body>
 
-    <!-- ==================== MENU ==================== -->
+    <!-- ==================== MENU PRINCIPAL ==================== -->
     <div class="menu-container">
         <nav class="navbar">
             <div class="logo">
@@ -878,7 +850,9 @@
                             <th>Ações</th>
                         </tr>
                     </thead>
-                    <tbody id="corpoTabela"></tbody>
+                    <tbody id="corpoTabela">
+                        <!-- Preenchido via JS -->
+                    </tbody>
                 </table>
             </div>
 
@@ -932,17 +906,6 @@
                 </div>
 
                 <div class="detalhe-mensagem" id="modalMensagem">—</div>
-
-                <!-- ✅ NOVO: Ações rápidas de status -->
-                <div class="acoes-rapidas">
-                    <div class="label-rapido">Ações rápidas de status</div>
-                    <button class="btn-rapido em-andamento" id="btnRapidoEmAndamento">
-                        <i class="fas fa-clock"></i> Em andamento
-                    </button>
-                    <button class="btn-rapido resolvido" id="btnRapidoResolvido">
-                        <i class="fas fa-circle-check"></i> Resolvido
-                    </button>
-                </div>
 
                 <div class="modal-actions">
                     <div class="campo-acao">
@@ -1054,8 +1017,6 @@
         const btnExcluirTicket = document.getElementById('btnExcluirTicket');
         const btnFecharModal = document.getElementById('btnFecharModal');
         const btnCancelarModal = document.getElementById('btnCancelarModal');
-        const btnRapidoEmAndamento = document.getElementById('btnRapidoEmAndamento');
-        const btnRapidoResolvido = document.getElementById('btnRapidoResolvido');
 
         const toast = document.getElementById('toast');
         const toastIcone = document.getElementById('toastIcone');
@@ -1077,11 +1038,17 @@
         function formatarData(isoString) {
             if (!isoString) return '—';
             try {
-                return new Date(isoString).toLocaleString('pt-BR', {
-                    day: '2-digit', month: '2-digit', year: 'numeric',
-                    hour: '2-digit', minute: '2-digit'
+                const data = new Date(isoString);
+                return data.toLocaleString('pt-BR', {
+                    day: '2-digit',
+                    month: '2-digit',
+                    year: 'numeric',
+                    hour: '2-digit',
+                    minute: '2-digit'
                 });
-            } catch { return isoString; }
+            } catch {
+                return isoString;
+            }
         }
 
         function labelCategoria(cat) {
@@ -1158,8 +1125,14 @@
 
                 if (termo) {
                     const alvo = [
-                        t.nome, t.login, t.email, t.assunto, t.mensagem, String(t.id)
+                        t.nome,
+                        t.login,
+                        t.email,
+                        t.assunto,
+                        t.mensagem,
+                        String(t.id)
                     ].filter(Boolean).join(' ').toLowerCase();
+
                     if (!alvo.includes(termo)) return false;
                 }
 
@@ -1284,10 +1257,11 @@
             if (e.key === 'Escape' && modalOverlay.classList.contains('show')) fecharModal();
         });
 
-        /* ==================== ✅ SALVAR COM STATUS ESPECÍFICO ==================== */
-        async function salvarComStatus(novoStatus) {
+        /* ==================== SALVAR ALTERAÇÕES ==================== */
+        btnSalvarTicket.addEventListener('click', async () => {
             if (!ticketAtual) return;
 
+            const novoStatus = modalStatus.value;
             const novaPrioridade = modalPrioridade.value;
             const resposta = modalResposta.value.trim() || null;
 
@@ -1306,7 +1280,7 @@
 
                 if (error) throw error;
 
-                mostrarToast('sucesso', `Ticket #${ticketAtual.id} marcado como "${labelStatus(novoStatus)}"!`);
+                mostrarToast('sucesso', `Ticket #${ticketAtual.id} atualizado!`);
                 fecharModal();
                 await carregarTickets();
 
@@ -1317,21 +1291,6 @@
                 btnSalvarTicket.disabled = false;
                 btnSalvarTicket.innerHTML = '<i class="fas fa-floppy-disk"></i> Salvar alterações';
             }
-        }
-
-        btnSalvarTicket.addEventListener('click', () => {
-            salvarComStatus(modalStatus.value);
-        });
-
-        /* ==================== ✅ BOTÕES RÁPIDOS ==================== */
-        btnRapidoEmAndamento.addEventListener('click', () => {
-            modalStatus.value = 'em_andamento';
-            salvarComStatus('em_andamento');
-        });
-
-        btnRapidoResolvido.addEventListener('click', () => {
-            modalStatus.value = 'resolvido';
-            salvarComStatus('resolvido');
         });
 
         /* ==================== EXCLUIR TICKET ==================== */
