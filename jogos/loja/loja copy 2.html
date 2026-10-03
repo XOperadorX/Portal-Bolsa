@@ -1,0 +1,1030 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Loja | MM Quase Tudo</title>
+
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+
+    <!-- Supabase -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+    <style>
+        /* ==================== RESET E BASE ==================== */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Inter', 'Segoe UI', sans-serif;
+        }
+
+        body {
+            min-height: 100vh;
+            background: linear-gradient(135deg, #002e5d 0%, #001a33 100%);
+            color: #e0e0e0;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* ==================== MENU ==================== */
+        .menu-container {
+            width: 100%;
+            background-color: rgb(0, 43, 173);
+            backdrop-filter: blur(8px);
+            border-bottom: 1px solid rgba(255, 215, 0, 0.2);
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.6);
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+        }
+
+        .navbar {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 0.9rem 2rem;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            flex-wrap: wrap;
+        }
+
+        .logo {
+            font-size: 1.8rem;
+            font-weight: 800;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+            color: #ffffff;
+            text-shadow: 0 0 10px rgba(255, 215, 0, 0.5);
+            display: flex;
+            align-items: center;
+            gap: 0.3rem;
+        }
+
+        .logo span { color: #f5c542; font-weight: 900; }
+        .logo i { color: #f5c542; font-size: 1.6rem; margin-right: 0.2rem; }
+
+        /* ==================== LINKS DE NAVEGAÇÃO ==================== */
+        .nav-links {
+            display: flex;
+            align-items: center;
+            gap: 2.2rem;
+            list-style: none;
+            margin: 0;
+            padding: 0;
+        }
+
+        .nav-links li a {
+            text-decoration: none;
+            color: #d0d0d0;
+            font-weight: 600;
+            font-size: 1rem;
+            letter-spacing: 0.3px;
+            transition: all 0.2s ease;
+            padding: 0.5rem 0;
+            position: relative;
+            display: inline-flex;
+            align-items: center;
+        }
+
+        .nav-links li a i {
+            margin-right: 8px;
+            font-size: 0.95em;
+            color: #f5c542;
+            transition: color 0.2s ease, transform 0.2s ease;
+        }
+
+        .nav-links li a:hover i { color: #ffffff; transform: scale(1.1); }
+
+        .nav-links li a::after {
+            content: '';
+            position: absolute;
+            bottom: 0; left: 0;
+            width: 0; height: 2px;
+            background: #f5c542;
+            transition: width 0.25s ease;
+        }
+
+        .nav-links li a:hover { color: #ffffff; }
+        .nav-links li a:hover::after { width: 100%; }
+
+        /* ==================== BOTÃO DISCORD ==================== */
+        .btn-discord {
+            background: linear-gradient(135deg, #f5c542 0%, #d4a017 100%);
+            border: none;
+            border-radius: 40px;
+            color: #0b0e14;
+            font-weight: 700;
+            font-size: 0.9rem;
+            padding: 0.7rem 1.6rem;
+            display: flex;
+            align-items: center;
+            gap: 0.6rem;
+            cursor: pointer;
+            transition: transform 0.2s, box-shadow 0.2s;
+            box-shadow: 0 0 15px rgba(245, 197, 66, 0.3);
+            text-decoration: none;
+            letter-spacing: 0.3px;
+            white-space: nowrap;
+        }
+
+        .btn-discord i { font-size: 1.1rem; }
+
+        .btn-discord:hover {
+            transform: scale(1.03);
+            box-shadow: 0 0 25px rgba(245, 197, 66, 0.6);
+            background: linear-gradient(135deg, #f7d25c 0%, #e0b020 100%);
+        }
+
+        /* ==================== MENU TOGGLE ==================== */
+        .menu-toggle {
+            display: none;
+            background: transparent;
+            border: none;
+            color: #f5c542;
+            font-size: 1.8rem;
+            cursor: pointer;
+            padding: 0.3rem 0.6rem;
+        }
+
+        /* ==================== CONTEÚDO DA LOJA ==================== */
+        .loja-wrapper {
+            flex: 1;
+            max-width: 1400px;
+            width: 100%;
+            margin: 0 auto;
+            padding: 40px 20px;
+        }
+
+        .loja-header { text-align: center; margin-bottom: 40px; }
+
+        .loja-header h1 {
+            font-size: 2.4rem;
+            color: #ffffff;
+            font-weight: 800;
+            letter-spacing: 1px;
+            text-shadow: 0 0 15px rgba(245, 197, 66, 0.4);
+            margin-bottom: 10px;
+        }
+
+        .loja-header h1 i { color: #f5c542; margin-right: 10px; }
+        .loja-header p { color: #a0b4d0; font-size: 1rem; }
+
+        /* ==================== FILTROS ==================== */
+        .filtros {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 12px;
+            margin-bottom: 35px;
+        }
+
+        .filtros button {
+            background: rgba(30, 41, 59, 0.8);
+            border: 1px solid #334155;
+            color: #cbd5e1;
+            padding: 10px 22px;
+            border-radius: 30px;
+            font-size: 0.9rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .filtros button:hover {
+            border-color: #f5c542;
+            color: #f5c542;
+            transform: translateY(-2px);
+        }
+
+        .filtros button.active {
+            background: linear-gradient(135deg, #f5c542 0%, #d4a017 100%);
+            color: #0b0e14;
+            border-color: #f5c542;
+            box-shadow: 0 0 15px rgba(245, 197, 66, 0.4);
+        }
+
+        /* ==================== GRID DE PRODUTOS ==================== */
+        .produtos-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+            gap: 24px;
+        }
+
+        .produto-card {
+            background: #1e293b;
+            border: 1px solid #334155;
+            border-radius: 16px;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            transition: transform 0.25s ease, box-shadow 0.25s ease, border-color 0.25s ease;
+            position: relative;
+        }
+
+        .produto-card:hover {
+            transform: translateY(-6px);
+            border-color: #f5c542;
+            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.5), 0 0 20px rgba(245, 197, 66, 0.2);
+        }
+
+        .produto-imagem {
+            width: 100%;
+            height: 160px;
+            background: linear-gradient(135deg, #002e5d 0%, #004080 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 3.5rem;
+            color: #f5c542;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .produto-imagem::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: radial-gradient(circle at 30% 30%, rgba(245, 197, 66, 0.15), transparent 60%);
+        }
+
+        .produto-tag {
+            position: absolute;
+            top: 12px; right: 12px;
+            background: linear-gradient(135deg, #f5c542 0%, #d4a017 100%);
+            color: #0b0e14;
+            font-size: 0.7rem;
+            font-weight: 800;
+            text-transform: uppercase;
+            padding: 4px 10px;
+            border-radius: 20px;
+            letter-spacing: 0.5px;
+            z-index: 2;
+        }
+
+        .produto-info {
+            padding: 18px;
+            display: flex;
+            flex-direction: column;
+            flex: 1;
+        }
+
+        .produto-info h3 {
+            color: #f1f5f9;
+            font-size: 1.1rem;
+            font-weight: 700;
+            margin-bottom: 8px;
+        }
+
+        .produto-info p {
+            color: #94a3b8;
+            font-size: 0.85rem;
+            line-height: 1.5;
+            margin-bottom: 16px;
+            flex: 1;
+        }
+
+        .produto-preco {
+            display: flex;
+            align-items: baseline;
+            gap: 6px;
+            margin-bottom: 14px;
+        }
+
+        .produto-preco .valor {
+            color: #f5c542;
+            font-size: 1.4rem;
+            font-weight: 800;
+        }
+
+        .produto-preco .moeda {
+            color: #94a3b8;
+            font-size: 0.8rem;
+            font-weight: 600;
+            text-transform: uppercase;
+        }
+
+        .btn-comprar {
+            width: 100%;
+            padding: 11px;
+            background: linear-gradient(135deg, #3b82f6, #2563eb);
+            border: none;
+            border-radius: 8px;
+            color: #ffffff;
+            font-size: 0.9rem;
+            font-weight: 700;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+            font-family: inherit;
+        }
+
+        .btn-comprar:hover {
+            transform: scale(1.03);
+            box-shadow: 0 0 20px rgba(59, 130, 246, 0.5);
+        }
+
+        .btn-comprar:active { transform: scale(0.98); }
+
+        /* ==================== MODAL DE COMPRA ==================== */
+        .modal-overlay {
+            position: fixed;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.75);
+            backdrop-filter: blur(5px);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            z-index: 2000;
+            padding: 20px;
+        }
+
+        .modal-overlay.show { display: flex; }
+
+        .modal {
+            background: #1e293b;
+            border: 1px solid #334155;
+            border-radius: 16px;
+            width: 100%;
+            max-width: 560px;
+            max-height: 90vh;
+            overflow-y: auto;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.7);
+            animation: modalIn 0.25s ease;
+        }
+
+        @keyframes modalIn {
+            from { opacity: 0; transform: translateY(20px) scale(0.98); }
+            to { opacity: 1; transform: translateY(0) scale(1); }
+        }
+
+        .modal-header {
+            padding: 18px 22px;
+            border-bottom: 1px solid #334155;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: sticky;
+            top: 0;
+            background: #1e293b;
+            z-index: 2;
+        }
+
+        .modal-header h2 {
+            font-size: 1.1rem;
+            color: #f1f5f9;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .modal-header h2 i { color: #f5c542; }
+
+        .btn-fechar {
+            background: transparent;
+            border: none;
+            color: #94a3b8;
+            font-size: 1.3rem;
+            cursor: pointer;
+            width: 34px; height: 34px;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.2s;
+        }
+
+        .btn-fechar:hover { background: #334155; color: #fff; }
+
+        .modal-body { padding: 20px; }
+
+        .detalhe-item {
+            background: #0f172a;
+            border: 1px solid #334155;
+            border-radius: 10px;
+            padding: 10px 14px;
+            margin-bottom: 10px;
+        }
+
+        .detalhe-item .rotulo {
+            font-size: 0.7rem;
+            color: #64748b;
+            text-transform: uppercase;
+            font-weight: 700;
+            letter-spacing: 0.5px;
+            margin-bottom: 4px;
+        }
+
+        .detalhe-item .valor {
+            color: #f1f5f9;
+            font-weight: 600;
+            font-size: 0.95rem;
+            word-break: break-word;
+        }
+
+        .campo-acao { margin-top: 16px; }
+
+        .campo-acao label {
+            display: block;
+            color: #94a3b8;
+            font-size: 0.75rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 6px;
+        }
+
+        .campo-acao input,
+        .campo-acao textarea {
+            width: 100%;
+            background: #0f172a;
+            border: 1px solid #334155;
+            border-radius: 8px;
+            color: #f1f5f9;
+            padding: 10px 12px;
+            font-size: 0.9rem;
+            outline: none;
+            font-family: inherit;
+            transition: border-color 0.2s;
+        }
+
+        .campo-acao input:focus,
+        .campo-acao textarea:focus { border-color: #3b82f6; }
+
+        .campo-acao textarea { resize: vertical; min-height: 70px; }
+
+        .modal-aviso {
+            margin-top: 16px;
+            color: #94a3b8;
+            font-size: 0.85rem;
+            line-height: 1.5;
+            padding: 12px 14px;
+            background: rgba(59, 130, 246, 0.08);
+            border-left: 3px solid #3b82f6;
+            border-radius: 6px;
+        }
+
+        .modal-aviso strong { color: #f5c542; }
+
+        .modal-footer {
+            padding: 0 20px 20px;
+            display: flex;
+            gap: 10px;
+            justify-content: flex-end;
+            flex-wrap: wrap;
+        }
+
+        .btn {
+            border: none;
+            border-radius: 8px;
+            padding: 11px 20px;
+            font-size: 0.9rem;
+            font-weight: 700;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            transition: all 0.2s;
+            font-family: inherit;
+        }
+
+        .btn-primario {
+            background: linear-gradient(135deg, #3b82f6, #2563eb);
+            color: #fff;
+        }
+
+        .btn-primario:hover {
+            box-shadow: 0 0 20px rgba(59, 130, 246, 0.5);
+            transform: scale(1.02);
+        }
+
+        .btn-secundario { background: #334155; color: #e2e8f0; }
+        .btn-secundario:hover { background: #475569; }
+
+        .btn:disabled { opacity: 0.6; cursor: not-allowed; transform: none; }
+
+        /* ==================== TOAST ==================== */
+        .toast {
+            position: fixed;
+            bottom: 24px;
+            right: 24px;
+            background: #1e293b;
+            border: 1px solid #334155;
+            border-left: 4px solid #3b82f6;
+            border-radius: 10px;
+            padding: 14px 18px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+            transform: translateX(150%);
+            transition: transform 0.3s ease;
+            z-index: 3000;
+            max-width: 380px;
+        }
+
+        .toast.show { transform: translateX(0); }
+        .toast.sucesso { border-left-color: #22c55e; }
+        .toast.erro { border-left-color: #ef4444; }
+        .toast.warn { border-left-color: #f59e0b; }
+
+        .toast i { font-size: 1.2rem; }
+        .toast.sucesso i { color: #4ade80; }
+        .toast.erro i { color: #f87171; }
+        .toast.warn i { color: #fbbf24; }
+        .toast .texto { font-size: 0.88rem; color: #e2e8f0; }
+
+        /* ==================== RESPONSIVIDADE ==================== */
+        @media (max-width: 1024px) {
+            .navbar { padding: 0.8rem 1.5rem; }
+            .nav-links { gap: 1.5rem; }
+            .btn-discord { padding: 0.6rem 1.2rem; font-size: 0.85rem; }
+        }
+
+        @media (max-width: 860px) {
+            .nav-links {
+                display: none;
+                width: 100%;
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 1rem;
+                padding: 1.5rem 0 0.5rem 0;
+                border-top: 1px solid rgba(255, 215, 0, 0.15);
+                margin-top: 1rem;
+            }
+
+            .nav-links.active { display: flex; }
+            .nav-links li { width: 100%; }
+
+            .nav-links li a {
+                display: flex;
+                width: 100%;
+                padding: 0.6rem 0;
+                font-size: 1.1rem;
+            }
+
+            .menu-toggle { display: block; }
+            .navbar { justify-content: space-between; }
+
+            .btn-discord {
+                margin-left: auto;
+                margin-right: 1rem;
+            }
+
+            .loja-header h1 { font-size: 2rem; }
+        }
+
+        @media (max-width: 480px) {
+            .navbar { padding: 0.7rem 1rem; }
+            .logo { font-size: 1.5rem; }
+            .logo i { font-size: 1.3rem; }
+            .btn-discord { padding: 0.5rem 1rem; font-size: 0.8rem; }
+            .btn-discord span { display: none; }
+            .btn-discord i { font-size: 1.2rem; margin: 0; }
+            .loja-header h1 { font-size: 1.6rem; }
+            .produtos-grid { grid-template-columns: 1fr; }
+            .toast { left: 16px; right: 16px; max-width: none; }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- ==================== MENU PRINCIPAL ==================== -->
+    <div class="menu-container">
+        <nav class="navbar">
+            <div class="logo">
+                <i class="fas fa-cow"></i>
+                MM<span>Quase Tudo</span>
+            </div>
+
+            <button class="menu-toggle" id="menuToggle" aria-label="Abrir menu">
+                <i class="fas fa-bars"></i>
+            </button>
+
+            <ul class="nav-links" id="navLinks">
+                <li><a href="./index.html"><i class="fas fa-house"></i> Início</a></li>
+                <li><a href="./noticias.html"><i class="fas fa-newspaper"></i> Notícias</a></li>
+                <li><a href="./jogos/ranking/ranking002.html"><i class="fas fa-trophy"></i> Classificações</a></li>
+                <li><a href="./eventos.html"><i class="fas fa-calendar-days"></i> Eventos</a></li>
+                <li><a href="./download.html"><i class="fas fa-download"></i> Downloads</a></li>
+                <li><a href="./suporte.html"><i class="fas fa-headset"></i> Suporte</a></li>
+                <li><a href="./loja.html"><i class="fas fa-cart-shopping"></i> Loja</a></li>
+                <li><a href="./cadastro.html"><i class="fas fa-user-plus"></i> Cadastro</a></li>
+                <li><a href="./login.html"><i class="fas fa-sign-in-alt"></i> Login</a></li>
+            </ul>
+
+            <a href="https://discord.gg/ATtu4z9Ewt" class="btn-discord" target="_blank" rel="noopener">
+                <i class="fab fa-discord"></i>
+                <span>Jogue Agora</span>
+            </a>
+        </nav>
+    </div>
+
+    <!-- ==================== CONTEÚDO DA LOJA ==================== -->
+    <main class="loja-wrapper">
+        <header class="loja-header">
+            <h1><i class="fas fa-cart-shopping"></i>Loja MM Quase Tudo</h1>
+            <p>Itens exclusivos, boosts e pacotes para turbinar sua experiência</p>
+        </header>
+
+        <!-- Filtros -->
+        <div class="filtros">
+            <button class="active" data-filtro="todos">Todos</button>
+            <button data-filtro="destaques">Destaques</button>
+            <button data-filtro="vip">VIPs</button>
+            <button data-filtro="itens">Itens</button>
+            <button data-filtro="pacotes">Pacotes</button>
+        </div>
+
+        <!-- Grid de produtos (carregado via JS) -->
+        <section class="produtos-grid" id="produtosGrid">
+            <div style="grid-column:1/-1;text-align:center;padding:60px;color:#94a3b8;">
+                <i class="fas fa-spinner fa-spin" style="font-size:2rem;color:#f5c542;"></i>
+                <p style="margin-top:12px;">Carregando produtos...</p>
+            </div>
+        </section>
+    </main>
+
+    <!-- ==================== MODAL DE COMPRA ==================== -->
+    <div class="modal-overlay" id="modalCompra">
+        <div class="modal">
+            <div class="modal-header">
+                <h2><i class="fas fa-cart-shopping"></i> Confirmar Compra</h2>
+                <button class="btn-fechar" id="btnFecharCompra" aria-label="Fechar">
+                    <i class="fas fa-xmark"></i>
+                </button>
+            </div>
+
+            <div class="modal-body">
+                <div class="detalhe-item">
+                    <div class="rotulo">Produto</div>
+                    <div class="valor" id="compraProduto">—</div>
+                </div>
+
+                <div class="detalhe-item">
+                    <div class="rotulo">Preço</div>
+                    <div class="valor" id="compraPreco" style="color:#4ade80;font-family:monospace;">—</div>
+                </div>
+
+                <div class="detalhe-item">
+                    <div class="rotulo">Duração</div>
+                    <div class="valor" id="compraDuracao">—</div>
+                </div>
+
+                <div class="campo-acao">
+                    <label for="compraChave">Chave Pix para contato</label>
+                    <input type="text" id="compraChave" placeholder="CPF, celular, email ou aleatória...">
+                </div>
+
+                <div class="campo-acao">
+                    <label for="compraObs">Observação (opcional)</label>
+                    <textarea id="compraObs" placeholder="Algo que a equipe precise saber..."></textarea>
+                </div>
+
+                <div class="modal-aviso">
+                    Ao confirmar, um <strong>ticket de suporte</strong> será aberto automaticamente
+                    com status <strong>"Em andamento"</strong>. Nossa equipe entrará em contato
+                    para finalizar o pagamento.
+                </div>
+            </div>
+
+            <div class="modal-footer">
+                <button class="btn btn-secundario" id="btnCancelarCompra">
+                    <i class="fas fa-xmark"></i> Cancelar
+                </button>
+                <button class="btn btn-primario" id="btnConfirmarCompra">
+                    <i class="fas fa-check"></i> Confirmar Compra
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- ==================== TOAST ==================== -->
+    <div class="toast" id="toast">
+        <i class="fas fa-circle-check" id="toastIcone"></i>
+        <span class="texto" id="toastTexto">Mensagem</span>
+    </div>
+
+    <!-- ==================== JAVASCRIPT ==================== -->
+    <script>
+        /* ==================== SUPABASE ==================== */
+        const SUPABASE_URL = 'https://xrcxvizzdumcxbylmkvn.supabase.co';
+        const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InhyY3h2aXp6ZHVtY3hieWxta3ZuIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODY2NjA0NzIsImV4cCI6MjEwMjIzNjQ3Mn0.ohB4tW0UQ-k1PcwoZxm4u9XSGNLsFphv1_UwTWoklOM';
+        const supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+        /* ==================== MENU MOBILE ==================== */
+        const menuToggle = document.getElementById('menuToggle');
+        const navLinks = document.getElementById('navLinks');
+
+        menuToggle.addEventListener('click', () => {
+            navLinks.classList.toggle('active');
+            const icon = menuToggle.querySelector('i');
+            icon.classList.toggle('fa-bars');
+            icon.classList.toggle('fa-times');
+        });
+
+        navLinks.querySelectorAll('a').forEach(link => {
+            link.addEventListener('click', () => {
+                if (window.innerWidth <= 860) {
+                    navLinks.classList.remove('active');
+                    const icon = menuToggle.querySelector('i');
+                    icon.classList.remove('fa-times');
+                    icon.classList.add('fa-bars');
+                }
+            });
+        });
+
+        /* ==================== TOAST ==================== */
+        const toast = document.getElementById('toast');
+        const toastIcone = document.getElementById('toastIcone');
+        const toastTexto = document.getElementById('toastTexto');
+        let toastTimer = null;
+
+        function mostrarToast(tipo, texto) {
+            toast.classList.remove('show', 'sucesso', 'erro', 'warn');
+            toast.classList.add(tipo);
+            const icones = {
+                sucesso: 'fas fa-circle-check',
+                erro: 'fas fa-circle-exclamation',
+                warn: 'fas fa-triangle-exclamation'
+            };
+            toastIcone.className = icones[tipo] || icones.sucesso;
+            toastTexto.textContent = texto;
+            void toast.offsetWidth;
+            toast.classList.add('show');
+            clearTimeout(toastTimer);
+            toastTimer = setTimeout(() => toast.classList.remove('show'), 4000);
+        }
+
+        /* ==================== ESTADO ==================== */
+        let produtos = [];
+        let filtroAtual = 'todos';
+        let produtoSelecionado = null;
+
+        /* ==================== CARREGAR CARGOS VIP ==================== */
+        async function carregarProdutos() {
+            const grid = document.getElementById('produtosGrid');
+
+            try {
+                const { data, error } = await supabaseClient
+                    .from('cargos')
+                    .select('*')
+                    .eq('is_vip', true)
+                    .order('nivel', { ascending: true });
+
+                if (error) throw error;
+
+                produtos = (data || []).map(c => ({
+                    id: c.id,
+                    codigo: c.codigo,
+                    nome: c.nome,
+                    nivel: c.nivel,
+                    cor: c.cor || '#f5c542',
+                    duracao_meses: c.duracao_meses || 1,
+                    preco: parseFloat(c.preco || 0),
+                    descricao: c.descricao || `Benefícios exclusivos do ${c.nome}.`,
+                    categoria: 'vip'
+                }));
+
+                renderizarProdutos();
+
+            } catch (err) {
+                console.error('[Loja] Erro:', err);
+                grid.innerHTML = `
+                    <div style="grid-column:1/-1;text-align:center;padding:40px;color:#f87171;">
+                        <i class="fas fa-circle-exclamation" style="font-size:2rem;"></i>
+                        <p style="margin-top:12px;">Erro ao carregar produtos: ${err.message}</p>
+                    </div>`;
+            }
+        }
+
+        /* ==================== RENDERIZAR PRODUTOS ==================== */
+        function renderizarProdutos() {
+            const grid = document.getElementById('produtosGrid');
+
+            let lista = produtos;
+            if (filtroAtual === 'vip') lista = produtos.filter(p => p.categoria === 'vip');
+            if (filtroAtual === 'destaques') lista = produtos.filter(p => p.nivel >= 6);
+            if (filtroAtual === 'itens' || filtroAtual === 'pacotes') lista = [];
+
+            if (!lista.length) {
+                grid.innerHTML = `
+                    <div style="grid-column:1/-1;text-align:center;padding:40px;color:#64748b;">
+                        <i class="fas fa-box-open" style="font-size:2.5rem;"></i>
+                        <p style="margin-top:12px;">Nenhum produto nesta categoria.</p>
+                    </div>`;
+                return;
+            }
+
+            grid.innerHTML = lista.map(p => {
+                const tag = p.nivel >= 8 ? 'Melhor Valor'
+                          : p.nivel >= 6 ? 'Popular'
+                          : p.nivel === 1 ? 'Novo' : null;
+
+                return `
+                <article class="produto-card" data-id="${p.id}">
+                    <div class="produto-imagem">
+                        ${tag ? `<span class="produto-tag">${tag}</span>` : ''}
+                        <i class="fas fa-crown" style="color:${p.cor}; text-shadow:0 0 20px ${p.cor}80;"></i>
+                    </div>
+                    <div class="produto-info">
+                        <h3 style="color:${p.cor};">${escapeHtml(p.nome)}</h3>
+                        <p>${escapeHtml(p.descricao)}</p>
+                        <div class="produto-preco">
+                            <span class="valor" style="color:${p.cor};">
+                                R$ ${p.preco.toFixed(2).replace('.', ',')}
+                            </span>
+                            <span class="moeda">BRL</span>
+                        </div>
+                        <button class="btn-comprar" data-comprar="${p.id}">
+                            <i class="fas fa-shopping-cart"></i> Comprar
+                        </button>
+                    </div>
+                </article>`;
+            }).join('');
+
+            grid.querySelectorAll('[data-comprar]').forEach(btn => {
+                btn.addEventListener('click', () => abrirModalCompra(parseInt(btn.dataset.comprar)));
+            });
+        }
+
+        /* ==================== FILTROS ==================== */
+        document.querySelectorAll('.filtros button').forEach(btn => {
+            btn.addEventListener('click', () => {
+                document.querySelectorAll('.filtros button').forEach(b => b.classList.remove('active'));
+                btn.classList.add('active');
+                filtroAtual = btn.dataset.filtro || 'todos';
+                renderizarProdutos();
+            });
+        });
+
+        /* ==================== MODAL DE COMPRA ==================== */
+        const modalCompra = document.getElementById('modalCompra');
+        const compraProduto = document.getElementById('compraProduto');
+        const compraPreco = document.getElementById('compraPreco');
+        const compraDuracao = document.getElementById('compraDuracao');
+        const compraChave = document.getElementById('compraChave');
+        const compraObs = document.getElementById('compraObs');
+        const btnConfirmarCompra = document.getElementById('btnConfirmarCompra');
+        const btnCancelarCompra = document.getElementById('btnCancelarCompra');
+        const btnFecharCompra = document.getElementById('btnFecharCompra');
+
+        function abrirModalCompra(id) {
+            const p = produtos.find(x => x.id === id);
+            if (!p) return;
+
+            const logado = localStorage.getItem('usuario_logado');
+            if (!logado) {
+                mostrarToast('warn', 'Faça login para comprar. Redirecionando...');
+                setTimeout(() => { window.location.href = './login.html'; }, 1500);
+                return;
+            }
+
+            produtoSelecionado = p;
+            compraProduto.textContent = p.nome;
+            compraPreco.textContent = `R$ ${p.preco.toFixed(2).replace('.', ',')}`;
+            compraDuracao.textContent = `${p.duracao_meses} mês(es)`;
+            compraChave.value = '';
+            compraObs.value = '';
+            modalCompra.classList.add('show');
+
+            setTimeout(() => compraChave.focus(), 100);
+        }
+
+        function fecharModalCompra() {
+            modalCompra.classList.remove('show');
+            produtoSelecionado = null;
+        }
+
+        btnFecharCompra.addEventListener('click', fecharModalCompra);
+        btnCancelarCompra.addEventListener('click', fecharModalCompra);
+        modalCompra.addEventListener('click', e => {
+            if (e.target === modalCompra) fecharModalCompra();
+        });
+
+        document.addEventListener('keydown', e => {
+            if (e.key === 'Escape' && modalCompra.classList.contains('show')) {
+                fecharModalCompra();
+            }
+        });
+
+        /* ==================== CONFIRMAR COMPRA → CRIA TICKET ==================== */
+        btnConfirmarCompra.addEventListener('click', async () => {
+            if (!produtoSelecionado) return;
+
+            let logado = {};
+            try {
+                logado = JSON.parse(localStorage.getItem('usuario_logado') || '{}');
+            } catch (e) {}
+
+            const chave = compraChave.value.trim();
+            const obs = compraObs.value.trim();
+
+            if (!chave) {
+                mostrarToast('warn', 'Informe uma chave Pix para contato.');
+                compraChave.focus();
+                return;
+            }
+
+            btnConfirmarCompra.disabled = true;
+            btnConfirmarCompra.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Processando...';
+
+            try {
+                const agora = new Date().toISOString();
+
+                // Monta mensagem do ticket
+                const mensagem = [
+                    '🛒 COMPRA NA LOJA',
+                    '',
+                    `Produto: ${produtoSelecionado.nome} (${produtoSelecionado.codigo})`,
+                    `Nível: ${produtoSelecionado.nivel}`,
+                    `Preço: R$ ${produtoSelecionado.preco.toFixed(2).replace('.', ',')}`,
+                    `Duração: ${produtoSelecionado.duracao_meses} mês(es)`,
+                    `Chave Pix informada: ${chave}`,
+                    '',
+                    obs ? `Observação do cliente:\n${obs}` : 'Sem observações.'
+                ].join('\n');
+
+                // 1) Cria o ticket de suporte
+                const { data: ticketCriado, error: errTicket } = await supabaseClient
+                    .from('suporte_tickets')
+                    .insert([{
+                        user_id: logado.id || logado.login || null,
+                        nome: logado.nome || logado.login || 'Cliente',
+                        login: logado.login || '',
+                        email: logado.email || '',
+                        categoria: 'pagamento',
+                        assunto: `[LOJA] ${produtoSelecionado.nome} — R$ ${produtoSelecionado.preco.toFixed(2)}`,
+                        mensagem: mensagem,
+                        prioridade: 'alta',
+                        status: 'em_andamento',
+                        resposta: null,
+                        created_at: agora,
+                        updated_at: agora
+                    }])
+                    .select()
+                    .single();
+
+                if (errTicket) throw errTicket;
+
+                // 2) (Opcional) Registra em "compras"
+                try {
+                    await supabaseClient.from('compras').insert([{
+                        user_login: logado.login || '',
+                        cargo_codigo: produtoSelecionado.codigo,
+                        cargo_nome: produtoSelecionado.nome,
+                        preco: produtoSelecionado.preco,
+                        status: 'pendente',
+                        ticket_id: ticketCriado?.id || null,
+                        created_at: agora
+                    }]);
+                } catch (e) {
+                    console.warn('[Loja] Tabela "compras" não encontrada ou erro:', e.message);
+                }
+
+                // 3) Feedback visual
+                btnConfirmarCompra.innerHTML = '<i class="fas fa-check"></i> Compra registrada!';
+                btnConfirmarCompra.style.background = 'linear-gradient(135deg, #22c55e, #16a34a)';
+
+                mostrarToast('sucesso', `✅ Ticket #${ticketCriado.id} aberto com status "Em andamento"!`);
+
+                setTimeout(() => {
+                    fecharModalCompra();
+                    btnConfirmarCompra.disabled = false;
+                    btnConfirmarCompra.innerHTML = '<i class="fas fa-check"></i> Confirmar Compra';
+                    btnConfirmarCompra.style.background = '';
+
+                    if (confirm(
+                        `✅ Compra registrada!\n\n` +
+                        `Ticket #${ticketCriado.id} aberto com status "Em andamento".\n\n` +
+                        `Deseja ir para a página de suporte agora?`
+                    )) {
+                        window.location.href = './adm_suporte.html';
+                    }
+                }, 1500);
+
+            } catch (err) {
+                console.error('[Loja] Erro ao comprar:', err);
+                mostrarToast('erro', 'Erro ao registrar compra: ' + err.message);
+                btnConfirmarCompra.disabled = false;
+                btnConfirmarCompra.innerHTML = '<i class="fas fa-check"></i> Confirmar Compra';
+            }
+        });
+
+        /* ==================== UTILITÁRIO ==================== */
+        function escapeHtml(str) {
+            if (str === null || str === undefined) return '';
+            const div = document.createElement('div');
+            div.textContent = String(str);
+            return div.innerHTML;
+        }
+
+        /* ==================== INIT ==================== */
+        carregarProdutos();
+    </script>
+</body>
+</html>

@@ -924,24 +924,25 @@
             .diario-modal-body { min-height: 300px; }
         }
 
-        .diario-modal-body {
-            flex: 1;
-            overflow: auto;
-            background: #0f0c1a;
-            position: relative;
-            min-height: 500px;
-            height: calc(92vh - 80px);
-        }
 
-        .diario-modal-body iframe {
-            width: 100%;
-            height: 100%;
-            min-height: 500px;
-            border: none;
-            display: block;
-            background: #0f0c1a;
-            color-scheme: dark;
-        }
+        .diario-modal-body {
+    flex: 1;
+    overflow: auto; /* permite scroll */
+    background: #0f0c1a;
+    position: relative;
+    min-height: 500px;
+    height: calc(92vh - 80px); /* altura explícita */
+}
+
+.diario-modal-body iframe {
+    width: 100%;
+    height: 100%;
+    min-height: 500px;
+    border: none;
+    display: block;
+    background: #0f0c1a;
+    color-scheme: dark;
+}
     </style>
 </head>
 <body>
@@ -997,9 +998,9 @@
 
         <div class="nav-buttons">
 
-            <!-- 🛒 BOTÃO LOJA -->
+            <!-- 🛒 BOTÃO LOJA (NOVO) -->
             <a href="./jogos/loja/loja.html"  class="btn-bolsa" style="background: linear-gradient(135deg, #f59e0b, #d97706);">🛒 Loja</a>
-            <!-- 📅 BOTÃO DIÁRIO -->
+            <!-- 📅 BOTÃO DIÁRIO (abre modal flutuante) -->
             <button type="button" class="btn-bolsa btn-diario" id="btnAbrirDiario">📅 DIÁRIO</button>
             <!-- 👑 BOTÃO CODEX -->
             <a href="./codex.html" class="btn-bolsa btn-codex">📖 CODEX</a>
@@ -1615,11 +1616,8 @@
 
             configurarEventosDosJogos() {
                 document.querySelectorAll('.game-card').forEach(card => {
-                    // Clona para remover listeners antigos
-                    const novo = card.cloneNode(true);
-                    card.parentNode.replaceChild(novo, card);
-                    // Único listener - SEM dupla interceptação
-                    novo.addEventListener('click', this.gastarStaminaParaJogar);
+                    card.removeEventListener('click', this.gastarStaminaParaJogar);
+                    card.addEventListener('click', this.gastarStaminaParaJogar);
                 });
             }
 
@@ -1656,11 +1654,7 @@
             }
         }
 
-        // ============================================================
-        // ✅ CORREÇÃO PRINCIPAL: expor a instância globalmente
-        // ============================================================
         const levelSystem = new LevelSystem();
-        window.levelSystem = levelSystem;  // ⬅️ ESSENCIAL para sincronizarRegenState e interceptações
         let saveInterval = null;
 
         function iniciarSalvamentoAutomatico() {
@@ -1743,11 +1737,10 @@
             setTimeout(async () => {
                 await levelSystem.loadUserData();
                 setTimeout(async () => {
-                    // ✅ AGORA SÓ EXISTE UM SISTEMA DE INTERCEPTAÇÃO
                     levelSystem.configurarEventosDosJogos();
                     iniciarContadorRegen();
                     sincronizarRegenState();
-                    // ❌ REMOVIDO: interceptarCliquesJogos() (era a causa da dupla interceptação)
+                    interceptarCliquesJogos();
                 }, 500);
             }, 300);
 
@@ -1792,85 +1785,113 @@
             });
         });
 
-        // ============================================================
-        // 📅 MODAL FLUTUANTE DO DIÁRIO
-        // ============================================================
-        (function configurarModalDiario() {
-            const btnAbrir = document.getElementById('btnAbrirDiario');
-            const overlay = document.getElementById('diarioModalOverlay');
-            const btnFechar = document.getElementById('btnFecharDiario');
-            const iframe = document.getElementById('diarioIframe');
-
-            if (!btnAbrir || !overlay || !iframe) {
-                console.error('❌ Elementos do modal Diário não encontrados:', {
-                    btnAbrir: !!btnAbrir,
-                    overlay: !!overlay,
-                    iframe: !!iframe
-                });
-                return;
-            }
-
-            let iframeCarregado = false;
-
-            function abrirModal() {
-                console.log('📅 Abrindo modal do Diário...');
-                if (!iframeCarregado || !iframe.src || iframe.src === 'about:blank') {
-                    console.log('🔄 Carregando diario.html no iframe...');
-                    iframe.src = './diario.html';
-                    iframeCarregado = true;
-                }
-                overlay.classList.add('active');
-                document.body.style.overflow = 'hidden';
-                if (window.levelSystem) {
-                    window.levelSystem.addLog('📅 Abriu o Diário de Login', 'info');
-                }
-            }
-
-            function fecharModal() {
-                console.log('📅 Fechando modal do Diário');
-                overlay.classList.remove('active');
-                document.body.style.overflow = '';
-            }
-
-            iframe.addEventListener('load', function() {
-                console.log('✅ iframe do diario.html carregado!');
-                try {
-                    const doc = iframe.contentDocument || iframe.contentWindow.document;
-                    const temConteudo = doc && doc.body && doc.body.innerHTML.length > 100;
-                    if (!temConteudo) {
-                        console.warn('⚠️ iframe carregou mas está vazio');
+        function interceptarCliquesJogos() {
+            document.querySelectorAll('.game-card').forEach(card => {
+                const novo = card.cloneNode(true);
+                card.parentNode.replaceChild(novo, card);
+                novo.addEventListener('click', function (e) {
+                    if (regenState.smAtual < REGEN_CFG.SM_MINIMA_JOGO) {
+                        e.preventDefault(); e.stopPropagation();
+                        novo.style.animation = 'shake 0.5s';
+                        setTimeout(() => { novo.style.animation = ''; }, 500);
+                        if (window.levelSystem) window.levelSystem.mostrarToast(`⚡ Stamina insuficiente! Faltam ${REGEN_CFG.SM_MINIMA_JOGO - regenState.smAtual} SM.`, 'erro');
+                        const c = document.getElementById('staminaRegenContainer');
+                        if (c) c.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                        return false;
                     }
-                } catch (e) {
-                    console.log('ℹ️ iframe cross-origin (normal)');
-                }
+                    if (window.levelSystem && window.levelSystem.gastarStaminaParaJogar) {
+                        window.levelSystem.gastarStaminaParaJogar.call(this, e);
+                    }
+                });
             });
+        }
 
-            iframe.addEventListener('error', function(e) {
-                console.error('❌ Erro ao carregar iframe:', e);
-            });
+// ============================================================
+// 📅 MODAL FLUTUANTE DO DIÁRIO — v2 (com debug)
+// ============================================================
+(function configurarModalDiario() {
+    const btnAbrir = document.getElementById('btnAbrirDiario');
+    const overlay = document.getElementById('diarioModalOverlay');
+    const btnFechar = document.getElementById('btnFecharDiario');
+    const iframe = document.getElementById('diarioIframe');
 
-            btnAbrir.addEventListener('click', function(e) {
-                e.preventDefault();
-                e.stopPropagation();
-                abrirModal();
-            });
+    if (!btnAbrir || !overlay || !iframe) {
+        console.error('❌ Elementos do modal Diário não encontrados:', {
+            btnAbrir: !!btnAbrir,
+            overlay: !!overlay,
+            iframe: !!iframe
+        });
+        return;
+    }
 
-            if (btnFechar) {
-                btnFechar.addEventListener('click', fecharModal);
+    let iframeCarregado = false;
+
+    function abrirModal() {
+        console.log('📅 Abrindo modal do Diário...');
+
+        // SEMPRE recarrega o iframe (evita cache de página em branco)
+        if (!iframeCarregado || !iframe.src || iframe.src === 'about:blank') {
+            console.log('🔄 Carregando diario.html no iframe...');
+            iframe.src = './diario.html';
+            iframeCarregado = true;
+        }
+
+        overlay.classList.add('active');
+        document.body.style.overflow = 'hidden';
+
+        if (window.levelSystem) {
+            window.levelSystem.addLog('📅 Abriu o Diário de Login', 'info');
+        }
+    }
+
+    function fecharModal() {
+        console.log('📅 Fechando modal do Diário');
+        overlay.classList.remove('active');
+        document.body.style.overflow = '';
+    }
+
+    // Event listener do iframe para detectar erros
+    iframe.addEventListener('load', function() {
+        console.log('✅ iframe do diario.html carregado!');
+        try {
+            // Verifica se o conteúdo carregou mesmo
+            const doc = iframe.contentDocument || iframe.contentWindow.document;
+            const temConteudo = doc && doc.body && doc.body.innerHTML.length > 100;
+            if (!temConteudo) {
+                console.warn('⚠️ iframe carregou mas está vazio');
             }
+        } catch (e) {
+            // Cross-origin, normal se for outro domínio
+            console.log('ℹ️ iframe cross-origin (normal)');
+        }
+    });
 
-            overlay.addEventListener('click', function(e) {
-                if (e.target === overlay) fecharModal();
-            });
+    iframe.addEventListener('error', function(e) {
+        console.error('❌ Erro ao carregar iframe:', e);
+    });
 
-            document.addEventListener('keydown', function(e) {
-                if (e.key === 'Escape' && overlay.classList.contains('active')) {
-                    fecharModal();
-                }
-            });
+    btnAbrir.addEventListener('click', function(e) {
+        e.preventDefault();
+        e.stopPropagation();
+        abrirModal();
+    });
 
-            console.log('📅 Modal do Diário configurado!');
-        })();
+    if (btnFechar) {
+        btnFechar.addEventListener('click', fecharModal);
+    }
+
+    overlay.addEventListener('click', function(e) {
+        if (e.target === overlay) fecharModal();
+    });
+
+    document.addEventListener('keydown', function(e) {
+        if (e.key === 'Escape' && overlay.classList.contains('active')) {
+            fecharModal();
+        }
+    });
+
+    console.log('📅 Modal do Diário configurado!');
+})();
     </script>
 </body>
 </html>

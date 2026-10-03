@@ -1,0 +1,1392 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Loja | MM Quase Tudo</title>
+
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+
+    <!-- Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500;700;900&family=Rajdhani:wght@600;700&display=swap" rel="stylesheet">
+
+    <!-- Supabase -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+    <style>
+        /* ==================== RESET E BASE ==================== */
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Rajdhani', sans-serif; }
+
+        :root {
+            --bg-dark: #0a0b10;
+            --card-bg: #121520;
+            --neon-blue: #00f0ff;
+            --neon-purple: #7000ff;
+            --neon-green: #00ff66;
+            --text-color: #f0f4f8;
+        }
+
+        body {
+            background-color: var(--bg-dark);
+            color: var(--text-color);
+            background-image:
+                radial-gradient(circle at 15% 20%, rgba(112, 0, 255, 0.15) 0%, transparent 40%),
+                radial-gradient(circle at 85% 80%, rgba(0, 240, 255, 0.15) 0%, transparent 40%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        /* ==================== NAVBAR CYBERPUNK ==================== */
+        .nav-bar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: rgba(18, 21, 32, 0.8);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(0, 240, 255, 0.2);
+            padding: 12px 24px;
+            border-radius: 16px;
+            margin-bottom: 20px;
+            box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
+            flex-wrap: wrap;
+            gap: 10px;
+            max-width: 1400px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        .nav-links { display: flex; align-items: center; gap: 15px; flex-wrap: wrap; }
+
+        .nav-links a {
+            color: #a0aec0;
+            text-decoration: none;
+            font-weight: 700;
+            font-size: 1.1rem;
+            padding: 8px 16px;
+            border-radius: 8px;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .nav-links a:hover, .nav-links a.active {
+            color: #fff;
+            background: rgba(0, 240, 255, 0.15);
+            border: 1px solid var(--neon-blue);
+            box-shadow: 0 0 10px rgba(0, 240, 255, 0.3);
+        }
+
+        .nav-buttons { display: flex; gap: 10px; align-items: center; flex-wrap: wrap; }
+
+        .btn-bolsa {
+            background: linear-gradient(135deg, #00f0ff, #7000ff);
+            color: white;
+            border: none;
+            padding: 8px 18px;
+            border-radius: 40px;
+            font-weight: bold;
+            font-size: 0.9rem;
+            cursor: pointer;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            box-shadow: 0 0 12px rgba(0, 240, 255, 0.4);
+            text-decoration: none;
+            font-family: 'Rajdhani', sans-serif;
+        }
+
+        .btn-bolsa:hover { transform: translateY(-2px) scale(1.02); box-shadow: 0 0 20px rgba(0, 240, 255, 0.8); }
+
+        /* 👑 BOTÃO CODEX */
+        .btn-codex {
+            background: linear-gradient(135deg, #ffd700, #b8860b) !important;
+            color: #000 !important;
+            box-shadow: 0 0 12px rgba(255, 215, 0, 0.5) !important;
+            animation: codexGlow 2s ease-in-out infinite;
+        }
+        .btn-codex:hover { box-shadow: 0 0 25px rgba(255, 215, 0, 0.9) !important; }
+        @keyframes codexGlow {
+            0%, 100% { box-shadow: 0 0 12px rgba(255, 215, 0, 0.5); }
+            50% { box-shadow: 0 0 22px rgba(255, 215, 0, 0.9), 0 0 35px rgba(255, 215, 0, 0.4); }
+        }
+
+        /* 📅 BOTÃO DIÁRIO */
+        .btn-diario {
+            background: linear-gradient(135deg, #f0c040, #d4a020) !important;
+            color: #000 !important;
+            box-shadow: 0 0 12px rgba(240, 192, 64, 0.5) !important;
+            animation: diarioGlow 2s ease-in-out infinite;
+        }
+        .btn-diario:hover { box-shadow: 0 0 25px rgba(240, 192, 64, 0.9) !important; }
+        @keyframes diarioGlow {
+            0%, 100% { box-shadow: 0 0 12px rgba(240, 192, 64, 0.5); }
+            50% { box-shadow: 0 0 22px rgba(240, 192, 64, 0.9), 0 0 35px rgba(240, 192, 64, 0.4); }
+        }
+
+        /* 🛒 BOTÃO LOJA */
+        .btn-loja {
+            background: linear-gradient(135deg, #f5c542, #d4a017) !important;
+            color: #0b0e14 !important;
+            box-shadow: 0 0 12px rgba(245, 197, 66, 0.5) !important;
+            animation: lojaGlow 2s ease-in-out infinite;
+            font-weight: 800;
+        }
+        .btn-loja:hover { box-shadow: 0 0 25px rgba(245, 197, 66, 0.9) !important; }
+        @keyframes lojaGlow {
+            0%, 100% { box-shadow: 0 0 12px rgba(245, 197, 66, 0.5); }
+            50% { box-shadow: 0 0 22px rgba(245, 197, 66, 0.9), 0 0 35px rgba(245, 197, 66, 0.4); }
+        }
+
+        .btn-sair {
+            background: linear-gradient(135deg, #ef4444, #dc2626);
+            color: white;
+            border: none;
+            padding: 8px 18px;
+            border-radius: 40px;
+            font-weight: bold;
+            font-size: 0.9rem;
+            cursor: pointer;
+            transition: all 0.2s;
+            box-shadow: 0 0 10px rgba(239, 68, 68, 0.3);
+            font-family: 'Rajdhani', sans-serif;
+        }
+        .btn-sair:hover { transform: scale(0.96); background: linear-gradient(135deg, #dc2626, #b91c1c); box-shadow: 0 0 15px rgba(220, 38, 38, 0.6); }
+
+        /* ==================== PERFIL ==================== */
+        .user-profile {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            background: rgba(0, 240, 255, 0.08);
+            padding: 6px 16px 6px 12px;
+            border-radius: 40px;
+            border: 1px solid rgba(0, 240, 255, 0.2);
+            color: #fff;
+            font-weight: 600;
+            font-size: 0.95rem;
+            transition: all 0.3s;
+            cursor: default;
+        }
+        .user-profile:hover {
+            background: rgba(0, 240, 255, 0.15);
+            border-color: var(--neon-blue);
+            box-shadow: 0 0 15px rgba(0, 240, 255, 0.2);
+        }
+        .user-avatar {
+            background: linear-gradient(135deg, var(--neon-blue), var(--neon-purple));
+            width: 36px; height: 36px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.2rem;
+            font-weight: bold;
+            box-shadow: 0 0 10px rgba(0, 240, 255, 0.3);
+        }
+        .user-info { display: flex; flex-direction: column; line-height: 1.2; }
+        .user-nick {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 0.9rem;
+            letter-spacing: 0.5px;
+            color: #fff;
+        }
+        .saldo { font-size: 0.8rem; color: var(--neon-green); display: flex; align-items: center; gap: 4px; }
+
+        /* ==================== BTC WIDGET ==================== */
+        .btc-widget {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            background: linear-gradient(135deg, #1a1a2e, #16213e);
+            border: 1px solid #f7931a;
+            border-radius: 10px;
+            padding: 6px 14px 6px 10px;
+            margin-right: 10px;
+            box-shadow: 0 0 15px rgba(247, 147, 26, 0.15);
+            transition: all 0.3s ease;
+            cursor: default;
+        }
+        .btc-widget:hover { box-shadow: 0 0 25px rgba(247, 147, 26, 0.3); transform: scale(1.02); }
+        .btc-icon { font-size: 20px; animation: btcPulse 2s ease-in-out infinite; }
+        @keyframes btcPulse { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.15); } }
+        .btc-info { display: flex; flex-direction: column; line-height: 1.2; }
+        .btc-label { font-size: 9px; text-transform: uppercase; color: #f7931a; letter-spacing: 0.5px; font-weight: 700; }
+        .btc-value {
+            font-size: 14px;
+            font-weight: 700;
+            color: #f7931a;
+            font-family: 'Orbitron', monospace;
+            text-shadow: 0 0 10px rgba(247, 147, 26, 0.3);
+            letter-spacing: 0.5px;
+        }
+
+        /* ==================== CABEÇALHO DA LOJA ==================== */
+        .loja-header {
+            text-align: center;
+            margin-bottom: 40px;
+            max-width: 1400px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+        .loja-header h1 {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 2.4rem;
+            color: #ffffff;
+            font-weight: 800;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            text-shadow: 0 0 10px var(--neon-blue), 0 0 20px var(--neon-purple);
+            margin-bottom: 10px;
+        }
+        .loja-header h1 i { color: #f5c542; margin-right: 12px; }
+        .loja-header p { color: #8a99ad; font-size: 1rem; }
+
+        /* ==================== FILTROS ==================== */
+        .filtros {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 12px;
+            margin-bottom: 35px;
+            max-width: 1400px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        .filtros button {
+            background: rgba(18, 21, 32, 0.8);
+            border: 1px solid rgba(0, 240, 255, 0.2);
+            color: #cbd5e1;
+            padding: 10px 22px;
+            border-radius: 30px;
+            font-size: 0.9rem;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            font-family: 'Rajdhani', sans-serif;
+        }
+
+        .filtros button:hover {
+            border-color: #f5c542;
+            color: #f5c542;
+            transform: translateY(-2px);
+            box-shadow: 0 0 15px rgba(245, 197, 66, 0.3);
+        }
+
+        .filtros button.active {
+            background: linear-gradient(135deg, #f5c542 0%, #d4a017 100%);
+            color: #0b0e14;
+            border-color: #f5c542;
+            box-shadow: 0 0 15px rgba(245, 197, 66, 0.4);
+        }
+
+        /* ==================== GRID DE PRODUTOS ==================== */
+        .produtos-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+            gap: 24px;
+            max-width: 1400px;
+            margin: 0 auto;
+            padding-bottom: 40px;
+        }
+
+        .produto-card {
+            background: var(--card-bg);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            border-radius: 16px;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            transition: transform 0.25s ease, box-shadow 0.25s ease, border-color 0.25s ease;
+            position: relative;
+        }
+
+        .produto-card:hover {
+            transform: translateY(-6px);
+            border-color: var(--neon-blue);
+            box-shadow: 0 10px 25px -5px rgba(0, 240, 255, 0.4);
+            background: #181d2e;
+        }
+
+        .produto-imagem {
+            width: 100%;
+            height: 160px;
+            background: linear-gradient(135deg, #0a1a3d 0%, #16213e 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 3.5rem;
+            color: #f5c542;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .produto-imagem::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: radial-gradient(circle at 30% 30%, rgba(0, 240, 255, 0.15), transparent 60%);
+        }
+
+        .produto-tag {
+            position: absolute;
+            top: 12px; right: 12px;
+            background: linear-gradient(135deg, #f5c542 0%, #d4a017 100%);
+            color: #0b0e14;
+            font-size: 0.7rem;
+            font-weight: 800;
+            text-transform: uppercase;
+            padding: 4px 10px;
+            border-radius: 20px;
+            letter-spacing: 0.5px;
+            z-index: 2;
+            box-shadow: 0 0 15px rgba(245, 197, 66, 0.5);
+        }
+
+        .produto-info {
+            padding: 18px;
+            display: flex;
+            flex-direction: column;
+            flex: 1;
+        }
+
+        .produto-info h3 {
+            color: #f1f5f9;
+            font-size: 1.1rem;
+            font-weight: 700;
+            margin-bottom: 8px;
+            font-family: 'Orbitron', sans-serif;
+            letter-spacing: 0.5px;
+        }
+
+        .produto-info p {
+            color: #94a3b8;
+            font-size: 0.85rem;
+            line-height: 1.5;
+            margin-bottom: 16px;
+            flex: 1;
+            font-weight: 500;
+        }
+
+        .produto-preco {
+            display: flex;
+            align-items: baseline;
+            gap: 6px;
+            margin-bottom: 14px;
+        }
+
+        .produto-preco .valor {
+            color: #f5c542;
+            font-size: 1.4rem;
+            font-weight: 800;
+            font-family: 'Orbitron', monospace;
+        }
+
+        .produto-preco .moeda {
+            color: #94a3b8;
+            font-size: 0.8rem;
+            font-weight: 600;
+            text-transform: uppercase;
+        }
+
+        .btn-comprar {
+            width: 100%;
+            padding: 11px;
+            background: linear-gradient(135deg, #00f0ff, #7000ff);
+            border: none;
+            border-radius: 40px;
+            color: #ffffff;
+            font-size: 0.9rem;
+            font-weight: 700;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+            font-family: 'Rajdhani', sans-serif;
+            box-shadow: 0 0 12px rgba(0, 240, 255, 0.3);
+        }
+
+        .btn-comprar:hover {
+            transform: translateY(-2px) scale(1.03);
+            box-shadow: 0 0 25px rgba(0, 240, 255, 0.7);
+        }
+
+        .btn-comprar:active { transform: scale(0.98); }
+
+        /* ==================== MODAL DE COMPRA ==================== */
+        .modal-overlay {
+            position: fixed;
+            inset: 0;
+            background: rgba(5, 6, 12, 0.82);
+            backdrop-filter: blur(10px);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            z-index: 2000;
+            padding: 20px;
+        }
+
+        .modal-overlay.show { display: flex; }
+
+        .modal {
+            background: linear-gradient(180deg, #1e1b30 0%, #171426 100%);
+            border: 2px solid #3b3459;
+            border-radius: 16px;
+            width: 100%;
+            max-width: 560px;
+            max-height: 90vh;
+            overflow-y: auto;
+            box-shadow: 0 0 40px rgba(0, 240, 255, 0.25), 0 20px 60px rgba(0, 0, 0, 0.65);
+            animation: modalIn 0.25s ease;
+        }
+
+        @keyframes modalIn {
+            from { opacity: 0; transform: translateY(20px) scale(0.98); }
+            to { opacity: 1; transform: translateY(0) scale(1); }
+        }
+
+        .modal-header {
+            padding: 18px 22px;
+            border-bottom: 1px solid rgba(0, 240, 255, 0.2);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: sticky;
+            top: 0;
+            background: linear-gradient(180deg, #1e1b30 0%, #1e1b30 100%);
+            z-index: 2;
+        }
+
+        .modal-header h2 {
+            font-size: 1.1rem;
+            color: #f1f5f9;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-family: 'Orbitron', sans-serif;
+            letter-spacing: 0.5px;
+        }
+
+        .modal-header h2 i { color: #f5c542; }
+
+        .btn-fechar {
+            background: transparent;
+            border: none;
+            color: #94a3b8;
+            font-size: 1.3rem;
+            cursor: pointer;
+            width: 34px; height: 34px;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.2s;
+        }
+
+        .btn-fechar:hover { background: rgba(239, 68, 68, 0.2); color: #fff; }
+
+        .modal-body { padding: 20px; }
+
+        .detalhe-item {
+            background: #0f172a;
+            border: 1px solid rgba(0, 240, 255, 0.15);
+            border-radius: 10px;
+            padding: 10px 14px;
+            margin-bottom: 10px;
+        }
+
+        .detalhe-item .rotulo {
+            font-size: 0.7rem;
+            color: #64748b;
+            text-transform: uppercase;
+            font-weight: 700;
+            letter-spacing: 0.5px;
+            margin-bottom: 4px;
+        }
+
+        .detalhe-item .valor {
+            color: #f1f5f9;
+            font-weight: 600;
+            font-size: 0.95rem;
+            word-break: break-word;
+        }
+
+        .campo-acao { margin-top: 16px; }
+
+        .campo-acao label {
+            display: block;
+            color: #94a3b8;
+            font-size: 0.75rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 6px;
+        }
+
+        .campo-acao textarea {
+            width: 100%;
+            background: #0f172a;
+            border: 1px solid rgba(0, 240, 255, 0.2);
+            border-radius: 8px;
+            color: #f1f5f9;
+            padding: 10px 12px;
+            font-size: 0.9rem;
+            outline: none;
+            font-family: inherit;
+            transition: border-color 0.2s;
+        }
+
+        .campo-acao textarea:focus { border-color: var(--neon-blue); box-shadow: 0 0 15px rgba(0, 240, 255, 0.2); }
+        .campo-acao textarea { resize: vertical; min-height: 70px; }
+
+        .modal-aviso {
+            margin-top: 16px;
+            color: #94a3b8;
+            font-size: 0.85rem;
+            line-height: 1.5;
+            padding: 12px 14px;
+            background: rgba(0, 240, 255, 0.06);
+            border-left: 3px solid var(--neon-blue);
+            border-radius: 6px;
+        }
+
+        .modal-aviso strong { color: #f5c542; }
+
+        .modal-footer {
+            padding: 0 20px 20px;
+            display: flex;
+            gap: 10px;
+            justify-content: flex-end;
+            flex-wrap: wrap;
+        }
+
+        .btn {
+            border: none;
+            border-radius: 40px;
+            padding: 11px 22px;
+            font-size: 0.9rem;
+            font-weight: 700;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            transition: all 0.2s;
+            font-family: 'Rajdhani', sans-serif;
+        }
+
+        .btn-primario {
+            background: linear-gradient(135deg, #00f0ff, #7000ff);
+            color: #fff;
+            box-shadow: 0 0 12px rgba(0, 240, 255, 0.4);
+        }
+
+        .btn-primario:hover {
+            box-shadow: 0 0 25px rgba(0, 240, 255, 0.8);
+            transform: translateY(-2px) scale(1.02);
+        }
+
+        .btn-secundario { background: #334155; color: #e2e8f0; }
+        .btn-secundario:hover { background: #475569; }
+
+        .btn:disabled { opacity: 0.6; cursor: not-allowed; transform: none; }
+
+        /* ==================== CAIXA PIX ==================== */
+        .pix-box {
+            background: #0f172a;
+            border: 1px solid #f5c542;
+            border-radius: 10px;
+            padding: 12px 14px;
+            margin-bottom: 10px;
+            box-shadow: 0 0 20px rgba(245, 197, 66, 0.15);
+        }
+
+        .pix-box .rotulo {
+            font-size: 0.7rem;
+            color: #f5c542;
+            text-transform: uppercase;
+            font-weight: 700;
+            letter-spacing: 0.5px;
+            margin-bottom: 4px;
+        }
+
+        .pix-linha {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-top: 6px;
+        }
+
+        .pix-valor {
+            font-family: 'Courier New', monospace;
+            color: #f5c542;
+            font-size: 0.95rem;
+            font-weight: 700;
+            word-break: break-all;
+            flex: 1;
+        }
+
+        .btn-copiar-pix {
+            background: rgba(245, 197, 66, 0.15);
+            border: 1px solid rgba(245, 197, 66, 0.5);
+            color: #f5c542;
+            padding: 8px 14px;
+            border-radius: 20px;
+            cursor: pointer;
+            font-weight: 700;
+            font-family: 'Rajdhani', sans-serif;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            transition: all 0.2s;
+            white-space: nowrap;
+        }
+
+        .btn-copiar-pix:hover {
+            background: rgba(245, 197, 66, 0.25);
+            box-shadow: 0 0 15px rgba(245, 197, 66, 0.4);
+        }
+
+        .pix-instrucao {
+            font-size: 0.75rem;
+            color: #94a3b8;
+            margin-top: 8px;
+            line-height: 1.4;
+        }
+
+        .pix-instrucao strong { color: #4ade80; }
+
+        /* ==================== TOAST ==================== */
+        .toast {
+            position: fixed;
+            bottom: 24px;
+            right: 24px;
+            background: rgba(18, 21, 32, 0.95);
+            border: 1px solid rgba(0, 240, 255, 0.2);
+            border-left: 4px solid #3b82f6;
+            border-radius: 10px;
+            padding: 14px 18px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+            transform: translateX(150%);
+            transition: transform 0.3s ease;
+            z-index: 3000;
+            max-width: 380px;
+        }
+
+        .toast.show { transform: translateX(0); }
+        .toast.sucesso { border-left-color: #22c55e; }
+        .toast.erro { border-left-color: #ef4444; }
+        .toast.warn { border-left-color: #f59e0b; }
+
+        .toast i { font-size: 1.2rem; }
+        .toast.sucesso i { color: #4ade80; }
+        .toast.erro i { color: #f87171; }
+        .toast.warn i { color: #fbbf24; }
+        .toast .texto { font-size: 0.88rem; color: #e2e8f0; }
+
+        /* ==================== MODAL DIÁRIO ==================== */
+        .diario-modal-overlay {
+            position: fixed;
+            inset: 0;
+            background: rgba(5, 6, 12, 0.82);
+            backdrop-filter: blur(10px);
+            display: none;
+            justify-content: center;
+            align-items: center;
+            z-index: 99999;
+            padding: 20px;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .diario-modal-overlay.active { display: flex; opacity: 1; }
+
+        .diario-modal {
+            width: 100%;
+            max-width: 1000px;
+            max-height: 92vh;
+            background: linear-gradient(180deg, #1e1b30 0%, #171426 100%);
+            border: 2px solid #3b3459;
+            border-radius: 16px;
+            box-shadow: 0 0 40px rgba(240, 192, 64, 0.25), 0 20px 60px rgba(0, 0, 0, 0.65);
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+            transform: scale(0.92) translateY(20px);
+            transition: transform 0.35s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            animation: diarioModalGlow 3s ease-in-out infinite;
+        }
+
+        .diario-modal-overlay.active .diario-modal { transform: scale(1) translateY(0); }
+
+        @keyframes diarioModalGlow {
+            0%, 100% { box-shadow: 0 0 40px rgba(240, 192, 64, 0.25), 0 20px 60px rgba(0, 0, 0, 0.65); }
+            50% { box-shadow: 0 0 55px rgba(240, 192, 64, 0.45), 0 20px 60px rgba(0, 0, 0, 0.65); }
+        }
+
+        .diario-modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 14px 20px;
+            background: linear-gradient(135deg, rgba(240, 192, 64, 0.12), rgba(212, 160, 32, 0.05));
+            border-bottom: 1px solid rgba(240, 192, 64, 0.25);
+            flex-shrink: 0;
+        }
+
+        .diario-modal-title { display: flex; align-items: center; gap: 12px; }
+
+        .diario-modal-icon {
+            background: linear-gradient(135deg, #f0c040, #d4a020);
+            padding: 8px 11px;
+            border-radius: 10px;
+            font-size: 20px;
+            box-shadow: 0 0 15px rgba(240, 192, 64, 0.5);
+            animation: diarioIconPulse 2s ease-in-out infinite;
+        }
+
+        @keyframes diarioIconPulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.08); }
+        }
+
+        .diario-modal-sub {
+            font-size: 0.7rem;
+            color: #d0c8f0;
+            letter-spacing: 1px;
+            font-weight: 600;
+        }
+
+        .diario-modal-main {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 1.05rem;
+            font-weight: 700;
+            color: #ffd040;
+            letter-spacing: 2px;
+            text-shadow: 0 0 12px rgba(255, 208, 64, 0.5);
+        }
+
+        .diario-modal-close {
+            background: rgba(239, 68, 68, 0.15);
+            border: 1px solid rgba(239, 68, 68, 0.35);
+            color: #fca5a5;
+            width: 38px; height: 38px;
+            border-radius: 50%;
+            font-size: 1.1rem;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.2s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            line-height: 1;
+        }
+
+        .diario-modal-close:hover {
+            background: rgba(239, 68, 68, 0.35);
+            color: #fff;
+            transform: rotate(90deg) scale(1.1);
+            box-shadow: 0 0 18px rgba(239, 68, 68, 0.6);
+        }
+
+        .diario-modal-body {
+            flex: 1;
+            overflow: auto;
+            background: #0f0c1a;
+            position: relative;
+            min-height: 500px;
+            height: calc(92vh - 80px);
+        }
+
+        .diario-modal-body iframe {
+            width: 100%;
+            height: 100%;
+            min-height: 500px;
+            border: none;
+            display: block;
+            background: #0f0c1a;
+            color-scheme: dark;
+        }
+
+        /* ==================== RESPONSIVIDADE ==================== */
+        @media (max-width: 700px) {
+            body { padding: 12px; }
+            .nav-bar { flex-direction: column; align-items: stretch; padding: 10px 14px; }
+            .nav-links { justify-content: center; }
+            .nav-buttons { justify-content: center; }
+            .user-profile { padding: 4px 12px 4px 8px; }
+            .user-nick { font-size: 0.8rem; }
+            .btc-widget { padding: 4px 10px 4px 8px; margin-right: 6px; }
+            .btc-icon { font-size: 16px; }
+            .btc-value { font-size: 11px; }
+            .btc-label { font-size: 7px; }
+            .loja-header h1 { font-size: 1.8rem; }
+            .produtos-grid { grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 14px; }
+            .diario-modal-overlay { padding: 8px; }
+            .diario-modal { max-height: 95vh; border-radius: 12px; }
+            .diario-modal-header { padding: 10px 14px; }
+            .diario-modal-icon { padding: 6px 9px; font-size: 16px; }
+            .diario-modal-main { font-size: 0.9rem; }
+            .diario-modal-sub { font-size: 0.6rem; }
+            .diario-modal-close { width: 32px; height: 32px; font-size: 0.95rem; }
+            .diario-modal-body { min-height: 300px; }
+        }
+
+        @media (max-width: 480px) {
+            .produtos-grid { grid-template-columns: 1fr; }
+            .loja-header h1 { font-size: 1.5rem; }
+            .toast { left: 16px; right: 16px; max-width: none; }
+            .pix-linha { flex-direction: column; align-items: stretch; }
+            .btn-copiar-pix { justify-content: center; }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- ==================== NAVBAR CYBERPUNK ==================== -->
+    <nav class="nav-bar">
+        <div class="nav-links">
+            <a href="../../dashboard.html">🏠 DASHBOARD</a>
+        </div>
+
+        <div class="user-profile" id="userProfile">
+            <div class="user-avatar" id="userAvatar">👤</div>
+            <div class="user-info">
+                <span class="user-nick" id="userNick">Carregando...</span>
+                <span class="saldo" id="saldo">R$ 0,00</span>
+            </div>
+        </div>
+
+
+
+        <div class="nav-buttons">
+
+
+            <a href="../../dados/admin/admin.html" id="btnAdmin" class="btn-bolsa"
+               style="display:none; background: linear-gradient(135deg, #7000ff, #8b5cf6);">
+               👑 Admin
+            </a>
+        </div>
+    </nav>
+
+    <!-- ==================== CABEÇALHO DA LOJA ==================== -->
+    <header class="loja-header">
+        <h1><i class="fas fa-cart-shopping"></i>Loja MM Quase Tudo</h1>
+        <p>Itens exclusivos, boosts e pacotes para turbinar sua experiência</p>
+    </header>
+
+    <!-- Filtros -->
+    <div class="filtros">
+        <button class="active" data-filtro="todos">Todos</button>
+        <button data-filtro="destaques">Destaques</button>
+        <button data-filtro="vip">VIPs</button>
+        <button data-filtro="itens">Itens</button>
+        <button data-filtro="pacotes">Pacotes</button>
+    </div>
+
+    <!-- Grid de produtos (carregado via JS) -->
+    <section class="produtos-grid" id="produtosGrid">
+        <div style="grid-column:1/-1;text-align:center;padding:60px;color:#94a3b8;">
+            <i class="fas fa-spinner fa-spin" style="font-size:2rem;color:#f5c542;"></i>
+            <p style="margin-top:12px;">Carregando produtos...</p>
+        </div>
+    </section>
+
+    <!-- ==================== MODAL DE COMPRA ==================== -->
+    <div class="modal-overlay" id="modalCompra">
+        <div class="modal">
+            <div class="modal-header">
+                <h2><i class="fas fa-cart-shopping"></i> Confirmar Compra</h2>
+                <button class="btn-fechar" id="btnFecharCompra" aria-label="Fechar">
+                    <i class="fas fa-xmark"></i>
+                </button>
+            </div>
+
+            <div class="modal-body">
+                <div class="detalhe-item">
+                    <div class="rotulo">Produto</div>
+                    <div class="valor" id="compraProduto">—</div>
+                </div>
+
+                <div class="detalhe-item">
+                    <div class="rotulo">Preço</div>
+                    <div class="valor" id="compraPreco" style="color:#4ade80;font-family:monospace;">—</div>
+                </div>
+
+                <div class="detalhe-item">
+                    <div class="rotulo">Duração</div>
+                    <div class="valor" id="compraDuracao">—</div>
+                </div>
+
+                <!-- Chave Pix fixa -->
+                <div class="pix-box">
+                    <div class="rotulo"><i class="fas fa-key"></i> Chave Pix para pagamento</div>
+                    <div class="pix-linha">
+                        <div class="pix-valor" id="compraChavePix">—</div>
+                        <button type="button" class="btn-copiar-pix" id="btnCopiarChavePix">
+                            <i class="fas fa-copy"></i> Copiar
+                        </button>
+                    </div>
+                    <div class="pix-instrucao">
+                        Faça o pagamento nessa chave e clique em
+                        <strong>"Já Paguei — Enviar Comprovante"</strong>.
+                        Nossa equipe confirmará o recebimento e liberará sua compra.
+                    </div>
+                </div>
+
+                <div class="campo-acao">
+                    <label for="compraObs">Observação (opcional)</label>
+                    <textarea id="compraObs" placeholder="Algo que a equipe precise saber..."></textarea>
+                </div>
+
+                <div class="modal-aviso">
+                    Ao confirmar, um <strong>ticket de suporte</strong> será aberto com status
+                    <strong>"Em andamento"</strong> e <strong>aguardando pagamento</strong>.
+                    Você será notificado quando a equipe confirmar o Pix.
+                </div>
+            </div>
+
+            <div class="modal-footer">
+                <button class="btn btn-secundario" id="btnCancelarCompra">
+                    <i class="fas fa-xmark"></i> Cancelar
+                </button>
+                <button class="btn btn-primario" id="btnConfirmarCompra">
+                    <i class="fas fa-paper-plane"></i> Já Paguei — Enviar Comprovante
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- ==================== MODAL DIÁRIO ==================== -->
+    <div class="diario-modal-overlay" id="diarioModalOverlay">
+        <div class="diario-modal">
+            <div class="diario-modal-header">
+                <div class="diario-modal-title">
+                    <span class="diario-modal-icon">📅</span>
+                    <div>
+                        <div class="diario-modal-sub">CICLO 1 • DE 30 DIAS</div>
+                        <div class="diario-modal-main">LOGIN DIÁRIO</div>
+                    </div>
+                </div>
+                <button class="diario-modal-close" id="btnFecharDiario" title="Fechar">✕</button>
+            </div>
+            <div class="diario-modal-body">
+                <iframe
+                    id="diarioIframe"
+                    src=""
+                    frameborder="0"
+                    loading="lazy"
+                    title="Login Diário">
+                </iframe>
+            </div>
+        </div>
+    </div>
+
+    <!-- ==================== TOAST ==================== -->
+    <div class="toast" id="toast">
+        <i class="fas fa-circle-check" id="toastIcone"></i>
+        <span class="texto" id="toastTexto">Mensagem</span>
+    </div>
+
+    <!-- ==================== JAVASCRIPT ==================== -->
+    <script>
+        /* ==================== SUPABASE ==================== */
+        const SUPABASE_URL = 'https://xrcxvizzdumcxbylmkvn.supabase.co';
+        const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InhyY3h2aXp6ZHVtY3hieWxta3ZuIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODY2NjA0NzIsImV4cCI6MjEwMjIzNjQ3Mn0.ohB4tW0UQ-k1PcwoZxm4u9XSGNLsFphv1_UwTWoklOM';
+        const TABELA = 'Geral';
+        const supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+        /* ==================== CHAVE PIX FIXA ==================== */
+        /* ⚠️ TROQUE ABAIXO PELA SUA CHAVE PIX REAL */
+        const CHAVE_PIX_FIXA = 'a7f3c9e1-4b2d-4f8a-9c1e-5d6b8a0f2e3c';
+
+        /* ==================== TOAST ==================== */
+        const toast = document.getElementById('toast');
+        const toastIcone = document.getElementById('toastIcone');
+        const toastTexto = document.getElementById('toastTexto');
+        let toastTimer = null;
+
+        function mostrarToast(tipo, texto) {
+            toast.classList.remove('show', 'sucesso', 'erro', 'warn');
+            toast.classList.add(tipo);
+            const icones = {
+                sucesso: 'fas fa-circle-check',
+                erro: 'fas fa-circle-exclamation',
+                warn: 'fas fa-triangle-exclamation'
+            };
+            toastIcone.className = icones[tipo] || icones.sucesso;
+            toastTexto.textContent = texto;
+            void toast.offsetWidth;
+            toast.classList.add('show');
+            clearTimeout(toastTimer);
+            toastTimer = setTimeout(() => toast.classList.remove('show'), 4000);
+        }
+
+        /* ==================== CARREGAR DADOS DO USUÁRIO (NAVBAR) ==================== */
+        (async function carregarUsuarioNavbar() {
+            try {
+                const raw = localStorage.getItem('usuario_logado');
+                if (!raw) return;
+                const sessao = JSON.parse(raw);
+                if (!sessao?.login) return;
+
+                // Preenche com dados básicos da sessão imediatamente
+                const avatar = document.getElementById('userAvatar');
+                const nick = document.getElementById('userNick');
+                if (avatar) avatar.textContent = sessao.login.charAt(0).toUpperCase();
+                if (nick) nick.textContent = sessao.nome || sessao.login;
+
+                // Busca dados atualizados no Supabase
+                const { data: profile } = await supabaseClient
+                    .from(TABELA)
+                    .select('nome, login, saldo, btc, cadeado')
+                    .eq('login', sessao.login)
+                    .maybeSingle();
+
+                if (profile) {
+                    if (nick) nick.textContent = profile.nome || profile.login;
+                    const saldoEl = document.getElementById('saldo');
+                    if (saldoEl) {
+                        saldoEl.textContent = new Intl.NumberFormat('pt-BR', {
+                            style: 'currency', currency: 'BRL'
+                        }).format(profile.saldo || 0);
+                    }
+                    const btcEl = document.getElementById('btcTotal');
+                    if (btcEl) btcEl.textContent = (profile.btc || 0).toFixed(8);
+
+                    // Botão Admin
+                    if (profile.cadeado === true) {
+                        const btnAdmin = document.getElementById('btnAdmin');
+                        if (btnAdmin) {
+                            btnAdmin.style.display = 'inline-flex';
+                            btnAdmin.classList.add('visivel');
+                        }
+                    }
+                }
+            } catch (e) {
+                console.warn('[Navbar] Erro ao carregar usuário:', e);
+            }
+        })();
+
+        /* ==================== BOTÃO SAIR ==================== */
+        document.getElementById('btnSair')?.addEventListener('click', () => {
+            if (confirm('Tem certeza que deseja sair?')) {
+                localStorage.removeItem('usuario_logado');
+                localStorage.removeItem('session_timestamp');
+                window.location.href = './login.html';
+            }
+        });
+
+        /* ==================== MODAL DIÁRIO ==================== */
+        (function configurarModalDiario() {
+            const btnAbrir = document.getElementById('btnAbrirDiario');
+            const overlay = document.getElementById('diarioModalOverlay');
+            const btnFechar = document.getElementById('btnFecharDiario');
+            const iframe = document.getElementById('diarioIframe');
+
+            if (!btnAbrir || !overlay || !iframe) return;
+
+            let iframeCarregado = false;
+
+            function abrirModal() {
+                if (!iframeCarregado || !iframe.src || iframe.src === 'about:blank') {
+                    iframe.src = './diario.html';
+                    iframeCarregado = true;
+                }
+                overlay.classList.add('active');
+                document.body.style.overflow = 'hidden';
+            }
+
+            function fecharModal() {
+                overlay.classList.remove('active');
+                document.body.style.overflow = '';
+            }
+
+            btnAbrir.addEventListener('click', (e) => {
+                e.preventDefault();
+                e.stopPropagation();
+                abrirModal();
+            });
+
+            if (btnFechar) btnFechar.addEventListener('click', fecharModal);
+
+            overlay.addEventListener('click', (e) => {
+                if (e.target === overlay) fecharModal();
+            });
+
+            document.addEventListener('keydown', (e) => {
+                if (e.key === 'Escape' && overlay.classList.contains('active')) fecharModal();
+            });
+        })();
+
+        /* ==================== ESTADO DA LOJA ==================== */
+        let produtos = [];
+        let filtroAtual = 'todos';
+        let produtoSelecionado = null;
+
+        /* ==================== CARREGAR CARGOS VIP ==================== */
+        async function carregarProdutos() {
+            const grid = document.getElementById('produtosGrid');
+
+            try {
+                const { data, error } = await supabaseClient
+                    .from('cargos')
+                    .select('*')
+                    .eq('is_vip', true)
+                    .order('nivel', { ascending: true });
+
+                if (error) throw error;
+
+                produtos = (data || []).map(c => ({
+                    id: c.id,
+                    codigo: c.codigo,
+                    nome: c.nome,
+                    nivel: c.nivel,
+                    cor: c.cor || '#f5c542',
+                    duracao_meses: c.duracao_meses || 1,
+                    preco: parseFloat(c.preco || 0),
+                    descricao: c.descricao || `Benefícios exclusivos do ${c.nome}.`,
+                    categoria: 'vip'
+                }));
+
+                renderizarProdutos();
+
+            } catch (err) {
+                console.error('[Loja] Erro:', err);
+                grid.innerHTML = `
+                    <div style="grid-column:1/-1;text-align:center;padding:40px;color:#f87171;">
+                        <i class="fas fa-circle-exclamation" style="font-size:2rem;"></i>
+                        <p style="margin-top:12px;">Erro ao carregar produtos: ${err.message}</p>
+                    </div>`;
+            }
+        }
+
+        /* ==================== RENDERIZAR PRODUTOS ==================== */
+        function renderizarProdutos() {
+            const grid = document.getElementById('produtosGrid');
+
+            let lista = produtos;
+            if (filtroAtual === 'vip') lista = produtos.filter(p => p.categoria === 'vip');
+            if (filtroAtual === 'destaques') lista = produtos.filter(p => p.nivel >= 6);
+            if (filtroAtual === 'itens' || filtroAtual === 'pacotes') lista = [];
+
+            if (!lista.length) {
+                grid.innerHTML = `
+                    <div style="grid-column:1/-1;text-align:center;padding:40px;color:#64748b;">
+                        <i class="fas fa-box-open" style="font-size:2.5rem;"></i>
+                        <p style="margin-top:12px;">Nenhum produto nesta categoria.</p>
+                    </div>`;
+                return;
+            }
+
+            grid.innerHTML = lista.map(p => {
+                const tag = p.nivel >= 8 ? 'Melhor Valor'
+                          : p.nivel >= 6 ? 'Popular'
+                          : p.nivel === 1 ? 'Novo' : null;
+
+                return `
+                <article class="produto-card" data-id="${p.id}">
+                    <div class="produto-imagem">
+                        ${tag ? `<span class="produto-tag">${tag}</span>` : ''}
+                        <i class="fas fa-crown" style="color:${p.cor}; text-shadow:0 0 20px ${p.cor}80;"></i>
+                    </div>
+                    <div class="produto-info">
+                        <h3 style="color:${p.cor};">${escapeHtml(p.nome)}</h3>
+                        <p>${escapeHtml(p.descricao)}</p>
+                        <div class="produto-preco">
+                            <span class="valor" style="color:${p.cor};">
+                                R$ ${p.preco.toFixed(2).replace('.', ',')}
+                            </span>
+                            <span class="moeda">BRL</span>
+                        </div>
+                        <button class="btn-comprar" data-comprar="${p.id}">
+                            <i class="fas fa-shopping-cart"></i> Comprar
+                        </button>
+                    </div>
+                </article>`;
+            }).join('');
+
+            grid.querySelectorAll('[data-comprar]').forEach(btn => {
+                btn.addEventListener('click', () => abrirModalCompra(parseInt(btn.dataset.comprar)));
+            });
+        }
+
+        /* ==================== FILTROS ==================== */
+        document.querySelectorAll('.filtros button').forEach(btn => {
+            btn.addEventListener('click', () => {
+                document.querySelectorAll('.filtros button').forEach(b => b.classList.remove('active'));
+                btn.classList.add('active');
+                filtroAtual = btn.dataset.filtro || 'todos';
+                renderizarProdutos();
+            });
+        });
+
+        /* ==================== MODAL DE COMPRA ==================== */
+        const modalCompra = document.getElementById('modalCompra');
+        const compraProduto = document.getElementById('compraProduto');
+        const compraPreco = document.getElementById('compraPreco');
+        const compraDuracao = document.getElementById('compraDuracao');
+        const compraChavePix = document.getElementById('compraChavePix');
+        const btnCopiarChavePix = document.getElementById('btnCopiarChavePix');
+        const compraObs = document.getElementById('compraObs');
+        const btnConfirmarCompra = document.getElementById('btnConfirmarCompra');
+        const btnCancelarCompra = document.getElementById('btnCancelarCompra');
+        const btnFecharCompra = document.getElementById('btnFecharCompra');
+
+        function abrirModalCompra(id) {
+            const p = produtos.find(x => x.id === id);
+            if (!p) return;
+
+            const logado = localStorage.getItem('usuario_logado');
+            if (!logado) {
+                mostrarToast('warn', 'Faça login para comprar. Redirecionando...');
+                setTimeout(() => { window.location.href = './login.html'; }, 1500);
+                return;
+            }
+
+            produtoSelecionado = p;
+            compraProduto.textContent = p.nome;
+            compraPreco.textContent = `R$ ${p.preco.toFixed(2).replace('.', ',')}`;
+            compraDuracao.textContent = `${p.duracao_meses} mês(es)`;
+            compraChavePix.textContent = CHAVE_PIX_FIXA;
+            compraObs.value = '';
+            modalCompra.classList.add('show');
+        }
+
+        function fecharModalCompra() {
+            modalCompra.classList.remove('show');
+            produtoSelecionado = null;
+        }
+
+        btnCopiarChavePix.addEventListener('click', () => {
+            navigator.clipboard.writeText(CHAVE_PIX_FIXA).then(() => {
+                mostrarToast('sucesso', '📋 Chave Pix copiada!');
+                const original = btnCopiarChavePix.innerHTML;
+                btnCopiarChavePix.innerHTML = '<i class="fas fa-check"></i> Copiado!';
+                setTimeout(() => { btnCopiarChavePix.innerHTML = original; }, 1500);
+            }).catch(() => {
+                mostrarToast('erro', 'Não foi possível copiar. Copie manualmente.');
+            });
+        });
+
+        btnFecharCompra.addEventListener('click', fecharModalCompra);
+        btnCancelarCompra.addEventListener('click', fecharModalCompra);
+        modalCompra.addEventListener('click', e => {
+            if (e.target === modalCompra) fecharModalCompra();
+        });
+
+        document.addEventListener('keydown', e => {
+            if (e.key === 'Escape' && modalCompra.classList.contains('show')) {
+                fecharModalCompra();
+            }
+        });
+
+        /* ==================== CONFIRMAR COMPRA ==================== */
+        btnConfirmarCompra.addEventListener('click', async () => {
+            if (!produtoSelecionado) return;
+
+            let logado = {};
+            try {
+                logado = JSON.parse(localStorage.getItem('usuario_logado') || '{}');
+            } catch (e) {}
+
+            const obs = compraObs.value.trim();
+
+            btnConfirmarCompra.disabled = true;
+            btnConfirmarCompra.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Enviando...';
+
+            try {
+                const agora = new Date().toISOString();
+
+                const mensagem = [
+                    '🛒 COMPRA NA LOJA — AGUARDANDO PAGAMENTO',
+                    '',
+                    `Produto: ${produtoSelecionado.nome} (${produtoSelecionado.codigo})`,
+                    `Nível: ${produtoSelecionado.nivel}`,
+                    `Preço: R$ ${produtoSelecionado.preco.toFixed(2).replace('.', ',')}`,
+                    `Duração: ${produtoSelecionado.duracao_meses} mês(es)`,
+                    '',
+                    `💳 PIX para pagamento: ${CHAVE_PIX_FIXA}`,
+                    '',
+                    obs ? `Observação do cliente:\n${obs}` : 'Sem observações.',
+                    '',
+                    '⏳ Status: aguardando confirmação do pagamento pelo admin.'
+                ].join('\n');
+
+                // 1) Cria ticket
+                const { data: ticketCriado, error: errTicket } = await supabaseClient
+                    .from('suporte_tickets')
+                    .insert([{
+                        user_id: logado.id || logado.login || null,
+                        nome: logado.nome || logado.login || 'Cliente',
+                        login: logado.login || '',
+                        email: logado.email || '',
+                        categoria: 'pagamento',
+                        assunto: `[LOJA] ${produtoSelecionado.nome} — R$ ${produtoSelecionado.preco.toFixed(2)}`,
+                        mensagem: mensagem,
+                        prioridade: 'alta',
+                        status: 'em_andamento',
+                        resposta: null,
+                        created_at: agora,
+                        updated_at: agora
+                    }])
+                    .select()
+                    .single();
+
+                if (errTicket) throw errTicket;
+
+                // 2) Registra em compras
+                try {
+                    await supabaseClient.from('compras').insert([{
+                        user_login: logado.login || '',
+                        cargo_codigo: produtoSelecionado.codigo,
+                        cargo_nome: produtoSelecionado.nome,
+                        preco: produtoSelecionado.preco,
+                        status: 'aguardando_pagamento',
+                        ticket_id: ticketCriado?.id || null,
+                        created_at: agora
+                    }]);
+                } catch (e) {
+                    console.warn('[Loja] Erro ao inserir em compras:', e.message);
+                }
+
+                btnConfirmarCompra.innerHTML = '<i class="fas fa-check"></i> Enviado!';
+                btnConfirmarCompra.style.background = 'linear-gradient(135deg, #22c55e, #16a34a)';
+
+                mostrarToast('sucesso', `✅ Ticket #${ticketCriado.id} aberto. Aguarde a confirmação do Pix.`);
+
+                setTimeout(() => {
+                    fecharModalCompra();
+                    btnConfirmarCompra.disabled = false;
+                    btnConfirmarCompra.innerHTML = '<i class="fas fa-paper-plane"></i> Já Paguei — Enviar Comprovante';
+                    btnConfirmarCompra.style.background = '';
+                }, 1500);
+
+            } catch (err) {
+                console.error('[Loja] Erro ao comprar:', err);
+                mostrarToast('erro', 'Erro ao registrar compra: ' + err.message);
+                btnConfirmarCompra.disabled = false;
+                btnConfirmarCompra.innerHTML = '<i class="fas fa-paper-plane"></i> Já Paguei — Enviar Comprovante';
+            }
+        });
+
+        /* ==================== UTILITÁRIO ==================== */
+        function escapeHtml(str) {
+            if (str === null || str === undefined) return '';
+            const div = document.createElement('div');
+            div.textContent = String(str);
+            return div.innerHTML;
+        }
+
+        /* ==================== INIT ==================== */
+        carregarProdutos();
+    </script>
+</body>
+</html>
