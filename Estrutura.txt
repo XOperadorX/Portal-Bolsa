@@ -1,0 +1,166 @@
+📁 Estrutura do Projeto Portal_Bolsa
+text
+Portal_Bolsa/
+│
+├── 📄 index.html                    # Redirecionamento inicial (sessão 24h)
+├── 📄 index.js                      # Lógica de verificação de sessão
+├── 📄 menu.html                     # Componente de menu reutilizável
+├── 📄 jsconfig.json                 # Config vazio
+├── 📄 package.json                  # Dependências Cordova
+├── 📄 config.xml                    # Config Cordova (Android/iOS)
+├── 📄 README.md                     # Documentação
+│
+├── 🔐 AUTENTICAÇÃO
+│   ├── login.html                   # Tela de login (RPC login_usuario)
+│   ├── cadastro.html                # Cadastro + fingerprint de dispositivo
+│   ├── confirmar.html               # Confirmação de e-mail (Supabase Auth)
+│   ├── esqueci-login.html           # Recuperar login por nome
+│   └── esqueci-senha.html           # Redefinir senha (SHA-256)
+│
+├── 🏠 PÁGINAS PÚBLICAS
+│   ├── noticias.html                # Central de notícias (filtros + Supabase)
+│   ├── eventos.html                 # Listagem de eventos/torneios
+│   ├── download.html                # Downloads APK/ZIP + status servidor
+│   └── suporte.html                 # Tickets + FAQ + painel admin
+│
+├── 🎮 ÁREA LOGADA
+│   ├── dashboard.html               # Central de jogos (hub principal)
+│   ├── codex.html                   # Códice de equipamentos
+│   ├── diario.html                  # Login diário 30 dias
+│   ├── troca.html                   # TrocaSegura (negociações)
+│   └── testetet.html                # Visualizador de tickets
+│
+├── 📁 shared/                       # (referenciado, não enviado)
+│   ├── offline-regen.css
+│   └── offline-regen.js             # Sistema de regeneração offline
+│
+├── 📁 styles/                       # (referenciado, não enviado)
+│   ├── dashboard.css
+│   └── login.css
+│
+├── 📁 style/                        # (referenciado, não enviado)
+│   ├── esqueci-login.css
+│   └── esqueci-senha.css
+│
+├── 📁 jogos/                        # (referenciado, não enviado)
+│   ├── 📁 planta/planta.html        # Milharal
+│   ├── 📁 bolsa/bolsa.html          # B3 Simulator
+│   ├── 📁 torre/torre.html          # Torre de Arena
+│   ├── 📁 minerar/minerar.html      # Mineração de BTC
+│   ├── 📁 faz/faz.html              # Fazenda
+│   ├── 📁 ninos/ninos.html          # Nino
+│   ├── 📁 shagrila/shagrila.html    # Shagrila
+│   ├── 📁 ponto/ponto.html          # Pontinhos
+│   ├── 📁 papelao/papelao.html      # Papelão
+│   │
+│   ├── 📁 loja/loja.html            # Loja
+│   ├── 📁 mercado/mercado.html      # Mercado
+│   ├── 📁 mochila/mochila.html      # Mochila 🎒
+│   ├── 📁 mumu/mumu.html            # Troca MUMU
+│   ├── 📁 troca/troca.html          # Troca BTC
+│   ├── 📁 ranking/ranking.html      # Classificações
+│   ├── 📁 ranking/ranking002.html   # Classificações (pública)
+│   └── 📁 perfil/perfil.html        # Perfil do jogador
+│
+├── 📁 dados/                        # (referenciado, não enviado)
+│   └── 📁 admin/admin.html          # Painel administrativo
+│
+└── 📁 www/                          # (Cordova — opcional)
+    └── (build)
+🔗 Mapa de Navegação
+text
+                            ┌─────────────┐
+                            │  index.html │
+                            └──────┬──────┘
+                                   │
+                    ┌──────────────┴──────────────┐
+                    │                             │
+              (sessão válida)              (sem sessão)
+                    │                             │
+                    ▼                             ▼
+            ┌──────────────┐              ┌──────────────┐
+            │dashboard.html│              │ noticias.html│
+            └───────┬──────┘              └──────────────┘
+                    │                             ▲
+        ┌───────────┼───────────┐                 │
+        │           │           │                 │
+        ▼           ▼           ▼                 │
+   ┌────────┐ ┌────────┐ ┌──────────┐             │
+   │codex   │ │diario  │ │troca.html│             │
+   └────────┘ └────────┘ └──────────┘             │
+        │                                          │
+        │  ┌──────────────────────────┐            │
+        └─▶│ menu.html (reutilizável) ├────────────┘
+           └──────────────────────────┘
+                    │
+    ┌───────────────┼───────────────┬───────────────┐
+    ▼               ▼               ▼               ▼
+┌─────────┐    ┌──────────┐   ┌──────────┐   ┌──────────┐
+│login    │    │cadastro  │   │eventos   │   │download  │
+└─────────┘    └──────────┘   └──────────┘   └──────────┘
+    │               │
+    ▼               ▼
+┌─────────┐    ┌──────────────┐
+│esqueci- │    │confirmar.html│
+│login/   │    └──────────────┘
+│senha    │
+└─────────┘
+
+    ┌──────────┐
+    │suporte   │◄──── testetet.html (admin view)
+    └──────────┘
+📊 Resumo por Categoria
+Categoria	Qtd	Arquivos
+Autenticação	5	login, cadastro, confirmar, esqueci-login, esqueci-senha
+Públicas	4	noticias, eventos, download, suporte
+Logadas	5	dashboard, codex, diario, troca, testetet
+Sistema	4	index.html, index.js, menu.html, README.md
+Config	3	package.json, config.xml, jsconfig.json
+Referenciadas (não enviadas)	~25	jogos/, shared/, styles/, dados/
+🎯 Fluxo de Dependências
+text
+┌─────────────────────────────────────────────────┐
+│              Supabase (Backend)                 │
+│  https://xrcxvizzdumcxbylmkvn.supabase.co       │
+│                                                  │
+│  Tabelas:  Geral · Atividades · Trocas          │
+│            suporte_tickets · cargos             │
+│            downloads · noticias                 │
+│                                                  │
+│  RPCs:     criar_usuario · login_usuario        │
+│            calcular_regen_offline               │
+└──────────────────┬──────────────────────────────┘
+                   │
+                   ▼
+┌─────────────────────────────────────────────────┐
+│           Frontend (HTML/JS)                    │
+│                                                  │
+│  • CDN: jsDelivr (@supabase/supabase-js@2)      │
+│  • CDN: esm.sh (ES Modules)                     │
+│  • CDN: Font Awesome 6.5.1                      │
+│  • CDN: Google Fonts (Inter/Orbitron/Rajdhani)  │
+└──────────────────┬──────────────────────────────┘
+                   │
+                   ▼
+┌─────────────────────────────────────────────────┐
+│         Apache Cordova (Mobile)                 │
+│                                                  │
+│  • cordova-android ^12.0.0                      │
+│  • cordova-ios ^7.0.0                           │
+│  • Plugins: whitelist, inappbrowser, statusbar, │
+│             device                              │
+└─────────────────────────────────────────────────┘
+⚠️ Arquivos Referenciados mas Ausentes
+Os seguintes arquivos são importados no código mas não foram enviados:
+
+text
+❌ shared/offline-regen.css
+❌ shared/offline-regen.js
+❌ styles/dashboard.css
+❌ styles/login.css
+❌ style/esqueci-login.css
+❌ style/esqueci-senha.css
+❌ style/login.css
+❌ jogos/**/*.html (todos os jogos)
+❌ dados/admin/admin.html
+Nota: offline-regen.js é crítico — a classe OfflineRegen é importada em dashboard.html para o sistema de regeneração de HP/MP/Stamina.
