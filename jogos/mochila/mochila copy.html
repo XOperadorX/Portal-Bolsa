@@ -70,7 +70,8 @@
     justify-content: center;
   }
 
-  .btn-bolsa {
+  .btn-bolsa,
+  .btn-sair {
     display: inline-flex;
     align-items: center;
     gap: 6px;
@@ -88,18 +89,24 @@
     white-space: nowrap;
   }
 
-  .btn-bolsa:hover {
+  .btn-bolsa:hover,
+  .btn-sair:hover {
     filter: brightness(1.15);
     transform: translateY(-1px);
     box-shadow: 0 6px 14px rgba(0, 0, 0, .35);
   }
 
-  .btn-bolsa:active {
+  .btn-bolsa:active,
+  .btn-sair:active {
     transform: scale(.97);
   }
 
-  .btn-diario { background: linear-gradient(135deg, #f59e0b, #d97706); }
-  .btn-codex  { background: linear-gradient(135deg, #22c55e, #16a34a); }
+  .btn-sair {
+    background: linear-gradient(135deg, #b91c1c, #7f1d1d);
+  }
+
+  .btn-diario   { background: linear-gradient(135deg, #f59e0b, #d97706); }
+  .btn-codex    { background: linear-gradient(135deg, #22c55e, #16a34a); }
 
   /* ============================================================
      4. HEADER DA PÁGINA
@@ -396,7 +403,8 @@
       gap: 8px;
     }
 
-    .btn-bolsa {
+    .btn-bolsa,
+    .btn-sair {
       padding: 8px 12px;
       font-size: 12.5px;
     }
@@ -700,7 +708,13 @@ function renderItens(filtro = '') {
 function renderUsuario(u) {
   $('#user-area').innerHTML = `
     <span>👤 <span class="nick">${esc(u.nome || u.login)}</span></span>
+    <button class="btn ghost danger" id="btn-sair">Sair</button>
   `;
+  $('#btn-sair').addEventListener('click', () => {
+    SESSION_KEYS.forEach(k => localStorage.removeItem(k));
+    TIMESTAMP_KEYS.forEach(k => localStorage.removeItem(k));
+    location.href = 'https://xoperadorx.github.io/Portal-Bolsa/login.html';
+  });
 }
 
 function mostrarErro(msg) {

@@ -1,844 +1,750 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
-<head><!-- 3. No <head>, adicione o CSS do menu (ou importe de menu.css) -->
-<link rel="stylesheet" href="./shared/menu.css">
-    <!-- ============================================================ -->
-<!-- SEO / Open Graph / Twitter Card                              -->
-<!-- ============================================================ -->
-<meta name="description" content="MM Quase Tudo — Central de jogos, economia virtual e negociações entre jogadores.">
-<meta name="keywords" content="mm quasetudo, jogos, economia virtual, mmorpg, browser game">
-<meta name="author" content="Equipe MM Quase Tudo">
-<meta name="theme-color" content="#002bad">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#002bad">
 
-<!-- Open Graph (Facebook / Discord / WhatsApp) -->
-<meta property="og:type"        content="website">
-<meta property="og:site_name"   content="MM Quase Tudo">
-<meta property="og:title"       content="MM Quase Tudo — Central de Jogos">
-<meta property="og:description" content="Central de jogos, economia virtual e negociações entre jogadores.">
-<meta property="og:image"       content="https://xoperadorx.github.io/Portal-Bolsa/assets/og-image.png">
-<meta property="og:url"         content="https://xoperadorx.github.io/Portal-Bolsa/">
-<meta property="og:locale"      content="pt_BR">
+  <title>MM Quase Tudo - Login Diário</title>
 
-<!-- Twitter Card -->
-<meta name="twitter:card"        content="summary_large_image">
-<meta name="twitter:title"       content="MM Quase Tudo — Central de Jogos">
-<meta name="twitter:description" content="Central de jogos, economia virtual e negociações entre jogadores.">
-<meta name="twitter:image"       content="https://xoperadorx.github.io/Portal-Bolsa/assets/og-image.png">
+  <meta name="description" content="Login diário do MM Quase Tudo — resgate recompensas todos os dias.">
+  <meta name="author" content="Equipe MM Quase Tudo">
 
-<!-- Favicon -->
-<link rel="icon"             type="image/png" sizes="32x32" href="./assets/favicon-32.png">
-<link rel="icon"             type="image/png" sizes="16x16" href="./assets/favicon-16.png">
-<link rel="apple-touch-icon" sizes="180x180"               href="./assets/apple-touch-icon.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="./assets/favicon-32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="./assets/favicon-16.png">
+  <link rel="apple-touch-icon" sizes="180x180" href="./assets/apple-touch-icon.png">
+  <link rel="manifest" href="./manifest.json">
 
-<!-- PWA (opcional) -->
-<link rel="manifest" href="./manifest.json">
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>MM Quase Tudo - Login Diário - Ciclo 1 de 30 Dias</title>
+  <link rel="stylesheet" href="./shared/menu.css">
 
-    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
-    <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-            font-family: 'Segoe UI', Roboto, Oxygen, Ubuntu, sans-serif;
-        }
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: 'Segoe UI', Roboto, Oxygen, Ubuntu, sans-serif;
+    }
 
-        body {
-            background: linear-gradient(135deg, #0f0c1a 0%, #1a162e 50%, #12101f 100%);
-            min-height: 100vh;
-            display: flex;
-            justify-content: center;
-            align-items: flex-start;
-            padding: 20px;
-            color: #fff;
-        }
+    body {
+      background: linear-gradient(135deg, #0f0c1a 0%, #1a162e 50%, #12101f 100%);
+      min-height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: flex-start;
+      padding: 20px;
+      color: #fff;
+    }
 
-        .container {
-            background: linear-gradient(180deg, #1e1b30 0%, #171426 100%);
-            border: 2px solid #3b3459;
-            border-radius: 16px;
-            padding: 24px;
-            max-width: 900px;
-            width: 100%;
-            box-shadow: 0 0 30px rgba(100, 80, 200, 0.2);
-        }
+    .container {
+      background: linear-gradient(180deg, #1e1b30 0%, #171426 100%);
+      border: 2px solid #3b3459;
+      border-radius: 16px;
+      padding: 24px;
+      max-width: 900px;
+      width: 100%;
+      box-shadow: 0 0 30px rgba(100, 80, 200, 0.2);
+    }
 
-        .header-top {
-            display: flex;
-            justify-content: space-between;
-            align-items: flex-start;
-            margin-bottom: 12px;
-            flex-wrap: wrap;
-            gap: 10px;
-        }
+    .header-top {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      margin-bottom: 12px;
+      flex-wrap: wrap;
+      gap: 10px;
+    }
 
-        .cycle-title {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
+    .cycle-title {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
 
-        .calendar-icon {
-            background: linear-gradient(135deg, #f0c040, #d4a020);
-            padding: 8px 10px;
-            border-radius: 8px;
-            font-weight: bold;
-            color: #000;
-            font-size: 20px;
-        }
+    .calendar-icon {
+      background: linear-gradient(135deg, #f0c040, #d4a020);
+      padding: 8px 10px;
+      border-radius: 8px;
+      font-weight: bold;
+      color: #000;
+      font-size: 20px;
+    }
 
-        .cycle-text {
-            font-size: 14px;
-            color: #d0c8f0;
-        }
+    .cycle-text {
+      font-size: 14px;
+      color: #d0c8f0;
+    }
 
-        .main-title {
-            font-size: 22px;
-            font-weight: bold;
-            margin-top: 2px;
-        }
+    .main-title {
+      font-size: 22px;
+      font-weight: bold;
+      margin-top: 2px;
+    }
 
-        .next-day {
-            text-align: right;
-            color: #a098c0;
-            font-size: 14px;
-        }
+    .next-day {
+      text-align: right;
+      color: #a098c0;
+      font-size: 14px;
+    }
 
-        .countdown {
-            color: #ffd040;
-            font-size: 18px;
-            font-weight: bold;
-            margin-top: 4px;
-            font-variant-numeric: tabular-nums;
-        }
+    .countdown {
+      color: #ffd040;
+      font-size: 18px;
+      font-weight: bold;
+      margin-top: 4px;
+      font-variant-numeric: tabular-nums;
+    }
 
-        .progress-bar-container {
-            width: 100%;
-            height: 6px;
-            background: #2a2540;
-            border-radius: 3px;
-            margin: 16px 0 20px;
-            overflow: hidden;
-        }
+    .progress-bar-container {
+      width: 100%;
+      height: 6px;
+      background: #2a2540;
+      border-radius: 3px;
+      margin: 16px 0 20px;
+      overflow: hidden;
+    }
 
-        .progress-bar {
-            height: 100%;
-            width: 0%;
-            background: linear-gradient(90deg, #f0c840, #ffd040, #f0c840);
-            border-radius: 3px;
-            transition: width 1s linear;
-            position: relative;
-        }
+    .progress-bar {
+      height: 100%;
+      width: 0%;
+      background: linear-gradient(90deg, #f0c840, #ffd040, #f0c840);
+      border-radius: 3px;
+      transition: width 1s linear;
+      position: relative;
+    }
 
-        .progress-bar::after {
-            content: '';
-            position: absolute;
-            top: 0; left: 0; right: 0; bottom: 0;
-            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.4), transparent);
-            animation: shine 2s infinite;
-        }
+    .progress-bar::after {
+      content: '';
+      position: absolute;
+      top: 0; left: 0; right: 0; bottom: 0;
+      background: linear-gradient(90deg, transparent, rgba(255,255,255,0.4), transparent);
+      animation: shine 2s infinite;
+    }
 
-        @keyframes shine {
-            0% { transform: translateX(-100%); }
-            100% { transform: translateX(100%); }
-        }
+    @keyframes shine {
+      0% { transform: translateX(-100%); }
+      100% { transform: translateX(100%); }
+    }
 
-        /* Botão de resgatar */
-        .btn-resgatar-container {
-            display: flex;
-            justify-content: center;
-            margin: 20px 0 10px;
-        }
+    .btn-resgatar-container {
+      display: flex;
+      justify-content: center;
+      margin: 20px 0 10px;
+    }
 
-        .btn-resgatar {
-            padding: 14px 32px;
-            background: linear-gradient(135deg, #f0c040, #d4a020);
-            border: none;
-            border-radius: 12px;
-            color: #000;
-            font-weight: bold;
-            font-size: 15px;
-            cursor: pointer;
-            box-shadow: 0 0 20px rgba(240, 192, 64, 0.5);
-            transition: all 0.3s;
-            font-family: inherit;
-            letter-spacing: 1px;
-            text-transform: uppercase;
-            animation: pulseBtn 2s ease-in-out infinite;
-        }
+    .btn-resgatar {
+      padding: 14px 32px;
+      background: linear-gradient(135deg, #f0c040, #d4a020);
+      border: none;
+      border-radius: 12px;
+      color: #000;
+      font-weight: bold;
+      font-size: 15px;
+      cursor: pointer;
+      box-shadow: 0 0 20px rgba(240, 192, 64, 0.5);
+      transition: all 0.3s;
+      font-family: inherit;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+      animation: pulseBtn 2s ease-in-out infinite;
+    }
 
-        .btn-resgatar:hover:not(:disabled) {
-            transform: scale(1.05);
-            box-shadow: 0 0 30px rgba(240, 192, 64, 0.9);
-        }
+    .btn-resgatar:hover:not(:disabled) {
+      transform: scale(1.05);
+      box-shadow: 0 0 30px rgba(240, 192, 64, 0.9);
+    }
 
-        .btn-resgatar:disabled {
-            background: #3b3459;
-            color: #6a6a8a;
-            cursor: not-allowed;
-            box-shadow: none;
-            animation: none;
-        }
+    .btn-resgatar:disabled {
+      background: #3b3459;
+      color: #6a6a8a;
+      cursor: not-allowed;
+      box-shadow: none;
+      animation: none;
+    }
 
-        @keyframes pulseBtn {
-            0%, 100% { box-shadow: 0 0 20px rgba(240, 192, 64, 0.5); }
-            50% { box-shadow: 0 0 30px rgba(240, 192, 64, 0.8); }
-        }
+    @keyframes pulseBtn {
+      0%, 100% { box-shadow: 0 0 20px rgba(240, 192, 64, 0.5); }
+      50% { box-shadow: 0 0 30px rgba(240, 192, 64, 0.8); }
+    }
 
-        .status-msg {
-            text-align: center;
-            font-size: 13px;
-            color: #a098c0;
-            margin-top: 8px;
-            min-height: 18px;
-        }
+    .status-msg {
+      text-align: center;
+      font-size: 13px;
+      color: #a098c0;
+      margin-top: 8px;
+      min-height: 18px;
+    }
 
-        .status-msg.erro { color: #ff8080; }
-        .status-msg.sucesso { color: #60f0a0; }
+    .status-msg.erro { color: #ff8080; }
+    .status-msg.sucesso { color: #60f0a0; }
 
-        /* Grade de Dias */
-        .grid-days {
-            display: grid;
-            grid-template-columns: repeat(10, 1fr);
-            gap: 8px;
-            margin: 16px 0;
-        }
+    .grid-days {
+      display: grid;
+      grid-template-columns: repeat(10, 1fr);
+      gap: 8px;
+      margin: 16px 0;
+    }
 
-        .day-card {
-            background: linear-gradient(180deg, #2a2540, #221d35);
-            border: 2px solid #3b3459;
-            border-radius: 8px;
-            padding: 10px 6px;
-            text-align: center;
-            transition: 0.2s;
-            position: relative;
-        }
+    .day-card {
+      background: linear-gradient(180deg, #2a2540, #221d35);
+      border: 2px solid #3b3459;
+      border-radius: 8px;
+      padding: 10px 6px;
+      text-align: center;
+      transition: 0.2s;
+      position: relative;
+    }
 
-        .day-card.current {
-            border-color: #60f0a0;
-            box-shadow: 0 0 10px rgba(96, 240, 160, 0.3);
-        }
+    .day-card.current {
+      border-color: #60f0a0;
+      box-shadow: 0 0 10px rgba(96, 240, 160, 0.3);
+    }
 
-        .day-card.resgatado {
-            background: linear-gradient(180deg, #1a3a2a, #122a1e);
-            border-color: #2a8a5a;
-            opacity: 0.85;
-        }
+    .day-card.resgatado {
+      background: linear-gradient(180deg, #1a3a2a, #122a1e);
+      border-color: #2a8a5a;
+      opacity: 0.85;
+    }
 
-        .day-card.resgatado::after {
-            content: '✓';
-            position: absolute;
-            top: 3px;
-            right: 5px;
-            color: #60f0a0;
-            font-weight: bold;
-            font-size: 13px;
-        }
+    .day-card.resgatado::after {
+      content: '✓';
+      position: absolute;
+      top: 3px;
+      right: 5px;
+      color: #60f0a0;
+      font-weight: bold;
+      font-size: 13px;
+    }
 
-        .day-card.bloqueado {
-            opacity: 0.5;
-        }
+    .day-card.bloqueado {
+      opacity: 0.5;
+    }
 
-        .day-number {
-            font-size: 12px;
-            color: #a098c0;
-            margin-bottom: 6px;
-        }
+    .day-number {
+      font-size: 12px;
+      color: #a098c0;
+      margin-bottom: 6px;
+    }
 
-        .crystals {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 4px;
-            font-size: 13px;
-            font-weight: bold;
-            color: #d0b0ff;
-            margin-bottom: 6px;
-        }
+    .sm-reward {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 4px;
+      font-size: 14px;
+      font-weight: bold;
+      color: #80e0ff;
+      margin-bottom: 6px;
+    }
 
-        .crystal-icon {
-            color: #b080ff;
-        }
+    .sm-icon {
+      color: #40c0ff;
+      filter: drop-shadow(0 0 3px rgba(80, 200, 255, .6));
+    }
 
-        .reward-icon {
-            font-size: 20px;
-            margin: 6px 0;
-        }
+    .reward-icon {
+      font-size: 22px;
+      margin: 6px 0;
+    }
 
-        .reward-text {
-            font-size: 10px;
-            color: #9088b0;
-            line-height: 1.2;
-        }
+    .reward-text {
+      font-size: 10px;
+      color: #9088b0;
+      line-height: 1.2;
+    }
 
-        .footer-note {
-            margin-top: 20px;
-            font-size: 11px;
-            color: #8078a0;
-            line-height: 1.5;
-            text-align: center;
-        }
+    .footer-note {
+      margin-top: 20px;
+      font-size: 11px;
+      color: #8078a0;
+      line-height: 1.5;
+      text-align: center;
+    }
 
-        .loading-overlay {
-            position: fixed;
-            inset: 0;
-            background: rgba(15, 12, 26, 0.9);
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            flex-direction: column;
-            gap: 15px;
-            z-index: 9999;
-            color: #ffd040;
-            font-size: 14px;
-        }
+    .loading-overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(15, 12, 26, 0.9);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      flex-direction: column;
+      gap: 15px;
+      z-index: 9999;
+      color: #ffd040;
+      font-size: 14px;
+    }
 
-        .loading-spinner {
-            width: 50px;
-            height: 50px;
-            border: 4px solid rgba(240, 192, 64, 0.15);
-            border-top-color: #f0c040;
-            border-radius: 50%;
-            animation: spin 1s linear infinite;
-        }
+    .loading-spinner {
+      width: 50px;
+      height: 50px;
+      border: 4px solid rgba(240, 192, 64, 0.15);
+      border-top-color: #f0c040;
+      border-radius: 50%;
+      animation: spin 1s linear infinite;
+    }
 
-        @keyframes spin { to { transform: rotate(360deg); } }
+    @keyframes spin { to { transform: rotate(360deg); } }
 
-        /* Toast */
-        .toast {
-            position: fixed;
-            bottom: 20px;
-            left: 50%;
-            transform: translateX(-50%) translateY(100px);
-            background: rgba(20, 18, 35, 0.98);
-            color: #fff;
-            padding: 12px 24px;
-            border-radius: 12px;
-            font-size: 14px;
-            font-weight: 600;
-            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.6);
-            border-left: 4px solid #f0c040;
-            z-index: 10000;
-            opacity: 0;
-            transition: all 0.4s ease;
-            max-width: 90%;
-            text-align: center;
-        }
+    .toast {
+      position: fixed;
+      bottom: 20px;
+      left: 50%;
+      transform: translateX(-50%) translateY(100px);
+      background: rgba(20, 18, 35, 0.98);
+      color: #fff;
+      padding: 12px 24px;
+      border-radius: 12px;
+      font-size: 14px;
+      font-weight: 600;
+      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.6);
+      border-left: 4px solid #f0c040;
+      z-index: 10000;
+      opacity: 0;
+      transition: all 0.4s ease;
+      max-width: 90%;
+      text-align: center;
+    }
 
-        .toast.show {
-            opacity: 1;
-            transform: translateX(-50%) translateY(0);
-        }
+    .toast.show {
+      opacity: 1;
+      transform: translateX(-50%) translateY(0);
+    }
 
-        .toast.sucesso { border-left-color: #60f0a0; }
-        .toast.erro    { border-left-color: #ff8080; }
-        .toast.info    { border-left-color: #80c0ff; }
+    .toast.sucesso { border-left-color: #60f0a0; }
+    .toast.erro    { border-left-color: #ff8080; }
+    .toast.info    { border-left-color: #80c0ff; }
 
-        @media (max-width: 700px) {
-            .grid-days { grid-template-columns: repeat(5, 1fr); gap: 6px; }
-            .main-title { font-size: 18px; }
-            .countdown { font-size: 15px; }
-            .day-number { font-size: 10px; }
-            .reward-text { font-size: 9px; }
-            .day-card { padding: 8px 4px; }
-            .btn-resgatar { padding: 12px 22px; font-size: 13px; }
-        }
-    </style>
+    @media (max-width: 700px) {
+      .grid-days { grid-template-columns: repeat(5, 1fr); gap: 6px; }
+      .main-title { font-size: 18px; }
+      .countdown { font-size: 15px; }
+      .day-number { font-size: 10px; }
+      .reward-text { font-size: 9px; }
+      .day-card { padding: 8px 4px; }
+      .btn-resgatar { padding: 12px 22px; font-size: 13px; }
+    }
+  </style>
 </head>
 <body>
-    <!-- LOADING -->
-    <div class="loading-overlay" id="loadingOverlay">
-        <div class="loading-spinner"></div>
-        <div>Carregando login diário...</div>
+
+
+<div class="loading-overlay" id="loadingOverlay">
+  <div class="loading-spinner"></div>
+  <div>Carregando login diário...</div>
+</div>
+
+<div class="container">
+  <div class="header-top">
+    <div class="cycle-title">
+      <span class="calendar-icon">📅</span>
+      <div>
+        <div class="cycle-text" id="cycleText">CICLO 1 • DE 30 DIAS</div>
+        <h1 class="main-title">LOGIN DIÁRIO</h1>
+      </div>
     </div>
-
-    <div class="container">
-        <!-- Cabeçalho -->
-        <div class="header-top">
-            <div class="cycle-title">
-                <span class="calendar-icon">📅</span>
-                <div>
-                    <div class="cycle-text" id="cycleText">CICLO 1 • DE 30 DIAS</div>
-                    <h1 class="main-title">LOGIN DIÁRIO</h1>
-                </div>
-            </div>
-            <div class="next-day">
-                PRÓXIMO DIA EM
-                <div class="countdown" id="countdown">-- h -- min</div>
-            </div>
-        </div>
-
-        <!-- Barra de progresso -->
-        <div class="progress-bar-container">
-            <div class="progress-bar" id="progressBar"></div>
-        </div>
-
-        <!-- Grade de Dias (gerada via JS) -->
-        <div class="grid-days" id="gridDays"></div>
-
-        <!-- Botão de Resgatar -->
-        <div class="btn-resgatar-container">
-            <button class="btn-resgatar" id="btnResgatar">🎁 Resgatar Recompensa do Dia</button>
-        </div>
-
-        <div class="status-msg" id="statusMsg"></div>
-
-        <!-- Rodapé -->
-        <p class="footer-note">
-            ⏰ Volte todos os dias para resgatar recompensas exclusivas.<br>
-            💎 Cristais são acumulados automaticamente.
-        </p>
+    <div class="next-day">
+      PRÓXIMO DIA EM
+      <div class="countdown" id="countdown">-- h -- min</div>
     </div>
+  </div>
 
-    <!-- Toast -->
-    <div class="toast" id="toast"></div>
+  <div class="progress-bar-container">
+    <div class="progress-bar" id="progressBar"></div>
+  </div>
 
-    <script type="importmap">
-    {
-        "imports": {
-            "@supabase/supabase-js": "https://esm.sh/@supabase/supabase-js@2"
-        }
-    }
-    </script>
+  <div class="grid-days" id="gridDays"></div>
 
-    <script type="module">
-        // ============================================
-        // CONFIGURAÇÕES
-        // ============================================
-        const SUPABASE_URL = 'https://xrcxvizzdumcxbylmkvn.supabase.co';
-        const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InhyY3h2aXp6ZHVtY3hieWxta3ZuIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODY2NjA0NzIsImV4cCI6MjEwMjIzNjQ3Mn0.ohB4tW0UQ-k1PcwoZxm4u9XSGNLsFphv1_UwTWoklOM';
-        const TABELA = 'Geral';
-        const SESSION_KEY = 'usuario_logado';
+  <div class="btn-resgatar-container">
+    <button class="btn-resgatar" id="btnResgatar">🎁 Resgatar Recompensa do Dia</button>
+  </div>
 
-        const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+  <div class="status-msg" id="statusMsg"></div>
 
-        // ============================================
-        // DEFINIÇÃO DOS 30 DIAS DE RECOMPENSAS
-        // ============================================
-        const RECOMPENSAS = [
-            // Linha 1
-            { dia: 1,  cristais: 20,  icone: '🪙', desc: '63.5K ouro' },
-            { dia: 2,  cristais: 20,  icone: '⚙️', desc: '25 Ferrito' },
-            { dia: 3,  cristais: 20,  icone: '🔷', desc: '25 nítidos' },
-            { dia: 4,  cristais: 20,  icone: '💛', desc: '20 Perito' },
-            { dia: 5,  cristais: 20,  icone: '📦', desc: 'Cápsula Bronze' },
-            { dia: 6,  cristais: 20,  icone: '💰', desc: '52.7K ouro' },
-            { dia: 7,  cristais: 20,  icone: '🚗', desc: 'Cápsula Prata' },
-            { dia: 8,  cristais: 20,  icone: '⚙️', desc: '30 Ferrito' },
-            { dia: 9,  cristais: 20,  icone: '🔷', desc: '30 nítidos' },
-            { dia: 10, cristais: 20,  icone: '📦', desc: 'Cápsula Bronze' },
-            // Linha 2
-            { dia: 11, cristais: 20,  icone: '💛', desc: '30 Perito' },
-            { dia: 12, cristais: 20,  icone: '🪙', desc: '52.8K ouro' },
-            { dia: 13, cristais: 20,  icone: '🔷', desc: '25 nítidos' },
-            { dia: 14, cristais: 40,  icone: '📦', desc: 'Cápsula Prata' },
-            { dia: 15, cristais: 20,  icone: '📦', desc: 'Cápsula Bronze' },
-            { dia: 16, cristais: 20,  icone: '💰', desc: '50K ouro' },
-            { dia: 17, cristais: 20,  icone: '💛', desc: '25 Perito' },
-            { dia: 18, cristais: 20,  icone: '💛', desc: '35 Perito' },
-            { dia: 19, cristais: 20,  icone: '⚙️', desc: '35 Ferrito' },
-            { dia: 20, cristais: 20,  icone: '📦', desc: 'Cápsula Bronze' },
-            // Linha 3
-            { dia: 21, cristais: 40,  icone: '📦', desc: 'Cápsula Ouro' },
-            { dia: 22, cristais: 20,  icone: '💰', desc: '63.5K ouro' },
-            { dia: 23, cristais: 20,  icone: '💛', desc: '40 Perito' },
-            { dia: 24, cristais: 20,  icone: '🔷', desc: '37 nítidos' },
-            { dia: 25, cristais: 20,  icone: '📦', desc: 'Cápsula Bronze' },
-            { dia: 26, cristais: 20,  icone: '⚙️', desc: '46 Ferrito' },
-            { dia: 27, cristais: 20,  icone: '💰', desc: '154.5K ouro' },
-            { dia: 28, cristais: 40,  icone: '🚗', desc: 'Cápsula Prata' },
-            { dia: 29, cristais: 20,  icone: '🔷', desc: '37 nítidos' },
-            { dia: 30, cristais: 140, icone: '🎁', desc: 'Cápsula Ouro Exclusiva' }
-        ];
+  <p class="footer-note">
+    ⏰ Volte todos os dias para resgatar recompensas exclusivas.<br>
+    💠 Pontos SM (`sm_atual`) são acumulados automaticamente.
+  </p>
+</div>
 
-        // ============================================
-        // ESTADO GLOBAL
-        // ============================================
-        const state = {
-            usuario: null,
-            diaAtual: 1,
-            ultimoResgate: null,
-            diasResgatados: [],
-            cicloInicio: null,
-            totalSegundos: 0,
-            intervalId: null,
-            carregado: false
+<div class="toast" id="toast"></div>
+
+<script type="module">
+import { db, TABELA } from './config.js';
+
+/* ============================================================
+   SESSÃO (mesma lógica do resto do projeto)
+============================================================ */
+const SESSION_KEYS = [
+  'usuario_logado','usuarioLogado','user','usuario','jogador',
+  'session','sessao','login','portal_bolsa_user','user_data','dados_usuario'
+];
+
+function lerSessao() {
+  for (const key of SESSION_KEYS) {
+    const raw = localStorage.getItem(key);
+    if (!raw) continue;
+    try {
+      const obj = JSON.parse(raw);
+      const u = obj?.user || obj?.usuario || obj;
+      if (u && (u.login || u.nome || u.email || u.id)) {
+        return {
+          id:    u.id,
+          login: u.login || u.nome || u.email?.split('@')[0] || u.username,
+          nome:  u.nome || u.login || u.email?.split('@')[0] || u.username
         };
+      }
+    } catch (_) {
+      if (raw.length > 0 && raw.length < 100) {
+        return { login: raw, nome: raw };
+      }
+    }
+  }
+  return null;
+}
 
-        // ============================================
-        // UTILITÁRIOS
-        // ============================================
-        function mostrarToast(msg, tipo = 'info') {
-            const toast = document.getElementById('toast');
-            toast.textContent = msg;
-            toast.className = 'toast show ' + tipo;
-            setTimeout(() => {
-                toast.classList.remove('show');
-            }, 3500);
-        }
+/* ============================================================
+   RECOMPENSAS — todos os dias dão 10 SM (sm_atual)
+============================================================ */
+const SM_POR_DIA = 10;          // ⚙️ valor base por dia
+const SM_BONUS_DIA_30 = 50;     // ⚙️ bônus no dia 30
 
-        function setStatus(msg, tipo = '') {
-            const el = document.getElementById('statusMsg');
-            el.textContent = msg;
-            el.className = 'status-msg ' + tipo;
-        }
+const RECOMPENSAS = Array.from({ length: 30 }, (_, i) => {
+  const dia = i + 1;
+  const bonus = dia === 30 ? SM_BONUS_DIA_30 : 0;
+  return {
+    dia,
+    sm: SM_POR_DIA + bonus,
+    icone: dia === 30 ? '🎁' : '💠',
+    desc: dia === 30 ? `+${SM_POR_DIA + bonus} SM (Bônus Final)` : `+${SM_POR_DIA} SM`
+  };
+});
 
-        // ============================================
-        // RENDERIZAÇÃO DA GRADE
-        // ============================================
-        function renderizarGrade() {
-            const grid = document.getElementById('gridDays');
-            grid.innerHTML = RECOMPENSAS.map(r => {
-                const resgatado = state.diasResgatados.includes(r.dia);
-                const atual = r.dia === state.diaAtual;
-                const bloqueado = r.dia > state.diaAtual;
+/* ============================================================
+   ESTADO
+============================================================ */
+const state = {
+  usuario: null,
+  diaAtual: 1,
+  ultimoResgate: null,
+  diasResgatados: [],
+  cicloInicio: null,
+  intervalId: null
+};
 
-                let classes = 'day-card';
-                if (atual) classes += ' current';
-                if (resgatado) classes += ' resgatado';
-                if (bloqueado) classes += ' bloqueado';
+/* ============================================================
+   HELPERS DE UI
+============================================================ */
+function mostrarToast(msg, tipo = 'info') {
+  const toast = document.getElementById('toast');
+  toast.textContent = msg;
+  toast.className = 'toast show ' + tipo;
+  setTimeout(() => toast.classList.remove('show'), 3500);
+}
 
-                const isUltimo = r.dia === 30;
-                return `
-                    <div class="${classes}">
-                        <div class="day-number">${isUltimo ? `DIA ${r.dia} ★` : `DIA ${r.dia}`}</div>
-                        <div class="crystals" ${isUltimo ? 'style="color:#ffd040;"' : ''}>
-                            <span class="crystal-icon">💎</span> +${r.cristais}
-                        </div>
-                        <div class="reward-icon">${r.icone}</div>
-                        <div class="reward-text">${r.desc}</div>
-                    </div>
-                `;
-            }).join('');
+function setStatus(msg, tipo = '') {
+  const el = document.getElementById('statusMsg');
+  el.textContent = msg;
+  el.className = 'status-msg ' + tipo;
+}
 
-            // Atualiza barra de progresso
-            const progresso = ((state.diaAtual - 1) / 30) * 100;
-            document.getElementById('progressBar').style.width = progresso + '%';
+/* ============================================================
+   RENDERIZAÇÃO
+============================================================ */
+function renderizarGrade() {
+  const grid = document.getElementById('gridDays');
+  grid.innerHTML = RECOMPENSAS.map(r => {
+    const resgatado  = state.diasResgatados.includes(r.dia);
+    const atual      = r.dia === state.diaAtual;
+    const bloqueado  = r.dia > state.diaAtual;
 
-            // Atualiza botão
-            atualizarBotao();
-        }
+    let classes = 'day-card';
+    if (atual)     classes += ' current';
+    if (resgatado) classes += ' resgatado';
+    if (bloqueado) classes += ' bloqueado';
 
-        function atualizarBotao() {
-            const btn = document.getElementById('btnResgatar');
-            const diaJaResgatado = state.diasResgatados.includes(state.diaAtual);
+    const isUltimo = r.dia === 30;
+    return `
+      <div class="${classes}">
+        <div class="day-number">${isUltimo ? `DIA ${r.dia} ★` : `DIA ${r.dia}`}</div>
+        <div class="sm-reward" ${isUltimo ? 'style="color:#ffd040;"' : ''}>
+          <span class="sm-icon">💠</span> +${r.sm}
+        </div>
+        <div class="reward-icon">${r.icone}</div>
+        <div class="reward-text">${r.desc}</div>
+      </div>
+    `;
+  }).join('');
 
-            if (diaJaResgatado) {
-                btn.disabled = true;
-                btn.textContent = '✓ Recompensa já resgatada hoje';
-                setStatus('⏰ Volte amanhã para o próximo dia!', 'info');
-            } else {
-                btn.disabled = false;
-                btn.innerHTML = `🎁 Resgatar Dia ${state.diaAtual}`;
-                setStatus(`Pronto para resgatar o Dia ${state.diaAtual}!`, 'sucesso');
-            }
-        }
+  const progresso = ((state.diaAtual - 1) / 30) * 100;
+  document.getElementById('progressBar').style.width = progresso + '%';
 
-        // ============================================
-        // COUNTDOWN PARA PRÓXIMO DIA (24h)
-        // ============================================
-        function calcularProximoDia() {
-            if (!state.ultimoResgate) {
-                // Sem resgate anterior: 24h a partir de agora
-                return new Date(Date.now() + 24 * 60 * 60 * 1000);
-            }
-            const ultimo = new Date(state.ultimoResgate);
-            return new Date(ultimo.getTime() + 24 * 60 * 60 * 1000);
-        }
+  atualizarBotao();
+}
 
-        function iniciarCountdown() {
-            if (state.intervalId) clearInterval(state.intervalId);
+function atualizarBotao() {
+  const btn = document.getElementById('btnResgatar');
+  const diaJaResgatado = state.diasResgatados.includes(state.diaAtual);
 
-            function tick() {
-                const proximo = calcularProximoDia();
-                const agora = new Date();
-                const diff = proximo - agora;
+  if (diaJaResgatado) {
+    btn.disabled = true;
+    btn.textContent = '✓ Recompensa já resgatada hoje';
+    setStatus('⏰ Volte amanhã para o próximo dia!', 'info');
+  } else {
+    btn.disabled = false;
+    btn.innerHTML = `🎁 Resgatar Dia ${state.diaAtual} (+${RECOMPENSAS[state.diaAtual - 1].sm} SM)`;
+    setStatus(`Pronto para resgatar o Dia ${state.diaAtual}!`, 'sucesso');
+  }
+}
 
-                if (diff <= 0) {
-                    document.getElementById('countdown').textContent = '🎁 DISPONÍVEL!';
-                    document.getElementById('countdown').style.color = '#60f0a0';
-                    // Liberar próximo dia
-                    if (state.diasResgatados.includes(state.diaAtual) && state.diaAtual < 30) {
-                        state.diaAtual++;
-                        state.ultimoResgate = null;
-                        salvarProgresso().then(() => {
-                            renderizarGrade();
-                            mostrarToast(`🎉 Novo dia disponível: Dia ${state.diaAtual}!`, 'sucesso');
-                        });
-                    }
-                    return;
-                }
+/* ============================================================
+   COUNTDOWN
+============================================================ */
+function calcularProximoDia() {
+  if (!state.ultimoResgate) {
+    return new Date(Date.now() + 24 * 60 * 60 * 1000);
+  }
+  const ultimo = new Date(state.ultimoResgate);
+  return new Date(ultimo.getTime() + 24 * 60 * 60 * 1000);
+}
 
-                const horas = Math.floor(diff / (1000 * 60 * 60));
-                const minutos = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
-                const segundos = Math.floor((diff % (1000 * 60)) / 1000);
+function iniciarCountdown() {
+  if (state.intervalId) clearInterval(state.intervalId);
 
-                let texto = '';
-                if (horas > 0) texto += `${horas} h `;
-                if (minutos > 0 || horas > 0) texto += `${minutos} min`;
-                if (horas === 0 && minutos < 10) texto += ` ${segundos} s`;
+  function tick() {
+    const proximo = calcularProximoDia();
+    const diff = proximo - new Date();
 
-                document.getElementById('countdown').textContent = texto.trim();
-                document.getElementById('countdown').style.color = '#ffd040';
-            }
+    if (diff <= 0) {
+      const el = document.getElementById('countdown');
+      el.textContent = '🎁 DISPONÍVEL!';
+      el.style.color = '#60f0a0';
 
-            tick();
-            state.intervalId = setInterval(tick, 1000);
-        }
+      if (state.diasResgatados.includes(state.diaAtual) && state.diaAtual < 30) {
+        state.diaAtual++;
+        state.ultimoResgate = null;
+        salvarProgresso().then(() => {
+          renderizarGrade();
+          mostrarToast(`🎉 Novo dia disponível: Dia ${state.diaAtual}!`, 'sucesso');
+        });
+      }
+      return;
+    }
 
-        // ============================================
-        // PERSISTÊNCIA NO SUPABASE
-        // ============================================
-        async function carregarProgresso(login) {
-            try {
-                const { data, error } = await supabase
-                    .from(TABELA)
-                    .select('diario_ciclo, diario_dia, diario_ultimo_resgate, diario_dias_resgatados, diario_ciclo_inicio')
-                    .eq('login', login)
-                    .maybeSingle();
+    const horas    = Math.floor(diff / (1000 * 60 * 60));
+    const minutos  = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
+    const segundos = Math.floor((diff % (1000 * 60)) / 1000);
 
-                if (error) {
-                    console.warn('⚠️ Campos diário não existem ainda. Usando padrão.', error.message);
-                    // Fallback: tenta carregar dados básicos
-                    const { data: basic } = await supabase
-                        .from(TABELA)
-                        .select('login')
-                        .eq('login', login)
-                        .maybeSingle();
-                    if (!basic) throw new Error('Usuário não encontrado');
-                    return;
-                }
+    let texto = '';
+    if (horas > 0)   texto += `${horas} h `;
+    if (minutos > 0 || horas > 0) texto += `${minutos} min`;
+    if (horas === 0 && minutos < 10) texto += ` ${segundos} s`;
 
-                if (data) {
-                    state.diaAtual = data.diario_dia || 1;
-                    state.ultimoResgate = data.diario_ultimo_resgate || null;
-                    state.diasResgatados = Array.isArray(data.diario_dias_resgatados)
-                        ? data.diario_dias_resgatados
-                        : [];
-                    state.cicloInicio = data.diario_ciclo_inicio || null;
+    const el = document.getElementById('countdown');
+    el.textContent = texto.trim();
+    el.style.color = '#ffd040';
+  }
 
-                    // Verifica se já passou 24h desde o último resgate para avançar
-                    if (state.ultimoResgate) {
-                        const proximo = new Date(new Date(state.ultimoResgate).getTime() + 24 * 60 * 60 * 1000);
-                        if (new Date() >= proximo && state.diasResgatados.includes(state.diaAtual) && state.diaAtual < 30) {
-                            state.diaAtual++;
-                            state.ultimoResgate = null;
-                            await salvarProgresso();
-                        }
-                    }
-                }
-            } catch (e) {
-                console.error('❌ Erro ao carregar progresso:', e);
-            }
-        }
+  tick();
+  state.intervalId = setInterval(tick, 1000);
+}
 
-        async function salvarProgresso() {
-            if (!state.usuario) return false;
-            try {
-                const payload = {
-                    diario_dia: state.diaAtual,
-                    diario_ultimo_resgate: state.ultimoResgate,
-                    diario_dias_resgatados: state.diasResgatados,
-                    diario_ciclo_inicio: state.cicloInicio,
-                    updated_at: new Date().toISOString()
-                };
+/* ============================================================
+   PERSISTÊNCIA
+============================================================ */
+async function carregarProgresso(login) {
+  try {
+    const { data, error } = await db
+      .from(TABELA)
+      .select('diario_dia, diario_ultimo_resgate, diario_dias_resgatados, diario_ciclo_inicio')
+      .eq('login', login)
+      .maybeSingle();
 
-                const { error } = await supabase
-                    .from(TABELA)
-                    .update(payload)
-                    .eq('login', state.usuario.login);
+    if (error) {
+      console.warn('⚠️ Erro ao carregar progresso:', error.message);
+      return;
+    }
+    if (!data) return;
 
-                if (error) {
-                    console.warn('⚠️ Erro ao salvar progresso do diário:', error.message);
-                    return false;
-                }
-                return true;
-            } catch (e) {
-                console.error('❌ Exceção ao salvar progresso:', e);
-                return false;
-            }
-        }
+    state.diaAtual         = data.diario_dia || 1;
+    state.ultimoResgate    = data.diario_ultimo_resgate || null;
+    state.diasResgatados   = Array.isArray(data.diario_dias_resgatados)
+      ? data.diario_dias_resgatados
+      : [];
+    state.cicloInicio      = data.diario_ciclo_inicio || null;
 
-        // ============================================
-        // RESGATAR RECOMPENSA
-        // ============================================
-        async function resgatarRecompensa() {
-            if (!state.usuario) {
-                mostrarToast('⚠️ Faça login primeiro!', 'erro');
-                return;
-            }
+    // Avança o dia se já passou 24h
+    if (state.ultimoResgate) {
+      const proximo = new Date(new Date(state.ultimoResgate).getTime() + 24 * 60 * 60 * 1000);
+      if (new Date() >= proximo
+          && state.diasResgatados.includes(state.diaAtual)
+          && state.diaAtual < 30) {
+        state.diaAtual++;
+        state.ultimoResgate = null;
+        await salvarProgresso();
+      }
+    }
+  } catch (e) {
+    console.error('❌ Erro ao carregar progresso:', e);
+  }
+}
 
-            if (state.diasResgatados.includes(state.diaAtual)) {
-                mostrarToast('⚠️ Você já resgatou a recompensa de hoje!', 'erro');
-                return;
-            }
+async function salvarProgresso() {
+  if (!state.usuario) return false;
+  try {
+    const { error } = await db
+      .from(TABELA)
+      .update({
+        diario_dia: state.diaAtual,
+        diario_ultimo_resgate: state.ultimoResgate,
+        diario_dias_resgatados: state.diasResgatados,
+        diario_ciclo_inicio: state.cicloInicio,
+        updated_at: new Date().toISOString()
+      })
+      .eq('login', state.usuario.login);
 
-            const recompensa = RECOMPENSAS.find(r => r.dia === state.diaAtual);
-            if (!recompensa) {
-                mostrarToast('❌ Recompensa não encontrada', 'erro');
-                return;
-            }
+    if (error) {
+      console.warn('⚠️ Erro ao salvar progresso:', error.message);
+      return false;
+    }
+    return true;
+  } catch (e) {
+    console.error('❌ Exceção ao salvar:', e);
+    return false;
+  }
+}
 
-            const btn = document.getElementById('btnResgatar');
-            btn.disabled = true;
-            btn.textContent = '⏳ Processando...';
+/* ============================================================
+   RESGATAR — agora adiciona sm_atual
+============================================================ */
+async function resgatarRecompensa() {
+  if (!state.usuario) {
+    mostrarToast('⚠️ Faça login primeiro!', 'erro');
+    return;
+  }
+  if (state.diasResgatados.includes(state.diaAtual)) {
+    mostrarToast('⚠️ Você já resgatou a recompensa de hoje!', 'erro');
+    return;
+  }
 
-            try {
-                // Buscar dados atuais do usuário
-                const { data: userData, error: errLoad } = await supabase
-                    .from(TABELA)
-                    .select('cristais, diario_dias_resgatados, diario_dia')
-                    .eq('login', state.usuario.login)
-                    .maybeSingle();
+  const recompensa = RECOMPENSAS.find(r => r.dia === state.diaAtual);
+  if (!recompensa) {
+    mostrarToast('❌ Recompensa não encontrada', 'erro');
+    return;
+  }
 
-                if (errLoad) throw errLoad;
+  const btn = document.getElementById('btnResgatar');
+  btn.disabled = true;
+  btn.textContent = '⏳ Processando...';
 
-                // Verificar se campo cristais existe
-                const cristaisAtuais = userData?.cristais ?? 0;
-                const novosCristais = cristaisAtuais + recompensa.cristais;
+  try {
+    // Busca sm_atual atual
+    const { data: userData, error: errLoad } = await db
+      .from(TABELA)
+      .select('sm_atual, diario_dias_resgatados, diario_dia')
+      .eq('login', state.usuario.login)
+      .maybeSingle();
 
-                // Atualizar estado local
-                state.diasResgatados.push(state.diaAtual);
-                state.ultimoResgate = new Date().toISOString();
-                if (!state.cicloInicio) state.cicloInicio = new Date().toISOString();
+    if (errLoad) throw errLoad;
 
-                // Salvar no banco: cristais + progresso diário
-                const payload = {
-                    cristais: novosCristais,
-                    diario_dia: state.diaAtual,
-                    diario_ultimo_resgate: state.ultimoResgate,
-                    diario_dias_resgatados: state.diasResgatados,
-                    diario_ciclo_inicio: state.cicloInicio,
-                    updated_at: new Date().toISOString()
-                };
+    const smAtual = Number(userData?.sm_atual ?? 0);
+    const smNovo  = smAtual + recompensa.sm;
 
-                const { error: errSave } = await supabase
-                    .from(TABELA)
-                    .update(payload)
-                    .eq('login', state.usuario.login);
+    // Atualiza estado local
+    state.diasResgatados.push(state.diaAtual);
+    state.ultimoResgate = new Date().toISOString();
+    if (!state.cicloInicio) state.cicloInicio = new Date().toISOString();
 
-                if (errSave) {
-                    // Tenta salvar sem o campo cristais (fallback)
-                    console.warn('⚠️ Campo cristais não existe, salvando apenas progresso');
-                    const payloadFallback = {
-                        diario_dia: state.diaAtual,
-                        diario_ultimo_resgate: state.ultimoResgate,
-                        diario_dias_resgatados: state.diasResgatados,
-                        diario_ciclo_inicio: state.cicloInicio,
-                        updated_at: new Date().toISOString()
-                    };
-                    const { error: errFallback } = await supabase
-                        .from(TABELA)
-                        .update(payloadFallback)
-                        .eq('login', state.usuario.login);
-                    if (errFallback) throw errFallback;
-                }
+    // Salva no banco: sm_atual + progresso
+    const { error: errSave } = await db
+      .from(TABELA)
+      .update({
+        sm_atual: smNovo,
+        diario_dia: state.diaAtual,
+        diario_ultimo_resgate: state.ultimoResgate,
+        diario_dias_resgatados: state.diasResgatados,
+        diario_ciclo_inicio: state.cicloInicio,
+        updated_at: new Date().toISOString()
+      })
+      .eq('login', state.usuario.login);
 
-                // Atualizar interface
-                renderizarGrade();
-                iniciarCountdown();
+    if (errSave) throw errSave;
 
-                mostrarToast(
-                    `🎉 Dia ${recompensa.dia} resgatado! +${recompensa.cristais} 💎 e ${recompensa.desc}`,
-                    'sucesso'
-                );
+    // Atualiza UI
+    renderizarGrade();
+    iniciarCountdown();
 
-                setStatus(`✅ Resgatado: ${recompensa.desc} (+${recompensa.cristais} 💎)`, 'sucesso');
+    mostrarToast(
+      `🎉 Dia ${recompensa.dia} resgatado! +${recompensa.sm} 💠 SM`,
+      'sucesso'
+    );
+    setStatus(`✅ Resgatado: +${recompensa.sm} 💠 SM (total: ${smNovo})`, 'sucesso');
 
-                // Aviso do dashboard (se estiver em iframe)
-                if (window.parent && window.parent !== window) {
-                    try {
-                        window.parent.postMessage({
-                            tipo: 'diario_resgatado',
-                            dia: recompensa.dia,
-                            cristais: recompensa.cristais
-                        }, '*');
-                    } catch (e) { /* ignora */ }
-                }
+    // Avisa o dashboard se estiver em iframe
+    if (window.parent && window.parent !== window) {
+      try {
+        window.parent.postMessage({
+          tipo: 'diario_resgatado',
+          dia: recompensa.dia,
+          sm: recompensa.sm
+        }, '*');
+      } catch (e) { /* ignora */ }
+    }
 
-            } catch (e) {
-                console.error('❌ Erro ao resgatar:', e);
-                mostrarToast('❌ Erro ao resgatar recompensa. Tente novamente.', 'erro');
-                // Reverter estado local
-                state.diasResgatados = state.diasResgatados.filter(d => d !== state.diaAtual);
-                state.ultimoResgate = null;
-                renderizarGrade();
-            } finally {
-                btn.disabled = false;
-                atualizarBotao();
-            }
-        }
+  } catch (e) {
+    console.error('❌ Erro ao resgatar:', e);
+    mostrarToast('❌ Erro ao resgatar recompensa. Tente novamente.', 'erro');
+    state.diasResgatados = state.diasResgatados.filter(d => d !== state.diaAtual);
+    state.ultimoResgate = null;
+    renderizarGrade();
+  } finally {
+    btn.disabled = false;
+    atualizarBotao();
+  }
+}
 
-        // ============================================
-        // INICIALIZAÇÃO
-        // ============================================
-        async function init() {
-            try {
-                // Carregar sessão
-                const raw = localStorage.getItem(SESSION_KEY);
-                if (!raw) {
-                    mostrarToast('⚠️ Faça login para acessar o diário', 'erro');
-                    setStatus('Você precisa estar logado', 'erro');
-                    document.getElementById('loadingOverlay').style.display = 'none';
-                    return;
-                }
+/* ============================================================
+   INIT
+============================================================ */
+async function init() {
+  try {
+    const sessao = lerSessao();
+    if (!sessao || !sessao.login) {
+      mostrarToast('⚠️ Faça login para acessar o diário', 'erro');
+      setStatus('Você precisa estar logado', 'erro');
+      document.getElementById('loadingOverlay').style.display = 'none';
+      return;
+    }
 
-                const sessao = JSON.parse(raw);
-                if (!sessao?.login) {
-                    document.getElementById('loadingOverlay').style.display = 'none';
-                    return;
-                }
+    state.usuario = sessao;
 
-                state.usuario = sessao;
+    await carregarProgresso(sessao.login);
 
-                // Carregar progresso do banco
-                await carregarProgresso(sessao.login);
+    renderizarGrade();
+    iniciarCountdown();
 
-                // Renderizar interface
-                renderizarGrade();
-                iniciarCountdown();
+    document.getElementById('btnResgatar').addEventListener('click', resgatarRecompensa);
 
-                // Configurar botão
-                document.getElementById('btnResgatar').addEventListener('click', resgatarRecompensa);
+    document.getElementById('loadingOverlay').style.display = 'none';
 
-                state.carregado = true;
+    console.log('✅ Diário carregado para:', sessao.login);
 
-                // Esconder loading
-                document.getElementById('loadingOverlay').style.display = 'none';
+  } catch (e) {
+    console.error('❌ Erro na inicialização:', e);
+    document.getElementById('loadingOverlay').style.display = 'none';
+    mostrarToast('❌ Erro ao carregar diário', 'erro');
+  }
+}
 
-                console.log('✅ Diário carregado para:', sessao.login);
-
-            } catch (e) {
-                console.error('❌ Erro na inicialização:', e);
-                document.getElementById('loadingOverlay').style.display = 'none';
-                mostrarToast('❌ Erro ao carregar diário', 'erro');
-            }
-        }
-
-        // Aguardar DOM
-        document.addEventListener('DOMContentLoaded', init);
-
-        // Expor para debug
-        window.diarioState = state;
-    </script>
-    <script type="module">
-import {
-  salvarSessao,
-  sessaoValida,
-  obterUsuario,
-  limparSessao,
-  exigirSessao
-} from './shared/session.js';
-
-// Verifica antes de tudo
-const usuario = exigirSessao('login.html');
-if (!usuario) throw new Error('Sessão inválida');
-
-// Agora use normalmente
-console.log('Logado como:', usuario.login);
+document.addEventListener('DOMContentLoaded', init);
+window.diarioState = state;
 </script>
+
+<script type="module">
+  import { renderMenu } from './shared/menu.js';
+  renderMenu('menu-slot', 'diario');
+</script>
+
 </body>
 </html>

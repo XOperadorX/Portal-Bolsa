@@ -219,6 +219,16 @@
     }
     .aviso-taxa-comprador .val{font-family:monospace;font-weight:700;}
     .aviso-taxa-comprador .val.final{color:#4ade80;font-size:15px;}
+
+    /* Aviso de cancelamento dentro do card */
+    .aviso-cancelar{
+      flex-basis:100%;
+      font-size:11.5px;
+      color:var(--mut);
+      text-align:center;
+      line-height:1.5;
+      margin-top:8px;
+    }
   </style>
 </head>
 <body>
@@ -480,7 +490,7 @@ function identificarUsuario() {
     usuarioLogado = null;
     area.innerHTML = `
       <span style="color:#fbbf24;font-size:13px">⚠️ Não logado</span>
-      <a class="btn pri" href="./../../login.html" style="margin-left:8px">Fazer login</a>`;
+      <a class="btn pri" href="./login.html" style="margin-left:8px">Fazer login</a>`;
     return null;
   }
 
@@ -819,7 +829,7 @@ function cardHTML(r) {
 
     if (euVendedor || euComprador) {
       acoes += `<button class="btn ghost danger" data-acao="cancelar" data-id="${r.id}">
-                  Cancelar
+                  ❌ Cancelar
                 </button>`;
     }
   }
@@ -838,7 +848,7 @@ function cardHTML(r) {
         : `<div class="aviso err">⚠️ Código não disponível neste dispositivo.</div>`;
 
       acoes += `<button class="btn ghost danger" data-acao="cancelar" data-id="${r.id}">
-                  Cancelar
+                  ❌ Cancelar
                 </button>`;
     }
 
@@ -872,6 +882,14 @@ function cardHTML(r) {
               Liberar item
             </button>
           </div>
+
+          <div class="aviso-cancelar">
+            ⚠️ Se o vendedor não tiver mais o item, você pode cancelar a troca:
+          </div>
+          <button class="btn ghost danger" data-acao="cancelar" data-id="${r.id}"
+                  style="width:100%;margin-top:0;">
+            ❌ Cancelar troca
+          </button>
         </div>`;
     }
 
@@ -938,14 +956,13 @@ async function onAcaoLista(e) {
 
   const acao = btn.dataset.acao;
   const cod  = btn.dataset.cod;
-  // ⚠️ CORREÇÃO: converte ID para número (o Supabase retorna número, mas dataset retorna string)
   const id   = btn.dataset.id ? Number(btn.dataset.id) : null;
 
   if (acao === 'copiar')   return copiar(cod);
   if (acao === 'pago')     return confirmarPagamento(id, btn);
   if (acao === 'pagar')    return pagarTroca(id, btn);
   if (acao === 'liberar')  return liberarItem(id, btn);
-  if (acao === 'cancelar') return cancelar(id);
+  if (acao === 'cancelar') return cancelar(id, btn);
 }
 
 async function pagarTroca(id, btn) {
@@ -1037,10 +1054,24 @@ async function liberarItem(id, btn) {
     if (error) throw error;
 
     if (!data?.ok) {
-      toast('❌ ' + (data?.erro || 'Erro desconhecido'), 'err');
+      const erro = String(data?.erro || '');
+
+      // Detecta falta de item no vendedor
+      const semItem = erro.includes('não tem quantidade suficiente')
+                   || erro.includes('não tem o item')
+                   || erro.includes('item não encontrado');
+
+      if (semItem) {
+        toast('❌ ' + erro, 'err');
+        toast('💡 Você pode cancelar esta troca clicando em "❌ Cancelar troca".', 'err');
+      } else {
+        toast('❌ ' + (erro || 'Erro desconhecido'), 'err');
+      }
+
       if (data?.tentativas_restantes !== undefined) {
         toast(`Tentativas restantes: ${data.tentativas_restantes}`, 'err');
       }
+
       if (input) { input.value = ''; input.focus(); }
       carregar();
       return;
@@ -1061,18 +1092,53 @@ async function liberarItem(id, btn) {
   }
 }
 
-async function cancelar(id) {
-  if (!confirm('Cancelar esta negociação?')) return;
+async function cancelar(id, btn) {
+  if (!confirm('Tem certeza que deseja cancelar esta negociação?\n\nEssa ação não pode ser desfeita.')) return;
 
-  const { data, error } = await db.rpc('cancelar_troca', { p_id: id });
+  if (btn) {
+    btn.disabled = true;
+    const textoOriginal = btn.textContent;
+    btn.textContent = 'Cancelando...';
+
+    try {
+      const { data, error } = await db.rpc('cancelar_troca', {
+        p_id: id,
+        p_usuario: usuarioLogado?.login || null
+      });
+
+      if (error || !data?.ok) {
+        toast('Erro: ' + (error?.message || data?.erro), 'err');
+        return;
+      }
+
+      toast('✅ Negociação cancelada.', 'ok');
+      carregar();
+      carregarMochilaESaldo();
+
+    } catch (e) {
+      console.error(e);
+      toast('Erro: ' + e.message, 'err');
+    } finally {
+      btn.disabled = false;
+      btn.textContent = textoOriginal;
+    }
+    return;
+  }
+
+  // Fallback (sem botão)
+  const { data, error } = await db.rpc('cancelar_troca', {
+    p_id: id,
+    p_usuario: usuarioLogado?.login || null
+  });
 
   if (error || !data?.ok) {
     toast('Erro: ' + (error?.message || data?.erro), 'err');
     return;
   }
 
-  toast('Negociação cancelada.', '');
+  toast('✅ Negociação cancelada.', 'ok');
   carregar();
+  carregarMochilaESaldo();
 }
 
 /* ============================================================
