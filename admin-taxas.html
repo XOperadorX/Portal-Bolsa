@@ -1,0 +1,610 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin — Taxas de Trocas | MM Quase Tudo</title>
+
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Inter', 'Segoe UI', sans-serif; }
+
+        body {
+            min-height: 100vh;
+            background: linear-gradient(135deg, #001a33 0%, #000d1a 100%);
+            color: #e0e0e0;
+            padding: 20px;
+        }
+
+        .container { max-width: 1400px; margin: 0 auto; }
+
+        /* Header */
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: rgba(18, 21, 32, 0.85);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(245, 197, 66, 0.2);
+            padding: 16px 24px;
+            border-radius: 14px;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+            gap: 12px;
+        }
+
+        .header h1 {
+            color: #f5c542;
+            font-size: 1.4rem;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .btn-voltar {
+            background: linear-gradient(135deg, #3b82f6, #2563eb);
+            color: #fff;
+            padding: 10px 20px;
+            border-radius: 30px;
+            font-weight: 700;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            transition: transform 0.2s, box-shadow 0.2s;
+            font-size: 0.9rem;
+        }
+
+        .btn-voltar:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 0 20px rgba(59, 130, 246, 0.5);
+        }
+
+        /* Cards de estatística */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 16px;
+            margin-bottom: 24px;
+        }
+
+        .stat-card {
+            background: #1e293b;
+            border: 1px solid #334155;
+            border-radius: 14px;
+            padding: 18px;
+            transition: transform 0.2s, border-color 0.2s;
+        }
+
+        .stat-card:hover {
+            transform: translateY(-3px);
+            border-color: #f5c542;
+        }
+
+        .stat-card .rotulo {
+            font-size: 0.72rem;
+            color: #94a3b8;
+            text-transform: uppercase;
+            font-weight: 700;
+            letter-spacing: 0.5px;
+            margin-bottom: 8px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .stat-card .rotulo i { color: #f5c542; }
+
+        .stat-card .valor {
+            font-size: 1.6rem;
+            font-weight: 800;
+            color: #fff;
+            font-family: 'Consolas', monospace;
+        }
+
+        .stat-card .valor.dourado { color: #f5c542; }
+        .stat-card .valor.verde   { color: #4ade80; }
+        .stat-card .valor.azul    { color: #60a5fa; }
+        .stat-card .valor.roxo    { color: #c084fc; }
+
+        .stat-card .sub {
+            font-size: 0.75rem;
+            color: #64748b;
+            margin-top: 6px;
+        }
+
+        /* Seções */
+        .secao {
+            background: #1e293b;
+            border: 1px solid #334155;
+            border-radius: 14px;
+            padding: 22px;
+            margin-bottom: 20px;
+        }
+
+        .secao h2 {
+            color: #f1f5f9;
+            font-size: 1.1rem;
+            font-weight: 700;
+            margin-bottom: 18px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding-bottom: 12px;
+            border-bottom: 1px solid #334155;
+        }
+
+        .secao h2 i { color: #f5c542; }
+
+        /* Tabelas */
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        thead th {
+            background: #0f172a;
+            color: #94a3b8;
+            font-size: 0.75rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            padding: 12px 14px;
+            text-align: left;
+            border-bottom: 1px solid #334155;
+            white-space: nowrap;
+        }
+
+        tbody tr {
+            border-bottom: 1px solid #2a3648;
+            transition: background 0.15s;
+        }
+
+        tbody tr:hover { background: #263449; }
+        tbody tr:last-child { border-bottom: none; }
+
+        tbody td {
+            padding: 12px 14px;
+            font-size: 0.88rem;
+            color: #cbd5e1;
+        }
+
+        tbody td.mono {
+            font-family: 'Consolas', monospace;
+            color: #f5c542;
+            font-weight: 600;
+        }
+
+        tbody td.destaque { color: #4ade80; font-weight: 700; }
+        tbody td.rank {
+            color: #f5c542;
+            font-weight: 800;
+        }
+
+        /* Gráfico de barras */
+        .grafico-barras {
+            display: flex;
+            align-items: flex-end;
+            gap: 4px;
+            height: 180px;
+            padding: 10px 0;
+            border-bottom: 1px solid #334155;
+            margin-bottom: 10px;
+            overflow-x: auto;
+        }
+
+        .barra-item {
+            flex: 1;
+            min-width: 22px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: flex-end;
+            height: 100%;
+            gap: 4px;
+            position: relative;
+        }
+
+        .barra-item .barra {
+            width: 100%;
+            background: linear-gradient(180deg, #f5c542, #d4a017);
+            border-radius: 4px 4px 0 0;
+            transition: height 0.4s ease;
+            min-height: 3px;
+            position: relative;
+        }
+
+        .barra-item:hover .barra {
+            background: linear-gradient(180deg, #ffe066, #f5c542);
+            box-shadow: 0 0 12px rgba(245, 197, 66, 0.6);
+        }
+
+        .barra-item .valor-topo {
+            font-size: 0.65rem;
+            color: #f5c542;
+            font-weight: 700;
+            font-family: 'Consolas', monospace;
+            position: absolute;
+            top: -18px;
+            white-space: nowrap;
+        }
+
+        .barra-item .label-x {
+            font-size: 0.6rem;
+            color: #64748b;
+            transform: rotate(-45deg);
+            white-space: nowrap;
+            margin-top: 4px;
+            min-height: 30px;
+        }
+
+        /* Estados */
+        .loading, .vazio {
+            text-align: center;
+            padding: 40px;
+            color: #64748b;
+            font-size: 0.9rem;
+        }
+
+        .loading i, .vazio i {
+            display: block;
+            font-size: 2rem;
+            margin-bottom: 12px;
+            color: #334155;
+        }
+
+        /* Botão atualizar */
+        .btn-atualizar {
+            background: #334155;
+            border: 1px solid #475569;
+            color: #f5c542;
+            padding: 10px 18px;
+            border-radius: 8px;
+            font-weight: 700;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            transition: all 0.2s;
+            font-family: inherit;
+            font-size: 0.9rem;
+        }
+
+        .btn-atualizar:hover {
+            background: #475569;
+            border-color: #f5c542;
+        }
+
+        .btn-atualizar .fa-rotate.loading { animation: spin 0.8s linear infinite; }
+        @keyframes spin { to { transform: rotate(360deg); } }
+
+        @media (max-width: 700px) {
+            .header h1 { font-size: 1.1rem; }
+            .stat-card .valor { font-size: 1.2rem; }
+            .secao { padding: 16px; }
+            thead th, tbody td { padding: 10px 8px; font-size: 0.78rem; }
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+
+    <!-- Header -->
+    <div class="header">
+        <h1>💰 Painel de Taxas — TrocaSegura</h1>
+        <div style="display:flex;gap:10px;">
+            <button class="btn-atualizar" id="btnAtualizar">
+                <i class="fas fa-rotate" id="iconeAtualizar"></i>
+                Atualizar
+            </button>
+            <a href="./dashboard.html" class="btn-voltar">
+                <i class="fas fa-house"></i> Dashboard
+            </a>
+        </div>
+    </div>
+
+    <!-- Cards de estatística -->
+    <div class="stats-grid" id="statsGrid">
+        <div class="stat-card">
+            <div class="rotulo"><i class="fas fa-coins"></i> Total Geral</div>
+            <div class="valor dourado" id="statTotalGeral">--</div>
+            <div class="sub" id="statQtdGeral">-- trocas</div>
+        </div>
+        <div class="stat-card">
+            <div class="rotulo"><i class="fas fa-calendar-day"></i> Hoje</div>
+            <div class="valor verde" id="statTotalHoje">--</div>
+            <div class="sub" id="statQtdHoje">-- trocas</div>
+        </div>
+        <div class="stat-card">
+            <div class="rotulo"><i class="fas fa-calendar-week"></i> Últimos 7 dias</div>
+            <div class="valor azul" id="statTotalSemana">--</div>
+            <div class="sub">Somatório semanal</div>
+        </div>
+        <div class="stat-card">
+            <div class="rotulo"><i class="fas fa-calendar-alt"></i> Últimos 30 dias</div>
+            <div class="valor roxo" id="statTotalMes">--</div>
+            <div class="sub">Somatório mensal</div>
+        </div>
+        <div class="stat-card">
+            <div class="rotulo"><i class="fas fa-chart-line"></i> Média por troca</div>
+            <div class="valor" id="statMedia">--</div>
+            <div class="sub">Valor médio de taxa</div>
+        </div>
+        <div class="stat-card">
+            <div class="rotulo"><i class="fas fa-crown"></i> Maior taxa</div>
+            <div class="valor dourado" id="statMaior">--</div>
+            <div class="sub">Recorde arrecadado</div>
+        </div>
+    </div>
+
+    <!-- Gráfico -->
+    <div class="secao">
+        <h2><i class="fas fa-chart-bar"></i> Arrecadação Diária (últimos 30 dias)</h2>
+        <div class="grafico-barras" id="graficoBarras">
+            <div class="loading"><i class="fas fa-spinner fa-spin"></i>Carregando...</div>
+        </div>
+    </div>
+
+    <!-- Top vendedores -->
+    <div class="secao">
+        <h2><i class="fas fa-trophy"></i> Top 10 Vendedores por Taxa Gerada</h2>
+        <table>
+            <thead>
+                <tr>
+                    <th>#</th>
+                    <th>Vendedor</th>
+                    <th>Trocas</th>
+                    <th>Taxa Total</th>
+                </tr>
+            </thead>
+            <tbody id="corpoTopVendedores">
+                <tr><td colspan="4" class="loading">Carregando...</td></tr>
+            </tbody>
+        </table>
+    </div>
+
+    <!-- Últimas taxas -->
+    <div class="secao">
+        <h2><i class="fas fa-list"></i> Últimas 50 Taxas Registradas</h2>
+        <table>
+            <thead>
+                <tr>
+                    <th>Data</th>
+                    <th>Item</th>
+                    <th>Preço</th>
+                    <th>Taxa</th>
+                    <th>Pago por</th>
+                    <th>Vendedor</th>
+                    <th>Comprador</th>
+                </tr>
+            </thead>
+            <tbody id="corpoUltimasTaxas">
+                <tr><td colspan="7" class="loading">Carregando...</td></tr>
+            </tbody>
+        </table>
+    </div>
+
+</div>
+
+<script>
+/* ============================================================
+   CONFIG
+============================================================ */
+const SUPABASE_URL = 'https://xrcxvizzdumcxbylmkvn.supabase.co';
+const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InhyY3h2aXp6ZHVtY3hieWxta3ZuIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODY2NjA0NzIsImV4cCI6MjEwMjIzNjQ3Mn0.ohB4tW0UQ-k1PcwoZxm4u9XSGNLsFphv1_UwTWoklOM';
+
+const db = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+
+/* ============================================================
+   HELPERS
+============================================================ */
+const $ = (s) => document.querySelector(s);
+const money = (v) => `💎 ${Number(v || 0).toFixed(2)}`;
+const dataCurta = (iso) => {
+  if (!iso) return '—';
+  return new Date(iso).toLocaleString('pt-BR', {
+    day: '2-digit', month: '2-digit',
+    hour: '2-digit', minute: '2-digit'
+  });
+};
+
+function esc(str) {
+  if (!str) return '';
+  const div = document.createElement('div');
+  div.textContent = str;
+  return div.innerHTML;
+}
+
+/* ============================================================
+   CARREGAR ESTATÍSTICAS
+============================================================ */
+async function carregarEstatisticas() {
+  try {
+    const { data, error } = await db.rpc('estatisticas_taxas');
+    if (error) throw error;
+    if (!data) return;
+
+    $('#statTotalGeral').textContent  = money(data.total_geral);
+    $('#statTotalHoje').textContent   = money(data.total_hoje);
+    $('#statTotalSemana').textContent = money(data.total_semana);
+    $('#statTotalMes').textContent    = money(data.total_mes);
+    $('#statMedia').textContent       = money(data.media_taxa);
+    $('#statMaior').textContent       = money(data.maior_taxa);
+
+    $('#statQtdGeral').textContent = `${data.qtd_geral} trocas`;
+    $('#statQtdHoje').textContent  = `${data.qtd_hoje} trocas`;
+
+  } catch (err) {
+    console.error('[Stats] Erro:', err);
+  }
+}
+
+/* ============================================================
+   CARREGAR TOP VENDEDORES
+============================================================ */
+async function carregarTopVendedores() {
+  const tbody = $('#corpoTopVendedores');
+
+  try {
+    const { data, error } = await db.rpc('ranking_vendedores_taxas', { p_limite: 10 });
+    if (error) throw error;
+
+    if (!data || data.length === 0) {
+      tbody.innerHTML = `<tr><td colspan="4" class="vazio">
+        <i class="fas fa-inbox"></i>Nenhum dado ainda.
+      </td></tr>`;
+      return;
+    }
+
+    tbody.innerHTML = data.map((r, i) => `
+      <tr>
+        <td class="rank">${i + 1}º</td>
+        <td><strong>${esc(r.vendedor)}</strong></td>
+        <td>${r.qtd_trocas}</td>
+        <td class="mono">${money(r.total_taxas)}</td>
+      </tr>
+    `).join('');
+
+  } catch (err) {
+    console.error('[Top] Erro:', err);
+    tbody.innerHTML = `<tr><td colspan="4" class="vazio">
+      <i class="fas fa-circle-exclamation"></i>Erro: ${esc(err.message)}
+    </td></tr>`;
+  }
+}
+
+/* ============================================================
+   CARREGAR ÚLTIMAS TAXAS
+============================================================ */
+async function carregarUltimasTaxas() {
+  const tbody = $('#corpoUltimasTaxas');
+
+  try {
+    const { data, error } = await db
+      .from('Trocas_Taxas')
+      .select('*')
+      .order('criado_em', { ascending: false })
+      .limit(50);
+
+    if (error) throw error;
+
+    if (!data || data.length === 0) {
+      tbody.innerHTML = `<tr><td colspan="7" class="vazio">
+        <i class="fas fa-inbox"></i>Nenhuma taxa registrada ainda.
+      </td></tr>`;
+      return;
+    }
+
+    tbody.innerHTML = data.map(t => `
+      <tr>
+        <td>${dataCurta(t.criado_em)}</td>
+        <td>${esc(t.item_nome || '—')}</td>
+        <td>${money(t.preco_troca)}</td>
+        <td class="mono destaque">${money(t.valor_taxa)}</td>
+        <td>${esc(t.pago_por)}</td>
+        <td>${esc(t.vendedor)}</td>
+        <td>${esc(t.comprador)}</td>
+      </tr>
+    `).join('');
+
+  } catch (err) {
+    console.error('[Ultimas] Erro:', err);
+    tbody.innerHTML = `<tr><td colspan="7" class="vazio">
+      <i class="fas fa-circle-exclamation"></i>Erro: ${esc(err.message)}
+    </td></tr>`;
+  }
+}
+
+/* ============================================================
+   GRÁFICO DE BARRAS
+============================================================ */
+async function carregarGrafico() {
+  const container = $('#graficoBarras');
+
+  try {
+    const { data, error } = await db.rpc('taxas_por_dia', { p_dias: 30 });
+    if (error) throw error;
+
+    if (!data || data.length === 0) {
+      container.innerHTML = `<div class="vazio">
+        <i class="fas fa-chart-bar"></i>Sem dados ainda.
+      </div>`;
+      return;
+    }
+
+    // Inverte para ordem cronológica
+    const dados = [...data].reverse();
+    const maxValor = Math.max(...dados.map(d => Number(d.total) || 0)) || 1;
+
+    container.innerHTML = dados.map(d => {
+      const valor = Number(d.total) || 0;
+      const altura = (valor / maxValor) * 100;
+      const dia = new Date(d.dia);
+      const label = `${String(dia.getDate()).padStart(2, '0')}/${String(dia.getMonth() + 1).padStart(2, '0')}`;
+
+      return `
+        <div class="barra-item" title="${label}: ${money(valor)} (${d.qtd_trocas} trocas)">
+          <span class="valor-topo">${valor > 0 ? valor.toFixed(0) : ''}</span>
+          <div class="barra" style="height: ${Math.max(altura, 2)}%;"></div>
+          <span class="label-x">${label}</span>
+        </div>
+      `;
+    }).join('');
+
+  } catch (err) {
+    console.error('[Grafico] Erro:', err);
+    container.innerHTML = `<div class="vazio">
+      <i class="fas fa-circle-exclamation"></i>Erro: ${esc(err.message)}
+    </div>`;
+  }
+}
+
+/* ============================================================
+   CARREGAR TUDO
+============================================================ */
+async function carregarTudo() {
+  const icone = $('#iconeAtualizar');
+  const btn = $('#btnAtualizar');
+
+  icone.classList.add('loading');
+  btn.disabled = true;
+
+  await Promise.all([
+    carregarEstatisticas(),
+    carregarTopVendedores(),
+    carregarUltimasTaxas(),
+    carregarGrafico()
+  ]);
+
+  icone.classList.remove('loading');
+  btn.disabled = false;
+}
+
+$('#btnAtualizar').addEventListener('click', carregarTudo);
+
+/* ============================================================
+   AUTO-REFRESH (30s)
+============================================================ */
+carregarTudo();
+setInterval(carregarEstatisticas, 30000);
+setInterval(carregarUltimasTaxas, 30000);
+
+/* ============================================================
+   REALTIME (opcional — atualiza ao vivo)
+============================================================ */
+db.channel('taxas-rt')
+  .on('postgres_changes',
+      { event: 'INSERT', schema: 'public', table: 'Trocas_Taxas' },
+      () => {
+        carregarEstatisticas();
+        carregarUltimasTaxas();
+        carregarGrafico();
+      })
+  .subscribe();
+</script>
+
+</body>
+</html>

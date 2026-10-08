@@ -9,9 +9,9 @@ const LINKS = [
   { id: 'eventos',   href: './eventos.html',                     icon: 'fa-calendar-days', label: 'Eventos' },
   { id: 'download',  href: './download.html',                    icon: 'fa-download',      label: 'Downloads' },
   { id: 'suporte',   href: './suporte.html',                     icon: 'fa-headset',       label: 'Suporte' },
-  { id: 'loja',      href: './jogos/loja/loja.html',             icon: 'fa-cart-shopping', label: 'Loja' },
   { id: 'cadastro',  href: './cadastro.html',                    icon: 'fa-user-plus',     label: 'Cadastro' },
   { id: 'login',     href: './login.html',                       icon: 'fa-sign-in-alt',   label: 'Login' },
+  { id: 'como-jogar', href: './como-jogar.html',                   icon: 'fa-question-circle', label: 'Como Jogar' }
 ];
 
 /**
