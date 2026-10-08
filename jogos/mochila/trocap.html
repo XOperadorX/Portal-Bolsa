@@ -23,13 +23,8 @@
   <meta name="twitter:description" content="Negociação segura de itens entre jogadores.">
   <meta name="twitter:image"       content="https://xoperadorx.github.io/Portal-Bolsa/assets/og-image.png">
 
-  <!-- CSS do menu compartilhado -->
   <link rel="stylesheet" href="./shared/menu.css">
-
-  <!-- Font Awesome -->
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
-
-  <!-- ⚠️ Supabase PRIMEIRO (o config.js depende do global `supabase`) -->
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
   <style>
@@ -45,7 +40,6 @@
       color:var(--txt);min-height:100vh;padding-bottom:40px;
     }
 
-    /* ==================== HEADER ==================== */
     .troca-header{
       display:flex;flex-wrap:wrap;gap:12px;align-items:center;justify-content:space-between;
       padding:16px 22px;border-bottom:1px solid var(--line);
@@ -77,7 +71,6 @@
     .status-supabase.online .dot{background:#22c55e;box-shadow:0 0 6px #22c55e}
     .status-supabase.offline .dot{background:#ef4444;box-shadow:0 0 6px #ef4444}
 
-    /* ==================== INPUTS/BOTÕES ==================== */
     input,select,textarea{
       background:var(--card2);border:1px solid var(--line);color:var(--txt);
       padding:10px 12px;border-radius:10px;font-size:14px;font-family:inherit;outline:none;width:100%;
@@ -230,32 +223,26 @@
 </head>
 <body>
 
-<!-- ==================== MENU PRINCIPAL (injetado via JS) ==================== -->
 <div id="menu-slot"></div>
 
-<!-- ==================== HEADER (ÚNICO — sem duplicação) ==================== -->
 <header class="troca-header">
   <div class="brand">🛡️ TrocaSegura <small>negociação entre jogadores</small></div>
 
   <div class="header-right">
-    <!-- Saldo MUMU -->
     <div class="saldo-mumu" id="saldoMumuHeader" style="display:none;">
       💎 <span id="saldoMumuValor">0.00</span> MUMU
     </div>
 
-    <!-- Status Supabase -->
     <div class="status-supabase" id="statusSupabase">
       <span class="dot"></span> Verificando…
     </div>
 
-    <!-- Usuário -->
     <div id="user-area">
       <span style="color:var(--mut);font-size:13px">
         <span class="loading"></span>Verificando sessão…
       </span>
     </div>
 
-    <!-- Navegação rápida -->
     <a href="./mochila.html" class="btn"
        style="background:linear-gradient(135deg,#8b5cf6,#7000ff);color:#fff;border-color:transparent;">
       🎒 Mochila
@@ -331,7 +318,6 @@
 
 <div id="toasts"></div>
 
-<!-- ==================== MODAL DO CÓDIGO ==================== -->
 <div class="modal hidden" id="modal">
   <div class="modal-box">
     <h2>🔐 Código de liberação</h2>
@@ -365,7 +351,6 @@
   </div>
 </div>
 
-<!-- ==================== SCRIPT PRINCIPAL ==================== -->
 <script type="module">
 import {
   SUPABASE_URL,
@@ -573,14 +558,12 @@ async function carregarMochilaESaldo() {
     if (error) throw error;
     if (!data) throw new Error(`Jogador "${usuarioLogado.login}" não encontrado na tabela Geral`);
 
-    // Saldo MUMU
     saldoMumuAtual = Number(data.mumu || 0);
     const elSaldo  = $('#saldoMumuValor');
     const boxSaldo = $('#saldoMumuHeader');
     if (elSaldo)  elSaldo.textContent = saldoMumuAtual.toFixed(2);
     if (boxSaldo) boxSaldo.style.display = 'inline-flex';
 
-    // Inventário
     inventario = extrairTodosItens(data);
     mochilaCarregada = true;
 
@@ -613,7 +596,6 @@ async function carregarMochilaESaldo() {
 function extrairTodosItens(d) {
   const todos = {};
 
-  // 1. carteira (jsonb objeto)
   if (d.carteira && typeof d.carteira === 'object' && !Array.isArray(d.carteira)) {
     Object.keys(d.carteira).forEach(k => {
       const q = Number(d.carteira[k]) || 0;
@@ -624,7 +606,6 @@ function extrairTodosItens(d) {
     });
   }
 
-  // 2. itens (array ou objeto)
   if (Array.isArray(d.itens)) {
     d.itens.forEach(item => {
       if (!item) return;
@@ -646,7 +627,6 @@ function extrairTodosItens(d) {
     });
   }
 
-  // 3. recursos de fazenda
   if (Number(d.seeds) > 0)   { todos['Sementes'] = { id:'sementes', nome:'Sementes', qtd:Number(d.seeds) }; }
   if (Number(d.stock) > 0)   { todos['Milho']    = { id:'milho',    nome:'Milho',    qtd:Number(d.stock) }; }
   if (Number(d.buckets) > 0) { todos['Balde']    = { id:'balde',    nome:'Balde',    qtd:Number(d.buckets) }; }
@@ -815,17 +795,28 @@ function cardHTML(r) {
 
   let acoes = '';
 
+  // ---------------------- AGUARDANDO ----------------------
   if (r.status === 'aguardando') {
     if (euVendedor) {
       acoes += `<button class="btn ok" data-acao="pago" data-id="${r.id}">
                   💰 Já recebi o pagamento
                 </button>`;
+    } else if (euComprador) {
+      acoes += `<button class="btn ok" data-acao="pagar" data-id="${r.id}">
+                  💸 Pagar 💎 ${custoTotal.toFixed(2)} agora
+                </button>
+                <div class="aviso">
+                  ⏳ Você precisa pagar <strong>💎 ${custoTotal.toFixed(2)}</strong>
+                  (💎 ${preco.toFixed(2)} da troca + 💎 ${taxa.toFixed(2)} de taxa).
+                  <br>O vendedor <strong>${esc(r.vendedor)}</strong> confirmará o recebimento.
+                </div>`;
     } else {
       acoes += `<div class="aviso">
                   ⏳ O comprador <strong>${esc(r.comprador)}</strong> precisa pagar
-                  <strong>💎 ${preco.toFixed(2)}</strong>.
+                  <strong>💎 ${custoTotal.toFixed(2)}</strong>.
                 </div>`;
     }
+
     if (euVendedor || euComprador) {
       acoes += `<button class="btn ghost danger" data-acao="cancelar" data-id="${r.id}">
                   Cancelar
@@ -833,6 +824,7 @@ function cardHTML(r) {
     }
   }
 
+  // ---------------------- CONFIRMADO ----------------------
   else if (r.status === 'pagamento_confirmado') {
     if (euVendedor) {
       acoes += cod
@@ -888,12 +880,14 @@ function cardHTML(r) {
     }
   }
 
+  // ---------------------- CONCLUÍDA ----------------------
   else if (r.status === 'concluida') {
     acoes += `<div class="aviso ok">
                 ✅ Concluída${r.concluido_em ? ' em ' + dataHora(r.concluido_em) : ''}.
               </div>`;
   }
 
+  // ---------------------- CANCELADA ----------------------
   else {
     acoes += `<div class="aviso err">❌ Negociação cancelada.</div>`;
   }
@@ -944,8 +938,57 @@ async function onAcaoLista(e) {
   const { acao, id, cod } = btn.dataset;
   if (acao === 'copiar')   return copiar(cod);
   if (acao === 'pago')     return confirmarPagamento(id, btn);
+  if (acao === 'pagar')    return pagarTroca(id, btn);
   if (acao === 'liberar')  return liberarItem(id, btn);
   if (acao === 'cancelar') return cancelar(id);
+}
+
+async function pagarTroca(id, btn) {
+  if (!usuarioLogado) return toast('Faça login primeiro.', 'err');
+
+  const r = cache.find(x => x.id === id);
+  if (!r) return toast('Troca não encontrada.', 'err');
+
+  const preco = Number(r.preco_mumu || 0);
+  const taxa  = Number(r.taxa_mumu || 0);
+  const total = preco + taxa;
+
+  const confirmou = confirm(
+    `Confirmar pagamento?\n\n` +
+    `Você vai pagar 💎 ${total.toFixed(2)} MUMU.\n` +
+    `O valor só é debitado quando você digitar o código de liberação.`
+  );
+  if (!confirmou) return;
+
+  btn.disabled = true;
+  const textoOriginal = btn.textContent;
+  btn.textContent = 'Processando...';
+
+  try {
+    const { data, error } = await db.rpc('pagar_troca', {
+      p_id: id,
+      p_comprador: usuarioLogado.login
+    });
+
+    if (error) throw error;
+
+    if (!data?.ok) {
+      toast('❌ ' + (data?.erro || 'Erro desconhecido'), 'err');
+      return;
+    }
+
+    toast('✅ Pagamento confirmado! Peça o código ao vendedor.', 'ok');
+
+    carregar();
+    carregarMochilaESaldo();
+
+  } catch (e) {
+    console.error(e);
+    toast('Erro: ' + e.message, 'err');
+  } finally {
+    btn.disabled = false;
+    btn.textContent = textoOriginal;
+  }
 }
 
 async function confirmarPagamento(id, btn) {
@@ -1125,7 +1168,6 @@ async function copiar(texto) {
 }
 </script>
 
-<!-- ==================== MENU (renderizado) ==================== -->
 <script type="module">
   import { renderMenu } from './shared/menu.js';
   renderMenu('menu-slot', 'troca');
