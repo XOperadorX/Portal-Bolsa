@@ -164,3 +164,14 @@ text
 ❌ jogos/**/*.html (todos os jogos)
 ❌ dados/admin/admin.html
 Nota: offline-regen.js é crítico — a classe OfflineRegen é importada em dashboard.html para o sistema de regeneração de HP/MP/Stamina.
+
+Portal-Bolsa/
+├── trocap.html          ← a página
+├── mochila.html         ← já existe
+├── config.js            ← VAMOS CRIAR
+├── login.html
+├── dashboard.html
+└── shared/
+    └── menu.js
+
+    
