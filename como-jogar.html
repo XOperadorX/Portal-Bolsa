@@ -1,0 +1,1056 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Como Jogar — MM Quase Tudo</title>
+
+    <style>
+        /* ==================== CONFIGURAÇÃO DE IMPRESSÃO ==================== */
+        @page {
+            size: A4;
+            margin: 1.5cm 1.8cm;
+        }
+
+        @media print {
+            .no-print { display: none !important; }
+            body { font-size: 11pt; }
+            h1 { page-break-after: avoid; }
+            h2 { page-break-after: avoid; page-break-before: auto; }
+            h3 { page-break-after: avoid; }
+            table, blockquote, .box { page-break-inside: avoid; }
+            .page-break { page-break-before: always; }
+        }
+
+        /* ==================== RESET E BASE ==================== */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            background: #f0f4f8;
+            color: #2c3e50;
+            line-height: 1.7;
+            padding: 30px 20px;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            background: #ffffff;
+            padding: 50px 60px;
+            border-radius: 8px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+        }
+
+        /* ==================== CAPA ==================== */
+        .capa {
+            text-align: center;
+            padding: 60px 20px 40px;
+            border-bottom: 4px solid #f5c542;
+            margin-bottom: 40px;
+        }
+
+        .capa .logo {
+            font-size: 3.5rem;
+            margin-bottom: 20px;
+        }
+
+        .capa h1 {
+            font-size: 2.6rem;
+            color: #002bad;
+            font-weight: 900;
+            letter-spacing: 1px;
+            margin-bottom: 12px;
+            border: none;
+            padding: 0;
+        }
+
+        .capa .versao {
+            display: inline-block;
+            background: linear-gradient(135deg, #f5c542, #d4a017);
+            color: #0b0e14;
+            font-weight: 800;
+            font-size: 0.85rem;
+            padding: 8px 20px;
+            border-radius: 30px;
+            letter-spacing: 1px;
+            margin-top: 10px;
+            box-shadow: 0 4px 12px rgba(245, 197, 66, 0.3);
+        }
+
+        .capa .subtitulo {
+            color: #64748b;
+            font-size: 1.1rem;
+            margin-top: 18px;
+        }
+
+        /* ==================== TIPOGRAFIA ==================== */
+        h1 {
+            font-size: 1.9rem;
+            color: #002bad;
+            border-bottom: 3px solid #f5c542;
+            padding-bottom: 10px;
+            margin: 40px 0 20px;
+            font-weight: 800;
+        }
+
+        h2 {
+            font-size: 1.4rem;
+            color: #002bad;
+            margin: 30px 0 15px;
+            font-weight: 700;
+            padding-left: 14px;
+            border-left: 5px solid #f5c542;
+        }
+
+        h3 {
+            font-size: 1.1rem;
+            color: #1a3a6c;
+            margin: 22px 0 10px;
+            font-weight: 700;
+        }
+
+        p {
+            margin-bottom: 14px;
+            color: #334155;
+        }
+
+        strong { color: #002bad; font-weight: 700; }
+
+        /* ==================== ÍNDICE ==================== */
+        .indice {
+            background: #f8fafc;
+            border: 1px solid #e2e8f0;
+            border-left: 5px solid #002bad;
+            border-radius: 8px;
+            padding: 24px 30px;
+            margin-bottom: 40px;
+        }
+
+        .indice h2 {
+            margin-top: 0;
+            border: none;
+            padding: 0;
+            font-size: 1.2rem;
+            color: #002bad;
+            margin-bottom: 14px;
+        }
+
+        .indice ol {
+            list-style: none;
+            counter-reset: item;
+            padding-left: 0;
+        }
+
+        .indice li {
+            counter-increment: item;
+            padding: 5px 0;
+            color: #475569;
+            font-weight: 500;
+        }
+
+        .indice li::before {
+            content: counter(item) ".";
+            color: #f5c542;
+            font-weight: 800;
+            margin-right: 10px;
+            display: inline-block;
+            width: 24px;
+        }
+
+        /* ==================== LISTAS ==================== */
+        ul, ol {
+            margin: 12px 0 18px 24px;
+        }
+
+        ul li, ol li {
+            margin-bottom: 8px;
+            color: #334155;
+        }
+
+        ul li::marker { color: #f5c542; font-weight: bold; }
+        ol li::marker { color: #002bad; font-weight: bold; }
+
+        /* ==================== TABELAS ==================== */
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 18px 0 24px;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+        }
+
+        thead {
+            background: linear-gradient(135deg, #002bad 0%, #001a6e 100%);
+        }
+
+        thead th {
+            color: #ffffff;
+            padding: 12px 15px;
+            text-align: left;
+            font-weight: 700;
+            font-size: 0.9rem;
+            letter-spacing: 0.3px;
+        }
+
+        tbody td {
+            padding: 11px 15px;
+            border-bottom: 1px solid #e2e8f0;
+            font-size: 0.92rem;
+        }
+
+        tbody tr:nth-child(even) {
+            background: #f8fafc;
+        }
+
+        tbody tr:hover {
+            background: #fef9e7;
+        }
+
+        tbody tr:last-child td {
+            border-bottom: none;
+        }
+
+        /* ==================== BOXES ESPECIAIS ==================== */
+        .box {
+            padding: 16px 20px;
+            margin: 20px 0;
+            border-radius: 8px;
+            line-height: 1.6;
+            font-size: 0.95rem;
+        }
+
+        .box-aviso {
+            background: #fef3c7;
+            border-left: 5px solid #f59e0b;
+            color: #78350f;
+        }
+
+        .box-aviso strong { color: #92400e; }
+
+        .box-info {
+            background: #dbeafe;
+            border-left: 5px solid #3b82f6;
+            color: #1e3a8a;
+        }
+
+        .box-info strong { color: #1e40af; }
+
+        .box-sucesso {
+            background: #d1fae5;
+            border-left: 5px solid #10b981;
+            color: #064e3b;
+        }
+
+        .box-sucesso strong { color: #047857; }
+
+        .box-perigo {
+            background: #fee2e2;
+            border-left: 5px solid #ef4444;
+            color: #7f1d1d;
+        }
+
+        .box-perigo strong { color: #991b1b; }
+
+        .box-dica {
+            background: #f3e8ff;
+            border-left: 5px solid #a855f7;
+            color: #581c87;
+        }
+
+        .box-dica strong { color: #6b21a8; }
+
+        /* ==================== CÓDIGO INLINE ==================== */
+        code {
+            background: #f1f5f9;
+            color: #0f172a;
+            padding: 2px 8px;
+            border-radius: 4px;
+            font-family: 'Consolas', 'Monaco', monospace;
+            font-size: 0.88em;
+            border: 1px solid #e2e8f0;
+        }
+
+        /* ==================== SEPARADOR ==================== */
+        hr {
+            border: none;
+            border-top: 2px dashed #e2e8f0;
+            margin: 40px 0;
+        }
+
+        /* ==================== DESTAQUE DE NÚMEROS ==================== */
+        .numero {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 30px;
+            height: 30px;
+            background: linear-gradient(135deg, #f5c542, #d4a017);
+            color: #0b0e14;
+            border-radius: 50%;
+            font-weight: 900;
+            font-size: 0.9rem;
+            margin-right: 10px;
+        }
+
+        /* ==================== PASSO A PASSO ==================== */
+        .passo {
+            display: flex;
+            align-items: flex-start;
+            gap: 14px;
+            padding: 12px 0;
+            border-bottom: 1px solid #f1f5f9;
+        }
+
+        .passo:last-child { border-bottom: none; }
+
+        .passo-num {
+            flex-shrink: 0;
+            width: 32px;
+            height: 32px;
+            background: linear-gradient(135deg, #002bad, #1e40af);
+            color: #fff;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 800;
+            font-size: 0.95rem;
+            box-shadow: 0 3px 8px rgba(0, 43, 173, 0.25);
+        }
+
+        .passo-conteudo {
+            flex: 1;
+            padding-top: 4px;
+        }
+
+        .passo-conteudo strong {
+            color: #002bad;
+            display: block;
+            margin-bottom: 4px;
+        }
+
+        /* ==================== RODAPÉ ==================== */
+        .rodape {
+            margin-top: 60px;
+            padding-top: 30px;
+            border-top: 3px solid #f5c542;
+            text-align: center;
+            color: #64748b;
+            font-size: 0.88rem;
+        }
+
+        .rodape .final {
+            font-size: 1.2rem;
+            color: #002bad;
+            font-weight: 800;
+            margin-bottom: 10px;
+        }
+
+        /* ==================== BOTÃO DE IMPRESSÃO ==================== */
+        .btn-print {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            background: linear-gradient(135deg, #002bad, #1e40af);
+            color: #fff;
+            border: none;
+            padding: 14px 24px;
+            border-radius: 50px;
+            font-size: 1rem;
+            font-weight: 700;
+            cursor: pointer;
+            box-shadow: 0 8px 24px rgba(0, 43, 173, 0.4);
+            transition: all 0.25s;
+            z-index: 100;
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            font-family: inherit;
+        }
+
+        .btn-print:hover {
+            transform: translateY(-3px) scale(1.03);
+            box-shadow: 0 12px 32px rgba(0, 43, 173, 0.55);
+        }
+
+        /* ==================== RESPONSIVO ==================== */
+        @media (max-width: 700px) {
+            .container { padding: 30px 22px; }
+            .capa h1 { font-size: 1.8rem; }
+            .capa .logo { font-size: 2.5rem; }
+            h1 { font-size: 1.4rem; }
+            h2 { font-size: 1.15rem; }
+            table { font-size: 0.85rem; }
+            thead th, tbody td { padding: 8px 10px; }
+            .btn-print { padding: 12px 18px; font-size: 0.9rem; bottom: 16px; right: 16px; }
+        }
+    </style>
+</head>
+<body>
+
+    <button class="btn-print no-print" onclick="window.print()">
+        📄 Salvar como PDF
+    </button>
+
+    <div class="container">
+
+        <!-- ==================== CAPA ==================== -->
+        <div class="capa">
+            <div class="logo">🏦</div>
+            <h1>MM Quase Tudo</h1>
+            <p class="subtitulo">Guia Completo do Jogador</p>
+            <span class="versao">VERSÃO 1.0.0 · TEMPORADA 2026</span>
+        </div>
+
+        <!-- ==================== ÍNDICE ==================== -->
+        <div class="indice">
+            <h2>📑 Índice</h2>
+            <ol>
+                <li>Bem-vindo ao MM Quase Tudo</li>
+                <li>Como Criar sua Conta</li>
+                <li>Fazendo Login</li>
+                <li>Conhecendo o Dashboard</li>
+                <li>Sistema de Níveis e Atributos</li>
+                <li>Stamina — Como Funciona</li>
+                <li>Regeneração Offline</li>
+                <li>Jogando os Minigames</li>
+                <li>Códice de Equipamentos (Codex)</li>
+                <li>Login Diário (Recompensas)</li>
+                <li>TrocaSegura — Negociando com Outros Jogadores</li>
+                <li>Mochila e Itens</li>
+                <li>Loja — Comprando VIPs</li>
+                <li>Suporte — Como Pedir Ajuda</li>
+                <li>Dicas e Boas Práticas</li>
+                <li>Contato</li>
+            </ol>
+        </div>
+
+        <!-- ==================== 1 ==================== -->
+        <h1>1. Bem-vindo ao MM Quase Tudo</h1>
+
+        <p>
+            O <strong>MM Quase Tudo</strong> é uma plataforma de jogos online com <strong>economia virtual</strong>,
+            sistema de níveis, negociações entre jogadores e muito mais. Este guia vai te ensinar tudo o que
+            você precisa para começar a jogar.
+        </p>
+
+        <div class="box box-info">
+            <strong>💡 Dica:</strong> Leia este guia até o fim para não perder nenhuma mecânica importante
+            do jogo. Ele foi pensado para levar você do zero ao nível avançado.
+        </div>
+
+        <!-- ==================== 2 ==================== -->
+        <h1>2. Como Criar sua Conta</h1>
+
+        <div class="passo">
+            <div class="passo-num">1</div>
+            <div class="passo-conteudo">
+                <strong>Acesse a página de Cadastro</strong>
+                No site, clique em <code>Cadastro</code> no menu principal.
+            </div>
+        </div>
+
+        <div class="passo">
+            <div class="passo-num">2</div>
+            <div class="passo-conteudo">
+                <strong>Preencha os campos</strong>
+                <ul>
+                    <li><strong>Login:</strong> apenas letras, números e <code>_</code> (3 a 20 caracteres). Ex: <code>MoitaPR</code></li>
+                    <li><strong>Senha:</strong> mínimo 6 caracteres. Ex: <code>moitapr123456</code></li>
+                    <li><strong>Confirmar Senha:</strong> repita a mesma senha</li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="passo">
+            <div class="passo-num">3</div>
+            <div class="passo-conteudo">
+                <strong>Clique em "📝 Criar Conta"</strong>
+                O sistema verifica automaticamente se o login já existe e se o dispositivo já foi cadastrado.
+            </div>
+        </div>
+
+        <div class="passo">
+            <div class="passo-num">4</div>
+            <div class="passo-conteudo">
+                <strong>Pronto!</strong>
+                Você será redirecionado automaticamente para o Dashboard.
+            </div>
+        </div>
+
+        <div class="box box-aviso">
+            <strong>⚠️ Aviso Importante:</strong> É permitido apenas <strong>1 conta por dispositivo</strong>.
+            O sistema utiliza uma verificação única de hardware para impedir múltiplas contas. Tentar burlar
+            resulta em <strong>banimento permanente</strong>.
+        </div>
+
+        <!-- ==================== 3 ==================== -->
+        <h1>3. Fazendo Login</h1>
+
+        <div class="passo">
+            <div class="passo-num">1</div>
+            <div class="passo-conteudo">
+                <strong>Acesse o Login</strong>
+                Clique em <code>Login</code> no menu principal.
+            </div>
+        </div>
+
+        <div class="passo">
+            <div class="passo-num">2</div>
+            <div class="passo-conteudo">
+                <strong>Digite Login e Senha</strong>
+                Use as credenciais cadastradas.
+            </div>
+        </div>
+
+        <div class="passo">
+            <div class="passo-num">3</div>
+            <div class="passo-conteudo">
+                <strong>Clique em "🔐 Entrar"</strong>
+                O sistema aplica automaticamente a <strong>regeneração offline</strong> de HP, MP e Stamina.
+            </div>
+        </div>
+
+        <div class="box box-sucesso">
+            <strong>✅ Sessão de 24h:</strong> Sua sessão dura um dia inteiro. Após esse período, faça login novamente.
+        </div>
+
+        <!-- ==================== 4 ==================== -->
+        <h1>4. Conhecendo o Dashboard</h1>
+
+        <p>O <strong>Dashboard</strong> é o coração do jogo. É por ele que você acessa tudo.</p>
+
+        <h3>👤 Perfil do Jogador</h3>
+        <ul>
+            <li><strong>Avatar:</strong> primeira letra do seu login</li>
+            <li><strong>Nick:</strong> seu nome de jogador</li>
+            <li><strong>Saldo:</strong> seu dinheiro em R$</li>
+        </ul>
+
+        <h3>📊 Widget de Nível</h3>
+        <ul>
+            <li><strong>Nível atual</strong> (começa em 1)</li>
+            <li><strong>Título</strong> (🌱 Iniciante, 🌿 Aprendiz, ⚔️ Guerreiro, etc.)</li>
+            <li><strong>Barra de EXP</strong> — quanto falta para subir de nível</li>
+            <li><strong>Atributos:</strong> ❤️ HP, 💧 Mana, ⚡ Stamina, ⚔️ Força, 🛡️ Defesa, 🔮 Magia</li>
+        </ul>
+
+        <h3>🎮 Grid de Jogos</h3>
+        <p>Cada card leva a um minigame diferente:</p>
+        <ul>
+            <li>🌱 Milharal</li>
+            <li>📈 B3 Simulator (Bolsa)</li>
+            <li>⚔️ Torre de Arena</li>
+            <li>⛏️ Mineração de BTC</li>
+            <li>🌾 Fazenda</li>
+            <li>👶 Nino</li>
+            <li>🧙 Shagrila</li>
+            <li>🎯 Pontinhos</li>
+            <li>📄 Papelão</li>
+        </ul>
+
+        <h3>🎯 Botões Importantes</h3>
+        <table>
+            <thead>
+                <tr><th>Botão</th><th>Função</th></tr>
+            </thead>
+            <tbody>
+                <tr><td>🛒 Loja</td><td>Comprar VIPs e itens</td></tr>
+                <tr><td>📅 Diário</td><td>Login diário com recompensas</td></tr>
+                <tr><td>📖 CODEX</td><td>Códice de equipamentos</td></tr>
+                <tr><td>💰 Mercado</td><td>Negociar com jogadores</td></tr>
+                <tr><td>🎒 Mochila</td><td>Ver seus itens</td></tr>
+                <tr><td>💰 Troca MUMU</td><td>Converter moedas</td></tr>
+                <tr><td>💰 Troca BTC</td><td>Converter Bitcoin</td></tr>
+                <tr><td>🏆 Classificações</td><td>Ver o ranking</td></tr>
+                <tr><td>🏆 Perfil</td><td>Ver seu perfil completo</td></tr>
+                <tr><td>🚪 Sair</td><td>Fazer logout</td></tr>
+            </tbody>
+        </table>
+
+        <!-- ==================== 5 ==================== -->
+        <h1>5. Sistema de Níveis e Atributos</h1>
+
+        <p>Cada ação no jogo gera <strong>EXP</strong> (experiência). Ao acumular EXP suficiente, você sobe de nível.</p>
+
+        <h3>📈 Fórmula de EXP</h3>
+        <p>O EXP necessário para subir de nível é calculado assim:</p>
+        <div class="box box-info">
+            <code>EXP próximo = 100 × (1,2 ^ (nível - 1))</code>
+        </div>
+
+        <table>
+            <thead>
+                <tr><th>Nível</th><th>EXP necessário</th></tr>
+            </thead>
+            <tbody>
+                <tr><td>1 → 2</td><td>100</td></tr>
+                <tr><td>2 → 3</td><td>120</td></tr>
+                <tr><td>3 → 4</td><td>144</td></tr>
+                <tr><td>5 → 6</td><td>207</td></tr>
+                <tr><td>10 → 11</td><td>515</td></tr>
+                <tr><td>20 → 21</td><td>3.833</td></tr>
+                <tr><td>50 → 51</td><td>910.043</td></tr>
+            </tbody>
+        </table>
+
+        <h3>📊 Ganhos por Nível</h3>
+        <table>
+            <thead>
+                <tr><th>Atributo</th><th>Ganho por nível</th></tr>
+            </thead>
+            <tbody>
+                <tr><td>❤️ HP Máximo</td><td>+6</td></tr>
+                <tr><td>💧 Mana Máximo</td><td>+4</td></tr>
+                <tr><td>⚡ Stamina Máxima</td><td>+3</td></tr>
+                <tr><td>⚔️ Força</td><td>+1,5</td></tr>
+                <tr><td>🛡️ Defesa</td><td>+1,2</td></tr>
+                <tr><td>🔮 Magia</td><td>+1,0</td></tr>
+            </tbody>
+        </table>
+
+        <h3>🏆 Títulos por Nível</h3>
+        <table>
+            <thead>
+                <tr><th>Nível</th><th>Título</th></tr>
+            </thead>
+            <tbody>
+                <tr><td>1</td><td>🌱 Iniciante</td></tr>
+                <tr><td>5</td><td>🌿 Aprendiz</td></tr>
+                <tr><td>10</td><td>⚔️ Guerreiro</td></tr>
+                <tr><td>20</td><td>🛡️ Mestre</td></tr>
+                <tr><td>35</td><td>🏆 Lendário</td></tr>
+                <tr><td>50</td><td>👑 Herói</td></tr>
+                <tr><td>75</td><td>⚡ Deus da Guerra</td></tr>
+                <tr><td>100</td><td>🌟 Imortal</td></tr>
+            </tbody>
+        </table>
+
+        <!-- ==================== 6 ==================== -->
+        <h1>6. Stamina — Como Funciona</h1>
+
+        <p><strong>Stamina (SM)</strong> é a energia necessária para jogar. Sem ela, você não consegue entrar nos minigames.</p>
+
+        <h3>📋 Regras</h3>
+        <ul>
+            <li>Você começa com <strong>100 SM</strong></li>
+            <li><strong>Mínimo 10 SM</strong> para jogar</li>
+            <li>Cada jogo consome <strong>50% da sua stamina atual</strong></li>
+            <li>Ao cair abaixo de 10 SM, você não pode mais jogar</li>
+        </ul>
+
+        <h3>🧮 Exemplo prático</h3>
+        <table>
+            <thead>
+                <tr><th>Stamina antes</th><th>Gasto (50%)</th><th>Stamina depois</th></tr>
+            </thead>
+            <tbody>
+                <tr><td>100 SM</td><td>50 SM</td><td>50 SM</td></tr>
+                <tr><td>50 SM</td><td>25 SM</td><td>25 SM</td></tr>
+                <tr><td>25 SM</td><td>12 SM</td><td>13 SM</td></tr>
+                <tr><td>20 SM</td><td>10 SM</td><td>10 SM</td></tr>
+                <tr><td>10 SM</td><td>—</td><td>❌ Não pode jogar</td></tr>
+            </tbody>
+        </table>
+
+        <div class="box box-dica">
+            <strong>💡 Dica:</strong> Jogue quando estiver com bastante stamina para aproveitar ao máximo,
+            ou economize para o minigame que mais te recompensa.
+        </div>
+
+        <!-- ==================== 7 ==================== -->
+        <h1>7. Regeneração Offline</h1>
+
+        <p>Quando você <strong>sai do jogo</strong> (logout), sua stamina, HP e mana começam a <strong>regenerar automaticamente</strong>.</p>
+
+        <h3>⏱️ Taxas de regeneração</h3>
+        <table>
+            <thead>
+                <tr><th>Atributo</th><th>Regeneração</th></tr>
+            </thead>
+            <tbody>
+                <tr><td>⚡ Stamina</td><td>+2 por minuto</td></tr>
+                <tr><td>❤️ HP</td><td>+1 por minuto</td></tr>
+                <tr><td>💧 Mana</td><td>+1 por minuto</td></tr>
+            </tbody>
+        </table>
+
+        <div class="box box-sucesso">
+            <strong>⏰ Tempo máximo offline: 24 horas</strong><br>
+            Após 24h offline, HP, MP e SM são restaurados ao <strong>MÁXIMO</strong> automaticamente.
+        </div>
+
+        <h3>📊 Exemplos práticos</h3>
+        <ul>
+            <li><strong>1 hora offline</strong> → +120 SM, +60 HP, +60 MP</li>
+            <li><strong>6 horas offline</strong> → +720 SM (cap em máximo), +360 HP, +360 MP</li>
+            <li><strong>24 horas offline</strong> → restaura TUDO ao máximo ✨</li>
+        </ul>
+
+        <!-- ==================== 8 ==================== -->
+        <h1>8. Jogando os Minigames</h1>
+
+        <div class="passo">
+            <div class="passo-num">1</div>
+            <div class="passo-conteudo">
+                <strong>Escolha um jogo</strong>
+                No Dashboard, clique em qualquer card do grid.
+            </div>
+        </div>
+
+        <div class="passo">
+            <div class="passo-num">2</div>
+            <div class="passo-conteudo">
+                <strong>Verifique sua stamina</strong>
+                Se tiver <strong>10+ SM</strong>, o jogo abre. Se não, aguarde a regeneração.
+            </div>
+        </div>
+
+        <div class="passo">
+            <div class="passo-num">3</div>
+            <div class="passo-conteudo">
+                <strong>Aguarde o loading</strong>
+                Aparece uma tela animada mostrando:
+                <ul>
+                    <li>Ícone do jogo</li>
+                    <li>Quanto de stamina será consumida</li>
+                    <li>Barra de progresso</li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="passo">
+            <div class="passo-num">4</div>
+            <div class="passo-conteudo">
+                <strong>Jogue!</strong>
+                O jogo abre em ~1 segundo. Ao voltar ao Dashboard, sua stamina já foi debitada.
+            </div>
+        </div>
+
+        <!-- ==================== 9 ==================== -->
+        <h1>9. Códice de Equipamentos (Codex)</h1>
+
+        <p>O <strong>Códice</strong> é onde você registra seus <strong>ativos da bolsa</strong> como equipamentos.</p>
+
+        <h3>📝 Como registrar</h3>
+        <div class="passo">
+            <div class="passo-num">1</div>
+            <div class="passo-conteudo">
+                <strong>Acesse o Codex</strong>
+                Clique em <code>📖 CODEX</code> no Dashboard.
+            </div>
+        </div>
+
+        <div class="passo">
+            <div class="passo-num">2</div>
+            <div class="passo-conteudo">
+                <strong>Escolha a categoria</strong>
+                Ações, FIIs, ETFs ou Tesouro.
+            </div>
+        </div>
+
+        <div class="passo">
+            <div class="passo-num">3</div>
+            <div class="passo-conteudo">
+                <strong>Clique em "➕ Registrar no Codex"</strong>
+                O ativo entra no seu inventário e você ganha bônus.
+            </div>
+        </div>
+
+        <h3>🎁 Bônus por raridade</h3>
+        <table>
+            <thead>
+                <tr><th>Raridade</th><th>Bônus ATK</th><th>Bônus DEF</th><th>Bônus HP</th></tr>
+            </thead>
+            <tbody>
+                <tr><td>⚪ Comum</td><td>+2 a +5</td><td>+1 a +3</td><td>+10 a +30</td></tr>
+                <tr><td>🟢 Incomum</td><td>+5 a +12</td><td>+3 a +8</td><td>+30 a +80</td></tr>
+                <tr><td>🔵 Raro</td><td>+12 a +25</td><td>+8 a +15</td><td>+80 a +150</td></tr>
+                <tr><td>🟣 Épico</td><td>+25 a +40</td><td>+15 a +25</td><td>+150 a +300</td></tr>
+                <tr><td>🟡 Lendário</td><td>+40 a +60</td><td>+25 a +40</td><td>+300 a +500</td></tr>
+            </tbody>
+        </table>
+
+        <div class="box box-info">
+            <strong>⚡ Tempo Real:</strong> Quando você registra um ativo, o Codex atualiza
+            instantaneamente em todos os seus dispositivos.
+        </div>
+
+        <!-- ==================== 10 ==================== -->
+        <div class="page-break"></div>
+        <h1>10. Login Diário (Recompensas)</h1>
+
+        <p>Você tem <strong>30 dias de recompensas</strong> para resgatar, mas só pode resgatar <strong>1 por dia</strong>.</p>
+
+        <div class="passo">
+            <div class="passo-num">1</div>
+            <div class="passo-conteudo">
+                <strong>No Dashboard, clique em "📅 DIÁRIO"</strong>
+                Abre um modal com o grid dos 30 dias.
+            </div>
+        </div>
+
+        <div class="passo">
+            <div class="passo-num">2</div>
+            <div class="passo-conteudo">
+                <strong>Veja seu progresso</strong>
+                Dias já resgatados aparecem com <strong>✓ verde</strong>. Dias futuros estão bloqueados.
+            </div>
+        </div>
+
+        <div class="passo">
+            <div class="passo-num">3</div>
+            <div class="passo-conteudo">
+                <strong>Clique em "🎁 Resgatar Recompensa do Dia"</strong>
+                Você recebe 💎 <strong>Cristais</strong> + 🎁 <strong>Itens</strong>.
+            </div>
+        </div>
+
+        <div class="box box-aviso">
+            <strong>⏰ Countdown:</strong> Após resgatar, aparece um <strong>countdown de 24h</strong>.
+            Quando zerar, o próximo dia fica disponível. Não perca o ritmo!
+        </div>
+
+        <div class="box box-sucesso">
+            <strong>🎉 Recompensa do Dia 30:</strong><br>
+            💎 140 cristais + 🎁 Cápsula Ouro Exclusiva
+        </div>
+
+        <!-- ==================== 11 ==================== -->
+        <h1>11. TrocaSegura — Negociando com Outros Jogadores</h1>
+
+        <p>O <strong>TrocaSegura</strong> é o sistema de negociação segura entre jogadores.</p>
+
+        <h3>🔄 Como funciona</h3>
+        <div class="passo">
+            <div class="passo-num">1</div>
+            <div class="passo-conteudo">
+                <strong>Vendedor cria a negociação</strong>
+                Define o item, o preço em R$ e o nick do comprador.
+            </div>
+        </div>
+
+        <div class="passo">
+            <div class="passo-num">2</div>
+            <div class="passo-conteudo">
+                <strong>Sistema gera código de 6 dígitos</strong>
+                Apenas o vendedor vê o código.
+            </div>
+        </div>
+
+        <div class="passo">
+            <div class="passo-num">3</div>
+            <div class="passo-conteudo">
+                <strong>Comprador confirma pagamento</strong>
+                Combina com o vendedor a forma de pagamento.
+            </div>
+        </div>
+
+        <div class="passo">
+            <div class="passo-num">4</div>
+            <div class="passo-conteudo">
+                <strong>Vendedor confirma recebimento</strong>
+                Só depois de receber, entrega o código ao comprador.
+            </div>
+        </div>
+
+        <div class="passo">
+            <div class="passo-num">5</div>
+            <div class="passo-conteudo">
+                <strong>Comprador digita o código no site</strong>
+                ✅ <strong>Negociação concluída!</strong> O item é liberado.
+            </div>
+        </div>
+
+        <h3>🔐 Status da negociação</h3>
+        <table>
+            <thead>
+                <tr><th>Status</th><th>Significado</th></tr>
+            </thead>
+            <tbody>
+                <tr><td>🟡 Aguardando pagamento</td><td>Esperando o comprador pagar</td></tr>
+                <tr><td>🔵 Pagamento confirmado</td><td>Vendedor confirmou recebimento</td></tr>
+                <tr><td>🟢 Concluída</td><td>Código validado, item entregue</td></tr>
+                <tr><td>🔴 Cancelada</td><td>Cancelada por qualquer parte</td></tr>
+            </tbody>
+        </table>
+
+        <div class="box box-perigo">
+            <strong>⚠️ Segurança:</strong> NUNCA entregue o código antes de confirmar o pagamento.
+            Máximo de <strong>5 tentativas</strong> de acerto do código. Após 5 erros, a negociação é bloqueada.
+        </div>
+
+        <!-- ==================== 12 ==================== -->
+        <h1>12. Mochila e Itens</h1>
+
+        <p>A <strong>Mochila</strong> guarda todos os seus itens. Acesse pelo Dashboard clicando em <code>🎒 Mochila</code>.</p>
+
+        <table>
+            <thead>
+                <tr><th>Item</th><th>Descrição</th></tr>
+            </thead>
+            <tbody>
+                <tr><td>🌱 Sementes</td><td>Para plantar na Fazenda</td></tr>
+                <tr><td>🌾 Milho</td><td>Colheita da Fazenda</td></tr>
+                <tr><td>🪣 Baldes</td><td>Ferramentas</td></tr>
+                <tr><td>🥕 Colheita</td><td>Produtos agrícolas</td></tr>
+                <tr><td>⚙️ Ferrito</td><td>Recurso de crafting</td></tr>
+                <tr><td>🔷 Nítidos</td><td>Cristais refinados</td></tr>
+                <tr><td>💛 Perito</td><td>Moeda de prestígio</td></tr>
+                <tr><td>📦 Cápsulas</td><td>Caixas surpresa</td></tr>
+                <tr><td>🎁 Itens Especiais</td><td>Itens raros e exclusivos</td></tr>
+            </tbody>
+        </table>
+
+        <!-- ==================== 13 ==================== -->
+        <h1>13. Loja — Comprando VIPs</h1>
+
+        <div class="passo">
+            <div class="passo-num">1</div>
+            <div class="passo-conteudo">
+                <strong>Acesse a Loja</strong>
+                Clique em <code>🛒 Loja</code> no Dashboard.
+            </div>
+        </div>
+
+        <div class="passo">
+            <div class="passo-num">2</div>
+            <div class="passo-conteudo">
+                <strong>Escolha um VIP</strong>
+                De VIP1 a VIP9.
+            </div>
+        </div>
+
+        <div class="passo">
+            <div class="passo-num">3</div>
+            <div class="passo-conteudo">
+                <strong>Confirme a compra</strong>
+                O valor é debitado do seu saldo Mumu.
+            </div>
+        </div>
+
+        <div class="passo">
+            <div class="passo-num">4</div>
+            <div class="passo-conteudo">
+                <strong>Ticket aberto automaticamente</strong>
+                A equipe libera seu VIP em até 24h.
+            </div>
+        </div>
+
+        <h3>💎 Tabela de VIPs</h3>
+        <table>
+            <thead>
+                <tr><th>Produto</th><th>Nível</th><th>Preço</th><th>Benefícios</th></tr>
+            </thead>
+            <tbody>
+                <tr><td>VIP1</td><td>1</td><td>R$ 10,00</td><td>Bônus básico</td></tr>
+                <tr><td>VIP2</td><td>2</td><td>R$ 20,00</td><td>+10% EXP</td></tr>
+                <tr><td>VIP3</td><td>3</td><td>R$ 30,00</td><td>+15% EXP</td></tr>
+                <tr><td>VIP4</td><td>4</td><td>R$ 40,00</td><td>+20% EXP</td></tr>
+                <tr><td>VIP5</td><td>5</td><td>R$ 50,00</td><td>+25% EXP</td></tr>
+                <tr><td>VIP6</td><td>6</td><td>R$ 60,00</td><td>+30% EXP</td></tr>
+                <tr><td>VIP7</td><td>7</td><td>R$ 70,00</td><td>+35% EXP</td></tr>
+                <tr><td>VIP8</td><td>8</td><td>R$ 80,00</td><td>+40% EXP</td></tr>
+                <tr><td>VIP9</td><td>9</td><td>R$ 90,00</td><td>+50% EXP + Bônus especiais</td></tr>
+            </tbody>
+        </table>
+
+        <!-- ==================== 14 ==================== -->
+        <h1>14. Suporte — Como Pedir Ajuda</h1>
+
+        <h3>🎫 Canais de Atendimento</h3>
+        <table>
+            <thead>
+                <tr><th>Canal</th><th>Como acessar</th></tr>
+            </thead>
+            <tbody>
+                <tr><td>🎫 Abrir Ticket</td><td>Página <code>suporte.html</code></td></tr>
+                <tr><td>💬 Discord</td><td><a href="https://discord.gg/ATtu4z9Ewt">discord.gg/ATtu4z9Ewt</a></td></tr>
+                <tr><td>📧 Email</td><td>mmquasetudo@gmail.com</td></tr>
+            </tbody>
+        </table>
+
+        <h3>🗂️ Categorias de Ticket</h3>
+        <ul>
+            <li>🧑 <strong>Conta</strong> — Problemas com login/senha</li>
+            <li>💰 <strong>Pagamento/Loja</strong> — Compras não creditadas</li>
+            <li>🐛 <strong>Bug/Erro</strong> — Erros no jogo</li>
+            <li>💡 <strong>Sugestão</strong> — Ideias para melhorar</li>
+            <li>🚨 <strong>Denúncia</strong> — Reportar jogador</li>
+            <li>📝 <strong>Outro</strong> — Qualquer outro assunto</li>
+        </ul>
+
+        <h3>⏱️ Prazos de resposta</h3>
+        <table>
+            <thead>
+                <tr><th>Prioridade</th><th>Prazo</th></tr>
+            </thead>
+            <tbody>
+                <tr><td>🟢 Normal</td><td>Até 24h úteis</td></tr>
+                <tr><td>🟡 Alta</td><td>Até 8h úteis</td></tr>
+                <tr><td>🔴 Urgente</td><td>Até 4h úteis</td></tr>
+            </tbody>
+        </table>
+
+        <!-- ==================== 15 ==================== -->
+        <h1>15. Dicas e Boas Práticas</h1>
+
+        <h3>✅ Faça</h3>
+        <ul>
+            <li>✅ Faça login <strong>todos os dias</strong> para não perder o Diário</li>
+            <li>✅ Economize stamina para jogos com melhores recompensas</li>
+            <li>✅ Use o <strong>TrocaSegura</strong> para negociar (é 100% seguro)</li>
+            <li>✅ Registre ativos no Codex para ganhar bônus permanentes</li>
+            <li>✅ Guarde seus cristais para itens especiais</li>
+        </ul>
+
+        <h3>❌ Não faça</h3>
+        <ul>
+            <li>❌ Não compartilhe seu login e senha</li>
+            <li>❌ Não entregue códigos de troca sem confirmar pagamento</li>
+            <li>❌ Não crie múltiplas contas (sistema detecta e bloqueia)</li>
+            <li>❌ Não use programas externos (banimento permanente)</li>
+            <li>❌ Não ofenda outros jogadores (denúncia + banimento)</li>
+        </ul>
+
+        <div class="box box-dica">
+            <strong>🎁 Códigos de Resgate:</strong> Fique atento ao Discord para códigos exclusivos!
+            Cada código dá recompensas instantâneas e pode ser usado <strong>1 vez por conta</strong>.
+        </div>
+
+        <!-- ==================== 16 ==================== -->
+        <h1>16. Contato</h1>
+
+        <table>
+            <thead>
+                <tr><th>Onde</th><th>Link</th></tr>
+            </thead>
+            <tbody>
+                <tr><td>🌐 Site</td><td>xoperadorx.github.io/Portal-Bolsa</td></tr>
+                <tr><td>💬 Discord</td><td>discord.gg/ATtu4z9Ewt</td></tr>
+                <tr><td>📧 Email</td><td>mmquasetudo@gmail.com</td></tr>
+                <tr><td>📥 Download Android</td><td>gofile.io/d/EAGM9koU</td></tr>
+                <tr><td>📥 Download Windows</td><td>Google Drive (ver site)</td></tr>
+            </tbody>
+        </table>
+
+        <!-- ==================== RODAPÉ ==================== -->
+        <div class="rodape">
+            <div class="final">🎉 Boa sorte, jogador!</div>
+            <p>Bem-vindo à comunidade MM Quase Tudo!</p>
+            <p>Que seus minigames sejam lucrativos, suas trocas seguras, e que você suba de nível rapidamente!</p>
+            <p style="margin-top: 20px; font-size: 0.8rem;">
+                Documento gerado em 08/10/2026 · Versão 1.0.0
+            </p>
+        </div>
+
+    </div>
+
+</body>
+</html>
