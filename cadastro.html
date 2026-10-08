@@ -4,9 +4,27 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0">
     <meta name="theme-color" content="#002bad">
-    <title>Cadastro — Conta Teste</title>
+
+    <title>Cadastro — MM Quase Tudo</title>
+
+    <!-- SEO -->
+    <meta name="description" content="Crie sua conta no MM Quase Tudo — Central de jogos, economia virtual e negociações entre jogadores.">
+    <meta name="keywords" content="mm quasetudo, cadastro, criar conta, jogos, mmorpg">
+    <meta name="author" content="Equipe MM Quase Tudo">
+
+    <!-- Open Graph -->
+    <meta property="og:type"        content="website">
+    <meta property="og:site_name"   content="MM Quase Tudo">
+    <meta property="og:title"       content="Cadastro — MM Quase Tudo">
+    <meta property="og:description" content="Crie sua conta para jogar.">
+    <meta property="og:image"       content="https://xoperadorx.github.io/Portal-Bolsa/assets/og-image.png">
+    <meta property="og:url"         content="https://xoperadorx.github.io/Portal-Bolsa/cadastro.html">
+    <meta property="og:locale"      content="pt_BR">
+
+    <!-- Supabase + Icons -->
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+
     <style>
         /* ==================== RESET E BASE ==================== */
         * {
@@ -181,18 +199,6 @@
             margin-bottom: 20px;
         }
 
-        .subtitle-aviso {
-            color: #fca5a5;
-            font-size: 13px;
-            text-align: center;
-            margin-bottom: 20px;
-            padding: 10px 12px;
-            background: rgba(239, 68, 68, 0.1);
-            border: 1px solid rgba(239, 68, 68, 0.3);
-            border-radius: 8px;
-            line-height: 1.4;
-        }
-
         /* ==================== FORMULÁRIO ==================== */
         .form-group { margin-bottom: 18px; }
 
@@ -222,9 +228,6 @@
             border-color: #3b82f6;
             box-shadow: 0 0 0 3px rgba(59,130,246,0.2);
         }
-
-        .form-group input.invalido { border-color: #ef4444; }
-        .form-group input.valido { border-color: #22c55e; }
 
         .form-group .ajuda {
             font-size: 12px;
@@ -307,7 +310,6 @@
         }
 
         /* ==================== RESPONSIVIDADE ==================== */
-
         @media (max-width: 1024px) {
             .navbar { padding: 0.8rem 1.5rem; }
             .nav-links { gap: 1.5rem; }
@@ -370,8 +372,6 @@
             }
 
             h1 { font-size: 22px; margin-bottom: 16px; }
-            .subtitle-aviso { font-size: 12px; padding: 8px 10px; }
-
             .form-group { margin-bottom: 16px; }
             .form-group label { font-size: 13px; }
             .form-group input { padding: 11px 12px; font-size: 16px; }
@@ -434,6 +434,7 @@
     </style>
 </head>
 <body>
+
     <!-- ==================== MENU PRINCIPAL ==================== -->
     <div class="menu-container">
         <nav class="navbar">
@@ -469,7 +470,8 @@
     <div class="cadastro-wrapper">
         <div class="cadastro-container">
             <h1>📝 Criar Conta</h1>
-                        <div id="mensagemErro" class="mensagem-erro"></div>
+
+            <div id="mensagemErro" class="mensagem-erro"></div>
             <div id="mensagemSucesso" class="mensagem-sucesso"></div>
 
             <form id="formCadastro" autocomplete="on">
@@ -481,7 +483,7 @@
                 <div class="form-group">
                     <label for="senha">Senha</label>
                     <input type="password" id="senha" placeholder="Mínimo 6 caracteres" autocomplete="new-password" required>
-                    <div class="ajuda">Use pelo menos 6 caracteres Ex: moitapr123456.</div>
+                    <div class="ajuda">Use pelo menos 6 caracteres. Ex: moitapr123456</div>
                 </div>
                 <div class="form-group">
                     <label for="confirmarSenha">Confirmar senha</label>
@@ -489,297 +491,302 @@
                 </div>
                 <button type="submit" id="btnCadastrar">📝 Criar conta</button>
             </form>
- 
+        </div>
     </div>
 
-<script>
-    // ==================== CONFIGURAÇÕES ====================
-    const SUPABASE_URL = 'https://xrcxvizzdumcxbylmkvn.supabase.co';
-    // ⚠️ TROQUE pela SUA NOVA chave após rotacionar
-    const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InhyY3h2aXp6ZHVtY3hieWxta3ZuIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODY2NjA0NzIsImV4cCI6MjEwMjIzNjQ3Mn0.ohB4tW0UQ-k1PcwoZxm4u9XSGNLsFphv1_UwTWoklOM';
-    const TABELA = 'Geral';
+    <!-- ==================== SCRIPTS ==================== -->
+    <script>
+        // ==================== CONFIGURAÇÕES ====================
+        const SUPABASE_URL = 'https://xrcxvizzdumcxbylmkvn.supabase.co';
+        const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InhyY3h2aXp6ZHVtY3hieWxta3ZuIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODY2NjA0NzIsImV4cCI6MjEwMjIzNjQ3Mn0.ohB4tW0UQ-k1PcwoZxm4u9XSGNLsFphv1_UwTWoklOM';
+        const TABELA = 'Geral';
 
-    const supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+        const supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
-    // ==================== SESSÃO LOCAL (24h) ====================
-    const SESSION_KEY = 'usuario_logado';
-    const SESSION_TIMESTAMP_KEY = 'session_timestamp';
-    const SESSION_DURATION = 24 * 60 * 60 * 1000;
+        // ==================== SESSÃO LOCAL (24h) ====================
+        const SESSION_KEY = 'usuario_logado';
+        const SESSION_TIMESTAMP_KEY = 'session_timestamp';
+        const SESSION_DURATION = 24 * 60 * 60 * 1000;
 
-    function salvarSessao(usuario) {
-        localStorage.setItem(SESSION_KEY, JSON.stringify(usuario));
-        localStorage.setItem(SESSION_TIMESTAMP_KEY, Date.now().toString());
-    }
-    function sessaoValida() {
-        const ts = localStorage.getItem(SESSION_TIMESTAMP_KEY);
-        const u = localStorage.getItem(SESSION_KEY);
-        if (!ts || !u) return false;
-        const t = parseInt(ts, 10);
-        if (isNaN(t)) return false;
-        return (Date.now() - t) < SESSION_DURATION;
-    }
-
-    // ==================== ELEMENTOS ====================
-    const formCadastro    = document.getElementById('formCadastro');
-    const loginInput      = document.getElementById('login');
-    const senhaInput      = document.getElementById('senha');
-    const confirmarInput  = document.getElementById('confirmarSenha');
-    const btnCadastrar    = document.getElementById('btnCadastrar');
-    const mensagemErro    = document.getElementById('mensagemErro');
-    const mensagemSucesso = document.getElementById('mensagemSucesso');
-
-    // ==================== MENU TOGGLE ====================
-    const menuToggle = document.getElementById('menuToggle');
-    const navLinks   = document.getElementById('navLinks');
-    if (menuToggle && navLinks) {
-        menuToggle.addEventListener('click', () => {
-            const aberto = navLinks.classList.toggle('active');
-            menuToggle.setAttribute('aria-expanded', aberto ? 'true' : 'false');
-            const icon = menuToggle.querySelector('i');
-            if (icon) icon.className = aberto ? 'fas fa-times' : 'fas fa-bars';
-        });
-        navLinks.querySelectorAll('a').forEach(link => {
-            link.addEventListener('click', () => {
-                if (window.innerWidth <= 860) {
-                    navLinks.classList.remove('active');
-                    menuToggle.setAttribute('aria-expanded', 'false');
-                    const icon = menuToggle.querySelector('i');
-                    if (icon) icon.className = 'fas fa-bars';
-                }
-            });
-        });
-    }
-
-    // ==================== MENSAGENS ====================
-    const MSG_APARELHO_DUPLICADO = 'Esse Aparelho já está cadastrado aqui. Não é possível repetir.';
-    function mostrarErro(m) {
-        mensagemErro.textContent = m;
-        mensagemErro.className = 'mensagem-erro show';
-        mensagemSucesso.className = 'mensagem-sucesso';
-    }
-    function mostrarSucesso(m) {
-        mensagemSucesso.textContent = m;
-        mensagemSucesso.className = 'mensagem-sucesso show';
-        mensagemErro.className = 'mensagem-erro';
-    }
-    function ocultarMensagens() {
-        mensagemErro.className = 'mensagem-erro';
-        mensagemSucesso.className = 'mensagem-sucesso';
-    }
-
-    // ==================== SHA-256 ====================
-    async function sha256(texto) {
-        const enc = new TextEncoder().encode(texto);
-        const buf = await crypto.subtle.digest('SHA-256', enc);
-        return Array.from(new Uint8Array(buf)).map(b => b.toString(16).padStart(2,'0')).join('');
-    }
-
-    // ==================== CONEXÃO ====================
-    async function verificarSupabase() {
-        try {
-            const { error } = await supabaseClient.from('cargos').select('id').limit(1);
-            return !error;
-        } catch { return false; }
-    }
-
-    // ==================== VALIDAÇÕES ====================
-    function validarLogin(v) { return /^[a-zA-Z0-9_]{3,20}$/.test(v); }
-
-    // ==================== FINGERPRINT (inalterado) ====================
-    async function gerarFingerprint() {
-        const partes = [];
-        try {
-            const canvas = document.createElement('canvas');
-            canvas.width = 220; canvas.height = 50;
-            const ctx = canvas.getContext('2d');
-            ctx.textBaseline = 'top';
-            ctx.font = '14px "Arial"';
-            ctx.fillStyle = '#f60';
-            ctx.fillRect(125, 1, 62, 20);
-            ctx.fillStyle = '#069';
-            ctx.fillText('Fingerprint🎮🔥', 2, 15);
-            ctx.fillStyle = 'rgba(102,204,0,0.7)';
-            ctx.fillText('Fingerprint🎮🔥', 4, 17);
-            partes.push('canvas:' + canvas.toDataURL());
-        } catch { partes.push('canvas:err'); }
-        try {
-            const canvas = document.createElement('canvas');
-            const gl = canvas.getContext('webgl') || canvas.getContext('experimental-webgl');
-            if (gl) {
-                const dbg = gl.getExtension('WEBGL_debug_renderer_info');
-                if (dbg) {
-                    partes.push('gl_vendor:' + gl.getParameter(dbg.UNMASKED_VENDOR_WEBGL));
-                    partes.push('gl_renderer:' + gl.getParameter(dbg.UNMASKED_RENDERER_WEBGL));
-                }
-                partes.push('gl_version:' + gl.getParameter(gl.VERSION));
-                partes.push('gl_ext:' + (gl.getSupportedExtensions() || []).sort().join(','));
-            }
-        } catch { partes.push('gl:err'); }
-        partes.push('ua:' + navigator.userAgent);
-        partes.push('platform:' + (navigator.platform || ''));
-        partes.push('vendor:' + (navigator.vendor || ''));
-        partes.push('lang:' + (navigator.language || ''));
-        partes.push('langs:' + (navigator.languages || []).join(','));
-        try {
-            partes.push('tz:' + Intl.DateTimeFormat().resolvedOptions().timeZone);
-            partes.push('tz_off:' + new Date().getTimezoneOffset());
-        } catch { partes.push('tz:err'); }
-        partes.push('screen:' + screen.width + 'x' + screen.height);
-        partes.push('avail:' + screen.availWidth + 'x' + screen.availHeight);
-        partes.push('colorDepth:' + screen.colorDepth);
-        partes.push('pixelRatio:' + (window.devicePixelRatio || 1));
-        partes.push('cores:' + (navigator.hardwareConcurrency || 0));
-        partes.push('mem:' + (navigator.deviceMemory || 0));
-        partes.push('touch:' + (navigator.maxTouchPoints || 0));
-        try {
-            const plugins = Array.from(navigator.plugins || []).map(p => p.name).sort().join(',');
-            partes.push('plugins:' + plugins);
-        } catch {}
-        try {
-            const baseFonts = ['monospace', 'sans-serif', 'serif'];
-            const fontList = ['Arial','Arial Black','Comic Sans MS','Courier New','Georgia','Impact','Lucida Console','Lucida Sans Unicode','Palatino Linotype','Tahoma','Times New Roman','Trebuchet MS','Verdana','Webdings','Calibri','Cambria','Candara','Consolas','Constantia','Corbel','Franklin Gothic Medium','Gabriola','Leelawadee UI','Malgun Gothic','Microsoft Sans Serif','MS Gothic','MV Boli','Nirmala UI','Segoe UI','Segoe UI Emoji','SimSun','Sylfaen','Symbol','Wingdings','Yu Gothic'];
-            const span = document.createElement('span');
-            span.style.position = 'absolute';
-            span.style.left = '-9999px';
-            span.style.fontSize = '72px';
-            span.textContent = 'mmmmmmmmmmlli';
-            document.body.appendChild(span);
-            const baseSizes = {};
-            for (const bf of baseFonts) {
-                span.style.fontFamily = bf;
-                baseSizes[bf] = span.offsetWidth + 'x' + span.offsetHeight;
-            }
-            const detectadas = [];
-            for (const f of fontList) {
-                let enc = false;
-                for (const bf of baseFonts) {
-                    span.style.fontFamily = `'${f}',${bf}`;
-                    const tam = span.offsetWidth + 'x' + span.offsetHeight;
-                    if (tam !== baseSizes[bf]) { enc = true; break; }
-                }
-                if (enc) detectadas.push(f);
-            }
-            document.body.removeChild(span);
-            partes.push('fonts:' + detectadas.join(','));
-        } catch {}
-        return await sha256('fp::' + partes.join('||'));
-    }
-
-    // ==================== IP ====================
-    async function obterIP() {
-        try {
-            const r = await fetch('https://api.ipify.org?format=json');
-            const j = await r.json();
-            return j.ip || 'desconhecido';
-        } catch { return 'desconhecido'; }
-    }
-
-    // ==================== MAC ====================
-    function obterMAC() {
-        return new Promise((resolve) => {
-            let mac = 'desconhecido';
-            let fim = false;
-            const finalizar = (v) => { if (fim) return; fim = true; resolve(v); };
-            const t = setTimeout(() => finalizar(mac), 2500);
-            try {
-                const pc = new RTCPeerConnection({ iceServers: [{ urls: 'stun:stun.l.google.com:19302' }] });
-                pc.createDataChannel('');
-                pc.onicecandidate = (e) => {
-                    if (!e.candidate) return;
-                    const m = e.candidate.candidate.match(/([0-9a-f]{2}[-:]){5}[0-9a-f]{2}/i);
-                    if (m && mac === 'desconhecido') mac = m[0].toUpperCase();
-                };
-                pc.createOffer().then(o => pc.setLocalDescription(o)).catch(() => {});
-                setTimeout(() => { clearTimeout(t); try { pc.close(); } catch {} finalizar(mac); }, 2000);
-            } catch { clearTimeout(t); finalizar('desconhecido'); }
-        });
-    }
-
-    // ==================== CADASTRO VIA RPC ====================
-    async function fazerCadastro(dados) {
-        try {
-            const { data, error } = await supabaseClient.rpc('criar_usuario', {
-                p_login:       dados.login,
-                p_senha:       dados.senha,
-                p_fingerprint: dados.fingerprint,
-                p_mac:         dados.mac_address,
-                p_ip:          dados.ip_address
-            });
-
-            if (error) {
-                console.error('Erro RPC criar_usuario:', error);
-                mostrarErro('❌ ' + (error.message || 'Erro ao criar conta.'));
-                return false;
-            }
-
-            if (!data || !data.ok) {
-                const msg = (data && data.erro) ? data.erro : 'Erro ao criar conta.';
-                if (msg.toLowerCase().includes('aparelho') || msg.toLowerCase().includes('cadastrado')) {
-                    mostrarErro(MSG_APARELHO_DUPLICADO);
-                } else {
-                    mostrarErro('❌ ' + msg);
-                }
-                return false;
-            }
-
-            // Sucesso — cria sessão local
-            const usuarioSessao = {
-                id:    data.id,
-                login: data.login,
-                saldo: 0,
-                saldo_poupanca: 0,
-                carteira: {}
-            };
-            salvarSessao(usuarioSessao);
-
-            mostrarSucesso('✅ Conta criada! Redirecionando...');
-            setTimeout(() => { window.location.href = 'dashboard.html'; }, 1200);
-            return true;
-
-        } catch (e) {
-            console.error('Erro inesperado:', e);
-            mostrarErro('❌ ' + (e.message || 'Erro ao criar conta. Tente novamente.'));
-            return false;
+        function salvarSessao(usuario) {
+            localStorage.setItem(SESSION_KEY, JSON.stringify(usuario));
+            localStorage.setItem(SESSION_TIMESTAMP_KEY, Date.now().toString());
         }
-    }
+        function sessaoValida() {
+            const ts = localStorage.getItem(SESSION_TIMESTAMP_KEY);
+            const u = localStorage.getItem(SESSION_KEY);
+            if (!ts || !u) return false;
+            const t = parseInt(ts, 10);
+            if (isNaN(t)) return false;
+            return (Date.now() - t) < SESSION_DURATION;
+        }
 
-    // ==================== EVENTOS ====================
-    formCadastro.addEventListener('submit', async (e) => {
-        e.preventDefault();
-        ocultarMensagens();
+        // ==================== REDIRECIONA SE JÁ LOGADO ====================
+        if (sessaoValida()) {
+            window.location.replace('dashboard.html');
+            throw new Error('REDIRECT_LOGGED_IN');
+        }
 
-        const login    = loginInput.value.trim().toLowerCase();
-        const senha    = senhaInput.value.trim();
-        const confirma = confirmarInput.value.trim();
+        // ==================== ELEMENTOS ====================
+        const formCadastro    = document.getElementById('formCadastro');
+        const loginInput      = document.getElementById('login');
+        const senhaInput      = document.getElementById('senha');
+        const confirmarInput  = document.getElementById('confirmarSenha');
+        const btnCadastrar    = document.getElementById('btnCadastrar');
+        const mensagemErro    = document.getElementById('mensagemErro');
+        const mensagemSucesso = document.getElementById('mensagemSucesso');
 
-        if (!login || !senha || !confirma) { mostrarErro('⚠️ Preencha todos os campos!'); return; }
-        if (!validarLogin(login)) { mostrarErro('⚠️ Login inválido. Use 3 a 20 caracteres (letras, números e _).'); return; }
-        if (senha.length < 6) { mostrarErro('⚠️ A senha deve ter pelo menos 6 caracteres.'); return; }
-        if (senha !== confirma) { mostrarErro('⚠️ As senhas não coincidem.'); return; }
+        // ==================== MENU TOGGLE ====================
+        const menuToggle = document.getElementById('menuToggle');
+        const navLinks   = document.getElementById('navLinks');
+        if (menuToggle && navLinks) {
+            menuToggle.addEventListener('click', () => {
+                const aberto = navLinks.classList.toggle('active');
+                menuToggle.setAttribute('aria-expanded', aberto ? 'true' : 'false');
+                const icon = menuToggle.querySelector('i');
+                if (icon) icon.className = aberto ? 'fas fa-times' : 'fas fa-bars';
+            });
+            navLinks.querySelectorAll('a').forEach(link => {
+                link.addEventListener('click', () => {
+                    if (window.innerWidth <= 860) {
+                        navLinks.classList.remove('active');
+                        menuToggle.setAttribute('aria-expanded', 'false');
+                        const icon = menuToggle.querySelector('i');
+                        if (icon) icon.className = 'fas fa-bars';
+                    }
+                });
+            });
+        }
 
-        const online = await verificarSupabase();
-        if (!online) { mostrarErro('❌ Sem conexão com o banco de dados.'); return; }
+        // ==================== MENSAGENS ====================
+        const MSG_APARELHO_DUPLICADO = 'Esse Aparelho já está cadastrado aqui. Não é possível repetir.';
+        function mostrarErro(m) {
+            mensagemErro.textContent = m;
+            mensagemErro.className = 'mensagem-erro show';
+            mensagemSucesso.className = 'mensagem-sucesso';
+        }
+        function mostrarSucesso(m) {
+            mensagemSucesso.textContent = m;
+            mensagemSucesso.className = 'mensagem-sucesso show';
+            mensagemErro.className = 'mensagem-erro';
+        }
+        function ocultarMensagens() {
+            mensagemErro.className = 'mensagem-erro';
+            mensagemSucesso.className = 'mensagem-sucesso';
+        }
 
-        btnCadastrar.disabled = true;
-        btnCadastrar.innerHTML = '<span class="loading"></span> Verificando dispositivo...';
+        // ==================== SHA-256 ====================
+        async function sha256(texto) {
+            const enc = new TextEncoder().encode(texto);
+            const buf = await crypto.subtle.digest('SHA-256', enc);
+            return Array.from(new Uint8Array(buf)).map(b => b.toString(16).padStart(2,'0')).join('');
+        }
 
-        const fingerprint = await gerarFingerprint();
-        const mac_address = await obterMAC();
-        const ip_address  = await obterIP();
+        // ==================== CONEXÃO ====================
+        async function verificarSupabase() {
+            try {
+                const { error } = await supabaseClient.from('cargos').select('id').limit(1);
+                return !error;
+            } catch { return false; }
+        }
 
-        btnCadastrar.innerHTML = '<span class="loading"></span> Criando conta...';
+        // ==================== VALIDAÇÕES ====================
+        function validarLogin(v) { return /^[a-zA-Z0-9_]{3,20}$/.test(v); }
 
-        await fazerCadastro({ login, senha, fingerprint, mac_address, ip_address });
+        // ==================== FINGERPRINT ====================
+        async function gerarFingerprint() {
+            const partes = [];
+            try {
+                const canvas = document.createElement('canvas');
+                canvas.width = 220; canvas.height = 50;
+                const ctx = canvas.getContext('2d');
+                ctx.textBaseline = 'top';
+                ctx.font = '14px "Arial"';
+                ctx.fillStyle = '#f60';
+                ctx.fillRect(125, 1, 62, 20);
+                ctx.fillStyle = '#069';
+                ctx.fillText('Fingerprint🎮🔥', 2, 15);
+                ctx.fillStyle = 'rgba(102,204,0,0.7)';
+                ctx.fillText('Fingerprint🎮🔥', 4, 17);
+                partes.push('canvas:' + canvas.toDataURL());
+            } catch { partes.push('canvas:err'); }
+            try {
+                const canvas = document.createElement('canvas');
+                const gl = canvas.getContext('webgl') || canvas.getContext('experimental-webgl');
+                if (gl) {
+                    const dbg = gl.getExtension('WEBGL_debug_renderer_info');
+                    if (dbg) {
+                        partes.push('gl_vendor:' + gl.getParameter(dbg.UNMASKED_VENDOR_WEBGL));
+                        partes.push('gl_renderer:' + gl.getParameter(dbg.UNMASKED_RENDERER_WEBGL));
+                    }
+                    partes.push('gl_version:' + gl.getParameter(gl.VERSION));
+                    partes.push('gl_ext:' + (gl.getSupportedExtensions() || []).sort().join(','));
+                }
+            } catch { partes.push('gl:err'); }
+            partes.push('ua:' + navigator.userAgent);
+            partes.push('platform:' + (navigator.platform || ''));
+            partes.push('vendor:' + (navigator.vendor || ''));
+            partes.push('lang:' + (navigator.language || ''));
+            partes.push('langs:' + (navigator.languages || []).join(','));
+            try {
+                partes.push('tz:' + Intl.DateTimeFormat().resolvedOptions().timeZone);
+                partes.push('tz_off:' + new Date().getTimezoneOffset());
+            } catch { partes.push('tz:err'); }
+            partes.push('screen:' + screen.width + 'x' + screen.height);
+            partes.push('avail:' + screen.availWidth + 'x' + screen.availHeight);
+            partes.push('colorDepth:' + screen.colorDepth);
+            partes.push('pixelRatio:' + (window.devicePixelRatio || 1));
+            partes.push('cores:' + (navigator.hardwareConcurrency || 0));
+            partes.push('mem:' + (navigator.deviceMemory || 0));
+            partes.push('touch:' + (navigator.maxTouchPoints || 0));
+            try {
+                const plugins = Array.from(navigator.plugins || []).map(p => p.name).sort().join(',');
+                partes.push('plugins:' + plugins);
+            } catch {}
+            try {
+                const baseFonts = ['monospace', 'sans-serif', 'serif'];
+                const fontList = ['Arial','Arial Black','Comic Sans MS','Courier New','Georgia','Impact','Lucida Console','Lucida Sans Unicode','Palatino Linotype','Tahoma','Times New Roman','Trebuchet MS','Verdana','Webdings','Calibri','Cambria','Candara','Consolas','Constantia','Corbel','Franklin Gothic Medium','Gabriola','Leelawadee UI','Malgun Gothic','Microsoft Sans Serif','MS Gothic','MV Boli','Nirmala UI','Segoe UI','Segoe UI Emoji','SimSun','Sylfaen','Symbol','Wingdings','Yu Gothic'];
+                const span = document.createElement('span');
+                span.style.position = 'absolute';
+                span.style.left = '-9999px';
+                span.style.fontSize = '72px';
+                span.textContent = 'mmmmmmmmmmlli';
+                document.body.appendChild(span);
+                const baseSizes = {};
+                for (const bf of baseFonts) {
+                    span.style.fontFamily = bf;
+                    baseSizes[bf] = span.offsetWidth + 'x' + span.offsetHeight;
+                }
+                const detectadas = [];
+                for (const f of fontList) {
+                    let enc = false;
+                    for (const bf of baseFonts) {
+                        span.style.fontFamily = `'${f}',${bf}`;
+                        const tam = span.offsetWidth + 'x' + span.offsetHeight;
+                        if (tam !== baseSizes[bf]) { enc = true; break; }
+                    }
+                    if (enc) detectadas.push(f);
+                }
+                document.body.removeChild(span);
+                partes.push('fonts:' + detectadas.join(','));
+            } catch {}
+            return await sha256('fp::' + partes.join('||'));
+        }
 
-        btnCadastrar.disabled = false;
-        btnCadastrar.innerHTML = '📝 Criar conta';
-    });
+        // ==================== IP ====================
+        async function obterIP() {
+            try {
+                const r = await fetch('https://api.ipify.org?format=json');
+                const j = await r.json();
+                return j.ip || 'desconhecido';
+            } catch { return 'desconhecido'; }
+        }
 
-    // ==================== INICIALIZAÇÃO ====================
-    verificarSupabase();
-    if (sessaoValida()) {
-        window.location.href = 'dashboard.html';
-    }
-</script>
+        // ==================== MAC ====================
+        function obterMAC() {
+            return new Promise((resolve) => {
+                let mac = 'desconhecido';
+                let fim = false;
+                const finalizar = (v) => { if (fim) return; fim = true; resolve(v); };
+                const t = setTimeout(() => finalizar(mac), 2500);
+                try {
+                    const pc = new RTCPeerConnection({ iceServers: [{ urls: 'stun:stun.l.google.com:19302' }] });
+                    pc.createDataChannel('');
+                    pc.onicecandidate = (e) => {
+                        if (!e.candidate) return;
+                        const m = e.candidate.candidate.match(/([0-9a-f]{2}[-:]){5}[0-9a-f]{2}/i);
+                        if (m && mac === 'desconhecido') mac = m[0].toUpperCase();
+                    };
+                    pc.createOffer().then(o => pc.setLocalDescription(o)).catch(() => {});
+                    setTimeout(() => { clearTimeout(t); try { pc.close(); } catch {} finalizar(mac); }, 2000);
+                } catch { clearTimeout(t); finalizar('desconhecido'); }
+            });
+        }
+
+        // ==================== CADASTRO VIA RPC ====================
+        async function fazerCadastro(dados) {
+            try {
+                const { data, error } = await supabaseClient.rpc('criar_usuario', {
+                    p_login:       dados.login,
+                    p_senha:       dados.senha,
+                    p_fingerprint: dados.fingerprint,
+                    p_mac:         dados.mac_address,
+                    p_ip:          dados.ip_address
+                });
+
+                if (error) {
+                    console.error('Erro RPC criar_usuario:', error);
+                    mostrarErro('❌ ' + (error.message || 'Erro ao criar conta.'));
+                    return false;
+                }
+
+                if (!data || !data.ok) {
+                    const msg = (data && data.erro) ? data.erro : 'Erro ao criar conta.';
+                    if (msg.toLowerCase().includes('aparelho') || msg.toLowerCase().includes('cadastrado')) {
+                        mostrarErro(MSG_APARELHO_DUPLICADO);
+                    } else {
+                        mostrarErro('❌ ' + msg);
+                    }
+                    return false;
+                }
+
+                // Sucesso — cria sessão local
+                const usuarioSessao = {
+                    id:    data.id,
+                    login: data.login,
+                    saldo: 0,
+                    saldo_poupanca: 0,
+                    carteira: {}
+                };
+                salvarSessao(usuarioSessao);
+
+                mostrarSucesso('✅ Conta criada! Redirecionando...');
+                setTimeout(() => {
+                    window.location.replace('dashboard.html');
+                }, 1200);
+                return true;
+
+            } catch (e) {
+                console.error('Erro inesperado:', e);
+                mostrarErro('❌ ' + (e.message || 'Erro ao criar conta. Tente novamente.'));
+                return false;
+            }
+        }
+
+        // ==================== EVENTOS ====================
+        formCadastro.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            ocultarMensagens();
+
+            const login    = loginInput.value.trim().toLowerCase();
+            const senha    = senhaInput.value.trim();
+            const confirma = confirmarInput.value.trim();
+
+            if (!login || !senha || !confirma) { mostrarErro('⚠️ Preencha todos os campos!'); return; }
+            if (!validarLogin(login)) { mostrarErro('⚠️ Login inválido. Use 3 a 20 caracteres (letras, números e _).'); return; }
+            if (senha.length < 6) { mostrarErro('⚠️ A senha deve ter pelo menos 6 caracteres.'); return; }
+            if (senha !== confirma) { mostrarErro('⚠️ As senhas não coincidem.'); return; }
+
+            const online = await verificarSupabase();
+            if (!online) { mostrarErro('❌ Sem conexão com o banco de dados.'); return; }
+
+            btnCadastrar.disabled = true;
+            btnCadastrar.innerHTML = '<span class="loading"></span> Verificando dispositivo...';
+
+            const fingerprint = await gerarFingerprint();
+            const mac_address = await obterMAC();
+            const ip_address  = await obterIP();
+
+            btnCadastrar.innerHTML = '<span class="loading"></span> Criando conta...';
+
+            await fazerCadastro({ login, senha, fingerprint, mac_address, ip_address });
+
+            btnCadastrar.disabled = false;
+            btnCadastrar.innerHTML = '📝 Criar conta';
+        });
+
+        // ==================== INICIALIZAÇÃO ====================
+        verificarSupabase();
+    </script>
 </body>
 </html>

@@ -1,0 +1,38 @@
+{
+  "name": "br.seuusuario.portalbolsa",
+  "displayName": "PortalBolsa",
+  "version": "1.0.0",
+  "description": "Aplicativo MM Quase Tudo - Central de Jogos",
+  "main": "index.js",
+  "scripts": {
+    "dev": "npx serve . -l 3000",
+    "preview": "npx serve .",
+    "prepare": "cordova prepare",
+    "build:android": "cordova build android --release",
+    "build:ios": "cordova build ios --release",
+    "run:android": "cordova run android",
+    "clean": "rm -rf platforms plugins www node_modules",
+    "lint": "npx eslint . --ext .js,.html",
+    "format": "npx prettier --write ."
+  },
+  "keywords": ["ecosystem:cordova", "mmorpg", "browser-game"],
+  "author": "Equipe MM Quase Tudo",
+  "license": "Apache-2.0",
+  "cordova": {
+    "plugins": {
+      "cordova-plugin-whitelist": {},
+      "cordova-plugin-inappbrowser": {},
+      "cordova-plugin-statusbar": {},
+      "cordova-plugin-device": {}
+    },
+    "platforms": ["android", "ios"]
+  },
+  "devDependencies": {
+    "cordova-android": "^12.0.0",
+    "cordova-ios": "^7.0.0",
+    "cordova-plugin-whitelist": "^1.3.5",
+    "cordova-plugin-inappbrowser": "^5.0.0",
+    "cordova-plugin-statusbar": "^3.0.0",
+    "cordova-plugin-device": "^2.1.0"
+  }
+}

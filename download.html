@@ -1,10 +1,25 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
-
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#002bad">
+
     <title>Downloads | MM Quase Tudo</title>
+
+    <!-- SEO -->
+    <meta name="description" content="Baixe o MM Quase Tudo para Android ou Windows — Central de jogos, economia virtual e negociações entre jogadores.">
+    <meta name="keywords" content="mm quasetudo, download, apk, android, windows, jogos">
+    <meta name="author" content="Equipe MM Quase Tudo">
+
+    <!-- Open Graph -->
+    <meta property="og:type"        content="website">
+    <meta property="og:site_name"   content="MM Quase Tudo">
+    <meta property="og:title"       content="Downloads — MM Quase Tudo">
+    <meta property="og:description" content="Baixe o MM Quase Tudo e comece a jogar.">
+    <meta property="og:image"       content="https://xoperadorx.github.io/Portal-Bolsa/assets/og-image.png">
+    <meta property="og:url"         content="https://xoperadorx.github.io/Portal-Bolsa/download.html">
+    <meta property="og:locale"      content="pt_BR">
 
     <!-- Font Awesome -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
@@ -291,19 +306,7 @@
             color: #fff;
         }
 
-        .download-icon.ios {
-            background: linear-gradient(135deg, #a2aaad, #000);
-            color: #fff;
-        }
-
-        .download-icon.linux {
-            background: linear-gradient(135deg, #f6a800, #d78400);
-            color: #fff;
-        }
-
-        .download-titulo {
-            flex: 1;
-        }
+        .download-titulo { flex: 1; }
 
         .download-titulo h3 {
             color: #f1f5f9;
@@ -366,7 +369,6 @@
         .btn-download.android:hover { box-shadow: 0 8px 25px rgba(61, 220, 132, 0.45); }
         .btn-download.windows:hover { box-shadow: 0 8px 25px rgba(0, 164, 239, 0.45); }
 
-        /* Barra de progresso */
         .progress-bar {
             height: 4px;
             width: 100%;
@@ -917,7 +919,6 @@
 
         const plataforma = detectarPlataforma();
 
-        // Destaca o card da plataforma do usuário
         function destacarPlataforma() {
             const mapa = {
                 android: 'cardAndroid',
@@ -984,13 +985,11 @@
                 if (error) throw error;
                 if (!data || data.length === 0) return;
 
-                // Atualiza badge com a versão mais recente
                 const maisRecente = data[0];
                 if (maisRecente) {
                     document.getElementById('versaoTexto').textContent = 'Versão ' + maisRecente.versao;
                 }
 
-                // Atualiza botões se houver URL no banco
                 data.forEach(item => {
                     const btn = document.querySelector(`[data-download="${item.plataforma}"]`);
                     if (btn && item.url) {
@@ -1001,7 +1000,6 @@
                 console.log(`[Downloads] ${data.length} versão(ões) carregada(s) do Supabase.`);
 
             } catch (err) {
-                // Tabela pode não existir — apenas mantém os valores padrão
                 console.warn('[Downloads] Não foi possível carregar versões:', err.message);
             }
         }
@@ -1036,7 +1034,5 @@
         verificarStatus();
         setInterval(verificarStatus, 30000);
     </script>
-
 </body>
-
 </html>

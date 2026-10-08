@@ -211,3 +211,22 @@ Ao lançar uma nova versão, atualize **estes 4 lugares** para manter tudo consi
 | **MAJOR** | Mudanças incompatíveis | `1.0.0` → `2.0.0` |
 | **MINOR** | Novas funcionalidades | `1.0.0` → `1.1.0` |
 | **PATCH** | Correções de bugs | `1.0.0` → `1.0.1` |
+
+🎯 Ordem Recomendada de Execução
+DIA 1 (Segurança):
+  1. Rodar SQL do RLS
+  2. Rotacionar chave anon
+  3. Aplicar RPC de troca
+
+DIA 2 (Senhas + Refactor):
+  4. Migrar senhas para bcrypt
+  5. Criar shared/session.js e aplicar
+
+DIA 3 (Organização):
+  6. Criar shared/menu.js
+  7. Aplicar menu em todas as páginas
+
+DIA 4 (Polimento):
+  8. Favicon + OG tags
+  9. .gitignore + package.json
+  10. Remover logs

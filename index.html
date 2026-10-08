@@ -1,9 +1,43 @@
+
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#002bad">
+
     <title>MM Quase Tudo</title>
+
+    <!-- SEO -->
+    <meta name="description" content="MM Quase Tudo — Central de jogos, economia virtual e negociações entre jogadores.">
+    <meta name="keywords" content="mm quasetudo, jogos, economia virtual, mmorpg, browser game">
+    <meta name="author" content="Equipe MM Quase Tudo">
+
+    <!-- Open Graph -->
+    <meta property="og:type"        content="website">
+    <meta property="og:site_name"   content="MM Quase Tudo">
+    <meta property="og:title"       content="MM Quase Tudo — Central de Jogos">
+    <meta property="og:description" content="Central de jogos, economia virtual e negociações entre jogadores.">
+    <meta property="og:image"       content="https://xoperadorx.github.io/Portal-Bolsa/assets/og-image.png">
+    <meta property="og:url"         content="https://xoperadorx.github.io/Portal-Bolsa/">
+    <meta property="og:locale"      content="pt_BR">
+
+    <!-- Twitter Card -->
+    <meta name="twitter:card"        content="summary_large_image">
+    <meta name="twitter:title"       content="MM Quase Tudo — Central de Jogos">
+    <meta name="twitter:description" content="Central de jogos, economia virtual e negociações entre jogadores.">
+    <meta name="twitter:image"       content="https://xoperadorx.github.io/Portal-Bolsa/assets/og-image.png">
+
+    <!-- Favicon (descomente se os arquivos existirem) -->
+    <!--
+    <link rel="icon"             type="image/png" sizes="32x32" href="./assets/favicon-32.png">
+    <link rel="icon"             type="image/png" sizes="16x16" href="./assets/favicon-16.png">
+    <link rel="apple-touch-icon" sizes="180x180"               href="./assets/apple-touch-icon.png">
+    -->
+
+    <!-- PWA (descomente se manifest.json existir) -->
+    <!-- <link rel="manifest" href="./manifest.json"> -->
+
     <style>
         * {
             margin: 0;
@@ -23,6 +57,7 @@
         .loading-container {
             text-align: center;
             color: white;
+            padding: 20px;
         }
 
         .loading-container h1 {
@@ -46,57 +81,160 @@
             margin: 20px auto;
         }
 
+        .erro-box {
+            color: #fca5a5;
+            font-size: 1rem;
+            line-height: 1.6;
+            padding: 20px;
+            background: rgba(239, 68, 68, 0.1);
+            border: 1px solid rgba(239, 68, 68, 0.3);
+            border-radius: 12px;
+            max-width: 500px;
+            margin: 0 auto;
+        }
+
+        .erro-box a {
+            color: #f59e0b;
+            text-decoration: none;
+            font-weight: 700;
+        }
+
+        .erro-box a:hover {
+            text-decoration: underline;
+        }
+
         @keyframes spin {
-            0% { transform: rotate(0deg); }
+            0%   { transform: rotate(0deg); }
             100% { transform: rotate(360deg); }
         }
 
         @keyframes pulse {
             0%, 100% { opacity: 1; }
-            50% { opacity: 0.5; }
+            50%      { opacity: 0.5; }
         }
     </style>
 </head>
 <body>
     <div class="loading-container">
         <h1>🏦 MM Quase Tudo</h1>
-        <div class="spinner"></div>
-        <p>Redirecionando para o Logar...</p>
+        <div class="spinner" id="spinner"></div>
+        <p id="loadingMsg">Carregando...</p>
     </div>
 
-    <script>
-        // ==================== SESSÃO (24h) ====================
-        const SESSION_KEY = 'usuario_logado';
+    <script type="module">
+        // ══════════════════════════════════════════════════════════════
+        // CONFIGURAÇÃO DE SESSÃO (inline — não depende de arquivo externo)
+        // ══════════════════════════════════════════════════════════════
+        const SESSION_KEY           = 'usuario_logado';
         const SESSION_TIMESTAMP_KEY = 'session_timestamp';
-        const SESSION_DURATION = 24 * 60 * 60 * 1000;
+        const SESSION_DURATION      = 24 * 60 * 60 * 1000; // 24h
 
-        function sessaoValida() {
-            const ts = localStorage.getItem(SESSION_TIMESTAMP_KEY);
-            const u  = localStorage.getItem(SESSION_KEY);
-            if (!ts || !u) return false;
-            const t = parseInt(ts, 10);
-            if (isNaN(t)) return false;
-            return (Date.now() - t) < SESSION_DURATION;
+        function limparSessao() {
+            try {
+                localStorage.removeItem(SESSION_KEY);
+                localStorage.removeItem(SESSION_TIMESTAMP_KEY);
+            } catch (e) {}
         }
 
-        if (sessaoValida()) {
+        function sessaoValida() {
             try {
-                const user = JSON.parse(localStorage.getItem(SESSION_KEY));
-                if (user && user.login) {
-                    window.location.href = 'dashboard.html';
-                } else {
-                    window.location.href = 'noticias.html';
-                }
+                const ts = localStorage.getItem(SESSION_TIMESTAMP_KEY);
+                const u  = localStorage.getItem(SESSION_KEY);
+                if (!ts || !u) return false;
+                const t = parseInt(ts, 10);
+                if (isNaN(t)) return false;
+                return (Date.now() - t) < SESSION_DURATION;
             } catch (e) {
-                window.location.href = 'noticias.html';
+                return false;
             }
+        }
+
+        function obterUsuario() {
+            try {
+                const raw = localStorage.getItem(SESSION_KEY);
+                if (!raw) return null;
+                return JSON.parse(raw);
+            } catch (e) {
+                return null;
+            }
+        }
+
+        // ══════════════════════════════════════════════════════════════
+        // 🛡️ PROTEÇÃO ANTI-LOOP
+        // Detecta se a página foi recarregada 3+ vezes em 5 segundos.
+        // ══════════════════════════════════════════════════════════════
+        const LOOP_KEY   = 'index_loop_count';
+        const LOOP_TS_KEY = 'index_loop_timestamp';
+        const LOOP_LIMIT = 3;
+        const LOOP_WINDOW = 5000;
+
+        function verificarLoop() {
+            const agora = Date.now();
+            const ts = parseInt(localStorage.getItem(LOOP_TS_KEY) || '0', 10);
+            let count = parseInt(localStorage.getItem(LOOP_KEY) || '0', 10);
+
+            if ((agora - ts) > LOOP_WINDOW) count = 0;
+
+            count++;
+            localStorage.setItem(LOOP_KEY, count.toString());
+            localStorage.setItem(LOOP_TS_KEY, agora.toString());
+
+            return count >= LOOP_LIMIT;
+        }
+
+        function limparLoop() {
+            try {
+                localStorage.removeItem(LOOP_KEY);
+                localStorage.removeItem(LOOP_TS_KEY);
+            } catch (e) {}
+        }
+
+        // ══════════════════════════════════════════════════════════════
+        // FLUXO PRINCIPAL DE REDIRECIONAMENTO
+        // ══════════════════════════════════════════════════════════════
+        const msg     = document.getElementById('loadingMsg');
+        const spinner = document.getElementById('spinner');
+
+        if (verificarLoop()) {
+            // 🚨 Loop detectado — para tudo e limpa
+            limparLoop();
+            limparSessao();
+
+            if (spinner) spinner.style.display = 'none';
+            msg.outerHTML = `
+                <div class="erro-box">
+                    ⚠️ <strong>Erro de redirecionamento detectado.</strong><br>
+                    A sessão foi limpa para evitar loop.<br><br>
+                    <a href="./login.html">→ Ir para o login</a>
+                </div>
+            `;
+            console.error('[index] Loop de redirecionamento detectado — sessão limpa.');
+
+        } else if (sessaoValida()) {
+            // ✅ Tem sessão válida → vai para dashboard
+            const user = obterUsuario();
+            if (user && user.login) {
+                msg.textContent = `Bem-vindo, ${user.nome || user.login}!`;
+                limparLoop();
+                // Usa replace() para não poluir o histórico do navegador
+                window.location.replace('dashboard.html');
+            } else {
+                // Sessão existe mas está corrompida
+                limparSessao();
+                msg.textContent = 'Sessão corrompida. Redirecionando...';
+                setTimeout(() => {
+                    window.location.replace('login.html');
+                }, 500);
+            }
+
         } else {
-            // Limpa sessão expirada
-            localStorage.removeItem(SESSION_KEY);
-            localStorage.removeItem(SESSION_TIMESTAMP_KEY);
+            // ❌ Sem sessão válida → vai para página PÚBLICA
+            // (não vai para login.html para evitar possível loop)
+            limparSessao();
+            msg.textContent = 'Redirecionando...';
             setTimeout(() => {
-                window.location.href = 'noticias.html';
-            }, 800);
+                window.location.replace('./noticias.html');
+            }, 500);
         }
     </script>
 </body>

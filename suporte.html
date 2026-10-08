@@ -3,9 +3,37 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#002bad">
+
     <title>Suporte | MM Quase Tudo</title>
 
+    <!-- SEO -->
+    <meta name="description" content="Central de suporte do MM Quase Tudo — Abra tickets, consulte o FAQ e fale com a equipe.">
+    <meta name="keywords" content="mm quasetudo, suporte, ajuda, tickets">
+    <meta name="author" content="Equipe MM Quase Tudo">
+
+    <!-- Open Graph -->
+    <meta property="og:type"        content="website">
+    <meta property="og:site_name"   content="MM Quase Tudo">
+    <meta property="og:title"       content="Suporte — MM Quase Tudo">
+    <meta property="og:description" content="Central de suporte do MM Quase Tudo.">
+    <meta property="og:image"       content="https://xoperadorx.github.io/Portal-Bolsa/assets/og-image.png">
+    <meta property="og:url"         content="https://xoperadorx.github.io/Portal-Bolsa/suporte.html">
+    <meta property="og:locale"      content="pt_BR">
+
+    <!-- Twitter Card -->
+    <meta name="twitter:card"        content="summary_large_image">
+    <meta name="twitter:title"       content="Suporte — MM Quase Tudo">
+    <meta name="twitter:description" content="Central de suporte do MM Quase Tudo.">
+    <meta name="twitter:image"       content="https://xoperadorx.github.io/Portal-Bolsa/assets/og-image.png">
+
+    <!-- CSS do menu compartilhado -->
+    <link rel="stylesheet" href="./shared/menu.css">
+
+    <!-- Font Awesome -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+
+    <!-- Supabase -->
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
     <style>
@@ -18,123 +46,6 @@
             color: #e0e0e0;
             display: flex;
             flex-direction: column;
-        }
-
-        /* ==================== MENU ==================== */
-        .menu-container {
-            width: 100%;
-            background-color: rgb(0, 43, 173);
-            backdrop-filter: blur(8px);
-            border-bottom: 1px solid rgba(255, 215, 0, 0.2);
-            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.6);
-            position: sticky;
-            top: 0;
-            z-index: 1000;
-        }
-
-        .navbar {
-            max-width: 1400px;
-            margin: 0 auto;
-            padding: 0.9rem 2rem;
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            flex-wrap: wrap;
-        }
-
-        .logo {
-            font-size: 1.8rem;
-            font-weight: 800;
-            letter-spacing: 1px;
-            text-transform: uppercase;
-            color: #ffffff;
-            text-shadow: 0 0 10px rgba(255, 215, 0, 0.5);
-            display: flex;
-            align-items: center;
-            gap: 0.3rem;
-        }
-
-        .logo span { color: #f5c542; font-weight: 900; }
-        .logo i { color: #f5c542; font-size: 1.6rem; margin-right: 0.2rem; }
-
-        .nav-links {
-            display: flex;
-            align-items: center;
-            gap: 2.2rem;
-            list-style: none;
-            margin: 0;
-            padding: 0;
-        }
-
-        .nav-links li a {
-            text-decoration: none;
-            color: #d0d0d0;
-            font-weight: 600;
-            font-size: 1rem;
-            letter-spacing: 0.3px;
-            transition: all 0.2s ease;
-            padding: 0.5rem 0;
-            position: relative;
-            display: inline-flex;
-            align-items: center;
-        }
-
-        .nav-links li a i {
-            margin-right: 8px;
-            font-size: 0.95em;
-            color: #f5c542;
-            transition: color 0.2s ease, transform 0.2s ease;
-        }
-
-        .nav-links li a:hover i { color: #ffffff; transform: scale(1.1); }
-
-        .nav-links li a::after {
-            content: '';
-            position: absolute;
-            bottom: 0; left: 0;
-            width: 0; height: 2px;
-            background: #f5c542;
-            transition: width 0.25s ease;
-        }
-
-        .nav-links li a:hover { color: #ffffff; }
-        .nav-links li a:hover::after { width: 100%; }
-
-        .btn-discord {
-            background: linear-gradient(135deg, #f5c542 0%, #d4a017 100%);
-            border: none;
-            border-radius: 40px;
-            color: #0b0e14;
-            font-weight: 700;
-            font-size: 0.9rem;
-            padding: 0.7rem 1.6rem;
-            display: flex;
-            align-items: center;
-            gap: 0.6rem;
-            cursor: pointer;
-            transition: transform 0.2s, box-shadow 0.2s;
-            box-shadow: 0 0 15px rgba(245, 197, 66, 0.3);
-            text-decoration: none;
-            letter-spacing: 0.3px;
-            white-space: nowrap;
-        }
-
-        .btn-discord i { font-size: 1.1rem; }
-
-        .btn-discord:hover {
-            transform: scale(1.03);
-            box-shadow: 0 0 25px rgba(245, 197, 66, 0.6);
-            background: linear-gradient(135deg, #f7d25c 0%, #e0b020 100%);
-        }
-
-        .menu-toggle {
-            display: none;
-            background: transparent;
-            border: none;
-            color: #f5c542;
-            font-size: 1.8rem;
-            cursor: pointer;
-            padding: 0.3rem 0.6rem;
         }
 
         /* ==================== ABAS ==================== */
@@ -168,7 +79,6 @@
         }
 
         .aba-btn i { color: #f5c542; }
-
         .aba-btn:hover { color: #e2e8f0; background: #263449; }
 
         .aba-btn.ativa {
@@ -178,8 +88,6 @@
             border-bottom: 1px solid #1e293b;
             box-shadow: 0 -4px 12px rgba(0, 0, 0, 0.2);
         }
-
-        .aba-btn.ativa i { color: #f5c542; }
 
         .aba-conteudo { display: none; }
         .aba-conteudo.ativa { display: block; }
@@ -209,7 +117,7 @@
             line-height: 1.6;
         }
 
-        /* ==================== LAYOUT PRINCIPAL ==================== */
+        /* ==================== LAYOUT ==================== */
         .suporte-wrapper {
             flex: 1;
             max-width: 1400px;
@@ -221,7 +129,6 @@
             gap: 30px;
         }
 
-        /* ==================== CARDS BASE ==================== */
         .card {
             background: #1e293b;
             border: 1px solid #334155;
@@ -291,7 +198,6 @@
             gap: 14px;
         }
 
-        /* ==================== BOTÃO ENVIAR ==================== */
         .btn-enviar {
             width: 100%;
             padding: 14px;
@@ -353,7 +259,7 @@
             color: #fca5a5;
         }
 
-        /* ==================== HISTÓRICO DE TICKETS (cards) ==================== */
+        /* ==================== TICKETS (cards) ==================== */
         .historico-lista {
             display: flex;
             flex-direction: column;
@@ -377,11 +283,7 @@
             transition: transform 0.2s, border-color 0.2s;
         }
 
-        .ticket-item:hover {
-            transform: translateX(4px);
-            border-color: #f5c542;
-        }
-
+        .ticket-item:hover { transform: translateX(4px); border-color: #f5c542; }
         .ticket-item.status-aberto { border-left-color: #3b82f6; }
         .ticket-item.status-em_andamento { border-left-color: #f5c542; }
         .ticket-item.status-resolvido { border-left-color: #22c55e; }
@@ -396,11 +298,7 @@
             flex-wrap: wrap;
         }
 
-        .ticket-item .id {
-            color: #f5c542;
-            font-weight: 800;
-            font-size: 0.85rem;
-        }
+        .ticket-item .id { color: #f5c542; font-weight: 800; font-size: 0.85rem; }
 
         .ticket-item .assunto {
             color: #f1f5f9;
@@ -519,7 +417,7 @@
 
         .historico-busca button:hover { background: #475569; border-color: #f5c542; }
 
-        /* ==================== TABELA DE TICKETS ==================== */
+        /* ==================== TABELA ==================== */
         .tabela-wrapper {
             max-width: 1400px;
             width: 100%;
@@ -555,7 +453,6 @@
         }
 
         .tabela-header h2 i { color: #f5c542; }
-
         .tabela-header .contador { color: #94a3b8; font-size: 0.85rem; }
 
         .tabela-scroll { overflow-x: auto; }
@@ -608,7 +505,7 @@
         .tabela-card .estado-vazio i { font-size: 3rem; margin-bottom: 14px; color: #334155; }
         .tabela-card .estado-vazio p { font-size: 1rem; }
 
-        /* ==================== TOOLBAR ADMIN ==================== */
+        /* ==================== TOOLBAR ==================== */
         .toolbar {
             max-width: 1400px;
             width: 100%;
@@ -636,7 +533,6 @@
 
         .btn-atualizar:hover { border-color: #f5c542; background: #263449; }
         .btn-atualizar:disabled { opacity: 0.5; cursor: not-allowed; }
-
         .btn-atualizar .fa-rotate.loading { animation: spin 0.8s linear infinite; }
 
         /* ==================== FAQ ==================== */
@@ -716,7 +612,7 @@
         .canal-card .titulo { color: #f1f5f9; font-size: 0.95rem; font-weight: 700; }
         .canal-card .descricao { color: #94a3b8; font-size: 0.8rem; line-height: 1.4; }
 
-        /* ==================== STATUS SISTEMA ==================== */
+        /* ==================== STATUS ==================== */
         .status-lista { list-style: none; margin-top: 18px; }
 
         .status-lista li {
@@ -763,10 +659,9 @@
             display: inline-block;
         }
 
-        /* ==================== COLUNA DIREITA ==================== */
         .coluna-direita { display: flex; flex-direction: column; gap: 30px; }
 
-        /* ==================== MODAL (somente leitura) ==================== */
+        /* ==================== MODAL ==================== */
         .modal-overlay {
             position: fixed;
             inset: 0;
@@ -943,31 +838,10 @@
 
         /* ==================== RESPONSIVIDADE ==================== */
         @media (max-width: 1024px) {
-            .navbar { padding: 0.8rem 1.5rem; }
-            .nav-links { gap: 1.5rem; }
-            .btn-discord { padding: 0.6rem 1.2rem; font-size: 0.85rem; }
             .suporte-wrapper { grid-template-columns: 1fr; }
         }
 
         @media (max-width: 860px) {
-            .nav-links {
-                display: none;
-                width: 100%;
-                flex-direction: column;
-                align-items: flex-start;
-                gap: 1rem;
-                padding: 1.5rem 0 0.5rem 0;
-                border-top: 1px solid rgba(255, 215, 0, 0.15);
-                margin-top: 1rem;
-            }
-
-            .nav-links.active { display: flex; }
-            .nav-links li { width: 100%; }
-            .nav-links li a { display: flex; width: 100%; padding: 0.6rem 0; font-size: 1.1rem; }
-            .menu-toggle { display: block; }
-            .navbar { justify-content: space-between; }
-            .btn-discord { margin-left: auto; margin-right: 1rem; }
-
             .suporte-hero h1 { font-size: 2rem; }
             .detalhe-grid { grid-template-columns: 1fr; }
             .abas { padding: 10px 10px 0; }
@@ -975,12 +849,6 @@
         }
 
         @media (max-width: 480px) {
-            .navbar { padding: 0.7rem 1rem; }
-            .logo { font-size: 1.5rem; }
-            .logo i { font-size: 1.3rem; }
-            .btn-discord { padding: 0.5rem 1rem; font-size: 0.8rem; }
-            .btn-discord span { display: none; }
-            .btn-discord i { font-size: 1.2rem; margin: 0; }
             .suporte-hero h1 { font-size: 1.6rem; }
             .card { padding: 20px; }
             .form-row { grid-template-columns: 1fr; }
@@ -993,36 +861,8 @@
 </head>
 <body>
 
-    <!-- ==================== MENU ==================== -->
-    <div class="menu-container">
-        <nav class="navbar">
-            <div class="logo">
-                <i class="fas fa-cow"></i>
-                MM<span>Quase Tudo</span>
-            </div>
-
-            <button class="menu-toggle" id="menuToggle" aria-label="Abrir menu">
-                <i class="fas fa-bars"></i>
-            </button>
-
-            <ul class="nav-links" id="navLinks">
-                <li><a href="./index.html"><i class="fas fa-house"></i> Início</a></li>
-                <li><a href="./noticias.html"><i class="fas fa-newspaper"></i> Notícias</a></li>
-                <li><a href="./jogos/ranking/ranking002.html"><i class="fas fa-trophy"></i> Classificações</a></li>
-                <li><a href="./eventos.html"><i class="fas fa-calendar-days"></i> Eventos</a></li>
-                <li><a href="./download.html"><i class="fas fa-download"></i> Downloads</a></li>
-                <li><a href="./suporte.html"><i class="fas fa-headset"></i> Suporte</a></li>
-                <li><a href="./loja.html"><i class="fas fa-cart-shopping"></i> Loja</a></li>
-                <li><a href="./cadastro.html"><i class="fas fa-user-plus"></i> Cadastro</a></li>
-                <li><a href="./login.html"><i class="fas fa-sign-in-alt"></i> Login</a></li>
-            </ul>
-
-            <a href="https://discord.gg/ATtu4z9Ewt" class="btn-discord" target="_blank" rel="noopener">
-                <i class="fab fa-discord"></i>
-                <span>Jogue Agora</span>
-            </a>
-        </nav>
-    </div>
+    <!-- ==================== MENU (injetado via JS) ==================== -->
+    <div id="menu-slot"></div>
 
     <!-- ==================== ABAS ==================== -->
     <div class="abas">
@@ -1281,9 +1121,7 @@
                                 <th>Resposta</th>
                             </tr>
                         </thead>
-                        <tbody id="corpoTabela">
-                            <!-- Preenchido via JS -->
-                        </tbody>
+                        <tbody id="corpoTabela"></tbody>
                     </table>
                 </div>
 
@@ -1339,7 +1177,7 @@
         </section>
     </div>
 
-    <!-- ==================== MODAL (SOMENTE VISUALIZAÇÃO) ==================== -->
+    <!-- ==================== MODAL ==================== -->
     <div class="modal-overlay" id="modalOverlay">
         <div class="modal">
             <div class="modal-header">
@@ -1412,28 +1250,6 @@
 
         const supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
-        /* ==================== MENU TOGGLE ==================== */
-        const menuToggle = document.getElementById('menuToggle');
-        const navLinks = document.getElementById('navLinks');
-
-        menuToggle.addEventListener('click', () => {
-            navLinks.classList.toggle('active');
-            const icon = menuToggle.querySelector('i');
-            icon.classList.toggle('fa-bars');
-            icon.classList.toggle('fa-times');
-        });
-
-        navLinks.querySelectorAll('a').forEach(link => {
-            link.addEventListener('click', () => {
-                if (window.innerWidth <= 860) {
-                    navLinks.classList.remove('active');
-                    const icon = menuToggle.querySelector('i');
-                    icon.classList.add('fa-bars');
-                    icon.classList.remove('fa-times');
-                }
-            });
-        });
-
         /* ==================== ABAS ==================== */
         const abaBtns = document.querySelectorAll('.aba-btn');
         const abaConteudos = document.querySelectorAll('.aba-conteudo');
@@ -1448,7 +1264,6 @@
                 btn.classList.add('ativa');
                 document.getElementById('aba-' + aba).classList.add('ativa');
 
-                // Se abrir admin, recarrega tickets
                 if (aba === 'admin') {
                     carregarTicketsAdmin();
                 }
@@ -1515,7 +1330,7 @@
             return mapa[prio] || prio || '—';
         }
 
-        /* ==================== FORMULÁRIO DE SUPORTE ==================== */
+        /* ==================== FORMULÁRIO ==================== */
         const form = document.getElementById('formSuporte');
         const btnEnviar = document.getElementById('btnEnviar');
         const msgSucesso = document.getElementById('msgSucesso');
@@ -1620,7 +1435,7 @@
             }
         });
 
-        /* ==================== HISTÓRICO DE TICKETS (cards + tabela) ==================== */
+        /* ==================== HISTÓRICO ==================== */
         const historicoLista = document.getElementById('historicoLista');
         const buscaHistorico = document.getElementById('buscaHistorico');
         const btnBuscarHistorico = document.getElementById('btnBuscarHistorico');
@@ -1683,7 +1498,6 @@
                     return;
                 }
 
-                // ========== PREENCHE OS CARDS ==========
                 historicoLista.innerHTML = '';
                 data.forEach(t => {
                     const div = document.createElement('div');
@@ -1714,7 +1528,6 @@
                     historicoLista.appendChild(div);
                 });
 
-                // ========== PREENCHE A TABELA ==========
                 renderizarTabela(data);
 
             } catch (err) {
@@ -1793,17 +1606,7 @@
             }
         });
 
-        // Carrega automaticamente se houver login/email salvo no formulário
-        (function autoCarregar() {
-            const loginSalvo = document.getElementById('login').value.trim();
-            const emailSalvo = document.getElementById('email').value.trim();
-            if (loginSalvo || emailSalvo) {
-                buscaHistorico.value = loginSalvo || emailSalvo;
-                carregarHistorico(loginSalvo, emailSalvo);
-            }
-        })();
-
-        /* ==================== ADMIN - TICKETS ==================== */
+        /* ==================== ADMIN ==================== */
         let todosTicketsAdmin = [];
 
         const corpoTabelaAdmin = document.getElementById('corpoTabelaAdmin');
@@ -1934,7 +1737,7 @@
 
         btnAtualizar.addEventListener('click', carregarTicketsAdmin);
 
-        /* ==================== VERIFICAÇÃO DE STATUS ==================== */
+        /* ==================== STATUS ==================== */
         async function verificarStatus() {
             const badge = document.getElementById('statusBanco');
 
@@ -1961,8 +1764,15 @@
         verificarStatus();
         setInterval(verificarStatus, 30000);
 
-        /* ==================== INICIALIZAÇÃO ==================== */
+        /* ==================== INIT ==================== */
         carregarTicketsAdmin();
     </script>
+
+    <!-- ==================== MENU (renderizado) ==================== -->
+    <script type="module">
+        import { renderMenu } from './shared/menu.js';
+        renderMenu('menu-slot', 'suporte');
+    </script>
+
 </body>
 </html>

@@ -1,6 +1,37 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
-<head>
+<head><!-- 3. No <head>, adicione o CSS do menu (ou importe de menu.css) -->
+<link rel="stylesheet" href="./shared/menu.css">
+    <!-- ============================================================ -->
+<!-- SEO / Open Graph / Twitter Card                              -->
+<!-- ============================================================ -->
+<meta name="description" content="MM Quase Tudo — Central de jogos, economia virtual e negociações entre jogadores.">
+<meta name="keywords" content="mm quasetudo, jogos, economia virtual, mmorpg, browser game">
+<meta name="author" content="Equipe MM Quase Tudo">
+<meta name="theme-color" content="#002bad">
+
+<!-- Open Graph (Facebook / Discord / WhatsApp) -->
+<meta property="og:type"        content="website">
+<meta property="og:site_name"   content="MM Quase Tudo">
+<meta property="og:title"       content="MM Quase Tudo — Central de Jogos">
+<meta property="og:description" content="Central de jogos, economia virtual e negociações entre jogadores.">
+<meta property="og:image"       content="https://xoperadorx.github.io/Portal-Bolsa/assets/og-image.png">
+<meta property="og:url"         content="https://xoperadorx.github.io/Portal-Bolsa/">
+<meta property="og:locale"      content="pt_BR">
+
+<!-- Twitter Card -->
+<meta name="twitter:card"        content="summary_large_image">
+<meta name="twitter:title"       content="MM Quase Tudo — Central de Jogos">
+<meta name="twitter:description" content="Central de jogos, economia virtual e negociações entre jogadores.">
+<meta name="twitter:image"       content="https://xoperadorx.github.io/Portal-Bolsa/assets/og-image.png">
+
+<!-- Favicon -->
+<link rel="icon"             type="image/png" sizes="32x32" href="./assets/favicon-32.png">
+<link rel="icon"             type="image/png" sizes="16x16" href="./assets/favicon-16.png">
+<link rel="apple-touch-icon" sizes="180x180"               href="./assets/apple-touch-icon.png">
+
+<!-- PWA (opcional) -->
+<link rel="manifest" href="./manifest.json">
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Sistema - Configurações</title>
@@ -1164,6 +1195,21 @@ tr:hover td {
         window.__SYS_CONFIG = CONFIG;
         window.__SYS_SUPABASE = supabase;
         window.__SYS_VERIFICAR = verificarConexao;
-    </script>
+    </script><script type="module">
+import {
+  salvarSessao,
+  sessaoValida,
+  obterUsuario,
+  limparSessao,
+  exigirSessao
+} from './shared/session.js';
+
+// Verifica antes de tudo
+const usuario = exigirSessao('login.html');
+if (!usuario) throw new Error('Sessão inválida');
+
+// Agora use normalmente
+console.log('Logado como:', usuario.login);
+</script>
 </body>
 </html>
