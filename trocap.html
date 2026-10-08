@@ -32,7 +32,7 @@
   <!-- Font Awesome -->
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
 
-  <!-- Supabase (precisa vir ANTES do módulo principal) -->
+  <!-- Supabase -->
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
   <style>
@@ -48,6 +48,7 @@
       color:var(--txt);min-height:100vh;padding-bottom:40px;
     }
 
+    /* Header interno (não é o menu principal) */
     .troca-header{
       display:flex;flex-wrap:wrap;gap:12px;align-items:center;justify-content:space-between;
       padding:16px 22px;border-bottom:1px solid var(--line);
@@ -60,6 +61,7 @@
     .user-info{display:flex;align-items:center;gap:8px;font-size:14px}
     .user-info .nick{font-weight:700;color:#4ade80}
 
+    /* Saldo MUMU no header */
     .saldo-mumu{
       background:linear-gradient(135deg,#8b5cf6,#7000ff);
       color:#fff;font-weight:800;
@@ -154,6 +156,7 @@
       font-weight:700;flex:1;min-width:0;
     }
 
+    /* Resumo de taxas no formulário */
     .taxa-info{
       font-size:11.5px;color:#c084fc;margin-top:6px;
       background:rgba(139,92,246,.08);border-left:3px solid #8b5cf6;
@@ -188,6 +191,7 @@
     }
     .modal-box .btns{display:flex;gap:10px;justify-content:center;flex-wrap:wrap}
 
+    /* Resumo de valores no modal */
     .resumo-modal{
       background:rgba(139,92,246,.08);border:1px solid rgba(139,92,246,.3);
       border-radius:10px;padding:12px 14px;margin-bottom:18px;
@@ -208,6 +212,7 @@
              vertical-align:middle;margin-right:6px}
     @keyframes spin{to{transform:rotate(360deg)}}
 
+    /* Comprador paga taxa */
     .aviso-taxa-comprador{
       padding:10px 14px;background:rgba(245,158,11,.08);
       border-radius:8px;margin-bottom:12px;
@@ -243,25 +248,14 @@
     <div class="saldo-mumu" id="saldoMumuHeader" style="display:none;">
       💎 <span id="saldoMumuValor">0.00</span> MUMU
     </div>
-
     <div class="status-supabase" id="statusSupabase">
       <span class="dot"></span> Verificando…
     </div>
-
     <div id="user-area">
       <span style="color:var(--mut);font-size:13px">
         <span class="loading"></span>Verificando sessão…
       </span>
     </div>
-
-    <a href="./mochila.html" class="btn"
-       style="background:linear-gradient(135deg,#8b5cf6,#7000ff);color:#fff;border-color:transparent;">
-      🎒 Mochila
-    </a>
-
-    <a href="./dashboard.html" class="btn ghost">
-      🏠 Dashboard
-    </a>
   </div>
 </header>
 
@@ -367,20 +361,19 @@
 </div>
 
 <!-- ==================== SCRIPT PRINCIPAL ==================== -->
-<script type="module">
-import {
-  SUPABASE_URL,
-  SUPABASE_KEY,
-  TABELA,
-  TABELA_ATIVIDADES,
-  TABELA_TROCAS,
-  TAXA_PERCENTUAL,
-  db
-} from './config.js';
-
+<script>
 /* ============================================================
-   CONSTANTES DE SESSÃO / STATUS
+   CONFIG
 ============================================================ */
+const SUPABASE_URL = 'https://xrcxvizzdumcxbylmkvn.supabase.co';
+const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InhyY3h2aXp6ZHVtY3hieWxta3ZuIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODY2NjA0NzIsImV4cCI6MjEwMjIzNjQ3Mn0.ohB4tW0UQ-k1PcwoZxm4u9XSGNLsFphv1_UwTWoklOM';
+const TABELA            = 'Geral';
+const TABELA_ATIVIDADES = 'Atividades';
+const TABELA_TROCAS     = 'Trocas';
+const TAXA_PERCENTUAL   = 0.05; // 5%
+
+const db = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+
 const SESSION_KEYS = [
   'usuario_logado','usuarioLogado','user','usuario','jogador',
   'session','sessao','login','portal_bolsa_user','user_data','dados_usuario'
@@ -576,12 +569,14 @@ async function carregarMochilaESaldo() {
     if (error) throw error;
     if (!data) throw new Error(`Jogador "${usuarioLogado.login}" não encontrado`);
 
+    // Saldo MUMU
     saldoMumuAtual = Number(data.mumu || 0);
-    const elSaldo  = $('#saldoMumuValor');
+    const elSaldo = $('#saldoMumuValor');
     const boxSaldo = $('#saldoMumuHeader');
-    if (elSaldo)  elSaldo.textContent = saldoMumuAtual.toFixed(2);
+    if (elSaldo) elSaldo.textContent = saldoMumuAtual.toFixed(2);
     if (boxSaldo) boxSaldo.style.display = 'inline-flex';
 
+    // Inventário
     inventario = extrairTodosItens(data);
     mochilaCarregada = true;
 
@@ -645,9 +640,10 @@ function extrairTodosItens(d) {
     });
   }
 
-  if (Number(d.seeds) > 0)   { todos['Sementes'] = { id:'sementes', nome:'Sementes', qtd:Number(d.seeds) }; }
-  if (Number(d.stock) > 0)   { todos['Milho']    = { id:'milho',    nome:'Milho',    qtd:Number(d.stock) }; }
-  if (Number(d.buckets) > 0) { todos['Balde']    = { id:'balde',    nome:'Balde',    qtd:Number(d.buckets) }; }
+  // Recursos de fazenda como itens
+  if (Number(d.seeds) > 0)     { todos['Sementes'] = { id:'sementes', nome:'Sementes', qtd:Number(d.seeds) }; }
+  if (Number(d.stock) > 0)     { todos['Milho']    = { id:'milho',    nome:'Milho',    qtd:Number(d.stock) }; }
+  if (Number(d.buckets) > 0)   { todos['Balde']    = { id:'balde',    nome:'Balde',    qtd:Number(d.buckets) }; }
 
   return Object.values(todos).map(i => ({
     id_item: i.id,
@@ -687,6 +683,7 @@ function bindEventos() {
 
   $('#form')?.addEventListener('submit', criarTroca);
 
+  // Autocompletar item + qtd
   $('#item-select')?.addEventListener('change', (e) => {
     const opt = e.target.selectedOptions[0];
     if (!opt || !opt.value) {
@@ -701,6 +698,7 @@ function bindEventos() {
     if (Number($('#qtd').value) > qtd) $('#qtd').value = qtd;
   });
 
+  // Preview de taxa enquanto digita o preço
   $('#preco')?.addEventListener('input', (e) => {
     const preco = Number(e.target.value) || 0;
     const info = $('#taxa-info');
@@ -816,6 +814,7 @@ function cardHTML(r) {
 
   let acoes = '';
 
+  // ---------------------- AGUARDANDO ----------------------
   if (r.status === 'aguardando') {
     if (euVendedor) {
       acoes += `<button class="btn ok" data-acao="pago" data-id="${r.id}">
@@ -834,6 +833,7 @@ function cardHTML(r) {
     }
   }
 
+  // ---------------------- CONFIRMADO ----------------------
   else if (r.status === 'pagamento_confirmado') {
     if (euVendedor) {
       acoes += cod
@@ -889,12 +889,14 @@ function cardHTML(r) {
     }
   }
 
+  // ---------------------- CONCLUÍDA ----------------------
   else if (r.status === 'concluida') {
     acoes += `<div class="aviso ok">
                 ✅ Concluída${r.concluido_em ? ' em ' + dataHora(r.concluido_em) : ''}.
               </div>`;
   }
 
+  // ---------------------- CANCELADA ----------------------
   else {
     acoes += `<div class="aviso err">❌ Negociação cancelada.</div>`;
   }
