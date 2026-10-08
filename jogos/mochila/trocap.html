@@ -247,7 +247,7 @@
        style="background:linear-gradient(135deg,#8b5cf6,#7000ff);color:#fff;border-color:transparent;">
       🎒 Mochila
     </a>
-    <a href="./dashboard.html" class="btn ghost">🏠 Dashboard</a>
+    <a href="./../../dashboard.html" class="btn ghost">🏠 Dashboard</a>
   </div>
 </header>
 
@@ -935,7 +935,12 @@ function cardHTML(r) {
 async function onAcaoLista(e) {
   const btn = e.target.closest('[data-acao]');
   if (!btn) return;
-  const { acao, id, cod } = btn.dataset;
+
+  const acao = btn.dataset.acao;
+  const cod  = btn.dataset.cod;
+  // ⚠️ CORREÇÃO: converte ID para número (o Supabase retorna número, mas dataset retorna string)
+  const id   = btn.dataset.id ? Number(btn.dataset.id) : null;
+
   if (acao === 'copiar')   return copiar(cod);
   if (acao === 'pago')     return confirmarPagamento(id, btn);
   if (acao === 'pagar')    return pagarTroca(id, btn);
