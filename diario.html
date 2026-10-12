@@ -17,8 +17,6 @@
 
   <link rel="stylesheet" href="./shared/menu.css">
 
-  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-
   <style>
     * {
       margin: 0;
@@ -31,10 +29,16 @@
       background: linear-gradient(135deg, #0f0c1a 0%, #1a162e 50%, #12101f 100%);
       min-height: 100vh;
       display: flex;
-      justify-content: center;
-      align-items: flex-start;
+      flex-direction: column;
       padding: 20px;
       color: #fff;
+    }
+
+    .diario-wrapper {
+      flex: 1;
+      display: flex;
+      justify-content: center;
+      align-items: flex-start;
     }
 
     .container {
@@ -329,47 +333,73 @@
 </head>
 <body>
 
+<!-- ============================================================
+     MENU (injetado via JS)
+============================================================ -->
+<div id="menu-slot"></div>
 
+<!-- ============================================================
+     LOADING
+============================================================ -->
 <div class="loading-overlay" id="loadingOverlay">
   <div class="loading-spinner"></div>
   <div>Carregando login diário...</div>
 </div>
 
-<div class="container">
-  <div class="header-top">
-    <div class="cycle-title">
-      <span class="calendar-icon">📅</span>
-      <div>
-        <div class="cycle-text" id="cycleText">CICLO 1 • DE 30 DIAS</div>
-        <h1 class="main-title">LOGIN DIÁRIO</h1>
+<!-- ============================================================
+     CONTEÚDO
+============================================================ -->
+<div class="diario-wrapper">
+  <div class="container">
+    <div class="header-top">
+      <div class="cycle-title">
+        <span class="calendar-icon">📅</span>
+        <div>
+          <div class="cycle-text" id="cycleText">CICLO 1 • DE 30 DIAS</div>
+          <h1 class="main-title">LOGIN DIÁRIO</h1>
+        </div>
+      </div>
+      <div class="next-day">
+        PRÓXIMO DIA EM
+        <div class="countdown" id="countdown">-- h -- min</div>
       </div>
     </div>
-    <div class="next-day">
-      PRÓXIMO DIA EM
-      <div class="countdown" id="countdown">-- h -- min</div>
+
+    <div class="progress-bar-container">
+      <div class="progress-bar" id="progressBar"></div>
     </div>
+
+    <div class="grid-days" id="gridDays"></div>
+
+    <div class="btn-resgatar-container">
+      <button class="btn-resgatar" id="btnResgatar">🎁 Resgatar Recompensa do Dia</button>
+    </div>
+
+    <div class="status-msg" id="statusMsg"></div>
+
+    <p class="footer-note">
+      ⏰ Volte todos os dias para resgatar recompensas exclusivas.<br>
+      💠 Pontos SM (`sm_atual`) são acumulados automaticamente.
+    </p>
   </div>
-
-  <div class="progress-bar-container">
-    <div class="progress-bar" id="progressBar"></div>
-  </div>
-
-  <div class="grid-days" id="gridDays"></div>
-
-  <div class="btn-resgatar-container">
-    <button class="btn-resgatar" id="btnResgatar">🎁 Resgatar Recompensa do Dia</button>
-  </div>
-
-  <div class="status-msg" id="statusMsg"></div>
-
-  <p class="footer-note">
-    ⏰ Volte todos os dias para resgatar recompensas exclusivas.<br>
-    💠 Pontos SM (`sm_atual`) são acumulados automaticamente.
-  </p>
 </div>
 
 <div class="toast" id="toast"></div>
 
+<!-- ============================================================
+     IMPORTMAP — Supabase via ESM
+============================================================ -->
+<script type="importmap">
+{
+  "imports": {
+    "@supabase/supabase-js": "https://esm.sh/@supabase/supabase-js@2"
+  }
+}
+</script>
+
+<!-- ============================================================
+     SCRIPT PRINCIPAL — importa tudo do config.js
+============================================================ -->
 <script type="module">
 import { db, TABELA } from './config.js';
 
@@ -741,10 +771,7 @@ document.addEventListener('DOMContentLoaded', init);
 window.diarioState = state;
 </script>
 
-<script type="module">
-  import { renderMenu } from './shared/menu.js';
-  renderMenu('menu-slot', 'diario');
-</script>
+
 
 </body>
 </html>

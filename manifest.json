@@ -1,8 +1,20 @@
 {
-  "name": "br.seuusuario.portalbolsa",
-  "displayName": "PortalBolsa",
+  "name": "MM Quase Tudo — Central de Jogos",
+  "short_name": "MMQuaseTudo",
+  "displayName": "MM Quase Tudo",
   "version": "1.0.0",
-  "description": "Aplicativo MM Quase Tudo - Central de Jogos",
+  "description": "Central de jogos, economia virtual e negociações entre jogadores",
+  "start_url": "./index.html",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#0a0b10",
+  "theme_color": "#002bad",
+  "lang": "pt-BR",
+  "icons": [
+    { "src": "./assets/favicon-32.png",  "sizes": "32x32",   "type": "image/png" },
+    { "src": "./assets/favicon-16.png",  "sizes": "16x16",   "type": "image/png" },
+    { "src": "./assets/apple-touch-icon.png", "sizes": "180x180", "type": "image/png" }
+  ],
   "main": "index.js",
   "scripts": {
     "dev": "npx serve . -l 3000",

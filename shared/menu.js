@@ -3,15 +3,15 @@
 // ============================================================
 
 const LINKS = [
-  { id: 'index',     href: './index.html',                       icon: 'fa-house',         label: 'Início' },
-  { id: 'noticias',  href: './noticias.html',                    icon: 'fa-newspaper',     label: 'Notícias' },
-  { id: 'ranking',   href: './jogos/ranking/ranking002.html',    icon: 'fa-trophy',        label: 'Classificações' },
-  { id: 'eventos',   href: './eventos.html',                     icon: 'fa-calendar-days', label: 'Eventos' },
-  { id: 'download',  href: './download.html',                    icon: 'fa-download',      label: 'Downloads' },
-  { id: 'suporte',   href: './suporte.html',                     icon: 'fa-headset',       label: 'Suporte' },
-  { id: 'cadastro',  href: './cadastro.html',                    icon: 'fa-user-plus',     label: 'Cadastro' },
-  { id: 'login',     href: './login.html',                       icon: 'fa-sign-in-alt',   label: 'Login' },
-  { id: 'como-jogar', href: './como-jogar.html',                   icon: 'fa-question-circle', label: 'Como Jogar' }
+  { id: 'index',       href: './index.html',                     icon: 'fa-house',           label: 'Início' },
+  { id: 'noticias',    href: './noticias.html',                  icon: 'fa-newspaper',       label: 'Notícias' },
+  { id: 'ranking',     href: './jogos/ranking/ranking002.html',  icon: 'fa-trophy',          label: 'Classificações' },
+  { id: 'eventos',     href: './eventos.html',                   icon: 'fa-calendar-days',   label: 'Eventos' },
+  { id: 'download',    href: './download.html',                  icon: 'fa-download',        label: 'Downloads' },
+  { id: 'suporte',     href: './suporte.html',                   icon: 'fa-headset',         label: 'Suporte' },
+  { id: 'cadastro',    href: './cadastro.html',                  icon: 'fa-user-plus',       label: 'Cadastro' },
+  { id: 'login',       href: './login.html',                     icon: 'fa-sign-in-alt',     label: 'Login' },
+  { id: 'como-jogar',  href: './como-jogar.html',                icon: 'fa-question-circle', label: 'Como Jogar' }
 ];
 
 /**

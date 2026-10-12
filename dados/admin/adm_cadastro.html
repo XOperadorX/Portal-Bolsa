@@ -1,18 +1,12 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-    <!-- 3. No <head>, adicione o CSS do menu (ou importe de menu.css) -->
 <link rel="stylesheet" href="./shared/menu.css">
-    <!-- =====
-     ======================================================= -->
-<!-- SEO / Open Graph / Twitter Card                              -->
-<!-- ============================================================ -->
 <meta name="description" content="MM Quase Tudo — Central de jogos, economia virtual e negociações entre jogadores.">
 <meta name="keywords" content="mm quasetudo, jogos, economia virtual, mmorpg, browser game">
 <meta name="author" content="Equipe MM Quase Tudo">
 <meta name="theme-color" content="#002bad">
 
-<!-- Open Graph (Facebook / Discord / WhatsApp) -->
 <meta property="og:type"        content="website">
 <meta property="og:site_name"   content="MM Quase Tudo">
 <meta property="og:title"       content="MM Quase Tudo — Central de Jogos">
@@ -21,644 +15,155 @@
 <meta property="og:url"         content="https://xoperadorx.github.io/Portal-Bolsa/">
 <meta property="og:locale"      content="pt_BR">
 
-<!-- Twitter Card -->
 <meta name="twitter:card"        content="summary_large_image">
 <meta name="twitter:title"       content="MM Quase Tudo — Central de Jogos">
 <meta name="twitter:description" content="Central de jogos, economia virtual e negociações entre jogadores.">
 <meta name="twitter:image"       content="https://xoperadorx.github.io/Portal-Bolsa/assets/og-image.png">
 
-<!-- Favicon -->
 <link rel="icon"             type="image/png" sizes="32x32" href="./assets/favicon-32.png">
 <link rel="icon"             type="image/png" sizes="16x16" href="./assets/favicon-16.png">
 <link rel="apple-touch-icon" sizes="180x180"               href="./assets/apple-touch-icon.png">
-
-<!-- PWA (opcional) -->
 <link rel="manifest" href="./manifest.json">
 
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Admin Cadastros | MM Quase Tudo</title>
 
-    <!-- Font Awesome -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
-
-    <!-- Google Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@700&family=Rajdhani:wght@600;700&family=Inter:wght@400;600;700;800&display=swap" rel="stylesheet">
-
-    <!-- Supabase JS (CDN) -->
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
     <style>
-        /* ==================== RESET E BASE ==================== */
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-            font-family: 'Inter', 'Segoe UI', sans-serif;
-        }
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Inter', 'Segoe UI', sans-serif; }
+        body { min-height: 100vh; background: linear-gradient(135deg, #001a33 0%, #000d1a 100%); color: #e0e0e0; display: flex; flex-direction: column; }
 
-        body {
-            min-height: 100vh;
-            background: linear-gradient(135deg, #001a33 0%, #000d1a 100%);
-            color: #e0e0e0;
-            display: flex;
-            flex-direction: column;
-        }
-
-        /* ==================== HERO ==================== */
-        .admin-hero {
-            text-align: center;
-            padding: 40px 20px 20px;
-            max-width: 900px;
-            margin: 0 auto;
-        }
-
-        .admin-hero h1 {
-            font-size: 2.4rem;
-            color: #ffffff;
-            font-weight: 800;
-            letter-spacing: 1px;
-            text-shadow: 0 0 15px rgba(245, 197, 66, 0.4);
-            margin-bottom: 10px;
-        }
-
+        .admin-hero { text-align: center; padding: 40px 20px 20px; max-width: 900px; margin: 0 auto; }
+        .admin-hero h1 { font-size: 2.4rem; color: #ffffff; font-weight: 800; letter-spacing: 1px; text-shadow: 0 0 15px rgba(245, 197, 66, 0.4); margin-bottom: 10px; }
         .admin-hero h1 i { color: #f5c542; margin-right: 12px; }
+        .admin-hero p { color: #a0b4d0; font-size: 1rem; line-height: 1.6; }
 
-        .admin-hero p {
-            color: #a0b4d0;
-            font-size: 1rem;
-            line-height: 1.6;
-        }
-
-        /* ==================== DASHBOARD STATS ==================== */
-        .stats-grid {
-            max-width: 1400px;
-            width: 100%;
-            margin: 0 auto;
-            padding: 20px 20px 0;
-            display: grid;
-            grid-template-columns: repeat(4, 1fr);
-            gap: 18px;
-        }
-
-        .stat-card {
-            background: #1e293b;
-            border: 1px solid #334155;
-            border-radius: 14px;
-            padding: 20px;
-            display: flex;
-            align-items: center;
-            gap: 16px;
-            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.3);
-            transition: transform 0.2s, border-color 0.2s;
-        }
-
-        .stat-card:hover {
-            transform: translateY(-3px);
-            border-color: #f5c542;
-        }
-
-        .stat-card .icone {
-            width: 52px;
-            height: 52px;
-            border-radius: 12px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 1.5rem;
-            flex-shrink: 0;
-        }
-
+        .stats-grid { max-width: 1400px; width: 100%; margin: 0 auto; padding: 20px 20px 0; display: grid; grid-template-columns: repeat(4, 1fr); gap: 18px; }
+        .stat-card { background: #1e293b; border: 1px solid #334155; border-radius: 14px; padding: 20px; display: flex; align-items: center; gap: 16px; box-shadow: 0 6px 20px rgba(0, 0, 0, 0.3); transition: transform 0.2s, border-color 0.2s; }
+        .stat-card:hover { transform: translateY(-3px); border-color: #f5c542; }
+        .stat-card .icone { width: 52px; height: 52px; border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 1.5rem; flex-shrink: 0; }
         .stat-card .icone.azul { background: rgba(59, 130, 246, 0.15); color: #60a5fa; }
         .stat-card .icone.amarelo { background: rgba(245, 197, 66, 0.15); color: #f5c542; }
         .stat-card .icone.verde { background: rgba(34, 197, 94, 0.15); color: #4ade80; }
         .stat-card .icone.vermelho { background: rgba(239, 68, 68, 0.15); color: #f87171; }
+        .stat-card .info .valor { font-size: 1.8rem; font-weight: 800; color: #f1f5f9; line-height: 1.1; }
+        .stat-card .info .rotulo { font-size: 0.82rem; color: #94a3b8; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px; }
 
-        .stat-card .info .valor {
-            font-size: 1.8rem;
-            font-weight: 800;
-            color: #f1f5f9;
-            line-height: 1.1;
-        }
-
-        .stat-card .info .rotulo {
-            font-size: 0.82rem;
-            color: #94a3b8;
-            font-weight: 600;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-        }
-
-        /* ==================== TOOLBAR ==================== */
-        .toolbar {
-            max-width: 1400px;
-            width: 100%;
-            margin: 0 auto;
-            padding: 20px;
-            display: flex;
-            flex-wrap: wrap;
-            gap: 14px;
-            align-items: center;
-            justify-content: space-between;
-        }
-
-        .filtros {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 12px;
-            align-items: center;
-        }
-
-        .filtros select,
-        .filtros input {
-            background: #1e293b;
-            border: 1px solid #334155;
-            border-radius: 8px;
-            color: #f1f5f9;
-            padding: 10px 14px;
-            font-size: 0.9rem;
-            outline: none;
-            transition: border-color 0.2s;
-            font-family: inherit;
-        }
-
-        .filtros select:focus,
-        .filtros input:focus {
-            border-color: #3b82f6;
-        }
-
+        .toolbar { max-width: 1400px; width: 100%; margin: 0 auto; padding: 20px; display: flex; flex-wrap: wrap; gap: 14px; align-items: center; justify-content: space-between; }
+        .filtros { display: flex; flex-wrap: wrap; gap: 12px; align-items: center; }
+        .filtros select, .filtros input { background: #1e293b; border: 1px solid #334155; border-radius: 8px; color: #f1f5f9; padding: 10px 14px; font-size: 0.9rem; outline: none; transition: border-color 0.2s; font-family: inherit; }
+        .filtros select:focus, .filtros input:focus { border-color: #3b82f6; }
         .filtros input { min-width: 240px; }
 
-        .btn-atualizar {
-            background: #1e293b;
-            border: 1px solid #334155;
-            border-radius: 8px;
-            color: #f5c542;
-            padding: 10px 16px;
-            font-size: 0.9rem;
-            font-weight: 600;
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            transition: all 0.2s;
-        }
-
-        .btn-atualizar:hover {
-            border-color: #f5c542;
-            background: #263449;
-        }
-
-        .btn-atualizar .fa-rotate.loading {
-            animation: spin 0.8s linear infinite;
-        }
-
+        .btn-atualizar { background: #1e293b; border: 1px solid #334155; border-radius: 8px; color: #f5c542; padding: 10px 16px; font-size: 0.9rem; font-weight: 600; cursor: pointer; display: flex; align-items: center; gap: 8px; transition: all 0.2s; }
+        .btn-atualizar:hover { border-color: #f5c542; background: #263449; }
+        .btn-atualizar .fa-rotate.loading { animation: spin 0.8s linear infinite; }
         @keyframes spin { to { transform: rotate(360deg); } }
 
-        /* ==================== TABELA ==================== */
-        .tabela-wrapper {
-            max-width: 1400px;
-            width: 100%;
-            margin: 0 auto;
-            padding: 0 20px 60px;
-            flex: 1;
-        }
-
-        .tabela-card {
-            background: #1e293b;
-            border: 1px solid #334155;
-            border-radius: 16px;
-            overflow: hidden;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
-        }
-
-        .tabela-header {
-            padding: 18px 24px;
-            border-bottom: 1px solid #334155;
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            flex-wrap: wrap;
-            gap: 10px;
-        }
-
-        .tabela-header h2 {
-            color: #f1f5f9;
-            font-size: 1.15rem;
-            font-weight: 700;
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
-
+        .tabela-wrapper { max-width: 1400px; width: 100%; margin: 0 auto; padding: 0 20px 60px; flex: 1; }
+        .tabela-card { background: #1e293b; border: 1px solid #334155; border-radius: 16px; overflow: hidden; box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3); }
+        .tabela-header { padding: 18px 24px; border-bottom: 1px solid #334155; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 10px; }
+        .tabela-header h2 { color: #f1f5f9; font-size: 1.15rem; font-weight: 700; display: flex; align-items: center; gap: 10px; }
         .tabela-header h2 i { color: #f5c542; }
+        .tabela-header .contador { color: #94a3b8; font-size: 0.85rem; }
+        .tabela-scroll { overflow-x: auto; }
 
-        .tabela-header .contador {
-            color: #94a3b8;
-            font-size: 0.85rem;
-        }
-
-        .tabela-scroll {
-            overflow-x: auto;
-        }
-
-        table {
-            width: 100%;
-            border-collapse: collapse;
-            min-width: 1000px;
-        }
-
-        thead th {
-            background: #0f172a;
-            color: #94a3b8;
-            font-size: 0.78rem;
-            font-weight: 700;
-            text-transform: uppercase;
-            letter-spacing: 0.6px;
-            padding: 14px 16px;
-            text-align: left;
-            border-bottom: 1px solid #334155;
-            white-space: nowrap;
-        }
-
-        tbody tr {
-            border-bottom: 1px solid #2a3648;
-            transition: background 0.15s;
-            cursor: pointer;
-        }
-
+        table { width: 100%; border-collapse: collapse; min-width: 1000px; }
+        thead th { background: #0f172a; color: #94a3b8; font-size: 0.78rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.6px; padding: 14px 16px; text-align: left; border-bottom: 1px solid #334155; white-space: nowrap; }
+        tbody tr { border-bottom: 1px solid #2a3648; transition: background 0.15s; cursor: pointer; }
         tbody tr:hover { background: #263449; }
         tbody tr:last-child { border-bottom: none; }
-
-        tbody td {
-            padding: 14px 16px;
-            font-size: 0.88rem;
-            color: #cbd5e1;
-            vertical-align: middle;
-        }
-
+        tbody td { padding: 14px 16px; font-size: 0.88rem; color: #cbd5e1; vertical-align: middle; }
         .td-id { color: #f5c542; font-weight: 700; }
         .td-login { color: #f1f5f9; font-weight: 600; }
 
-        .badge {
-            display: inline-flex;
-            align-items: center;
-            gap: 5px;
-            font-size: 0.72rem;
-            font-weight: 700;
-            padding: 4px 10px;
-            border-radius: 20px;
-            text-transform: uppercase;
-            letter-spacing: 0.4px;
-            white-space: nowrap;
-        }
-
-        .badge::before {
-            content: '';
-            width: 7px; height: 7px;
-            border-radius: 50%;
-            background: currentColor;
-        }
-
+        .badge { display: inline-flex; align-items: center; gap: 5px; font-size: 0.72rem; font-weight: 700; padding: 4px 10px; border-radius: 20px; text-transform: uppercase; letter-spacing: 0.4px; white-space: nowrap; }
+        .badge::before { content: ''; width: 7px; height: 7px; border-radius: 50%; background: currentColor; }
         .badge.ativo { background: rgba(34, 197, 94, 0.15); color: #4ade80; border: 1px solid rgba(34, 197, 94, 0.4); }
         .badge.bloqueado { background: rgba(239, 68, 68, 0.15); color: #f87171; border: 1px solid rgba(239, 68, 68, 0.4); }
         .badge.cadeado { background: rgba(245, 197, 66, 0.15); color: #f5c542; border: 1px solid rgba(245, 197, 66, 0.4); }
 
-        .acoes {
-            display: flex;
-            gap: 6px;
-        }
-
-        .btn-acao {
-            width: 34px; height: 34px;
-            border-radius: 8px;
-            border: 1px solid #334155;
-            background: #0f172a;
-            color: #cbd5e1;
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 0.85rem;
-            transition: all 0.2s;
-        }
-
+        .acoes { display: flex; gap: 6px; }
+        .btn-acao { width: 34px; height: 34px; border-radius: 8px; border: 1px solid #334155; background: #0f172a; color: #cbd5e1; cursor: pointer; display: flex; align-items: center; justify-content: center; font-size: 0.85rem; transition: all 0.2s; }
         .btn-acao:hover { border-color: #f5c542; color: #f5c542; }
         .btn-acao.excluir:hover { border-color: #ef4444; color: #ef4444; }
 
-        .estado-vazio {
-            padding: 60px 20px;
-            text-align: center;
-            color: #64748b;
-        }
-
+        .estado-vazio { padding: 60px 20px; text-align: center; color: #64748b; }
         .estado-vazio i { font-size: 3rem; margin-bottom: 14px; color: #334155; }
         .estado-vazio p { font-size: 1rem; }
 
-        /* ==================== MODAL ==================== */
-        .modal-overlay {
-            position: fixed;
-            inset: 0;
-            background: rgba(0, 0, 0, 0.7);
-            backdrop-filter: blur(4px);
-            display: none;
-            align-items: center;
-            justify-content: center;
-            z-index: 2000;
-            padding: 20px;
-        }
-
+        .modal-overlay { position: fixed; inset: 0; background: rgba(0, 0, 0, 0.7); backdrop-filter: blur(4px); display: none; align-items: center; justify-content: center; z-index: 2000; padding: 20px; }
         .modal-overlay.show { display: flex; }
-
-        .modal {
-            background: #1e293b;
-            border: 1px solid #334155;
-            border-radius: 16px;
-            width: 100%;
-            max-width: 760px;
-            max-height: 90vh;
-            overflow-y: auto;
-            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.6);
-            animation: modalIn 0.25s ease;
-        }
-
-        @keyframes modalIn {
-            from { opacity: 0; transform: translateY(20px) scale(0.98); }
-            to { opacity: 1; transform: translateY(0) scale(1); }
-        }
-
-        .modal-header {
-            padding: 20px 24px;
-            border-bottom: 1px solid #334155;
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            gap: 12px;
-            position: sticky;
-            top: 0;
-            background: #1e293b;
-            z-index: 2;
-        }
-
-        .modal-header h2 {
-            font-size: 1.2rem;
-            color: #f1f5f9;
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
-
+        .modal { background: #1e293b; border: 1px solid #334155; border-radius: 16px; width: 100%; max-width: 760px; max-height: 90vh; overflow-y: auto; box-shadow: 0 20px 60px rgba(0, 0, 0, 0.6); animation: modalIn 0.25s ease; }
+        @keyframes modalIn { from { opacity: 0; transform: translateY(20px) scale(0.98); } to { opacity: 1; transform: translateY(0) scale(1); } }
+        .modal-header { padding: 20px 24px; border-bottom: 1px solid #334155; display: flex; align-items: center; justify-content: space-between; gap: 12px; position: sticky; top: 0; background: #1e293b; z-index: 2; }
+        .modal-header h2 { font-size: 1.2rem; color: #f1f5f9; display: flex; align-items: center; gap: 10px; }
         .modal-header h2 i { color: #f5c542; }
-
-        .btn-fechar {
-            background: transparent;
-            border: none;
-            color: #94a3b8;
-            font-size: 1.4rem;
-            cursor: pointer;
-            width: 36px; height: 36px;
-            border-radius: 8px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            transition: all 0.2s;
-        }
-
+        .btn-fechar { background: transparent; border: none; color: #94a3b8; font-size: 1.4rem; cursor: pointer; width: 36px; height: 36px; border-radius: 8px; display: flex; align-items: center; justify-content: center; transition: all 0.2s; }
         .btn-fechar:hover { background: #334155; color: #f1f5f9; }
 
         .modal-body { padding: 24px; }
-
-        .abas {
-            display: flex;
-            gap: 6px;
-            border-bottom: 1px solid #334155;
-            margin-bottom: 20px;
-            overflow-x: auto;
-        }
-
-        .aba {
-            background: transparent;
-            border: none;
-            color: #94a3b8;
-            font-size: 0.85rem;
-            font-weight: 700;
-            padding: 10px 14px;
-            cursor: pointer;
-            border-bottom: 2px solid transparent;
-            white-space: nowrap;
-            transition: all 0.2s;
-            font-family: inherit;
-        }
-
+        .abas { display: flex; gap: 6px; border-bottom: 1px solid #334155; margin-bottom: 20px; overflow-x: auto; }
+        .aba { background: transparent; border: none; color: #94a3b8; font-size: 0.85rem; font-weight: 700; padding: 10px 14px; cursor: pointer; border-bottom: 2px solid transparent; white-space: nowrap; transition: all 0.2s; font-family: inherit; }
         .aba:hover { color: #e2e8f0; }
-
-        .aba.ativa {
-            color: #f5c542;
-            border-bottom-color: #f5c542;
-        }
-
+        .aba.ativa { color: #f5c542; border-bottom-color: #f5c542; }
         .painel { display: none; }
         .painel.ativo { display: block; }
 
-        .detalhe-grid {
-            display: grid;
-            grid-template-columns: repeat(2, 1fr);
-            gap: 14px;
-            margin-bottom: 18px;
-        }
-
-        .detalhe-item {
-            background: #0f172a;
-            border: 1px solid #334155;
-            border-radius: 10px;
-            padding: 12px 14px;
-        }
-
-        .detalhe-item .rotulo {
-            font-size: 0.72rem;
-            color: #64748b;
-            text-transform: uppercase;
-            font-weight: 700;
-            letter-spacing: 0.5px;
-            margin-bottom: 4px;
-        }
-
-        .detalhe-item .valor {
-            color: #f1f5f9;
-            font-size: 0.92rem;
-            font-weight: 600;
-            word-break: break-word;
-        }
-
+        .detalhe-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 14px; margin-bottom: 18px; }
+        .detalhe-item { background: #0f172a; border: 1px solid #334155; border-radius: 10px; padding: 12px 14px; }
+        .detalhe-item .rotulo { font-size: 0.72rem; color: #64748b; text-transform: uppercase; font-weight: 700; letter-spacing: 0.5px; margin-bottom: 4px; }
+        .detalhe-item .valor { color: #f1f5f9; font-size: 0.92rem; font-weight: 600; word-break: break-word; }
         .detalhe-item.full { grid-column: 1 / -1; }
+        .detalhe-item .valor.mono { font-family: 'Courier New', monospace; font-size: 0.78rem; color: #94a3b8; word-break: break-all; }
 
-        .detalhe-item .valor.mono {
-            font-family: 'Courier New', monospace;
-            font-size: 0.78rem;
-            color: #94a3b8;
-            word-break: break-all;
-        }
-
-        .campo-acao {
-            margin-bottom: 14px;
-        }
-
-        .campo-acao label {
-            display: block;
-            color: #94a3b8;
-            font-size: 0.78rem;
-            font-weight: 700;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-            margin-bottom: 6px;
-        }
-
-        .campo-acao input,
-        .campo-acao select,
-        .campo-acao textarea {
-            width: 100%;
-            background: #0f172a;
-            border: 1px solid #334155;
-            border-radius: 8px;
-            color: #f1f5f9;
-            padding: 10px 12px;
-            font-size: 0.9rem;
-            outline: none;
-            font-family: inherit;
-            transition: border-color 0.2s;
-        }
-
+        .campo-acao { margin-bottom: 14px; }
+        .campo-acao label { display: block; color: #94a3b8; font-size: 0.78rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 6px; }
+        .campo-acao input, .campo-acao select, .campo-acao textarea { width: 100%; background: #0f172a; border: 1px solid #334155; border-radius: 8px; color: #f1f5f9; padding: 10px 12px; font-size: 0.9rem; outline: none; font-family: inherit; transition: border-color 0.2s; }
         .campo-acao textarea { resize: vertical; min-height: 80px; }
+        .campo-acao input:focus, .campo-acao select:focus, .campo-acao textarea:focus { border-color: #3b82f6; }
+        .campo-acao input:disabled { opacity: 0.6; cursor: not-allowed; }
+        .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+        .form-row-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 14px; }
 
-        .campo-acao input:focus,
-        .campo-acao select:focus,
-        .campo-acao textarea:focus { border-color: #3b82f6; }
-
-        .campo-acao input:disabled {
-            opacity: 0.6;
-            cursor: not-allowed;
-        }
-
-        .form-row {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 14px;
-        }
-
-        .form-row-3 {
-            display: grid;
-            grid-template-columns: 1fr 1fr 1fr;
-            gap: 14px;
-        }
-
-        .modal-footer {
-            display: flex;
-            gap: 12px;
-            justify-content: flex-end;
-            flex-wrap: wrap;
-            padding: 0 24px 24px;
-        }
-
-        .btn {
-            border: none;
-            border-radius: 8px;
-            padding: 11px 20px;
-            font-size: 0.9rem;
-            font-weight: 700;
-            cursor: pointer;
-            display: inline-flex;
-            align-items: center;
-            gap: 8px;
-            transition: all 0.2s;
-            font-family: inherit;
-        }
-
-        .btn-primario {
-            background: linear-gradient(135deg, #3b82f6, #2563eb);
-            color: #fff;
-        }
-
+        .modal-footer { display: flex; gap: 12px; justify-content: flex-end; flex-wrap: wrap; padding: 0 24px 24px; }
+        .btn { border: none; border-radius: 8px; padding: 11px 20px; font-size: 0.9rem; font-weight: 700; cursor: pointer; display: inline-flex; align-items: center; gap: 8px; transition: all 0.2s; font-family: inherit; }
+        .btn-primario { background: linear-gradient(135deg, #3b82f6, #2563eb); color: #fff; }
         .btn-primario:hover { box-shadow: 0 0 20px rgba(59, 130, 246, 0.5); transform: scale(1.02); }
-
-        .btn-secundario {
-            background: #334155;
-            color: #e2e8f0;
-        }
-
+        .btn-secundario { background: #334155; color: #e2e8f0; }
         .btn-secundario:hover { background: #475569; }
-
-        .btn-perigo {
-            background: rgba(239, 68, 68, 0.15);
-            color: #f87171;
-            border: 1px solid rgba(239, 68, 68, 0.4);
-        }
-
+        .btn-perigo { background: rgba(239, 68, 68, 0.15); color: #f87171; border: 1px solid rgba(239, 68, 68, 0.4); }
         .btn-perigo:hover { background: rgba(239, 68, 68, 0.25); }
-
-        .btn-aviso {
-            background: rgba(245, 197, 66, 0.15);
-            color: #f5c542;
-            border: 1px solid rgba(245, 197, 66, 0.4);
-        }
-
+        .btn-aviso { background: rgba(245, 197, 66, 0.15); color: #f5c542; border: 1px solid rgba(245, 197, 66, 0.4); }
         .btn-aviso:hover { background: rgba(245, 197, 66, 0.25); }
-
         .btn:disabled { opacity: 0.6; cursor: not-allowed; transform: none; }
 
-        /* ==================== TOAST ==================== */
-        .toast {
-            position: fixed;
-            bottom: 24px;
-            right: 24px;
-            background: #1e293b;
-            border: 1px solid #334155;
-            border-left: 4px solid #3b82f6;
-            border-radius: 10px;
-            padding: 14px 18px;
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
-            transform: translateX(150%);
-            transition: transform 0.3s ease;
-            z-index: 3000;
-            max-width: 380px;
-        }
-
+        .toast { position: fixed; bottom: 24px; right: 24px; background: #1e293b; border: 1px solid #334155; border-left: 4px solid #3b82f6; border-radius: 10px; padding: 14px 18px; display: flex; align-items: center; gap: 12px; box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5); transform: translateX(150%); transition: transform 0.3s ease; z-index: 3000; max-width: 380px; }
         .toast.show { transform: translateX(0); }
         .toast.sucesso { border-left-color: #22c55e; }
         .toast.erro { border-left-color: #ef4444; }
-
         .toast i { font-size: 1.2rem; }
         .toast.sucesso i { color: #4ade80; }
         .toast.erro i { color: #f87171; }
         .toast .texto { font-size: 0.88rem; color: #e2e8f0; }
 
-        .loading {
-            display: inline-block;
-            width: 14px; height: 14px;
-            border: 2px solid rgba(255,255,255,0.3);
-            border-top-color: #fff;
-            border-radius: 50%;
-            animation: spin 0.6s linear infinite;
-            vertical-align: middle;
-            margin-right: 6px;
-        }
+        .loading { display: inline-block; width: 14px; height: 14px; border: 2px solid rgba(255,255,255,0.3); border-top-color: #fff; border-radius: 50%; animation: spin 0.6s linear infinite; vertical-align: middle; margin-right: 6px; }
 
-        /* ==================== RESPONSIVIDADE ==================== */
         @media (max-width: 1024px) {
             .stats-grid { grid-template-columns: repeat(2, 1fr); }
             .form-row-3 { grid-template-columns: 1fr 1fr; }
         }
-
         @media (max-width: 860px) {
             .admin-hero h1 { font-size: 1.9rem; }
             .detalhe-grid { grid-template-columns: 1fr; }
             .form-row, .form-row-3 { grid-template-columns: 1fr; }
         }
-
         @media (max-width: 480px) {
             .admin-hero h1 { font-size: 1.5rem; }
             .stats-grid { grid-template-columns: 1fr; }
@@ -667,9 +172,6 @@
             .toast { left: 16px; right: 16px; max-width: none; }
         }
 
-        /* ============================================================ */
-        /* CSS NAVBAR CYBERPUNK                                         */
-        /* ============================================================ */
         :root {
             --bg-dark: #0a0b10;
             --card-bg: #121520;
@@ -679,140 +181,19 @@
             --text-color: #f0f4f8;
         }
 
-        .nav-bar {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            background: rgba(18, 21, 32, 0.85);
-            backdrop-filter: blur(10px);
-            border: 1px solid rgba(0, 240, 255, 0.2);
-            padding: 12px 24px;
-            border-radius: 16px;
-            margin: 20px auto 30px;
-            max-width: 1400px;
-            width: calc(100% - 40px);
-            box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
-            flex-wrap: wrap;
-            gap: 10px;
-            font-family: 'Inter', 'Segoe UI', sans-serif;
-            box-sizing: border-box;
-        }
-
+        .nav-bar { display: flex; justify-content: space-between; align-items: center; background: rgba(18, 21, 32, 0.85); backdrop-filter: blur(10px); border: 1px solid rgba(0, 240, 255, 0.2); padding: 12px 24px; border-radius: 16px; margin: 20px auto 30px; max-width: 1400px; width: calc(100% - 40px); box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37); flex-wrap: wrap; gap: 10px; font-family: 'Inter', 'Segoe UI', sans-serif; box-sizing: border-box; }
         .nav-bar * { box-sizing: border-box; }
-
-        .nav-bar .nav-links {
-            display: flex;
-            align-items: center;
-            gap: 15px;
-            flex-wrap: wrap;
-        }
-
-        .nav-bar .nav-links a {
-            color: #a0aec0;
-            text-decoration: none;
-            font-weight: 700;
-            font-size: 1.1rem;
-            padding: 8px 16px;
-            border-radius: 8px;
-            transition: all 0.3s ease;
-            display: flex;
-            align-items: center;
-            gap: 6px;
-            font-family: 'Rajdhani', sans-serif;
-        }
-
-        .nav-bar .nav-links a:hover,
-        .nav-bar .nav-links a.active {
-            color: #fff;
-            background: rgba(0, 240, 255, 0.15);
-            border: 1px solid var(--neon-blue);
-            box-shadow: 0 0 10px rgba(0, 240, 255, 0.3);
-        }
-
-        .nav-bar .user-profile {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            background: rgba(0, 240, 255, 0.08);
-            padding: 6px 16px 6px 12px;
-            border-radius: 40px;
-            border: 1px solid rgba(0, 240, 255, 0.2);
-            color: #fff;
-            font-weight: 600;
-            font-size: 0.95rem;
-            transition: all 0.3s;
-            cursor: default;
-        }
-
-        .nav-bar .user-profile:hover {
-            background: rgba(0, 240, 255, 0.15);
-            border-color: var(--neon-blue);
-            box-shadow: 0 0 15px rgba(0, 240, 255, 0.2);
-        }
-
-        .nav-bar .user-avatar {
-            background: linear-gradient(135deg, var(--neon-blue), var(--neon-purple));
-            width: 36px;
-            height: 36px;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 1.2rem;
-            font-weight: bold;
-            box-shadow: 0 0 10px rgba(0, 240, 255, 0.3);
-        }
-
-        .nav-bar .user-info {
-            display: flex;
-            flex-direction: column;
-            line-height: 1.2;
-        }
-
-        .nav-bar .user-nick {
-            font-family: 'Orbitron', sans-serif;
-            font-size: 0.9rem;
-            letter-spacing: 0.5px;
-            color: #fff;
-        }
-
-        .nav-bar .user-balance {
-            font-size: 0.8rem;
-            color: var(--neon-green);
-            display: flex;
-            align-items: center;
-            gap: 4px;
-        }
-
-        .nav-bar .nav-buttons {
-            display: flex;
-            gap: 10px;
-            align-items: center;
-            flex-wrap: wrap;
-        }
-
-        .nav-bar .btn-bolsa {
-            background: linear-gradient(135deg, #00f0ff, #7000ff);
-            color: white;
-            border: none;
-            padding: 8px 18px;
-            border-radius: 40px;
-            font-weight: bold;
-            font-size: 0.9rem;
-            cursor: pointer;
-            transition: all 0.3s;
-            display: flex;
-            align-items: center;
-            gap: 5px;
-            box-shadow: 0 0 12px rgba(0, 240, 255, 0.4);
-            font-family: 'Rajdhani', sans-serif;
-        }
-
-        .nav-bar .btn-bolsa:hover {
-            transform: translateY(-2px) scale(1.02);
-            box-shadow: 0 0 20px rgba(0, 240, 255, 0.8);
-        }
-
+        .nav-bar .nav-links { display: flex; align-items: center; gap: 15px; flex-wrap: wrap; }
+        .nav-bar .nav-links a { color: #a0aec0; text-decoration: none; font-weight: 700; font-size: 1.1rem; padding: 8px 16px; border-radius: 8px; transition: all 0.3s ease; display: flex; align-items: center; gap: 6px; font-family: 'Rajdhani', sans-serif; }
+        .nav-bar .nav-links a:hover, .nav-bar .nav-links a.active { color: #fff; background: rgba(0, 240, 255, 0.15); border: 1px solid var(--neon-blue); box-shadow: 0 0 10px rgba(0, 240, 255, 0.3); }
+        .nav-bar .user-profile { display: flex; align-items: center; gap: 12px; background: rgba(0, 240, 255, 0.08); padding: 6px 16px 6px 12px; border-radius: 40px; border: 1px solid rgba(0, 240, 255, 0.2); color: #fff; font-weight: 600; font-size: 0.95rem; }
+        .nav-bar .user-avatar { background: linear-gradient(135deg, var(--neon-blue), var(--neon-purple)); width: 36px; height: 36px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 1.2rem; font-weight: bold; box-shadow: 0 0 10px rgba(0, 240, 255, 0.3); }
+        .nav-bar .user-info { display: flex; flex-direction: column; line-height: 1.2; }
+        .nav-bar .user-nick { font-family: 'Orbitron', sans-serif; font-size: 0.9rem; color: #fff; }
+        .nav-bar .user-balance { font-size: 0.8rem; color: var(--neon-green); }
+        .nav-bar .nav-buttons { display: flex; gap: 10px; align-items: center; flex-wrap: wrap; }
+        .nav-bar .btn-bolsa { background: linear-gradient(135deg, #00f0ff, #7000ff); color: white; border: none; padding: 8px 18px; border-radius: 40px; font-weight: bold; font-size: 0.9rem; cursor: pointer; transition: all 0.3s; display: flex; align-items: center; gap: 5px; box-shadow: 0 0 12px rgba(0, 240, 255, 0.4); font-family: 'Rajdhani', sans-serif; }
+        .nav-bar .btn-bolsa:hover { transform: translateY(-2px) scale(1.02); box-shadow: 0 0 20px rgba(0, 240, 255, 0.8); }
         @media (max-width: 860px) {
             .nav-bar { flex-direction: column; align-items: stretch; }
             .nav-bar .nav-links { justify-content: center; }
@@ -822,7 +203,6 @@
 </head>
 <body>
 
-    <!-- ==================== NAVBAR CYBERPUNK ==================== -->
     <div class="nav-bar">
         <div class="nav-links">
             <a href="./admin.html" class="active">⚡ ADMIN</a>
@@ -837,15 +217,18 @@
         <div class="nav-buttons">
             <button class="btn-bolsa" onclick="window.location.href='./admin.html'">🏠 Voltar</button>
         </div>
+
+        <div class="nav-buttons">
+            <button class="btn-bolsa" onclick="window.location.href='../../dashboard.html'">🏠 Voltar</button>
+        </div>
+
     </div>
 
-    <!-- ==================== HERO ==================== -->
     <section class="admin-hero">
         <h1><i class="fas fa-users-gear"></i>Painel de Cadastros</h1>
         <p>Gerencie todas as contas registradas na tabela <strong>Geral</strong>.</p>
     </section>
 
-    <!-- ==================== STATS ==================== -->
     <section class="stats-grid">
         <div class="stat-card">
             <div class="icone azul"><i class="fas fa-users"></i></div>
@@ -877,7 +260,6 @@
         </div>
     </section>
 
-    <!-- ==================== TOOLBAR ==================== -->
     <section class="toolbar">
         <div class="filtros">
             <select id="filtroStatus">
@@ -905,7 +287,6 @@
         </button>
     </section>
 
-    <!-- ==================== TABELA ==================== -->
     <section class="tabela-wrapper">
         <div class="tabela-card">
             <div class="tabela-header">
@@ -938,7 +319,6 @@
         </div>
     </section>
 
-    <!-- ==================== MODAL ==================== -->
     <div class="modal-overlay" id="modalOverlay">
         <div class="modal">
             <div class="modal-header">
@@ -949,7 +329,6 @@
             </div>
 
             <div class="modal-body">
-                <!-- Abas -->
                 <div class="abas">
                     <button class="aba ativa" data-aba="conta"><i class="fas fa-id-card"></i> Conta</button>
                     <button class="aba" data-aba="atributos"><i class="fas fa-heart-pulse"></i> Atributos</button>
@@ -957,125 +336,46 @@
                     <button class="aba" data-aba="editar"><i class="fas fa-pen"></i> Editar</button>
                 </div>
 
-                <!-- Aba: Conta -->
                 <div class="painel ativo" id="painel-conta">
                     <div class="detalhe-grid">
-                        <div class="detalhe-item">
-                            <div class="rotulo">ID</div>
-                            <div class="valor" id="detId">—</div>
-                        </div>
-                        <div class="detalhe-item">
-                            <div class="rotulo">Login</div>
-                            <div class="valor" id="detLogin">—</div>
-                        </div>
-                        <div class="detalhe-item">
-                            <div class="rotulo">Saldo</div>
-                            <div class="valor" id="detSaldo">—</div>
-                        </div>
-                        <div class="detalhe-item">
-                            <div class="rotulo">Poupança</div>
-                            <div class="valor" id="detPoupanca">—</div>
-                        </div>
-                        <div class="detalhe-item">
-                            <div class="rotulo">Proventos Pendentes</div>
-                            <div class="valor" id="detProventos">—</div>
-                        </div>
-                        <div class="detalhe-item">
-                            <div class="rotulo">Criado em</div>
-                            <div class="valor" id="detCriado">—</div>
-                        </div>
-                        <div class="detalhe-item">
-                            <div class="rotulo">Bloqueado</div>
-                            <div class="valor" id="detBloqueado">—</div>
-                        </div>
-                        <div class="detalhe-item">
-                            <div class="rotulo">Cadeado</div>
-                            <div class="valor" id="detCadeado">—</div>
-                        </div>
-                        <div class="detalhe-item full">
-                            <div class="rotulo">Carteira (JSON)</div>
-                            <div class="valor mono" id="detCarteira">—</div>
-                        </div>
-                        <div class="detalhe-item full">
-                            <div class="rotulo">Itens (JSON)</div>
-                            <div class="valor mono" id="detItens">—</div>
-                        </div>
+                        <div class="detalhe-item"><div class="rotulo">ID</div><div class="valor" id="detId">—</div></div>
+                        <div class="detalhe-item"><div class="rotulo">Login</div><div class="valor" id="detLogin">—</div></div>
+                        <div class="detalhe-item"><div class="rotulo">Saldo</div><div class="valor" id="detSaldo">—</div></div>
+                        <div class="detalhe-item"><div class="rotulo">Poupança</div><div class="valor" id="detPoupanca">—</div></div>
+                        <div class="detalhe-item"><div class="rotulo">Proventos Pendentes</div><div class="valor" id="detProventos">—</div></div>
+                        <div class="detalhe-item"><div class="rotulo">Criado em</div><div class="valor" id="detCriado">—</div></div>
+                        <div class="detalhe-item"><div class="rotulo">Bloqueado</div><div class="valor" id="detBloqueado">—</div></div>
+                        <div class="detalhe-item"><div class="rotulo">Cadeado</div><div class="valor" id="detCadeado">—</div></div>
+                        <div class="detalhe-item full"><div class="rotulo">Carteira (JSON)</div><div class="valor mono" id="detCarteira">—</div></div>
+                        <div class="detalhe-item full"><div class="rotulo">Itens (JSON)</div><div class="valor mono" id="detItens">—</div></div>
                     </div>
                 </div>
 
-                <!-- Aba: Atributos -->
                 <div class="painel" id="painel-atributos">
                     <div class="detalhe-grid">
-                        <div class="detalhe-item">
-                            <div class="rotulo">Nível</div>
-                            <div class="valor" id="detNivel">—</div>
-                        </div>
-                        <div class="detalhe-item">
-                            <div class="rotulo">Experiência</div>
-                            <div class="valor" id="detExp">—</div>
-                        </div>
-                        <div class="detalhe-item">
-                            <div class="rotulo">HP</div>
-                            <div class="valor" id="detHp">—</div>
-                        </div>
-                        <div class="detalhe-item">
-                            <div class="rotulo">MP</div>
-                            <div class="valor" id="detMp">—</div>
-                        </div>
-                        <div class="detalhe-item">
-                            <div class="rotulo">SM</div>
-                            <div class="valor" id="detSm">—</div>
-                        </div>
-                        <div class="detalhe-item">
-                            <div class="rotulo">Ataque (ATK)</div>
-                            <div class="valor" id="detAtk">—</div>
-                        </div>
-                        <div class="detalhe-item">
-                            <div class="rotulo">Defesa (DEF)</div>
-                            <div class="valor" id="detDef">—</div>
-                        </div>
-                        <div class="detalhe-item">
-                            <div class="rotulo">Magia (MAG)</div>
-                            <div class="valor" id="detMag">—</div>
-                        </div>
-                        <div class="detalhe-item">
-                            <div class="rotulo">Seeds</div>
-                            <div class="valor" id="detSeeds">—</div>
-                        </div>
-                        <div class="detalhe-item">
-                            <div class="rotulo">Mumu</div>
-                            <div class="valor" id="detMumu">—</div>
-                        </div>
-                        <div class="detalhe-item">
-                            <div class="rotulo">Total Upgrades</div>
-                            <div class="valor" id="detUpgrades">—</div>
-                        </div>
-                        <div class="detalhe-item">
-                            <div class="rotulo">Stock</div>
-                            <div class="valor" id="detStock">—</div>
-                        </div>
+                        <div class="detalhe-item"><div class="rotulo">Nível</div><div class="valor" id="detNivel">—</div></div>
+                        <div class="detalhe-item"><div class="rotulo">Experiência</div><div class="valor" id="detExp">—</div></div>
+                        <div class="detalhe-item"><div class="rotulo">HP</div><div class="valor" id="detHp">—</div></div>
+                        <div class="detalhe-item"><div class="rotulo">MP</div><div class="valor" id="detMp">—</div></div>
+                        <div class="detalhe-item"><div class="rotulo">SM</div><div class="valor" id="detSm">—</div></div>
+                        <div class="detalhe-item"><div class="rotulo">Ataque (ATK)</div><div class="valor" id="detAtk">—</div></div>
+                        <div class="detalhe-item"><div class="rotulo">Defesa (DEF)</div><div class="valor" id="detDef">—</div></div>
+                        <div class="detalhe-item"><div class="rotulo">Magia (MAG)</div><div class="valor" id="detMag">—</div></div>
+                        <div class="detalhe-item"><div class="rotulo">Seeds</div><div class="valor" id="detSeeds">—</div></div>
+                        <div class="detalhe-item"><div class="rotulo">Mumu</div><div class="valor" id="detMumu">—</div></div>
+                        <div class="detalhe-item"><div class="rotulo">Total Upgrades</div><div class="valor" id="detUpgrades">—</div></div>
+                        <div class="detalhe-item"><div class="rotulo">Stock</div><div class="valor" id="detStock">—</div></div>
                     </div>
                 </div>
 
-                <!-- Aba: Dispositivo -->
                 <div class="painel" id="painel-dispositivo">
                     <div class="detalhe-grid">
-                        <div class="detalhe-item full">
-                            <div class="rotulo">Fingerprint</div>
-                            <div class="valor mono" id="detFingerprint">—</div>
-                        </div>
-                        <div class="detalhe-item full">
-                            <div class="rotulo">MAC Address</div>
-                            <div class="valor mono" id="detMac">—</div>
-                        </div>
-                        <div class="detalhe-item full">
-                            <div class="rotulo">IP Address</div>
-                            <div class="valor mono" id="detIp">—</div>
-                        </div>
+                        <div class="detalhe-item full"><div class="rotulo">Fingerprint</div><div class="valor mono" id="detFingerprint">—</div></div>
+                        <div class="detalhe-item full"><div class="rotulo">MAC Address</div><div class="valor mono" id="detMac">—</div></div>
+                        <div class="detalhe-item full"><div class="rotulo">IP Address</div><div class="valor mono" id="detIp">—</div></div>
                     </div>
                 </div>
 
-                <!-- Aba: Editar -->
                 <div class="painel" id="painel-editar">
                     <div class="form-row">
                         <div class="campo-acao">
@@ -1089,63 +389,27 @@
                     </div>
 
                     <div class="form-row-3">
-                        <div class="campo-acao">
-                            <label for="editNivel">Nível</label>
-                            <input type="number" id="editNivel" min="1">
-                        </div>
-                        <div class="campo-acao">
-                            <label for="editExp">Experiência</label>
-                            <input type="number" id="editExp" min="0">
-                        </div>
-                        <div class="campo-acao">
-                            <label for="editExpProximo">Exp Próximo</label>
-                            <input type="number" id="editExpProximo" min="1">
-                        </div>
+                        <div class="campo-acao"><label for="editNivel">Nível</label><input type="number" id="editNivel" min="1"></div>
+                        <div class="campo-acao"><label for="editExp">Experiência</label><input type="number" id="editExp" min="0"></div>
+                        <div class="campo-acao"><label for="editExpProximo">Exp Próximo</label><input type="number" id="editExpProximo" min="1"></div>
                     </div>
 
                     <div class="form-row-3">
-                        <div class="campo-acao">
-                            <label for="editSaldo">Saldo</label>
-                            <input type="number" id="editSaldo" min="0" step="0.01">
-                        </div>
-                        <div class="campo-acao">
-                            <label for="editPoupanca">Poupança</label>
-                            <input type="number" id="editPoupanca" min="0" step="0.01">
-                        </div>
-                        <div class="campo-acao">
-                            <label for="editProventos">Proventos Pendentes</label>
-                            <input type="number" id="editProventos" min="0" step="0.01">
-                        </div>
+                        <div class="campo-acao"><label for="editSaldo">Saldo</label><input type="number" id="editSaldo" min="0" step="0.01"></div>
+                        <div class="campo-acao"><label for="editPoupanca">Poupança</label><input type="number" id="editPoupanca" min="0" step="0.01"></div>
+                        <div class="campo-acao"><label for="editProventos">Proventos Pendentes</label><input type="number" id="editProventos" min="0" step="0.01"></div>
                     </div>
 
                     <div class="form-row-3">
-                        <div class="campo-acao">
-                            <label for="editHp">HP</label>
-                            <input type="number" id="editHp" min="0">
-                        </div>
-                        <div class="campo-acao">
-                            <label for="editMaxHp">Max HP</label>
-                            <input type="number" id="editMaxHp" min="0">
-                        </div>
-                        <div class="campo-acao">
-                            <label for="editAtk">ATK</label>
-                            <input type="number" id="editAtk" min="0">
-                        </div>
+                        <div class="campo-acao"><label for="editHp">HP</label><input type="number" id="editHp" min="0"></div>
+                        <div class="campo-acao"><label for="editMaxHp">Max HP</label><input type="number" id="editMaxHp" min="0"></div>
+                        <div class="campo-acao"><label for="editAtk">ATK</label><input type="number" id="editAtk" min="0"></div>
                     </div>
 
                     <div class="form-row-3">
-                        <div class="campo-acao">
-                            <label for="editDef">DEF</label>
-                            <input type="number" id="editDef" min="0">
-                        </div>
-                        <div class="campo-acao">
-                            <label for="editMag">MAG</label>
-                            <input type="number" id="editMag" min="0">
-                        </div>
-                        <div class="campo-acao">
-                            <label for="editSeeds">Seeds</label>
-                            <input type="number" id="editSeeds" min="0">
-                        </div>
+                        <div class="campo-acao"><label for="editDef">DEF</label><input type="number" id="editDef" min="0"></div>
+                        <div class="campo-acao"><label for="editMag">MAG</label><input type="number" id="editMag" min="0"></div>
+                        <div class="campo-acao"><label for="editSeeds">Seeds</label><input type="number" id="editSeeds" min="0"></div>
                     </div>
 
                     <div class="form-row">
@@ -1165,7 +429,6 @@
                         </div>
                     </div>
 
-                    <!-- ===== NOVO: Dispositivo editável ===== -->
                     <div class="campo-acao">
                         <label for="editFingerprint">Fingerprint</label>
                         <input type="text" id="editFingerprint" placeholder="Fingerprint do dispositivo">
@@ -1201,13 +464,11 @@
         </div>
     </div>
 
-    <!-- ==================== TOAST ==================== -->
     <div class="toast" id="toast">
         <i class="fas fa-circle-check" id="toastIcone"></i>
         <span class="texto" id="toastTexto">Mensagem</span>
     </div>
 
-    <!-- ==================== JAVASCRIPT ==================== -->
     <script>
         /* ==================== CONFIGURAÇÃO SUPABASE ==================== */
         const SUPABASE_URL = 'https://xrcxvizzdumcxbylmkvn.supabase.co';
@@ -1255,11 +516,8 @@
             try {
                 const data = new Date(isoString);
                 return data.toLocaleString('pt-BR', {
-                    day: '2-digit',
-                    month: '2-digit',
-                    year: 'numeric',
-                    hour: '2-digit',
-                    minute: '2-digit'
+                    day: '2-digit', month: '2-digit', year: 'numeric',
+                    hour: '2-digit', minute: '2-digit'
                 });
             } catch {
                 return isoString;
@@ -1278,6 +536,15 @@
             const div = document.createElement('div');
             div.textContent = str;
             return div.innerHTML;
+        }
+
+        /* ✅ HASH SHA-256 (compatível com cadastro.html) */
+        async function hashSenha(texto) {
+            const enc = new TextEncoder().encode(texto);
+            const buf = await crypto.subtle.digest('SHA-256', enc);
+            return Array.from(new Uint8Array(buf))
+                .map(b => b.toString(16).padStart(2, '0'))
+                .join('');
         }
 
         /* ==================== CARREGAR USUÁRIOS ==================== */
@@ -1330,11 +597,7 @@
 
                 if (termo) {
                     const alvo = [
-                        u.id,
-                        u.login,
-                        u.mac_address,
-                        u.ip_address,
-                        u.fingerprint
+                        u.id, u.login, u.mac_address, u.ip_address, u.fingerprint
                     ].filter(Boolean).join(' ').toLowerCase();
 
                     if (!alvo.includes(termo)) return false;
@@ -1432,7 +695,6 @@
             usuarioAtual = u;
             modalId.textContent = '#' + u.id;
 
-            /* --- Aba Conta --- */
             document.getElementById('detId').textContent = u.id ?? '—';
             document.getElementById('detLogin').textContent = u.login || '—';
             document.getElementById('detSaldo').textContent = formatarMoeda(u.saldo);
@@ -1444,7 +706,6 @@
             document.getElementById('detCarteira').textContent = JSON.stringify(u.carteira || {}, null, 2);
             document.getElementById('detItens').textContent = JSON.stringify(u.itens || [], null, 2);
 
-            /* --- Aba Atributos --- */
             document.getElementById('detNivel').textContent = u.nivel ?? '—';
             document.getElementById('detExp').textContent = u.experiencia ?? u.exp ?? '—';
             document.getElementById('detHp').textContent = `${u.hp_atual ?? u.hp ?? '—'} / ${u.hp_max ?? u.max_hp ?? '—'}`;
@@ -1458,12 +719,10 @@
             document.getElementById('detUpgrades').textContent = u.total_upgrades ?? '—';
             document.getElementById('detStock').textContent = u.stock ?? '—';
 
-            /* --- Aba Dispositivo --- */
             document.getElementById('detFingerprint').textContent = u.fingerprint || '—';
             document.getElementById('detMac').textContent = u.mac_address || '—';
             document.getElementById('detIp').textContent = u.ip_address || '—';
 
-            /* --- Aba Editar --- */
             document.getElementById('editLogin').value = u.login || '';
             document.getElementById('editSenha').value = '';
             document.getElementById('editNivel').value = u.nivel ?? 1;
@@ -1481,12 +740,10 @@
             document.getElementById('editBloqueado').value = u.bloqueado ? 'true' : 'false';
             document.getElementById('editCadeado').value = u.cadeado ? 'true' : 'false';
 
-            /* NOVO: Dispositivo */
             document.getElementById('editFingerprint').value = u.fingerprint || '';
             document.getElementById('editMac').value = u.mac_address || '';
             document.getElementById('editIp').value = u.ip_address || '';
 
-            /* Resetar abas */
             document.querySelectorAll('.aba').forEach(a => a.classList.remove('ativa'));
             document.querySelector('.aba[data-aba="conta"]').classList.add('ativa');
             document.querySelectorAll('.painel').forEach(p => p.classList.remove('ativo'));
@@ -1554,13 +811,12 @@
                 seeds: parseInt(document.getElementById('editSeeds').value) || 0,
                 bloqueado: document.getElementById('editBloqueado').value === 'true',
                 cadeado: document.getElementById('editCadeado').value === 'true',
-                /* NOVO: Dispositivo */
                 fingerprint: document.getElementById('editFingerprint').value.trim() || null,
                 mac_address: document.getElementById('editMac').value.trim() || null,
                 ip_address: document.getElementById('editIp').value.trim() || null
             };
 
-            /* Senha (se preenchida) */
+            /* ✅ CORREÇÃO: senha com hash SHA-256 (igual cadastro.html) */
             const novaSenha = document.getElementById('editSenha').value.trim();
             if (novaSenha) {
                 if (novaSenha.length < 6) {
@@ -1569,7 +825,7 @@
                     btn.innerHTML = '<i class="fas fa-floppy-disk"></i> Salvar alterações';
                     return;
                 }
-                updates.senha = novaSenha;
+                updates.senha = await hashSenha(novaSenha);
             }
 
             try {
@@ -1595,7 +851,7 @@
             }
         });
 
-        /* ==================== RESETAR SENHA ==================== */
+        /* ==================== RESETAR SENHA (com hash) ==================== */
         document.getElementById('btnResetarSenha').addEventListener('click', async () => {
             if (!usuarioAtual) return;
 
@@ -1609,9 +865,10 @@
             }
 
             try {
+                const senhaHash = await hashSenha(senha);
                 const { error } = await supabaseClient
                     .from(TABELA)
-                    .update({ senha: senha })
+                    .update({ senha: senhaHash })
                     .eq('id', usuarioAtual.id);
 
                 if (error) throw error;
@@ -1660,21 +917,6 @@
 
         /* ==================== INICIALIZAÇÃO ==================== */
         carregarUsuarios();
-    </script><script type="module">
-import {
-  salvarSessao,
-  sessaoValida,
-  obterUsuario,
-  limparSessao,
-  exigirSessao
-} from './shared/session.js';
-
-// Verifica antes de tudo
-const usuario = exigirSessao('login.html');
-if (!usuario) throw new Error('Sessão inválida');
-
-// Agora use normalmente
-console.log('Logado como:', usuario.login);
-</script>
+    </script>
 </body>
 </html>

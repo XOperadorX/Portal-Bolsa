@@ -1,0 +1,1568 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="theme-color" content="#0a0e16" />
+
+  <title>Admin — Saques | MM Quase Tudo</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    :root {
+      --bg:       #070b12;
+      --bg-2:     #0a0f18;
+      --card:     #0f1520;
+      --card-2:   #131a26;
+      --line:     #1c2533;
+      --line-2:   #263243;
+
+      --txt:      #e8eefb;
+      --txt-2:    #a4b1c5;
+      --mut:      #64748b;
+
+      --roxo:     #a855f7;
+      --roxo-2:   #7c3aed;
+      --verde:    #10b981;
+      --azul:     #3b82f6;
+      --mumu:     #ffb020;
+      --vermelho: #ef4444;
+      --laranja:  #f59e0b;
+      --ciano:    #06b6d4;
+
+      --radius:   14px;
+      --radius-sm: 10px;
+      --radius-lg: 20px;
+      --trans:    .18s cubic-bezier(.4, 0, .2, 1);
+    }
+
+    body {
+      font-family: 'Inter', system-ui, sans-serif;
+      background: var(--bg);
+      background-image:
+        radial-gradient(900px 500px at 15% 0%,  rgba(168, 85, 247, 0.10), transparent 60%),
+        radial-gradient(900px 500px at 85% 100%, rgba(255, 176, 32, 0.06), transparent 60%);
+      color: var(--txt);
+      min-height: 100vh;
+      padding: 24px 20px 60px;
+    }
+
+    /* ============================================================
+       HEADER
+    ============================================================ */
+    .header {
+      max-width: 1400px;
+      margin: 0 auto 22px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 16px;
+      flex-wrap: wrap;
+    }
+
+    .header-esq .tag {
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 1.4px;
+      color: var(--mut);
+      text-transform: uppercase;
+      margin-bottom: 4px;
+    }
+
+    .header-esq h1 {
+      font-size: 28px;
+      font-weight: 800;
+      letter-spacing: -0.5px;
+      color: #fff;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .header-esq h1 .crown {
+      background: linear-gradient(135deg, var(--mumu), #d97706);
+      color: #1a1000;
+      padding: 6px 12px;
+      border-radius: 10px;
+      font-size: 18px;
+      box-shadow: 0 6px 18px rgba(255, 176, 32, 0.4);
+    }
+
+    .header-dir {
+      display: flex;
+      gap: 10px;
+      align-items: center;
+      flex-wrap: wrap;
+    }
+
+    .rt-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 11.5px;
+      font-weight: 700;
+      color: var(--mut);
+      padding: 7px 14px;
+      background: rgba(255, 255, 255, 0.03);
+      border: 1px solid var(--line);
+      border-radius: 20px;
+    }
+
+    .rt-dot {
+      width: 8px; height: 8px;
+      border-radius: 50%;
+      background: #475569;
+      transition: var(--trans);
+    }
+
+    .rt-dot.ativo {
+      background: var(--verde);
+      box-shadow: 0 0 10px rgba(16, 185, 129, 0.8);
+      animation: rtPulse 1.6s ease-in-out infinite;
+    }
+
+    @keyframes rtPulse {
+      0%, 100% { opacity: 1; }
+      50%      { opacity: 0.4; }
+    }
+
+    .btn-ghost {
+      background: transparent;
+      border: 1px solid var(--line-2);
+      color: var(--txt-2);
+      padding: 9px 16px;
+      border-radius: 10px;
+      font-size: 13px;
+      font-weight: 600;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      transition: var(--trans);
+      font-family: inherit;
+      text-decoration: none;
+    }
+
+    .btn-ghost:hover {
+      border-color: var(--mumu);
+      color: var(--mumu);
+      background: rgba(255, 176, 32, 0.06);
+    }
+
+    /* ============================================================
+       STATS
+    ============================================================ */
+    .stats-grid {
+      max-width: 1400px;
+      margin: 0 auto 20px;
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+      gap: 12px;
+    }
+
+    .stat {
+      background: linear-gradient(180deg, rgba(15, 21, 32, 0.9), rgba(19, 26, 38, 0.9));
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      padding: 16px 18px;
+      position: relative;
+      overflow: hidden;
+      transition: var(--trans);
+    }
+
+    .stat:hover {
+      border-color: var(--line-2);
+      transform: translateY(-2px);
+    }
+
+    .stat::before {
+      content: '';
+      position: absolute;
+      left: 0; top: 0; bottom: 0;
+      width: 3px;
+    }
+
+    .stat.pendentes::before   { background: var(--laranja); }
+    .stat.pagos::before       { background: var(--verde); }
+    .stat.recusados::before   { background: var(--vermelho); }
+    .stat.total-mumu::before  { background: var(--mumu); }
+    .stat.total-usdt::before  { background: var(--roxo); }
+
+    .stat .lbl {
+      font-size: 10.5px;
+      font-weight: 700;
+      letter-spacing: 1.2px;
+      text-transform: uppercase;
+      color: var(--mut);
+      margin-bottom: 8px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .stat .val {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 22px;
+      font-weight: 800;
+      color: #fff;
+      letter-spacing: -0.3px;
+      line-height: 1.1;
+    }
+
+    .stat.pendentes .val  { color: var(--laranja); }
+    .stat.pagos .val      { color: var(--verde); }
+    .stat.recusados .val  { color: var(--vermelho); }
+    .stat.total-mumu .val { color: var(--mumu); }
+    .stat.total-usdt .val { color: var(--roxo); }
+
+    .stat .sub {
+      font-size: 11px;
+      color: var(--mut);
+      margin-top: 6px;
+    }
+
+    /* ============================================================
+       FILTROS
+    ============================================================ */
+    .filtros {
+      max-width: 1400px;
+      margin: 0 auto 16px;
+      background: linear-gradient(180deg, rgba(15, 21, 32, 0.9), rgba(19, 26, 38, 0.9));
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      padding: 14px 18px;
+      display: flex;
+      gap: 10px;
+      align-items: center;
+      flex-wrap: wrap;
+    }
+
+    .filtros label {
+      font-size: 11px;
+      font-weight: 700;
+      color: var(--mut);
+      text-transform: uppercase;
+      letter-spacing: 1px;
+    }
+
+    .filtros select,
+    .filtros input {
+      background: var(--bg-2);
+      border: 1px solid var(--line-2);
+      color: var(--txt);
+      padding: 9px 12px;
+      border-radius: 8px;
+      font-size: 13px;
+      font-family: inherit;
+      outline: none;
+      transition: var(--trans);
+    }
+
+    .filtros select:focus,
+    .filtros input:focus {
+      border-color: var(--mumu);
+      box-shadow: 0 0 0 3px rgba(255, 176, 32, 0.15);
+    }
+
+    .filtros input { min-width: 240px; flex: 1; }
+
+    .filtros .sep { flex: 1; }
+
+    .btn-refresh {
+      background: linear-gradient(135deg, var(--mumu), #d97706);
+      color: #1a1000;
+      border: none;
+      padding: 10px 18px;
+      border-radius: 8px;
+      font-size: 13px;
+      font-weight: 800;
+      cursor: pointer;
+      transition: var(--trans);
+      font-family: inherit;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      box-shadow: 0 6px 16px rgba(255, 176, 32, 0.3);
+    }
+
+    .btn-refresh:hover {
+      transform: translateY(-2px);
+      filter: brightness(1.08);
+      box-shadow: 0 10px 24px rgba(255, 176, 32, 0.5);
+    }
+
+    .btn-refresh .spin { animation: spin .8s linear infinite; }
+
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    /* ============================================================
+       TABS STATUS
+    ============================================================ */
+    .tabs-status {
+      max-width: 1400px;
+      margin: 0 auto 16px;
+      display: flex;
+      gap: 6px;
+      flex-wrap: wrap;
+    }
+
+    .tab-s {
+      padding: 8px 16px;
+      border-radius: 8px;
+      font-size: 12.5px;
+      font-weight: 700;
+      color: var(--txt-2);
+      background: var(--card);
+      border: 1px solid var(--line);
+      cursor: pointer;
+      transition: var(--trans);
+      font-family: inherit;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .tab-s:hover { color: var(--txt); border-color: var(--line-2); }
+
+    .tab-s.ativa {
+      background: linear-gradient(180deg, var(--mumu), #d97706);
+      color: #1a1000;
+      border-color: transparent;
+      box-shadow: 0 4px 12px rgba(255, 176, 32, 0.35);
+    }
+
+    .tab-s .badge {
+      background: rgba(0, 0, 0, 0.2);
+      padding: 2px 8px;
+      border-radius: 20px;
+      font-size: 10.5px;
+      font-weight: 800;
+      letter-spacing: 0.3px;
+    }
+
+    /* ============================================================
+       LISTA DE SAQUES
+    ============================================================ */
+    .lista-wrapper {
+      max-width: 1400px;
+      margin: 0 auto;
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(360px, 1fr));
+      gap: 14px;
+    }
+
+    .card-saque {
+      background: linear-gradient(180deg, rgba(15, 21, 32, 0.95), rgba(19, 26, 38, 0.95));
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      padding: 18px 20px;
+      position: relative;
+      overflow: hidden;
+      transition: var(--trans);
+      animation: cardIn .3s ease;
+    }
+
+    @keyframes cardIn {
+      from { opacity: 0; transform: translateY(8px); }
+      to   { opacity: 1; transform: none; }
+    }
+
+    .card-saque:hover {
+      border-color: var(--line-2);
+      transform: translateY(-2px);
+    }
+
+    .card-saque::before {
+      content: '';
+      position: absolute;
+      left: 0; top: 0; bottom: 0;
+      width: 4px;
+    }
+
+    .card-saque.mumu::before { background: var(--mumu); }
+    .card-saque.usdt::before { background: var(--roxo); }
+
+    .card-top {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      gap: 12px;
+      margin-bottom: 14px;
+      flex-wrap: wrap;
+    }
+
+    .card-user {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      min-width: 0;
+    }
+
+    .avatar {
+      width: 42px; height: 42px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 16px;
+      font-weight: 800;
+      color: #fff;
+      flex-shrink: 0;
+    }
+
+    .avatar.mumu { background: linear-gradient(135deg, var(--mumu), #d97706); color: #1a1000; }
+    .avatar.usdt { background: linear-gradient(135deg, var(--roxo), var(--roxo-2)); }
+
+    .card-user-info { min-width: 0; }
+    .card-user-info .nick {
+      font-size: 14px;
+      font-weight: 800;
+      color: #fff;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      margin-bottom: 2px;
+    }
+
+    .card-user-info .login {
+      font-size: 11.5px;
+      color: var(--mut);
+      font-family: 'JetBrains Mono', monospace;
+    }
+
+    .card-status {
+      font-size: 10px;
+      font-weight: 800;
+      letter-spacing: 0.8px;
+      text-transform: uppercase;
+      padding: 5px 10px;
+      border-radius: 20px;
+      white-space: nowrap;
+    }
+
+    .card-status.pendente { background: rgba(245, 158, 11, 0.15); color: var(--laranja); border: 1px solid rgba(245, 158, 11, 0.4); }
+    .card-status.pago     { background: rgba(16, 185, 129, 0.15); color: var(--verde); border: 1px solid rgba(16, 185, 129, 0.4); }
+    .card-status.recusado { background: rgba(239, 68, 68, 0.15); color: var(--vermelho); border: 1px solid rgba(239, 68, 68, 0.4); }
+
+    /* ---------- VALORES ---------- */
+    .valor-destaque {
+      background: rgba(255, 255, 255, 0.02);
+      border: 1px solid var(--line);
+      border-radius: 12px;
+      padding: 14px 16px;
+      margin-bottom: 14px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 12px;
+      flex-wrap: wrap;
+    }
+
+    .valor-destaque .esq .rot {
+      font-size: 10px;
+      font-weight: 700;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+      color: var(--mut);
+      margin-bottom: 4px;
+    }
+
+    .valor-destaque .esq .val {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 22px;
+      font-weight: 800;
+      color: var(--mumu);
+      letter-spacing: -0.3px;
+    }
+
+    .card-saque.usdt .valor-destaque .esq .val { color: var(--roxo); }
+
+    .valor-destaque .dir {
+      text-align: right;
+    }
+
+    .valor-destaque .dir .rot {
+      font-size: 10px;
+      font-weight: 700;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+      color: var(--mut);
+      margin-bottom: 4px;
+    }
+
+    .valor-destaque .dir .val {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 16px;
+      font-weight: 700;
+      color: var(--verde);
+    }
+
+    /* ---------- INFO GRID ---------- */
+    .info-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+      margin-bottom: 14px;
+    }
+
+    .info-item {
+      background: rgba(255, 255, 255, 0.02);
+      border: 1px solid var(--line);
+      border-radius: 10px;
+      padding: 10px 12px;
+      min-width: 0;
+    }
+
+    .info-item.full { grid-column: 1 / -1; }
+
+    .info-item .rot {
+      font-size: 9.5px;
+      font-weight: 700;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+      color: var(--mut);
+      margin-bottom: 4px;
+    }
+
+    .info-item .val {
+      font-size: 12.5px;
+      color: var(--txt);
+      font-weight: 600;
+      word-break: break-all;
+      line-height: 1.4;
+    }
+
+    .info-item .val.mono {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 11.5px;
+      color: var(--txt-2);
+    }
+
+    .copy-btn {
+      background: transparent;
+      border: 1px solid var(--line-2);
+      color: var(--txt-2);
+      padding: 2px 8px;
+      border-radius: 6px;
+      font-size: 10px;
+      cursor: pointer;
+      transition: var(--trans);
+      font-family: inherit;
+      margin-left: 6px;
+      vertical-align: middle;
+    }
+
+    .copy-btn:hover {
+      border-color: var(--mumu);
+      color: var(--mumu);
+    }
+
+    /* ---------- AÇÕES ---------- */
+    .card-acoes {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+      padding-top: 12px;
+      border-top: 1px solid var(--line);
+    }
+
+    .btn-acao {
+      flex: 1;
+      min-width: 120px;
+      padding: 11px 14px;
+      border: none;
+      border-radius: 10px;
+      font-size: 12.5px;
+      font-weight: 800;
+      cursor: pointer;
+      transition: var(--trans);
+      font-family: inherit;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      letter-spacing: 0.3px;
+    }
+
+    .btn-acao:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+      transform: none !important;
+    }
+
+    .btn-pagar {
+      background: linear-gradient(135deg, var(--verde), #059669);
+      color: #fff;
+      box-shadow: 0 6px 16px rgba(16, 185, 129, 0.3);
+    }
+
+    .btn-pagar:hover:not(:disabled) {
+      transform: translateY(-2px);
+      filter: brightness(1.08);
+      box-shadow: 0 10px 24px rgba(16, 185, 129, 0.5);
+    }
+
+    .btn-recusar {
+      background: rgba(239, 68, 68, 0.12);
+      color: #fca5a5;
+      border: 1px solid rgba(239, 68, 68, 0.4);
+    }
+
+    .btn-recusar:hover:not(:disabled) {
+      background: rgba(239, 68, 68, 0.25);
+      color: #fff;
+      box-shadow: 0 8px 20px rgba(239, 68, 68, 0.4);
+    }
+
+    .btn-detalhes {
+      background: transparent;
+      border: 1px solid var(--line-2);
+      color: var(--txt-2);
+    }
+
+    .btn-detalhes:hover:not(:disabled) {
+      border-color: var(--ciano);
+      color: var(--ciano);
+      background: rgba(6, 182, 212, 0.08);
+    }
+
+    /* ---------- EMPTY ---------- */
+    .empty {
+      max-width: 1400px;
+      margin: 40px auto;
+      text-align: center;
+      padding: 60px 20px;
+      color: var(--mut);
+      background: linear-gradient(180deg, rgba(15, 21, 32, 0.6), rgba(19, 26, 38, 0.6));
+      border: 1px dashed var(--line-2);
+      border-radius: var(--radius-lg);
+    }
+
+    .empty i {
+      font-size: 48px;
+      color: var(--line-2);
+      margin-bottom: 14px;
+      display: block;
+    }
+
+    .empty .titulo {
+      font-size: 15px;
+      font-weight: 700;
+      color: var(--txt-2);
+      margin-bottom: 6px;
+    }
+
+    .empty .desc {
+      font-size: 13px;
+      color: var(--mut);
+    }
+
+    /* ============================================================
+       TOAST
+    ============================================================ */
+    .toasts {
+      position: fixed;
+      bottom: 24px;
+      right: 24px;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      z-index: 9999;
+      max-width: 380px;
+    }
+
+    .toast {
+      background: rgba(15, 21, 32, 0.98);
+      backdrop-filter: blur(10px);
+      border: 1px solid var(--line-2);
+      border-left: 4px solid var(--azul);
+      border-radius: 12px;
+      padding: 14px 18px;
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--txt);
+      box-shadow: 0 12px 32px rgba(0, 0, 0, 0.5);
+      animation: toastIn .3s ease;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      line-height: 1.4;
+    }
+
+    .toast.sucesso { border-left-color: var(--verde);    color: #86efac; }
+    .toast.erro    { border-left-color: var(--vermelho); color: #fca5a5; }
+    .toast.aviso   { border-left-color: var(--laranja);  color: #fcd34d; }
+    .toast i { font-size: 16px; }
+
+    @keyframes toastIn {
+      from { opacity: 0; transform: translateX(100px); }
+      to   { opacity: 1; transform: translateX(0); }
+    }
+
+    /* ============================================================
+       MODAL
+    ============================================================ */
+    .modal-overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(4, 7, 12, 0.85);
+      backdrop-filter: blur(6px);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+      z-index: 9998;
+    }
+
+    .modal-overlay.show { display: flex; }
+
+    .modal {
+      background: linear-gradient(180deg, var(--card), var(--card-2));
+      border: 1px solid var(--line-2);
+      border-radius: var(--radius-lg);
+      padding: 26px 28px;
+      max-width: 480px;
+      width: 100%;
+      box-shadow: 0 30px 60px rgba(0, 0, 0, 0.7);
+      animation: modalIn .25s ease;
+    }
+
+    @keyframes modalIn {
+      from { opacity: 0; transform: scale(0.95) translateY(20px); }
+      to   { opacity: 1; transform: none; }
+    }
+
+    .modal h2 {
+      font-size: 18px;
+      font-weight: 800;
+      color: #fff;
+      margin-bottom: 12px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .modal p {
+      font-size: 13.5px;
+      color: var(--txt-2);
+      line-height: 1.65;
+      margin-bottom: 18px;
+    }
+
+    .modal p strong { color: var(--txt); }
+
+    .modal-resumo {
+      background: rgba(255, 255, 255, 0.03);
+      border: 1px solid var(--line);
+      border-radius: 10px;
+      padding: 12px 14px;
+      margin-bottom: 18px;
+      font-size: 13px;
+    }
+
+    .modal-resumo .row {
+      display: flex;
+      justify-content: space-between;
+      padding: 4px 0;
+    }
+
+    .modal-resumo .row .k { color: var(--mut); }
+    .modal-resumo .row .v {
+      font-family: 'JetBrains Mono', monospace;
+      font-weight: 700;
+      color: var(--txt);
+    }
+
+    .modal-resumo .row .v.mumu { color: var(--mumu); }
+    .modal-resumo .row .v.usdt { color: var(--roxo); }
+    .modal-resumo .row .v.verde { color: var(--verde); }
+    .modal-resumo .row .v.vermelho { color: var(--vermelho); }
+
+    .modal-btns {
+      display: flex;
+      gap: 10px;
+      justify-content: flex-end;
+      flex-wrap: wrap;
+    }
+
+    .modal-btns button {
+      padding: 11px 20px;
+      border-radius: 10px;
+      font-size: 13px;
+      font-weight: 700;
+      cursor: pointer;
+      transition: var(--trans);
+      font-family: inherit;
+      border: none;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .btn-cancelar {
+      background: transparent;
+      color: var(--txt-2);
+      border: 1px solid var(--line-2);
+    }
+
+    .btn-cancelar:hover {
+      color: var(--txt);
+      background: rgba(255, 255, 255, 0.05);
+    }
+
+    .btn-confirmar {
+      background: linear-gradient(135deg, var(--verde), #059669);
+      color: #fff;
+    }
+
+    .btn-confirmar:hover {
+      filter: brightness(1.08);
+      transform: translateY(-1px);
+    }
+
+    .btn-confirmar.vermelho {
+      background: linear-gradient(135deg, var(--vermelho), #dc2626);
+    }
+
+    /* ============================================================
+       RESPONSIVIDADE
+    ============================================================ */
+    @media (max-width: 640px) {
+      body { padding: 14px 12px 40px; }
+      .header-esq h1 { font-size: 22px; }
+      .stats-grid { grid-template-columns: 1fr 1fr; }
+      .stat .val { font-size: 18px; }
+      .filtros { flex-direction: column; align-items: stretch; }
+      .filtros input { min-width: 0; }
+      .lista-wrapper { grid-template-columns: 1fr; }
+      .info-grid { grid-template-columns: 1fr; }
+      .toasts { left: 12px; right: 12px; max-width: none; }
+    }
+
+    @media (max-width: 380px) {
+      .stats-grid { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- ==================== HEADER ==================== -->
+<header class="header">
+  <div class="header-esq">
+    <div class="tag">Painel Administrativo</div>
+    <h1>
+      <span class="crown">👑</span>
+      Saques Pendentes
+    </h1>
+  </div>
+  <div class="header-dir">
+    <div class="rt-badge" id="rtBadge">
+      <span class="rt-dot" id="rtDot"></span>
+      <span id="rtTexto">Conectando…</span>
+    </div>
+    <a href="./admin.html" class="btn-ghost">
+      <i class="fas fa-arrow-left"></i> Voltar
+    </a>
+  </div>
+</header>
+
+<!-- ==================== STATS ==================== -->
+<div class="stats-grid">
+  <div class="stat pendentes">
+    <div class="lbl"><i class="fas fa-hourglass-half"></i> Pendentes</div>
+    <div class="val" id="statPendentes">0</div>
+    <div class="sub">Aguardando análise</div>
+  </div>
+  <div class="stat pagos">
+    <div class="lbl"><i class="fas fa-circle-check"></i> Pagos</div>
+    <div class="val" id="statPagos">0</div>
+    <div class="sub">Enviados com sucesso</div>
+  </div>
+  <div class="stat recusados">
+    <div class="lbl"><i class="fas fa-circle-xmark"></i> Recusados</div>
+    <div class="val" id="statRecusados">0</div>
+    <div class="sub">Saldo devolvido</div>
+  </div>
+  <div class="stat total-mumu">
+    <div class="lbl"><i class="fas fa-coins"></i> Total MUMU pago</div>
+    <div class="val" id="statTotalMumu">0,00</div>
+    <div class="sub">Somatório aprovado</div>
+  </div>
+  <div class="stat total-usdt">
+    <div class="lbl"><i class="fas fa-cube"></i> Total USDT pago</div>
+    <div class="val" id="statTotalUsdt">0,00</div>
+    <div class="sub">Somatório aprovado</div>
+  </div>
+</div>
+
+<!-- ==================== FILTROS ==================== -->
+<div class="filtros">
+  <label>Buscar:</label>
+  <input type="text" id="filtroBusca" placeholder="Nome, login, nick MUMU ou endereço Solana…">
+
+  <label>Tipo:</label>
+  <select id="filtroTipo">
+    <option value="todos">Todos</option>
+    <option value="mumu">MUMU</option>
+    <option value="usdt">USDT</option>
+  </select>
+
+  <div class="sep"></div>
+
+  <button class="btn-refresh" id="btnRefresh">
+    <i class="fas fa-rotate" id="iconeRefresh"></i>
+    <span>Atualizar</span>
+  </button>
+</div>
+
+<!-- ==================== TABS STATUS ==================== -->
+<div class="tabs-status">
+  <button class="tab-s ativa" data-status="pendente">
+    <i class="fas fa-hourglass-half"></i>
+    Pendentes
+    <span class="badge" id="badgePendentes">0</span>
+  </button>
+  <button class="tab-s" data-status="pago">
+    <i class="fas fa-circle-check"></i>
+    Pagos
+    <span class="badge" id="badgePagos">0</span>
+  </button>
+  <button class="tab-s" data-status="recusado">
+    <i class="fas fa-circle-xmark"></i>
+    Recusados
+    <span class="badge" id="badgeRecusados">0</span>
+  </button>
+</div>
+
+<!-- ==================== LISTA ==================== -->
+<div class="lista-wrapper" id="listaWrapper"></div>
+<div id="emptyState" class="empty" style="display:none;">
+  <i class="fas fa-inbox"></i>
+  <div class="titulo">Nenhum saque encontrado</div>
+  <div class="desc">Não há saques com esse filtro no momento.</div>
+</div>
+
+<!-- ==================== TOASTS ==================== -->
+<div class="toasts" id="toasts"></div>
+
+<!-- ==================== MODAL ==================== -->
+<div class="modal-overlay" id="modalOverlay">
+  <div class="modal">
+    <h2 id="modalTitulo"><i class="fas fa-circle-question"></i> Confirmar ação</h2>
+    <p id="modalTexto">Tem certeza?</p>
+
+    <div class="modal-resumo" id="modalResumo"></div>
+
+    <div class="modal-btns">
+      <button class="btn-cancelar" id="btnModalCancelar">
+        <i class="fas fa-xmark"></i> Cancelar
+      </button>
+      <button class="btn-confirmar" id="btnModalConfirmar">
+        <i class="fas fa-check"></i> Confirmar
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- ============================================================
+     IMPORTMAP — Supabase via ESM
+============================================================ -->
+<script type="importmap">
+{
+  "imports": {
+    "@supabase/supabase-js": "https://esm.sh/@supabase/supabase-js@2"
+  }
+}
+</script>
+
+<!-- ============================================================
+     SCRIPT PRINCIPAL — importa tudo do config.js
+============================================================ -->
+<script type="module">
+import {
+  db as sb,
+  TABELA,
+  SIMB,
+  TAXA_MUMU,
+  TAXA_USDT
+} from './../../config.js';
+
+/* ============================================================
+   ESTADO
+============================================================ */
+const state = {
+  usuario: null,
+  saques: [],
+  statusAtual: 'pendente',
+  filtroTipo: 'todos',
+  filtroBusca: '',
+  realtimeChannel: null,
+  acaoPendente: null
+};
+
+/* ============================================================
+   HELPERS
+============================================================ */
+const $ = (s) => document.querySelector(s);
+const $$ = (s) => document.querySelectorAll(s);
+
+function fmtBR(v) {
+  return new Intl.NumberFormat('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 }).format(Number(v || 0));
+}
+
+function fmtMumu(v) { return `${SIMB.mumu} ${fmtBR(v)}`; }
+function fmtUsdt(v) { return `${SIMB.usdt} ${fmtBR(v)}`; }
+function fmtSaldo(v) { return `${SIMB.saldo} ${fmtBR(v)}`; }
+
+function fmtData(iso) {
+  if (!iso) return '—';
+  try { return new Date(iso).toLocaleString('pt-BR'); }
+  catch { return '—'; }
+}
+
+function esc(s) {
+  return String(s ?? '').replace(/[&<>"']/g, c => ({
+    '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;'
+  }[c]));
+}
+
+function toast(msg, tipo = 'sucesso') {
+  const el = document.createElement('div');
+  el.className = `toast ${tipo}`;
+  const icones = { sucesso: 'circle-check', erro: 'circle-exclamation', aviso: 'triangle-exclamation' };
+  el.innerHTML = `<i class="fas fa-${icones[tipo] || 'circle-info'}"></i><span>${esc(msg)}</span>`;
+  $('#toasts').appendChild(el);
+  setTimeout(() => {
+    el.style.transition = 'opacity .3s';
+    el.style.opacity = '0';
+    setTimeout(() => el.remove(), 300);
+  }, 3600);
+}
+
+function copiar(texto) {
+  if (!texto) return;
+  navigator.clipboard.writeText(texto).then(() => {
+    toast('Copiado!', 'sucesso');
+  }).catch(() => {
+    const ta = document.createElement('textarea');
+    ta.value = texto;
+    document.body.appendChild(ta);
+    ta.select();
+    document.execCommand('copy');
+    ta.remove();
+    toast('Copiado!', 'sucesso');
+  });
+}
+
+/* ============================================================
+   VALIDAÇÃO DE ADMIN
+============================================================ */
+async function validarAdmin() {
+  const raw = localStorage.getItem('usuario_logado');
+  if (!raw) {
+    alert('⛔ Faça login primeiro');
+    window.location.href = './login.html';
+    return false;
+  }
+  let login;
+  try { login = JSON.parse(raw).login; } catch { login = null; }
+  if (!login) {
+    alert('⛔ Sessão inválida');
+    window.location.href = './login.html';
+    return false;
+  }
+
+  const { data, error } = await sb
+    .from(TABELA)
+    .select('cadeado, nome, login')
+    .eq('login', login)
+    .maybeSingle();
+
+  if (error || !data) {
+    alert('⛔ Erro ao validar acesso');
+    window.location.href = './dashboard.html';
+    return false;
+  }
+  if (data.cadeado !== true) {
+    alert('⛔ Acesso negado — você não é admin');
+    window.location.href = './dashboard.html';
+    return false;
+  }
+
+  state.usuario = { login: data.login, nome: data.nome || data.login };
+  return true;
+}
+
+/* ============================================================
+   REALTIME
+============================================================ */
+function setStatusRT(ativo, texto) {
+  const dot = $('#rtDot');
+  const txt = $('#rtTexto');
+  dot.className = 'rt-dot' + (ativo ? ' ativo' : '');
+  txt.textContent = texto;
+}
+
+function iniciarRealtime() {
+  if (state.realtimeChannel) {
+    try { sb.removeChannel(state.realtimeChannel); } catch {}
+  }
+
+  setStatusRT(false, 'Conectando…');
+
+  state.realtimeChannel = sb
+    .channel('adm-saques-rt')
+    .on(
+      'postgres_changes',
+      { event: 'UPDATE', schema: 'public', table: TABELA },
+      (payload) => {
+        if (!payload.new) return;
+        /* Ignora updates que não são de saque (evita refresh desnecessário) */
+        const temPendente = payload.new.pix_pendente != null;
+        const temHistorico = Array.isArray(payload.new.historico_saques) && payload.new.historico_saques.length > 0;
+        if (!temPendente && !temHistorico) return;
+
+        console.log('🔄 Realtime — atualizando saques');
+        carregarSaques(true);
+        piscarRT();
+      }
+    )
+    .subscribe((status) => {
+      if (status === 'SUBSCRIBED')      setStatusRT(true, 'Tempo real ativo');
+      else if (status === 'CHANNEL_ERROR' || status === 'TIMED_OUT')
+                                        setStatusRT(false, 'Reconectando…');
+      else                              setStatusRT(false, status);
+    });
+}
+
+function piscarRT() {
+  const dot = $('#rtDot');
+  if (!dot) return;
+  dot.style.transform = 'scale(1.6)';
+  setTimeout(() => { dot.style.transform = 'scale(1)'; }, 250);
+}
+
+/* ============================================================
+   CARREGAR SAQUES
+============================================================ */
+async function carregarSaques(silencioso = false) {
+  if (!silencioso) {
+    const icone = $('#iconeRefresh');
+    icone.classList.add('spin');
+  }
+
+  const { data, error } = await sb
+    .from(TABELA)
+    .select('id, nome, login, saldo, pix_pendente, historico_saques, chave_pix, meta');
+
+  if (!silencioso) {
+    const icone = $('#iconeRefresh');
+    icone.classList.remove('spin');
+  }
+
+  if (error) {
+    console.error('Erro ao carregar saques:', error);
+    toast('Erro ao carregar saques: ' + error.message, 'erro');
+    return;
+  }
+
+  /* Achata todos os saques em uma lista única */
+  const todos = [];
+
+  (data || []).forEach(u => {
+    const historico = Array.isArray(u.historico_saques) ? u.historico_saques : [];
+    const chave = u.chave_pix && typeof u.chave_pix === 'object' ? u.chave_pix : {};
+    const meta = u.meta && typeof u.meta === 'object' ? u.meta : {};
+
+    /* Filtra histórico por tipo válido */
+    historico.forEach((h, idx) => {
+      const tipo = h.tipo === 'usdt' ? 'usdt' : 'mumu';
+      /* Só inclui se tiver data/valor */
+      if (!h || !h.data) return;
+
+      const status = h.status === 'pago' ? 'pago'
+                   : h.status === 'recusado' ? 'recusado'
+                   : 'pendente';
+
+      /* Destino */
+      let destino = h.destino || '';
+      if (!destino) {
+        if (tipo === 'mumu') {
+          const nick = chave.mumu_nick || '';
+          const srv = chave.mumu_servidor || '';
+          destino = nick ? `MUMU: ${nick}${srv ? ' (Srv ' + srv + ')' : ''}` : '—';
+        } else {
+          destino = meta.solana_wallet ? `SOL: ${meta.solana_wallet}` : '—';
+        }
+      }
+
+      todos.push({
+        id:       u.id,
+        login:    u.login,
+        nome:     u.nome || u.login,
+        saldo:    Number(u.saldo || 0),
+        tipo,
+        valor:    Number(h.valor || 0),
+        saldo_utilizado: Number(h.saldo_utilizado || 0),
+        data:     h.data,
+        status,
+        destino,
+        idx,
+        chave
+      });
+    });
+  });
+
+  /* Ordena: mais recente primeiro */
+  todos.sort((a, b) => new Date(b.data) - new Date(a.data));
+
+  state.saques = todos;
+
+  renderStats();
+  renderLista();
+}
+
+/* ============================================================
+   STATS
+============================================================ */
+function renderStats() {
+  const pendentes = state.saques.filter(s => s.status === 'pendente');
+  const pagos     = state.saques.filter(s => s.status === 'pago');
+  const recusados = state.saques.filter(s => s.status === 'recusado');
+
+  $('#statPendentes').textContent = pendentes.length;
+  $('#statPagos').textContent = pagos.length;
+  $('#statRecusados').textContent = recusados.length;
+
+  const totalMumuPago = pagos.filter(s => s.tipo === 'mumu').reduce((a, s) => a + s.valor, 0);
+  const totalUsdtPago = pagos.filter(s => s.tipo === 'usdt').reduce((a, s) => a + s.valor, 0);
+
+  $('#statTotalMumu').textContent = fmtBR(totalMumuPago);
+  $('#statTotalUsdt').textContent = fmtBR(totalUsdtPago);
+
+  $('#badgePendentes').textContent = pendentes.length;
+  $('#badgePagos').textContent = pagos.length;
+  $('#badgeRecusados').textContent = recusados.length;
+}
+
+/* ============================================================
+   LISTA
+============================================================ */
+function renderLista() {
+  const wrapper = $('#listaWrapper');
+  const empty = $('#emptyState');
+
+  const busca = state.filtroBusca.toLowerCase().trim();
+  const filtroTipo = state.filtroTipo;
+
+  let lista = state.saques.filter(s => s.status === state.statusAtual);
+
+  if (filtroTipo !== 'todos') {
+    lista = lista.filter(s => s.tipo === filtroTipo);
+  }
+
+  if (busca) {
+    lista = lista.filter(s =>
+      (s.login || '').toLowerCase().includes(busca) ||
+      (s.nome || '').toLowerCase().includes(busca) ||
+      (s.destino || '').toLowerCase().includes(busca)
+    );
+  }
+
+  if (lista.length === 0) {
+    wrapper.innerHTML = '';
+    empty.style.display = 'block';
+    return;
+  }
+
+  empty.style.display = 'none';
+  wrapper.innerHTML = lista.map(s => cardHTML(s)).join('');
+}
+
+function cardHTML(s) {
+  const isMumu = s.tipo === 'mumu';
+  const avatarLetra = (s.nome || s.login || '?').charAt(0).toUpperCase();
+  const valorTxt = isMumu ? fmtMumu(s.valor) : fmtUsdt(s.valor);
+  const classe = isMumu ? 'mumu' : 'usdt';
+  const statusClasse = s.status;
+  const statusLabel = s.status === 'pago' ? 'Pago'
+                    : s.status === 'recusado' ? 'Recusado'
+                    : 'Pendente';
+
+  const botoes = s.status === 'pendente'
+    ? `
+      <button class="btn-acao btn-pagar" onclick="abrirModal('pagar', ${s.id}, ${s.idx})">
+        <i class="fas fa-check"></i> Marcar como pago
+      </button>
+      <button class="btn-acao btn-recusar" onclick="abrirModal('recusar', ${s.id}, ${s.idx})">
+        <i class="fas fa-xmark"></i> Recusar
+      </button>
+    `
+    : `
+      <button class="btn-acao btn-detalhes" disabled style="flex:1;">
+        <i class="fas fa-check-circle"></i> ${statusLabel}
+      </button>
+    `;
+
+  return `
+    <div class="card-saque ${classe}">
+      <div class="card-top">
+        <div class="card-user">
+          <div class="avatar ${classe}">${esc(avatarLetra)}</div>
+          <div class="card-user-info">
+            <div class="nick">${esc(s.nome)}</div>
+            <div class="login">@${esc(s.login)} · ID ${s.id}</div>
+          </div>
+        </div>
+        <div class="card-status ${statusClasse}">${statusLabel}</div>
+      </div>
+
+      <div class="valor-destaque">
+        <div class="esq">
+          <div class="rot">Valor a enviar</div>
+          <div class="val">${valorTxt}</div>
+        </div>
+        <div class="dir">
+          <div class="rot">Saldo debitado</div>
+          <div class="val">${fmtSaldo(s.saldo_utilizado)}</div>
+        </div>
+      </div>
+
+      <div class="info-grid">
+        <div class="info-item full">
+          <div class="rot">Destino</div>
+          <div class="val">
+            ${esc(s.destino)}
+            ${s.destino && s.destino !== '—' ? `<button class="copy-btn" onclick="copiar('${esc(s.destino).replace(/'/g, "\\'")}')">📋</button>` : ''}
+          </div>
+        </div>
+        <div class="info-item">
+          <div class="rot">Tipo</div>
+          <div class="val mono" style="color:${isMumu ? 'var(--mumu)' : 'var(--roxo)'}; font-weight:700;">
+            ${isMumu ? '💰 MUMU' : '💎 USDT · Solana'}
+          </div>
+        </div>
+        <div class="info-item">
+          <div class="rot">Data</div>
+          <div class="val mono">${fmtData(s.data)}</div>
+        </div>
+        <div class="info-item">
+          <div class="rot">Saldo atual do usuário</div>
+          <div class="val mono" style="color:var(--verde); font-weight:700;">${fmtSaldo(s.saldo)}</div>
+        </div>
+        <div class="info-item">
+          <div class="rot">Índice no histórico</div>
+          <div class="val mono">#${s.idx}</div>
+        </div>
+      </div>
+
+      <div class="card-acoes">
+        ${botoes}
+      </div>
+    </div>
+  `;
+}
+
+/* ============================================================
+   AÇÕES — MODAL
+============================================================ */
+function abrirModal(tipo, idUser, idx) {
+  const saque = state.saques.find(s => s.id === idUser && s.idx === idx);
+  if (!saque) return;
+
+  state.acaoPendente = { tipo, saque };
+
+  const modal = $('#modalOverlay');
+  const titulo = $('#modalTitulo');
+  const texto = $('#modalTexto');
+  const resumo = $('#modalResumo');
+  const btnConf = $('#btnModalConfirmar');
+
+  const isPagar = tipo === 'pagar';
+  const isMumu = saque.tipo === 'mumu';
+  const valorTxt = isMumu ? fmtMumu(saque.valor) : fmtUsdt(saque.valor);
+
+  if (isPagar) {
+    titulo.innerHTML = `<i class="fas fa-circle-check" style="color:var(--verde)"></i> Confirmar pagamento`;
+    texto.innerHTML = `Você está confirmando que o saque abaixo foi <strong>enviado com sucesso</strong>. O saldo já foi debitado do usuário, nada mais será alterado.`;
+    btnConf.className = 'btn-confirmar';
+    btnConf.innerHTML = '<i class="fas fa-check"></i> Confirmar pagamento';
+  } else {
+    titulo.innerHTML = `<i class="fas fa-circle-xmark" style="color:var(--vermelho)"></i> Recusar saque`;
+    texto.innerHTML = `Você está <strong>recusando</strong> o saque abaixo. O saldo de <strong>${fmtSaldo(saque.saldo_utilizado)}</strong> será <strong>devolvido</strong> ao usuário automaticamente.`;
+    btnConf.className = 'btn-confirmar vermelho';
+    btnConf.innerHTML = '<i class="fas fa-xmark"></i> Recusar e devolver';
+  }
+
+  resumo.innerHTML = `
+    <div class="row">
+      <span class="k">Usuário</span>
+      <span class="v">${esc(saque.nome)} (@${esc(saque.login)})</span>
+    </div>
+    <div class="row">
+      <span class="k">Valor</span>
+      <span class="v ${isMumu ? 'mumu' : 'usdt'}">${valorTxt}</span>
+    </div>
+    <div class="row">
+      <span class="k">Saldo debitado</span>
+      <span class="v">${fmtSaldo(saque.saldo_utilizado)}</span>
+    </div>
+    <div class="row">
+      <span class="k">Destino</span>
+      <span class="v mono" style="font-size:11px;">${esc(saque.destino.slice(0, 42))}${saque.destino.length > 42 ? '…' : ''}</span>
+    </div>
+  `;
+
+  modal.classList.add('show');
+}
+
+function fecharModal() {
+  $('#modalOverlay').classList.remove('show');
+  state.acaoPendente = null;
+}
+
+async function confirmarAcao() {
+  if (!state.acaoPendente) return;
+  const { tipo, saque } = state.acaoPendente;
+  const btnConf = $('#btnModalConfirmar');
+  const txtOriginal = btnConf.innerHTML;
+  btnConf.disabled = true;
+  btnConf.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Processando…';
+
+  try {
+    /* Busca estado atualizado do usuário */
+    const { data: user, error: err1 } = await sb
+      .from(TABELA)
+      .select('saldo, historico_saques, pix_pendente')
+      .eq('id', saque.id)
+      .single();
+
+    if (err1) throw err1;
+
+    const historico = Array.isArray(user.historico_saques) ? [...user.historico_saques] : [];
+    if (!historico[saque.idx]) throw new Error('Índice do histórico inválido');
+
+    const novoStatus = tipo === 'pagar' ? 'pago' : 'recusado';
+    historico[saque.idx] = {
+      ...historico[saque.idx],
+      status: novoStatus,
+      [novoStatus + '_em']: new Date().toISOString(),
+      aprovado_por: state.usuario?.login || 'admin'
+    };
+
+    /* Se recusar, devolve o saldo */
+    const updates = {
+      historico_saques: historico,
+      updated_at: new Date().toISOString()
+    };
+
+    if (tipo === 'recusar') {
+      updates.saldo = Number(user.saldo || 0) + Number(saque.saldo_utilizado || 0);
+    }
+
+    /* Se o pix_pendente é desse saque, limpa */
+    const pend = user.pix_pendente && typeof user.pix_pendente === 'object' ? user.pix_pendente : null;
+    if (pend && pend.data === saque.data) {
+      updates.pix_pendente = null;
+    }
+
+    const { error: err2 } = await sb
+      .from(TABELA)
+      .update(updates)
+      .eq('id', saque.id);
+
+    if (err2) throw err2;
+
+    if (tipo === 'pagar') {
+      const valorTxt = saque.tipo === 'mumu' ? fmtMumu(saque.valor) : fmtUsdt(saque.valor);
+      toast(`✅ Saque de ${valorTxt} marcado como PAGO`, 'sucesso');
+    } else {
+      toast(`❌ Saque recusado — ${fmtSaldo(saque.saldo_utilizado)} devolvido`, 'aviso');
+    }
+
+    fecharModal();
+    await carregarSaques(true);
+  } catch (e) {
+    console.error(e);
+    toast('Erro: ' + e.message, 'erro');
+    btnConf.disabled = false;
+    btnConf.innerHTML = txtOriginal;
+  }
+}
+
+/* ============================================================
+   EVENTOS
+============================================================ */
+$$('.tab-s').forEach(tab => {
+  tab.addEventListener('click', () => {
+    $$('.tab-s').forEach(t => t.classList.remove('ativa'));
+    tab.classList.add('ativa');
+    state.statusAtual = tab.dataset.status;
+    renderLista();
+  });
+});
+
+$('#filtroBusca').addEventListener('input', (e) => {
+  state.filtroBusca = e.target.value;
+  renderLista();
+});
+
+$('#filtroTipo').addEventListener('change', (e) => {
+  state.filtroTipo = e.target.value;
+  renderLista();
+});
+
+$('#btnRefresh').addEventListener('click', () => {
+  carregarSaques();
+  toast('Atualizado!', 'sucesso');
+});
+
+$('#btnModalCancelar').addEventListener('click', fecharModal);
+$('#btnModalConfirmar').addEventListener('click', confirmarAcao);
+$('#modalOverlay').addEventListener('click', (e) => {
+  if (e.target.id === 'modalOverlay') fecharModal();
+});
+
+document.addEventListener('keydown', (e) => {
+  if (e.key === 'Escape' && $('#modalOverlay').classList.contains('show')) fecharModal();
+});
+
+/* ============================================================
+   INICIALIZAÇÃO
+============================================================ */
+async function init() {
+  console.log('👑 Painel Admin — Saques MUMU/USDT');
+  console.log('🎨 Símbolos:', SIMB);
+  console.log('📊 Taxa MUMU:', `S$ ${TAXA_MUMU.reais_por_mumu} = M$ 1,00`);
+  console.log('📊 Taxa USDT:', `US$ 0,01 = S$ ${TAXA_USDT.saldo_minimo.toLocaleString('pt-BR')}`);
+
+  const ok = await validarAdmin();
+  if (!ok) return;
+
+  console.log('✅ Admin:', state.usuario.login);
+
+  await carregarSaques();
+  iniciarRealtime();
+}
+
+document.addEventListener('DOMContentLoaded', init);
+
+window.addEventListener('beforeunload', () => {
+  if (state.realtimeChannel) {
+    try { sb.removeChannel(state.realtimeChannel); } catch {}
+  }
+});
+
+/* Expõe funções usadas em onclick */
+window.abrirModal = abrirModal;
+window.copiar = copiar;
+</script>
+
+</body>
+</html>

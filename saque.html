@@ -1,0 +1,1664 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="theme-color" content="#0a0e16" />
+
+  <title>Carteira — Saque | MM Quase Tudo</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    :root {
+      --bg:         #070b12;
+      --bg-2:       #0a0f18;
+      --card:       #0f1520;
+      --card-2:     #131a26;
+      --line:       #1c2533;
+      --line-2:     #263243;
+
+      --txt:        #e8eefb;
+      --txt-2:      #a4b1c5;
+      --mut:        #64748b;
+
+      --roxo:       #a855f7;
+      --roxo-2:     #7c3aed;
+      --verde:      #10b981;
+      --verde-2:    #059669;
+      --azul:       #3b82f6;
+      --dourado:    #f5c542;
+      --vermelho:   #ef4444;
+      --laranja:    #f59e0b;
+      --mumu:       #ffb020;
+
+      --radius:     14px;
+      --radius-sm:  10px;
+      --radius-lg:  20px;
+
+      --sombra:     0 8px 24px rgba(0, 0, 0, 0.45);
+      --sombra-lg:  0 20px 60px rgba(0, 0, 0, 0.6);
+
+      --trans:      .18s cubic-bezier(.4, 0, .2, 1);
+    }
+
+    html, body {
+      -webkit-font-smoothing: antialiased;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    body {
+      font-family: 'Inter', system-ui, sans-serif;
+      background: var(--bg);
+      background-image:
+        radial-gradient(900px 500px at 15% 0%,  rgba(168, 85, 247, 0.12), transparent 60%),
+        radial-gradient(900px 500px at 85% 100%, rgba(255, 176, 32, 0.08), transparent 60%);
+      color: var(--txt);
+      min-height: 100vh;
+      display: flex;
+      justify-content: center;
+      padding: 24px 16px 60px;
+    }
+
+    .carteira {
+      width: 100%;
+      max-width: 980px;
+      background: linear-gradient(180deg, var(--card) 0%, var(--card-2) 100%);
+      border: 1px solid var(--line);
+      border-radius: var(--radius-lg);
+      box-shadow: var(--sombra-lg);
+      padding: 28px 30px 32px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .carteira::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 0; right: 0;
+      height: 3px;
+      background: linear-gradient(90deg, var(--roxo), var(--mumu), var(--verde));
+      opacity: .8;
+    }
+
+    /* ---------- HEADER ---------- */
+    .cabecalho {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      gap: 16px;
+      flex-wrap: wrap;
+      margin-bottom: 20px;
+    }
+
+    .cabecalho-esq .tag {
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 1.4px;
+      color: var(--mut);
+      text-transform: uppercase;
+      margin-bottom: 4px;
+    }
+
+    .cabecalho-esq h1 {
+      font-size: 32px;
+      font-weight: 800;
+      letter-spacing: -0.6px;
+      color: #fff;
+      line-height: 1.1;
+    }
+
+    .cabecalho-dir {
+      display: flex;
+      gap: 8px;
+      align-items: center;
+      flex-wrap: wrap;
+    }
+
+    .btn-ghost {
+      background: transparent;
+      border: 1px solid var(--line-2);
+      color: var(--txt-2);
+      padding: 9px 16px;
+      border-radius: 10px;
+      font-size: 13px;
+      font-weight: 600;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      transition: var(--trans);
+      font-family: inherit;
+    }
+
+    .btn-ghost:hover {
+      border-color: var(--roxo);
+      color: var(--roxo);
+      background: rgba(168, 85, 247, 0.06);
+    }
+
+    .btn-fechar {
+      width: 38px; height: 38px;
+      border-radius: 10px;
+      border: 1px solid var(--line-2);
+      background: transparent;
+      color: var(--txt-2);
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 16px;
+      transition: var(--trans);
+    }
+
+    .btn-fechar:hover {
+      border-color: var(--vermelho);
+      color: var(--vermelho);
+      background: rgba(239, 68, 68, 0.08);
+      transform: rotate(90deg);
+    }
+
+    /* ---------- TABS ---------- */
+    .tabs {
+      display: inline-flex;
+      gap: 6px;
+      padding: 5px;
+      background: var(--bg-2);
+      border: 1px solid var(--line);
+      border-radius: 12px;
+      margin-bottom: 16px;
+    }
+
+    .tab {
+      padding: 8px 18px;
+      border-radius: 8px;
+      font-size: 13px;
+      font-weight: 700;
+      color: var(--txt-2);
+      background: transparent;
+      border: none;
+      cursor: pointer;
+      transition: var(--trans);
+      font-family: inherit;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .tab:hover { color: var(--txt); }
+
+    .tab.ativa {
+      background: linear-gradient(180deg, var(--mumu), #e08a00);
+      color: #1a1000;
+      box-shadow: 0 4px 12px rgba(255, 176, 32, 0.35);
+    }
+
+    .tab[data-aba="usdt"].ativa {
+      background: linear-gradient(180deg, var(--roxo), var(--roxo-2));
+      color: #fff;
+      box-shadow: 0 4px 12px rgba(168, 85, 247, 0.35);
+    }
+
+    /* ---------- AVISO ---------- */
+    .aviso {
+      font-size: 13px;
+      line-height: 1.65;
+      color: var(--txt-2);
+      margin-bottom: 22px;
+      padding: 12px 16px;
+      background: rgba(255, 176, 32, 0.05);
+      border-left: 3px solid var(--mumu);
+      border-radius: 0 10px 10px 0;
+    }
+
+    .aviso strong { color: var(--txt); font-weight: 700; }
+
+    /* ---------- STATS ---------- */
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 12px;
+      margin-bottom: 24px;
+    }
+
+    .stat {
+      background: linear-gradient(180deg, rgba(15, 21, 32, 0.9), rgba(19, 26, 38, 0.9));
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      padding: 16px 16px 14px;
+      transition: var(--trans);
+    }
+
+    .stat:hover {
+      border-color: var(--line-2);
+      transform: translateY(-2px);
+    }
+
+    .stat .lbl {
+      font-size: 10.5px;
+      font-weight: 700;
+      letter-spacing: 1.2px;
+      text-transform: uppercase;
+      color: var(--mut);
+      margin-bottom: 10px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .stat .val {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 22px;
+      font-weight: 700;
+      color: #fff;
+      letter-spacing: -0.3px;
+      margin-bottom: 6px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      line-height: 1.1;
+    }
+
+    .stat .val.roxo    { color: var(--roxo); }
+    .stat .val.verde   { color: var(--verde); }
+    .stat .val.laranja { color: var(--laranja); }
+    .stat .val.mumu    { color: var(--mumu); }
+
+    .stat .sub {
+      font-size: 11.5px;
+      color: var(--mut);
+      line-height: 1.4;
+    }
+
+    .stat .sub strong { color: var(--txt-2); font-weight: 600; }
+
+    /* ---------- PAINEL DUPLO ---------- */
+    .painel-duplo {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 18px;
+      margin-bottom: 18px;
+    }
+
+    .bloco {
+      background: linear-gradient(180deg, rgba(15, 21, 32, 0.7), rgba(19, 26, 38, 0.7));
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      padding: 22px 22px 20px;
+    }
+
+    .bloco .tag {
+      font-size: 10.5px;
+      font-weight: 700;
+      letter-spacing: 1.4px;
+      text-transform: uppercase;
+      color: var(--mut);
+      margin-bottom: 4px;
+    }
+
+    .bloco h2 {
+      font-size: 20px;
+      font-weight: 800;
+      letter-spacing: -0.3px;
+      color: #fff;
+      margin-bottom: 18px;
+    }
+
+    /* ---------- INPUTS ---------- */
+    .campo { margin-bottom: 16px; }
+
+    .campo label {
+      display: block;
+      font-size: 12px;
+      font-weight: 600;
+      color: var(--txt-2);
+      margin-bottom: 8px;
+    }
+
+    .input-grupo {
+      display: flex;
+      gap: 8px;
+    }
+
+    .input-wrap {
+      flex: 1;
+      position: relative;
+    }
+
+    .input-wrap input {
+      width: 100%;
+      background: var(--bg-2);
+      border: 1px solid var(--line-2);
+      color: var(--txt);
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 15px;
+      font-weight: 600;
+      padding: 12px 14px;
+      border-radius: var(--radius-sm);
+      outline: none;
+      transition: var(--trans);
+    }
+
+    .input-wrap input:focus {
+      border-color: var(--mumu);
+      box-shadow: 0 0 0 3px rgba(255, 176, 32, 0.15);
+    }
+
+    .input-wrap input::-webkit-outer-spin-button,
+    .input-wrap input::-webkit-inner-spin-button {
+      -webkit-appearance: none;
+      margin: 0;
+    }
+
+    .btn-mini {
+      padding: 0 14px;
+      border-radius: var(--radius-sm);
+      border: 1px solid var(--line-2);
+      background: transparent;
+      color: var(--txt-2);
+      font-size: 12px;
+      font-weight: 700;
+      cursor: pointer;
+      transition: var(--trans);
+      font-family: inherit;
+      white-space: nowrap;
+    }
+
+    .btn-mini:hover {
+      border-color: var(--mumu);
+      color: var(--mumu);
+      background: rgba(255, 176, 32, 0.06);
+    }
+
+    /* ---------- CAIXA "VOCÊ RECEBE" ---------- */
+    .caixa-recebe {
+      background: linear-gradient(135deg, rgba(255, 176, 32, 0.08), rgba(224, 138, 0, 0.04));
+      border: 1px solid rgba(255, 176, 32, 0.3);
+      border-radius: var(--radius-sm);
+      padding: 14px 18px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 14px;
+    }
+
+    .caixa-recebe .lbl {
+      font-size: 12px;
+      font-weight: 700;
+      letter-spacing: 1px;
+      color: var(--mumu);
+      text-transform: uppercase;
+    }
+
+    .caixa-recebe .val {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 26px;
+      font-weight: 800;
+      color: var(--mumu);
+      letter-spacing: -0.5px;
+    }
+
+    /* ---------- BOTÃO PRIMÁRIO ---------- */
+    .btn-primario {
+      width: 100%;
+      padding: 14px;
+      background: linear-gradient(135deg, var(--mumu), #e08a00);
+      color: #1a1000;
+      border: none;
+      border-radius: var(--radius-sm);
+      font-size: 14px;
+      font-weight: 800;
+      letter-spacing: 0.3px;
+      cursor: pointer;
+      transition: var(--trans);
+      font-family: inherit;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      box-shadow: 0 8px 20px rgba(255, 176, 32, 0.3);
+    }
+
+    .btn-primario:hover:not(:disabled) {
+      transform: translateY(-2px);
+      box-shadow: 0 12px 28px rgba(255, 176, 32, 0.5);
+      filter: brightness(1.06);
+    }
+
+    .btn-primario:active:not(:disabled) {
+      transform: translateY(0);
+    }
+
+    .btn-primario:disabled {
+      background: var(--line);
+      color: var(--mut);
+      box-shadow: none;
+      cursor: not-allowed;
+    }
+
+    .aviso-minimo {
+      font-size: 12px;
+      color: var(--laranja);
+      margin-top: 12px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      line-height: 1.5;
+    }
+
+    .aviso-minimo.ok { color: var(--verde); }
+
+    /* ---------- CHAVE MUMU / CARTEIRA SOLANA ---------- */
+    .chave-bloco {
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+    }
+
+    .select-tipo,
+    .chave-input {
+      background: var(--bg-2);
+      border: 1px solid var(--line-2);
+      color: var(--txt);
+      padding: 12px 14px;
+      border-radius: var(--radius-sm);
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 13px;
+      outline: none;
+      transition: var(--trans);
+      width: 100%;
+    }
+
+    .select-tipo {
+      font-family: inherit;
+      font-weight: 600;
+      cursor: pointer;
+    }
+
+    .select-tipo:focus,
+    .chave-input:focus {
+      border-color: var(--mumu);
+      box-shadow: 0 0 0 3px rgba(255, 176, 32, 0.15);
+    }
+
+    .select-tipo option { background: var(--card-2); }
+
+    .ajuda {
+      font-size: 11.5px;
+      color: var(--mut);
+      line-height: 1.5;
+      margin-top: 8px;
+    }
+
+    .btn-salvar-chave {
+      padding: 10px 18px;
+      background: transparent;
+      border: 1px solid var(--line-2);
+      color: var(--txt-2);
+      border-radius: var(--radius-sm);
+      font-size: 12.5px;
+      font-weight: 700;
+      cursor: pointer;
+      transition: var(--trans);
+      font-family: inherit;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      width: fit-content;
+    }
+
+    .btn-salvar-chave:hover:not(:disabled) {
+      border-color: var(--mumu);
+      color: var(--mumu);
+      background: rgba(255, 176, 32, 0.08);
+    }
+
+    .btn-salvar-chave:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+    }
+
+    .btn-salvar-chave.salvando {
+      color: var(--laranja);
+      border-color: var(--laranja);
+    }
+
+    /* ---------- CARTEIRA SOLANA (vazio) ---------- */
+    .estado-vazio {
+      text-align: center;
+      padding: 30px 16px;
+      border: 1px dashed var(--line-2);
+      border-radius: var(--radius);
+      margin-top: 8px;
+    }
+
+    .estado-vazio i {
+      font-size: 32px;
+      color: var(--mut);
+      margin-bottom: 12px;
+      display: block;
+    }
+
+    .estado-vazio .titulo {
+      font-size: 14px;
+      font-weight: 700;
+      color: var(--txt-2);
+      margin-bottom: 6px;
+    }
+
+    .estado-vazio .desc {
+      font-size: 12px;
+      color: var(--mut);
+      line-height: 1.5;
+      max-width: 260px;
+      margin: 0 auto;
+    }
+
+    /* ---------- HISTÓRICO ---------- */
+    .historico {
+      background: linear-gradient(180deg, rgba(15, 21, 32, 0.7), rgba(19, 26, 38, 0.7));
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      padding: 20px 22px;
+      margin-top: 18px;
+    }
+
+    .historico .tag {
+      font-size: 10.5px;
+      font-weight: 700;
+      letter-spacing: 1.4px;
+      text-transform: uppercase;
+      color: var(--mut);
+      margin-bottom: 12px;
+    }
+
+    .historico .vazio {
+      font-size: 13px;
+      color: var(--mut);
+      padding: 16px 0;
+    }
+
+    .hist-item {
+      display: grid;
+      grid-template-columns: auto 1fr auto auto;
+      gap: 14px;
+      align-items: center;
+      padding: 12px 0;
+      border-bottom: 1px solid var(--line);
+      font-size: 13px;
+    }
+
+    .hist-item:last-child { border-bottom: none; }
+
+    .hist-item .icone {
+      width: 36px; height: 36px;
+      border-radius: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 15px;
+    }
+
+    .hist-item .icone.pago     { background: rgba(16, 185, 129, 0.15); color: var(--verde); }
+    .hist-item .icone.pendente { background: rgba(245, 158, 11, 0.15); color: var(--laranja); }
+    .hist-item .icone.recusado { background: rgba(239, 68, 68, 0.15);  color: var(--vermelho); }
+
+    .hist-item .info { color: var(--txt-2); }
+    .hist-item .info strong { color: var(--txt); display: block; font-size: 13px; margin-bottom: 2px; }
+    .hist-item .info span { font-size: 11.5px; color: var(--mut); }
+
+    .hist-item .valor {
+      font-family: 'JetBrains Mono', monospace;
+      font-weight: 700;
+      font-size: 14px;
+    }
+
+    .hist-item .valor.pago     { color: var(--verde); }
+    .hist-item .valor.pendente { color: var(--laranja); }
+    .hist-item .valor.recusado { color: var(--mut); text-decoration: line-through; }
+
+    .badge-status {
+      font-size: 10px;
+      font-weight: 800;
+      letter-spacing: 0.8px;
+      text-transform: uppercase;
+      padding: 4px 10px;
+      border-radius: 20px;
+    }
+
+    .badge-status.pago     { background: rgba(16, 185, 129, 0.15); color: var(--verde); border: 1px solid rgba(16, 185, 129, 0.4); }
+    .badge-status.pendente { background: rgba(245, 158, 11, 0.15); color: var(--laranja); border: 1px solid rgba(245, 158, 11, 0.4); }
+    .badge-status.recusado { background: rgba(239, 68, 68, 0.15);  color: var(--vermelho); border: 1px solid rgba(239, 68, 68, 0.4); }
+
+    /* ---------- TOAST ---------- */
+    .toasts {
+      position: fixed;
+      bottom: 24px;
+      right: 24px;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      z-index: 9999;
+      max-width: 360px;
+    }
+
+    .toast {
+      background: rgba(15, 21, 32, 0.98);
+      backdrop-filter: blur(10px);
+      border: 1px solid var(--line-2);
+      border-left: 4px solid var(--azul);
+      border-radius: 12px;
+      padding: 14px 18px;
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--txt);
+      box-shadow: 0 12px 32px rgba(0, 0, 0, 0.5);
+      animation: toastIn .3s ease;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      line-height: 1.4;
+    }
+
+    .toast.sucesso { border-left-color: var(--verde);    color: #86efac; }
+    .toast.erro    { border-left-color: var(--vermelho); color: #fca5a5; }
+    .toast.aviso   { border-left-color: var(--laranja);  color: #fcd34d; }
+    .toast i { font-size: 16px; }
+
+    @keyframes toastIn {
+      from { opacity: 0; transform: translateX(100px); }
+      to   { opacity: 1; transform: translateX(0); }
+    }
+
+    /* ---------- INDICADOR REALTIME ---------- */
+    .rt-indicator {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 11px;
+      font-weight: 600;
+      color: var(--mut);
+      padding: 5px 12px;
+      background: rgba(255, 255, 255, 0.03);
+      border: 1px solid var(--line);
+      border-radius: 20px;
+      margin-left: 10px;
+      vertical-align: middle;
+    }
+
+    .rt-dot {
+      width: 7px; height: 7px;
+      border-radius: 50%;
+      background: #475569;
+      transition: var(--trans);
+    }
+
+    .rt-dot.ativo {
+      background: var(--verde);
+      box-shadow: 0 0 10px rgba(16, 185, 129, 0.8);
+      animation: rtPulse 1.6s ease-in-out infinite;
+    }
+
+    .rt-dot.erro { background: var(--vermelho); }
+
+    @keyframes rtPulse {
+      0%, 100% { opacity: 1; }
+      50%      { opacity: 0.4; }
+    }
+
+    /* ---------- RESPONSIVIDADE ---------- */
+    @media (max-width: 780px) {
+      body { padding: 12px 10px 40px; }
+      .carteira { padding: 20px 18px 24px; border-radius: 16px; }
+      .cabecalho-esq h1 { font-size: 24px; }
+      .stats-grid { grid-template-columns: repeat(2, 1fr); gap: 10px; }
+      .stat .val { font-size: 18px; }
+      .painel-duplo { grid-template-columns: 1fr; gap: 14px; }
+      .bloco { padding: 18px 16px; }
+      .bloco h2 { font-size: 17px; }
+      .caixa-recebe .val { font-size: 22px; }
+      .hist-item { grid-template-columns: auto 1fr auto; }
+      .hist-item .badge-status { grid-column: 1 / -1; justify-self: start; }
+    }
+
+    @media (max-width: 420px) {
+      .cabecalho { flex-direction: column; align-items: stretch; }
+      .cabecalho-dir { justify-content: flex-end; }
+      .stats-grid { grid-template-columns: 1fr; }
+      .tabs { width: 100%; }
+      .tab { flex: 1; justify-content: center; }
+    }
+  </style>
+</head>
+<body>
+
+<div class="carteira">
+
+  <!-- ==================== CABEÇALHO ==================== -->
+  <div class="cabecalho">
+    <div class="cabecalho-esq">
+      <div class="tag">Carteira</div>
+      <h1 id="tituloPagina">Saldo em MUMU</h1>
+      <span class="rt-indicator" id="rtIndicator">
+        <span class="rt-dot" id="rtDot"></span>
+        <span id="rtTexto">Conectando…</span>
+      </span>
+    </div>
+    <div class="cabecalho-dir">
+      <button class="btn-ghost" id="btnMostrarValores">
+        <i class="fas fa-eye"></i>
+        <span id="txtMostrarValores">Mostrar valores</span>
+      </button>
+      <button class="btn-ghost" id="btnAtualizar">
+        <i class="fas fa-rotate" id="iconeAtualizar"></i>
+        <span>Atualizar</span>
+      </button>
+      <button class="btn-fechar" id="btnFechar" title="Fechar">
+        <i class="fas fa-xmark"></i>
+      </button>
+    </div>
+  </div>
+
+  <!-- ==================== TABS ==================== -->
+  <div class="tabs">
+    <button class="tab ativa" data-aba="mumu">
+      <i class="fas fa-coins"></i> MUMU
+    </button>
+    <button class="tab" data-aba="usdt">
+      <i class="fas fa-cube"></i> USDT · Solana
+    </button>
+  </div>
+
+  <!-- ==================== DESCRIÇÃO ==================== -->
+  <div class="aviso" id="avisoDescricao">
+    Converte seu saldo em MUMU: <strong>S$ 100,00 = M$ 1,00 MUMU</strong> (S$ 1,00 = M$ 0,01 MUMU).
+    O saque mínimo é de <strong>S$ 50,00</strong> (M$ 0,50 MUMU), e o envio é feito em até <strong>8 horas</strong> depois do pedido.
+  </div>
+
+  <!-- ==================== STATS ==================== -->
+  <div class="stats-grid">
+    <div class="stat">
+      <div class="lbl"><i class="fas fa-wallet"></i> Saldo</div>
+      <div class="val roxo">
+        <span id="statSaldoDisponivel">•••••</span>
+      </div>
+      <div class="sub">Equivale a <strong id="statSaldoEquiv">—</strong></div>
+    </div>
+
+    <div class="stat">
+      <div class="lbl"><i class="fas fa-hourglass-half"></i> Saque Pendente</div>
+      <div class="val" id="statPendenteValor">—</div>
+      <div class="sub" id="statPendenteSub">Nenhum pedido em andamento</div>
+    </div>
+
+    <div class="stat">
+      <div class="lbl"><i class="fas fa-circle-check"></i> Total Recebido</div>
+      <div class="val verde" id="statTotalRecebido">•••••</div>
+      <div class="sub"><span id="statTotalQtd">0</span> saques pagos</div>
+    </div>
+
+    <div class="stat">
+      <div class="lbl"><i class="fas fa-arrow-right-arrow-left"></i> Conversão</div>
+      <div class="val mumu" id="statConversao">S$ 100,00 = M$ 1,00</div>
+      <div class="sub"><span id="statConversaoDetalhe">S$ 1,00 = M$ 0,01</span></div>
+    </div>
+  </div>
+
+  <!-- ==================== PAINEL DUPLO ==================== -->
+  <div class="painel-duplo">
+
+    <!-- ===== COLUNA ESQUERDA: SACAR ===== -->
+    <div class="bloco">
+      <div class="tag">Sacar</div>
+      <h2 id="tituloSacar">Converter saldo em MUMU</h2>
+
+      <div class="campo">
+        <label for="inputSaldo">Saldo (S$)</label>
+        <div class="input-grupo">
+          <div class="input-wrap">
+            <input type="number" id="inputSaldo" placeholder="50.00" min="0" step="0.01" value="50">
+          </div>
+          <button class="btn-mini" id="btnMinimo">Mínimo</button>
+          <button class="btn-mini" id="btnTudo">Tudo</button>
+        </div>
+      </div>
+
+      <div class="caixa-recebe">
+        <span class="lbl">Você recebe</span>
+        <span class="val" id="valorRecebe">M$ 0,50</span>
+      </div>
+
+      <button class="btn-primario" id="btnSolicitar" disabled>
+        <i class="fas fa-paper-plane"></i>
+        <span>Solicitar MUMU</span>
+      </button>
+
+      <div class="aviso-minimo" id="avisoMinimo">
+        <i class="fas fa-circle-info"></i>
+        <span id="textoMinimo">Você precisa de pelo menos S$ 50,00. Faltam S$ 50,00.</span>
+      </div>
+    </div>
+
+    <!-- ===== COLUNA DIREITA ===== -->
+    <div class="bloco">
+      <div class="tag" id="tagDestino">Conta MUMU</div>
+      <h2 id="tituloChave">Não cadastrada</h2>
+
+      <!-- Bloco MUMU -->
+      <div class="chave-bloco" id="mumuBloco">
+        <input type="text" class="chave-input" id="inputMumuNick" placeholder="Seu nick no MUMU (ex: MoitaPR)" />
+
+        <select class="select-tipo" id="selectMumuServidor">
+          <option value="">Selecione o servidor…</option>
+          <option value="1">Servidor 1 — Principal</option>
+          <option value="2">Servidor 2</option>
+          <option value="3">Servidor 3</option>
+          <option value="novo">Servidor Novo</option>
+        </select>
+
+        <button class="btn-salvar-chave" id="btnSalvarMumu">
+          <i class="fas fa-floppy-disk"></i>
+          <span id="txtSalvarMumu">Salvar conta MUMU</span>
+        </button>
+
+        <div class="ajuda" id="ajudaMumu">
+          Informe seu nick exato no MUMU e o servidor onde joga.
+        </div>
+
+        <div class="ajuda" style="color:#64748b; font-size:11px;">
+          <i class="fas fa-lock"></i>
+          Seus dados ficam guardados com segurança. Só a equipe vê o nick completo na hora de enviar.
+        </div>
+      </div>
+
+      <!-- Bloco Solana -->
+      <div class="chave-bloco" id="carteiraSolanaBloco" style="display:none;">
+        <div class="estado-vazio" id="solanaVazio">
+          <i class="fas fa-wallet"></i>
+          <div class="titulo">Nenhuma carteira vinculada</div>
+          <div class="desc">
+            A carteira Solana será vinculada quando você fizer o primeiro saque em USDT.
+          </div>
+        </div>
+
+        <input type="text" class="chave-input" id="inputSolana" placeholder="Cole aqui o endereço da sua carteira Solana (ex: 5FHneW...)" />
+
+        <button class="btn-salvar-chave" id="btnSalvarSolana">
+          <i class="fas fa-link"></i>
+          <span id="txtSalvarSolana">Vincular carteira</span>
+        </button>
+
+        <div class="ajuda">
+          A Phantom pode pedir para assinar uma mensagem. Assinar não move fundos nem custa taxa.
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ==================== HISTÓRICO ==================== -->
+  <div class="historico">
+    <div class="tag" id="tagHistorico">Histórico de Saques</div>
+    <div id="historicoConteudo">
+      <div class="vazio">Você ainda não fez nenhum saque.</div>
+    </div>
+  </div>
+
+</div>
+
+<div class="toasts" id="toasts"></div>
+
+<!-- ============================================================
+     IMPORTMAP — Supabase via ESM
+============================================================ -->
+<script type="importmap">
+{
+  "imports": {
+    "@supabase/supabase-js": "https://esm.sh/@supabase/supabase-js@2"
+  }
+}
+</script>
+
+<!-- ============================================================
+     SCRIPT PRINCIPAL — importa tudo do config.js
+============================================================ -->
+<script type="module">
+import {
+  db as sb,
+  TABELA,
+  SIMB,
+  TAXA_MUMU,
+  TAXA_USDT
+} from './config.js';
+
+/* ============================================================
+   ESTADO
+============================================================ */
+const state = {
+  usuario: null,
+  dados: null,
+  aba: 'mumu',
+  mostrarValores: false,
+  realtimeChannel: null
+};
+
+/* ============================================================
+   HELPERS
+============================================================ */
+const $ = (sel) => document.querySelector(sel);
+const $$ = (sel) => document.querySelectorAll(sel);
+
+function fmtBR(v) {
+  return new Intl.NumberFormat('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 }).format(Number(v || 0));
+}
+
+function fmtMumu(v) {
+  return `${SIMB.mumu} ${fmtBR(v)}`;
+}
+
+function fmtSaldo(v) {
+  return `${SIMB.saldo} ${fmtBR(v)}`;
+}
+
+function fmtUsdt(v) {
+  return `${SIMB.usdt} ${fmtBR(v)}`;
+}
+
+function fmtData(iso) {
+  if (!iso) return '—';
+  try { return new Date(iso).toLocaleString('pt-BR'); }
+  catch { return '—'; }
+}
+
+function esc(s) {
+  return String(s ?? '').replace(/[&<>"']/g, c => ({
+    '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;'
+  }[c]));
+}
+
+function toast(msg, tipo = 'sucesso') {
+  const el = document.createElement('div');
+  el.className = `toast ${tipo}`;
+  const icones = { sucesso: 'circle-check', erro: 'circle-exclamation', aviso: 'triangle-exclamation' };
+  el.innerHTML = `<i class="fas fa-${icones[tipo] || 'circle-info'}"></i><span>${esc(msg)}</span>`;
+  $('#toasts').appendChild(el);
+  setTimeout(() => {
+    el.style.transition = 'opacity .3s';
+    el.style.opacity = '0';
+    setTimeout(() => el.remove(), 300);
+  }, 3600);
+}
+
+/* ============================================================
+   SESSÃO
+============================================================ */
+const SESSION_KEYS = ['usuario_logado', 'usuario', 'user', 'session', 'auth'];
+
+function lerSessao() {
+  for (const k of SESSION_KEYS) {
+    const raw = localStorage.getItem(k);
+    if (!raw) continue;
+    try {
+      const obj = JSON.parse(raw);
+      const u = obj?.user || obj?.usuario || obj;
+      if (u && (u.login || u.email || u.nome)) {
+        return {
+          id:    u.id,
+          login: u.login || u.email?.split('@')[0] || u.nome,
+          nome:  u.nome || u.login || u.email?.split('@')[0]
+        };
+      }
+    } catch (_) {
+      if (raw.length > 0 && raw.length < 100) {
+        return { login: raw, nome: raw };
+      }
+    }
+  }
+  return null;
+}
+
+/* ============================================================
+   REALTIME
+============================================================ */
+function setStatusRT(ativo, texto) {
+  const dot = $('#rtDot');
+  const txt = $('#rtTexto');
+  dot.className = 'rt-dot' + (ativo ? ' ativo' : '');
+  txt.textContent = texto;
+}
+
+function iniciarRealtime() {
+  if (state.realtimeChannel) {
+    try { sb.removeChannel(state.realtimeChannel); } catch {}
+  }
+  if (!state.usuario?.login) {
+    setStatusRT(false, 'Aguardando login');
+    return;
+  }
+
+  setStatusRT(false, 'Conectando…');
+
+  state.realtimeChannel = sb
+    .channel('carteira-' + state.usuario.login)
+    .on(
+      'postgres_changes',
+      {
+        event: 'UPDATE',
+        schema: 'public',
+        table: TABELA,
+        filter: `login=eq.${state.usuario.login}`
+      },
+      (payload) => {
+        if (payload.new) {
+          state.dados = payload.new;
+          renderTudo();
+          piscarRT();
+        }
+      }
+    )
+    .subscribe((status) => {
+      if (status === 'SUBSCRIBED')      setStatusRT(true, 'Tempo real');
+      else if (status === 'CHANNEL_ERROR' || status === 'TIMED_OUT')
+                                        setStatusRT(false, 'Reconectando…');
+      else                              setStatusRT(false, status);
+    });
+}
+
+function piscarRT() {
+  const dot = $('#rtDot');
+  if (!dot) return;
+  dot.style.transform = 'scale(1.6)';
+  setTimeout(() => { dot.style.transform = 'scale(1)'; }, 250);
+}
+
+/* ============================================================
+   CARREGAR DADOS
+============================================================ */
+async function carregarDados() {
+  if (!state.usuario?.login) return;
+
+  const { data, error } = await sb
+    .from(TABELA)
+    .select('*')
+    .eq('login', state.usuario.login)
+    .maybeSingle();
+
+  if (error) {
+    console.error('Erro ao carregar dados:', error);
+    toast('Erro ao carregar dados da conta', 'erro');
+    return;
+  }
+  if (!data) {
+    toast('Usuário não encontrado na base', 'erro');
+    return;
+  }
+
+  state.dados = data;
+  renderTudo();
+}
+
+/* ============================================================
+   RENDER GERAL
+============================================================ */
+function renderTudo() {
+  renderStats();
+  renderTitulos();
+  renderChaveMumu();
+  renderChaveSolana();
+  renderHistorico();
+  renderBotoes();
+  aplicarModoOculto();
+}
+
+/* ---------- STATS ---------- */
+function renderStats() {
+  const d = state.dados;
+  if (!d) return;
+
+  const saldo = Number(d.saldo || 0);
+  const pendente = d.pix_pendente && typeof d.pix_pendente === 'object' ? d.pix_pendente : null;
+  const historico = Array.isArray(d.historico_saques) ? d.historico_saques : [];
+
+  $('#statSaldoDisponivel').textContent = fmtSaldo(saldo);
+
+  /* Conversões */
+  const valorEmMumu = saldo / TAXA_MUMU.reais_por_mumu;
+  const valorEmUSDT = saldo / TAXA_USDT.saldo_por_dolar;
+
+  if (state.aba === 'mumu') {
+    $('#statSaldoEquiv').textContent = fmtMumu(valorEmMumu);
+  } else {
+    $('#statSaldoEquiv').textContent = fmtUsdt(valorEmUSDT);
+  }
+
+  /* Pendente */
+  if (pendente) {
+    const valor = Number(pendente.valor || 0);
+    $('#statPendenteValor').textContent = pendente.tipo === 'usdt'
+      ? fmtUsdt(valor)
+      : fmtMumu(valor);
+    $('#statPendenteSub').textContent = `Solicitado em ${fmtData(pendente.data)}`;
+    $('#statPendenteValor').classList.add('laranja');
+  } else {
+    $('#statPendenteValor').textContent = '—';
+    $('#statPendenteSub').textContent = 'Nenhum pedido em andamento';
+    $('#statPendenteValor').classList.remove('laranja');
+  }
+
+  /* Total recebido */
+  const pagos = historico.filter(h => h.status === 'pago');
+  const totalPago = pagos.reduce((s, h) => s + Number(h.valor || 0), 0);
+  $('#statTotalRecebido').textContent = state.aba === 'usdt'
+    ? fmtUsdt(totalPago)
+    : fmtMumu(totalPago);
+  $('#statTotalQtd').textContent = pagos.length;
+
+  /* Conversão (card) */
+  if (state.aba === 'mumu') {
+    $('#statConversao').textContent = 'S$ 100,00 = M$ 1,00';
+    $('#statConversaoDetalhe').textContent = 'S$ 1,00 = M$ 0,01';
+  } else {
+    $('#statConversao').textContent = 'US$ 0,01 = S$ 10.000,00';
+    $('#statConversaoDetalhe').textContent = 'S$ 10.000,00 = US$ 0,01';
+  }
+}
+
+/* ---------- TÍTULOS ---------- */
+function renderTitulos() {
+  if (state.aba === 'mumu') {
+    $('#tituloPagina').textContent = 'Saldo em MUMU';
+    $('#avisoDescricao').innerHTML = 'Converte seu saldo em MUMU: <strong>S$ 100,00 = M$ 1,00 MUMU</strong> (S$ 1,00 = M$ 0,01 MUMU). O saque mínimo é de <strong>S$ 50,00</strong> (M$ 0,50 MUMU), e o envio é feito em até <strong>8 horas</strong> depois do pedido.';
+    $('#tituloSacar').textContent = 'Converter saldo em MUMU';
+    $('#tagHistorico').textContent = 'Histórico de Saques em MUMU';
+    $('#btnSolicitar').querySelector('span').textContent = 'Solicitar MUMU';
+    $('#tagDestino').textContent = 'Conta MUMU';
+    $('#mumuBloco').style.display = 'flex';
+    $('#carteiraSolanaBloco').style.display = 'none';
+    $('#avisoDescricao').style.borderLeftColor = 'var(--mumu)';
+    $('#avisoDescricao').style.background = 'rgba(255, 176, 32, 0.05)';
+  } else {
+    $('#tituloPagina').textContent = 'Saldo em USDT';
+    $('#avisoDescricao').innerHTML = 'Converte seu saldo em USDT na rede Solana: <strong>US$ 0,01 = S$ 10.000,00</strong>. O saque mínimo é de <strong>S$ 10.000,00</strong> (US$ 0,01), e o envio é feito em até <strong>8 horas</strong> para a carteira vinculada.';
+    $('#tituloSacar').textContent = 'Converter saldo em USDT';
+    $('#tagHistorico').textContent = 'Histórico de Saques em USDT';
+    $('#btnSolicitar').querySelector('span').textContent = 'Solicitar USDT';
+    $('#tagDestino').textContent = 'Carteira Solana';
+    $('#mumuBloco').style.display = 'none';
+    $('#carteiraSolanaBloco').style.display = 'flex';
+    $('#avisoDescricao').style.borderLeftColor = 'var(--roxo)';
+    $('#avisoDescricao').style.background = 'rgba(168, 85, 247, 0.05)';
+  }
+}
+
+/* ---------- CHAVE MUMU ---------- */
+function renderChaveMumu() {
+  const d = state.dados;
+  if (!d) return;
+
+  const chave = d.chave_pix && typeof d.chave_pix === 'object' ? d.chave_pix : {};
+  const nick = chave.mumu_nick || chave.mumu || '';
+  const servidor = chave.mumu_servidor || '';
+
+  $('#inputMumuNick').value = nick;
+  $('#selectMumuServidor').value = servidor;
+
+  if (nick && servidor) {
+    $('#tituloChave').textContent = `${nick} · Servidor ${servidor}`;
+  } else if (nick) {
+    $('#tituloChave').textContent = nick;
+  } else {
+    $('#tituloChave').textContent = 'Não cadastrada';
+  }
+
+  const btn = $('#btnSalvarMumu');
+  const txt = $('#txtSalvarMumu');
+  const temAlteracao = (nick !== (chave.mumu_nick || '')) || (servidor !== (chave.mumu_servidor || ''));
+  btn.disabled = false;
+  btn.classList.remove('salvando');
+  txt.textContent = temAlteracao ? 'Salvar conta MUMU' : 'Salva';
+  btn.querySelector('i').className = temAlteracao ? 'fas fa-floppy-disk' : 'fas fa-check';
+}
+
+/* ---------- CARTEIRA SOLANA ---------- */
+function renderChaveSolana() {
+  const d = state.dados;
+  if (!d) return;
+
+  const meta = d.meta && typeof d.meta === 'object' ? d.meta : {};
+  const endereco = meta.solana_wallet || '';
+
+  $('#inputSolana').value = endereco;
+
+  if (endereco) {
+    $('#solanaVazio').style.display = 'none';
+    $('#txtSalvarSolana').textContent = 'Carteira vinculada';
+    $('#btnSalvarSolana').querySelector('i').className = 'fas fa-check';
+    $('#btnSalvarSolana').style.borderColor = 'var(--verde)';
+    $('#btnSalvarSolana').style.color = 'var(--verde)';
+  } else {
+    $('#solanaVazio').style.display = 'block';
+    $('#txtSalvarSolana').textContent = 'Vincular carteira';
+    $('#btnSalvarSolana').querySelector('i').className = 'fas fa-link';
+    $('#btnSalvarSolana').style.borderColor = '';
+    $('#btnSalvarSolana').style.color = '';
+  }
+
+  if (state.aba === 'usdt' && endereco) {
+    $('#tituloChave').textContent = `${endereco.slice(0, 6)}…${endereco.slice(-4)}`;
+  }
+}
+
+/* ---------- HISTÓRICO ---------- */
+function renderHistorico() {
+  const d = state.dados;
+  if (!d) return;
+
+  const historico = Array.isArray(d.historico_saques) ? d.historico_saques : [];
+  const filtrado = historico
+    .filter(h => (state.aba === 'mumu' ? (h.tipo !== 'usdt') : (h.tipo === 'usdt')))
+    .sort((a, b) => new Date(b.data) - new Date(a.data));
+
+  const box = $('#historicoConteudo');
+
+  if (filtrado.length === 0) {
+    box.innerHTML = `<div class="vazio">${
+      state.aba === 'mumu'
+        ? 'Você ainda não fez nenhum saque em MUMU.'
+        : 'Você ainda não fez nenhum saque em USDT.'
+    }</div>`;
+    return;
+  }
+
+  box.innerHTML = filtrado.map(h => {
+    const st = h.status === 'pago' ? 'pago' : h.status === 'recusado' ? 'recusado' : 'pendente';
+    const icone = st === 'pago' ? 'fa-check' : st === 'recusado' ? 'fa-xmark' : 'fa-clock';
+    const valor = Number(h.valor || 0);
+    const isUsdt = h.tipo === 'usdt';
+    const valorTxt = isUsdt ? fmtUsdt(valor) : fmtMumu(valor);
+
+    return `
+      <div class="hist-item">
+        <div class="icone ${st}"><i class="fas ${icone}"></i></div>
+        <div class="info">
+          <strong>${valorTxt}</strong>
+          <span>${fmtData(h.data)}${h.destino ? ' · ' + esc(String(h.destino).slice(0, 40)) : ''}</span>
+        </div>
+        <div class="valor ${st}">${valorTxt}</div>
+        <div class="badge-status ${st}">${
+          st === 'pago' ? 'Pago' : st === 'recusado' ? 'Recusado' : 'Pendente'
+        }</div>
+      </div>
+    `;
+  }).join('');
+}
+
+/* ---------- BOTÕES ---------- */
+function renderBotoes() {
+  const d = state.dados;
+  if (!d) return;
+
+  const saldo = Number(d.saldo || 0);
+  const pendente = d.pix_pendente && typeof d.pix_pendente === 'object' ? d.pix_pendente : null;
+
+  const taxa = state.aba === 'mumu' ? TAXA_MUMU : TAXA_USDT;
+  const minimo = taxa.saldo_minimo;
+
+  if (pendente) {
+    const btn = $('#btnSolicitar');
+    btn.disabled = true;
+    const valor = Number(pendente.valor || 0);
+    const tipoTxt = pendente.tipo === 'usdt' ? fmtUsdt(valor) : fmtMumu(valor);
+    btn.querySelector('span').textContent = 'Saque em andamento';
+    $('#textoMinimo').textContent = `Você já tem um saque de ${tipoTxt} em andamento.`;
+    $('#avisoMinimo').classList.remove('ok');
+    return;
+  }
+
+  const btn = $('#btnSolicitar');
+  btn.querySelector('span').textContent = state.aba === 'mumu' ? 'Solicitar MUMU' : 'Solicitar USDT';
+
+  if (saldo < minimo) {
+    btn.disabled = true;
+    const faltam = minimo - saldo;
+    $('#textoMinimo').textContent = `Você precisa de pelo menos ${fmtSaldo(minimo)}. Faltam ${fmtSaldo(faltam)}.`;
+    $('#avisoMinimo').classList.remove('ok');
+  } else {
+    btn.disabled = false;
+    $('#textoMinimo').textContent = `Você pode solicitar o saque agora.`;
+    $('#avisoMinimo').classList.add('ok');
+  }
+}
+
+/* ---------- MODO OCULTO ---------- */
+function aplicarModoOculto() {
+  const d = state.dados;
+  if (!d) return;
+
+  const ocultar = !state.mostrarValores;
+
+  const setText = (sel, real, mascarado) => {
+    const el = $(sel);
+    if (!el) return;
+    el.textContent = ocultar ? mascarado : real;
+  };
+
+  setText('#statSaldoDisponivel', fmtSaldo(d.saldo || 0), '•••••');
+
+  const historico = Array.isArray(d.historico_saques) ? d.historico_saques : [];
+  const pagos = historico.filter(h => h.status === 'pago');
+  const totalPago = pagos.reduce((s, h) => s + Number(h.valor || 0), 0);
+  setText('#statTotalRecebido',
+    state.aba === 'usdt' ? fmtUsdt(totalPago) : fmtMumu(totalPago),
+    '•••••');
+
+  const pendente = d.pix_pendente && typeof d.pix_pendente === 'object' ? d.pix_pendente : null;
+  if (pendente) {
+    const valor = Number(pendente.valor || 0);
+    setText('#statPendenteValor',
+      pendente.tipo === 'usdt' ? fmtUsdt(valor) : fmtMumu(valor),
+      '•••••');
+  }
+
+  const txt = $('#txtMostrarValores');
+  const icone = $('#btnMostrarValores').querySelector('i');
+  if (state.mostrarValores) {
+    txt.textContent = 'Ocultar valores';
+    icone.className = 'fas fa-eye-slash';
+  } else {
+    txt.textContent = 'Mostrar valores';
+    icone.className = 'fas fa-eye';
+  }
+}
+
+/* ============================================================
+   AÇÕES
+============================================================ */
+
+$$('.tab').forEach(tab => {
+  tab.addEventListener('click', () => {
+    $$('.tab').forEach(t => t.classList.remove('ativa'));
+    tab.classList.add('ativa');
+    state.aba = tab.dataset.aba;
+    renderTudo();
+  });
+});
+
+$('#btnMostrarValores').addEventListener('click', () => {
+  state.mostrarValores = !state.mostrarValores;
+  aplicarModoOculto();
+});
+
+$('#btnAtualizar').addEventListener('click', async () => {
+  const icone = $('#iconeAtualizar');
+  icone.style.animation = 'spin .6s linear infinite';
+  try {
+    await carregarDados();
+    toast('Dados atualizados', 'sucesso');
+  } finally {
+    icone.style.animation = '';
+  }
+});
+
+$('#btnFechar').addEventListener('click', () => {
+  if (document.referrer) window.history.back();
+  else window.location.href = './dashboard.html';
+});
+
+$('#btnMinimo').addEventListener('click', () => {
+  const taxa = state.aba === 'mumu' ? TAXA_MUMU : TAXA_USDT;
+  $('#inputSaldo').value = taxa.saldo_minimo;
+  atualizarValorRecebe();
+});
+
+$('#btnTudo').addEventListener('click', () => {
+  const d = state.dados;
+  if (!d) return;
+  $('#inputSaldo').value = Number(d.saldo || 0).toFixed(2);
+  atualizarValorRecebe();
+});
+
+$('#inputSaldo').addEventListener('input', atualizarValorRecebe);
+
+/* CÁLCULO PRINCIPAL */
+function atualizarValorRecebe() {
+  const saldoDigitado = Number($('#inputSaldo').value) || 0;
+
+  if (state.aba === 'mumu') {
+    const valor = saldoDigitado / TAXA_MUMU.reais_por_mumu;
+    $('#valorRecebe').textContent = fmtMumu(valor);
+  } else {
+    const valor = saldoDigitado / TAXA_USDT.saldo_por_dolar;
+    $('#valorRecebe').textContent = fmtUsdt(valor);
+  }
+  renderBotoes();
+}
+
+/* --- Salvar conta MUMU --- */
+$('#btnSalvarMumu').addEventListener('click', async () => {
+  const d = state.dados;
+  if (!d) return;
+
+  const nick = $('#inputMumuNick').value.trim();
+  const servidor = $('#selectMumuServidor').value;
+
+  if (!nick || nick.length < 3) {
+    toast('Informe seu nick do MUMU (mínimo 3 caracteres)', 'aviso');
+    return;
+  }
+  if (!servidor) {
+    toast('Selecione o servidor', 'aviso');
+    return;
+  }
+
+  const chaveAtual = d.chave_pix && typeof d.chave_pix === 'object' ? d.chave_pix : {};
+  const novaChave = {
+    ...chaveAtual,
+    tipo: 'mumu',
+    mumu_nick: nick,
+    mumu_servidor: servidor
+  };
+
+  const btn = $('#btnSalvarMumu');
+  const txt = $('#txtSalvarMumu');
+  btn.disabled = true;
+  btn.classList.add('salvando');
+  txt.textContent = 'Salvando…';
+
+  const { error } = await sb
+    .from(TABELA)
+    .update({ chave_pix: novaChave, updated_at: new Date().toISOString() })
+    .eq('login', state.usuario.login);
+
+  btn.disabled = false;
+  btn.classList.remove('salvando');
+
+  if (error) {
+    console.error(error);
+    toast('Erro ao salvar: ' + error.message, 'erro');
+    txt.textContent = 'Tentar novamente';
+    return;
+  }
+
+  toast('Conta MUMU salva com sucesso!', 'sucesso');
+});
+
+/* --- Salvar Solana --- */
+$('#btnSalvarSolana').addEventListener('click', async () => {
+  const d = state.dados;
+  if (!d) return;
+  const endereco = $('#inputSolana').value.trim();
+  if (!endereco || endereco.length < 32) {
+    toast('Endereço Solana inválido', 'aviso');
+    return;
+  }
+
+  const btn = $('#btnSalvarSolana');
+  btn.disabled = true;
+  $('#txtSalvarSolana').textContent = 'Salvando…';
+
+  const meta = d.meta && typeof d.meta === 'object' ? d.meta : {};
+  const novaMeta = { ...meta, solana_wallet: endereco };
+
+  const { error } = await sb
+    .from(TABELA)
+    .update({ meta: novaMeta, updated_at: new Date().toISOString() })
+    .eq('login', state.usuario.login);
+
+  btn.disabled = false;
+
+  if (error) {
+    toast('Erro ao salvar carteira: ' + error.message, 'erro');
+    $('#txtSalvarSolana').textContent = 'Vincular carteira';
+    return;
+  }
+
+  toast('Carteira Solana vinculada!', 'sucesso');
+});
+
+/* ============================================================
+   SOLICITAR SAQUE
+============================================================ */
+$('#btnSolicitar').addEventListener('click', async () => {
+  const d = state.dados;
+  if (!d) return;
+
+  const taxa = state.aba === 'mumu' ? TAXA_MUMU : TAXA_USDT;
+  const saldoDigitado = Number($('#inputSaldo').value) || 0;
+
+  if (saldoDigitado < taxa.saldo_minimo) {
+    toast(`Mínimo de ${fmtSaldo(taxa.saldo_minimo)}`, 'aviso');
+    return;
+  }
+  if (saldoDigitado > Number(d.saldo || 0)) {
+    toast('Você não tem tanto saldo', 'aviso');
+    return;
+  }
+
+  const chave = d.chave_pix && typeof d.chave_pix === 'object' ? d.chave_pix : {};
+
+  if (state.aba === 'mumu') {
+    if (!chave.mumu_nick || !chave.mumu_servidor) {
+      toast('Cadastre sua conta MUMU antes de solicitar', 'aviso');
+      return;
+    }
+  }
+
+  if (state.aba === 'usdt') {
+    const meta = d.meta && typeof d.meta === 'object' ? d.meta : {};
+    if (!meta.solana_wallet) {
+      toast('Vincule sua carteira Solana antes de solicitar', 'aviso');
+      return;
+    }
+  }
+
+  const isMumu = state.aba === 'mumu';
+  const valorConvertido = isMumu
+    ? saldoDigitado / TAXA_MUMU.reais_por_mumu
+    : saldoDigitado / TAXA_USDT.saldo_por_dolar;
+
+  const valorTxt = isMumu ? fmtMumu(valorConvertido) : fmtUsdt(valorConvertido);
+
+  if (!confirm(`Confirmar saque?\n\n${fmtSaldo(saldoDigitado)} de saldo\n→ ${valorTxt}\n\nEste valor será enviado em até 8 horas.`)) {
+    return;
+  }
+
+  let destino = '';
+  if (isMumu) {
+    destino = `MUMU: ${chave.mumu_nick} (Srv ${chave.mumu_servidor})`;
+  } else {
+    const meta = d.meta && typeof d.meta === 'object' ? d.meta : {};
+    destino = `SOL: ${(meta.solana_wallet || '').slice(0, 8)}…`;
+  }
+
+  const pendente = {
+    tipo: isMumu ? 'mumu' : 'usdt',
+    valor: valorConvertido,
+    saldo_utilizado: saldoDigitado,
+    moeda: isMumu ? 'MUMU' : 'US$',
+    data: new Date().toISOString(),
+    destino
+  };
+
+  const historicoAtual = Array.isArray(d.historico_saques) ? d.historico_saques : [];
+  const novoHistorico = [
+    ...historicoAtual,
+    {
+      tipo: isMumu ? 'mumu' : 'usdt',
+      valor: valorConvertido,
+      saldo_utilizado: saldoDigitado,
+      moeda: isMumu ? 'MUMU' : 'US$',
+      data: new Date().toISOString(),
+      status: 'pendente',
+      destino
+    }
+  ];
+
+  const novoSaldo = Number(d.saldo || 0) - saldoDigitado;
+
+  const btn = $('#btnSolicitar');
+  const txtOriginal = btn.querySelector('span').textContent;
+  btn.disabled = true;
+  btn.querySelector('span').textContent = 'Processando…';
+
+  const { error } = await sb
+    .from(TABELA)
+    .update({
+      saldo: novoSaldo,
+      pix_pendente: pendente,
+      historico_saques: novoHistorico,
+      updated_at: new Date().toISOString()
+    })
+    .eq('login', state.usuario.login);
+
+  btn.disabled = false;
+  btn.querySelector('span').textContent = txtOriginal;
+
+  if (error) {
+    console.error(error);
+    toast('Erro ao solicitar: ' + error.message, 'erro');
+    return;
+  }
+
+  toast(`Saque de ${valorTxt} solicitado! Enviaremos em até 8h.`, 'sucesso');
+  $('#inputSaldo').value = taxa.saldo_minimo;
+});
+
+/* ============================================================
+   INICIALIZAÇÃO
+============================================================ */
+async function init() {
+  console.log('💰 Carteira — Saque MUMU / USDT');
+  console.log('📊 Taxa MUMU:', `S$ ${TAXA_MUMU.reais_por_mumu} = M$ 1,00`);
+  console.log('📊 Taxa USDT:', `US$ 0,01 = S$ ${TAXA_USDT.saldo_minimo.toLocaleString('pt-BR')}`);
+  console.log('🎨 Símbolos:', SIMB);
+
+  state.usuario = lerSessao();
+
+  if (!state.usuario?.login) {
+    toast('Faça login para acessar a carteira', 'aviso');
+    setTimeout(() => {
+      window.location.href = './login.html';
+    }, 1800);
+    return;
+  }
+
+  await carregarDados();
+  iniciarRealtime();
+  atualizarValorRecebe();
+}
+
+document.addEventListener('DOMContentLoaded', init);
+
+window.addEventListener('beforeunload', () => {
+  if (state.realtimeChannel) {
+    try { sb.removeChannel(state.realtimeChannel); } catch {}
+  }
+});
+</script>
+
+</body>
+</html>

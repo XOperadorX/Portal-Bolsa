@@ -1,16 +1,12 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
-<head><!-- 3. No <head>, adicione o CSS do menu (ou importe de menu.css) -->
+<head>
 <link rel="stylesheet" href="./shared/menu.css">
-    <!-- ============================================================ -->
-<!-- SEO / Open Graph / Twitter Card                              -->
-<!-- ============================================================ -->
 <meta name="description" content="MM Quase Tudo — Central de jogos, economia virtual e negociações entre jogadores.">
 <meta name="keywords" content="mm quasetudo, jogos, economia virtual, mmorpg, browser game">
 <meta name="author" content="Equipe MM Quase Tudo">
 <meta name="theme-color" content="#002bad">
 
-<!-- Open Graph (Facebook / Discord / WhatsApp) -->
 <meta property="og:type"        content="website">
 <meta property="og:site_name"   content="MM Quase Tudo">
 <meta property="og:title"       content="MM Quase Tudo — Central de Jogos">
@@ -19,23 +15,19 @@
 <meta property="og:url"         content="https://xoperadorx.github.io/Portal-Bolsa/">
 <meta property="og:locale"      content="pt_BR">
 
-<!-- Twitter Card -->
 <meta name="twitter:card"        content="summary_large_image">
 <meta name="twitter:title"       content="MM Quase Tudo — Central de Jogos">
 <meta name="twitter:description" content="Central de jogos, economia virtual e negociações entre jogadores.">
 <meta name="twitter:image"       content="https://xoperadorx.github.io/Portal-Bolsa/assets/og-image.png">
 
-<!-- Favicon -->
 <link rel="icon"             type="image/png" sizes="32x32" href="./assets/favicon-32.png">
 <link rel="icon"             type="image/png" sizes="16x16" href="./assets/favicon-16.png">
 <link rel="apple-touch-icon" sizes="180x180"               href="./assets/apple-touch-icon.png">
-
-<!-- PWA (opcional) -->
 <link rel="manifest" href="./manifest.json">
+
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>MM Quase Tudo — Codex</title>
-    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
         :root {
@@ -53,7 +45,6 @@
         body { background: linear-gradient(135deg, #0f1419 0%, #1a1f2e 100%); min-height: 100vh; color: #e6e6e6; padding: 20px; }
         .container { max-width: 1200px; margin: 0 auto; }
 
-        /* ========== TOPBAR / NAVEGAÇÃO ========== */
         .topbar {
             display: flex;
             justify-content: space-between;
@@ -176,7 +167,6 @@
         footer { text-align: center; margin-top: 40px; color: var(--cinza); font-size: 0.9em; padding-top: 20px; border-top: 1px solid var(--borda); }
         .oculto { display: none !important; }
 
-        /* ========== SEÇÃO DE ATIVOS DA BOLSA ========== */
         .bolsa-tabs { display: flex; gap: 8px; margin-bottom: 15px; flex-wrap: wrap; }
         .bolsa-tab {
             padding: 8px 16px; background: #252b3b; border: 1px solid var(--borda);
@@ -230,17 +220,25 @@
             border-radius: 20px; letter-spacing: 0.5px;
         }
 
-        /* ========== INDICADOR TEMPO REAL ========== */
         .rt-indicator { display: inline-flex; align-items: center; gap: 6px; font-size: 0.75em; color: var(--cinza); margin-left: 10px; }
         .rt-dot { width: 8px; height: 8px; border-radius: 50%; background: #444; }
         .rt-dot.ativo { background: #4cd964; box-shadow: 0 0 8px rgba(76, 217, 100, 0.6); animation: pulse 1.5s infinite; }
         @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.4; } }
+
+        .btn-seed {
+            padding: 10px 20px;
+            background: linear-gradient(90deg, #f59e0b, #d97706);
+            border: none; border-radius: 8px;
+            color: #000; font-weight: bold;
+            cursor: pointer; font-size: 0.9em;
+            transition: all 0.2s;
+        }
+        .btn-seed:hover { transform: scale(1.03); box-shadow: 0 4px 12px rgba(245, 158, 11, 0.4); }
     </style>
 </head>
 <body>
 <div class="container">
 
-    <!-- ========== TOPBAR COM BOTÃO VOLTAR ========== -->
     <div class="topbar">
         <div class="topbar-brand">📖 CÓDICE DE EQUIPAMENTOS</div>
         <div class="topbar-actions">
@@ -260,13 +258,12 @@
         <button class="aba" onclick="trocarAba('resumo')">🏆 Resumo de Bônus</button>
     </div>
 
-    <!-- ABA: ATIVOS DA BOLSA -->
     <div id="aba-bolsa" class="conteudo-aba">
         <div class="painel">
             <h2>📈 Ativos da Bolsa — BAEP</h2>
             <p style="color: var(--cinza); margin-bottom: 15px; font-size: 0.9em;">
-                Todos os ativos são carregados <strong>exclusivamente do banco de dados</strong> (campo
-                <code>fazendinha_dados → bolsa_ativos</code> da tabela <code>Geral</code>).
+                Todos os ativos são carregados <strong>exclusivamente do banco de dados</strong>
+                (<code>fazendinha_dados.bolsa</code> da tabela <code>Geral</code>).
                 Clique em <strong>"➕ Registrar no Codex"</strong> para adicioná-los ao seu inventário.
             </p>
 
@@ -286,7 +283,6 @@
         </div>
     </div>
 
-    <!-- ABA: ITENS REGISTRADOS -->
     <div id="aba-itens" class="conteudo-aba oculto">
         <div class="painel">
             <h2>
@@ -316,7 +312,6 @@
         </div>
     </div>
 
-    <!-- ABA: RESUMO -->
     <div id="aba-resumo" class="conteudo-aba oculto">
         <div class="painel">
             <h2>🏆 Bônus Acumulados</h2>
@@ -352,6 +347,9 @@
     📖 Códice de Equipamentos — Dados 100% do banco | Tabela: public."Geral"
 </footer>
 
+<!-- ============================================================
+     IMPORTMAP — Supabase via ESM
+============================================================ -->
 <script type="importmap">
 {
     "imports": {
@@ -360,60 +358,199 @@
 }
 </script>
 
+<!-- ============================================================
+     SCRIPT PRINCIPAL — Codex Unificado
+============================================================ -->
 <script type="module">
-// ==========================================
-// SUPABASE
-// ==========================================
-import { createClient } from '@supabase/supabase-js';
-
-const SUPABASE_URL = 'https://xrcxvizzdumcxbylmkvn.supabase.co';
-const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InhyY3h2aXp6ZHVtY3hieWxta3ZuIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODY2NjA0NzIsImV4cCI6MjEwMjIzNjQ3Mn0.ohB4tW0UQ-k1PcwoZxm4u9XSGNLsFphv1_UwTWoklOM';
-const TABELA = 'Geral';
-const supabase = createClient(SUPABASE_URL, SUPABASE_KEY);
+import { 
+  db as supabase, 
+  TABELA, 
+  carregarBolsa, 
+  salvarBolsa,
+  registrarAtivoNoCodex,
+  listarItensCodex,
+  calcularResumoBonus,
+  calcularBonusAtivo,
+  RARIDADE_MAP
+} from './config.js';
 
 // ==========================================
 // ESTADO
 // ==========================================
-let itensSalvos = [];
 let usuarioLogado = null;
-let ativosBolsa = { acoes: [], fiis: [], etfs: [], tesouro: [] };
+let bolsa = { acoes: [], fiis: [], etfs: [], tesouro: [], selic: 10.75 };
 let categoriaAtual = 'acoes';
-let itensRegistradosIds = new Set();
 let realtimeChannel = null;
-let bolsaCarregada = false;
+let itensCodex = [];
 
 // ==========================================
-// TABELAS DE BÔNUS
+// ATIVOS PADRÃO (seed) — embutido para evitar dependência externa
+// ==========================================
+const ATIVOS_PADRAO = {
+  acoes: [
+    { id: 'PETR4',  nome: 'Petrobras PN',        preco: 28.50, dy: 12.5, variacao: 0, rentabilidade: 0 },
+    { id: 'VALE3',  nome: 'Vale ON',             preco: 62.30, dy: 8.2,  variacao: 0, rentabilidade: 0 },
+    { id: 'ITUB4',  nome: 'Itaú Unibanco PN',    preco: 33.80, dy: 6.8,  variacao: 0, rentabilidade: 0 },
+    { id: 'BBDC4',  nome: 'Bradesco PN',         preco: 14.20, dy: 7.5,  variacao: 0, rentabilidade: 0 },
+    { id: 'ABEV3',  nome: 'Ambev ON',            preco: 12.80, dy: 5.2,  variacao: 0, rentabilidade: 0 },
+    { id: 'MGLU3',  nome: 'Magazine Luiza ON',   preco:  8.90, dy: 0.0,  variacao: 0, rentabilidade: 0 },
+    { id: 'WEGE3',  nome: 'WEG ON',              preco: 52.10, dy: 1.8,  variacao: 0, rentabilidade: 0 },
+    { id: 'BBAS3',  nome: 'Banco do Brasil ON',  preco: 27.40, dy: 9.5,  variacao: 0, rentabilidade: 0 }
+  ],
+  fiis: [
+    { id: 'MXRF11', nome: 'Maxi Renda FII',      preco: 10.15,  dy: 11.2, variacao: 0, rentabilidade: 0 },
+    { id: 'HGLG11', nome: 'CSHG Logística FII',  preco: 162.30, dy: 7.8,  variacao: 0, rentabilidade: 0 },
+    { id: 'KNRI11', nome: 'Kinea Renda Imob.',   preco: 145.60, dy: 8.1,  variacao: 0, rentabilidade: 0 },
+    { id: 'XPML11', nome: 'XP Malls FII',        preco: 108.40, dy: 9.0,  variacao: 0, rentabilidade: 0 }
+  ],
+  etfs: [
+    { id: 'BOVA11', nome: 'iShares Ibovespa',    preco: 118.70, dy: 0.0,  variacao: 0, rentabilidade: 0 },
+    { id: 'SMAL11', nome: 'iShares Small Cap',   preco:  95.20, dy: 0.0,  variacao: 0, rentabilidade: 0 },
+    { id: 'IVVB11', nome: 'iShares S&P 500',     preco: 320.50, dy: 0.0,  variacao: 0, rentabilidade: 0 }
+  ],
+  tesouro: [
+    { id: 'TESOURO_SELIC_2029', nome: 'Tesouro Selic 2029',     preco: 14520.00, dy: 10.75, variacao: 0, rentabilidade: 0, vencimento: '01/03/2029' },
+    { id: 'TESOURO_IPCA_2035',  nome: 'Tesouro IPCA+ 2035',     preco:  3820.00, dy: 6.20,  variacao: 0, rentabilidade: 0, vencimento: '15/05/2035' },
+    { id: 'TESOURO_PRE_2029',   nome: 'Tesouro Prefixado 2029', preco:  7850.00, dy: 11.50, variacao: 0, rentabilidade: 0, vencimento: '01/01/2029' }
+  ],
+  selic: 10.75,
+  ultima_atualizacao: null
+};
+
+// ==========================================
+// TABELAS DE BÔNUS (visual)
 // ==========================================
 const tabelaBonus = {
-    comum:   { minAtk: 2,  maxAtk: 5,   minDef: 1, maxDef: 3,   minHp: 10,  maxHp: 30,  prioridade: 3, classe: 'item-comum', etiq: 'et-comum' },
-    incomum: { minAtk: 5,  maxAtk: 12,  minDef: 3, maxDef: 8,   minHp: 30,  maxHp: 80,  prioridade: 3, classe: 'item-incomum', etiq: 'et-incomum' },
-    raro:    { minAtk: 12, maxAtk: 25,  minDef: 8, maxDef: 15,  minHp: 80,  maxHp: 150, prioridade: 2, classe: 'item-raro', etiq: 'et-raro' },
-    epico:   { minAtk: 25, maxAtk: 40,  minDef: 15,maxDef: 25,  minHp: 150, maxHp: 300, prioridade: 1, classe: 'item-epico', etiq: 'et-epico' },
-    lendario:{ minAtk: 40, maxAtk: 60,  minDef: 25,maxDef: 40,  minHp: 300, maxHp: 500, prioridade: 1, classe: 'item-lendario', etiq: 'et-lendario' }
+  comum:   { classe: 'item-comum', etiq: 'et-comum', prioridade: 3 },
+  incomum: { classe: 'item-incomum', etiq: 'et-incomum', prioridade: 3 },
+  raro:    { classe: 'item-raro', etiq: 'et-raro', prioridade: 2 },
+  epico:   { classe: 'item-epico', etiq: 'et-epico', prioridade: 1 },
+  lendario:{ classe: 'item-lendario', etiq: 'et-lendario', prioridade: 1 }
 };
+
+// ==========================================
+// HELPERS DE BOLSA
+// ==========================================
+function contarAtivos(b) {
+  if (!b) return 0;
+  return (b.acoes?.length || 0) 
+       + (b.fiis?.length || 0) 
+       + (b.etfs?.length || 0) 
+       + (b.tesouro?.length || 0);
+}
+
+function bolsaEstaVazia(b) {
+  return contarAtivos(b) === 0;
+}
+
+// ==========================================
+// POPULAR BOLSA SE VAZIA (embutido)
+// ==========================================
+async function popularBolsaSeVazia(login) {
+  if (!login) return { populado: false, motivo: 'sem_login' };
+
+  try {
+    const { data, error } = await supabase
+      .from(TABELA)
+      .select('fazendinha_dados')
+      .eq('login', login)
+      .maybeSingle();
+
+    if (error) throw error;
+    if (!data) return { populado: false, motivo: 'usuario_nao_encontrado' };
+
+    const fazendinha = data.fazendinha_dados || {};
+    const bolsaAtual = fazendinha.bolsa;
+
+    if (!bolsaEstaVazia(bolsaAtual)) {
+      return { populado: false, motivo: 'ja_populada', total: contarAtivos(bolsaAtual) };
+    }
+
+    const bolsaNova = {
+      ...ATIVOS_PADRAO,
+      ultima_atualizacao: new Date().toISOString()
+    };
+
+    const { error: updateError } = await supabase
+      .from(TABELA)
+      .update({
+        fazendinha_dados: {
+          ...fazendinha,
+          bolsa: bolsaNova
+        },
+        selic: ATIVOS_PADRAO.selic,
+        updated_at: new Date().toISOString()
+      })
+      .eq('login', login);
+
+    if (updateError) throw updateError;
+
+    const total = contarAtivos(bolsaNova);
+    console.log(`✅ Bolsa populada com ${total} ativos para ${login}`);
+
+    return { populado: true, total, bolsa: bolsaNova };
+
+  } catch (e) {
+    console.error('Erro ao popular bolsa:', e);
+    return { populado: false, motivo: 'erro', erro: e.message };
+  }
+}
+
+// ==========================================
+// FORÇAR RESET (útil para testes)
+// ==========================================
+async function resetarBolsa(login) {
+  if (!login) return false;
+
+  try {
+    const { data } = await supabase
+      .from(TABELA)
+      .select('fazendinha_dados')
+      .eq('login', login)
+      .maybeSingle();
+
+    const fazendinha = data?.fazendinha_dados || {};
+
+    const { error } = await supabase
+      .from(TABELA)
+      .update({
+        fazendinha_dados: {
+          ...fazendinha,
+          bolsa: {
+            ...ATIVOS_PADRAO,
+            ultima_atualizacao: new Date().toISOString()
+          }
+        },
+        updated_at: new Date().toISOString()
+      })
+      .eq('login', login);
+
+    if (error) throw error;
+    console.log('🔄 Bolsa resetada para padrão');
+    return true;
+  } catch (e) {
+    console.error('Erro ao resetar:', e);
+    return false;
+  }
+}
 
 // ==========================================
 // TROCA DE ABAS
 // ==========================================
 function trocarAba(nomeAba) {
-    document.querySelectorAll('.aba').forEach(aba => aba.classList.remove('ativa'));
-    document.querySelectorAll('.conteudo-aba').forEach(div => div.classList.add('oculto'));
-    document.getElementById(`aba-${nomeAba}`).classList.remove('oculto');
+  document.querySelectorAll('.aba').forEach(aba => aba.classList.remove('ativa'));
+  document.querySelectorAll('.conteudo-aba').forEach(div => div.classList.add('oculto'));
+  document.getElementById(`aba-${nomeAba}`).classList.remove('oculto');
 
-    const botoes = document.querySelectorAll('.aba');
-    const mapa = { bolsa: 0, itens: 1, resumo: 2 };
-    if (mapa[nomeAba] !== undefined && botoes[mapa[nomeAba]]) {
-        botoes[mapa[nomeAba]].classList.add('ativa');
-    }
+  const botoes = document.querySelectorAll('.aba');
+  const mapa = { bolsa: 0, itens: 1, resumo: 2 };
+  if (mapa[nomeAba] !== undefined && botoes[mapa[nomeAba]]) {
+    botoes[mapa[nomeAba]].classList.add('ativa');
+  }
 
-    if (nomeAba === 'itens') {
-        carregarItensDoSupabase().then(() => renderizarListaItens());
-    }
-    if (nomeAba === 'resumo') {
-        carregarItensDoSupabase().then(() => atualizarResumo());
-    }
-    if (nomeAba === 'bolsa') carregarAtivosBolsa();
+  if (nomeAba === 'itens') renderizarListaItens();
+  if (nomeAba === 'resumo') atualizarResumo();
+  if (nomeAba === 'bolsa') renderizarAtivosBolsa();
 }
 
 window.trocarAba = trocarAba;
@@ -422,490 +559,401 @@ window.trocarAba = trocarAba;
 // CARREGAR USUÁRIO LOGADO
 // ==========================================
 async function carregarUsuarioLogado() {
-    try {
-        const chaves = ['usuario_logado', 'user', 'usuario', 'session', 'auth'];
-        for (const chave of chaves) {
-            const sessao = localStorage.getItem(chave);
-            if (sessao) {
-                try {
-                    const dados = JSON.parse(sessao);
-                    if (dados && (dados.login || dados.email || dados.nome)) {
-                        usuarioLogado = dados.login || dados.email || dados.nome;
-                        const nomeExibir = dados.nome || usuarioLogado;
-                        const elUser = document.getElementById('topbarUser');
-                        if (elUser) elUser.textContent = `👤 ${nomeExibir}`;
-                        console.log('✅ Usuário logado:', usuarioLogado);
-                        return;
-                    }
-                } catch (_) { /* ignora */ }
-            }
-        }
-        console.log('ℹ️ Usuário não encontrado na sessão.');
-        const elUser = document.getElementById('topbarUser');
-        if (elUser) elUser.textContent = '👤 Visitante';
-    } catch (e) {
-        console.warn('Não foi possível carregar usuário:', e);
+  try {
+    const chaves = ['usuario_logado', 'user', 'usuario', 'session', 'auth'];
+    for (const chave of chaves) {
+      const sessao = localStorage.getItem(chave);
+      if (sessao) {
+        try {
+          const dados = JSON.parse(sessao);
+          if (dados && (dados.login || dados.email || dados.nome)) {
+            usuarioLogado = dados.login || dados.email || dados.nome;
+            const nomeExibir = dados.nome || usuarioLogado;
+            const elUser = document.getElementById('topbarUser');
+            if (elUser) elUser.textContent = `👤 ${nomeExibir}`;
+            return;
+          }
+        } catch (_) {}
+      }
     }
+    const elUser = document.getElementById('topbarUser');
+    if (elUser) elUser.textContent = '👤 Visitante';
+  } catch (e) {
+    console.warn('Não foi possível carregar usuário:', e);
+  }
 }
 
 // ==========================================
-// CARREGAR ITENS DO SUPABASE (SEMPRE DO BANCO)
+// CARREGAR BOLSA UNIFICADA (com auto-seed)
 // ==========================================
-async function carregarItensDoSupabase() {
-    if (!usuarioLogado) {
-        itensSalvos = [];
-        itensRegistradosIds = new Set();
-        return;
+async function carregarDadosBolsa() {
+  if (!usuarioLogado) {
+    bolsa = { acoes: [], fiis: [], etfs: [], tesouro: [], selic: 10.75 };
+    itensCodex = [];
+    return;
+  }
+
+  try {
+    // 1. Tentar carregar normalmente
+    let dados = await carregarBolsa(usuarioLogado);
+    bolsa = dados.bolsa;
+
+    // 2. Se vazia, popular automaticamente
+    if (bolsaEstaVazia(bolsa)) {
+      console.log('🌱 Bolsa vazia — populando automaticamente...');
+      const resultado = await popularBolsaSeVazia(usuarioLogado);
+      
+      if (resultado.populado) {
+        console.log(`✅ Bolsa populada com ${resultado.total} ativos`);
+        dados = await carregarBolsa(usuarioLogado);
+        bolsa = dados.bolsa;
+      } else if (resultado.motivo === 'ja_populada') {
+        console.log('ℹ️ Bolsa já estava populada');
+      } else {
+        console.warn('⚠️ Não foi possível popular:', resultado.motivo);
+      }
     }
 
-    try {
-        const { data, error } = await supabase
-            .from(TABELA)
-            .select('itens')
-            .eq('login', usuarioLogado)
-            .maybeSingle();
+    itensCodex = listarItensCodex(bolsa);
+    
+    const totalAtivos = contarAtivos(bolsa);
+    const totalRegistrados = itensCodex.length;
+    
+    console.log(`✅ Bolsa: ${totalAtivos} ativos | Codex: ${totalRegistrados} registrados`);
+    console.log(`   Ações: ${bolsa.acoes.length} | FIIs: ${bolsa.fiis.length} | ETFs: ${bolsa.etfs.length} | Tesouro: ${bolsa.tesouro.length}`);
 
-        if (error) throw error;
-
-        if (data && data.itens && Array.isArray(data.itens)) {
-            itensSalvos = data.itens.map(i => {
-                const bonus = i.bonus || i.bônus || {};
-                const conjunto = i.conjunto || {};
-                return {
-                    id_item: i.id_item || i.id || '',
-                    nome: i.nome || 'Item sem nome',
-                    tipo_peca: i.tipo_peca || '',
-                    raridade: i.raridade || 'comum',
-                    tier: i.tier || 1,
-                    id_conjunto: conjunto.id_conjunto || i.id_conjunto || '',
-                    nome_conjunto: conjunto.nome_conjunto || i.nome_conjunto || '',
-                    bonus: {
-                        atk: bonus.ataque || bonus.atk || 0,
-                        def: bonus.defesa || bonus.def || 0,
-                        hp: bonus.hp || 0
-                    },
-                    registrado_em: i.registrado_em || null
-                };
-            });
-            itensRegistradosIds = new Set(itensSalvos.map(i => i.id_item));
-            console.log(`✅ ${itensSalvos.length} itens carregados para ${usuarioLogado}`);
-        } else {
-            itensSalvos = [];
-            itensRegistradosIds = new Set();
-        }
-    } catch (e) {
-        console.warn('Erro ao carregar itens:', e);
-        itensSalvos = [];
-        itensRegistradosIds = new Set();
-    }
+  } catch (e) {
+    console.error('Erro ao carregar bolsa:', e);
+    bolsa = { acoes: [], fiis: [], etfs: [], tesouro: [], selic: 10.75 };
+    itensCodex = [];
+  }
 }
 
 // ==========================================
-// SUPABASE REALTIME — ATUALIZAÇÃO EM TEMPO REAL
+// SUPABASE REALTIME — Escuta a tabela Geral
 // ==========================================
 function iniciarRealtime() {
-    if (realtimeChannel) {
-        supabase.removeChannel(realtimeChannel);
-        realtimeChannel = null;
-    }
+  if (realtimeChannel) {
+    supabase.removeChannel(realtimeChannel);
+    realtimeChannel = null;
+  }
 
-    if (!usuarioLogado) {
-        atualizarStatusRealtime(false, 'Aguardando login...');
-        return;
-    }
+  if (!usuarioLogado) {
+    atualizarStatusRealtime(false, 'Aguardando login...');
+    return;
+  }
 
-    realtimeChannel = supabase
-        .channel('codex-itens-' + usuarioLogado)
-        .on(
-            'postgres_changes',
-            {
-                event: '*',
-                schema: 'public',
-                table: TABELA,
-                filter: `login=eq.${usuarioLogado}`
-            },
-            async (payload) => {
-                console.log('🔄 Realtime update:', payload.eventType);
-                await carregarItensDoSupabase();
-                renderizarListaItens();
-                atualizarResumo();
-                renderizarAtivosBolsa();
-                piscarIndicadorRealtime();
-            }
-        )
-        .subscribe((status) => {
-            if (status === 'SUBSCRIBED') {
-                atualizarStatusRealtime(true, 'Conectado');
-            } else if (status === 'CHANNEL_ERROR' || status === 'TIMED_OUT') {
-                atualizarStatusRealtime(false, 'Reconectando...');
-            } else {
-                atualizarStatusRealtime(false, status);
-            }
-        });
+  realtimeChannel = supabase
+    .channel('codex-unificado-' + usuarioLogado)
+    .on(
+      'postgres_changes',
+      {
+        event: 'UPDATE',
+        schema: 'public',
+        table: TABELA,
+        filter: `login=eq.${usuarioLogado}`
+      },
+      async (payload) => {
+        console.log('🔄 Realtime update recebido');
+        const fazendinha = payload.new?.fazendinha_dados || {};
+        const novaBolsa = fazendinha.bolsa;
+        
+        if (novaBolsa) {
+          bolsa = {
+            acoes: novaBolsa.acoes || [],
+            fiis: novaBolsa.fiis || [],
+            etfs: novaBolsa.etfs || [],
+            tesouro: novaBolsa.tesouro || [],
+            selic: novaBolsa.selic ?? 10.75,
+            ultima_atualizacao: novaBolsa.ultima_atualizacao
+          };
+          itensCodex = listarItensCodex(bolsa);
+          
+          renderizarAtivosBolsa();
+          renderizarListaItens();
+          atualizarResumo();
+          piscarIndicadorRealtime();
+        }
+      }
+    )
+    .subscribe((status) => {
+      if (status === 'SUBSCRIBED') {
+        atualizarStatusRealtime(true, 'Conectado');
+      } else if (status === 'CHANNEL_ERROR' || status === 'TIMED_OUT') {
+        atualizarStatusRealtime(false, 'Reconectando...');
+      } else {
+        atualizarStatusRealtime(false, status);
+      }
+    });
 }
 
 function atualizarStatusRealtime(ativo, texto) {
-    const dotItens = document.getElementById('rt-dot-itens');
-    const statusItens = document.getElementById('rt-status-itens');
-    if (dotItens) dotItens.classList.toggle('ativo', ativo);
-    if (statusItens) statusItens.textContent = ativo ? '🟢 Tempo real' : '🔴 Offline';
+  const dotItens = document.getElementById('rt-dot-itens');
+  const statusItens = document.getElementById('rt-status-itens');
+  if (dotItens) dotItens.classList.toggle('ativo', ativo);
+  if (statusItens) statusItens.textContent = ativo ? '🟢 Tempo real' : '🔴 Offline';
 }
 
 function piscarIndicadorRealtime() {
-    const dotItens = document.getElementById('rt-dot-itens');
-    if (!dotItens) return;
-    dotItens.style.transform = 'scale(1.5)';
-    setTimeout(() => { dotItens.style.transform = 'scale(1)'; }, 300);
-}
-
-// ==========================================
-// CARREGAR ATIVOS DA BOLSA — DIRETO DO BANCO
-// ==========================================
-async function carregarAtivosBolsa() {
-    const container = document.getElementById('bolsaConteudo');
-    container.innerHTML = `
-        <div class="bolsa-loading">
-            <div class="spinner"></div>
-            Carregando ativos da bolsa do banco de dados...
-        </div>
-    `;
-
-    if (!usuarioLogado) {
-        container.innerHTML = `
-            <div class="aviso aviso-erro">
-                ⚠️ Nenhum usuário logado. Faça login para carregar os ativos da bolsa do banco.
-            </div>
-        `;
-        return;
-    }
-
-    try {
-        const { data, error } = await supabase
-            .from(TABELA)
-            .select('fazendinha_dados')
-            .eq('login', usuarioLogado)
-            .maybeSingle();
-
-        if (error) throw error;
-
-        const dadosBolsa = data?.fazendinha_dados?.bolsa_ativos;
-
-        if (dadosBolsa && typeof dadosBolsa === 'object') {
-            ativosBolsa = {
-                acoes: Array.isArray(dadosBolsa.acoes) ? dadosBolsa.acoes : [],
-                fiis: Array.isArray(dadosBolsa.fiis) ? dadosBolsa.fiis : [],
-                etfs: Array.isArray(dadosBolsa.etfs) ? dadosBolsa.etfs : [],
-                tesouro: Array.isArray(dadosBolsa.tesouro) ? dadosBolsa.tesouro : []
-            };
-            bolsaCarregada = true;
-            renderizarAtivosBolsa();
-            console.log('✅ Ativos da bolsa carregados do banco:', {
-                acoes: ativosBolsa.acoes.length,
-                fiis: ativosBolsa.fiis.length,
-                etfs: ativosBolsa.etfs.length,
-                tesouro: ativosBolsa.tesouro.length
-            });
-        } else {
-            ativosBolsa = { acoes: [], fiis: [], etfs: [], tesouro: [] };
-            bolsaCarregada = true;
-            container.innerHTML = `
-                <div class="aviso aviso-erro">
-                    ⚠️ O campo <code>fazendinha_dados → bolsa_ativos</code> não existe ou está vazio no banco de dados.<br>
-                    Os ativos precisam ser cadastrados no banco antes de aparecerem aqui.
-                </div>
-            `;
-        }
-    } catch (e) {
-        console.error('Erro ao carregar bolsa:', e);
-        container.innerHTML = `
-            <div class="aviso aviso-erro">
-                ❌ Erro ao carregar ativos do banco: ${e.message || 'Tente novamente.'}
-            </div>
-        `;
-    }
+  const dotItens = document.getElementById('rt-dot-itens');
+  if (!dotItens) return;
+  dotItens.style.transform = 'scale(1.5)';
+  setTimeout(() => { dotItens.style.transform = 'scale(1)'; }, 300);
 }
 
 // ==========================================
 // RENDERIZAR ATIVOS DA BOLSA
 // ==========================================
 function renderizarAtivosBolsa() {
-    const container = document.getElementById('bolsaConteudo');
-    if (!container) return;
-    const ativos = ativosBolsa[categoriaAtual] || [];
+  const container = document.getElementById('bolsaConteudo');
+  if (!container) return;
+  const ativos = bolsa[categoriaAtual] || [];
 
-    if (ativos.length === 0) {
-        container.innerHTML = `
-            <div class="aviso aviso-info">
-                📭 Nenhum ativo nesta categoria (<strong>${categoriaAtual}</strong>) no banco de dados.
-            </div>
-        `;
-        return;
-    }
-
-    const tiposMap = { acoes: 'Ação', fiis: 'FII', etfs: 'ETF', tesouro: 'Tesouro' };
-
-    container.innerHTML = `
-        <div class="bolsa-grid">
-            ${ativos.map(ativo => {
-                const registrado = itensRegistradosIds.has(`bolsa_${ativo.id}`);
-                const variacao = typeof ativo.variacao === 'number' ? ativo.variacao : 0;
-                const preco = typeof ativo.preco === 'number' ? ativo.preco : 0;
-                const dy = typeof ativo.dy === 'number' ? ativo.dy : 0;
-                const variacaoClass = variacao >= 0 ? 'positiva' : 'negativa';
-                const variacaoSign = variacao >= 0 ? '+' : '';
-                const nomeSafe = (ativo.nome || '').replace(/'/g, "\\'");
-                return `
-                    <div class="bolsa-item" style="${registrado ? 'opacity: 0.7; border-left-color: #4cd964;' : ''}">
-                        ${registrado ? '<span class="badge-registrado">✓ REGISTRADO</span>' : ''}
-                        <div class="bolsa-item-header">
-                            <span class="bolsa-item-nome">${ativo.id}</span>
-                            <span class="bolsa-item-tipo">${tiposMap[categoriaAtual]}</span>
-                        </div>
-                        <div class="bolsa-item-info">
-                            <strong>${ativo.nome || '—'}</strong><br>
-                            DY Anual: <strong>${dy}%</strong>
-                        </div>
-                        <div class="bolsa-item-preco">
-                            R$ ${preco.toFixed(2)}
-                            <span class="bolsa-item-variacao ${variacaoClass}">${variacaoSign}${variacao.toFixed(2)}%</span>
-                        </div>
-                        <button class="btn-registrar-bolsa" 
-                                onclick="registrarAtivoBolsa('${ativo.id}', '${nomeSafe}', ${preco}, '${categoriaAtual}')"
-                                ${registrado ? 'disabled' : ''}>
-                            ${registrado ? '✓ Já Registrado' : '➕ Registrar no Codex'}
-                        </button>
-                    </div>
-                `;
-            }).join('')}
+  if (ativos.length === 0) {
+    const bolsaVazia = contarAtivos(bolsa) === 0;
+    
+    if (bolsaVazia) {
+      container.innerHTML = `
+        <div class="aviso aviso-erro">
+          ⚠️ <strong>Bolsa totalmente vazia.</strong><br>
+          Nenhum ativo cadastrado em <code>fazendinha_dados.bolsa</code>.
+          <br><br>
+          <button class="btn-seed" onclick="window.forcarSeedBolsa()">
+            🌱 Popular Bolsa com Ativos Padrão
+          </button>
+          <br><br>
+          <small style="color: #888;">
+            Isso criará PETR4, VALE3, MXRF11, BOVA11, Tesouro Selic e outros (18 ativos).
+          </small>
         </div>
-    `;
+      `;
+    } else {
+      container.innerHTML = `
+        <div class="aviso aviso-info">
+          📭 Nenhum ativo na categoria <strong>${categoriaAtual}</strong>.<br>
+          <small>Mas há ${contarAtivos(bolsa)} ativos em outras categorias.</small>
+        </div>
+      `;
+    }
+    return;
+  }
+
+  const tiposMap = { acoes: 'Ação', fiis: 'FII', etfs: 'ETF', tesouro: 'Tesouro' };
+
+  container.innerHTML = `
+    <div class="bolsa-grid">
+      ${ativos.map(ativo => {
+        const registrado = ativo.registrado_codex === true;
+        const variacao = typeof ativo.variacao === 'number' ? ativo.variacao : 0;
+        const preco = typeof ativo.preco === 'number' ? ativo.preco : 0;
+        const dy = typeof ativo.dy === 'number' ? ativo.dy : 0;
+        const variacaoClass = variacao >= 0 ? 'positiva' : 'negativa';
+        const variacaoSign = variacao >= 0 ? '+' : '';
+        const nomeSafe = (ativo.nome || '').replace(/'/g, "\\'");
+        return `
+          <div class="bolsa-item" style="${registrado ? 'opacity: 0.7; border-left-color: #4cd964;' : ''}">
+            ${registrado ? '<span class="badge-registrado">✓ REGISTRADO</span>' : ''}
+            <div class="bolsa-item-header">
+              <span class="bolsa-item-nome">${ativo.id}</span>
+              <span class="bolsa-item-tipo">${tiposMap[categoriaAtual]}</span>
+            </div>
+            <div class="bolsa-item-info">
+              <strong>${ativo.nome || '—'}</strong><br>
+              DY Anual: <strong>${dy}%</strong>
+            </div>
+            <div class="bolsa-item-preco">
+              R$ ${preco.toFixed(2)}
+              <span class="bolsa-item-variacao ${variacaoClass}">${variacaoSign}${variacao.toFixed(2)}%</span>
+            </div>
+            <button class="btn-registrar-bolsa"
+                    onclick="registrarAtivoBolsa('${ativo.id}', '${nomeSafe}', ${preco}, '${categoriaAtual}')"
+                    ${registrado ? 'disabled' : ''}>
+              ${registrado ? '✓ Já Registrado' : '➕ Registrar no Codex'}
+            </button>
+          </div>
+        `;
+      }).join('')}
+    </div>
+  `;
 }
 
 window.renderizarAtivosBolsa = renderizarAtivosBolsa;
 
 // ==========================================
-// REGISTRAR ATIVO DA BOLSA
+// FORÇAR SEED MANUAL
 // ==========================================
-window.registrarAtivoBolsa = async function(id, nome, preco, categoria) {
-    if (!usuarioLogado) {
-        alert('⚠️ Faça login primeiro!');
-        return;
+window.forcarSeedBolsa = async function() {
+  if (!usuarioLogado) {
+    alert('⚠️ Faça login primeiro!');
+    return;
+  }
+  if (!confirm('Isso criará 18 ativos padrão (PETR4, VALE3, etc.) na sua bolsa. Continuar?')) {
+    return;
+  }
+  try {
+    const ok = await resetarBolsa(usuarioLogado);
+    if (ok) {
+      await carregarDadosBolsa();
+      renderizarAtivosBolsa();
+      renderizarListaItens();
+      atualizarResumo();
+      alert('✅ Bolsa populada com sucesso!');
+    } else {
+      alert('❌ Erro ao popular bolsa.');
     }
-
-    const idItem = `bolsa_${id}`;
-    if (itensRegistradosIds.has(idItem)) {
-        alert('⚠️ Este ativo já está registrado no Codex!');
-        return;
-    }
-
-    const raridadeMap = { acoes: 'raro', fiis: 'epico', etfs: 'epico', tesouro: 'lendario' };
-    const tipoMap = { acoes: 'Ação', fiis: 'FII', etfs: 'ETF', tesouro: 'Tesouro' };
-    const raridade = raridadeMap[categoria] || 'raro';
-    const tipoPeca = tipoMap[categoria] || 'Ativo';
-
-    const tier = Math.min(20, Math.max(1, Math.floor(preco / 10)));
-
-    const bonusBase = {
-        raro:    { atk: 15, def: 10, hp: 100 },
-        epico:   { atk: 30, def: 20, hp: 250 },
-        lendario:{ atk: 50, def: 35, hp: 500 }
-    };
-    const b = bonusBase[raridade] || bonusBase.raro;
-    const fator = tier / 10;
-    const bonus = {
-        atk: Math.round(b.atk * fator),
-        def: Math.round(b.def * fator),
-        hp: Math.round(b.hp * fator)
-    };
-
-    const idConjunto = `bolsa_${categoria}_conj`;
-    const nomeConjunto = `Carteira ${tipoMap[categoria]}`;
-
-    const novoItem = {
-        id_item: idItem,
-        nome: `${nome} (${id})`,
-        tipo_peca: tipoPeca,
-        raridade: raridade,
-        tier: tier,
-        registrado_em: new Date().toISOString(),
-        bonus: { ataque: bonus.atk, defesa: bonus.def, hp: bonus.hp },
-        conjunto: { id_conjunto: idConjunto, nome_conjunto: nomeConjunto, completo: false },
-        pode_descartar: true
-    };
-
-    try {
-        const { data: userData, error: fetchError } = await supabase
-            .from(TABELA)
-            .select('itens')
-            .eq('login', usuarioLogado)
-            .maybeSingle();
-
-        if (fetchError) throw fetchError;
-
-        const itensAtuais = (userData && Array.isArray(userData.itens)) ? userData.itens : [];
-
-        if (itensAtuais.some(i => (i.id_item || i.id) === idItem)) {
-            itensRegistradosIds.add(idItem);
-            alert('⚠️ Este ativo já está registrado no Codex!');
-            return;
-        }
-
-        itensAtuais.push(novoItem);
-
-        const { error: updateError } = await supabase
-            .from(TABELA)
-            .update({ itens: itensAtuais, updated_at: new Date().toISOString() })
-            .eq('login', usuarioLogado);
-
-        if (updateError) throw updateError;
-
-        itensRegistradosIds.add(idItem);
-        await carregarItensDoSupabase();
-        renderizarAtivosBolsa();
-        renderizarListaItens();
-        atualizarResumo();
-
-        alert(`✅ ${nome} registrado no Codex!\n\nBônus: +${bonus.atk} ATK / +${bonus.def} DEF / +${bonus.hp} HP`);
-
-    } catch (e) {
-        console.error('Erro ao registrar:', e);
-        alert('❌ Erro ao registrar ativo: ' + (e.message || 'Tente novamente.'));
-    }
+  } catch (e) {
+    alert('❌ Erro: ' + e.message);
+  }
 };
 
 // ==========================================
-// RENDERIZAR LISTA DE ITENS
+// REGISTRAR ATIVO NO CODEX (modifica o próprio ativo)
 // ==========================================
-function renderizarListaItens() {
-    const lista = document.getElementById('lista_itens');
-    if (!lista) return;
+window.registrarAtivoBolsa = async function(id, nome, preco, categoria) {
+  if (!usuarioLogado) {
+    alert('⚠️ Faça login primeiro!');
+    return;
+  }
 
-    if (itensSalvos.length === 0) {
-        lista.innerHTML = `
-            <p style="color: var(--cinza); text-align: center; padding: 30px;">
-                Nenhum item registrado ainda.<br>
-                Use a aba <strong>"Ativos da Bolsa"</strong> para começar.
-            </p>
-        `;
-        document.getElementById('contagem_itens').textContent = '(0)';
-        document.getElementById('barra_progresso').style.width = '0%';
-        document.getElementById('porcentagem').textContent = '0%';
-        return;
+  try {
+    const resultado = await registrarAtivoNoCodex(usuarioLogado, categoria, id);
+    
+    if (resultado.jaRegistrado) {
+      alert('⚠️ Este ativo já está registrado no Codex!');
+      return;
     }
 
-    const ordenados = [...itensSalvos].sort((a, b) => {
-        const prioA = tabelaBonus[a.raridade]?.prioridade || 3;
-        const prioB = tabelaBonus[b.raridade]?.prioridade || 3;
-        return prioA - prioB || b.tier - a.tier;
-    });
+    await carregarDadosBolsa();
+    renderizarAtivosBolsa();
+    renderizarListaItens();
+    atualizarResumo();
 
-    lista.innerHTML = ordenados.map(item => {
-        const v = tabelaBonus[item.raridade] || tabelaBonus.comum;
-        return `
-            <div class="item-codex ${v.classe} item-registrado">
-                <span class="etiqueta ${v.etiq}">${item.raridade.charAt(0).toUpperCase() + item.raridade.slice(1)}</span>
-                <strong>${item.nome}</strong>
-                <div class="info-pequena">
-                    ${item.tipo_peca} • Tier ${item.tier} • ${item.nome_conjunto}<br>
-                    ⚔️+${item.bonus.atk} 🛡️+${item.bonus.def} ❤️+${item.bonus.hp}
-                </div>
-            </div>
-        `;
-    }).join('');
+    const bonus = resultado.ativo.bonus || {};
+    alert(`✅ ${nome} registrado no Codex!\n\nBônus: +${bonus.atk || 0} ATK / +${bonus.def || 0} DEF / +${bonus.hp || 0} HP`);
 
-    document.getElementById('contagem_itens').textContent = `(${itensSalvos.length})`;
-    const perc = Math.min(100, Math.round((itensSalvos.length / 24) * 100));
-    document.getElementById('barra_progresso').style.width = `${perc}%`;
-    document.getElementById('porcentagem').textContent = `${perc}%`;
+  } catch (e) {
+    console.error('Erro ao registrar:', e);
+    alert('❌ Erro ao registrar ativo: ' + (e.message || 'Tente novamente.'));
+  }
+};
+
+// ==========================================
+// RENDERIZAR LISTA DE ITENS (do Codex)
+// ==========================================
+function renderizarListaItens() {
+  const lista = document.getElementById('lista_itens');
+  if (!lista) return;
+
+  if (itensCodex.length === 0) {
+    lista.innerHTML = `
+      <p style="color: var(--cinza); text-align: center; padding: 30px;">
+        Nenhum item registrado ainda.<br>
+        Use a aba <strong>"Ativos da Bolsa"</strong> para começar.
+      </p>
+    `;
+    document.getElementById('contagem_itens').textContent = '(0)';
+    document.getElementById('barra_progresso').style.width = '0%';
+    document.getElementById('porcentagem').textContent = '0%';
+    return;
+  }
+
+  const ordenados = [...itensCodex].sort((a, b) => {
+    const prioA = tabelaBonus[a.raridade]?.prioridade || 3;
+    const prioB = tabelaBonus[b.raridade]?.prioridade || 3;
+    return prioA - prioB || b.tier - a.tier;
+  });
+
+  lista.innerHTML = ordenados.map(item => {
+    const v = tabelaBonus[item.raridade] || tabelaBonus.comum;
+    const conjuntoNome = item.conjunto?.nome_conjunto || '—';
+    return `
+      <div class="item-codex ${v.classe} item-registrado">
+        <span class="etiqueta ${v.etiq}">${item.raridade.charAt(0).toUpperCase() + item.raridade.slice(1)}</span>
+        <strong>${item.nome}</strong>
+        <div class="info-pequena">
+          ${item.tipo_peca} • Tier ${item.tier} • ${conjuntoNome}<br>
+          ⚔️+${item.bonus?.atk || 0} 🛡️+${item.bonus?.def || 0} ❤️+${item.bonus?.hp || 0}
+          ${item.preco_atual ? `<br>💰 Preço atual: R$ ${item.preco_atual.toFixed(2)}` : ''}
+        </div>
+      </div>
+    `;
+  }).join('');
+
+  document.getElementById('contagem_itens').textContent = `(${itensCodex.length})`;
+  const perc = Math.min(100, Math.round((itensCodex.length / 24) * 100));
+  document.getElementById('barra_progresso').style.width = `${perc}%`;
+  document.getElementById('porcentagem').textContent = `${perc}%`;
 }
 
 // ==========================================
 // ATUALIZAR RESUMO
 // ==========================================
 function atualizarResumo() {
-    if (itensSalvos.length === 0) {
-        document.getElementById('res_atk').textContent = '+0';
-        document.getElementById('res_def').textContent = '+0';
-        document.getElementById('res_hp').textContent = '+0';
-        document.getElementById('res_conj').textContent = '0';
-        document.getElementById('detalhe_resumo').innerHTML = '<p style="color: var(--cinza);">Registre itens para ver o detalhamento.</p>';
-        return;
-    }
+  if (itensCodex.length === 0) {
+    document.getElementById('res_atk').textContent = '+0';
+    document.getElementById('res_def').textContent = '+0';
+    document.getElementById('res_hp').textContent = '+0';
+    document.getElementById('res_conj').textContent = '0';
+    document.getElementById('detalhe_resumo').innerHTML = '<p style="color: var(--cinza);">Registre itens para ver o detalhamento.</p>';
+    return;
+  }
 
-    const total = itensSalvos.reduce((s, i) => ({
-        atk: s.atk + (i.bonus?.atk || 0),
-        def: s.def + (i.bonus?.def || 0),
-        hp: s.hp + (i.bonus?.hp || 0)
-    }), { atk: 0, def: 0, hp: 0 });
+  const resumo = calcularResumoBonus(bolsa);
+  const total = resumo.bonus;
 
-    const conjuntosUnicos = [...new Set(itensSalvos.map(i => i.id_conjunto).filter(Boolean))];
-    const conjuntosCompletos = conjuntosUnicos.filter(cid => {
-        const pecas = itensSalvos.filter(i => i.id_conjunto === cid);
-        const totalPecas = cid.includes('acess') ? 5 : 7;
-        return pecas.length >= totalPecas;
-    });
+  document.getElementById('res_atk').textContent = `+${total.atk}`;
+  document.getElementById('res_def').textContent = `+${total.def}`;
+  document.getElementById('res_hp').textContent = `+${total.hp}`;
+  document.getElementById('res_conj').textContent = `${resumo.conjuntosCompletos}/${resumo.conjuntosUnicos}`;
 
-    document.getElementById('res_atk').textContent = `+${total.atk}`;
-    document.getElementById('res_def').textContent = `+${total.def}`;
-    document.getElementById('res_hp').textContent = `+${total.hp}`;
-    document.getElementById('res_conj').textContent = `${conjuntosCompletos.length}/${conjuntosUnicos.length}`;
-
-    document.getElementById('detalhe_resumo').innerHTML = `
-        <div class="linha"><span>Total de Itens Registrados</span><span>${itensSalvos.length}</span></div>
-        <div class="linha"><span>Bônus de itens individuais</span><span>⚔️+${total.atk} 🛡️+${total.def} ❤️+${total.hp}</span></div>
-        <div class="linha" style="font-weight: bold; color: var(--dourado); border-top: 1px dashed #444; margin-top: 5px; padding-top: 10px;">
-            <span>TOTAL ACUMULADO</span><span>⚔️+${total.atk} 🛡️+${total.def} ❤️+${total.hp}</span>
-        </div>
-    `;
+  document.getElementById('detalhe_resumo').innerHTML = `
+    <div class="linha"><span>Total de Itens Registrados</span><span>${resumo.totalItens}</span></div>
+    <div class="linha"><span>Bônus de itens individuais</span><span>⚔️+${total.atk} 🛡️+${total.def} ❤️+${total.hp}</span></div>
+    <div class="linha" style="font-weight: bold; color: var(--dourado); border-top: 1px dashed #444; margin-top: 5px; padding-top: 10px;">
+      <span>TOTAL ACUMULADO</span><span>⚔️+${total.atk} 🛡️+${total.def} ❤️+${total.hp}</span>
+    </div>
+    <div class="linha" style="margin-top: 10px; color: #8a99ad;">
+      <span>SELIC Atual</span><span>${bolsa.selic ?? 10.75}%</span>
+    </div>
+    <div class="linha" style="color: #8a99ad;">
+      <span>Última Atualização da Bolsa</span>
+      <span>${bolsa.ultima_atualizacao ? new Date(bolsa.ultima_atualizacao).toLocaleString('pt-BR') : '—'}</span>
+    </div>
+  `;
 }
 
 // ==========================================
 // INICIALIZAÇÃO
 // ==========================================
 async function init() {
-    await carregarUsuarioLogado();
+  await carregarUsuarioLogado();
 
-    if (usuarioLogado) {
-        await carregarItensDoSupabase();
-        iniciarRealtime();
-    } else {
-        atualizarStatusRealtime(false, 'Aguardando login...');
-    }
+  if (usuarioLogado) {
+    await carregarDadosBolsa();
+    iniciarRealtime();
+  } else {
+    atualizarStatusRealtime(false, 'Aguardando login...');
+  }
 
-    // Tabs da bolsa
-    document.querySelectorAll('.bolsa-tab').forEach(tab => {
-        tab.addEventListener('click', () => {
-            document.querySelectorAll('.bolsa-tab').forEach(t => t.classList.remove('ativa'));
-            tab.classList.add('ativa');
-            categoriaAtual = tab.dataset.cat;
-            renderizarAtivosBolsa();
-        });
+  document.querySelectorAll('.bolsa-tab').forEach(tab => {
+    tab.addEventListener('click', () => {
+      document.querySelectorAll('.bolsa-tab').forEach(t => t.classList.remove('ativa'));
+      tab.classList.add('ativa');
+      categoriaAtual = tab.dataset.cat;
+      renderizarAtivosBolsa();
     });
+  });
 
-    // Carrega a bolsa (aba inicial)
-    await carregarAtivosBolsa();
+  renderizarAtivosBolsa();
+  renderizarListaItens();
+  atualizarResumo();
 
-    console.log('📖 Codex inicializado!');
-    console.log('👤 Usuário:', usuarioLogado || 'não definido');
+  console.log('📖 Codex inicializado (fonte unificada)!');
+  console.log('👤 Usuário:', usuarioLogado || 'não definido');
 }
 
 init();
 </script>
-<script type="module">
-import {
-  salvarSessao,
-  sessaoValida,
-  obterUsuario,
-  limparSessao,
-  exigirSessao
-} from './shared/session.js';
 
-// Verifica antes de tudo
-const usuario = exigirSessao('login.html');
-if (!usuario) throw new Error('Sessão inválida');
-
-// Agora use normalmente
-console.log('Logado como:', usuario.login);
-</script>
 </body>
 </html>

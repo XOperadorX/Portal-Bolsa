@@ -1,11 +1,11 @@
 # Portal_Bolsa
 
-![Versão](https://img.shields.io/badge/versão-1.0.0-blue?style=for-the-badge)
+![Versão](https://img.shields.io/badge/versão-1.1.0-blue?style=for-the-badge)
 ![Status](https://img.shields.io/badge/status-ativo-success?style=for-the-badge)
 ![Plataforma](https://img.shields.io/badge/plataforma-Web%20%7C%20Android%20%7C%20iOS-orange?style=for-the-badge)
 ![Supabase](https://img.shields.io/badge/backend-Supabase-3ECF8E?style=for-the-badge&logo=supabase&logoColor=white)
 
-**Versão Atual:** `1.0.0` · **Temporada:** 2026 · **Última atualização:** 30/09/2026
+**Versão Atual:** `1.1.0` · **Temporada:** 2026 · **Última atualização:** 12/10/2026
 
 Plataforma **MM Quase Tudo** — Central de jogos, economia virtual e negociações entre jogadores, construída com **HTML/CSS/JS puro** e **Supabase** como backend.
 
@@ -15,9 +15,10 @@ Plataforma **MM Quase Tudo** — Central de jogos, economia virtual e negociaç�
 
 | Item | Valor |
 |---|---|
-| **Versão** | `1.0.0` |
+| **Versão** | `1.1.0` |
 | **Codinome** | Temporada 2026 |
 | **Lançamento** | 30/09/2026 |
+| **Última atualização** | 12/10/2026 |
 | **Status** | 🟢 Ativo |
 | **Compatibilidade** | Web · Android 7.0+ · Windows 10+ |
 
@@ -29,30 +30,112 @@ O projeto é um portal web (também empacotável como app mobile via **Apache Co
 
 ---
 
+## ✨ Novidades da Versão 1.1.0
+
+### 🔐 Segurança
+- **`config.js` corrigido** — agora importa `createClient` corretamente (antes estava quebrado)
+- **`config.example.js`** — template público sincronizado
+- **`.gitignore`** — proteção contra commit de chaves e dependências
+- **Senhas com hash SHA-256 no admin** — `adm_cadastro.html` agora salva com hash (antes salvava em texto puro)
+
+### 🏗️ Arquitetura
+- **`config.js` centralizado** — `SIMB`, `TAXA_MUMU`, `TAXA_USDT`, `SUPABASE_URL`, `SUPABASE_KEY`
+- **`shared/logger.js`** — logger que só loga em DEV (evita poluição em produção)
+- **`shared/session.js`** — módulo único de sessão (já existente, agora oficial)
+- **`shared/menu.js` + `shared/menu.css`** — menu componentizado
+- **`shared/offline-regen.js` + `.css`** — regeneração offline unificada
+
+### 🎨 UX / Interface
+- **Símbolos de moeda padronizados**: **`S$`** (saldo), **`M$`** (MUMU), **`US$`** (USDT)
+- **`.dashboard-header` centralizado** — funciona em qualquer resolução
+- **Remoção do `dashboard copy.html`** — elimina duplicata antiga
+
+### 🐛 Bugfixes
+- **`index.html`** — anti-loop de redirecionamento (não trava mais)
+- **`login.html`** — sessão só é salva **após** a regeneração offline
+- **`admin.html`** — variável `supabaseDB` não sobrescreve mais `window.supabase`
+- **`codex.html`** — removido import duplicado do Supabase
+- **`dashboard.html`** — event delegation (não acumula listeners)
+- **`trocap.html`** — fallback numérico (não mostra `NaN` mais)
+- **`offline-regen.js`** — 5 correções críticas:
+  1. Widget usa `#offlineRegenSlot` corretamente
+  2. `onSmAumentada` persiste a limpeza do timer
+  3. `_aplicarRegenOffline` persiste a limpeza
+  4. `destroy()` limpa o toast órfão
+  5. Método público `render()` adicionado
+
+---
+
 ## 🗂️ Estrutura de Arquivos
 
+### 📁 Raiz
 | Arquivo | Descrição |
 |---|---|
-| `index.html` | Página inicial com redirecionamento automático baseado em sessão ativa (24h). |
-| `index.js` | Lógica de verificação de sessão e redirecionamento. |
-| `login.html` | Tela de login com validação via RPC `login_usuario` e aplicação de regeneração offline. |
-| `cadastro.html` | Cadastro de novos usuários com fingerprint de dispositivo, MAC e IP (anti-multi-conta). |
-| `confirmar.html` | Confirmação de e-mail após cadastro (integração com Supabase Auth). |
-| `dashboard.html` | Central de jogos — hub principal com status do jogador, nível, stamina, histórico de atividades, modal do Diário, widgets de BTC e saldo. |
-| `codex.html` | Códice de Equipamentos — registro de ativos da bolsa, bônus acumulados e integração em tempo real. |
-| `diario.html` | Sistema de login diário com 30 dias de recompensas, ciclo de cristais e countdown. |
-| `download.html` | Página de downloads (APK Android / ZIP Windows) com status do servidor e changelog. |
-| `eventos.html` | Listagem de eventos, torneios e atualizações com filtros e inscrição. |
-| `noticias.html` | Central de notícias com filtros por categoria e carregamento dinâmico via Supabase. |
-| `suporte.html` | Central de suporte com abertura de tickets, histórico, FAQ e painel administrativo. |
-| `testetet.html` | Visualizador de tickets (somente leitura) da tabela `suporte_tickets`. |
-| `troca.html` | **TrocaSegura** — sistema de negociação entre jogadores com código de liberação de 6 dígitos. |
-| `menu.html` | Componente de menu padronizado reutilizável. |
-| `esqueci-login.html` | Recuperação de login por nome completo. |
-| `esqueci-senha.html` | Redefinição de senha via login (hash SHA-256). |
-| `config.xml` | Configuração do Apache Cordova (app mobile). |
-| `package.json` | Dependências e scripts do Cordova. |
-| `jsconfig.json` | Configuração de JS (vazio). |
+| `index.html` | Página inicial com redirecionamento automático (anti-loop). |
+| `config.js` | ⚠️ **NÃO COMMITAR** — credenciais e constantes globais. |
+| `config.example.js` | Template público para novos devs. |
+| `.gitignore` | Ignora `config.js`, `node_modules/`, `platforms/`, etc. |
+| `manifest.json` | PWA — nome corrigido para "MM Quase Tudo". |
+| `package.json` | Dependências Cordova. |
+| `config.xml` | Config Cordova (Android/iOS). |
+| `jsconfig.json` | Config vazio. |
+| `README.md` | Este documento. |
+
+### 🔐 Autenticação
+| Arquivo | Descrição |
+|---|---|
+| `login.html` | Login via RPC `login_usuario` + regen offline (corrigido). |
+| `cadastro.html` | Cadastro com fingerprint de dispositivo. |
+| `confirmar.html` | Confirmação de e-mail (Supabase Auth). |
+| `esqueci-login.html` | Recuperar login por nome. |
+| `esqueci-senha.html` | Redefinir senha (hash SHA-256). |
+
+### 🏠 Públicas
+| Arquivo | Descrição |
+|---|---|
+| `noticias.html` | Central de notícias (Supabase dinâmico). |
+| `eventos.html` | Listagem de eventos/torneios. |
+| `download.html` | Downloads APK/ZIP + status servidor. |
+| `suporte.html` | Tickets + FAQ + painel admin. |
+| `como-jogar.html` | Guia do jogador (imprimível). |
+
+### 🎮 Área Logada
+| Arquivo | Descrição |
+|---|---|
+| `dashboard.html` | Hub principal (event delegation + S$). |
+| `codex.html` | Códice de equipamentos (sem dup CDN). |
+| `diario.html` | Login diário — 30 dias. |
+| `trocap.html` | TrocaSegura (com fallback NaN). |
+| `saque.html` | 💎 **Carteira** — saque MUMU/USDT com realtime. |
+| `testetet.html` | Visualizador de tickets. |
+
+### 📁 `shared/`
+| Arquivo | Descrição |
+|---|---|
+| `logger.js` | Logger centralizado (DEV vs PROD). |
+| `session.js` | Sessão 24h — `salvarSessao`, `sessaoValida`, `obterUsuario`, `exigirSessao`. |
+| `menu.js` | Componente de menu reutilizável. |
+| `menu.css` | Estilos do menu. |
+| `offline-regen.js` | Classe `OfflineRegen` (5 correções aplicadas). |
+| `offline-regen.css` | Estilos do widget de regeneração. |
+
+### 📁 `dados/admin/`
+| Arquivo | Descrição |
+|---|---|
+| `admin.html` | Painel ADM principal (usa `supabaseDB`). |
+| `adm_cadastro.html` | Cadastros (hash SHA-256). |
+| `adm_suporte.html` | Suporte + Pix. |
+| `adm_pix.html` | Gestão de saques Pix (legado). |
+| `adm_saques.html` | 🆕 **Saques MUMU/USDT** (usa `config.js`). |
+| `admin-bolsa.html` | Admin da Bolsa. |
+| `admin-mercado.html` | Admin do Mercado. |
+| `bolsa_admin.html` | Bolsa — painel detalhado. |
+| `delete.html` | Realtime + Delete de usuários. |
+| `sys.html` | Configurações do sistema. |
+| `cadeado.html` | Sistema de cadeado (conta). |
+
+### 📁 `jogos/`
+18 jogos/minigames, incluindo: `planta`, `bolsa`, `torre`, `minerar`, `faz`, `ninos`, `shagrila`, `ponto`, `papelao`, `loja`, `mercado`, `mochila`, `mumu`, `troca`, `ranking`, `ranking002`, `perfil`.
 
 ---
 
@@ -62,38 +145,50 @@ O projeto é um portal web (também empacotável como app mobile via **Apache Co
 - Login via RPC `login_usuario` (Supabase).
 - Sessão local com expiração de **24 horas** (`localStorage`).
 - Regeneração offline de HP/MP/Stamina ao fazer login (RPC `calcular_regen_offline`).
-- Cadastro com **fingerprint de dispositivo** (Canvas + WebGL + fontes + hardware) para evitar contas duplicadas.
+- Cadastro com **fingerprint de dispositivo** (Canvas + WebGL + fontes + hardware).
+- **Sessão só é salva APÓS regen** — evita estados inconsistentes.
 
 ### 🎮 Central de Jogos
-- Grid de jogos com interceptação de clique para consumo de stamina.
-- **Custo de entrada**: 50% da stamina atual (mínimo 10 SM para jogar).
-- Sistema de **níveis** (1–100+), títulos, EXP, atributos (HP, MP, Stamina, Força, Defesa, Magia).
+- Grid de jogos com **event delegation** (sem acúmulo de listeners).
+- **Custo de entrada**: 50% da stamina atual (mínimo 10 SM).
+- Sistema de **níveis** (1–100+), títulos, EXP, atributos.
 - Regeneração offline: **2 SM/min**, **1 HP/min**, **1 MP/min** (máx. 24h).
-- Log de atividades persistido na tabela `Atividades`.
+- Log de atividades persistido em `Atividades`.
+- **Saldo exibido com símbolo S$**.
+
+### 💎 Carteira (Saque)
+- **`saque.html`** — nova página dedicada.
+- Saque em **MUMU** (S$ 100,00 = M$ 1,00) ou **USDT** (US$ 0,01 = S$ 10.000,00).
+- Integração **tempo real** via Supabase Realtime.
+- Chave MUMU (nick + servidor) ou carteira Solana.
+- Histórico persistido em `historico_saques`.
 
 ### 📖 Codex
 - Registro de ativos da bolsa (Ações, FIIs, ETFs, Tesouro).
 - Bônus por raridade: Comum, Incomum, Raro, Épico, Lendário.
 - Integração em tempo real via **Supabase Realtime**.
-- Progresso geral de itens registrados.
 
 ### 📅 Diário
 - Ciclo de 30 dias com recompensas progressivas.
 - Resgate diário com countdown de 24h.
-- Acúmulo de cristais e itens.
-- Persistência no banco (`diario_dia`, `diario_dias_resgatados`, `diario_ultimo_resgate`).
+- Persistência em `diario_dia`, `diario_dias_resgatados`, `diario_ultimo_resgate`.
 
 ### 🛡️ TrocaSegura
-- Negociação entre jogadores com status: `aguardando_pagamento` → `pagamento_confirmado` → `concluida` / `cancelada`.
-- Código secreto de **6 dígitos** gerado pelo vendedor (hash SHA-256 armazenado).
+- Negociação entre jogadores com status `aguardando_pagamento` → `pagamento_confirmado` → `concluida` / `cancelada`.
+- Código secreto de **6 dígitos** (hash SHA-256).
 - Limite de **5 tentativas** de liberação.
-- Suporte a mochila com extração automática de itens.
+- Fallback numérico no modal (não mostra `NaN`).
+
+### 👑 Painel Admin
+- **`adm_saques.html`** — aprova/recusa saques MUMU/USDT.
+- Realtime — atualiza sozinho.
+- Devolve saldo automaticamente ao recusar.
+- Estatísticas: pendentes, pagos, recusados, total MUMU/USDT.
 
 ### 🎫 Suporte
 - Abertura de tickets com categoria e prioridade.
 - Histórico por login/email.
 - Painel admin com visualização de todos os tickets.
-- FAQ accordion e status do sistema.
 
 ---
 
@@ -118,7 +213,7 @@ O projeto é um portal web (também empacotável como app mobile via **Apache Co
 
 | Tabela | Uso |
 |---|---|
-| `Geral` | Dados dos jogadores (nível, atributos, saldo, BTC, itens, carteira, fazendinha_dados). |
+| `Geral` | Dados dos jogadores (nível, atributos, saldo, BTC, itens, carteira, `pix_pendente`, `historico_saques`, `chave_pix`, `limite_saque`, `offline_regen_start`). |
 | `Atividades` | Histórico de ações dos jogadores. |
 | `Trocas` | Negociações do TrocaSegura. |
 | `suporte_tickets` | Tickets de suporte. |
@@ -130,6 +225,17 @@ O projeto é um portal web (também empacotável como app mobile via **Apache Co
 - `criar_usuario(p_login, p_senha, p_fingerprint, p_mac, p_ip)`
 - `login_usuario(p_login, p_senha)`
 - `calcular_regen_offline(p_login)`
+- `criar_troca(...)` · `confirmar_pagamento_troca(...)` · `validar_codigo_troca(...)` · `cancelar_troca(...)`
+- `deletar_geral(p_id)`
+
+### ⚠️ Campos sensíveis da tabela `Geral`
+| Campo | Uso |
+|---|---|
+| `offline_regen_start` | Timestamp do início da regeneração offline |
+| `pix_pendente` | JSONB com saque pendente |
+| `historico_saques` | Array JSONB de saques (mumu + usdt) |
+| `chave_pix` | JSONB com dados MUMU (`mumu_nick`, `mumu_servidor`) |
+| `meta.solana_wallet` | Endereço Solana (USDT) |
 
 ---
 
@@ -144,89 +250,3 @@ cordova platform add android
 
 # Build
 cordova build android
-
-Plugins utilizados:
-
-cordova-plugin-whitelist
-
-cordova-plugin-inappbrowser
-
-cordova-plugin-statusbar
-
-cordova-plugin-device
-
-🔧 Configuração
-As credenciais do Supabase estão hardcoded nos arquivos HTML (chave anon pública). Para ambientes de produção, recomenda-se:
-
-Rotacionar a chave anon periodicamente.
-
-Configurar RLS (Row Level Security) adequadamente nas tabelas.
-
-Mover chamadas sensíveis para Edge Functions.
-
-Utilizar variáveis de ambiente no build.
-
-📥 Downloads
-Android (APK): gofile.io/d/EAGM9koU
-
-Windows (ZIP): Google Drive
-
-📝 Changelog Resumido
-Versão	Data	Destaques
-1.0.0	30/09/2026	Balanceamento de XP, correções no ranking, eventos de outubro.
-0.9.5	15/09/2026	Sistema de trocas MUMU, novo código de resgate.
-0.9.0	01/09/2026	Lançamento da temporada 2026, sistema de fazendinha.
-⚠️ Avisos de Segurança
-A chave SUPABASE_KEY está exposta no código-fonte (comportamento esperado para anon key, mas exige RLS bem configurado).
-
-Senhas são armazenadas com hash SHA-256 (recomenda-se migrar para bcrypt/argon2 no backend).
-
-Fingerprint e MAC são coletados para anti-fraude — verifique conformidade com LGPD.
-
-👥 Autor
-Equipe MM Quase Tudo
-
-📄 Licença
-Apache-2.0 (conforme package.json do Cordova).
-
-text
-
----
-
-## 🔄 Sincronizar a Versão em Todo o Projeto
-
-Ao lançar uma nova versão, atualize **estes 4 lugares** para manter tudo consistente:
-
-| # | Arquivo | O que alterar |
-|---|---|---|
-| 1 | `package.json` | `"version": "1.0.0"` |
-| 2 | `config.xml` | `<widget ... version="1.0.0">` |
-| 3 | `README.md` | Badge + tabela de versão |
-| 4 | `download.html` | `<span id="versaoTexto">Versão 1.0.0</span>` |
-
-### 💡 Versionamento Semântico (`MAJOR.MINOR.PATCH`)
-
-| Tipo | Quando usar | Exemplo |
-|---|---|---|
-| **MAJOR** | Mudanças incompatíveis | `1.0.0` → `2.0.0` |
-| **MINOR** | Novas funcionalidades | `1.0.0` → `1.1.0` |
-| **PATCH** | Correções de bugs | `1.0.0` → `1.0.1` |
-
-🎯 Ordem Recomendada de Execução
-DIA 1 (Segurança):
-  1. Rodar SQL do RLS
-  2. Rotacionar chave anon
-  3. Aplicar RPC de troca
-
-DIA 2 (Senhas + Refactor):
-  4. Migrar senhas para bcrypt
-  5. Criar shared/session.js e aplicar
-
-DIA 3 (Organização):
-  6. Criar shared/menu.js
-  7. Aplicar menu em todas as páginas
-
-DIA 4 (Polimento):
-  8. Favicon + OG tags
-  9. .gitignore + package.json
-  10. Remover logs

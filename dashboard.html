@@ -1,16 +1,12 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
-<head><!-- 3. No <head>, adicione o CSS do menu (ou importe de menu.css) -->
+<head>
 <link rel="stylesheet" href="./shared/menu.css">
-    <!-- ============================================================ -->
-<!-- SEO / Open Graph / Twitter Card                              -->
-<!-- ============================================================ -->
 <meta name="description" content="MM Quase Tudo — Central de jogos, economia virtual e negociações entre jogadores.">
 <meta name="keywords" content="mm quasetudo, jogos, economia virtual, mmorpg, browser game">
 <meta name="author" content="Equipe MM Quase Tudo">
 <meta name="theme-color" content="#002bad">
 
-<!-- Open Graph (Facebook / Discord / WhatsApp) -->
 <meta property="og:type"        content="website">
 <meta property="og:site_name"   content="MM Quase Tudo">
 <meta property="og:title"       content="MM Quase Tudo — Central de Jogos">
@@ -19,25 +15,21 @@
 <meta property="og:url"         content="https://xoperadorx.github.io/Portal-Bolsa/">
 <meta property="og:locale"      content="pt_BR">
 
-<!-- Twitter Card -->
 <meta name="twitter:card"        content="summary_large_image">
 <meta name="twitter:title"       content="MM Quase Tudo — Central de Jogos">
 <meta name="twitter:description" content="Central de jogos, economia virtual e negociações entre jogadores.">
 <meta name="twitter:image"       content="https://xoperadorx.github.io/Portal-Bolsa/assets/og-image.png">
 
-<!-- Favicon -->
 <link rel="icon"             type="image/png" sizes="32x32" href="./assets/favicon-32.png">
 <link rel="icon"             type="image/png" sizes="16x16" href="./assets/favicon-16.png">
 <link rel="apple-touch-icon" sizes="180x180"               href="./assets/apple-touch-icon.png">
-
-<!-- PWA (opcional) -->
 <link rel="manifest" href="./manifest.json">
+
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover, maximum-scale=5.0">
     <title>Dashboard Central de Jogos MM</title>
 
     <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500;700;900&family=Rajdhani:wght@600;700&display=swap" rel="stylesheet">
-    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
     <link rel="stylesheet" href="./shared/offline-regen.css">
     <link rel="stylesheet" href="./styles/dashboard.css">
@@ -137,7 +129,7 @@ body {
 }
 
 /* ============================================================
-   3. BOTÕES (bolsa, codex, diário, sair)
+   3. BOTÕES
    ============================================================ */
 .btn-bolsa {
   background: linear-gradient(135deg, #00f0ff, #7000ff);
@@ -329,11 +321,21 @@ body {
 }
 
 /* ============================================================
-   6. HEADER DO DASHBOARD
+   6. HEADER DO DASHBOARD  ← ✅ CORRIGIDO: centralização forçada
    ============================================================ */
 .dashboard-header {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
   text-align: center;
+  gap: 6px;
   margin-bottom: 25px;
+  padding: 0 12px;
+  max-width: 1300px;
+  margin-left: auto;
+  margin-right: auto;
+  width: 100%;
 }
 
 .dashboard-header h1 {
@@ -343,12 +345,19 @@ body {
   color: #fff;
   text-transform: uppercase;
   text-shadow: 0 0 10px var(--neon-blue), 0 0 20px var(--neon-purple);
+  line-height: 1.15;
+  margin: 0;
+  width: 100%;
+  text-align: center;
 }
 
 .dashboard-header p {
   color: #8a99ad;
   font-size: 1rem;
-  margin-top: 5px;
+  margin: 0;
+  width: 100%;
+  text-align: center;
+  line-height: 1.4;
 }
 
 /* ============================================================
@@ -1162,7 +1171,7 @@ body {
 }
 
 /* ============================================================
-   17. RESPONSIVIDADE — TABLET (até 900px)
+   17. RESPONSIVIDADE
    ============================================================ */
 @media (max-width: 900px) {
   body {
@@ -1171,219 +1180,71 @@ body {
     padding-bottom: max(14px, env(safe-area-inset-bottom));
   }
 
-  .nav-bar {
-    padding: 10px 16px;
-    gap: 8px;
-  }
+  .nav-bar { padding: 10px 16px; gap: 8px; }
+  .nav-links a { font-size: 1rem; padding: 7px 12px; }
 
-  .nav-links a {
-    font-size: 1rem;
-    padding: 7px 12px;
-  }
+  /* ✅ HEADER — reforço de centralização */
+  .dashboard-header { padding: 0 8px; }
+  .dashboard-header h1 { font-size: 1.8rem; letter-spacing: 1.5px; text-align: center; width: 100%; }
+  .dashboard-header p  { font-size: 0.9rem; text-align: center; width: 100%; }
 
-  .dashboard-header h1 {
-    font-size: 1.8rem;
-    letter-spacing: 1.5px;
-  }
-
-  .dashboard-header p {
-    font-size: 0.9rem;
-  }
-
-  .games-grid {
-    grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
-    gap: 12px;
-  }
-
+  .games-grid { grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); gap: 12px; }
   .game-icon { font-size: 2.4rem; }
   .game-title { font-size: 0.9rem; }
-
   .lw-num { font-size: 1.8rem; }
 }
 
-/* ============================================================
-   18. RESPONSIVIDADE — MOBILE GRANDE (até 700px)
-   ============================================================ */
 @media (max-width: 700px) {
   body {
     padding: 10px;
     padding-top: max(10px, env(safe-area-inset-top));
     padding-bottom: max(10px, env(safe-area-inset-bottom));
-    padding-left: max(10px, env(safe-area-inset-left));
-    padding-right: max(10px, env(safe-area-inset-right));
   }
 
-  /* --- Nav bar: empilha --- */
-  .nav-bar {
-    flex-direction: column;
-    align-items: stretch;
-    padding: 12px;
-    border-radius: 14px;
-    gap: 12px;
-  }
+  .nav-bar { flex-direction: column; align-items: stretch; padding: 12px; border-radius: 14px; gap: 12px; }
+  .nav-links { justify-content: center; }
+  .nav-links a { font-size: 1rem; padding: 10px 16px; flex: 1; justify-content: center; }
 
-  .nav-links {
-    justify-content: center;
-  }
-
-  .nav-links a {
-    font-size: 1rem;
-    padding: 10px 16px;
-    flex: 1;
-    justify-content: center;
-  }
-
-  /* --- Perfil + BTC largura total --- */
-  .user-profile {
-    width: 100%;
-    justify-content: center;
-    padding: 8px 14px;
-    border-radius: 12px;
-  }
-
-  .user-avatar {
-    width: 40px;
-    height: 40px;
-    font-size: 1.3rem;
-  }
-
+  .user-profile { width: 100%; justify-content: center; padding: 8px 14px; border-radius: 12px; }
+  .user-avatar { width: 40px; height: 40px; font-size: 1.3rem; }
   .user-nick { font-size: 0.95rem; }
   .saldo { font-size: 0.85rem; }
 
-  .btc-widget {
-    width: 100%;
-    margin-right: 0;
-    justify-content: center;
-    padding: 10px 14px;
-    border-radius: 12px;
-  }
-
+  .btc-widget { width: 100%; margin-right: 0; justify-content: center; padding: 10px 14px; border-radius: 12px; }
   .btc-icon { font-size: 22px; }
   .btc-value { font-size: 14px; }
   .btc-label { font-size: 8px; }
 
-  /* --- Botões: grid 2 colunas --- */
-  .nav-buttons {
-    display: grid;
-    grid-template-columns: repeat(2, 1fr);
-    gap: 8px;
-    width: 100%;
-  }
+  .nav-buttons { display: grid; grid-template-columns: repeat(2, 1fr); gap: 8px; width: 100%; }
+  .btn-bolsa, .btn-sair { width: 100%; justify-content: center; padding: 12px 10px; font-size: 0.85rem; min-height: 44px; border-radius: 12px; text-align: center; }
+  #btnAbrirDiario, #btnSair, #btnAdmin.visivel { grid-column: span 2; }
 
-  .btn-bolsa,
-  .btn-sair {
-    width: 100%;
-    justify-content: center;
-    padding: 12px 10px;
-    font-size: 0.85rem;
-    min-height: 44px;
-    border-radius: 12px;
-    text-align: center;
-  }
+  /* ✅ HEADER — centralização mobile */
+  .dashboard-header { margin-bottom: 18px; padding: 0 8px; }
+  .dashboard-header h1 { font-size: 1.5rem; letter-spacing: 1px; line-height: 1.25; text-align: center; }
+  .dashboard-header p  { font-size: 0.85rem; text-align: center; }
 
-  #btnAbrirDiario,
-  #btnSair,
-  #btnAdmin.visivel {
-    grid-column: span 2;
-  }
+  .status-bar { font-size: 0.68rem; padding: 6px 10px; gap: 6px; flex-direction: column; align-items: stretch; border-radius: 12px; }
+  .status-item { justify-content: center; padding: 4px 0; }
+  .status-item[style*="margin-left:auto"] { margin-left: 0 !important; }
 
-  /* --- Header --- */
-  .dashboard-header {
-    margin-bottom: 18px;
-  }
-
-  .dashboard-header h1 {
-    font-size: 1.5rem;
-    letter-spacing: 1px;
-    line-height: 1.25;
-  }
-
-  .dashboard-header p {
-    font-size: 0.85rem;
-  }
-
-  /* --- Status bar --- */
-  .status-bar {
-    font-size: 0.68rem;
-    padding: 6px 10px;
-    gap: 6px;
-    flex-direction: column;
-    align-items: stretch;
-    border-radius: 12px;
-  }
-
-  .status-item {
-    justify-content: center;
-    padding: 4px 0;
-  }
-
-  .status-item[style*="margin-left:auto"] {
-    margin-left: 0 !important;
-  }
-
-  /* --- Level widget --- */
-  .level-widget {
-    padding: 12px 14px;
-    border-radius: 14px;
-  }
-
-  .lw-header {
-    flex-direction: column;
-    align-items: stretch;
-    gap: 10px;
-  }
-
-  .lw-badge {
-    justify-content: center;
-  }
-
+  .level-widget { padding: 12px 14px; border-radius: 14px; }
+  .lw-header { flex-direction: column; align-items: stretch; gap: 10px; }
+  .lw-badge { justify-content: center; }
   .lw-num { font-size: 1.7rem; }
   .lw-title { font-size: 0.85rem; }
   .lw-exp { width: 100%; }
   .lw-text { font-size: 0.7rem; }
+  .lw-stats { justify-content: center; gap: 6px; }
+  .lw-stats span { font-size: 0.68rem; padding: 3px 10px; }
 
-  .lw-stats {
-    justify-content: center;
-    gap: 6px;
-  }
-
-  .lw-stats span {
-    font-size: 0.68rem;
-    padding: 3px 10px;
-  }
-
-  /* --- Grid de jogos --- */
-  .games-grid {
-    grid-template-columns: repeat(2, 1fr);
-    gap: 10px;
-  }
-
-  .game-card {
-    padding: 14px 10px;
-    border-radius: 14px;
-    min-height: 120px;
-  }
-
-  .game-icon {
-    font-size: 2.2rem;
-    margin-bottom: 8px;
-  }
-
+  .games-grid { grid-template-columns: repeat(2, 1fr); gap: 10px; }
+  .game-card { padding: 14px 10px; border-radius: 14px; min-height: 120px; }
+  .game-icon { font-size: 2.2rem; margin-bottom: 8px; }
   .game-title { font-size: 0.78rem; }
+  .game-badge { font-size: 0.5rem; padding: 2px 6px; top: 6px; right: 6px; }
+  .game-card.bloqueado::after { font-size: 0.6rem; padding: 5px 10px; }
 
-  .game-badge {
-    font-size: 0.5rem;
-    padding: 2px 6px;
-    top: 6px;
-    right: 6px;
-  }
-
-  .game-card.bloqueado::after {
-    font-size: 0.6rem;
-    padding: 5px 10px;
-  }
-
-  /* --- Loading --- */
   .loading-icon { font-size: 3rem; }
   .loading-text { font-size: 1.2rem; }
   .loading-sub  { font-size: 0.85rem; }
@@ -1391,296 +1252,107 @@ body {
   .loading-progress-bar { width: 240px; }
   .loading-spinner { width: 48px; height: 48px; }
 
-  /* --- Toast --- */
-  #levelToast {
-    bottom: 16px;
-    padding: 10px 16px;
-    font-size: 0.8rem;
-    max-width: calc(100vw - 32px);
-    border-radius: 10px;
-  }
+  #levelToast { bottom: 16px; padding: 10px 16px; font-size: 0.8rem; max-width: calc(100vw - 32px); border-radius: 10px; }
 
-  /* --- Regen --- */
-  .stamina-regen-container {
-    padding: 12px 14px;
-    border-radius: 12px;
-    margin: 14px auto;
-  }
-
+  .stamina-regen-container { padding: 12px 14px; border-radius: 12px; margin: 14px auto; }
   .regen-titulo { font-size: 0.8rem; }
   .regen-tempo  { font-size: 0.9rem; padding: 3px 10px; }
   .regen-barra-wrapper { height: 14px; }
   .regen-info   { font-size: 0.72rem; }
   .regen-aviso  { font-size: 0.72rem; }
 
-  /* --- Activity log --- */
-  .activity-log {
-    padding: 12px 14px;
-    border-radius: 14px;
-    margin-top: 14px;
-  }
-
+  .activity-log { padding: 12px 14px; border-radius: 14px; margin-top: 14px; }
   .log-list { font-size: 0.72rem; max-height: 120px; }
   .log-time { font-size: 0.6rem; }
 
-  /* --- Modal Diário --- */
-  .diario-modal-overlay {
-    padding: 8px;
-    padding-top: max(8px, env(safe-area-inset-top));
-    padding-bottom: max(8px, env(safe-area-inset-bottom));
-  }
-
-  .diario-modal {
-    max-height: calc(100dvh - 16px);
-    border-radius: 12px;
-    max-width: 100%;
-  }
-
-  .diario-modal-header {
-    padding: 10px 12px;
-    gap: 8px;
-  }
-
-  .diario-modal-icon {
-    padding: 6px 9px;
-    font-size: 16px;
-  }
-
+  .diario-modal-overlay { padding: 8px; padding-top: max(8px, env(safe-area-inset-top)); padding-bottom: max(8px, env(safe-area-inset-bottom)); }
+  .diario-modal { max-height: calc(100dvh - 16px); border-radius: 12px; max-width: 100%; }
+  .diario-modal-header { padding: 10px 12px; gap: 8px; }
+  .diario-modal-icon { padding: 6px 9px; font-size: 16px; }
   .diario-modal-main { font-size: 0.9rem; letter-spacing: 1.2px; }
   .diario-modal-sub  { font-size: 0.6rem; }
-
-  .diario-modal-close {
-    width: 34px;
-    height: 34px;
-    font-size: 0.95rem;
-  }
-
-  .diario-modal-body {
-    height: calc(100dvh - 100px);
-    min-height: 320px;
-  }
-
-  .diario-modal-body iframe {
-    min-height: 320px;
-  }
+  .diario-modal-close { width: 34px; height: 34px; font-size: 0.95rem; }
+  .diario-modal-body { height: calc(100dvh - 100px); min-height: 320px; }
+  .diario-modal-body iframe { min-height: 320px; }
 }
 
-/* ============================================================
-   19. RESPONSIVIDADE — MOBILE PEQUENO (até 480px)
-   ============================================================ */
 @media (max-width: 480px) {
-  body {
-    padding: 8px;
-    padding-top: max(8px, env(safe-area-inset-top));
-    padding-bottom: max(8px, env(safe-area-inset-bottom));
-  }
-
-  .nav-bar {
-    padding: 10px;
-    border-radius: 12px;
-    gap: 10px;
-  }
-
-  .nav-links a {
-    font-size: 0.9rem;
-    padding: 9px 12px;
-  }
-
-  .user-profile {
-    padding: 6px 12px;
-    gap: 8px;
-  }
-
-  .user-avatar {
-    width: 34px;
-    height: 34px;
-    font-size: 1.1rem;
-  }
-
+  body { padding: 8px; padding-top: max(8px, env(safe-area-inset-top)); padding-bottom: max(8px, env(safe-area-inset-bottom)); }
+  .nav-bar { padding: 10px; border-radius: 12px; gap: 10px; }
+  .nav-links a { font-size: 0.9rem; padding: 9px 12px; }
+  .user-profile { padding: 6px 12px; gap: 8px; }
+  .user-avatar { width: 34px; height: 34px; font-size: 1.1rem; }
   .user-nick { font-size: 0.85rem; }
   .saldo { font-size: 0.75rem; }
-
-  .btc-widget {
-    padding: 8px 12px;
-    gap: 6px;
-  }
-
+  .btc-widget { padding: 8px 12px; gap: 6px; }
   .btc-icon { font-size: 18px; }
   .btc-value { font-size: 12px; }
   .btc-label { font-size: 7px; }
+  .nav-buttons { grid-template-columns: 1fr 1fr; gap: 6px; }
+  .btn-bolsa, .btn-sair { font-size: 0.78rem; padding: 10px 8px; min-height: 42px; gap: 4px; }
 
-  .nav-buttons {
-    grid-template-columns: 1fr 1fr;
-    gap: 6px;
-  }
+  /* ✅ HEADER — centralização mobile pequeno */
+  .dashboard-header { padding: 0 4px; }
+  .dashboard-header h1 { font-size: 1.25rem; letter-spacing: 0.5px; text-align: center; }
+  .dashboard-header p  { font-size: 0.78rem; text-align: center; }
 
-  .btn-bolsa,
-  .btn-sair {
-    font-size: 0.78rem;
-    padding: 10px 8px;
-    min-height: 42px;
-    gap: 4px;
-  }
-
-  .dashboard-header h1 {
-    font-size: 1.25rem;
-    letter-spacing: 0.5px;
-  }
-
-  .dashboard-header p {
-    font-size: 0.78rem;
-  }
-
-  .games-grid {
-    grid-template-columns: repeat(2, 1fr);
-    gap: 8px;
-  }
-
-  .game-card {
-    padding: 10px 8px;
-    min-height: 105px;
-    border-radius: 12px;
-  }
-
+  .games-grid { grid-template-columns: repeat(2, 1fr); gap: 8px; }
+  .game-card { padding: 10px 8px; min-height: 105px; border-radius: 12px; }
   .game-icon { font-size: 1.8rem; margin-bottom: 6px; }
   .game-title { font-size: 0.68rem; letter-spacing: 0.5px; }
   .game-badge { font-size: 0.45rem; padding: 1px 5px; }
-
-  .game-card.bloqueado::after {
-    font-size: 0.55rem;
-    padding: 4px 8px;
-    letter-spacing: 0.8px;
-  }
-
+  .game-card.bloqueado::after { font-size: 0.55rem; padding: 4px 8px; letter-spacing: 0.8px; }
   .lw-num { font-size: 1.5rem; }
   .lw-title { font-size: 0.78rem; }
   .lw-stats span { font-size: 0.62rem; padding: 2px 8px; }
-
-  .status-bar {
-    font-size: 0.62rem;
-    padding: 4px 8px;
-  }
-
+  .status-bar { font-size: 0.62rem; padding: 4px 8px; }
   .loading-icon { font-size: 2.5rem; }
   .loading-text { font-size: 1.05rem; }
   .loading-sub  { font-size: 0.78rem; }
   .loading-stamina { font-size: 0.9rem; }
   .loading-progress-bar { width: 200px; }
   .loading-spinner { width: 42px; height: 42px; border-width: 3px; }
-
-  #levelToast {
-    padding: 8px 12px;
-    font-size: 0.75rem;
-    bottom: 12px;
-    border-radius: 8px;
-  }
-
+  #levelToast { padding: 8px 12px; font-size: 0.75rem; bottom: 12px; border-radius: 8px; }
   .diario-modal-main { font-size: 0.8rem; }
   .diario-modal-sub  { font-size: 0.55rem; }
   .diario-modal-icon { padding: 5px 8px; font-size: 14px; }
   .diario-modal-close { width: 30px; height: 30px; font-size: 0.85rem; }
-  .diario-modal-body {
-    height: calc(100dvh - 90px);
-    min-height: 260px;
-  }
-  .diario-modal-body iframe {
-    min-height: 260px;
-  }
+  .diario-modal-body { height: calc(100dvh - 90px); min-height: 260px; }
+  .diario-modal-body iframe { min-height: 260px; }
 }
 
-/* ============================================================
-   20. RESPONSIVIDADE — MOBILE MUITO PEQUENO (até 360px)
-   ============================================================ */
 @media (max-width: 360px) {
-  .nav-buttons {
-    grid-template-columns: 1fr;
-  }
-
-  .btn-bolsa,
-  .btn-sair {
-    font-size: 0.82rem;
-    min-height: 44px;
-  }
-
-  #btnAbrirDiario,
-  #btnSair,
-  #btnAdmin.visivel {
-    grid-column: span 1;
-  }
-
+  .nav-buttons { grid-template-columns: 1fr; }
+  .btn-bolsa, .btn-sair { font-size: 0.82rem; min-height: 44px; }
+  #btnAbrirDiario, #btnSair, #btnAdmin.visivel { grid-column: span 1; }
   .game-title { font-size: 0.62rem; }
   .game-icon { font-size: 1.6rem; }
 
-  .dashboard-header h1 { font-size: 1.1rem; }
+  /* ✅ HEADER — mobile ultra pequeno */
+  .dashboard-header h1 { font-size: 1.1rem; text-align: center; }
+  .dashboard-header p  { text-align: center; }
 }
 
-/* ============================================================
-   21. ORIENTAÇÃO PAISAGEM EM CELULAR
-   ============================================================ */
 @media (max-width: 900px) and (orientation: landscape) {
-  .games-grid {
-    grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
-  }
-
-  .game-card {
-    min-height: 90px;
-    padding: 10px 8px;
-  }
-
+  .games-grid { grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); }
+  .game-card { min-height: 90px; padding: 10px 8px; }
   .game-icon { font-size: 1.8rem; }
-
-  .diario-modal-body {
-    height: calc(100vh - 90px);
-  }
+  .diario-modal-body { height: calc(100vh - 90px); }
 }
 
-/* ============================================================
-   22. AJUSTE GLOBAL PARA TOQUE
-   ============================================================ */
 @media (hover: none) and (pointer: coarse) {
-  .game-card:hover {
-    transform: none;
-  }
-
-  .game-card:hover::before {
-    left: -100%;
-  }
-
-  .game-card:hover .game-icon {
-    transform: none;
-  }
-
-  .btn-bolsa:hover,
-  .btn-sair:hover,
-  .btc-widget:hover,
-  .user-profile:hover {
-    transform: none;
-  }
-
-  .game-card:active {
-    transform: scale(0.97);
-    background: #181d2e;
-  }
-
-  .btn-bolsa:active,
-  .btn-sair:active {
-    transform: scale(0.95);
-    filter: brightness(1.15);
-  }
+  .game-card:hover { transform: none; }
+  .game-card:hover::before { left: -100%; }
+  .game-card:hover .game-icon { transform: none; }
+  .btn-bolsa:hover, .btn-sair:hover, .btc-widget:hover, .user-profile:hover { transform: none; }
+  .game-card:active { transform: scale(0.97); background: #181d2e; }
+  .btn-bolsa:active, .btn-sair:active { transform: scale(0.95); filter: brightness(1.15); }
 }
 
-/* ============================================================
-   23. FALLBACK dvh (navegadores antigos)
-   ============================================================ */
 @supports not (height: 100dvh) {
   @media (max-width: 700px) {
-    .diario-modal {
-      max-height: 95vh;
-    }
-
-    .diario-modal-body {
-      height: calc(95vh - 100px);
-    }
+    .diario-modal { max-height: 95vh; }
+    .diario-modal-body { height: calc(95vh - 100px); }
   }
 }
 </style>
@@ -1724,7 +1396,7 @@ body {
             <div class="user-avatar" id="userAvatar">👤</div>
             <div class="user-info">
                 <span class="user-nick" id="userNick">Carregando...</span>
-                <span class="saldo" id="saldo">R$ 0,00</span>
+                <span class="saldo" id="saldo">S$ 0,00</span>
             </div>
         </div>
 
@@ -1737,30 +1409,27 @@ body {
         </div>
 
         <div class="nav-buttons">
+            <a href="./jogos/loja/loja.html"  class="btn-bolsa" style="background: linear-gradient(135deg, #f59e0b, #d97706);">🛒 Loja</a>
+            <button type="button" class="btn-bolsa btn-diario" id="btnAbrirDiario">📅 DIÁRIO</button>
+            <a href="./codex.html" class="btn-bolsa btn-codex">📖 CODEX</a>
+            <a href="./player.html" class="btn-bolsa btn-codex">👶 Player</a>
+            <a href="./jogos/mercado/mercado.html" class="btn-bolsa" style="background: linear-gradient(135deg, #f59e0b, #d97706);">💰 Mercado</a>
+            <a href="./jogos/mochila/mochila.html" class="btn-bolsa" style="background: linear-gradient(135deg, #8b5cf6, #7000ff);">🎒 Mochila</a>
+            <a href="./jogos/mumu/mumu.html" class="btn-bolsa" style="background: linear-gradient(135deg, #8b5cf6, #7000ff);">💰 Troca MUMU</a>
+            <a href="./jogos/troca/troca.html" class="btn-bolsa" style="background: linear-gradient(135deg, #8b5cf6, #7000ff);">💰 Troca BTC</a>
+            <a href="./jogos/ranking/ranking.html" class="btn-bolsa" style="background: linear-gradient(135deg, #8b5cf6, #7000ff);">🏆 Classificações</a>
+            <a href="./jogos/perfil/perfil.html" class="btn-bolsa" style="background: linear-gradient(135deg, #8b5cf6, #7000ff);">🏆 Perfil</a>
 
-    <!-- 🛒 BOTÃO LOJA -->
-    <a href="./jogos/loja/loja.html"  class="btn-bolsa" style="background: linear-gradient(135deg, #f59e0b, #d97706);">🛒 Loja</a>
-    <!-- 📅 BOTÃO DIÁRIO -->
-    <button type="button" class="btn-bolsa btn-diario" id="btnAbrirDiario">📅 DIÁRIO</button>
-    <!-- 👑 BOTÃO CODEX -->
-    <a href="./codex.html" class="btn-bolsa btn-codex">📖 CODEX</a>
-    <a href="./jogos/mercado/mercado.html" class="btn-bolsa" style="background: linear-gradient(135deg, #f59e0b, #d97706);">💰 Mercado</a>
-    <a href="./jogos/mochila/mochila.html" class="btn-bolsa" style="background: linear-gradient(135deg, #8b5cf6, #7000ff);">🎒 Mochila</a>
-    <a href="./jogos/mumu/mumu.html" class="btn-bolsa" style="background: linear-gradient(135deg, #8b5cf6, #7000ff);">💰 Troca MUMU</a>
-    <a href="./jogos/troca/troca.html" class="btn-bolsa" style="background: linear-gradient(135deg, #8b5cf6, #7000ff);">💰 Troca BTC</a>
-    <a href="./jogos/ranking/ranking.html" class="btn-bolsa" style="background: linear-gradient(135deg, #8b5cf6, #7000ff);">🏆 Classificações</a>
-    <a href="./jogos/perfil/perfil.html" class="btn-bolsa" style="background: linear-gradient(135deg, #8b5cf6, #7000ff);">🏆 Perfil</a>
-    <button class="btn-sair" id="btnSair">🚪 Sair</button>
+            <a href="./saque.html" class="btn-bolsa" style="background: linear-gradient(135deg, #a855f7, #7c3aed);">💎 Carteira</a>
 
-    <a href="./dados/admin/admin.html" id="btnAdmin" class="btn-bolsa"
-       style="display:none; background: linear-gradient(135deg, #7000ff, #8b5cf6);">
-       👑 Admin
-    </a>
-</div>
+            <button class="btn-sair" id="btnSair">🚪 Sair</button>
+
+            <a href="./dados/admin/admin.html" id="btnAdmin" class="btn-bolsa"
+               style="display:none; background: linear-gradient(135deg, #7000ff, #8b5cf6);">
+               👑 Admin
+            </a>
+        </div>
     </nav>
-
-
-
 
     <div class="level-widget" id="levelWidget">
         <div class="lw-header">
@@ -1831,7 +1500,6 @@ body {
             <div class="game-icon">🎯</div>
             <div class="game-title">Pontinhos</div>
         </a>
-
         <a href="./jogos/papelao/papelao.html" class="game-card" data-game="papelao" data-game-name="Papelão">
             <span class="game-badge">📄 Demo Bugado </span>
             <div class="game-icon">📄</div>
@@ -1851,9 +1519,6 @@ body {
 
     <div id="levelToast"></div>
 
-    <!-- ============================================================
-         MODAL FLUTUANTE DO DIÁRIO
-         ============================================================ -->
     <div class="diario-modal-overlay" id="diarioModalOverlay">
         <div class="diario-modal">
             <div class="diario-modal-header">
@@ -1879,6 +1544,9 @@ body {
         </div>
     </div>
 
+    <!-- ============================================================
+         IMPORTMAP — Supabase via ESM
+    ============================================================ -->
     <script type="importmap">
     {
       "imports": {
@@ -1887,24 +1555,29 @@ body {
     }
     </script>
 
+    <!-- ============================================================
+         SCRIPT PRINCIPAL — importa tudo do config.js
+    ============================================================ -->
     <script type="module">
-        import { OfflineRegen, REGEN_CONFIG } from './shared/offline-regen.js';
+        import { OfflineRegen } from './shared/offline-regen.js';
+        import {
+            db as supabase,
+            TABELA,
+            TABELA_ATIVIDADES,
+            SIMB
+        } from './config.js';
 
-        const SUPABASE_URL = 'https://xrcxvizzdumcxbylmkvn.supabase.co';
-        const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InhyY3h2aXp6ZHVtY3hieWxta3ZuIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODY2NjA0NzIsImV4cCI6MjEwMjIzNjQ3Mn0.ohB4tW0UQ-k1PcwoZxm4u9XSGNLsFphv1_UwTWoklOM';
-        const TABELA = 'Geral';
-        const TABELA_ATIVIDADES = 'Atividades';
-
-        const SESSION_DURATION = 24 * 60 * 60 * 1000;
-        const SESSION_KEY = 'usuario_logado';
+        /* ============================================================
+           CONFIG LOCAL
+        ============================================================ */
+        const SESSION_DURATION      = 24 * 60 * 60 * 1000;
+        const SESSION_KEY           = 'usuario_logado';
         const SESSION_TIMESTAMP_KEY = 'session_timestamp';
 
         function limparSessao() {
             localStorage.removeItem(SESSION_KEY);
             localStorage.removeItem(SESSION_TIMESTAMP_KEY);
         }
-
-        const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
         const REGEN_CFG = {
             SM_MINIMA_JOGO: 10,
@@ -1964,6 +1637,7 @@ body {
                 this._processandoJogo = false;
                 this.ultimaVezOnline = Date.now();
                 this.offlineRegen = null;
+                this._gridClickHandler = null;
 
                 this.atualizarUI = this.atualizarUI.bind(this);
                 this.addLog = this.addLog.bind(this);
@@ -2099,10 +1773,14 @@ body {
             async gastarStaminaParaJogar(event) {
                 event.preventDefault();
                 event.stopPropagation();
-                const link = event.currentTarget;
+
+                const link = event.target.closest('.game-card');
+                if (!link) { this._processandoJogo = false; return; }
+
                 const gameName = link.getAttribute('data-game-name') || link.getAttribute('data-game') || 'Jogo';
                 const gameIcon = link.querySelector('.game-icon')?.textContent || '🎮';
                 const href = link.getAttribute('href') || '#';
+
                 if (this._processandoJogo) return;
                 this._processandoJogo = true;
 
@@ -2300,7 +1978,16 @@ body {
                 if ($('lwAtk')) $('lwAtk').textContent = this.getAtaque();
                 if ($('lwDef')) $('lwDef').textContent = this.getDefesa();
                 if ($('lwMag')) $('lwMag').textContent = this.getMagia();
-                if ($('saldo')) $('saldo').textContent = new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(this.saldo || 0);
+
+                /* ✅ Saldo com símbolo S$ */
+                if ($('saldo')) {
+                    const saldoFmt = new Intl.NumberFormat('pt-BR', {
+                        minimumFractionDigits: 2,
+                        maximumFractionDigits: 2
+                    }).format(this.saldo || 0);
+                    $('saldo').textContent = `${SIMB.saldo} ${saldoFmt}`;
+                }
+
                 if ($('btcTotal')) $('btcTotal').textContent = (this.btc || 0).toFixed(8);
                 if ($('userAvatar') && this.usuario) $('userAvatar').textContent = this.usuario.login ? this.usuario.login.charAt(0).toUpperCase() : '👤';
                 const nick = $('userNick');
@@ -2333,13 +2020,22 @@ body {
             }
 
             configurarEventosDosJogos() {
-                document.querySelectorAll('.game-card').forEach(card => {
-                    // Clona para remover listeners antigos
-                    const novo = card.cloneNode(true);
-                    card.parentNode.replaceChild(novo, card);
-                    // Único listener - SEM dupla interceptação
-                    novo.addEventListener('click', this.gastarStaminaParaJogar);
-                });
+                const grid = document.getElementById('gamesGrid');
+                if (!grid) return;
+
+                if (this._gridClickHandler) {
+                    grid.removeEventListener('click', this._gridClickHandler);
+                }
+
+                this._gridClickHandler = (e) => {
+                    const card = e.target.closest('.game-card');
+                    if (!card) return;
+                    e.preventDefault();
+                    e.stopPropagation();
+                    this.gastarStaminaParaJogar(e);
+                };
+
+                grid.addEventListener('click', this._gridClickHandler);
             }
 
             async loadUserData() {
@@ -2369,17 +2065,14 @@ body {
                 const avatar = document.getElementById('userAvatar');
                 const headerUser = document.getElementById('headerUser');
                 if (nick) nick.textContent = 'Visitante';
-                if (saldo) saldo.textContent = 'R$ 0,00';
+                if (saldo) saldo.textContent = `${SIMB.saldo} 0,00`;
                 if (avatar) avatar.textContent = '👤';
                 if (headerUser) headerUser.textContent = 'Visitante';
             }
         }
 
-        // ============================================================
-        // ✅ CORREÇÃO PRINCIPAL: expor a instância globalmente
-        // ============================================================
         const levelSystem = new LevelSystem();
-        window.levelSystem = levelSystem;  // ⬅️ ESSENCIAL para sincronizarRegenState e interceptações
+        window.levelSystem = levelSystem;
         let saveInterval = null;
 
         function iniciarSalvamentoAutomatico() {
@@ -2456,17 +2149,17 @@ body {
 
         document.addEventListener('DOMContentLoaded', async function() {
             console.log('🚀 Dashboard carregado!');
+            console.log('🎨 Símbolos:', SIMB);
+
             if (!(await verificarSessao())) return;
             levelSystem.verificarConexao();
 
             setTimeout(async () => {
                 await levelSystem.loadUserData();
                 setTimeout(async () => {
-                    // ✅ AGORA SÓ EXISTE UM SISTEMA DE INTERCEPTAÇÃO
                     levelSystem.configurarEventosDosJogos();
                     iniciarContadorRegen();
                     sincronizarRegenState();
-                    // ❌ REMOVIDO: interceptarCliquesJogos() (era a causa da dupla interceptação)
                 }, 500);
             }, 300);
 
@@ -2511,9 +2204,6 @@ body {
             });
         });
 
-        // ============================================================
-        // 📅 MODAL FLUTUANTE DO DIÁRIO
-        // ============================================================
         (function configurarModalDiario() {
             const btnAbrir = document.getElementById('btnAbrirDiario');
             const overlay = document.getElementById('diarioModalOverlay');
@@ -2591,21 +2281,5 @@ body {
             console.log('📅 Modal do Diário configurado!');
         })();
     </script>
-    <script type="module">
-import {
-  salvarSessao,
-  sessaoValida,
-  obterUsuario,
-  limparSessao,
-  exigirSessao
-} from './shared/session.js';
-
-// Verifica antes de tudo
-const usuario = exigirSessao('login.html');
-if (!usuario) throw new Error('Sessão inválida');
-
-// Agora use normalmente
-console.log('Logado como:', usuario.login);
-</script>
 </body>
 </html>

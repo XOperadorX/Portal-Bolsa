@@ -1,19 +1,15 @@
-
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="theme-color" content="#002bad">
-
     <title>MM Quase Tudo</title>
 
-    <!-- SEO -->
     <meta name="description" content="MM Quase Tudo — Central de jogos, economia virtual e negociações entre jogadores.">
     <meta name="keywords" content="mm quasetudo, jogos, economia virtual, mmorpg, browser game">
     <meta name="author" content="Equipe MM Quase Tudo">
 
-    <!-- Open Graph -->
     <meta property="og:type"        content="website">
     <meta property="og:site_name"   content="MM Quase Tudo">
     <meta property="og:title"       content="MM Quase Tudo — Central de Jogos">
@@ -22,21 +18,10 @@
     <meta property="og:url"         content="https://xoperadorx.github.io/Portal-Bolsa/">
     <meta property="og:locale"      content="pt_BR">
 
-    <!-- Twitter Card -->
     <meta name="twitter:card"        content="summary_large_image">
     <meta name="twitter:title"       content="MM Quase Tudo — Central de Jogos">
     <meta name="twitter:description" content="Central de jogos, economia virtual e negociações entre jogadores.">
     <meta name="twitter:image"       content="https://xoperadorx.github.io/Portal-Bolsa/assets/og-image.png">
-
-    <!-- Favicon (descomente se os arquivos existirem) -->
-    <!--
-    <link rel="icon"             type="image/png" sizes="32x32" href="./assets/favicon-32.png">
-    <link rel="icon"             type="image/png" sizes="16x16" href="./assets/favicon-16.png">
-    <link rel="apple-touch-icon" sizes="180x180"               href="./assets/apple-touch-icon.png">
-    -->
-
-    <!-- PWA (descomente se manifest.json existir) -->
-    <!-- <link rel="manifest" href="./manifest.json"> -->
 
     <style>
         * {
@@ -121,9 +106,9 @@
         <p id="loadingMsg">Carregando...</p>
     </div>
 
-    <script type="module">
+    <script>
         // ══════════════════════════════════════════════════════════════
-        // CONFIGURAÇÃO DE SESSÃO (inline — não depende de arquivo externo)
+        // CONFIGURAÇÃO DE SESSÃO
         // ══════════════════════════════════════════════════════════════
         const SESSION_KEY           = 'usuario_logado';
         const SESSION_TIMESTAMP_KEY = 'session_timestamp';
@@ -142,7 +127,7 @@
                 const u  = localStorage.getItem(SESSION_KEY);
                 if (!ts || !u) return false;
                 const t = parseInt(ts, 10);
-                if (isNaN(t)) return false;
+                if (isNaN(t) || t <= 0) return false;
                 return (Date.now() - t) < SESSION_DURATION;
             } catch (e) {
                 return false;
@@ -161,11 +146,10 @@
 
         // ══════════════════════════════════════════════════════════════
         // 🛡️ PROTEÇÃO ANTI-LOOP
-        // Detecta se a página foi recarregada 3+ vezes em 5 segundos.
         // ══════════════════════════════════════════════════════════════
-        const LOOP_KEY   = 'index_loop_count';
+        const LOOP_KEY    = 'index_loop_count';
         const LOOP_TS_KEY = 'index_loop_timestamp';
-        const LOOP_LIMIT = 3;
+        const LOOP_LIMIT  = 3;
         const LOOP_WINDOW = 5000;
 
         function verificarLoop() {
@@ -190,13 +174,13 @@
         }
 
         // ══════════════════════════════════════════════════════════════
-        // FLUXO PRINCIPAL DE REDIRECIONAMENTO
+        // FLUXO PRINCIPAL
         // ══════════════════════════════════════════════════════════════
         const msg     = document.getElementById('loadingMsg');
         const spinner = document.getElementById('spinner');
 
         if (verificarLoop()) {
-            // 🚨 Loop detectado — para tudo e limpa
+            // 🚨 Loop detectado — limpa tudo e vai para noticias
             limparLoop();
             limparSessao();
 
@@ -205,7 +189,7 @@
                 <div class="erro-box">
                     ⚠️ <strong>Erro de redirecionamento detectado.</strong><br>
                     A sessão foi limpa para evitar loop.<br><br>
-                    <a href="./login.html">→ Ir para o login</a>
+                    <a href="./noticias.html">→ Ir para a página inicial</a>
                 </div>
             `;
             console.error('[index] Loop de redirecionamento detectado — sessão limpa.');
@@ -216,20 +200,19 @@
             if (user && user.login) {
                 msg.textContent = `Bem-vindo, ${user.nome || user.login}!`;
                 limparLoop();
-                // Usa replace() para não poluir o histórico do navegador
                 window.location.replace('dashboard.html');
             } else {
-                // Sessão existe mas está corrompida
+                // Sessão corrompida → limpa e vai para noticias (NÃO login)
                 limparSessao();
                 msg.textContent = 'Sessão corrompida. Redirecionando...';
                 setTimeout(() => {
-                    window.location.replace('login.html');
+                    window.location.replace('./noticias.html');
                 }, 500);
             }
 
         } else {
-            // ❌ Sem sessão válida → vai para página PÚBLICA
-            // (não vai para login.html para evitar possível loop)
+            // ❌ Sem sessão válida → página PÚBLICA
+            // ✅ NÃO vai para login.html (evita loop)
             limparSessao();
             msg.textContent = 'Redirecionando...';
             setTimeout(() => {

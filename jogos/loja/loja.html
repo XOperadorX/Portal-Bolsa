@@ -1,8 +1,6 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-    <!-- 3. No <head>, adicione o CSS do menu (ou importe de menu.css) -->
-<link rel="stylesheet" href="./shared/menu.css">
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Loja | MM Quase Tudo</title>
@@ -12,9 +10,6 @@
 
     <!-- Fonts -->
     <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500;700;900&family=Rajdhani:wght@600;700&display=swap" rel="stylesheet">
-
-    <!-- Supabase -->
-    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
     <style>
         /* ==================== RESET E BASE ==================== */
@@ -102,61 +97,6 @@
 
         .btn-bolsa:hover { transform: translateY(-2px) scale(1.02); box-shadow: 0 0 20px rgba(0, 240, 255, 0.8); }
 
-        /* 👑 BOTÃO CODEX */
-        .btn-codex {
-            background: linear-gradient(135deg, #ffd700, #b8860b) !important;
-            color: #000 !important;
-            box-shadow: 0 0 12px rgba(255, 215, 0, 0.5) !important;
-            animation: codexGlow 2s ease-in-out infinite;
-        }
-        .btn-codex:hover { box-shadow: 0 0 25px rgba(255, 215, 0, 0.9) !important; }
-        @keyframes codexGlow {
-            0%, 100% { box-shadow: 0 0 12px rgba(255, 215, 0, 0.5); }
-            50% { box-shadow: 0 0 22px rgba(255, 215, 0, 0.9), 0 0 35px rgba(255, 215, 0, 0.4); }
-        }
-
-        /* 📅 BOTÃO DIÁRIO */
-        .btn-diario {
-            background: linear-gradient(135deg, #f0c040, #d4a020) !important;
-            color: #000 !important;
-            box-shadow: 0 0 12px rgba(240, 192, 64, 0.5) !important;
-            animation: diarioGlow 2s ease-in-out infinite;
-        }
-        .btn-diario:hover { box-shadow: 0 0 25px rgba(240, 192, 64, 0.9) !important; }
-        @keyframes diarioGlow {
-            0%, 100% { box-shadow: 0 0 12px rgba(240, 192, 64, 0.5); }
-            50% { box-shadow: 0 0 22px rgba(240, 192, 64, 0.9), 0 0 35px rgba(240, 192, 64, 0.4); }
-        }
-
-        /* 🛒 BOTÃO LOJA */
-        .btn-loja {
-            background: linear-gradient(135deg, #f5c542, #d4a017) !important;
-            color: #0b0e14 !important;
-            box-shadow: 0 0 12px rgba(245, 197, 66, 0.5) !important;
-            animation: lojaGlow 2s ease-in-out infinite;
-            font-weight: 800;
-        }
-        .btn-loja:hover { box-shadow: 0 0 25px rgba(245, 197, 66, 0.9) !important; }
-        @keyframes lojaGlow {
-            0%, 100% { box-shadow: 0 0 12px rgba(245, 197, 66, 0.5); }
-            50% { box-shadow: 0 0 22px rgba(245, 197, 66, 0.9), 0 0 35px rgba(245, 197, 66, 0.4); }
-        }
-
-        .btn-sair {
-            background: linear-gradient(135deg, #ef4444, #dc2626);
-            color: white;
-            border: none;
-            padding: 8px 18px;
-            border-radius: 40px;
-            font-weight: bold;
-            font-size: 0.9rem;
-            cursor: pointer;
-            transition: all 0.2s;
-            box-shadow: 0 0 10px rgba(239, 68, 68, 0.3);
-            font-family: 'Rajdhani', sans-serif;
-        }
-        .btn-sair:hover { transform: scale(0.96); background: linear-gradient(135deg, #dc2626, #b91c1c); box-shadow: 0 0 15px rgba(220, 38, 38, 0.6); }
-
         /* ==================== PERFIL ==================== */
         .user-profile {
             display: flex;
@@ -196,34 +136,6 @@
             color: #fff;
         }
         .saldo { font-size: 0.8rem; color: var(--neon-green); display: flex; align-items: center; gap: 4px; }
-
-        /* ==================== BTC WIDGET ==================== */
-        .btc-widget {
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            background: linear-gradient(135deg, #1a1a2e, #16213e);
-            border: 1px solid #f7931a;
-            border-radius: 10px;
-            padding: 6px 14px 6px 10px;
-            margin-right: 10px;
-            box-shadow: 0 0 15px rgba(247, 147, 26, 0.15);
-            transition: all 0.3s ease;
-            cursor: default;
-        }
-        .btc-widget:hover { box-shadow: 0 0 25px rgba(247, 147, 26, 0.3); transform: scale(1.02); }
-        .btc-icon { font-size: 20px; animation: btcPulse 2s ease-in-out infinite; }
-        @keyframes btcPulse { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.15); } }
-        .btc-info { display: flex; flex-direction: column; line-height: 1.2; }
-        .btc-label { font-size: 9px; text-transform: uppercase; color: #f7931a; letter-spacing: 0.5px; font-weight: 700; }
-        .btc-value {
-            font-size: 14px;
-            font-weight: 700;
-            color: #f7931a;
-            font-family: 'Orbitron', monospace;
-            text-shadow: 0 0 10px rgba(247, 147, 26, 0.3);
-            letter-spacing: 0.5px;
-        }
 
         /* ==================== CABEÇALHO DA LOJA ==================== */
         .loja-header {
@@ -628,130 +540,6 @@
         .toast.warn i { color: #fbbf24; }
         .toast .texto { font-size: 0.88rem; color: #e2e8f0; }
 
-        /* ==================== MODAL DIÁRIO ==================== */
-        .diario-modal-overlay {
-            position: fixed;
-            inset: 0;
-            background: rgba(5, 6, 12, 0.82);
-            backdrop-filter: blur(10px);
-            display: none;
-            justify-content: center;
-            align-items: center;
-            z-index: 99999;
-            padding: 20px;
-            opacity: 0;
-            transition: opacity 0.3s ease;
-        }
-
-        .diario-modal-overlay.active { display: flex; opacity: 1; }
-
-        .diario-modal {
-            width: 100%;
-            max-width: 1000px;
-            max-height: 92vh;
-            background: linear-gradient(180deg, #1e1b30 0%, #171426 100%);
-            border: 2px solid #3b3459;
-            border-radius: 16px;
-            box-shadow: 0 0 40px rgba(240, 192, 64, 0.25), 0 20px 60px rgba(0, 0, 0, 0.65);
-            display: flex;
-            flex-direction: column;
-            overflow: hidden;
-            transform: scale(0.92) translateY(20px);
-            transition: transform 0.35s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-            animation: diarioModalGlow 3s ease-in-out infinite;
-        }
-
-        .diario-modal-overlay.active .diario-modal { transform: scale(1) translateY(0); }
-
-        @keyframes diarioModalGlow {
-            0%, 100% { box-shadow: 0 0 40px rgba(240, 192, 64, 0.25), 0 20px 60px rgba(0, 0, 0, 0.65); }
-            50% { box-shadow: 0 0 55px rgba(240, 192, 64, 0.45), 0 20px 60px rgba(0, 0, 0, 0.65); }
-        }
-
-        .diario-modal-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 14px 20px;
-            background: linear-gradient(135deg, rgba(240, 192, 64, 0.12), rgba(212, 160, 32, 0.05));
-            border-bottom: 1px solid rgba(240, 192, 64, 0.25);
-            flex-shrink: 0;
-        }
-
-        .diario-modal-title { display: flex; align-items: center; gap: 12px; }
-
-        .diario-modal-icon {
-            background: linear-gradient(135deg, #f0c040, #d4a020);
-            padding: 8px 11px;
-            border-radius: 10px;
-            font-size: 20px;
-            box-shadow: 0 0 15px rgba(240, 192, 64, 0.5);
-            animation: diarioIconPulse 2s ease-in-out infinite;
-        }
-
-        @keyframes diarioIconPulse {
-            0%, 100% { transform: scale(1); }
-            50% { transform: scale(1.08); }
-        }
-
-        .diario-modal-sub {
-            font-size: 0.7rem;
-            color: #d0c8f0;
-            letter-spacing: 1px;
-            font-weight: 600;
-        }
-
-        .diario-modal-main {
-            font-family: 'Orbitron', sans-serif;
-            font-size: 1.05rem;
-            font-weight: 700;
-            color: #ffd040;
-            letter-spacing: 2px;
-            text-shadow: 0 0 12px rgba(255, 208, 64, 0.5);
-        }
-
-        .diario-modal-close {
-            background: rgba(239, 68, 68, 0.15);
-            border: 1px solid rgba(239, 68, 68, 0.35);
-            color: #fca5a5;
-            width: 38px; height: 38px;
-            border-radius: 50%;
-            font-size: 1.1rem;
-            font-weight: bold;
-            cursor: pointer;
-            transition: all 0.2s;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            line-height: 1;
-        }
-
-        .diario-modal-close:hover {
-            background: rgba(239, 68, 68, 0.35);
-            color: #fff;
-            transform: rotate(90deg) scale(1.1);
-            box-shadow: 0 0 18px rgba(239, 68, 68, 0.6);
-        }
-
-        .diario-modal-body {
-            flex: 1;
-            overflow: auto;
-            background: #0f0c1a;
-            position: relative;
-            min-height: 500px;
-            height: calc(92vh - 80px);
-        }
-
-        .diario-modal-body iframe {
-            width: 100%;
-            height: 100%;
-            min-height: 500px;
-            border: none;
-            display: block;
-            background: #0f0c1a;
-            color-scheme: dark;
-        }
-
         /* ==================== RESPONSIVIDADE ==================== */
         @media (max-width: 700px) {
             body { padding: 12px; }
@@ -760,20 +548,8 @@
             .nav-buttons { justify-content: center; }
             .user-profile { padding: 4px 12px 4px 8px; }
             .user-nick { font-size: 0.8rem; }
-            .btc-widget { padding: 4px 10px 4px 8px; margin-right: 6px; }
-            .btc-icon { font-size: 16px; }
-            .btc-value { font-size: 11px; }
-            .btc-label { font-size: 7px; }
             .loja-header h1 { font-size: 1.8rem; }
             .produtos-grid { grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 14px; }
-            .diario-modal-overlay { padding: 8px; }
-            .diario-modal { max-height: 95vh; border-radius: 12px; }
-            .diario-modal-header { padding: 10px 14px; }
-            .diario-modal-icon { padding: 6px 9px; font-size: 16px; }
-            .diario-modal-main { font-size: 0.9rem; }
-            .diario-modal-sub { font-size: 0.6rem; }
-            .diario-modal-close { width: 32px; height: 32px; font-size: 0.95rem; }
-            .diario-modal-body { min-height: 300px; }
         }
 
         @media (max-width: 480px) {
@@ -795,7 +571,7 @@
             <div class="user-avatar" id="userAvatar">👤</div>
             <div class="user-info">
                 <span class="user-nick" id="userNick">Carregando...</span>
-                <span class="saldo" id="saldo">R$ 0,00</span>
+                <span class="saldo" id="saldo">S$ 0,00</span>
             </div>
         </div>
 
@@ -879,475 +655,422 @@
         </div>
     </div>
 
-    <!-- ==================== MODAL DIÁRIO ==================== -->
-    <div class="diario-modal-overlay" id="diarioModalOverlay">
-        <div class="diario-modal">
-            <div class="diario-modal-header">
-                <div class="diario-modal-title">
-                    <span class="diario-modal-icon">📅</span>
-                    <div>
-                        <div class="diario-modal-sub">CICLO 1 • DE 30 DIAS</div>
-                        <div class="diario-modal-main">LOGIN DIÁRIO</div>
-                    </div>
-                </div>
-                <button class="diario-modal-close" id="btnFecharDiario" title="Fechar">✕</button>
-            </div>
-            <div class="diario-modal-body">
-                <iframe
-                    id="diarioIframe"
-                    src=""
-                    frameborder="0"
-                    loading="lazy"
-                    title="Login Diário">
-                </iframe>
-            </div>
-        </div>
-    </div>
-
     <!-- ==================== TOAST ==================== -->
     <div class="toast" id="toast">
         <i class="fas fa-circle-check" id="toastIcone"></i>
         <span class="texto" id="toastTexto">Mensagem</span>
     </div>
 
-    <!-- ==================== JAVASCRIPT ==================== -->
-    <script>
-        /* ==================== SUPABASE ==================== */
-        const SUPABASE_URL = 'https://xrcxvizzdumcxbylmkvn.supabase.co';
-        const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InhyY3h2aXp6ZHVtY3hieWxta3ZuIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODY2NjA0NzIsImV4cCI6MjEwMjIzNjQ3Mn0.ohB4tW0UQ-k1PcwoZxm4u9XSGNLsFphv1_UwTWoklOM';
-        const TABELA = 'Geral';
-        const supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+    <!-- ============================================================
+         IMPORTMAP — Supabase via ESM
+    ============================================================ -->
+    <script type="importmap">
+    {
+      "imports": {
+        "@supabase/supabase-js": "https://esm.sh/@supabase/supabase-js@2"
+      }
+    }
+    </script>
 
-        /* ==================== MAPA DE PREÇOS FIXOS (VIP1..VIP9 = 10..90) ==================== */
-        const PRECOS_FIXOS = {};
-        for (let i = 1; i <= 9; i++) {
-            PRECOS_FIXOS[`VIP${i}`] = i * 10.00;
-        }
+    <!-- ============================================================
+         SCRIPT PRINCIPAL — importa tudo do config.js
+    ============================================================ -->
+    <script type="module">
+    import {
+        db,
+        TABELA,
+        TABELA_CARGOS,
+        TABELA_COMPRAS,
+        TABELA_SUPORTE_TICKETS,
+        SIMB,
+        fmtSaldo,
+        fmtMumu,
+        esc
+    } from '../../config.js';
 
-        /* ==================== TOAST ==================== */
-        const toast = document.getElementById('toast');
-        const toastIcone = document.getElementById('toastIcone');
-        const toastTexto = document.getElementById('toastTexto');
-        let toastTimer = null;
+    /* ============================================================
+       MAPA DE PREÇOS FIXOS (VIP1..VIP9 = 10..90)
+    ============================================================ */
+    const PRECOS_FIXOS = {};
+    for (let i = 1; i <= 9; i++) {
+        PRECOS_FIXOS[`VIP${i}`] = i * 10.00;
+    }
 
-        function mostrarToast(tipo, texto) {
-            toast.classList.remove('show', 'sucesso', 'erro', 'warn');
-            toast.classList.add(tipo);
-            const icones = {
-                sucesso: 'fas fa-circle-check',
-                erro: 'fas fa-circle-exclamation',
-                warn: 'fas fa-triangle-exclamation'
-            };
-            toastIcone.className = icones[tipo] || icones.sucesso;
-            toastTexto.textContent = texto;
-            void toast.offsetWidth;
-            toast.classList.add('show');
-            clearTimeout(toastTimer);
-            toastTimer = setTimeout(() => toast.classList.remove('show'), 4000);
-        }
+    /* ============================================================
+       TOAST
+    ============================================================ */
+    const toast = document.getElementById('toast');
+    const toastIcone = document.getElementById('toastIcone');
+    const toastTexto = document.getElementById('toastTexto');
+    let toastTimer = null;
 
-        /* ==================== CARREGAR DADOS DO USUÁRIO (NAVBAR) ==================== */
-        (async function carregarUsuarioNavbar() {
-            try {
-                const raw = localStorage.getItem('usuario_logado');
-                if (!raw) return;
-                const sessao = JSON.parse(raw);
-                if (!sessao?.login) return;
+    function mostrarToast(tipo, texto) {
+        toast.classList.remove('show', 'sucesso', 'erro', 'warn');
+        toast.classList.add(tipo);
+        const icones = {
+            sucesso: 'fas fa-circle-check',
+            erro: 'fas fa-circle-exclamation',
+            warn: 'fas fa-triangle-exclamation'
+        };
+        toastIcone.className = icones[tipo] || icones.sucesso;
+        toastTexto.textContent = texto;
+        void toast.offsetWidth;
+        toast.classList.add('show');
+        clearTimeout(toastTimer);
+        toastTimer = setTimeout(() => toast.classList.remove('show'), 4000);
+    }
 
-                const avatar = document.getElementById('userAvatar');
-                const nick = document.getElementById('userNick');
-                if (avatar) avatar.textContent = sessao.login.charAt(0).toUpperCase();
-                if (nick) nick.textContent = sessao.nome || sessao.login;
+    /* ============================================================
+       CARREGAR DADOS DO USUÁRIO (NAVBAR)
+    ============================================================ */
+    (async function carregarUsuarioNavbar() {
+        try {
+            const raw = localStorage.getItem('usuario_logado');
+            if (!raw) return;
+            const sessao = JSON.parse(raw);
+            if (!sessao?.login) return;
 
-                const { data: profile } = await supabaseClient
-                    .from(TABELA)
-                    .select('nome, login, saldo, btc, cadeado, mumu')
-                    .eq('login', sessao.login)
-                    .maybeSingle();
+            const avatar = document.getElementById('userAvatar');
+            const nick = document.getElementById('userNick');
+            if (avatar) avatar.textContent = sessao.login.charAt(0).toUpperCase();
+            if (nick) nick.textContent = sessao.nome || sessao.login;
 
-                if (profile) {
-                    if (nick) nick.textContent = profile.nome || profile.login;
-                    const saldoEl = document.getElementById('saldo');
-                    if (saldoEl) {
-                        saldoEl.textContent = new Intl.NumberFormat('pt-BR', {
-                            style: 'currency', currency: 'BRL'
-                        }).format(profile.saldo || 0);
-                    }
-                    const btcEl = document.getElementById('btcTotal');
-                    if (btcEl) btcEl.textContent = (profile.btc || 0).toFixed(8);
+            const { data: profile } = await db
+                .from(TABELA)
+                .select('nome, login, saldo, btc, cadeado, mumu')
+                .eq('login', sessao.login)
+                .maybeSingle();
 
-                    if (profile.cadeado === true) {
-                        const btnAdmin = document.getElementById('btnAdmin');
-                        if (btnAdmin) {
-                            btnAdmin.style.display = 'inline-flex';
-                            btnAdmin.classList.add('visivel');
-                        }
-                    }
+            if (profile) {
+                if (nick) nick.textContent = profile.nome || profile.login;
 
-                    if (profile.mumu !== undefined) {
-                        const rawLS = localStorage.getItem('usuario_logado');
-                        if (rawLS) {
-                            try {
-                                const ls = JSON.parse(rawLS);
-                                ls.mumu = profile.mumu;
-                                localStorage.setItem('usuario_logado', JSON.stringify(ls));
-                            } catch (e) {}
-                        }
-                    }
-                }
-            } catch (e) {
-                console.warn('[Navbar] Erro ao carregar usuário:', e);
-            }
-        })();
-
-        /* ==================== BOTÃO SAIR ==================== */
-        document.getElementById('btnSair')?.addEventListener('click', () => {
-            if (confirm('Tem certeza que deseja sair?')) {
-                localStorage.removeItem('usuario_logado');
-                localStorage.removeItem('session_timestamp');
-                window.location.href = './login.html';
-            }
-        });
-
-        /* ==================== MODAL DIÁRIO ==================== */
-        (function configurarModalDiario() {
-            const btnAbrir = document.getElementById('btnAbrirDiario');
-            const overlay = document.getElementById('diarioModalOverlay');
-            const btnFechar = document.getElementById('btnFecharDiario');
-            const iframe = document.getElementById('diarioIframe');
-
-            if (!btnAbrir || !overlay || !iframe) return;
-
-            let iframeCarregado = false;
-
-            function abrirModal() {
-                if (!iframeCarregado || !iframe.src || iframe.src === 'about:blank') {
-                    iframe.src = './diario.html';
-                    iframeCarregado = true;
-                }
-                overlay.classList.add('active');
-                document.body.style.overflow = 'hidden';
-            }
-
-            function fecharModal() {
-                overlay.classList.remove('active');
-                document.body.style.overflow = '';
-            }
-
-            btnAbrir.addEventListener('click', (e) => {
-                e.preventDefault();
-                e.stopPropagation();
-                abrirModal();
-            });
-
-            if (btnFechar) btnFechar.addEventListener('click', fecharModal);
-
-            overlay.addEventListener('click', (e) => {
-                if (e.target === overlay) fecharModal();
-            });
-
-            document.addEventListener('keydown', (e) => {
-                if (e.key === 'Escape' && overlay.classList.contains('active')) fecharModal();
-            });
-        })();
-
-        /* ==================== ESTADO DA LOJA ==================== */
-        let produtos = [];
-        let filtroAtual = 'todos';
-        let produtoSelecionado = null;
-
-        /* ==================== CARREGAR CARGOS VIP ==================== */
-        async function carregarProdutos() {
-            const grid = document.getElementById('produtosGrid');
-
-            try {
-                const { data, error } = await supabaseClient
-                    .from('cargos')
-                    .select('*')
-                    .eq('is_vip', true)
-                    .order('nivel', { ascending: true });
-
-                if (error) throw error;
-
-                produtos = (data || []).map(c => {
-                    const preco = PRECOS_FIXOS[c.codigo] !== undefined
-                        ? PRECOS_FIXOS[c.codigo]
-                        : parseFloat(c.preco || 0);
-
-                    return {
-                        id: c.id,
-                        codigo: c.codigo,
-                        nome: c.nome,
-                        nivel: c.nivel,
-                        cor: c.cor || '#f5c542',
-                        duracao_meses: c.duracao_meses || 1,
-                        preco: preco,
-                        descricao: c.descricao || `Benefícios exclusivos do ${c.nome}.`,
-                        categoria: 'vip'
-                    };
-                });
-
-                renderizarProdutos();
-
-            } catch (err) {
-                console.error('[Loja] Erro:', err);
-                grid.innerHTML = `
-                    <div style="grid-column:1/-1;text-align:center;padding:40px;color:#f87171;">
-                        <i class="fas fa-circle-exclamation" style="font-size:2rem;"></i>
-                        <p style="margin-top:12px;">Erro ao carregar produtos: ${err.message}</p>
-                    </div>`;
-            }
-        }
-
-        /* ==================== RENDERIZAR PRODUTOS ==================== */
-        function renderizarProdutos() {
-            const grid = document.getElementById('produtosGrid');
-
-            let lista = produtos;
-            if (filtroAtual === 'vip') lista = produtos.filter(p => p.categoria === 'vip');
-            if (filtroAtual === 'destaques') lista = produtos.filter(p => p.nivel >= 6);
-            if (filtroAtual === 'itens' || filtroAtual === 'pacotes') lista = [];
-
-            if (!lista.length) {
-                grid.innerHTML = `
-                    <div style="grid-column:1/-1;text-align:center;padding:40px;color:#64748b;">
-                        <i class="fas fa-box-open" style="font-size:2.5rem;"></i>
-                        <p style="margin-top:12px;">Nenhum produto nesta categoria.</p>
-                    </div>`;
-                return;
-            }
-
-            grid.innerHTML = lista.map(p => {
-                const tag = p.nivel >= 9 ? 'Melhor Valor'
-                          : p.nivel >= 6 ? 'Popular'
-                          : p.nivel === 1 ? 'Novo' : null;
-
-                return `
-                <article class="produto-card" data-id="${p.id}">
-                    <div class="produto-imagem">
-                        ${tag ? `<span class="produto-tag">${tag}</span>` : ''}
-                        <i class="fas fa-crown" style="color:${p.cor}; text-shadow:0 0 20px ${p.cor}80;"></i>
-                    </div>
-                    <div class="produto-info">
-                        <h3 style="color:${p.cor};">${escapeHtml(p.nome)}</h3>
-                        <p>${escapeHtml(p.descricao)}</p>
-                        <div class="produto-preco">
-                            <span class="valor" style="color:${p.cor};">
-                                R$ ${p.preco.toFixed(2).replace('.', ',')}
-                            </span>
-                            <span class="moeda">BRL</span>
-                        </div>
-                        <button class="btn-comprar" data-comprar="${p.id}">
-                            <i class="fas fa-shopping-cart"></i> Comprar
-                        </button>
-                    </div>
-                </article>`;
-            }).join('');
-
-            grid.querySelectorAll('[data-comprar]').forEach(btn => {
-                btn.addEventListener('click', () => abrirModalCompra(parseInt(btn.dataset.comprar)));
-            });
-        }
-
-        /* ==================== FILTROS ==================== */
-        document.querySelectorAll('.filtros button').forEach(btn => {
-            btn.addEventListener('click', () => {
-                document.querySelectorAll('.filtros button').forEach(b => b.classList.remove('active'));
-                btn.classList.add('active');
-                filtroAtual = btn.dataset.filtro || 'todos';
-                renderizarProdutos();
-            });
-        });
-
-        /* ==================== MODAL DE COMPRA ==================== */
-        const modalCompra = document.getElementById('modalCompra');
-        const compraProduto = document.getElementById('compraProduto');
-        const compraPreco = document.getElementById('compraPreco');
-        const compraDuracao = document.getElementById('compraDuracao');
-        const compraObs = document.getElementById('compraObs');
-        const btnConfirmarCompra = document.getElementById('btnConfirmarCompra');
-        const btnCancelarCompra = document.getElementById('btnCancelarCompra');
-        const btnFecharCompra = document.getElementById('btnFecharCompra');
-
-        function abrirModalCompra(id) {
-            const p = produtos.find(x => x.id === id);
-            if (!p) return;
-
-            const logado = localStorage.getItem('usuario_logado');
-            if (!logado) {
-                mostrarToast('warn', 'Faça login para comprar. Redirecionando...');
-                setTimeout(() => { window.location.href = './login.html'; }, 1500);
-                return;
-            }
-
-            produtoSelecionado = p;
-            compraProduto.textContent = p.nome;
-            compraPreco.textContent = `R$ ${p.preco.toFixed(2).replace('.', ',')}`;
-            compraDuracao.textContent = `${p.duracao_meses} mês(es)`;
-            compraObs.value = '';
-            modalCompra.classList.add('show');
-        }
-
-        function fecharModalCompra() {
-            modalCompra.classList.remove('show');
-            produtoSelecionado = null;
-        }
-
-        btnFecharCompra.addEventListener('click', fecharModalCompra);
-        btnCancelarCompra.addEventListener('click', fecharModalCompra);
-        modalCompra.addEventListener('click', e => {
-            if (e.target === modalCompra) fecharModalCompra();
-        });
-
-        document.addEventListener('keydown', e => {
-            if (e.key === 'Escape' && modalCompra.classList.contains('show')) {
-                fecharModalCompra();
-            }
-        });
-
-        /* ==================== CONFIRMAR COMPRA (com desconto no mumu) ==================== */
-        btnConfirmarCompra.addEventListener('click', async () => {
-            if (!produtoSelecionado) return;
-
-            let logado = {};
-            try {
-                logado = JSON.parse(localStorage.getItem('usuario_logado') || '{}');
-            } catch (e) {}
-
-            if (!logado.login) {
-                mostrarToast('erro', 'Sessão expirada. Faça login novamente.');
-                return;
-            }
-
-            const obs = compraObs.value.trim();
-
-            btnConfirmarCompra.disabled = true;
-            btnConfirmarCompra.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Processando...';
-
-            try {
-                const agora = new Date().toISOString();
-
-                const { data: usuario, error: errUser } = await supabaseClient
-                    .from(TABELA)
-                    .select('id, login, nome, email, mumu')
-                    .eq('login', logado.login)
-                    .maybeSingle();
-
-                if (errUser) throw errUser;
-                if (!usuario) throw new Error('Usuário não encontrado.');
-
-                const mumuAtual = Number(usuario.mumu || 0);
-                const preco = Number(produtoSelecionado.preco);
-
-                if (mumuAtual < preco) {
-                    mostrarToast('erro',
-                        `Saldo Mumu insuficiente. Você tem ${mumuAtual.toFixed(2)} e precisa de ${preco.toFixed(2)}.`);
-                    btnConfirmarCompra.disabled = false;
-                    btnConfirmarCompra.innerHTML = '<i class="fas fa-paper-plane"></i> Confirmar Compra';
-                    return;
-                }
-
-                const novoMumu = mumuAtual - preco;
-
-                const { error: errUpdate } = await supabaseClient
-                    .from(TABELA)
-                    .update({ mumu: novoMumu })
-                    .eq('login', logado.login);
-
-                if (errUpdate) throw errUpdate;
-
-                logado.mumu = novoMumu;
-                localStorage.setItem('usuario_logado', JSON.stringify(logado));
-
-                const mensagem = [
-                    '🛒 COMPRA NA LOJA — PAGO COM MUMU',
-                    '',
-                    `Produto: ${produtoSelecionado.nome} (${produtoSelecionado.codigo})`,
-                    `Nível: ${produtoSelecionado.nivel}`,
-                    `Preço: R$ ${preco.toFixed(2).replace('.', ',')}`,
-                    `Duração: ${produtoSelecionado.duracao_meses} mês(es)`,
-                    '',
-                    `💰 Saldo Mumu antes: ${mumuAtual.toFixed(2)}`,
-                    `💰 Saldo Mumu depois: ${novoMumu.toFixed(2)}`,
-                    '',
-                    obs ? `Observação do cliente:\n${obs}` : 'Sem observações.',
-                    '',
-                    '✅ Pagamento debitado automaticamente. Aguardando liberação da equipe.'
-                ].join('\n');
-
-                const { data: ticketCriado, error: errTicket } = await supabaseClient
-                    .from('suporte_tickets')
-                    .insert([{
-                        user_id: usuario.id || usuario.login,
-                        nome: usuario.nome || usuario.login,
-                        login: usuario.login || '',
-                        email: usuario.email || '',
-                        categoria: 'pagamento',
-                        assunto: `[LOJA] ${produtoSelecionado.nome} — R$ ${preco.toFixed(2)}`,
-                        mensagem: mensagem,
-                        prioridade: 'alta',
-                        status: 'em_andamento',
-                        resposta: null,
-                        created_at: agora,
-                        updated_at: agora
-                    }])
-                    .select()
-                    .single();
-
-                if (errTicket) throw errTicket;
-
-                try {
-                    await supabaseClient.from('compras').insert([{
-                        user_login: usuario.login || '',
-                        cargo_codigo: produtoSelecionado.codigo,
-                        cargo_nome: produtoSelecionado.nome,
-                        preco: preco,
-                        status: 'pago',
-                        ticket_id: ticketCriado?.id || null,
-                        created_at: agora
-                    }]);
-                } catch (e) {
-                    console.warn('[Loja] Erro ao inserir em compras:', e.message);
-                }
-
+                /* ✅ Saldo com símbolo S$ */
                 const saldoEl = document.getElementById('saldo');
-                if (saldoEl) {
-                    saldoEl.textContent = new Intl.NumberFormat('pt-BR', {
-                        style: 'currency', currency: 'BRL'
-                    }).format(novoMumu);
+                if (saldoEl) saldoEl.textContent = fmtSaldo(profile.saldo);
+
+                if (profile.cadeado === true) {
+                    const btnAdmin = document.getElementById('btnAdmin');
+                    if (btnAdmin) {
+                        btnAdmin.style.display = 'inline-flex';
+                        btnAdmin.classList.add('visivel');
+                    }
                 }
 
-                btnConfirmarCompra.innerHTML = '<i class="fas fa-check"></i> Compra Realizada!';
-                btnConfirmarCompra.style.background = 'linear-gradient(135deg, #22c55e, #16a34a)';
+                /* Guarda mumu na sessão local */
+                if (profile.mumu !== undefined) {
+                    try {
+                        const ls = JSON.parse(localStorage.getItem('usuario_logado'));
+                        ls.mumu = profile.mumu;
+                        localStorage.setItem('usuario_logado', JSON.stringify(ls));
+                    } catch (e) {}
+                }
+            }
+        } catch (e) {
+            console.warn('[Navbar] Erro ao carregar usuário:', e);
+        }
+    })();
 
-                mostrarToast('sucesso',
-                    `✅ Compra confirmada! R$ ${preco.toFixed(2)} debitados. Ticket #${ticketCriado.id} aberto.`);
+    /* ============================================================
+       ESTADO DA LOJA
+    ============================================================ */
+    let produtos = [];
+    let filtroAtual = 'todos';
+    let produtoSelecionado = null;
 
-                setTimeout(() => {
-                    fecharModalCompra();
-                    btnConfirmarCompra.disabled = false;
-                    btnConfirmarCompra.innerHTML = '<i class="fas fa-paper-plane"></i> Confirmar Compra';
-                    btnConfirmarCompra.style.background = '';
-                }, 1800);
+    /* ============================================================
+       CARREGAR CARGOS VIP
+    ============================================================ */
+    async function carregarProdutos() {
+        const grid = document.getElementById('produtosGrid');
 
-            } catch (err) {
-                console.error('[Loja] Erro ao comprar:', err);
-                mostrarToast('erro', 'Erro ao processar compra: ' + err.message);
+        try {
+            const { data, error } = await db
+                .from(TABELA_CARGOS)
+                .select('*')
+                .eq('is_vip', true)
+                .order('nivel', { ascending: true });
+
+            if (error) throw error;
+
+            produtos = (data || []).map(c => {
+                const preco = PRECOS_FIXOS[c.codigo] !== undefined
+                    ? PRECOS_FIXOS[c.codigo]
+                    : parseFloat(c.preco || 0);
+
+                return {
+                    id: c.id,
+                    codigo: c.codigo,
+                    nome: c.nome,
+                    nivel: c.nivel,
+                    cor: c.cor || '#f5c542',
+                    duracao_meses: c.duracao_meses || 1,
+                    preco: preco,
+                    descricao: c.descricao || `Benefícios exclusivos do ${c.nome}.`,
+                    categoria: 'vip'
+                };
+            });
+
+            renderizarProdutos();
+
+        } catch (err) {
+            console.error('[Loja] Erro:', err);
+            grid.innerHTML = `
+                <div style="grid-column:1/-1;text-align:center;padding:40px;color:#f87171;">
+                    <i class="fas fa-circle-exclamation" style="font-size:2rem;"></i>
+                    <p style="margin-top:12px;">Erro ao carregar produtos: ${esc(err.message)}</p>
+                </div>`;
+        }
+    }
+
+    /* ============================================================
+       RENDERIZAR PRODUTOS
+    ============================================================ */
+    function renderizarProdutos() {
+        const grid = document.getElementById('produtosGrid');
+
+        let lista = produtos;
+        if (filtroAtual === 'vip') lista = produtos.filter(p => p.categoria === 'vip');
+        if (filtroAtual === 'destaques') lista = produtos.filter(p => p.nivel >= 6);
+        if (filtroAtual === 'itens' || filtroAtual === 'pacotes') lista = [];
+
+        if (!lista.length) {
+            grid.innerHTML = `
+                <div style="grid-column:1/-1;text-align:center;padding:40px;color:#64748b;">
+                    <i class="fas fa-box-open" style="font-size:2.5rem;"></i>
+                    <p style="margin-top:12px;">Nenhum produto nesta categoria.</p>
+                </div>`;
+            return;
+        }
+
+        grid.innerHTML = lista.map(p => {
+            const tag = p.nivel >= 9 ? 'Melhor Valor'
+                      : p.nivel >= 6 ? 'Popular'
+                      : p.nivel === 1 ? 'Novo' : null;
+
+            return `
+            <article class="produto-card" data-id="${p.id}">
+                <div class="produto-imagem">
+                    ${tag ? `<span class="produto-tag">${tag}</span>` : ''}
+                    <i class="fas fa-crown" style="color:${p.cor}; text-shadow:0 0 20px ${p.cor}80;"></i>
+                </div>
+                <div class="produto-info">
+                    <h3 style="color:${p.cor};">${esc(p.nome)}</h3>
+                    <p>${esc(p.descricao)}</p>
+                    <div class="produto-preco">
+                        <span class="valor" style="color:${p.cor};">
+                            ${SIMB.mumu} ${p.preco.toFixed(2).replace('.', ',')}
+                        </span>
+                        <span class="moeda">MUMU</span>
+                    </div>
+                    <button class="btn-comprar" data-comprar="${p.id}">
+                        <i class="fas fa-shopping-cart"></i> Comprar
+                    </button>
+                </div>
+            </article>`;
+        }).join('');
+
+        grid.querySelectorAll('[data-comprar]').forEach(btn => {
+            btn.addEventListener('click', () => abrirModalCompra(parseInt(btn.dataset.comprar)));
+        });
+    }
+
+    /* ============================================================
+       FILTROS
+    ============================================================ */
+    document.querySelectorAll('.filtros button').forEach(btn => {
+        btn.addEventListener('click', () => {
+            document.querySelectorAll('.filtros button').forEach(b => b.classList.remove('active'));
+            btn.classList.add('active');
+            filtroAtual = btn.dataset.filtro || 'todos';
+            renderizarProdutos();
+        });
+    });
+
+    /* ============================================================
+       MODAL DE COMPRA
+    ============================================================ */
+    const modalCompra = document.getElementById('modalCompra');
+    const compraProduto = document.getElementById('compraProduto');
+    const compraPreco = document.getElementById('compraPreco');
+    const compraDuracao = document.getElementById('compraDuracao');
+    const compraObs = document.getElementById('compraObs');
+    const btnConfirmarCompra = document.getElementById('btnConfirmarCompra');
+    const btnCancelarCompra = document.getElementById('btnCancelarCompra');
+    const btnFecharCompra = document.getElementById('btnFecharCompra');
+
+    function abrirModalCompra(id) {
+        const p = produtos.find(x => x.id === id);
+        if (!p) return;
+
+        const logado = localStorage.getItem('usuario_logado');
+        if (!logado) {
+            mostrarToast('warn', 'Faça login para comprar. Redirecionando...');
+            setTimeout(() => { window.location.href = '../../login.html'; }, 1500);
+            return;
+        }
+
+        produtoSelecionado = p;
+        compraProduto.textContent = p.nome;
+        compraPreco.textContent = `${SIMB.mumu} ${p.preco.toFixed(2).replace('.', ',')}`;
+        compraDuracao.textContent = `${p.duracao_meses} mês(es)`;
+        compraObs.value = '';
+        modalCompra.classList.add('show');
+    }
+
+    function fecharModalCompra() {
+        modalCompra.classList.remove('show');
+        produtoSelecionado = null;
+    }
+
+    btnFecharCompra.addEventListener('click', fecharModalCompra);
+    btnCancelarCompra.addEventListener('click', fecharModalCompra);
+    modalCompra.addEventListener('click', e => {
+        if (e.target === modalCompra) fecharModalCompra();
+    });
+
+    document.addEventListener('keydown', e => {
+        if (e.key === 'Escape' && modalCompra.classList.contains('show')) {
+            fecharModalCompra();
+        }
+    });
+
+    /* ============================================================
+       CONFIRMAR COMPRA (com desconto no mumu)
+    ============================================================ */
+    btnConfirmarCompra.addEventListener('click', async () => {
+        if (!produtoSelecionado) return;
+
+        let logado = {};
+        try {
+            logado = JSON.parse(localStorage.getItem('usuario_logado') || '{}');
+        } catch (e) {}
+
+        if (!logado.login) {
+            mostrarToast('erro', 'Sessão expirada. Faça login novamente.');
+            return;
+        }
+
+        const obs = compraObs.value.trim();
+
+        btnConfirmarCompra.disabled = true;
+        btnConfirmarCompra.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Processando...';
+
+        try {
+            const agora = new Date().toISOString();
+
+            const { data: usuario, error: errUser } = await db
+                .from(TABELA)
+                .select('id, login, nome, email, mumu')
+                .eq('login', logado.login)
+                .maybeSingle();
+
+            if (errUser) throw errUser;
+            if (!usuario) throw new Error('Usuário não encontrado.');
+
+            const mumuAtual = Number(usuario.mumu || 0);
+            const preco = Number(produtoSelecionado.preco);
+
+            if (mumuAtual < preco) {
+                mostrarToast('erro',
+                    `Saldo MUMU insuficiente. Você tem ${fmtMumu(mumuAtual)} e precisa de ${fmtMumu(preco)}.`);
                 btnConfirmarCompra.disabled = false;
                 btnConfirmarCompra.innerHTML = '<i class="fas fa-paper-plane"></i> Confirmar Compra';
+                return;
             }
-        });
 
-        /* ==================== UTILITÁRIO ==================== */
-        function escapeHtml(str) {
-            if (str === null || str === undefined) return '';
-            const div = document.createElement('div');
-            div.textContent = String(str);
-            return div.innerHTML;
+            const novoMumu = mumuAtual - preco;
+
+            const { error: errUpdate } = await db
+                .from(TABELA)
+                .update({ mumu: novoMumu })
+                .eq('login', logado.login);
+
+            if (errUpdate) throw errUpdate;
+
+            logado.mumu = novoMumu;
+            localStorage.setItem('usuario_logado', JSON.stringify(logado));
+
+            const mensagem = [
+                '🛒 COMPRA NA LOJA — PAGO COM MUMU',
+                '',
+                `Produto: ${produtoSelecionado.nome} (${produtoSelecionado.codigo})`,
+                `Nível: ${produtoSelecionado.nivel}`,
+                `Preço: ${fmtMumu(preco)}`,
+                `Duração: ${produtoSelecionado.duracao_meses} mês(es)`,
+                '',
+                `💰 MUMU antes: ${fmtMumu(mumuAtual)}`,
+                `💰 MUMU depois: ${fmtMumu(novoMumu)}`,
+                '',
+                obs ? `Observação do cliente:\n${obs}` : 'Sem observações.',
+                '',
+                '✅ Pagamento debitado automaticamente. Aguardando liberação da equipe.'
+            ].join('\n');
+
+            const { data: ticketCriado, error: errTicket } = await db
+                .from(TABELA_SUPORTE_TICKETS)
+                .insert([{
+                    user_id: usuario.id || usuario.login,
+                    nome: usuario.nome || usuario.login,
+                    login: usuario.login || '',
+                    email: usuario.email || '',
+                    categoria: 'pagamento',
+                    assunto: `[LOJA] ${produtoSelecionado.nome} — ${fmtMumu(preco)}`,
+                    mensagem: mensagem,
+                    prioridade: 'alta',
+                    status: 'em_andamento',
+                    resposta: null,
+                    created_at: agora,
+                    updated_at: agora
+                }])
+                .select()
+                .single();
+
+            if (errTicket) throw errTicket;
+
+            /* Registra na tabela compras (opcional) */
+            try {
+                await db.from(TABELA_COMPRAS).insert([{
+                    user_login: usuario.login || '',
+                    cargo_codigo: produtoSelecionado.codigo,
+                    cargo_nome: produtoSelecionado.nome,
+                    preco: preco,
+                    status: 'pago',
+                    ticket_id: ticketCriado?.id || null,
+                    created_at: agora
+                }]);
+            } catch (e) {
+                console.warn('[Loja] Erro ao inserir em compras:', e.message);
+            }
+
+            /* Atualiza saldo visual (MUMU) */
+            const saldoEl = document.getElementById('saldo');
+            if (saldoEl) saldoEl.textContent = fmtSaldo(novoMumu);
+
+            btnConfirmarCompra.innerHTML = '<i class="fas fa-check"></i> Compra Realizada!';
+            btnConfirmarCompra.style.background = 'linear-gradient(135deg, #22c55e, #16a34a)';
+
+            mostrarToast('sucesso',
+                `✅ Compra confirmada! ${fmtMumu(preco)} debitados. Ticket #${ticketCriado.id} aberto.`);
+
+            setTimeout(() => {
+                fecharModalCompra();
+                btnConfirmarCompra.disabled = false;
+                btnConfirmarCompra.innerHTML = '<i class="fas fa-paper-plane"></i> Confirmar Compra';
+                btnConfirmarCompra.style.background = '';
+            }, 1800);
+
+        } catch (err) {
+            console.error('[Loja] Erro ao comprar:', err);
+            mostrarToast('erro', 'Erro ao processar compra: ' + err.message);
+            btnConfirmarCompra.disabled = false;
+            btnConfirmarCompra.innerHTML = '<i class="fas fa-paper-plane"></i> Confirmar Compra';
         }
+    });
 
-        /* ==================== INIT ==================== */
-        carregarProdutos();
+    /* ============================================================
+       INIT
+    ============================================================ */
+    carregarProdutos();
     </script>
 </body>
 </html>

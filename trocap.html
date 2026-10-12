@@ -7,11 +7,9 @@
 
   <title>TrocaSegura — Negociação entre Jogadores</title>
 
-  <!-- SEO -->
   <meta name="description" content="TrocaSegura — negociação segura de itens entre jogadores do MM Quase Tudo.">
   <meta name="author" content="Equipe MM Quase Tudo">
 
-  <!-- Open Graph -->
   <meta property="og:type"        content="website">
   <meta property="og:site_name"   content="MM Quase Tudo">
   <meta property="og:title"       content="TrocaSegura — MM Quase Tudo">
@@ -20,20 +18,13 @@
   <meta property="og:url"         content="https://xoperadorx.github.io/Portal-Bolsa/troca.html">
   <meta property="og:locale"      content="pt_BR">
 
-  <!-- Twitter Card -->
   <meta name="twitter:card"        content="summary_large_image">
   <meta name="twitter:title"       content="TrocaSegura — MM Quase Tudo">
   <meta name="twitter:description" content="Negociação segura de itens entre jogadores.">
   <meta name="twitter:image"       content="https://xoperadorx.github.io/Portal-Bolsa/assets/og-image.png">
 
-  <!-- CSS do menu compartilhado -->
   <link rel="stylesheet" href="./shared/menu.css">
-
-  <!-- Font Awesome -->
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
-
-  <!-- Supabase -->
-  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
   <style>
     *{box-sizing:border-box}
@@ -48,7 +39,6 @@
       color:var(--txt);min-height:100vh;padding-bottom:40px;
     }
 
-    /* Header interno (não é o menu principal) */
     .troca-header{
       display:flex;flex-wrap:wrap;gap:12px;align-items:center;justify-content:space-between;
       padding:16px 22px;border-bottom:1px solid var(--line);
@@ -61,7 +51,6 @@
     .user-info{display:flex;align-items:center;gap:8px;font-size:14px}
     .user-info .nick{font-weight:700;color:#4ade80}
 
-    /* Saldo MUMU no header */
     .saldo-mumu{
       background:linear-gradient(135deg,#8b5cf6,#7000ff);
       color:#fff;font-weight:800;
@@ -156,7 +145,6 @@
       font-weight:700;flex:1;min-width:0;
     }
 
-    /* Resumo de taxas no formulário */
     .taxa-info{
       font-size:11.5px;color:#c084fc;margin-top:6px;
       background:rgba(139,92,246,.08);border-left:3px solid #8b5cf6;
@@ -191,7 +179,6 @@
     }
     .modal-box .btns{display:flex;gap:10px;justify-content:center;flex-wrap:wrap}
 
-    /* Resumo de valores no modal */
     .resumo-modal{
       background:rgba(139,92,246,.08);border:1px solid rgba(139,92,246,.3);
       border-radius:10px;padding:12px 14px;margin-bottom:18px;
@@ -212,7 +199,6 @@
              vertical-align:middle;margin-right:6px}
     @keyframes spin{to{transform:rotate(360deg)}}
 
-    /* Comprador paga taxa */
     .aviso-taxa-comprador{
       padding:10px 14px;background:rgba(245,158,11,.08);
       border-radius:8px;margin-bottom:12px;
@@ -238,15 +224,14 @@
 </head>
 <body>
 
-<!-- ==================== MENU PRINCIPAL (injetado via JS) ==================== -->
 <div id="menu-slot"></div>
 
-<!-- ==================== HEADER INTERNO ==================== -->
 <header class="troca-header">
   <div class="brand">🛡️ TrocaSegura <small>negociação entre jogadores</small></div>
   <div class="header-right">
     <div class="saldo-mumu" id="saldoMumuHeader" style="display:none;">
-      💎 <span id="saldoMumuValor">0.00</span> MUMU
+      <span id="saldoMumuSimbolo">M$</span>
+      <span id="saldoMumuValor">0.00</span>
     </div>
     <div class="status-supabase" id="statusSupabase">
       <span class="dot"></span> Verificando…
@@ -294,7 +279,7 @@
           <small id="qtd-max" style="color:var(--mut);font-size:11.5px"></small>
         </div>
         <div class="campo">
-          <label for="preco">Preço (💎 MUMU)</label>
+          <label for="preco">Preço (<span class="simbolo-mumu">M$</span>)</label>
           <input id="preco" type="number" min="0.01" step="0.01" placeholder="0,00" required />
           <div class="taxa-info" id="taxa-info" style="display:none;"></div>
         </div>
@@ -326,7 +311,6 @@
 
 <div id="toasts"></div>
 
-<!-- ==================== MODAL DO CÓDIGO ==================== -->
 <div class="modal hidden" id="modal">
   <div class="modal-box">
     <h2>🔐 Código de liberação</h2>
@@ -360,20 +344,38 @@
   </div>
 </div>
 
-<!-- ==================== SCRIPT PRINCIPAL ==================== -->
-<script>
+<!-- ============================================================
+     IMPORTMAP — Supabase via ESM
+============================================================ -->
+<script type="importmap">
+{
+  "imports": {
+    "@supabase/supabase-js": "https://esm.sh/@supabase/supabase-js@2"
+  }
+}
+</script>
+
+<!-- ============================================================
+     SCRIPT PRINCIPAL — importa tudo do config.js
+============================================================ -->
+<script type="module">
+import {
+  db,
+  TABELA,
+  TABELA_ATIVIDADES,
+  TABELA_TROCAS,
+  TAXA_PERCENTUAL,
+  SIMB
+} from './config.js';
+
 /* ============================================================
-   CONFIG
+   ALIAS LOCAL (compatibilidade)
 ============================================================ */
-const SUPABASE_URL = 'https://xrcxvizzdumcxbylmkvn.supabase.co';
-const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InhyY3h2aXp6ZHVtY3hieWxta3ZuIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODY2NjA0NzIsImV4cCI6MjEwMjIzNjQ3Mn0.ohB4tW0UQ-k1PcwoZxm4u9XSGNLsFphv1_UwTWoklOM';
-const TABELA            = 'Geral';
-const TABELA_ATIVIDADES = 'Atividades';
-const TABELA_TROCAS     = 'Trocas';
-const TAXA_PERCENTUAL   = 0.05; // 5%
+const db_client = db;  // só por clareza
 
-const db = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
-
+/* ============================================================
+   SESSÃO
+============================================================ */
 const SESSION_KEYS = [
   'usuario_logado','usuarioLogado','user','usuario','jogador',
   'session','sessao','login','portal_bolsa_user','user_data','dados_usuario'
@@ -409,7 +411,9 @@ let saldoMumuAtual   = 0;
 const $ = (s) => document.querySelector(s);
 const esc = (s) => String(s ?? '').replace(/[&<>"']/g, c =>
   ({ '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;' }[c]));
-const money = (v) => `💎 ${Number(v || 0).toFixed(2)}`;
+
+/* ✅ Usa os símbolos do config.js */
+const moneyMumu = (v) => `${SIMB.mumu} ${Number(v || 0).toFixed(2)}`;
 const dataHora = (v) => v ? new Date(v).toLocaleString('pt-BR') : '—';
 
 function toast(msg, tipo = '') {
@@ -431,6 +435,22 @@ async function logAtividade(acao, detalhes) {
       created_at: new Date().toISOString()
     });
   } catch (e) { /* ignora se tabela não existir */ }
+}
+
+/* ============================================================
+   APLICAR SÍMBOLOS NO DOM ESTÁTICO
+============================================================ */
+function aplicarSimbolosNoHTML() {
+  /* Preço (label) */
+  document.querySelectorAll('.simbolo-mumu').forEach(el => {
+    el.textContent = SIMB.mumu;
+  });
+
+  /* Saldo MUMU (header) */
+  const simbEl = document.getElementById('saldoMumuSimbolo');
+  if (simbEl) simbEl.textContent = SIMB.mumu;
+
+  /* Modal - preço/taxa/líquido serão renderizados via JS */
 }
 
 /* ============================================================
@@ -517,17 +537,9 @@ function atualizarStatus(online, msg) {
 
 async function verificarSupabase() {
   try {
-    const resp = await fetch(`${SUPABASE_URL}/rest/v1/`, {
-      method: 'HEAD',
-      headers: {
-        'apikey': SUPABASE_KEY,
-        'Authorization': `Bearer ${SUPABASE_KEY}`
-      },
-      signal: (typeof AbortSignal !== 'undefined' && AbortSignal.timeout)
-        ? AbortSignal.timeout(5000) : undefined
-    });
-    if (resp.status < 500) { atualizarStatus(true); return true; }
-    atualizarStatus(false, 'HTTP ' + resp.status);
+    const { error } = await db.from(TABELA).select('login').limit(1);
+    if (!error) { atualizarStatus(true); return true; }
+    atualizarStatus(false, error.message);
     return false;
   } catch (e) {
     atualizarStatus(false, e.message || 'sem conexão');
@@ -569,14 +581,12 @@ async function carregarMochilaESaldo() {
     if (error) throw error;
     if (!data) throw new Error(`Jogador "${usuarioLogado.login}" não encontrado`);
 
-    // Saldo MUMU
     saldoMumuAtual = Number(data.mumu || 0);
     const elSaldo = $('#saldoMumuValor');
     const boxSaldo = $('#saldoMumuHeader');
     if (elSaldo) elSaldo.textContent = saldoMumuAtual.toFixed(2);
     if (boxSaldo) boxSaldo.style.display = 'inline-flex';
 
-    // Inventário
     inventario = extrairTodosItens(data);
     mochilaCarregada = true;
 
@@ -640,7 +650,6 @@ function extrairTodosItens(d) {
     });
   }
 
-  // Recursos de fazenda como itens
   if (Number(d.seeds) > 0)     { todos['Sementes'] = { id:'sementes', nome:'Sementes', qtd:Number(d.seeds) }; }
   if (Number(d.stock) > 0)     { todos['Milho']    = { id:'milho',    nome:'Milho',    qtd:Number(d.stock) }; }
   if (Number(d.buckets) > 0)   { todos['Balde']    = { id:'balde',    nome:'Balde',    qtd:Number(d.buckets) }; }
@@ -656,6 +665,7 @@ function extrairTodosItens(d) {
    INIT
 ============================================================ */
 document.addEventListener('DOMContentLoaded', async () => {
+  aplicarSimbolosNoHTML();
   bindEventos();
   identificarUsuario();
   iniciarMonitorStatus();
@@ -683,7 +693,6 @@ function bindEventos() {
 
   $('#form')?.addEventListener('submit', criarTroca);
 
-  // Autocompletar item + qtd
   $('#item-select')?.addEventListener('change', (e) => {
     const opt = e.target.selectedOptions[0];
     if (!opt || !opt.value) {
@@ -698,7 +707,6 @@ function bindEventos() {
     if (Number($('#qtd').value) > qtd) $('#qtd').value = qtd;
   });
 
-  // Preview de taxa enquanto digita o preço
   $('#preco')?.addEventListener('input', (e) => {
     const preco = Number(e.target.value) || 0;
     const info = $('#taxa-info');
@@ -716,11 +724,11 @@ function bindEventos() {
     info.innerHTML = `
       <div style="display:flex;justify-content:space-between;">
         <span>Taxa (5%)</span>
-        <strong>💎 ${taxa.toFixed(2)}</strong>
+        <strong>${SIMB.mumu} ${taxa.toFixed(2)}</strong>
       </div>
       <div style="display:flex;justify-content:space-between;">
         <span>Você recebe</span>
-        <strong style="color:#4ade80;">💎 ${liquido.toFixed(2)}</strong>
+        <strong style="color:#4ade80;">${SIMB.mumu} ${liquido.toFixed(2)}</strong>
       </div>
     `;
   });
@@ -814,7 +822,6 @@ function cardHTML(r) {
 
   let acoes = '';
 
-  // ---------------------- AGUARDANDO ----------------------
   if (r.status === 'aguardando') {
     if (euVendedor) {
       acoes += `<button class="btn ok" data-acao="pago" data-id="${r.id}">
@@ -823,7 +830,7 @@ function cardHTML(r) {
     } else {
       acoes += `<div class="aviso">
                   ⏳ O comprador <strong>${esc(r.comprador)}</strong> precisa pagar
-                  <strong>💎 ${preco.toFixed(2)}</strong>.
+                  <strong>${SIMB.mumu} ${preco.toFixed(2)}</strong>.
                 </div>`;
     }
     if (euVendedor || euComprador) {
@@ -833,7 +840,6 @@ function cardHTML(r) {
     }
   }
 
-  // ---------------------- CONFIRMADO ----------------------
   else if (r.status === 'pagamento_confirmado') {
     if (euVendedor) {
       acoes += cod
@@ -860,15 +866,15 @@ function cardHTML(r) {
             </div>
             <div class="row">
               <span>Preço da troca</span>
-              <span class="val">💎 ${preco.toFixed(2)}</span>
+              <span class="val">${SIMB.mumu} ${preco.toFixed(2)}</span>
             </div>
             <div class="row taxa">
               <span>Taxa do sistema (5%)</span>
-              <span class="val">💎 ${taxa.toFixed(2)}</span>
+              <span class="val">${SIMB.mumu} ${taxa.toFixed(2)}</span>
             </div>
             <div class="row total">
               <span>Total a pagar</span>
-              <span class="val final">💎 ${custoTotal.toFixed(2)}</span>
+              <span class="val final">${SIMB.mumu} ${custoTotal.toFixed(2)}</span>
             </div>
           </div>
 
@@ -889,14 +895,12 @@ function cardHTML(r) {
     }
   }
 
-  // ---------------------- CONCLUÍDA ----------------------
   else if (r.status === 'concluida') {
     acoes += `<div class="aviso ok">
                 ✅ Concluída${r.concluido_em ? ' em ' + dataHora(r.concluido_em) : ''}.
               </div>`;
   }
 
-  // ---------------------- CANCELADA ----------------------
   else {
     acoes += `<div class="aviso err">❌ Negociação cancelada.</div>`;
   }
@@ -912,15 +916,15 @@ function cardHTML(r) {
 
       <div class="linha">
         <span>Preço</span>
-        <strong class="preco">💎 ${preco.toFixed(2)}</strong>
+        <strong class="preco">${SIMB.mumu} ${preco.toFixed(2)}</strong>
       </div>
       <div class="linha">
         <span>Taxa do sistema (5%)</span>
-        <strong style="color:#fbbf24;">💎 ${taxa.toFixed(2)}</strong>
+        <strong style="color:#fbbf24;">${SIMB.mumu} ${taxa.toFixed(2)}</strong>
       </div>
       <div class="linha">
         <span>Vendedor recebe</span>
-        <strong style="color:#4ade80;">💎 ${liquido.toFixed(2)}</strong>
+        <strong style="color:#4ade80;">${SIMB.mumu} ${liquido.toFixed(2)}</strong>
       </div>
       <div class="linha">
         <span>Vendedor</span>
@@ -1002,7 +1006,7 @@ async function liberarItem(id, btn) {
     }
 
     const pago = Number(data.custo_total_pago || 0).toFixed(2);
-    toast(`✅ Troca concluída! Você pagou 💎 ${pago}`, 'ok');
+    toast(`✅ Troca concluída! Você pagou ${SIMB.mumu} ${pago}`, 'ok');
     localStorage.removeItem('ts_cod_' + id);
     carregar();
     carregarMochilaESaldo();
@@ -1078,6 +1082,15 @@ async function criarTroca(e) {
     return;
   }
 
+  /* ✅ Fallback se o RPC não retornar taxa/valor_liquido */
+  const precoNum   = Number(preco) || 0;
+  const taxaNum    = Number.isFinite(Number(data.taxa))
+      ? Number(data.taxa)
+      : precoNum * TAXA_PERCENTUAL;
+  const liquidoNum = Number.isFinite(Number(data.valor_liquido))
+      ? Number(data.valor_liquido)
+      : precoNum - taxaNum;
+
   localStorage.setItem('ts_cod_' + data.id, data.codigo);
 
   e.target.reset();
@@ -1087,7 +1100,7 @@ async function criarTroca(e) {
   $('#item').dataset.idItem = '';
   $('#taxa-info').style.display = 'none';
 
-  abrirModalCodigo(data.codigo, preco, data.taxa, data.valor_liquido);
+  abrirModalCodigo(data.codigo, precoNum, taxaNum, liquidoNum);
   carregar();
 }
 
@@ -1099,10 +1112,14 @@ function abrirModalCodigo(codigo, preco, taxa, liquido) {
   $('#modal-cod').textContent = codigo;
 
   const resumo = $('#modal-resumo');
-  if (resumo && preco !== undefined) {
-    $('#modal-preco').textContent   = `💎 ${Number(preco).toFixed(2)}`;
-    $('#modal-taxa').textContent    = `💎 ${Number(taxa).toFixed(2)}`;
-    $('#modal-liquido').textContent = `💎 ${Number(liquido).toFixed(2)}`;
+  if (resumo && preco !== undefined && !isNaN(preco)) {
+    const precoF   = Number.isFinite(Number(preco))   ? Number(preco)   : 0;
+    const taxaF    = Number.isFinite(Number(taxa))    ? Number(taxa)    : precoF * TAXA_PERCENTUAL;
+    const liquidoF = Number.isFinite(Number(liquido)) ? Number(liquido) : precoF - taxaF;
+
+    $('#modal-preco').textContent   = `${SIMB.mumu} ${precoF.toFixed(2)}`;
+    $('#modal-taxa').textContent    = `${SIMB.mumu} ${taxaF.toFixed(2)}`;
+    $('#modal-liquido').textContent = `${SIMB.mumu} ${liquidoF.toFixed(2)}`;
     resumo.style.display = 'block';
   } else if (resumo) {
     resumo.style.display = 'none';
@@ -1128,7 +1145,9 @@ async function copiar(texto) {
 }
 </script>
 
-<!-- ==================== MENU (renderizado) ==================== -->
+<!-- ============================================================
+     MENU — usa shared/menu.js
+============================================================ -->
 <script type="module">
   import { renderMenu } from './shared/menu.js';
   renderMenu('menu-slot', 'troca');

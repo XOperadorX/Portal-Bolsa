@@ -3,29 +3,29 @@
 // Usado por todos os jogos + dashboard
 // ============================================================
 // Uso:
-//   import { OfflineRegen } from '../shared/offline-regen.js';
+//   import { OfflineRegen } from './shared/offline-regen.js';
 //   const regen = new OfflineRegen({ supabase, tabela: 'Geral', login });
-//   await regen.init();          // lê do banco, aplica, renderiza
-//   regen.tick();                // chame a cada segundo (ou use regen.startAutoTick())
-//   regen.onSmReduzida(10);      // chame quando SM for reduzida
+//   await regen.init();
+//   regen.startAutoTick();
+//   regen.onSmReduzida(novoSm, smMax);
 // ============================================================
 
 export const REGEN_CONFIG = {
-    STAMINA_CRITICAL_PCT: 10,                 // % crítica
-    OFFLINE_FULL_MS: 24 * 60 * 60 * 1000,     // 24h
-    TICK_MS: 1000,                            // tick da barra
-    REGEN_ONLINE_INTERVAL_MS: 30 * 1000,      // tick online normal
-    REGEN_ONLINE_PER_TICK: 1                  // +1 SM por tick online
+    STAMINA_CRITICAL_PCT: 10,                 // % crítica (10% do smMax)
+    OFFLINE_FULL_MS: 24 * 60 * 60 * 1000,     // 24h até regeneração total
+    TICK_MS: 1000,                            // tick da barra (1s)
+    REGEN_ONLINE_INTERVAL_MS: 30 * 1000,      // reservado
+    REGEN_ONLINE_PER_TICK: 1                  // reservado
 };
 
 export class OfflineRegen {
     /**
      * @param {Object} opts
-     * @param {Object} opts.supabase     - cliente Supabase já criado
-     * @param {string} opts.tabela       - nome da tabela ('Geral')
-     * @param {string} opts.login        - login do usuário
-     * @param {HTMLElement} [opts.container] - onde injetar a barra (padrão: cria antes do primeiro <main>)
-     * @param {Function} [opts.onApply]  - callback(dados) sempre que a regen aplicar mudanças
+     * @param {Object} opts.supabase          - cliente Supabase
+     * @param {string} opts.tabela            - nome da tabela ('Geral')
+     * @param {string} opts.login             - login do usuário
+     * @param {HTMLElement} [opts.container]  - onde injetar a barra
+     * @param {Function} [opts.onApply]       - callback(dados) quando aplicar mudanças
      */
     constructor(opts) {
         if (!opts || !opts.supabase || !opts.tabela || !opts.login) {
@@ -37,14 +37,11 @@ export class OfflineRegen {
         this.container = opts.container || null;
         this.onApply = opts.onApply || null;
 
-        // Estado local (sincronizado com o banco)
-        this.offlineRegenStart = null;   // ms
-        this.sm = 0;
-        this.smMax = 100;
-        this.hp = 0;
-        this.hpMax = 100;
-        this.mp = 0;
-        this.mpMax = 100;
+        // Estado local
+        this.offlineRegenStart = null;
+        this.sm = 0;    this.smMax = 100;
+        this.hp = 0;    this.hpMax = 100;
+        this.mp = 0;    this.mpMax = 100;
 
         this._tickInterval = null;
         this._autoSaveTimeout = null;
@@ -56,10 +53,6 @@ export class OfflineRegen {
     // ============================================================
     // INICIALIZAÇÃO
     // ============================================================
-    /**
-     * Lê o estado do banco, aplica regeneração offline e monta a barra.
-     * @returns {Promise<Object>} dados atualizados
-     */
     async init() {
         await this._carregarDoBanco();
         this._aplicarRegenOffline();
@@ -70,7 +63,6 @@ export class OfflineRegen {
 
     /**
      * Chame quando a SM for reduzida em qualquer ação.
-     * Inicia a regeneração offline se cruzar o limiar crítico.
      */
     onSmReduzida(novoSm, smMax) {
         if (typeof novoSm === 'number') this.sm = novoSm;
@@ -88,23 +80,21 @@ export class OfflineRegen {
     }
 
     /**
-     * Chame quando a SM aumentar (descanso, item, etc.).
-     * Encerra a regeneração se sair do crítico.
+     * Chame quando a SM aumentar (descanso, item, admin).
+     * ✅ Persiste a limpeza do timer.
      */
     onSmAumentada(novoSm) {
         if (typeof novoSm === 'number') this.sm = novoSm;
         const limiar = this.smMax * (REGEN_CONFIG.STAMINA_CRITICAL_PCT / 100);
+
         if (this.sm >= limiar && this.offlineRegenStart) {
             this.offlineRegenStart = null;
             this._regenCompletaAvisada = false;
+            this._persistir();
         }
         this._renderizar();
     }
 
-    /**
-     * Recalcula e aplica a regeneração baseada no tempo decorrido.
-     * @returns {boolean} true se algo mudou
-     */
     tick() {
         if (this._destroyed) return false;
         const mudou = this._aplicarRegenOffline();
@@ -112,9 +102,6 @@ export class OfflineRegen {
         return mudou;
     }
 
-    /**
-     * Inicia o tick automático de 1s (atualiza a barra em tempo real).
-     */
     startAutoTick() {
         this.stopAutoTick();
         this._tickInterval = setInterval(() => this.tick(), REGEN_CONFIG.TICK_MS);
@@ -128,7 +115,14 @@ export class OfflineRegen {
     }
 
     /**
-     * Destroi o módulo (chame no beforeunload).
+     * Re-renderiza forçado (chamado pelo dashboard quando SM muda por fora).
+     */
+    render() {
+        this._renderizar();
+    }
+
+    /**
+     * ✅ Também limpa o toast órfão.
      */
     destroy() {
         this._destroyed = true;
@@ -137,6 +131,8 @@ export class OfflineRegen {
         if (this._widget && this._widget.parentNode) {
             this._widget.parentNode.removeChild(this._widget);
         }
+        const toast = document.getElementById('offlineRegenToast');
+        if (toast && toast.parentNode) toast.parentNode.removeChild(toast);
     }
 
     // ============================================================
@@ -146,16 +142,16 @@ export class OfflineRegen {
         const agora = Date.now();
         const limiar = this.smMax * (REGEN_CONFIG.STAMINA_CRITICAL_PCT / 100);
 
-        // Se SM está saudável, nada a fazer
+        // SM saudável → limpa regen se estava ativa
         if (this.sm >= limiar) {
             if (this.offlineRegenStart) {
                 this.offlineRegenStart = null;
+                this._persistir();
                 this._renderizar();
             }
             return false;
         }
 
-        // Sem marcação → não há como contar o tempo ainda
         if (!this.offlineRegenStart) return false;
 
         const decorrido = agora - this.offlineRegenStart;
@@ -164,14 +160,12 @@ export class OfflineRegen {
         let mudou = false;
 
         if (progresso < 1) {
-            // Regeneração proporcional de SM
             const smAlvo = Math.min(this.smMax, Math.ceil(this.smMax * progresso));
             if (smAlvo > this.sm) {
                 this.sm = smAlvo;
                 mudou = true;
             }
         } else {
-            // ✅ Completou 24h → restaura HP, MP e SM
             const precisaRestaurar =
                 this.sm < this.smMax ||
                 this.hp < this.hpMax ||
@@ -202,7 +196,6 @@ export class OfflineRegen {
     }
 
     _notificarCompleto() {
-        // Toast local (não depende de nenhuma lib externa)
         const toast = document.getElementById('offlineRegenToast');
         if (toast) {
             toast.textContent = '🌟 Recuperação total concluída! HP, MP e SM restaurados.';
@@ -222,12 +215,12 @@ export class OfflineRegen {
     async _carregarDoBanco() {
         const { data, error } = await this.supabase
             .from(this.tabela)
-            .select('sm_atual, sm, max_sm, hp_atual, hp, max_hp, mp_atual, mp, max_mp, offline_regen_start, ultima_vez_online, updated_at')
+            .select('sm_atual, sm, max_sm, hp_atual, hp, max_hp, mp_atual, mp, max_mp, offline_regen_start')
             .eq('login', this.login)
             .maybeSingle();
 
         if (error || !data) {
-            console.warn('⚠️ [OfflineRegen] Não foi possível carregar do banco:', error);
+            console.warn('⚠️ [OfflineRegen] Não foi possível carregar:', error);
             return;
         }
 
@@ -239,13 +232,9 @@ export class OfflineRegen {
         this.hp = data.hp_atual ?? data.hp ?? this.hpMax;
         this.mp = data.mp_atual ?? data.mp ?? this.mpMax;
 
-        // ✅ CORRIGIDO: usa APENAS o offline_regen_start explícito.
-        // NÃO usa ultima_vez_online/updated_at como fallback, pois isso
-        // marcaria regeneração ativa mesmo quando não há.
         const ts = data.offline_regen_start;
         this.offlineRegenStart = ts ? new Date(ts).getTime() : null;
 
-        // Se a SM já está saudável, limpa a marcação
         const limiar = this.smMax * (REGEN_CONFIG.STAMINA_CRITICAL_PCT / 100);
         if (this.sm >= limiar) {
             this.offlineRegenStart = null;
@@ -259,12 +248,9 @@ export class OfflineRegen {
 
     async _persistir() {
         const payload = {
-            sm_atual: this.sm,
-            sm: this.sm,
-            hp_atual: this.hp,
-            hp: this.hp,
-            mp_atual: this.mp,
-            mp: this.mp,
+            sm_atual: this.sm, sm: this.sm,
+            hp_atual: this.hp, hp: this.hp,
+            mp_atual: this.mp, mp: this.mp,
             offline_regen_start: this.offlineRegenStart
                 ? new Date(this.offlineRegenStart).toISOString()
                 : null,
@@ -282,7 +268,7 @@ export class OfflineRegen {
     }
 
     // ============================================================
-    // UI — BARRA
+    // UI — WIDGET
     // ============================================================
     _injetarWidgetSeNecessario() {
         if (document.getElementById('offlineRegenWidget')) {
@@ -319,15 +305,26 @@ export class OfflineRegen {
             "></div>
         `;
 
+        // ✅ Prioriza #offlineRegenSlot e insere DENTRO dele
         const anchor = this.container
+            || document.getElementById('offlineRegenSlot')
             || document.querySelector('main')
             || document.querySelector('.container')
             || document.body.firstChild;
 
+        const isSlot = anchor && anchor.id === 'offlineRegenSlot';
+
         const wrapper = document.createElement('div');
         wrapper.innerHTML = html.trim();
         const nodes = Array.from(wrapper.children);
-        nodes.forEach(n => anchor.parentNode.insertBefore(n, anchor));
+
+        if (isSlot) {
+            nodes.forEach(n => anchor.appendChild(n));
+        } else if (anchor && anchor.parentNode) {
+            nodes.forEach(n => anchor.parentNode.insertBefore(n, anchor));
+        } else {
+            nodes.forEach(n => document.body.appendChild(n));
+        }
 
         this._widget = document.getElementById('offlineRegenWidget');
     }

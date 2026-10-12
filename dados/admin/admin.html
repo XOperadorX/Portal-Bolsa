@@ -1,16 +1,12 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
-<head><!-- 3. No <head>, adicione o CSS do menu (ou importe de menu.css) -->
+<head>
 <link rel="stylesheet" href="./shared/menu.css">
-    <!-- ============================================================ -->
-<!-- SEO / Open Graph / Twitter Card                              -->
-<!-- ============================================================ -->
 <meta name="description" content="MM Quase Tudo — Central de jogos, economia virtual e negociações entre jogadores.">
 <meta name="keywords" content="mm quasetudo, jogos, economia virtual, mmorpg, browser game">
 <meta name="author" content="Equipe MM Quase Tudo">
 <meta name="theme-color" content="#002bad">
 
-<!-- Open Graph (Facebook / Discord / WhatsApp) -->
 <meta property="og:type"        content="website">
 <meta property="og:site_name"   content="MM Quase Tudo">
 <meta property="og:title"       content="MM Quase Tudo — Central de Jogos">
@@ -19,24 +15,20 @@
 <meta property="og:url"         content="https://xoperadorx.github.io/Portal-Bolsa/">
 <meta property="og:locale"      content="pt_BR">
 
-<!-- Twitter Card -->
 <meta name="twitter:card"        content="summary_large_image">
 <meta name="twitter:title"       content="MM Quase Tudo — Central de Jogos">
 <meta name="twitter:description" content="Central de jogos, economia virtual e negociações entre jogadores.">
 <meta name="twitter:image"       content="https://xoperadorx.github.io/Portal-Bolsa/assets/og-image.png">
 
-<!-- Favicon -->
 <link rel="icon"             type="image/png" sizes="32x32" href="./assets/favicon-32.png">
 <link rel="icon"             type="image/png" sizes="16x16" href="./assets/favicon-16.png">
 <link rel="apple-touch-icon" sizes="180x180"               href="./assets/apple-touch-icon.png">
-
-<!-- PWA (opcional) -->
 <link rel="manifest" href="./manifest.json">
+
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Painel ADM - BAEP Investimentos</title>
 
-    <!-- 🔐 PROTEÇÃO: bloqueia acesso direto se cadeado !== true -->
     <script>
     (async function protegerAdmin() {
         const usuarioData = localStorage.getItem('usuario_logado');
@@ -98,24 +90,18 @@
             --text-color: #f0f4f8;
         }
 
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-            font-family: 'Rajdhani', sans-serif;
-        }
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Rajdhani', sans-serif; }
 
         body {
             background-color: var(--bg-dark);
             color: var(--text-color);
-            background-image: 
+            background-image:
                 radial-gradient(circle at 15% 20%, rgba(112, 0, 255, 0.15) 0%, transparent 40%),
                 radial-gradient(circle at 85% 80%, rgba(0, 240, 255, 0.15) 0%, transparent 40%);
             min-height: 100vh;
             padding: 20px;
         }
 
-        /* --- BARRA DE NAVEGAÇÃO SUPERIOR (ADAPTADA) --- */
         .nav-bar {
             display: flex;
             justify-content: space-between;
@@ -131,12 +117,7 @@
             gap: 10px;
         }
 
-        .nav-links {
-            display: flex;
-            align-items: center;
-            gap: 15px;
-            flex-wrap: wrap;
-        }
+        .nav-links { display: flex; align-items: center; gap: 15px; flex-wrap: wrap; }
 
         .nav-links a {
             color: #a0aec0;
@@ -151,15 +132,13 @@
             gap: 6px;
         }
 
-        .nav-links a:hover,
-        .nav-links a.active {
+        .nav-links a:hover, .nav-links a.active {
             color: #fff;
             background: rgba(0, 240, 255, 0.15);
             border: 1px solid var(--neon-blue);
             box-shadow: 0 0 10px rgba(0, 240, 255, 0.3);
         }
 
-        /* Perfil do usuário */
         .user-profile {
             display: flex;
             align-items: center;
@@ -194,11 +173,7 @@
             box-shadow: 0 0 10px rgba(0, 240, 255, 0.3);
         }
 
-        .user-info {
-            display: flex;
-            flex-direction: column;
-            line-height: 1.2;
-        }
+        .user-info { display: flex; flex-direction: column; line-height: 1.2; }
 
         .user-nick {
             font-family: 'Orbitron', sans-serif;
@@ -215,17 +190,9 @@
             gap: 4px;
         }
 
-        .user-balance::before {
-            content: "💰";
-            font-size: 0.7rem;
-        }
+        .user-balance::before { content: "💰"; font-size: 0.7rem; }
 
-        .nav-buttons {
-            display: flex;
-            gap: 10px;
-            align-items: center;
-            flex-wrap: wrap;
-        }
+        .nav-buttons { display: flex; gap: 10px; align-items: center; flex-wrap: wrap; }
 
         .btn-bolsa {
             background: linear-gradient(135deg, #00f0ff, #7000ff);
@@ -267,7 +234,6 @@
             box-shadow: 0 0 15px rgba(220, 38, 38, 0.6);
         }
 
-        /* ============ MENU DE BOTÕES ADM ============ */
         .admin-menu-grid {
             display: grid;
             grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
@@ -309,9 +275,7 @@
             color: #fff;
         }
 
-        .admin-menu-btn:hover::before {
-            opacity: 1;
-        }
+        .admin-menu-btn:hover::before { opacity: 1; }
 
         .admin-menu-btn .menu-icon {
             width: 42px;
@@ -347,7 +311,6 @@
             font-weight: 500;
         }
 
-        /* Cores por categoria */
         .admin-menu-btn[data-cor="azul"] .menu-icon    { background: rgba(59, 130, 246, 0.15); color: #60a5fa; }
         .admin-menu-btn[data-cor="roxo"] .menu-icon    { background: rgba(139, 92, 246, 0.15); color: #a78bfa; }
         .admin-menu-btn[data-cor="verde"] .menu-icon   { background: rgba(34, 197, 94, 0.15);  color: #4ade80; }
@@ -366,12 +329,7 @@
         .admin-menu-btn[data-cor="laranja"]:hover { border-color: #f7931a; box-shadow: 0 8px 28px rgba(247, 147, 26, 0.25); }
         .admin-menu-btn[data-cor="rosa"]:hover    { border-color: #ff00aa; box-shadow: 0 8px 28px rgba(255, 0, 170, 0.25); }
 
-        /* --- CARDS (painel ADM) --- */
-        .container {
-            padding: 0;
-            max-width: 1400px;
-            margin: 0 auto;
-        }
+        .container { padding: 0; max-width: 1400px; margin: 0 auto; }
 
         .card {
             background: var(--card-bg);
@@ -383,9 +341,7 @@
             transition: border-color 0.3s;
         }
 
-        .card:hover {
-            border-color: rgba(0, 240, 255, 0.2);
-        }
+        .card:hover { border-color: rgba(0, 240, 255, 0.2); }
 
         .card h2 {
             font-size: 1.4rem;
@@ -398,9 +354,7 @@
             text-shadow: 0 0 8px rgba(0, 240, 255, 0.2);
         }
 
-        .form-group {
-            margin-bottom: 16px;
-        }
+        .form-group { margin-bottom: 16px; }
 
         .form-group label {
             display: block;
@@ -411,8 +365,7 @@
             letter-spacing: 0.3px;
         }
 
-        .form-group input,
-        .form-group select {
+        .form-group input, .form-group select {
             width: 100%;
             padding: 12px 16px;
             border: 2px solid #2a2f45;
@@ -423,23 +376,16 @@
             color: #f0f4f8;
         }
 
-        .form-group input:focus,
-        .form-group select:focus {
+        .form-group input:focus, .form-group select:focus {
             outline: none;
             border-color: var(--neon-blue);
             background: #121a2a;
             box-shadow: 0 0 0 4px rgba(0, 240, 255, 0.15);
         }
 
-        .form-group input::placeholder {
-            color: #5a6a7a;
-        }
+        .form-group input::placeholder { color: #5a6a7a; }
 
-        .form-row {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 20px;
-        }
+        .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
 
         .btn {
             padding: 12px 24px;
@@ -453,58 +399,23 @@
             letter-spacing: 0.5px;
         }
 
-        .btn:hover {
-            transform: translateY(-2px);
-        }
+        .btn:hover { transform: translateY(-2px); }
+        .btn:active { transform: scale(0.96); }
 
-        .btn:active {
-            transform: scale(0.96);
-        }
+        .btn-primary { background: linear-gradient(135deg, #002e5d, #001a33); color: white; }
+        .btn-primary:hover { box-shadow: 0 8px 25px rgba(0, 46, 93, 0.3); }
 
-        .btn-primary {
-            background: linear-gradient(135deg, #002e5d, #001a33);
-            color: white;
-        }
+        .btn-success { background: linear-gradient(135deg, #10b981, #059669); color: white; }
+        .btn-success:hover { box-shadow: 0 8px 25px rgba(16, 185, 129, 0.3); }
 
-        .btn-primary:hover {
-            box-shadow: 0 8px 25px rgba(0, 46, 93, 0.3);
-        }
+        .btn-danger { background: linear-gradient(135deg, #ef4444, #dc2626); color: white; }
+        .btn-danger:hover { box-shadow: 0 8px 25px rgba(239, 68, 68, 0.3); }
 
-        .btn-success {
-            background: linear-gradient(135deg, #10b981, #059669);
-            color: white;
-        }
+        .btn-warning { background: linear-gradient(135deg, #f59e0b, #d97706); color: white; }
+        .btn-warning:hover { box-shadow: 0 8px 25px rgba(245, 158, 11, 0.3); }
 
-        .btn-success:hover {
-            box-shadow: 0 8px 25px rgba(16, 185, 129, 0.3);
-        }
-
-        .btn-danger {
-            background: linear-gradient(135deg, #ef4444, #dc2626);
-            color: white;
-        }
-
-        .btn-danger:hover {
-            box-shadow: 0 8px 25px rgba(239, 68, 68, 0.3);
-        }
-
-        .btn-warning {
-            background: linear-gradient(135deg, #f59e0b, #d97706);
-            color: white;
-        }
-
-        .btn-warning:hover {
-            box-shadow: 0 8px 25px rgba(245, 158, 11, 0.3);
-        }
-
-        .btn-secondary {
-            background: linear-gradient(135deg, #6b7280, #4b5563);
-            color: white;
-        }
-
-        .btn-secondary:hover {
-            box-shadow: 0 8px 25px rgba(107, 114, 128, 0.3);
-        }
+        .btn-secondary { background: linear-gradient(135deg, #6b7280, #4b5563); color: white; }
+        .btn-secondary:hover { box-shadow: 0 8px 25px rgba(107, 114, 128, 0.3); }
 
         .btn-back {
             background: linear-gradient(135deg, #8b5cf6, #7c3aed);
@@ -531,7 +442,6 @@
             margin-left: auto;
         }
 
-        /* ============ BOTÃO DELETAR (CARD DETALHES) ============ */
         .btn-delete {
             background: linear-gradient(135deg, #7c3aed, #6d28d9);
             color: white;
@@ -552,11 +462,8 @@
             background: linear-gradient(135deg, #6d28d9, #5b21b6);
         }
 
-        .btn-delete:active {
-            transform: scale(0.96);
-        }
+        .btn-delete:active { transform: scale(0.96); }
 
-        /* Mensagens */
         .mensagem {
             padding: 12px 16px;
             border-radius: 10px;
@@ -565,41 +472,16 @@
             display: none;
         }
 
-        .mensagem.show {
-            display: block;
-        }
+        .mensagem.show { display: block; }
+        .mensagem-erro { background: #1f1a2a; color: #ff6b6b; border-left: 4px solid #ef4444; }
+        .mensagem-sucesso { background: #0f2a1a; color: #6bff9e; border-left: 4px solid #10b981; }
+        .mensagem-info { background: #0f1f2a; color: #6bc8ff; border-left: 4px solid #3b82f6; }
 
-        .mensagem-erro {
-            background: #1f1a2a;
-            color: #ff6b6b;
-            border-left: 4px solid #ef4444;
-        }
+        .table-wrapper { overflow-x: auto; width: 100%; }
 
-        .mensagem-sucesso {
-            background: #0f2a1a;
-            color: #6bff9e;
-            border-left: 4px solid #10b981;
-        }
+        table { width: 100%; border-collapse: collapse; min-width: 700px; }
 
-        .mensagem-info {
-            background: #0f1f2a;
-            color: #6bc8ff;
-            border-left: 4px solid #3b82f6;
-        }
-
-        .table-wrapper {
-            overflow-x: auto;
-            width: 100%;
-        }
-
-        table {
-            width: 100%;
-            border-collapse: collapse;
-            min-width: 700px;
-        }
-
-        th,
-        td {
+        th, td {
             padding: 12px 8px;
             text-align: center;
             border-bottom: 1px solid #2a2f45;
@@ -617,23 +499,11 @@
             letter-spacing: 1px;
         }
 
-        tr:hover td {
-            background: rgba(0, 240, 255, 0.04);
-        }
+        tr:hover td { background: rgba(0, 240, 255, 0.04); }
 
-        .usuario-info {
-            font-size: 0.8rem;
-            font-weight: 400;
-            color: #6bb8e8;
-            margin-left: 10px;
-        }
+        .usuario-info { font-size: 0.8rem; font-weight: 400; color: #6bb8e8; margin-left: 10px; }
 
-        .status-container {
-            display: flex;
-            gap: 10px;
-            align-items: center;
-            flex-wrap: wrap;
-        }
+        .status-container { display: flex; gap: 10px; align-items: center; flex-wrap: wrap; }
 
         .status-item {
             display: inline-flex;
@@ -647,17 +517,8 @@
             white-space: nowrap;
         }
 
-        .status-online {
-            background: #10b981;
-            color: white;
-            box-shadow: 0 2px 8px rgba(16, 185, 129, 0.3);
-        }
-
-        .status-offline {
-            background: #ef4444;
-            color: white;
-            box-shadow: 0 2px 8px rgba(239, 68, 68, 0.3);
-        }
+        .status-online { background: #10b981; color: white; box-shadow: 0 2px 8px rgba(16, 185, 129, 0.3); }
+        .status-offline { background: #ef4444; color: white; box-shadow: 0 2px 8px rgba(239, 68, 68, 0.3); }
 
         .status-checking {
             background: #f59e0b;
@@ -666,10 +527,7 @@
             animation: pulse-status 1s ease-in-out infinite;
         }
 
-        @keyframes pulse-status {
-            0%, 100% { opacity: 1; }
-            50% { opacity: 0.6; }
-        }
+        @keyframes pulse-status { 0%, 100% { opacity: 1; } 50% { opacity: 0.6; } }
 
         .status-dot {
             display: inline-block;
@@ -680,25 +538,16 @@
             flex-shrink: 0;
         }
 
-        .status-dot.online {
-            animation: pulse-dot-online 1.5s ease-in-out infinite;
-        }
+        .status-dot.online { animation: pulse-dot-online 1.5s ease-in-out infinite; }
 
         @keyframes pulse-dot-online {
             0%, 100% { opacity: 1; transform: scale(1); }
             50% { opacity: 0.5; transform: scale(0.8); }
         }
 
-        .status-label {
-            font-size: 0.65rem;
-            opacity: 0.9;
-        }
+        .status-label { font-size: 0.65rem; opacity: 0.9; }
 
-        .moeda-simbolo {
-            font-size: 0.9rem;
-            font-weight: 300;
-            color: #6c86a3;
-        }
+        .moeda-simbolo { font-size: 0.9rem; font-weight: 300; color: #6c86a3; }
 
         .loading {
             display: inline-block;
@@ -712,15 +561,9 @@
             margin-right: 10px;
         }
 
-        @keyframes spin {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(360deg); }
-        }
+        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
 
-        .btn:disabled {
-            opacity: 0.7;
-            cursor: not-allowed;
-        }
+        .btn:disabled { opacity: 0.7; cursor: not-allowed; }
 
         .acao-botoes {
             display: flex;
@@ -747,7 +590,6 @@
         .acao-botoes .set { background: #3b82f6; color: white; }
         .acao-botoes .set:hover { background: #2563eb; }
 
-        /* ============ BOTÃO DELETAR (TABELA) ============ */
         .acao-botoes .delete {
             background: #7c3aed;
             color: white;
@@ -772,17 +614,13 @@
             color: #f0f4f8;
         }
 
-        /* SELIC CARD (custom) */
         .selic-card {
             background: #141a2a;
             border-left: 6px solid var(--neon-blue);
             border-color: rgba(0, 240, 255, 0.3);
         }
 
-        .selic-card h2 {
-            border-left-color: var(--neon-blue);
-            color: #fff;
-        }
+        .selic-card h2 { border-left-color: var(--neon-blue); color: #fff; }
 
         .selic-atual {
             font-size: 2.5rem;
@@ -814,7 +652,6 @@
         .impacto-venda { background: #2a0f1a; color: #ff6b6b; border-left: 4px solid #ef4444; }
         .impacto-neutral { background: #1f1f0f; color: #ffd66b; border-left: 4px solid #f59e0b; }
 
-        /* Estatísticas */
         .stat-box {
             background: #1a1f2f;
             padding: 16px;
@@ -830,13 +667,7 @@
             letter-spacing: 1px;
         }
 
-        .stat-box p {
-            font-size: 2rem;
-            font-weight: 700;
-            color: #fff;
-            margin-top: 6px;
-        }
-
+        .stat-box p { font-size: 2rem; font-weight: 700; color: #fff; margin-top: 6px; }
         .stat-box .stat-green { color: var(--neon-green); }
         .stat-box .stat-blue { color: var(--neon-blue); }
         .stat-box .stat-gold { color: #f59e0b; }
@@ -845,15 +676,8 @@
         .stat-box .stat-purple { color: #a78bfa; }
         .stat-box .stat-orange { color: #f7931a; }
 
-        /* Cor da senha */
-        .senha-texto {
-            font-family: 'Courier New', monospace;
-            font-weight: 600;
-            color: #fbbf24;
-            letter-spacing: 1px;
-        }
+        .senha-texto { font-family: 'Courier New', monospace; font-weight: 600; color: #fbbf24; letter-spacing: 1px; }
 
-        /* ===== COLUNA SM ATUAL ===== */
         .sm-atual-texto {
             font-family: 'Orbitron', monospace;
             font-weight: 700;
@@ -861,7 +685,6 @@
             letter-spacing: 0.5px;
         }
 
-        /* ===== BTC DESTAQUE ===== */
         .btc-texto {
             font-family: 'Orbitron', monospace;
             font-weight: 700;
@@ -870,7 +693,6 @@
             text-shadow: 0 0 8px rgba(247, 147, 26, 0.3);
         }
 
-        /* ===== CARD SATOSHI (custom) ===== */
         .satoshi-card {
             border-left: 6px solid #f7931a;
             border-color: rgba(247, 147, 26, 0.3);
@@ -882,14 +704,8 @@
             text-shadow: 0 0 8px rgba(247, 147, 26, 0.3);
         }
 
-        /* ===== CÓDIGOS DE RESGATE ===== */
-        .codigos-card {
-            border-left: 6px solid var(--neon-green);
-        }
-
-        .codigos-card h2 {
-            border-left-color: var(--neon-green);
-        }
+        .codigos-card { border-left: 6px solid var(--neon-green); }
+        .codigos-card h2 { border-left-color: var(--neon-green); }
 
         .codigo-badge {
             display: inline-block;
@@ -918,7 +734,6 @@
         .acao-botoes .toggle { background: #3b82f6; color: white; }
         .acao-botoes .toggle:hover { background: #2563eb; }
 
-        /* ===== SEÇÃO TÍTULO ===== */
         .section-title {
             font-family: 'Orbitron', sans-serif;
             font-size: 1rem;
@@ -932,22 +747,11 @@
 
         @media (max-width: 768px) {
             .form-row { grid-template-columns: 1fr; }
-            .header-actions {
-                width: 100%;
-                justify-content: flex-start;
-                margin-left: 0;
-                margin-top: 8px;
-            }
-            .status-container {
-                width: 100%;
-                justify-content: flex-start;
-            }
+            .header-actions { width: 100%; justify-content: flex-start; margin-left: 0; margin-top: 8px; }
+            .status-container { width: 100%; justify-content: flex-start; }
             .btn-back { margin-left: 0; }
             .selic-atual { font-size: 1.8rem; }
-            .nav-bar {
-                flex-direction: column;
-                align-items: stretch;
-            }
+            .nav-bar { flex-direction: column; align-items: stretch; }
             .nav-links { justify-content: center; }
             .nav-buttons { justify-content: center; }
             .user-profile { padding: 4px 12px 4px 8px; }
@@ -962,10 +766,9 @@
     </style>
 </head>
 <body>
-    <!-- BARRA DE NAVEGAÇÃO ESTILIZADA (TEMA CYBERPUNK) -->
     <div class="nav-bar">
         <div class="nav-links">
-            <a href="./sys.html" class="active">⚡ ADMIN</a>
+            <a href="./admin.html" class="active">⚡ ADMIN</a>
         </div>
         <div class="user-profile">
             <div class="user-avatar">👑</div>
@@ -980,10 +783,8 @@
     </div>
 
     <div class="container">
-        <!-- Mensagens -->
         <div id="mensagem" class="mensagem"></div>
 
-        <!-- ==================== MENU DE BOTÕES ADMIN ==================== -->
         <div class="section-title">🧭 Painéis Administrativos</div>
         <div class="admin-menu-grid">
             <a href="./001admin.html" class="admin-menu-btn" data-cor="ciano">
@@ -1034,6 +835,15 @@
                 </div>
             </a>
 
+
+            <a href="./adm_saques.html" class="admin-menu-btn" data-cor="vermelho">
+                <div class="menu-icon"><i class="fas fa-trash-can"></i></div>
+                <div class="menu-label">
+                    <span class="titulo">Saques</span>
+                    <span class="subtitulo">Saquess</span>
+                </div>
+            </a>
+
             <a href="./sys.html" class="admin-menu-btn" data-cor="roxo">
                 <div class="menu-icon"><i class="fas fa-gear"></i></div>
                 <div class="menu-label">
@@ -1043,15 +853,14 @@
             </a>
         </div>
 
-        <!-- ==================== SELIC - CONTROLE ==================== -->
         <div class="card selic-card">
             <h2>📈 TAXA SELIC - CONTROLE</h2>
             <p style="color: #8a99ad; margin-bottom: 16px; font-size: 0.9rem;">
-                Ajuste a taxa SELIC para influenciar o mercado de FIIs. 
-                <strong style="color:var(--neon-blue);">SELIC alta</strong> → FIIs caem (oportunidade de compra) | 
+                Ajuste a taxa SELIC para influenciar o mercado de FIIs.
+                <strong style="color:var(--neon-blue);">SELIC alta</strong> → FIIs caem (oportunidade de compra) |
                 <strong style="color:var(--neon-green);">SELIC baixa</strong> → FIIs sobem (momento de vender/colher)
             </p>
-            
+
             <div class="form-row">
                 <div class="form-group">
                     <label for="selicInput">Taxa SELIC Atual (% a.a.)</label>
@@ -1084,7 +893,6 @@
             </div>
         </div>
 
-        <!-- ==================== CÓDIGOS DE RESGATE ==================== -->
         <div class="card codigos-card">
             <h2>🎁 CÓDIGOS DE RESGATE</h2>
             <p style="color: #8a99ad; margin-bottom: 16px; font-size: 0.9rem;">
@@ -1141,7 +949,6 @@
             </div>
         </div>
 
-        <!-- Buscar Usuário -->
         <div class="card">
             <h2>🔍 Buscar Usuário</h2>
             <div class="form-row">
@@ -1156,13 +963,11 @@
             </div>
         </div>
 
-        <!-- Resultados da Busca -->
         <div class="card" id="cardResultados" style="display: none;">
             <h2>👤 Usuário Encontrado</h2>
             <div id="detalhesUsuario"></div>
         </div>
 
-        <!-- ==================== TODOS OS USUÁRIOS ==================== -->
         <div class="card" id="cardLista" style="display: none;">
             <h2>📋 Todos os Usuários</h2>
             <div class="table-wrapper">
@@ -1185,7 +990,6 @@
             </div>
         </div>
 
-        <!-- ==================== TODOS OS SATOSHI ==================== -->
         <div class="card satoshi-card" id="cardSatoshi" style="display: none;">
             <h2>📋 Todos os Satoshi</h2>
             <div class="table-wrapper">
@@ -1204,7 +1008,6 @@
             </div>
         </div>
 
-        <!-- Ações Rápidas -->
         <div class="card">
             <h2>⚡ Ações Rápidas</h2>
             <div class="form-row">
@@ -1224,7 +1027,6 @@
             </div>
         </div>
 
-        <!-- Estatísticas -->
         <div class="card">
             <h2>📊 Estatísticas</h2>
             <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 20px;">
@@ -1292,32 +1094,27 @@
         // ==================== CONFIGURAÇÕES ====================
         const SUPABASE_URL = 'https://xrcxvizzdumcxbylmkvn.supabase.co';
         const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InhyY3h2aXp6ZHVtY3hieWxta3ZuIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODY2NjA0NzIsImV4cCI6MjEwMjIzNjQ3Mn0.ohB4tW0UQ-k1PcwoZxm4u9XSGNLsFphv1_UwTWoklOM';
-        const supabase = createClient(SUPABASE_URL, SUPABASE_KEY);
         const TABELA = 'Geral';
         const MOEDA = 'Mumu';
+
+        // ✅ NOME PRÓPRIO — não sobrescreve window.supabase
+        const supabaseDB = createClient(SUPABASE_URL, SUPABASE_KEY);
 
         let supabaseOnline = false;
         let usuariosCache = [];
         let selicAtual = 10.75;
         let codigosCache = [];
 
-        // ==================== FUNÇÕES UTILITÁRIAS ====================
+        // ==================== UTILITÁRIOS ====================
         function mostrarMensagem(texto, tipo = 'info') {
             const el = document.getElementById('mensagem');
             el.textContent = texto;
             el.className = `mensagem show mensagem-${tipo}`;
-            setTimeout(() => {
-                el.className = 'mensagem';
-            }, 5000);
+            setTimeout(() => { el.className = 'mensagem'; }, 5000);
         }
 
-        function formatarMoeda(valor) {
-            return `${Number(valor || 0).toFixed(2)} ${MOEDA}`;
-        }
-
-        function formatarBtc(valor) {
-            return `${Number(valor || 0).toFixed(8)} BTC`;
-        }
+        function formatarMoeda(valor) { return `${Number(valor || 0).toFixed(2)} ${MOEDA}`; }
+        function formatarBtc(valor) { return `${Number(valor || 0).toFixed(8)} BTC`; }
 
         function atualizarStatusSupabase(online, mensagem = null) {
             const textoNav = document.getElementById('statusSupabaseTextoNav');
@@ -1330,7 +1127,7 @@
             }
         }
 
-        // ==================== FUNÇÕES SELIC ====================
+        // ==================== SELIC ====================
         function atualizarDisplaySelic(valor) {
             const display = document.getElementById('selicDisplay');
             const indicador = document.getElementById('selicIndicador');
@@ -1350,34 +1147,26 @@
             let estrategiaDetalheTexto = 'Analise o mercado antes de agir.';
 
             if (valor >= 13.0) {
-                classificacao = 'ALTA';
-                classe = 'selic-alta';
-                impacto = '📉 FIIs em QUEDA';
-                impactoClasse = 'impacto-compra';
+                classificacao = 'ALTA'; classe = 'selic-alta';
+                impacto = '📉 FIIs em QUEDA'; impactoClasse = 'impacto-compra';
                 detalhe = 'SELIC alta → FIIs caem. Ótimo momento para COMPRAR cotas baratas!';
                 estrategiaTexto = '🛒 COMPRAR FIIs';
                 estrategiaDetalheTexto = 'Aproveite as cotas descontadas para acumular posições.';
             } else if (valor >= 10.5) {
-                classificacao = 'Média';
-                classe = 'selic-media';
-                impacto = '⚖️ Impacto Neutro';
-                impactoClasse = 'impacto-neutral';
+                classificacao = 'Média'; classe = 'selic-media';
+                impacto = '⚖️ Impacto Neutro'; impactoClasse = 'impacto-neutral';
                 detalhe = 'SELIC moderada. Mercado sem grandes oportunidades.';
                 estrategiaTexto = '🔍 Observar';
                 estrategiaDetalheTexto = 'Acompanhe os movimentos do mercado.';
             } else if (valor >= 8.0) {
-                classificacao = 'Média-Baixa';
-                classe = 'selic-media';
-                impacto = '📈 FIIs em SUBIDA';
-                impactoClasse = 'impacto-venda';
+                classificacao = 'Média-Baixa'; classe = 'selic-media';
+                impacto = '📈 FIIs em SUBIDA'; impactoClasse = 'impacto-venda';
                 detalhe = 'SELIC baixa → FIIs sobem. Momento de COLHER lucros!';
                 estrategiaTexto = '💰 VENDER FIIs';
                 estrategiaDetalheTexto = 'Aproveite a alta para realizar lucros e proteger o capital.';
             } else {
-                classificacao = 'BAIXA';
-                classe = 'selic-baixa';
-                impacto = '🚀 FIIs em ALTA';
-                impactoClasse = 'impacto-venda';
+                classificacao = 'BAIXA'; classe = 'selic-baixa';
+                impacto = '🚀 FIIs em ALTA'; impactoClasse = 'impacto-venda';
                 detalhe = 'SELIC muito baixa → FIIs valorizados. Hora de VENDER e colher!';
                 estrategiaTexto = '💸 COLHER LUCROS';
                 estrategiaDetalheTexto = 'Mercado aquecido, momento de vender posições.';
@@ -1394,29 +1183,17 @@
 
         async function salvarSelicNoSupabase(valor) {
             try {
-                const { data: existingData, error: checkError } = await supabase
-                    .from(TABELA)
-                    .select('id')
-                    .eq('id', 1)
-                    .single();
+                const { data: existingData, error: checkError } = await supabaseDB
+                    .from(TABELA).select('id').eq('id', 1).single();
 
                 if (checkError && checkError.code === 'PGRST116') {
-                    const { error: insertError } = await supabase
-                        .from(TABELA)
-                        .insert({ id: 1, selic: valor, updated_at: new Date().toISOString() });
-                    if (insertError) {
-                        console.error('Erro ao criar registro SELIC:', insertError);
-                        return false;
-                    }
+                    const { error: insertError } = await supabaseDB
+                        .from(TABELA).insert({ id: 1, selic: valor, updated_at: new Date().toISOString() });
+                    if (insertError) { console.error('Erro ao criar registro SELIC:', insertError); return false; }
                 } else {
-                    const { error: updateError } = await supabase
-                        .from(TABELA)
-                        .update({ selic: valor, updated_at: new Date().toISOString() })
-                        .eq('id', 1);
-                    if (updateError) {
-                        console.error('Erro ao atualizar SELIC:', updateError);
-                        return false;
-                    }
+                    const { error: updateError } = await supabaseDB
+                        .from(TABELA).update({ selic: valor, updated_at: new Date().toISOString() }).eq('id', 1);
+                    if (updateError) { console.error('Erro ao atualizar SELIC:', updateError); return false; }
                 }
                 return true;
             } catch (error) {
@@ -1427,16 +1204,11 @@
 
         async function carregarSelicDoSupabase() {
             try {
-                const { data, error } = await supabase
-                    .from(TABELA)
-                    .select('selic')
-                    .eq('id', 1)
-                    .single();
-                    
+                const { data, error } = await supabaseDB
+                    .from(TABELA).select('selic').eq('id', 1).single();
+
                 if (error) {
-                    if (error.code === 'PGRST116') {
-                        return null;
-                    }
+                    if (error.code === 'PGRST116') return null;
                     console.warn('Erro ao carregar SELIC:', error);
                     return null;
                 }
@@ -1465,10 +1237,7 @@
         // ==================== SUPABASE - USUÁRIOS ====================
         async function verificarSupabase() {
             try {
-                const { data, error } = await supabase
-                    .from(TABELA)
-                    .select('id')
-                    .limit(1);
+                const { data, error } = await supabaseDB.from(TABELA).select('id').limit(1);
                 if (error) {
                     supabaseOnline = false;
                     atualizarStatusSupabase(false, 'Erro');
@@ -1486,7 +1255,7 @@
 
         async function buscarUsuarios(filtro = null) {
             try {
-                let query = supabase
+                let query = supabaseDB
                     .from(TABELA)
                     .select('id, nome, login, saldo, saldo_poupanca, sm_atual, btc, mumu, bloqueado, proventos_pendentes, poder_mercado')
                     .not('login', 'is', null);
@@ -1514,16 +1283,8 @@
 
         async function buscarUsuarioPorId(id) {
             try {
-                const { data, error } = await supabase
-                    .from(TABELA)
-                    .select('*')
-                    .eq('id', id)
-                    .single();
-
-                if (error) {
-                    mostrarMensagem('❌ Usuário não encontrado.', 'erro');
-                    return null;
-                }
+                const { data, error } = await supabaseDB.from(TABELA).select('*').eq('id', id).single();
+                if (error) { mostrarMensagem('❌ Usuário não encontrado.', 'erro'); return null; }
                 return data;
             } catch (error) {
                 console.error('Erro:', error);
@@ -1532,14 +1293,11 @@
             }
         }
 
-        // ============ atualizar MUMU (não saldo) ============
         async function atualizarMumu(id, novoMumu) {
             try {
-                const { data, error } = await supabase
-                    .from(TABELA)
+                const { data, error } = await supabaseDB.from(TABELA)
                     .update({ mumu: novoMumu, updated_at: new Date().toISOString() })
-                    .eq('id', id)
-                    .select();
+                    .eq('id', id).select();
                 if (error) throw error;
                 return data;
             } catch (error) {
@@ -1550,11 +1308,9 @@
 
         async function atualizarSmAtual(id, valor) {
             try {
-                const { data, error } = await supabase
-                    .from(TABELA)
+                const { data, error } = await supabaseDB.from(TABELA)
                     .update({ sm_atual: valor, updated_at: new Date().toISOString() })
-                    .eq('id', id)
-                    .select();
+                    .eq('id', id).select();
                 if (error) throw error;
                 return data;
             } catch (error) {
@@ -1565,11 +1321,9 @@
 
         async function atualizarBtc(id, valor) {
             try {
-                const { data, error } = await supabase
-                    .from(TABELA)
+                const { data, error } = await supabaseDB.from(TABELA)
                     .update({ btc: valor, updated_at: new Date().toISOString() })
-                    .eq('id', id)
-                    .select();
+                    .eq('id', id).select();
                 if (error) throw error;
                 return data;
             } catch (error) {
@@ -1580,11 +1334,9 @@
 
         async function atualizarBloqueio(id, bloqueado) {
             try {
-                const { data, error } = await supabase
-                    .from(TABELA)
+                const { data, error } = await supabaseDB.from(TABELA)
                     .update({ bloqueado: bloqueado, updated_at: new Date().toISOString() })
-                    .eq('id', id)
-                    .select();
+                    .eq('id', id).select();
                 if (error) throw error;
                 return data;
             } catch (error) {
@@ -1593,14 +1345,11 @@
             }
         }
 
-        // ==================== DELETAR USUÁRIO ====================
         async function deletarUsuario(id, login) {
             const confirmacao1 = confirm(`⚠️ ATENÇÃO!\n\nTem certeza que deseja DELETAR o usuário "${login}" (ID: ${id})?\n\nEsta ação é IRREVERSÍVEL!`);
-            
             if (!confirmacao1) return;
-            
+
             const confirmacao2 = prompt(`🔴 CONFIRMAÇÃO FINAL\n\nDigite "DELETAR" (em maiúsculas) para confirmar a exclusão de "${login}":`);
-            
             if (confirmacao2 !== 'DELETAR') {
                 mostrarMensagem('❌ Exclusão cancelada. Você digitou "' + (confirmacao2 || 'nada') + '" em vez de "DELETAR".', 'erro');
                 return;
@@ -1608,15 +1357,9 @@
 
             try {
                 const usuario = await buscarUsuarioPorId(id);
-                if (!usuario) {
-                    mostrarMensagem('❌ Usuário não encontrado.', 'erro');
-                    return;
-                }
+                if (!usuario) { mostrarMensagem('❌ Usuário não encontrado.', 'erro'); return; }
 
-                const { error } = await supabase
-                    .from(TABELA)
-                    .delete()
-                    .eq('id', id);
+                const { error } = await supabaseDB.from(TABELA).delete().eq('id', id);
 
                 if (error) {
                     console.error('Erro ao deletar usuário:', error);
@@ -1625,68 +1368,36 @@
                 }
 
                 console.log(`🗑️ Usuário deletado: ID ${id} | Login: ${login}`);
-
                 mostrarMensagem(`🗑️ Usuário "${login}" (ID: ${id}) deletado com sucesso!`, 'sucesso');
-                
+
                 document.getElementById('cardResultados').style.display = 'none';
                 await carregarDados();
-                
             } catch (error) {
                 console.error('Erro:', error);
                 mostrarMensagem('❌ Erro ao deletar usuário.', 'erro');
             }
         }
 
-        // ==================== FUNÇÕES DE UI ====================
+        // ==================== UI ====================
         function renderizarUsuarioDetalhes(usuario) {
             const container = document.getElementById('detalhesUsuario');
             const card = document.getElementById('cardResultados');
 
-            if (!usuario) {
-                card.style.display = 'none';
-                return;
-            }
+            if (!usuario) { card.style.display = 'none'; return; }
 
             const estaBloqueado = usuario.bloqueado === true;
 
             container.innerHTML = `
                 <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 16px; background: #1a1f2f; padding: 20px; border-radius: 16px; border: 1px solid #2a2f45;">
-                    <div>
-                        <p style="font-size: 0.8rem; color: #8a99ad;">ID</p>
-                        <p style="font-size: 1.2rem; font-weight: 700; color: var(--neon-blue);">#${usuario.id}</p>
-                    </div>
-                    <div>
-                        <p style="font-size: 0.8rem; color: #8a99ad;">Nome</p>
-                        <p style="font-size: 1.2rem; font-weight: 600; color: #fff;">${usuario.nome || '—'}</p>
-                    </div>
-                    <div>
-                        <p style="font-size: 0.8rem; color: #8a99ad;">Login</p>
-                        <p style="font-size: 1.2rem; font-weight: 600; color: #fff;">${usuario.login}</p>
-                    </div>
-                    <div>
-                        <p style="font-size: 0.8rem; color: #8a99ad;">Senha</p>
-                        <p style="font-size: 1.2rem; font-weight: 600; color: #fbbf24; font-family: 'Courier New', monospace;">${usuario.senha || '—'}</p>
-                    </div>
-                    <div>
-                        <p style="font-size: 0.8rem; color: #8a99ad;">Mumu</p>
-                        <p style="font-size: 1.4rem; font-weight: 700; color: var(--neon-green);">${formatarMoeda(usuario.mumu || 0)}</p>
-                    </div>
-                    <div>
-                        <p style="font-size: 0.8rem; color: #8a99ad;">Saldo</p>
-                        <p style="font-size: 1.4rem; font-weight: 700; color: #22d3ee;">${formatarMoeda(usuario.saldo || 0)}</p>
-                    </div>
-                    <div>
-                        <p style="font-size: 0.8rem; color: #8a99ad;">Poupança</p>
-                        <p style="font-size: 1.4rem; font-weight: 700; color: #f59e0b;">${formatarMoeda(usuario.saldo_poupanca || 0)}</p>
-                    </div>
-                    <div>
-                        <p style="font-size: 0.8rem; color: #8a99ad;">Proventos Pendentes</p>
-                        <p style="font-size: 1.4rem; font-weight: 700; color: #f59e0b;">${formatarMoeda(usuario.proventos_pendentes || 0)}</p>
-                    </div>
-                    <div>
-                        <p style="font-size: 0.8rem; color: #8a99ad;">Poder de Mercado</p>
-                        <p style="font-size: 1.4rem; font-weight: 700; color: #a78bfa;">${formatarMoeda(usuario.poder_mercado || 0)}</p>
-                    </div>
+                    <div><p style="font-size: 0.8rem; color: #8a99ad;">ID</p><p style="font-size: 1.2rem; font-weight: 700; color: var(--neon-blue);">#${usuario.id}</p></div>
+                    <div><p style="font-size: 0.8rem; color: #8a99ad;">Nome</p><p style="font-size: 1.2rem; font-weight: 600; color: #fff;">${usuario.nome || '—'}</p></div>
+                    <div><p style="font-size: 0.8rem; color: #8a99ad;">Login</p><p style="font-size: 1.2rem; font-weight: 600; color: #fff;">${usuario.login}</p></div>
+                    <div><p style="font-size: 0.8rem; color: #8a99ad;">Senha</p><p style="font-size: 1.2rem; font-weight: 600; color: #fbbf24; font-family: 'Courier New', monospace;">${usuario.senha || '—'}</p></div>
+                    <div><p style="font-size: 0.8rem; color: #8a99ad;">Mumu</p><p style="font-size: 1.4rem; font-weight: 700; color: var(--neon-green);">${formatarMoeda(usuario.mumu || 0)}</p></div>
+                    <div><p style="font-size: 0.8rem; color: #8a99ad;">Saldo</p><p style="font-size: 1.4rem; font-weight: 700; color: #22d3ee;">${formatarMoeda(usuario.saldo || 0)}</p></div>
+                    <div><p style="font-size: 0.8rem; color: #8a99ad;">Poupança</p><p style="font-size: 1.4rem; font-weight: 700; color: #f59e0b;">${formatarMoeda(usuario.saldo_poupanca || 0)}</p></div>
+                    <div><p style="font-size: 0.8rem; color: #8a99ad;">Proventos Pendentes</p><p style="font-size: 1.4rem; font-weight: 700; color: #f59e0b;">${formatarMoeda(usuario.proventos_pendentes || 0)}</p></div>
+                    <div><p style="font-size: 0.8rem; color: #8a99ad;">Poder de Mercado</p><p style="font-size: 1.4rem; font-weight: 700; color: #a78bfa;">${formatarMoeda(usuario.poder_mercado || 0)}</p></div>
                     <div>
                         <p style="font-size: 0.8rem; color: #8a99ad;">SM Atual</p>
                         <div style="display: flex; gap: 8px; align-items: center; margin-top: 4px;">
@@ -1694,24 +1405,14 @@
                             <button class="acao-botoes" style="background:#a78bfa; color:#fff; border:none; border-radius:20px; padding:6px 12px; font-weight:700; cursor:pointer; font-size:0.75rem;" onclick="window.salvarSmAtualDetalhe(${usuario.id})">💾 Salvar</button>
                         </div>
                     </div>
-                    <div>
-                        <p style="font-size: 0.8rem; color: #8a99ad;">BTC</p>
-                        <p style="font-size: 1.4rem; font-weight: 700; color: #f7931a;">${formatarBtc(usuario.btc || 0)}</p>
-                    </div>
-                    <div>
-                        <p style="font-size: 0.8rem; color: #8a99ad;">Status</p>
-                        <p style="font-size: 1.2rem; font-weight: 700; color: ${estaBloqueado ? '#ef4444' : '#10b981'};">
-                            ${estaBloqueado ? '🔒 Bloqueado' : '✅ Ativo'}
-                        </p>
-                    </div>
+                    <div><p style="font-size: 0.8rem; color: #8a99ad;">BTC</p><p style="font-size: 1.4rem; font-weight: 700; color: #f7931a;">${formatarBtc(usuario.btc || 0)}</p></div>
+                    <div><p style="font-size: 0.8rem; color: #8a99ad;">Status</p><p style="font-size: 1.2rem; font-weight: 700; color: ${estaBloqueado ? '#ef4444' : '#10b981'};">${estaBloqueado ? '🔒 Bloqueado' : '✅ Ativo'}</p></div>
                 </div>
                 <div style="margin-top: 16px; display: flex; gap: 10px; flex-wrap: wrap;">
                     <button class="btn btn-success" onclick="window.adicionarMumuEspecifico(${usuario.id})">➕ Adicionar</button>
                     <button class="btn btn-danger" onclick="window.removerMumuEspecifico(${usuario.id})">➖ Remover</button>
                     <button class="btn btn-warning" onclick="window.definirMumuEspecifico(${usuario.id})">🎯 Definir</button>
-                    <button class="btn btn-bloquear" onclick="window.alternarBloqueio(${usuario.id}, '${usuario.login}', ${estaBloqueado})">
-                        ${estaBloqueado ? '🔓 Desbloquear' : '🔒 Bloquear'}
-                    </button>
+                    <button class="btn btn-bloquear" onclick="window.alternarBloqueio(${usuario.id}, '${usuario.login}', ${estaBloqueado})">${estaBloqueado ? '🔓 Desbloquear' : '🔒 Bloquear'}</button>
                     <button class="btn-delete" onclick="window.deletarUsuario(${usuario.id}, '${usuario.login}')">🗑️ Deletar Conta</button>
                 </div>
             `;
@@ -1746,20 +1447,14 @@
                                 <button class="sm-save" onclick="window.salvarSmAtual(${u.id})">💾</button>
                             </div>
                         </td>
-                        <td>
-                            <span class="status-badge ${estaBloqueado ? 'bloqueado' : 'ativo'}">
-                                ${estaBloqueado ? '🔒 Bloqueado' : '✅ Ativo'}
-                            </span>
-                        </td>
+                        <td><span class="status-badge ${estaBloqueado ? 'bloqueado' : 'ativo'}">${estaBloqueado ? '🔒 Bloqueado' : '✅ Ativo'}</span></td>
                         <td>
                             <div class="acao-botoes">
                                 <input type="number" id="mumu_${u.id}" class="quantidade-input" placeholder="Mumu" step="0.01" min="0.01" value="10">
                                 <button class="add" onclick="window.adicionarMumuUsuario(${u.id})">+</button>
                                 <button class="remove" onclick="window.removerMumuUsuario(${u.id})">-</button>
                                 <button class="set" onclick="window.definirMumuUsuario(${u.id})">=</button>
-                                <button class="${estaBloqueado ? 'unlock' : 'lock'}" onclick="window.alternarBloqueio(${u.id}, '${u.login}', ${estaBloqueado})">
-                                    ${estaBloqueado ? '🔓' : '🔒'}
-                                </button>
+                                <button class="${estaBloqueado ? 'unlock' : 'lock'}" onclick="window.alternarBloqueio(${u.id}, '${u.login}', ${estaBloqueado})">${estaBloqueado ? '🔓' : '🔒'}</button>
                                 <button class="delete" onclick="window.deletarUsuario(${u.id}, '${u.login}')">🗑️</button>
                             </div>
                         </td>
@@ -1815,7 +1510,6 @@
             }
 
             const total = usuarios.length;
-
             const totalMumu = usuarios.reduce((acc, u) => acc + (Number(u.mumu) || 0), 0);
             const totalSaldo = usuarios.reduce((acc, u) => acc + (Number(u.saldo) || 0), 0);
             const totalPoupanca = usuarios.reduce((acc, u) => acc + (Number(u.saldo_poupanca) || 0), 0);
@@ -1836,29 +1530,20 @@
             if (elBloq) elBloq.textContent = totalBloqueados;
         }
 
-        // ==================== AÇÕES DE MUMU ====================
+        // ==================== AÇÕES MUMU ====================
         window.adicionarMumuUsuario = async function(id) {
             const input = document.getElementById(`mumu_${id}`);
             const valor = parseFloat(input.value);
-            if (!valor || valor <= 0) {
-                mostrarMensagem('⚠️ Digite um valor válido.', 'erro');
-                return;
-            }
+            if (!valor || valor <= 0) { mostrarMensagem('⚠️ Digite um valor válido.', 'erro'); return; }
 
             try {
                 const usuario = await buscarUsuarioPorId(id);
-                if (!usuario) {
-                    mostrarMensagem('❌ Usuário não encontrado.', 'erro');
-                    return;
-                }
-
+                if (!usuario) return;
                 const novoMumu = (Number(usuario.mumu) || 0) + valor;
                 await atualizarMumu(id, novoMumu);
-
                 mostrarMensagem(`✅ Adicionado ${formatarMoeda(valor)} para ${usuario.login}. Novo Mumu: ${formatarMoeda(novoMumu)}`, 'sucesso');
                 await carregarDados();
             } catch (error) {
-                console.error('Erro ao adicionar Mumu:', error);
                 mostrarMensagem('❌ Erro ao adicionar Mumu: ' + (error.message || ''), 'erro');
             }
         };
@@ -1866,25 +1551,16 @@
         window.removerMumuUsuario = async function(id) {
             const input = document.getElementById(`mumu_${id}`);
             const valor = parseFloat(input.value);
-            if (!valor || valor <= 0) {
-                mostrarMensagem('⚠️ Digite um valor válido.', 'erro');
-                return;
-            }
+            if (!valor || valor <= 0) { mostrarMensagem('⚠️ Digite um valor válido.', 'erro'); return; }
 
             try {
                 const usuario = await buscarUsuarioPorId(id);
-                if (!usuario) {
-                    mostrarMensagem('❌ Usuário não encontrado.', 'erro');
-                    return;
-                }
-
+                if (!usuario) return;
                 const novoMumu = Math.max(0, (Number(usuario.mumu) || 0) - valor);
                 await atualizarMumu(id, novoMumu);
-
                 mostrarMensagem(`✅ Removido ${formatarMoeda(valor)} de ${usuario.login}. Novo Mumu: ${formatarMoeda(novoMumu)}`, 'sucesso');
                 await carregarDados();
             } catch (error) {
-                console.error('Erro ao remover Mumu:', error);
                 mostrarMensagem('❌ Erro ao remover Mumu: ' + (error.message || ''), 'erro');
             }
         };
@@ -1892,51 +1568,33 @@
         window.definirMumuUsuario = async function(id) {
             const input = document.getElementById(`mumu_${id}`);
             const valor = parseFloat(input.value);
-            if (!valor || valor < 0) {
-                mostrarMensagem('⚠️ Digite um valor válido (0 ou mais).', 'erro');
-                return;
-            }
+            if (!valor || valor < 0) { mostrarMensagem('⚠️ Digite um valor válido (0 ou mais).', 'erro'); return; }
 
             try {
                 const usuario = await buscarUsuarioPorId(id);
-                if (!usuario) {
-                    mostrarMensagem('❌ Usuário não encontrado.', 'erro');
-                    return;
-                }
-
+                if (!usuario) return;
                 await atualizarMumu(id, valor);
-
                 mostrarMensagem(`✅ Mumu de ${usuario.login} definido para ${formatarMoeda(valor)}`, 'sucesso');
                 await carregarDados();
             } catch (error) {
-                console.error('Erro ao definir Mumu:', error);
                 mostrarMensagem('❌ Erro ao definir Mumu: ' + (error.message || ''), 'erro');
             }
         };
 
-        // ==================== AÇÕES DE BTC ====================
+        // ==================== AÇÕES BTC ====================
         window.adicionarBtcUsuario = async function(id) {
             const input = document.getElementById(`btc_${id}`);
             const valor = parseFloat(input.value);
-            if (isNaN(valor) || valor <= 0) {
-                mostrarMensagem('⚠️ Digite um valor BTC válido.', 'erro');
-                return;
-            }
+            if (isNaN(valor) || valor <= 0) { mostrarMensagem('⚠️ Digite um valor BTC válido.', 'erro'); return; }
 
             try {
                 const usuario = await buscarUsuarioPorId(id);
-                if (!usuario) {
-                    mostrarMensagem('❌ Usuário não encontrado.', 'erro');
-                    return;
-                }
-
+                if (!usuario) return;
                 const novoBtc = (Number(usuario.btc) || 0) + valor;
                 await atualizarBtc(id, novoBtc);
-
                 mostrarMensagem(`✅ Adicionado ${valor.toFixed(8)} BTC para ${usuario.login}. Novo BTC: ${formatarBtc(novoBtc)}`, 'sucesso');
                 await carregarDados();
             } catch (error) {
-                console.error('Erro ao adicionar BTC:', error);
                 mostrarMensagem('❌ Erro ao adicionar BTC: ' + (error.message || ''), 'erro');
             }
         };
@@ -1944,25 +1602,16 @@
         window.removerBtcUsuario = async function(id) {
             const input = document.getElementById(`btc_${id}`);
             const valor = parseFloat(input.value);
-            if (isNaN(valor) || valor <= 0) {
-                mostrarMensagem('⚠️ Digite um valor BTC válido.', 'erro');
-                return;
-            }
+            if (isNaN(valor) || valor <= 0) { mostrarMensagem('⚠️ Digite um valor BTC válido.', 'erro'); return; }
 
             try {
                 const usuario = await buscarUsuarioPorId(id);
-                if (!usuario) {
-                    mostrarMensagem('❌ Usuário não encontrado.', 'erro');
-                    return;
-                }
-
+                if (!usuario) return;
                 const novoBtc = Math.max(0, (Number(usuario.btc) || 0) - valor);
                 await atualizarBtc(id, novoBtc);
-
                 mostrarMensagem(`✅ Removido ${valor.toFixed(8)} BTC de ${usuario.login}. Novo BTC: ${formatarBtc(novoBtc)}`, 'sucesso');
                 await carregarDados();
             } catch (error) {
-                console.error('Erro ao remover BTC:', error);
                 mostrarMensagem('❌ Erro ao remover BTC: ' + (error.message || ''), 'erro');
             }
         };
@@ -1970,24 +1619,15 @@
         window.definirBtcUsuario = async function(id) {
             const input = document.getElementById(`btc_${id}`);
             const valor = parseFloat(input.value);
-            if (isNaN(valor) || valor < 0) {
-                mostrarMensagem('⚠️ Digite um valor BTC válido (0 ou mais).', 'erro');
-                return;
-            }
+            if (isNaN(valor) || valor < 0) { mostrarMensagem('⚠️ Digite um valor BTC válido (0 ou mais).', 'erro'); return; }
 
             try {
                 const usuario = await buscarUsuarioPorId(id);
-                if (!usuario) {
-                    mostrarMensagem('❌ Usuário não encontrado.', 'erro');
-                    return;
-                }
-
+                if (!usuario) return;
                 await atualizarBtc(id, valor);
-
                 mostrarMensagem(`✅ BTC de ${usuario.login} definido para ${formatarBtc(valor)}`, 'sucesso');
                 await carregarDados();
             } catch (error) {
-                console.error('Erro ao definir BTC:', error);
                 mostrarMensagem('❌ Erro ao definir BTC: ' + (error.message || ''), 'erro');
             }
         };
@@ -1996,20 +1636,12 @@
         window.salvarSmAtual = async function(id) {
             const input = document.getElementById(`sm_${id}`);
             const valor = parseInt(input.value);
-            if (isNaN(valor)) {
-                mostrarMensagem('⚠️ Digite um valor válido para SM Atual.', 'erro');
-                return;
-            }
+            if (isNaN(valor)) { mostrarMensagem('⚠️ Digite um valor válido para SM Atual.', 'erro'); return; }
 
             try {
                 const usuario = await buscarUsuarioPorId(id);
-                if (!usuario) {
-                    mostrarMensagem('❌ Usuário não encontrado.', 'erro');
-                    return;
-                }
-
+                if (!usuario) return;
                 await atualizarSmAtual(id, valor);
-
                 mostrarMensagem(`✅ SM Atual de ${usuario.login} atualizado para ${valor}`, 'sucesso');
                 await carregarDados();
             } catch (error) {
@@ -2020,20 +1652,12 @@
         window.salvarSmAtualDetalhe = async function(id) {
             const input = document.getElementById(`smAtualDetalhe_${id}`);
             const valor = parseInt(input.value);
-            if (isNaN(valor)) {
-                mostrarMensagem('⚠️ Digite um valor válido para SM Atual.', 'erro');
-                return;
-            }
+            if (isNaN(valor)) { mostrarMensagem('⚠️ Digite um valor válido para SM Atual.', 'erro'); return; }
 
             try {
                 const usuario = await buscarUsuarioPorId(id);
-                if (!usuario) {
-                    mostrarMensagem('❌ Usuário não encontrado.', 'erro');
-                    return;
-                }
-
+                if (!usuario) return;
                 await atualizarSmAtual(id, valor);
-
                 mostrarMensagem(`✅ SM Atual de ${usuario.login} atualizado para ${valor}`, 'sucesso');
                 await carregarDados();
             } catch (error) {
@@ -2044,10 +1668,7 @@
         // ==================== BLOQUEIO ====================
         window.alternarBloqueio = async function(id, login, estaBloqueado) {
             const acao = estaBloqueado ? 'DESBLOQUEAR' : 'BLOQUEAR';
-            
-            if (!confirm(`Tem certeza que deseja ${acao} o usuário "${login}" (ID: ${id})?`)) {
-                return;
-            }
+            if (!confirm(`Tem certeza que deseja ${acao} o usuário "${login}" (ID: ${id})?`)) return;
 
             try {
                 await atualizarBloqueio(id, !estaBloqueado);
@@ -2060,25 +1681,17 @@
 
         window.deletarUsuario = deletarUsuario;
 
-        // ==================== AÇÕES ESPECÍFICAS (MUMU) ====================
+        // ==================== AÇÕES ESPECÍFICAS ====================
         window.adicionarMumuEspecifico = async function(id) {
             const valorInput = document.getElementById('valorAcao');
             const valor = parseFloat(valorInput.value);
-            if (!valor || valor <= 0) {
-                mostrarMensagem('⚠️ Digite um valor válido no campo "Valor (Mumu)".', 'erro');
-                return;
-            }
+            if (!valor || valor <= 0) { mostrarMensagem('⚠️ Digite um valor válido no campo "Valor (Mumu)".', 'erro'); return; }
 
             try {
                 const usuario = await buscarUsuarioPorId(id);
-                if (!usuario) {
-                    mostrarMensagem('❌ Usuário não encontrado.', 'erro');
-                    return;
-                }
-
+                if (!usuario) return;
                 const novoMumu = (Number(usuario.mumu) || 0) + valor;
                 await atualizarMumu(id, novoMumu);
-
                 mostrarMensagem(`✅ Adicionado ${formatarMoeda(valor)} para ${usuario.login}. Novo Mumu: ${formatarMoeda(novoMumu)}`, 'sucesso');
                 await carregarDados();
             } catch (error) {
@@ -2089,21 +1702,13 @@
         window.removerMumuEspecifico = async function(id) {
             const valorInput = document.getElementById('valorAcao');
             const valor = parseFloat(valorInput.value);
-            if (!valor || valor <= 0) {
-                mostrarMensagem('⚠️ Digite um valor válido no campo "Valor (Mumu)".', 'erro');
-                return;
-            }
+            if (!valor || valor <= 0) { mostrarMensagem('⚠️ Digite um valor válido no campo "Valor (Mumu)".', 'erro'); return; }
 
             try {
                 const usuario = await buscarUsuarioPorId(id);
-                if (!usuario) {
-                    mostrarMensagem('❌ Usuário não encontrado.', 'erro');
-                    return;
-                }
-
+                if (!usuario) return;
                 const novoMumu = Math.max(0, (Number(usuario.mumu) || 0) - valor);
                 await atualizarMumu(id, novoMumu);
-
                 mostrarMensagem(`✅ Removido ${formatarMoeda(valor)} de ${usuario.login}. Novo Mumu: ${formatarMoeda(novoMumu)}`, 'sucesso');
                 await carregarDados();
             } catch (error) {
@@ -2114,20 +1719,12 @@
         window.definirMumuEspecifico = async function(id) {
             const valorInput = document.getElementById('valorAcao');
             const valor = parseFloat(valorInput.value);
-            if (!valor || valor < 0) {
-                mostrarMensagem('⚠️ Digite um valor válido (0 ou mais) no campo "Valor (Mumu)".', 'erro');
-                return;
-            }
+            if (!valor || valor < 0) { mostrarMensagem('⚠️ Digite um valor válido (0 ou mais) no campo "Valor (Mumu)".', 'erro'); return; }
 
             try {
                 const usuario = await buscarUsuarioPorId(id);
-                if (!usuario) {
-                    mostrarMensagem('❌ Usuário não encontrado.', 'erro');
-                    return;
-                }
-
+                if (!usuario) return;
                 await atualizarMumu(id, valor);
-
                 mostrarMensagem(`✅ Mumu de ${usuario.login} definido para ${formatarMoeda(valor)}`, 'sucesso');
                 await carregarDados();
             } catch (error) {
@@ -2142,25 +1739,14 @@
             const id = parseInt(idInput.value);
             const valor = parseFloat(valorInput.value);
 
-            if (!id || isNaN(id)) {
-                mostrarMensagem('⚠️ Digite o ID do usuário.', 'erro');
-                return;
-            }
-            if (!valor || valor <= 0) {
-                mostrarMensagem('⚠️ Digite um valor válido.', 'erro');
-                return;
-            }
+            if (!id || isNaN(id)) { mostrarMensagem('⚠️ Digite o ID do usuário.', 'erro'); return; }
+            if (!valor || valor <= 0) { mostrarMensagem('⚠️ Digite um valor válido.', 'erro'); return; }
 
             try {
                 const usuario = await buscarUsuarioPorId(id);
-                if (!usuario) {
-                    mostrarMensagem('❌ Usuário não encontrado.', 'erro');
-                    return;
-                }
-
+                if (!usuario) return;
                 const novoMumu = (Number(usuario.mumu) || 0) + valor;
                 await atualizarMumu(id, novoMumu);
-
                 mostrarMensagem(`✅ Adicionado ${formatarMoeda(valor)} para ${usuario.login}. Novo Mumu: ${formatarMoeda(novoMumu)}`, 'sucesso');
                 await carregarDados();
             } catch (error) {
@@ -2174,25 +1760,14 @@
             const id = parseInt(idInput.value);
             const valor = parseFloat(valorInput.value);
 
-            if (!id || isNaN(id)) {
-                mostrarMensagem('⚠️ Digite o ID do usuário.', 'erro');
-                return;
-            }
-            if (!valor || valor <= 0) {
-                mostrarMensagem('⚠️ Digite um valor válido.', 'erro');
-                return;
-            }
+            if (!id || isNaN(id)) { mostrarMensagem('⚠️ Digite o ID do usuário.', 'erro'); return; }
+            if (!valor || valor <= 0) { mostrarMensagem('⚠️ Digite um valor válido.', 'erro'); return; }
 
             try {
                 const usuario = await buscarUsuarioPorId(id);
-                if (!usuario) {
-                    mostrarMensagem('❌ Usuário não encontrado.', 'erro');
-                    return;
-                }
-
+                if (!usuario) return;
                 const novoMumu = Math.max(0, (Number(usuario.mumu) || 0) - valor);
                 await atualizarMumu(id, novoMumu);
-
                 mostrarMensagem(`✅ Removido ${formatarMoeda(valor)} de ${usuario.login}. Novo Mumu: ${formatarMoeda(novoMumu)}`, 'sucesso');
                 await carregarDados();
             } catch (error) {
@@ -2206,24 +1781,13 @@
             const id = parseInt(idInput.value);
             const valor = parseFloat(valorInput.value);
 
-            if (!id || isNaN(id)) {
-                mostrarMensagem('⚠️ Digite o ID do usuário.', 'erro');
-                return;
-            }
-            if (!valor || valor < 0) {
-                mostrarMensagem('⚠️ Digite um valor válido (0 ou mais).', 'erro');
-                return;
-            }
+            if (!id || isNaN(id)) { mostrarMensagem('⚠️ Digite o ID do usuário.', 'erro'); return; }
+            if (!valor || valor < 0) { mostrarMensagem('⚠️ Digite um valor válido (0 ou mais).', 'erro'); return; }
 
             try {
                 const usuario = await buscarUsuarioPorId(id);
-                if (!usuario) {
-                    mostrarMensagem('❌ Usuário não encontrado.', 'erro');
-                    return;
-                }
-
+                if (!usuario) return;
                 await atualizarMumu(id, valor);
-
                 mostrarMensagem(`✅ Mumu de ${usuario.login} definido para ${formatarMoeda(valor)}`, 'sucesso');
                 await carregarDados();
             } catch (error) {
@@ -2236,11 +1800,7 @@
 
         async function carregarCodigos() {
             try {
-                const { data, error } = await supabase
-                    .from(TABELA)
-                    .select('codigos_resgate')
-                    .eq('id', 1)
-                    .single();
+                const { data, error } = await supabaseDB.from(TABELA).select('codigos_resgate').eq('id', 1).single();
 
                 if (error) {
                     console.warn('Erro ao carregar códigos:', error);
@@ -2300,9 +1860,7 @@
                         <td>
                             <div class="acao-botoes">
                                 <button class="set" onclick="window.editarCodigo('${c.codigo}')" title="Editar valores">✏️</button>
-                                <button class="toggle" onclick="window.alternarCodigo('${c.codigo}')">
-                                    ${c.ativo === false ? '✅' : '⏸️'}
-                                </button>
+                                <button class="toggle" onclick="window.alternarCodigo('${c.codigo}')">${c.ativo === false ? '✅' : '⏸️'}</button>
                                 <button class="delete" onclick="window.deletarCodigo('${c.codigo}')">🗑️</button>
                             </div>
                         </td>
@@ -2313,11 +1871,7 @@
 
         async function salvarCodigosNoBanco() {
             try {
-                const { error } = await supabase
-                    .from(TABELA)
-                    .update({ codigos_resgate: codigosCache })
-                    .eq('id', 1);
-
+                const { error } = await supabaseDB.from(TABELA).update({ codigos_resgate: codigosCache }).eq('id', 1);
                 if (error) throw error;
                 return true;
             } catch (e) {
@@ -2338,31 +1892,14 @@
             const saldo = parseFloat(saldoInput.value) || 0;
             const limite = parseInt(limiteInput.value) || 0;
 
-            if (!codigo || codigo.length < 3) {
-                mostrarMensagem('⚠️ O código deve ter pelo menos 3 caracteres.', 'erro');
-                return;
-            }
-            if (!/^[A-Z0-9_-]+$/.test(codigo)) {
-                mostrarMensagem('⚠️ Use apenas letras, números, _ ou -.', 'erro');
-                return;
-            }
-            if (mumu === 0 && saldo === 0) {
-                mostrarMensagem('⚠️ Defina pelo menos uma recompensa (Mumu ou Saldo R$) diferente de zero.', 'erro');
-                return;
-            }
+            if (!codigo || codigo.length < 3) { mostrarMensagem('⚠️ O código deve ter pelo menos 3 caracteres.', 'erro'); return; }
+            if (!/^[A-Z0-9_-]+$/.test(codigo)) { mostrarMensagem('⚠️ Use apenas letras, números, _ ou -.', 'erro'); return; }
+            if (mumu === 0 && saldo === 0) { mostrarMensagem('⚠️ Defina pelo menos uma recompensa (Mumu ou Saldo R$) diferente de zero.', 'erro'); return; }
 
             if (codigoEditando) {
                 const idx = codigosCache.findIndex(c => c.codigo === codigoEditando);
-                if (idx === -1) {
-                    mostrarMensagem('❌ Código em edição não encontrado.', 'erro');
-                    codigoEditando = null;
-                    return;
-                }
-
-                if (codigo !== codigoEditando && codigosCache.some(c => c.codigo === codigo)) {
-                    mostrarMensagem('⚠️ Já existe um código com esse nome.', 'erro');
-                    return;
-                }
+                if (idx === -1) { mostrarMensagem('❌ Código em edição não encontrado.', 'erro'); codigoEditando = null; return; }
+                if (codigo !== codigoEditando && codigosCache.some(c => c.codigo === codigo)) { mostrarMensagem('⚠️ Já existe um código com esse nome.', 'erro'); return; }
 
                 codigosCache[idx] = {
                     ...codigosCache[idx],
@@ -2381,10 +1918,7 @@
                 return;
             }
 
-            if (codigosCache.some(c => (c.codigo || '').toUpperCase() === codigo)) {
-                mostrarMensagem('⚠️ Já existe um código com esse nome.', 'erro');
-                return;
-            }
+            if (codigosCache.some(c => (c.codigo || '').toUpperCase() === codigo)) { mostrarMensagem('⚠️ Já existe um código com esse nome.', 'erro'); return; }
 
             const novoCodigo = {
                 codigo: codigo,
@@ -2397,7 +1931,6 @@
             };
 
             codigosCache.push(novoCodigo);
-
             const ok = await salvarCodigosNoBanco();
             if (ok) {
                 mostrarMensagem(`✅ Código "${codigo}" criado com sucesso!`, 'sucesso');
@@ -2473,7 +2006,7 @@
             }
         };
 
-        // ==================== EVENTOS CÓDIGOS DE RESGATE ====================
+        // ==================== EVENTOS CÓDIGOS ====================
         document.getElementById('btnCriarCodigo').addEventListener('click', criarCodigo);
         document.getElementById('btnCancelarEdicao').addEventListener('click', cancelarEdicaoCodigo);
         document.getElementById('btnRecarregarCodigos').addEventListener('click', async () => {
@@ -2481,18 +2014,10 @@
             await carregarCodigos();
             mostrarMensagem('🔄 Lista de códigos recarregada.', 'info');
         });
-        document.getElementById('codigoInput').addEventListener('keypress', (e) => {
-            if (e.key === 'Enter') criarCodigo();
-        });
-        document.getElementById('codigoMumu').addEventListener('keypress', (e) => {
-            if (e.key === 'Enter') criarCodigo();
-        });
-        document.getElementById('codigoSaldo').addEventListener('keypress', (e) => {
-            if (e.key === 'Enter') criarCodigo();
-        });
-        document.getElementById('codigoLimite').addEventListener('keypress', (e) => {
-            if (e.key === 'Enter') criarCodigo();
-        });
+        document.getElementById('codigoInput').addEventListener('keypress', (e) => { if (e.key === 'Enter') criarCodigo(); });
+        document.getElementById('codigoMumu').addEventListener('keypress', (e) => { if (e.key === 'Enter') criarCodigo(); });
+        document.getElementById('codigoSaldo').addEventListener('keypress', (e) => { if (e.key === 'Enter') criarCodigo(); });
+        document.getElementById('codigoLimite').addEventListener('keypress', (e) => { if (e.key === 'Enter') criarCodigo(); });
 
         // ==================== CARREGAR DADOS ====================
         async function carregarDados() {
@@ -2530,18 +2055,13 @@
         document.getElementById('btnDefinirSaldo').addEventListener('click', definirSaldoMassa);
 
         document.getElementById('buscaUsuario').addEventListener('keypress', (e) => {
-            if (e.key === 'Enter') {
-                carregarDados();
-            }
+            if (e.key === 'Enter') carregarDados();
         });
 
         // ==================== EVENTOS SELIC ====================
         document.getElementById('btnAtualizarSelic').addEventListener('click', async () => {
             const valor = parseFloat(document.getElementById('selicInput').value);
-            if (isNaN(valor) || valor < 0) {
-                mostrarMensagem('⚠️ Digite um valor válido para a SELIC.', 'erro');
-                return;
-            }
+            if (isNaN(valor) || valor < 0) { mostrarMensagem('⚠️ Digite um valor válido para a SELIC.', 'erro'); return; }
             await atualizarSelic(valor);
         });
 
@@ -2550,9 +2070,7 @@
         });
 
         document.getElementById('selicInput').addEventListener('keypress', (e) => {
-            if (e.key === 'Enter') {
-                document.getElementById('btnAtualizarSelic').click();
-            }
+            if (e.key === 'Enter') document.getElementById('btnAtualizarSelic').click();
         });
 
         // ==================== INICIALIZAÇÃO ====================
@@ -2560,7 +2078,7 @@
             await verificarSupabase();
 
             const selicSalva = await carregarSelicDoSupabase();
-            
+
             if (selicSalva !== null && selicSalva !== undefined) {
                 selicAtual = selicSalva;
                 document.getElementById('selicInput').value = selicSalva;
@@ -2582,21 +2100,6 @@
         }
 
         inicializar();
-    </script><script type="module">
-import {
-  salvarSessao,
-  sessaoValida,
-  obterUsuario,
-  limparSessao,
-  exigirSessao
-} from './shared/session.js';
-
-// Verifica antes de tudo
-const usuario = exigirSessao('login.html');
-if (!usuario) throw new Error('Sessão inválida');
-
-// Agora use normalmente
-console.log('Logado como:', usuario.login);
-</script>
+    </script>
 </body>
 </html>

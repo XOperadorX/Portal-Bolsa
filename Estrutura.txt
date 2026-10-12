@@ -1,17 +1,24 @@
 📁 Estrutura do Projeto Portal_Bolsa
-text
+================================================================================
+Versão: 1.0.0 · Temporada 2026 · Última atualização: 12/10/2026
+================================================================================
+
 Portal_Bolsa/
 │
-├── 📄 index.html                    # Redirecionamento inicial (sessão 24h)
-├── 📄 index.js                      # Lógica de verificação de sessão
+├── 📄 index.html                    # Redirecionamento inicial (COM ANTI-LOOP)
+├── 📄 index.js                      # (opcional) Lógica de sessão externa
 ├── 📄 menu.html                     # Componente de menu reutilizável
-├── 📄 jsconfig.json                 # Config vazio
+├── 📄 config.js                     # ⚠️ NÃO COMMITAR (adicionar ao .gitignore)
+├── 📄 config.example.js             # Template público para novos devs
+├── 📄 .gitignore                    # Config + node_modules + platforms + plugins
+├── 📄 manifest.json                 # PWA (nome corrigido: "MM Quase Tudo")
 ├── 📄 package.json                  # Dependências Cordova
 ├── 📄 config.xml                    # Config Cordova (Android/iOS)
+├── 📄 jsconfig.json                 # Config vazio
 ├── 📄 README.md                     # Documentação
 │
 ├── 🔐 AUTENTICAÇÃO
-│   ├── login.html                   # Tela de login (RPC login_usuario)
+│   ├── login.html                   # Login RPC + regen offline (CORRIGIDO)
 │   ├── cadastro.html                # Cadastro + fingerprint de dispositivo
 │   ├── confirmar.html               # Confirmação de e-mail (Supabase Auth)
 │   ├── esqueci-login.html           # Recuperar login por nome
@@ -21,54 +28,73 @@ Portal_Bolsa/
 │   ├── noticias.html                # Central de notícias (filtros + Supabase)
 │   ├── eventos.html                 # Listagem de eventos/torneios
 │   ├── download.html                # Downloads APK/ZIP + status servidor
-│   └── suporte.html                 # Tickets + FAQ + painel admin
+│   ├── suporte.html                 # Tickets + FAQ + painel admin
+│   └── como-jogar.html              # Guia do jogador (PDF-like)
 │
 ├── 🎮 ÁREA LOGADA
-│   ├── dashboard.html               # Central de jogos (hub principal)
-│   ├── codex.html                   # Códice de equipamentos
+│   ├── dashboard.html               # Hub principal (CORRIGIDO: event delegation)
+│   ├── codex.html                   # Códice de equipamentos (CORRIGIDO: sem dup)
 │   ├── diario.html                  # Login diário 30 dias
-│   ├── troca.html                   # TrocaSegura (negociações)
-│   └── testetet.html                # Visualizador de tickets
+│   ├── trocap.html                  # TrocaSegura (CORRIGIDO: fallback NaN)
+│   └── testetet.html                # Visualizador de tickets (somente leitura)
 │
-├── 📁 shared/                       # (referenciado, não enviado)
+├── 📁 shared/                       # Bibliotecas compartilhadas
+│   ├── menu.css
+│   ├── menu.js
+│   ├── session.js                   # salvarSessao, sessaoValida, obterUsuario
 │   ├── offline-regen.css
 │   └── offline-regen.js             # Sistema de regeneração offline
 │
-├── 📁 styles/                       # (referenciado, não enviado)
-│   ├── dashboard.css
+├── 📁 styles/
+│   └── dashboard.css
+│
+├── 📁 style/
+│   ├── esqueci-login.css
+│   ├── esqueci-senha.css
 │   └── login.css
 │
-├── 📁 style/                        # (referenciado, não enviado)
-│   ├── esqueci-login.css
-│   └── esqueci-senha.css
-│
-├── 📁 jogos/                        # (referenciado, não enviado)
-│   ├── 📁 planta/planta.html        # Milharal
-│   ├── 📁 bolsa/bolsa.html          # B3 Simulator
-│   ├── 📁 torre/torre.html          # Torre de Arena
-│   ├── 📁 minerar/minerar.html      # Mineração de BTC
-│   ├── 📁 faz/faz.html              # Fazenda
-│   ├── 📁 ninos/ninos.html          # Nino
-│   ├── 📁 shagrila/shagrila.html    # Shagrila
-│   ├── 📁 ponto/ponto.html          # Pontinhos
-│   ├── 📁 papelao/papelao.html      # Papelão
+├── 📁 jogos/
+│   ├── planta/planta.html           # Milharal
+│   ├── bolsa/bolsa.html             # B3 Simulator
+│   ├── torre/torre.html             # Torre de Arena
+│   ├── minerar/minerar.html         # Mineração de BTC
+│   ├── faz/faz.html                 # Fazenda
+│   ├── ninos/ninos.html             # Nino
+│   ├── shagrila/shagrila.html       # Shagrila
+│   ├── ponto/ponto.html             # Pontinhos
+│   ├── papelao/papelao.html         # Papelão
 │   │
-│   ├── 📁 loja/loja.html            # Loja
-│   ├── 📁 mercado/mercado.html      # Mercado
-│   ├── 📁 mochila/mochila.html      # Mochila 🎒
-│   ├── 📁 mumu/mumu.html            # Troca MUMU
-│   ├── 📁 troca/troca.html          # Troca BTC
-│   ├── 📁 ranking/ranking.html      # Classificações
-│   ├── 📁 ranking/ranking002.html   # Classificações (pública)
-│   └── 📁 perfil/perfil.html        # Perfil do jogador
+│   ├── loja/loja.html               # Loja
+│   ├── mercado/mercado.html         # Mercado
+│   ├── mochila/mochila.html         # Mochila 🎒
+│   ├── mumu/mumu.html               # Troca MUMU
+│   ├── troca/troca.html             # Troca BTC
+│   ├── ranking/ranking.html         # Classificações
+│   ├── ranking/ranking002.html      # Classificações (pública)
+│   └── perfil/perfil.html           # Perfil do jogador
 │
-├── 📁 dados/                        # (referenciado, não enviado)
-│   └── 📁 admin/admin.html          # Painel administrativo
+├── 📁 dados/
+│   └── 📁 admin/
+│       ├── admin.html               # Painel ADM principal (CORRIGIDO)
+│       ├── adm_cadastro.html        # Cadastros (CORRIGIDO: hash SHA-256)
+│       ├── adm_suporte.html         # Suporte + Pix
+│       ├── adm_pix.html             # Gestão de saques Pix
+│       ├── admin-bolsa.html         # Admin da Bolsa
+│       ├── admin-mercado.html       # Admin do Mercado
+│       ├── bolsa_admin.html         # Bolsa — painel detalhado
+│       ├── delete.html              # Realtime + Delete de usuários
+│       ├── sys.html                 # Configurações do sistema
+│       ├── cadeado.html             # Sistema de cadeado (conta)
+│       └── 001admin.html            # CRUD completo (não enviado)
 │
-└── 📁 www/                          # (Cordova — opcional)
+└── 📁 www/                          # Cordova build (gerado)
     └── (build)
-🔗 Mapa de Navegação
-text
+
+
+================================================================================
+🔗 MAPA DE NAVEGAÇÃO
+================================================================================
+
                             ┌─────────────┐
                             │  index.html │
                             └──────┬──────┘
@@ -86,7 +112,7 @@ text
         │           │           │                 │
         ▼           ▼           ▼                 │
    ┌────────┐ ┌────────┐ ┌──────────┐             │
-   │codex   │ │diario  │ │troca.html│             │
+   │codex   │ │diario  │ │trocap    │             │
    └────────┘ └────────┘ └──────────┘             │
         │                                          │
         │  ┌──────────────────────────┐            │
@@ -109,16 +135,56 @@ text
     ┌──────────┐
     │suporte   │◄──── testetet.html (admin view)
     └──────────┘
-📊 Resumo por Categoria
-Categoria	Qtd	Arquivos
-Autenticação	5	login, cadastro, confirmar, esqueci-login, esqueci-senha
-Públicas	4	noticias, eventos, download, suporte
-Logadas	5	dashboard, codex, diario, troca, testetet
-Sistema	4	index.html, index.js, menu.html, README.md
-Config	3	package.json, config.xml, jsconfig.json
-Referenciadas (não enviadas)	~25	jogos/, shared/, styles/, dados/
-🎯 Fluxo de Dependências
-text
+         │
+         ▼
+    ┌──────────────────┐
+    │dados/admin/*.html│  ← Área restrita (cadeado = true)
+    └──────────────────┘
+
+
+================================================================================
+📊 RESUMO POR CATEGORIA
+================================================================================
+Categoria                | Qtd | Arquivos
+-------------------------|-----|--------------------------------------------
+Autenticação             |  5  | login, cadastro, confirmar, esqueci-login, esqueci-senha
+Públicas                 |  5  | noticias, eventos, download, suporte, como-jogar
+Logadas                  |  5  | dashboard, codex, diario, trocap, testetet
+Admin                    | 10  | admin, adm_cadastro, adm_suporte, adm_pix, admin-bolsa...
+Sistema                  |  6  | index.html, config.js, config.example.js, .gitignore, manifest.json
+Config                   |  3  | package.json, config.xml, jsconfig.json
+Jogos                    | 18  | (listados em jogos/)
+Referenciadas            | ~25 | shared/, styles/, style/, assets/
+
+
+================================================================================
+⚠️ ARQUIVOS REFERENCIADOS MAS NÃO ENVIADOS
+================================================================================
+Os seguintes arquivos são importados no código mas não foram enviados.
+Verifique se existem no repositório para evitar quebras:
+
+❌ shared/offline-regen.css
+❌ shared/offline-regen.js              ← CRÍTICO (dashboard importa)
+❌ shared/menu.css
+❌ shared/menu.js                       ← CRÍTICO (renderMenu)
+❌ shared/session.js                    ← CRÍTICO (exigirSessao)
+❌ styles/dashboard.css
+❌ styles/login.css
+❌ style/esqueci-login.css
+❌ style/esqueci-senha.css
+❌ style/login.css
+❌ jogos/**/*.html                      ← Todos os 18 jogos
+❌ dados/admin/001admin.html            ← CRUD completo
+❌ assets/favicon-32.png
+❌ assets/favicon-16.png
+❌ assets/apple-touch-icon.png
+❌ assets/og-image.png
+
+
+================================================================================
+🎯 FLUXO DE DEPENDÊNCIAS
+================================================================================
+
 ┌─────────────────────────────────────────────────┐
 │              Supabase (Backend)                 │
 │  https://xrcxvizzdumcxbylmkvn.supabase.co       │
@@ -129,6 +195,9 @@ text
 │                                                  │
 │  RPCs:     criar_usuario · login_usuario        │
 │            calcular_regen_offline               │
+│            criar_troca · confirmar_pagamento_troca
+│            validar_codigo_troca · cancelar_troca
+│            deletar_geral                        │
 └──────────────────┬──────────────────────────────┘
                    │
                    ▼
@@ -136,7 +205,7 @@ text
 │           Frontend (HTML/JS)                    │
 │                                                  │
 │  • CDN: jsDelivr (@supabase/supabase-js@2)      │
-│  • CDN: esm.sh (ES Modules)                     │
+│  • CDN: esm.sh (ES Modules / importmap)         │
 │  • CDN: Font Awesome 6.5.1                      │
 │  • CDN: Google Fonts (Inter/Orbitron/Rajdhani)  │
 └──────────────────┬──────────────────────────────┘
@@ -150,28 +219,149 @@ text
 │  • Plugins: whitelist, inappbrowser, statusbar, │
 │             device                              │
 └─────────────────────────────────────────────────┘
-⚠️ Arquivos Referenciados mas Ausentes
-Os seguintes arquivos são importados no código mas não foram enviados:
 
-text
-❌ shared/offline-regen.css
-❌ shared/offline-regen.js
-❌ styles/dashboard.css
-❌ styles/login.css
-❌ style/esqueci-login.css
-❌ style/esqueci-senha.css
-❌ style/login.css
-❌ jogos/**/*.html (todos os jogos)
-❌ dados/admin/admin.html
-Nota: offline-regen.js é crítico — a classe OfflineRegen é importada em dashboard.html para o sistema de regeneração de HP/MP/Stamina.
 
-Portal-Bolsa/
-├── trocap.html          ← a página
-├── mochila.html         ← já existe
-├── config.js            ← VAMOS CRIAR
-├── login.html
-├── dashboard.html
-└── shared/
-    └── menu.js
+================================================================================
+✅ CORREÇÕES APLICADAS (12/10/2026)
+================================================================================
+Aplicadas nas versões mais recentes dos arquivos:
 
-    
+[1] config.js
+    - Adicionado: import { createClient } from 'https://esm.sh/@supabase/supabase-js@2'
+    - Corrigido: db agora é criado com createClient (antes usava supabase.createClient sem import)
+    - Impacto: diario.html e outros módulos que importam './config.js' funcionam
+
+[2] config.example.js
+    - Sincronizado com config.js (mesma estrutura, valores placeholder)
+    - Adicionado: export db = createClient(...)
+
+[3] .gitignore (NOVO)
+    - Ignora config.js, node_modules/, platforms/, plugins/, www/, hooks/
+    - Evita commit acidental de chaves e dependências
+
+[4] index.html
+    - Adicionado: validação t > 0 em sessaoValida() (evita session_timestamp corrompido)
+    - Corrigido: fallback redireciona para noticias.html (NÃO login.html)
+    - Impacto: elimina loop entre index ↔ login ↔ dashboard
+
+[5] login.html
+    - Corrigido: sessão só é salva APÓS aplicarRegeneracaoOffline()
+    - Impacto: HP/MP/SM sempre atualizados antes do redirect
+
+[6] admin.html
+    - Corrigido: renomeado const supabase → supabaseDB (não sobrescreve window.supabase)
+    - Corrigido: todas as chamadas .from(...) usam supabaseDB
+    - Impacto: outras libs/scripts que usam window.supabase não quebram
+
+[7] adm_cadastro.html
+    - Adicionado: função hashSenha() (SHA-256, compatível com cadastro.html)
+    - Corrigido: btnSalvarUsuario agora salva senha com hash
+    - Corrigido: btnResetarSenha agora salva senha com hash
+    - Impacto: senhas editadas no admin funcionam no login
+
+[8] dashboard.html
+    - Removido: import de REGEN_CONFIG (era importado mas nunca usado)
+    - Corrigido: configurarEventosDosJogos() usa event delegation no #gamesGrid
+    - Corrigido: gastarStaminaParaJogar() pega card via event.target.closest()
+    - Impacto: elimina duplicação de listeners ao reconfigurar
+
+[9] codex.html
+    - Removido: <script src="...supabase..."> duplicado
+    - Mantido: apenas importmap + import ESM
+    - Impacto: uma única instância da lib Supabase carregada
+
+[10] trocap.html
+    - Adicionado: fallback numérico em criarTroca() para data.taxa e data.valor_liquido
+    - Adicionado: fallback em abrirModalCodigo() (valida Number.isFinite)
+    - Impacto: modal-resumo nunca exibe "NaN"
+
+[11] manifest.json
+    - Corrigido: name = "MM Quase Tudo — Central de Jogos"
+    - Corrigido: short_name = "MMQuaseTudo"
+    - Adicionado: start_url, display, orientation, icons
+
+
+================================================================================
+🗑️ ARQUIVOS A REMOVER
+================================================================================
+- dashboard copy.html                    ← Duplicata antiga
+- Qualquer .html com sufixo " copy"      ← Restos de edição
+
+Comando:
+   rm "dashboard copy.html"
+
+
+================================================================================
+⚙️ ORDEM RECOMENDADA DE APLICAÇÃO
+================================================================================
+
+DIA 1 — Segurança:
+  1. Aplicar config.js + config.example.js + .gitignore
+  2. Rodar git rm --cached config.js
+  3. Corrigir admin.html (renomear supabase → supabaseDB)
+  4. Corrigir adm_cadastro.html (hash SHA-256)
+
+DIA 2 — Sessão e Loop:
+  5. Aplicar index.html (anti-loop)
+  6. Aplicar login.html (regeneração antes de salvar)
+  7. Testar fluxo: expirar sessão → recarregar index → noticias
+
+DIA 3 — Dashboard e Codex:
+  8. Aplicar dashboard.html (event delegation)
+  9. Aplicar codex.html (remover CDN duplicada)
+ 10. Testar entrada em jogos (consumo de stamina)
+
+DIA 4 — Troca e PWA:
+ 11. Aplicar trocap.html (fallback NaN)
+ 12. Aplicar manifest.json (nome correto)
+ 13. Testar instalação PWA
+
+
+================================================================================
+🧪 TESTES PÓS-APLICAÇÃO
+================================================================================
+✓ Login normal → sessão salva → dashboard carrega
+✓ Expirar sessão → index redireciona para noticias (sem loop)
+✓ Admin → editar senha de usuário → fazer logout → login com nova senha
+✓ Regeneração offline → HP/MP/SM atualizados antes do redirect
+✓ Console do navegador → sem erro "supabase is not defined"
+✓ Console → sem erro "Cannot read property 'createClient'"
+✓ Dashboard → clicar jogo com stamina < 10 → bloqueia corretamente
+✓ Dashboard → clicar jogo com stamina > 10 → consome 50% e redireciona
+✓ Codex → registrar ativo → aparece em "Itens Registrados"
+✓ TrocaSegura → criar troca → modal mostra valores corretos (não NaN)
+
+
+================================================================================
+🔒 SEGURANÇA — RECOMENDAÇÕES FUTURAS
+================================================================================
+[ ] Migrar senha SHA-256 para bcrypt/argon2 (via Edge Function)
+[ ] Implementar RLS (Row Level Security) em todas as tabelas
+[ ] Rotacionar chave anon periodicamente
+[ ] Mover operações sensíveis para Edge Functions
+[ ] Adicionar rate limiting no login (RPC)
+[ ] Usar variáveis de ambiente no build (não hardcode)
+[ ] Implementar refresh token (JWT curta duração)
+[ ] Auditoria de logs de admin (quem alterou o quê)
+
+
+================================================================================
+📌 CHECKLIST FINAL
+================================================================================
+[✓] config.js corrigido
+[✓] config.example.js sincronizado
+[✓] .gitignore criado
+[✓] index.html com anti-loop
+[✓] login.html com regen antes de salvar
+[✓] admin.html sem sobrescrever window.supabase
+[✓] adm_cadastro.html com hash SHA-256
+[✓] dashboard.html com event delegation
+[✓] codex.html sem CDN duplicada
+[✓] trocap.html com fallback NaN
+[✓] manifest.json com nome correto
+[✓] Estrutura.txt atualizado
+
+
+================================================================================
+Equipe MM Quase Tudo · Portal_Bolsa v1.0.0 · 2026
+================================================================================

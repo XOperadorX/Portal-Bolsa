@@ -7,12 +7,10 @@
 
     <title>Login — MM Quase Tudo</title>
 
-    <!-- SEO -->
     <meta name="description" content="Faça login no MM Quase Tudo — Central de jogos, economia virtual e negociações entre jogadores.">
     <meta name="keywords" content="mm quasetudo, login, jogos, mmorpg">
     <meta name="author" content="Equipe MM Quase Tudo">
 
-    <!-- Open Graph -->
     <meta property="og:type"        content="website">
     <meta property="og:site_name"   content="MM Quase Tudo">
     <meta property="og:title"       content="Login — MM Quase Tudo">
@@ -21,7 +19,6 @@
     <meta property="og:url"         content="https://xoperadorx.github.io/Portal-Bolsa/login.html">
     <meta property="og:locale"      content="pt_BR">
 
-    <!-- Supabase + Fonts + Icons -->
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -39,7 +36,6 @@
             flex-direction: column;
         }
 
-        /* ==================== MENU ==================== */
         .menu-container {
             width: 100%;
             background-color: rgb(0, 43, 173);
@@ -147,7 +143,6 @@
             padding: 0.3rem 0.6rem;
         }
 
-        /* ==================== LOGIN ==================== */
         .login-wrapper {
             flex: 1;
             display: flex;
@@ -268,7 +263,6 @@
 </head>
 <body>
 
-    <!-- ==================== MENU ==================== -->
     <div class="menu-container">
         <nav class="navbar">
             <div class="logo">
@@ -288,8 +282,8 @@
                 <li><a href="./download.html"><i class="fas fa-download"></i> Downloads</a></li>
                 <li><a href="./suporte.html"><i class="fas fa-headset"></i> Suporte</a></li>
                 <li><a href="./cadastro.html"><i class="fas fa-user-plus"></i> Cadastro</a></li>
-                <li><a href="./login.html"><i class="fas fa-sign-in-alt"></i> Login</a></li>    
-                <li><a href="./como-jogar.html"><i class="fas fa-question-circle"></i> Como Jogar</a></li>    
+                <li><a href="./login.html"><i class="fas fa-sign-in-alt"></i> Login</a></li>
+                <li><a href="./como-jogar.html"><i class="fas fa-question-circle"></i> Como Jogar</a></li>
             </ul>
 
             <a href="https://discord.gg/ATtu4z9Ewt" class="btn-discord" target="_blank" rel="noopener">
@@ -299,7 +293,6 @@
         </nav>
     </div>
 
-    <!-- ==================== LOGIN ==================== -->
     <div class="login-wrapper">
         <div class="login-container">
             <h1>🔐 Entrar</h1>
@@ -334,7 +327,6 @@
         </div>
     </div>
 
-    <!-- ==================== SCRIPTS ==================== -->
     <script>
         // ══════════════════════════════════════════════════════════════
         // MENU MOBILE
@@ -383,7 +375,6 @@
         const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InhyY3h2aXp6ZHVtY3hieWxta3ZuIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODY2NjA0NzIsImV4cCI6MjEwMjIzNjQ3Mn0.ohB4tW0UQ-k1PcwoZxm4u9XSGNLsFphv1_UwTWoklOM';
         const supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
-        
         // ══════════════════════════════════════════════════════════════
         // SESSÃO
         // ══════════════════════════════════════════════════════════════
@@ -400,14 +391,11 @@
             const u  = localStorage.getItem(SESSION_KEY);
             if (!ts || !u) return false;
             const t = parseInt(ts, 10);
-            if (isNaN(t)) return false;
+            if (isNaN(t) || t <= 0) return false;
             return (Date.now() - t) < SESSION_DURATION;
         }
 
-        // ══════════════════════════════════════════════════════════════
-        // REDIRECIONA SE JÁ LOGADO
-        // Página PÚBLICA — só manda pro dashboard se tiver sessão.
-        // ══════════════════════════════════════════════════════════════
+        // Redireciona se já logado
         if (sessaoValida()) {
             window.location.replace('dashboard.html');
             throw new Error('REDIRECT_LOGGED_IN');
@@ -498,6 +486,7 @@
             }
         }
 
+        // ✅ CORRIGIDO: sessão só é salva DEPOIS da regeneração
         async function fazerLogin(login, senha) {
             try {
                 const { data, error } = await supabaseClient.rpc('login_usuario', {
@@ -516,6 +505,11 @@
                     return false;
                 }
 
+                // 1. Aplica regeneração ANTES de salvar a sessão
+                mostrarSucesso('✅ Login OK! Verificando regeneração...');
+                const regenResult = await aplicarRegeneracaoOffline(data.login);
+
+                // 2. Só agora salva a sessão com dados atualizados
                 const usuario = {
                     id:    data.id,
                     login: data.login,
@@ -528,9 +522,7 @@
                 };
                 salvarSessao(usuario);
 
-                mostrarSucesso('✅ Login OK! Verificando regeneração...');
-
-                const regenResult = await aplicarRegeneracaoOffline(data.login);
+                // 3. Redireciona
                 const delay = (regenResult && regenResult.regenerou) ? 2000 : 800;
                 setTimeout(() => {
                     window.location.replace('dashboard.html');

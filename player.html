@@ -1,0 +1,1364 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
+    <title>Player - BAEP</title>
+
+    <link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@400;600;700&family=Orbitron:wght@400;700;900&display=swap" rel="stylesheet">
+
+    <style>
+        /* ============================================================
+           RESET E BASE
+        ============================================================ */
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        :root {
+            --neon-green: #4cd964;
+            --neon-blue: #00f0ff;
+            --neon-purple: #b066ff;
+            --neon-gold: #ffd700;
+            --neon-red: #ff6b6b;
+            --neon-orange: #f59e0b;
+            --border-glow: rgba(0, 240, 255, 0.15);
+        }
+
+        html { scroll-behavior: smooth; }
+
+        body {
+            background: 
+                radial-gradient(circle at 20% 0%, rgba(0, 240, 255, 0.08), transparent 50%),
+                radial-gradient(circle at 80% 100%, rgba(176, 102, 255, 0.08), transparent 50%),
+                linear-gradient(135deg, #0a0e17 0%, #12151f 50%, #0a0e17 100%);
+            color: #e6e6e6;
+            font-family: 'Rajdhani', 'Segoe UI', sans-serif;
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container { max-width: 1400px; margin: 0 auto; }
+
+        /* ============================================================
+           TOPBAR
+        ============================================================ */
+        .topbar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: rgba(18, 21, 32, 0.85);
+            backdrop-filter: blur(10px);
+            border: 1px solid var(--border-glow);
+            padding: 12px 20px;
+            border-radius: 14px;
+            margin-bottom: 20px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.5);
+            flex-wrap: wrap;
+            gap: 12px;
+        }
+
+        .topbar-brand {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-weight: 800;
+            font-size: 1.05em;
+            color: var(--neon-gold);
+            letter-spacing: 1px;
+            font-family: 'Orbitron', sans-serif;
+        }
+
+        .topbar-actions {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
+        .btn-voltar {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 9px 18px;
+            background: linear-gradient(135deg, #00f0ff, #7000ff);
+            color: #fff;
+            border: none;
+            border-radius: 30px;
+            font-weight: 700;
+            font-size: 0.85em;
+            cursor: pointer;
+            text-decoration: none;
+            transition: all 0.25s;
+            box-shadow: 0 0 12px rgba(0, 240, 255, 0.35);
+            font-family: 'Rajdhani', sans-serif;
+        }
+
+        .btn-voltar:hover {
+            transform: translateY(-2px) scale(1.03);
+            box-shadow: 0 0 22px rgba(0, 240, 255, 0.7);
+        }
+
+        .topbar-user {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            background: rgba(0, 240, 255, 0.08);
+            padding: 6px 14px;
+            border-radius: 30px;
+            border: 1px solid rgba(0, 240, 255, 0.2);
+            font-size: 0.85em;
+            font-weight: 600;
+            color: #c8d0e0;
+        }
+
+        /* ============================================================
+           LEVEL WIDGET
+        ============================================================ */
+        .level-widget {
+            position: relative;
+            background: rgba(18, 21, 32, 0.85);
+            backdrop-filter: blur(10px);
+            border: 1px solid var(--border-glow);
+            border-radius: 16px;
+            padding: 18px 24px;
+            margin-bottom: 20px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.5);
+            overflow: hidden;
+        }
+
+        .level-widget::before {
+            content: '';
+            position: absolute;
+            top: 0; left: 0; right: 0;
+            height: 3px;
+            background: linear-gradient(90deg, transparent, var(--neon-blue), var(--neon-purple), transparent);
+            animation: shimmerTop 3s linear infinite;
+        }
+
+        @keyframes shimmerTop {
+            0%   { transform: translateX(-100%); }
+            100% { transform: translateX(100%); }
+        }
+
+        .lw-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 20px;
+            margin-bottom: 16px;
+            flex-wrap: wrap;
+        }
+
+        .lw-badge {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .lw-num {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #00f0ff, #7000ff);
+            color: #fff;
+            font-size: 1.6em;
+            font-weight: 900;
+            box-shadow: 0 0 20px rgba(0, 240, 255, 0.6);
+            font-family: 'Orbitron', sans-serif;
+            transition: all 0.4s;
+            position: relative;
+        }
+
+        .lw-num::after {
+            content: '';
+            position: absolute;
+            inset: -4px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #00f0ff, #7000ff);
+            opacity: 0.4;
+            filter: blur(8px);
+            z-index: -1;
+        }
+
+        .lw-num.level-up {
+            animation: levelUpPop 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        @keyframes levelUpPop {
+            0%   { transform: scale(1); }
+            30%  { transform: scale(1.35); box-shadow: 0 0 50px rgba(255, 215, 0, 1); }
+            60%  { transform: scale(0.95); }
+            100% { transform: scale(1); }
+        }
+
+        .lw-label {
+            font-size: 0.65em;
+            letter-spacing: 2px;
+            color: #8a99ad;
+            font-weight: 700;
+        }
+
+        .lw-title {
+            font-size: 1.1em;
+            font-weight: 800;
+            color: var(--neon-gold);
+            text-shadow: 0 0 10px rgba(255,215,0,0.4);
+            transition: all 0.4s;
+        }
+
+        .lw-exp {
+            flex: 1;
+            min-width: 200px;
+        }
+
+        .lw-bar {
+            width: 100%;
+            height: 14px;
+            background: #2c3442;
+            border-radius: 7px;
+            overflow: hidden;
+            margin-bottom: 6px;
+            border: 1px solid rgba(0, 240, 255, 0.15);
+            position: relative;
+        }
+
+        .lw-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #00f0ff, #7000ff, #b066ff);
+            border-radius: 7px;
+            transition: width 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+            box-shadow: 0 0 12px rgba(0, 240, 255, 0.6);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .lw-fill::after {
+            content: '';
+            position: absolute;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent);
+            animation: lwShine 2.5s infinite;
+        }
+
+        @keyframes lwShine {
+            0%   { transform: translateX(-100%); }
+            100% { transform: translateX(100%); }
+        }
+
+        .lw-text {
+            font-size: 0.85em;
+            color: #8a99ad;
+            display: flex;
+            justify-content: space-between;
+            font-weight: 600;
+        }
+
+        .lw-cur { color: var(--neon-blue); font-weight: 800; }
+        .lw-nxt { color: #fff; font-weight: 700; }
+
+        .lw-realtime {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 40px;
+            height: 40px;
+            background: rgba(0, 240, 255, 0.08);
+            border-radius: 50%;
+            border: 1px solid rgba(0, 240, 255, 0.2);
+        }
+
+        .rt-dot {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            background: #444;
+            transition: background 0.3s;
+        }
+
+        .rt-dot.ativo {
+            background: var(--neon-green);
+            box-shadow: 0 0 12px rgba(76, 217, 100, 0.9);
+            animation: lwPulse 1.5s infinite;
+        }
+
+        @keyframes lwPulse {
+            0%, 100% { opacity: 1; transform: scale(1); }
+            50%      { opacity: 0.5; transform: scale(1.2); }
+        }
+
+        /* ============================================================
+           STATS COM BARRAS
+        ============================================================ */
+        .lw-stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+            gap: 12px;
+            padding-top: 14px;
+            border-top: 1px solid rgba(0, 240, 255, 0.1);
+        }
+
+        .stat-item {
+            background: rgba(0, 0, 0, 0.25);
+            border-radius: 10px;
+            padding: 10px 12px;
+            border: 1px solid rgba(0, 240, 255, 0.08);
+            transition: all 0.25s;
+        }
+
+        .stat-item:hover {
+            background: rgba(0, 240, 255, 0.05);
+            border-color: rgba(0, 240, 255, 0.3);
+            transform: translateY(-2px);
+        }
+
+        .stat-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 6px;
+            font-size: 0.85em;
+            font-weight: 700;
+            color: #8a99ad;
+        }
+
+        .stat-value {
+            font-weight: 900;
+            font-family: 'Orbitron', sans-serif;
+            font-size: 0.95em;
+        }
+
+        .stat-bar {
+            width: 100%;
+            height: 6px;
+            background: #2c3442;
+            border-radius: 3px;
+            overflow: hidden;
+        }
+
+        .stat-fill {
+            height: 100%;
+            border-radius: 3px;
+            transition: width 0.6s ease;
+        }
+
+        .stat-fill.hp  { background: linear-gradient(90deg, #ff6b6b, #ff3b3b); }
+        .stat-fill.mp  { background: linear-gradient(90deg, #66b2ff, #0066cc); }
+        .stat-fill.sm  { background: linear-gradient(90deg, #4cd964, #22a844); }
+
+        .hp-c  { color: #ff6b6b; }
+        .mp-c  { color: #66b2ff; }
+        .sm-c  { color: #4cd964; }
+
+        /* Stats simples (sem barra) */
+        .stat-simple {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            background: rgba(0, 0, 0, 0.25);
+            border-radius: 10px;
+            padding: 12px 14px;
+            border: 1px solid rgba(0, 240, 255, 0.08);
+            transition: all 0.25s;
+        }
+
+        .stat-simple:hover {
+            background: rgba(0, 240, 255, 0.05);
+            border-color: rgba(0, 240, 255, 0.3);
+            transform: translateY(-2px);
+        }
+
+        .stat-simple .stat-label {
+            font-size: 0.85em;
+            color: #8a99ad;
+            font-weight: 700;
+        }
+
+        .stat-simple .stat-value-simple {
+            font-weight: 900;
+            font-family: 'Orbitron', sans-serif;
+            font-size: 1.15em;
+        }
+
+        .atk-c { color: #ffd700; }
+        .def-c { color: #b066ff; }
+        .mag-c { color: #00f0ff; }
+
+        /* ============================================================
+           GRID INFO
+        ============================================================ */
+        .grid-info {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: 14px;
+            margin-top: 20px;
+        }
+
+        .info-box {
+            background: rgba(18, 21, 32, 0.85);
+            border: 1px solid var(--border-glow);
+            border-radius: 12px;
+            padding: 16px 18px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.4);
+            transition: all 0.25s;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .info-box::before {
+            content: '';
+            position: absolute;
+            top: 0; left: 0;
+            width: 4px;
+            height: 100%;
+            background: var(--neon-blue);
+            opacity: 0.6;
+        }
+
+        .info-box.verde::before  { background: var(--neon-green); }
+        .info-box.azul::before   { background: var(--neon-blue); }
+        .info-box.roxo::before   { background: var(--neon-purple); }
+        .info-box.gold::before   { background: var(--neon-gold); }
+
+        .info-box:hover {
+            transform: translateY(-3px);
+            border-color: rgba(0, 240, 255, 0.4);
+            box-shadow: 0 8px 25px rgba(0, 240, 255, 0.15);
+        }
+
+        .info-box h4 {
+            font-size: 0.75em;
+            letter-spacing: 1.5px;
+            color: #8a99ad;
+            text-transform: uppercase;
+            margin-bottom: 8px;
+            font-weight: 700;
+        }
+
+        .info-box .valor {
+            font-size: 1.7em;
+            font-weight: 900;
+            color: var(--neon-gold);
+            font-family: 'Orbitron', sans-serif;
+            transition: all 0.3s;
+        }
+
+        .info-box .valor.verde { color: var(--neon-green); }
+        .info-box .valor.azul  { color: var(--neon-blue); }
+        .info-box .valor.roxo  { color: var(--neon-purple); }
+
+        .valor.pulse {
+            animation: valuePulse 0.6s ease;
+        }
+
+        @keyframes valuePulse {
+            0%   { transform: scale(1); }
+            50%  { transform: scale(1.12); text-shadow: 0 0 20px currentColor; }
+            100% { transform: scale(1); }
+        }
+
+        /* ============================================================
+           CONQUISTAS
+        ============================================================ */
+        .conquistas-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+            gap: 10px;
+            margin-top: 12px;
+        }
+
+        .conquista {
+            background: rgba(0, 0, 0, 0.25);
+            border: 1px solid rgba(0, 240, 255, 0.1);
+            border-radius: 10px;
+            padding: 12px 8px;
+            text-align: center;
+            transition: all 0.25s;
+            cursor: help;
+            position: relative;
+        }
+
+        .conquista.desbloqueada {
+            background: linear-gradient(135deg, rgba(255, 215, 0, 0.1), rgba(176, 102, 255, 0.1));
+            border-color: rgba(255, 215, 0, 0.4);
+        }
+
+        .conquista.bloqueada {
+            opacity: 0.35;
+            filter: grayscale(1);
+        }
+
+        .conquista:hover {
+            transform: translateY(-3px) scale(1.05);
+            border-color: var(--neon-gold);
+        }
+
+        .conquista .icon {
+            font-size: 1.8em;
+            margin-bottom: 6px;
+            display: block;
+        }
+
+        .conquista .nome {
+            font-size: 0.7em;
+            font-weight: 700;
+            color: #c8d0e0;
+            letter-spacing: 0.5px;
+        }
+
+        /* ============================================================
+           TIMELINE (HISTÓRICO)
+        ============================================================ */
+        .timeline {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            margin-top: 12px;
+            max-height: 260px;
+            overflow-y: auto;
+            padding-right: 6px;
+        }
+
+        .timeline::-webkit-scrollbar { width: 6px; }
+        .timeline::-webkit-scrollbar-track { background: rgba(0,0,0,0.2); border-radius: 3px; }
+        .timeline::-webkit-scrollbar-thumb { background: rgba(0, 240, 255, 0.3); border-radius: 3px; }
+
+        .timeline-item {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 8px 12px;
+            background: rgba(0, 0, 0, 0.2);
+            border-radius: 8px;
+            border-left: 3px solid var(--neon-blue);
+            font-size: 0.85em;
+            transition: all 0.25s;
+        }
+
+        .timeline-item:hover {
+            background: rgba(0, 240, 255, 0.05);
+            transform: translateX(3px);
+        }
+
+        .timeline-item .hora {
+            color: #8a99ad;
+            font-size: 0.8em;
+            font-family: 'Orbitron', sans-serif;
+            min-width: 55px;
+        }
+
+        .timeline-item .texto {
+            flex: 1;
+            color: #c8d0e0;
+        }
+
+        .timeline-item .valor-hist {
+            font-weight: 900;
+            color: var(--neon-gold);
+            font-family: 'Orbitron', sans-serif;
+        }
+
+        /* ============================================================
+           SEÇÕES (título de painel)
+        ============================================================ */
+        .secao {
+            background: rgba(18, 21, 32, 0.85);
+            border: 1px solid var(--border-glow);
+            border-radius: 14px;
+            padding: 18px 22px;
+            margin-top: 20px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.4);
+        }
+
+        .secao h3 {
+            font-size: 0.9em;
+            color: var(--neon-gold);
+            letter-spacing: 1.5px;
+            margin-bottom: 14px;
+            text-transform: uppercase;
+            font-weight: 800;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        /* ============================================================
+           STATUS CONEXÃO
+        ============================================================ */
+        .status-container {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+
+        .status-item {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 5px 12px;
+            border-radius: 20px;
+            background: rgba(0, 240, 255, 0.05);
+            border: 1px solid rgba(0, 240, 255, 0.15);
+            font-size: 0.78em;
+            font-weight: 700;
+            color: #8a99ad;
+            transition: all 0.3s;
+        }
+
+        .status-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: #444;
+            transition: all 0.3s;
+        }
+
+        .status-dot.online {
+            background: var(--neon-green);
+            box-shadow: 0 0 10px rgba(76, 217, 100, 0.8);
+            animation: lwPulse 1.5s infinite;
+        }
+
+        /* ============================================================
+           SKELETON LOADING
+        ============================================================ */
+        .skeleton {
+            background: linear-gradient(90deg, #1a1f2e 25%, #2c3442 50%, #1a1f2e 75%);
+            background-size: 200% 100%;
+            animation: skeletonShine 1.5s infinite;
+            border-radius: 6px;
+            color: transparent !important;
+            user-select: none;
+        }
+
+        @keyframes skeletonShine {
+            0%   { background-position: 200% 0; }
+            100% { background-position: -200% 0; }
+        }
+
+        /* ============================================================
+           TOAST
+        ============================================================ */
+        .toast-container {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            z-index: 9999;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            max-width: 340px;
+        }
+
+        .toast {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 14px 18px;
+            border-radius: 12px;
+            background: rgba(18, 21, 32, 0.95);
+            border-left: 4px solid var(--neon-gold);
+            color: #e6e6e6;
+            font-weight: 600;
+            box-shadow: 0 6px 24px rgba(0,0,0,0.5);
+            animation: toastIn 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            backdrop-filter: blur(10px);
+        }
+
+        .toast.level-up   { border-left-color: var(--neon-gold); background: rgba(255, 215, 0, 0.15); }
+        .toast.conquista  { border-left-color: var(--neon-purple); background: rgba(176, 102, 255, 0.15); }
+        .toast.info       { border-left-color: var(--neon-blue); }
+
+        .toast.saindo {
+            animation: toastOut 0.3s ease forwards;
+        }
+
+        @keyframes toastIn {
+            from { transform: translateX(120%); opacity: 0; }
+            to   { transform: translateX(0); opacity: 1; }
+        }
+
+        @keyframes toastOut {
+            to { transform: translateX(120%); opacity: 0; }
+        }
+
+        /* ============================================================
+           RESPONSIVO
+        ============================================================ */
+        @media (max-width: 700px) {
+            body { padding: 12px; }
+            .lw-num { width: 48px; height: 48px; font-size: 1.2em; }
+            .lw-title { font-size: 0.95em; }
+            .info-box .valor { font-size: 1.4em; }
+            .conquistas-grid { grid-template-columns: repeat(auto-fill, minmax(90px, 1fr)); }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+
+        <!-- ========== TOPBAR ========== -->
+        <div class="topbar">
+            <div class="topbar-brand">
+                🎮 PLAYER — MM Quase Tudo
+            </div>
+            <div class="topbar-actions">
+                <div class="status-container">
+                    <span class="status-item">
+                        <span class="status-dot online" id="statusNet"></span>
+                        <span>🌐 Net</span>
+                    </span>
+                    <span class="status-item">
+                        <span class="status-dot" id="statusDb"></span>
+                        <span id="statusDbTexto">☁️ Supabase</span>
+                    </span>
+                    <span class="status-item">
+                        <span class="status-dot" id="statusRt"></span>
+                        <span id="statusRtTexto">🔄 Realtime</span>
+                    </span>
+                </div>
+                <div class="topbar-user" id="topbarUser">👤 Visitante</div>
+                <a href="./dashboard.html" class="btn-voltar">🏠 Dashboard</a>
+            </div>
+        </div>
+
+        <!-- ========== LEVEL WIDGET (TEMPO REAL) ========== -->
+        <div class="level-widget" id="levelWidget">
+            <div class="lw-header">
+                <div class="lw-badge">
+                    <span class="lw-num" id="lwNivel">1</span>
+                    <div>
+                        <div class="lw-label">NÍVEL</div>
+                        <div class="lw-title" id="lwTitulo">🌱 Iniciante</div>
+                    </div>
+                </div>
+                <div class="lw-exp">
+                    <div class="lw-bar">
+                        <div class="lw-fill" id="lwExpFill" style="width:0%"></div>
+                    </div>
+                    <div class="lw-text">
+                        <span class="lw-cur" id="lwExpAtual">0</span>
+                        <span>/ <span class="lw-nxt" id="lwExpProx">100</span> EXP</span>
+                    </div>
+                </div>
+                <div class="lw-realtime" title="Sincronização em tempo real">
+                    <span class="rt-dot" id="lwRtDot"></span>
+                </div>
+            </div>
+            <div class="lw-stats" id="lwStats">
+                <!-- Stats preenchidos via JS -->
+            </div>
+        </div>
+
+        <!-- ========== GRID DE INFORMAÇÕES ========== -->
+        <div class="grid-info">
+            <div class="info-box verde">
+                <h4>💵 Saldo</h4>
+                <div class="valor verde" id="infoSaldo">0,00</div>
+            </div>
+            <div class="info-box azul">
+                <h4>🏦 Poupança</h4>
+                <div class="valor azul" id="infoPoupanca">0,00</div>
+            </div>
+            <div class="info-box roxo">
+                <h4>🎁 Proventos</h4>
+                <div class="valor roxo" id="infoProventos">0,00</div>
+            </div>
+            <div class="info-box gold">
+                <h4>💎 Cristais</h4>
+                <div class="valor" id="infoCristais">0</div>
+            </div>
+        </div>
+
+        <!-- ========== CONQUISTAS ========== -->
+        <div class="secao">
+            <h3>🏆 Conquistas</h3>
+            <div class="conquistas-grid" id="conquistasGrid">
+                <!-- Preenchido via JS -->
+            </div>
+        </div>
+
+        <!-- ========== HISTÓRICO ========== -->
+        <div class="secao">
+            <h3>📜 Atividade Recente</h3>
+            <div class="timeline" id="timelineHist">
+                <div class="timeline-item">
+                    <span class="hora">--:--</span>
+                    <span class="texto" style="color: #8a99ad;">Nenhuma atividade recente</span>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <!-- ========== TOASTS ========== -->
+    <div class="toast-container" id="toastContainer"></div>
+
+    <!-- ============================================================
+         IMPORTMAP SUPABASE
+    ============================================================ -->
+    <script type="importmap">
+    {
+        "imports": {
+            "@supabase/supabase-js": "https://esm.sh/@supabase/supabase-js@2"
+        }
+    }
+    </script>
+
+    <!-- ============================================================
+         SCRIPT PRINCIPAL — importa tudo do config.js
+    ============================================================ -->
+    <script type="module">
+    import { 
+        db as supabase, 
+        TABELA,
+        SESSION_KEY,
+        carregarBolsa,
+        calcularResumoBonus
+    } from './config.js';
+
+    // ============================================================
+    // ESTADO
+    // ============================================================
+    let usuarioLogado = null;
+    let usuarioNome = null;
+    let realtimeChannel = null;
+
+    // Snapshot anterior para detectar level up / mudanças
+    let snapshotAnterior = null;
+
+    const jogador = {
+        nivel: 1,
+        titulo: '🌱 Iniciante',
+        experiencia: 0,
+        exp_proximo: 100,
+        hp_atual: 0,  hp_max: 0,
+        mp_atual: 0,  mp_max: 0,
+        sm_atual: 0,  sm_max: 0,
+        atk: 0, def: 0, mag: 0,
+        saldo: 0,
+        saldo_poupanca: 0,
+        proventos_pendentes: 0,
+        cristais: 0,
+        // Bônus do Codex
+        bonusCodex: { atk: 0, def: 0, hp: 0 },
+        // Carteira resumida
+        carteira: {},
+        itensCount: 0,
+        conjuntosCompletos: 0
+    };
+
+    // ============================================================
+    // TÍTULOS POR NÍVEL
+    // ============================================================
+    const TITULOS_NIVEL = [
+        { max: 4,   titulo: '🌱 Iniciante' },
+        { max: 9,   titulo: '🌿 Aprendiz' },
+        { max: 19,  titulo: '⚔️ Guerreiro' },
+        { max: 29,  titulo: '🛡️ Cavaleiro' },
+        { max: 49,  titulo: '🔥 Campeão' },
+        { max: 69,  titulo: '💎 Mestre' },
+        { max: 89,  titulo: '👑 Lenda' },
+        { max: 999, titulo: '🌌 Mítico' }
+    ];
+
+    function tituloPorNivel(nivel) {
+        const n = Number(nivel) || 1;
+        for (const t of TITULOS_NIVEL) {
+            if (n <= t.max) return t.titulo;
+        }
+        return '🌌 Mítico';
+    }
+
+    // ============================================================
+    // CONQUISTAS
+    // ============================================================
+    const CONQUISTAS = [
+        { id: 'primeiro_passo',  icon: '👣', nome: 'Primeiro Passo',  check: j => j.nivel >= 2 },
+        { id: 'aprendiz',        icon: '🌿', nome: 'Aprendiz',         check: j => j.nivel >= 5 },
+        { id: 'guerreiro',       icon: '⚔️', nome: 'Guerreiro',        check: j => j.nivel >= 10 },
+        { id: 'cavaleiro',       icon: '🛡️', nome: 'Cavaleiro',        check: j => j.nivel >= 20 },
+        { id: 'campeao',         icon: '🔥', nome: 'Campeão',          check: j => j.nivel >= 30 },
+        { id: 'mestre',          icon: '💎', nome: 'Mestre',           check: j => j.nivel >= 50 },
+        { id: 'lenda',           icon: '👑', nome: 'Lenda',            check: j => j.nivel >= 70 },
+        { id: 'mitico',          icon: '🌌', nome: 'Mítico',           check: j => j.nivel >= 90 },
+        { id: 'rico',            icon: '💰', nome: 'Rico',             check: j => j.saldo >= 1000 },
+        { id: 'magnata',         icon: '🏦', nome: 'Magnata',          check: j => j.saldo_poupanca >= 5000 },
+        { id: 'investidor',      icon: '📈', nome: 'Investidor',       check: j => j.itensCount >= 5 },
+        { id: 'colecionador',    icon: '📚', nome: 'Colecionador',     check: j => j.itensCount >= 15 },
+        { id: 'full_set',        icon: '🎯', nome: 'Set Completo',     check: j => j.conjuntosCompletos >= 1 },
+        { id: 'comerciante',     icon: '🛒', nome: 'Comerciante',      check: j => j.carteira && Object.keys(j.carteira).length >= 3 },
+        { id: 'cristalino',      icon: '💎', nome: 'Cristalino',       check: j => j.cristais >= 100 },
+        { id: 'poupador',        icon: '🏛️', nome: 'Poupador',         check: j => j.saldo_poupanca >= 100 }
+    ];
+
+    // Cache de conquistas já notificadas (evita toast repetido)
+    const conquistasNotificadas = new Set();
+
+    // ============================================================
+    // HELPERS
+    // ============================================================
+    function fmt(v) {
+        return Number(v || 0).toLocaleString('pt-BR', {
+            minimumFractionDigits: 2,
+            maximumFractionDigits: 2
+        });
+    }
+
+    function setText(id, valor) {
+        const el = document.getElementById(id);
+        if (el) el.textContent = valor;
+    }
+
+    function piscarValor(id) {
+        const el = document.getElementById(id);
+        if (!el) return;
+        el.classList.remove('pulse');
+        void el.offsetWidth; // força reflow
+        el.classList.add('pulse');
+    }
+
+    // ============================================================
+    // TOASTS
+    // ============================================================
+    function mostrarToast(emoji, titulo, msg, tipo = 'info') {
+        const container = document.getElementById('toastContainer');
+        if (!container) return;
+
+        const toast = document.createElement('div');
+        toast.className = `toast ${tipo}`;
+        toast.innerHTML = `
+            <span style="font-size: 1.4em;">${emoji}</span>
+            <div>
+                <div style="font-weight: 800; font-size: 0.95em;">${titulo}</div>
+                <div style="font-size: 0.8em; color: #8a99ad;">${msg}</div>
+            </div>
+        `;
+        container.appendChild(toast);
+
+        setTimeout(() => {
+            toast.classList.add('saindo');
+            setTimeout(() => toast.remove(), 300);
+        }, 4000);
+    }
+
+    // ============================================================
+    // CARREGAR USUÁRIO DA SESSÃO
+    // ============================================================
+    async function carregarUsuario() {
+        const chaves = [SESSION_KEY, 'usuario_logado', 'user', 'usuario', 'session', 'auth'];
+        for (const chave of chaves) {
+            const sessao = localStorage.getItem(chave);
+            if (sessao) {
+                try {
+                    const dados = JSON.parse(sessao);
+                    if (dados && (dados.login || dados.email || dados.nome)) {
+                        usuarioLogado = dados.login || dados.email || dados.nome;
+                        usuarioNome = dados.nome || usuarioLogado;
+                        const el = document.getElementById('topbarUser');
+                        if (el) el.textContent = `👤 ${usuarioNome}`;
+                        return;
+                    }
+                } catch (_) {}
+            }
+        }
+        const el = document.getElementById('topbarUser');
+        if (el) el.textContent = '👤 Visitante';
+    }
+
+    // ============================================================
+    // CARREGAR DADOS DO JOGADOR
+    // ============================================================
+    async function carregarJogador() {
+        if (!usuarioLogado) return;
+
+        try {
+            // 1. Dados base do jogador
+            const { data, error } = await supabase
+                .from(TABELA)
+                .select(`
+                    nivel, experiencia, exp_proximo,
+                    hp_atual, hp_max, mp_atual, mp_max, sm_atual, sm_max,
+                    atk, def, mag,
+                    ataque_base, defesa_base, magia_base,
+                    hp, max_hp, mp, max_mp, sm, max_sm,
+                    saldo, saldo_poupanca, proventos_pendentes,
+                    cristais, carteira, itens
+                `)
+                .eq('login', usuarioLogado)
+                .maybeSingle();
+
+            if (error) throw error;
+            if (!data) {
+                console.warn('⚠️ Usuário não encontrado');
+                atualizarStatusDb(false);
+                return;
+            }
+
+            // 2. Bônus do Codex (via config.js)
+            let bonusCodex = { atk: 0, def: 0, hp: 0 };
+            let itensCount = 0;
+            let conjuntosCompletos = 0;
+
+            try {
+                const dadosBolsa = await carregarBolsa(usuarioLogado);
+                const resumo = calcularResumoBonus(dadosBolsa.bolsa);
+                bonusCodex = resumo.bonus;
+                itensCount = resumo.totalItens;
+                conjuntosCompletos = resumo.conjuntosCompletos;
+            } catch (e) {
+                console.warn('Erro ao carregar bônus Codex:', e);
+            }
+
+            // Aplicar no estado
+            jogador.nivel = Number(data.nivel) || 1;
+            jogador.titulo = tituloPorNivel(jogador.nivel);
+            jogador.experiencia = Number(data.experiencia) || 0;
+            jogador.exp_proximo = Number(data.exp_proximo) || 100;
+
+            jogador.hp_atual = Number(data.hp_atual ?? data.hp ?? 0);
+            jogador.hp_max   = Number(data.hp_max   ?? data.max_hp ?? 0);
+            jogador.mp_atual = Number(data.mp_atual ?? data.mp ?? 0);
+            jogador.mp_max   = Number(data.mp_max   ?? data.max_mp ?? 0);
+            jogador.sm_atual = Number(data.sm_atual ?? data.sm ?? 0);
+            jogador.sm_max   = Number(data.sm_max   ?? data.max_sm ?? 0);
+
+            jogador.atk = Number(data.atk ?? data.ataque_base ?? 0);
+            jogador.def = Number(data.def ?? data.defesa_base ?? 0);
+            jogador.mag = Number(data.mag ?? data.magia_base ?? 0);
+
+            jogador.saldo = Number(data.saldo) || 0;
+            jogador.saldo_poupanca = Number(data.saldo_poupanca) || 0;
+            jogador.proventos_pendentes = Number(data.proventos_pendentes) || 0;
+            jogador.cristais = Number(data.cristais) || 0;
+
+            jogador.carteira = data.carteira || {};
+            jogador.bonusCodex = bonusCodex;
+            jogador.itensCount = itensCount;
+            jogador.conjuntosCompletos = conjuntosCompletos;
+
+            // Fallback visual se zerado
+            if (jogador.hp_max === 0 && jogador.mp_max === 0 && jogador.sm_max === 0) {
+                jogador.hp_atual = 100; jogador.hp_max = 100;
+                jogador.mp_atual = 50;  jogador.mp_max = 50;
+                jogador.sm_atual = 100; jogador.sm_max = 100;
+                jogador.atk = 15;
+                jogador.def = 10;
+                jogador.mag = 8;
+            }
+
+            // Salvar snapshot para detectar mudanças
+            snapshotAnterior = { ...jogador };
+
+            renderizarJogador();
+            renderizarConquistas();
+            atualizarStatusDb(true);
+
+        } catch (e) {
+            console.error('Erro ao carregar jogador:', e);
+            atualizarStatusDb(false);
+        }
+    }
+
+    // ============================================================
+    // RENDERIZAR JOGADOR
+    // ============================================================
+    function renderizarJogador() {
+        const nivel = jogador.nivel;
+        const exp = jogador.experiencia;
+        const expProx = jogador.exp_proximo;
+        const percExp = expProx > 0 ? Math.min(100, (exp / expProx) * 100) : 0;
+
+        // Detectar level up
+        if (snapshotAnterior && nivel > snapshotAnterior.nivel) {
+            const elNivel = document.getElementById('lwNivel');
+            if (elNivel) {
+                elNivel.classList.add('level-up');
+                setTimeout(() => elNivel.classList.remove('level-up'), 900);
+            }
+            mostrarToast('🎉', 'LEVEL UP!', `Você alcançou o nível ${nivel}!`, 'level-up');
+        }
+
+        // Nível + título
+        setText('lwNivel', nivel);
+        setText('lwTitulo', jogador.titulo || tituloPorNivel(nivel));
+
+        // EXP
+        setText('lwExpAtual', exp.toLocaleString('pt-BR'));
+        setText('lwExpProx', expProx.toLocaleString('pt-BR'));
+        const elFill = document.getElementById('lwExpFill');
+        if (elFill) elFill.style.width = `${percExp}%`;
+
+        // Stats com barra (HP / MP / SM)
+        renderizarStats();
+
+        // Info boxes com pulse
+        const infoMap = [
+            ['infoSaldo', jogador.saldo, fmt, 'saldo'],
+            ['infoPoupanca', jogador.saldo_poupanca, fmt, 'saldo_poupanca'],
+            ['infoProventos', jogador.proventos_pendentes, fmt, 'proventos_pendentes'],
+            ['infoCristais', jogador.cristais, v => v, 'cristais']
+        ];
+
+        for (const [id, valor, fmtFn, chave] of infoMap) {
+            const el = document.getElementById(id);
+            if (el) {
+                const novoTexto = fmtFn(valor);
+                const mudou = snapshotAnterior && snapshotAnterior[chave] !== valor;
+                el.textContent = novoTexto;
+                if (mudou) piscarValor(id);
+            }
+        }
+    }
+
+    // ============================================================
+    // RENDERIZAR STATS (com barra para HP/MP/SM e simples para outros)
+    // ============================================================
+    function renderizarStats() {
+        const container = document.getElementById('lwStats');
+        if (!container) return;
+
+        // Aplicar bônus do Codex sobre stats base
+        const atkFinal = jogador.atk + (jogador.bonusCodex?.atk || 0);
+        const defFinal = jogador.def + (jogador.bonusCodex?.def || 0);
+        const hpMaxFinal = jogador.hp_max + (jogador.bonusCodex?.hp || 0);
+        const hpAtualFinal = Math.min(jogador.hp_atual, hpMaxFinal);
+
+        const percHp = hpMaxFinal > 0 ? (hpAtualFinal / hpMaxFinal) * 100 : 0;
+        const percMp = jogador.mp_max > 0 ? (jogador.mp_atual / jogador.mp_max) * 100 : 0;
+        const percSm = jogador.sm_max > 0 ? (jogador.sm_atual / jogador.sm_max) * 100 : 0;
+
+        container.innerHTML = `
+            <div class="stat-item" title="HP — Pontos de vida">
+                <div class="stat-header">
+                    <span>❤️ HP</span>
+                    <span class="stat-value hp-c">${hpAtualFinal.toFixed(0)}/${hpMaxFinal.toFixed(0)}</span>
+                </div>
+                <div class="stat-bar">
+                    <div class="stat-fill hp" style="width: ${percHp}%"></div>
+                </div>
+            </div>
+
+            <div class="stat-item" title="Mana — Recurso para magias">
+                <div class="stat-header">
+                    <span>💧 MANA</span>
+                    <span class="stat-value mp-c">${jogador.mp_atual.toFixed(0)}/${jogador.mp_max.toFixed(0)}</span>
+                </div>
+                <div class="stat-bar">
+                    <div class="stat-fill mp" style="width: ${percMp}%"></div>
+                </div>
+            </div>
+
+            <div class="stat-item" title="Stamina — Energia para ações">
+                <div class="stat-header">
+                    <span>⚡ STAMINA</span>
+                    <span class="stat-value sm-c">${jogador.sm_atual.toFixed(0)}/${jogador.sm_max.toFixed(0)}</span>
+                </div>
+                <div class="stat-bar">
+                    <div class="stat-fill sm" style="width: ${percSm}%"></div>
+                </div>
+            </div>
+
+            <div class="stat-simple" title="Ataque — Dano físico (+${jogador.bonusCodex?.atk || 0} do Codex)">
+                <span class="stat-label">⚔️ FORÇA</span>
+                <span class="stat-value-simple atk-c">${atkFinal.toFixed(0)}</span>
+            </div>
+
+            <div class="stat-simple" title="Defesa — Redução de dano (+${jogador.bonusCodex?.def || 0} do Codex)">
+                <span class="stat-label">🛡️ DEFESA</span>
+                <span class="stat-value-simple def-c">${defFinal.toFixed(0)}</span>
+            </div>
+
+            <div class="stat-simple" title="Magia — Dano mágico">
+                <span class="stat-label">🔮 MAGIA</span>
+                <span class="stat-value-simple mag-c">${jogador.mag.toFixed(0)}</span>
+            </div>
+        `;
+    }
+
+    // ============================================================
+    // RENDERIZAR CONQUISTAS
+    // ============================================================
+    function renderizarConquistas() {
+        const grid = document.getElementById('conquistasGrid');
+        if (!grid) return;
+
+        grid.innerHTML = CONQUISTAS.map(c => {
+            const desbloqueada = c.check(jogador);
+            const classe = desbloqueada ? 'desbloqueada' : 'bloqueada';
+            
+            // Notificar nova conquista
+            if (desbloqueada && !conquistasNotificadas.has(c.id)) {
+                conquistasNotificadas.add(c.id);
+                if (snapshotAnterior) { // não notifica no primeiro load
+                    mostrarToast('🏆', 'Conquista!', c.nome, 'conquista');
+                }
+            }
+
+            return `
+                <div class="conquista ${classe}" title="${c.nome}">
+                    <span class="icon">${c.icon}</span>
+                    <span class="nome">${c.nome}</span>
+                </div>
+            `;
+        }).join('');
+    }
+
+    // ============================================================
+    // STATUS VISUAIS
+    // ============================================================
+    function atualizarStatusDb(ok) {
+        const dot = document.getElementById('statusDb');
+        const txt = document.getElementById('statusDbTexto');
+        if (dot) dot.className = `status-dot ${ok ? 'online' : ''}`;
+        if (txt) txt.textContent = ok ? '☁️ Supabase' : '☁️ Offline';
+    }
+
+    function atualizarStatusRealtime(ok) {
+        const dot = document.getElementById('statusRt');
+        const txt = document.getElementById('statusRtTexto');
+        if (dot) dot.className = `status-dot ${ok ? 'online' : ''}`;
+        if (txt) txt.textContent = ok ? '🔄 Realtime' : '🔄 Offline';
+
+        const lwDot = document.getElementById('lwRtDot');
+        if (lwDot) lwDot.classList.toggle('ativo', ok);
+    }
+
+    function atualizarStatusNet() {
+        const dot = document.getElementById('statusNet');
+        if (dot) dot.className = `status-dot ${navigator.onLine ? 'online' : ''}`;
+    }
+
+    // ============================================================
+    // REALTIME
+    // ============================================================
+    function iniciarRealtime() {
+        if (realtimeChannel) {
+            supabase.removeChannel(realtimeChannel);
+            realtimeChannel = null;
+        }
+
+        if (!usuarioLogado) {
+            atualizarStatusRealtime(false);
+            return;
+        }
+
+        realtimeChannel = supabase
+            .channel('player-tempo-real-' + usuarioLogado)
+            .on(
+                'postgres_changes',
+                {
+                    event: 'UPDATE',
+                    schema: 'public',
+                    table: TABELA,
+                    filter: `login=eq.${usuarioLogado}`
+                },
+                (payload) => {
+                    console.log('🔄 Realtime update:', payload.eventType);
+                    const novo = payload.new || {};
+
+                    // Snapshot para detectar mudanças
+                    snapshotAnterior = { ...jogador };
+
+                    // Nível / EXP
+                    jogador.nivel = Number(novo.nivel) || jogador.nivel;
+                    jogador.titulo = tituloPorNivel(jogador.nivel);
+                    jogador.experiencia = Number(novo.experiencia) ?? jogador.experiencia;
+                    jogador.exp_proximo = Number(novo.exp_proximo) || jogador.exp_proximo;
+
+                    // Stats
+                    jogador.hp_atual = Number(novo.hp_atual ?? novo.hp ?? jogador.hp_atual);
+                    jogador.hp_max   = Number(novo.hp_max   ?? novo.max_hp ?? jogador.hp_max);
+                    jogador.mp_atual = Number(novo.mp_atual ?? novo.mp ?? jogador.mp_atual);
+                    jogador.mp_max   = Number(novo.mp_max   ?? novo.max_mp ?? jogador.mp_max);
+                    jogador.sm_atual = Number(novo.sm_atual ?? novo.sm ?? jogador.sm_atual);
+                    jogador.sm_max   = Number(novo.sm_max   ?? novo.max_sm ?? jogador.sm_max);
+
+                    jogador.atk = Number(novo.atk ?? novo.ataque_base ?? jogador.atk);
+                    jogador.def = Number(novo.def ?? novo.defesa_base ?? jogador.def);
+                    jogador.mag = Number(novo.mag ?? novo.magia_base ?? jogador.mag);
+
+                    // Info
+                    jogador.saldo = Number(novo.saldo) ?? jogador.saldo;
+                    jogador.saldo_poupanca = Number(novo.saldo_poupanca) ?? jogador.saldo_poupanca;
+                    jogador.proventos_pendentes = Number(novo.proventos_pendentes) ?? jogador.proventos_pendentes;
+                    jogador.cristais = Number(novo.cristais) ?? jogador.cristais;
+                    jogador.carteira = novo.carteira || jogador.carteira;
+
+                    renderizarJogador();
+                    renderizarConquistas();
+                    atualizarStatusRealtime(true);
+                    piscarWidget();
+                }
+            )
+            .subscribe((status) => {
+                if (status === 'SUBSCRIBED') {
+                    atualizarStatusRealtime(true);
+                } else if (status === 'CHANNEL_ERROR' || status === 'TIMED_OUT') {
+                    atualizarStatusRealtime(false);
+                } else {
+                    atualizarStatusRealtime(false);
+                }
+            });
+    }
+
+    // ============================================================
+    // EFEITO VISUAL
+    // ============================================================
+    function piscarWidget() {
+        const w = document.getElementById('levelWidget');
+        if (!w) return;
+        w.style.transition = 'box-shadow 0.2s';
+        w.style.boxShadow = '0 0 30px rgba(0, 240, 255, 0.6)';
+        setTimeout(() => {
+            w.style.boxShadow = '0 4px 20px rgba(0,0,0,0.5)';
+        }, 400);
+    }
+
+    // ============================================================
+    // INICIALIZAÇÃO
+    // ============================================================
+    async function init() {
+        console.log('🎮 Inicializando Player...');
+
+        atualizarStatusNet();
+        window.addEventListener('online', atualizarStatusNet);
+        window.addEventListener('offline', atualizarStatusNet);
+
+        await carregarUsuario();
+
+        if (!usuarioLogado) {
+            console.warn('⚠️ Usuário não logado');
+            renderizarJogador();
+            renderizarConquistas();
+            atualizarStatusDb(false);
+            atualizarStatusRealtime(false);
+            return;
+        }
+
+        console.log(`👤 Usuário: ${usuarioLogado}`);
+
+        // Render inicial (skeleton passa a mostrar valores padrão)
+        renderizarJogador();
+        renderizarConquistas();
+
+        // Carregar do banco
+        await carregarJogador();
+
+        // Realtime
+        iniciarRealtime();
+
+        console.log('✅ Player inicializado!');
+    }
+
+    if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', init);
+    } else {
+        init();
+    }
+    </script>
+</body>
+</html>
