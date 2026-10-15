@@ -43,11 +43,6 @@
     color: #000;
     font-weight: bold;
   }
-  .jogador-card button {
-    padding: 4px 10px;
-    font-size: 12px;
-    margin: 0;
-  }
   button {
     background: #ffd700;
     color: #000;
@@ -61,7 +56,6 @@
   }
   button:hover { background: #ffed4a; transform: scale(1.05); }
   button:disabled { opacity: 0.4; cursor: not-allowed; transform: none; }
-  button.perigo { background: #ff6b6b; color: white; }
   .tabuleiro {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
@@ -140,21 +134,18 @@
 <div class="aviso" id="aviso-login">⚠️ Verificando sessão...</div>
 
 <div class="painel-jogadores">
-  <h3>Jogadores <span class="status-online" id="status-realtime"></span></h3>
+  <h3>Jogador <span class="status-online" id="status-realtime"></span></h3>
   <p style="font-size:12px; opacity:0.7; margin:6px 0 10px;">
-    Você entra automaticamente. Convide mais gente se quiser (opcional).
+    Entrada com taxa de <strong>S$ 1,00</strong> (você confirma antes).
     Saldo real (S$) da tabela <strong>Geral</strong> é usado no jogo.
   </p>
   <div id="lista-jogadores"></div>
-  <button id="btn-convidar" onclick="convidarJogador()">➕ Convidar Jogador</button>
-  <button id="btn-iniciar" onclick="iniciarJogo()">▶️ Iniciar Jogo</button>
-  <button id="btn-reiniciar" class="perigo" onclick="reiniciarJogo()">🔄 Reiniciar Jogo</button>
 </div>
 
 <div class="tabuleiro" id="tabuleiro"></div>
 
 <div class="controles">
-  <div id="dados-jogador">Clique em "Iniciar Jogo" para começar.</div>
+  <div id="dados-jogador">Carregando...</div>
   <br>
   <button id="btn-dados" onclick="jogarDados()">🎲 Jogar Dados</button>
   <button id="btn-comprar" onclick="comprar()">🏠 Comprar Propriedade</button>
@@ -164,7 +155,7 @@
 
 <script>
 // ============================================================
-// 🐞 DEBUG — captura erros antes do módulo carregar
+// 🐞 DEBUG
 // ============================================================
 (function () {
   const aviso = document.getElementById('aviso-login');
@@ -184,11 +175,6 @@
     console.error('[BI rejection]', e);
     setAviso('❌ Promise: ' + (e.reason?.message || e.reason), 'erro');
   });
-
-  console.log('[BI] localStorage:', Object.keys(localStorage));
-  for (const k of Object.keys(localStorage)) {
-    console.log(`[BI] "${k}" =`, localStorage.getItem(k)?.slice(0, 120));
-  }
 })();
 </script>
 
@@ -209,7 +195,7 @@ const { db, TABELA, SESSION_KEY, fmtSaldo, esc } = cfg;
 console.log('[BI] config.js OK. TABELA =', TABELA);
 
 // ============================================================
-// 🔐 SESSÃO (com fallback)
+// 🔐 SESSÃO
 // ============================================================
 function detectarLogin() {
   const chaves = [SESSION_KEY, 'usuario_logado', 'usuarioLogado', 'usuario', 'user', 'login', 'email'];
@@ -239,14 +225,19 @@ if (!login) {
 window.__biDebug('✅ Logado como <strong>' + esc(login) + '</strong>. Carregando...', 'ok');
 
 // ============================================================
+// ⚙️ CONSTANTES
+// ============================================================
+const TAXA_ENTRADA = 1.00;   // S$ 1,00
+const BONUS_VOLTA  = 0.00;   // sem bônus ao passar pela partida
+
+// ============================================================
 // 🎯 ESTADO
 // ============================================================
 let jogadores      = [];
 let jogadorAtual   = 0;
 let jogoIniciado   = false;
 let canalRealtime  = null;
-let todosUsuarios  = [];
-let eu           = null;   // dados do jogador logado
+let eu             = null;
 
 const TABULEIRO_PADRAO = [
   { nome: "Início",               preco: 0,   tipo: "inicio"      },
@@ -274,23 +265,19 @@ function montarTabuleiroDOM() {
 }
 
 // ============================================================
-// 📥 CARREGAR USUÁRIOS
+// 📥 CARREGAR MEU USUÁRIO
 // ============================================================
-async function carregarUsuarios() {
+async function carregarEu() {
   const { data, error } = await db
     .from(TABELA)
     .select('login, nome, saldo')
-    .not('login', 'is', null)
-    .order('login', { ascending: true });
+    .eq('login', login)
+    .maybeSingle();
 
-  if (error) {
-    console.error('[BI] erro usuários:', error);
-    return [];
-  }
-  todosUsuarios = data || [];
-  eu = todosUsuarios.find(u => u.login === login) || null;
-  console.log('[BI] usuários:', todosUsuarios.length, '| eu:', eu);
-  return todosUsuarios;
+  if (error) { console.error('[BI] erro eu:', error); return null; }
+  eu = data;
+  console.log('[BI] eu:', eu);
+  return eu;
 }
 
 // ============================================================
@@ -298,16 +285,9 @@ async function carregarUsuarios() {
 // ============================================================
 async function carregarJogo() {
   const { data, error } = await db
-    .from(TABELA)
-    .select('fazendinha_dados')
-    .eq('login', login)
-    .maybeSingle();
+    .from(TABELA).select('fazendinha_dados').eq('login', login).maybeSingle();
 
-  if (error) {
-    console.error('[BI] erro carregar:', error);
-    mostrarMsg('❌ Erro ao carregar.');
-    return;
-  }
+  if (error) { console.error('[BI] erro carregar:', error); return; }
 
   const jogo = data?.fazendinha_dados?.banco_imobiliario;
   if (jogo) {
@@ -315,27 +295,6 @@ async function carregarJogo() {
     jogadorAtual = jogo.jogadorAtual || 0;
     jogoIniciado = jogo.jogoIniciado || false;
     tabuleiro    = jogo.tabuleiro    || JSON.parse(JSON.stringify(TABULEIRO_PADRAO));
-  }
-
-  await sincronizarSaldos();
-  montarTabuleiroDOM();
-  atualizarTela();
-}
-
-// ============================================================
-// 🔄 SALDOS
-// ============================================================
-async function sincronizarSaldos() {
-  if (jogadores.length === 0) return;
-  const logins = jogadores.map(j => j.login);
-  const { data } = await db.from(TABELA).select('login, nome, saldo').in('login', logins);
-  if (!data) return;
-  for (const jog of jogadores) {
-    const u = data.find(d => d.login === jog.login);
-    if (u) {
-      jog.saldo = Number(u.saldo) || 0;
-      jog.nome  = u.nome || jog.login;
-    }
   }
 }
 
@@ -362,16 +321,13 @@ async function salvarJogo() {
 }
 
 // ============================================================
-// 💸 SALDO REAL — corrigido, 1 query só
+// 💸 SALDO REAL
 // ============================================================
 async function atualizarSaldoReal(loginJogador, deltaS) {
   if (!loginJogador || deltaS === 0) return;
 
   const { data } = await db
-    .from(TABELA)
-    .select('saldo')
-    .eq('login', loginJogador)
-    .maybeSingle();
+    .from(TABELA).select('saldo').eq('login', loginJogador).maybeSingle();
 
   const saldoAtual = Number(data?.saldo) || 0;
   const novoSaldo  = Math.max(0, saldoAtual + deltaS);
@@ -381,13 +337,11 @@ async function atualizarSaldoReal(loginJogador, deltaS) {
     updated_at: new Date().toISOString()
   }).eq('login', loginJogador);
 
-  if (error) {
-    console.error('[BI] erro saldo:', error);
-    return;
-  }
+  if (error) { console.error('[BI] erro saldo:', error); return; }
 
   const jog = jogadores.find(j => j.login === loginJogador);
   if (jog) jog.saldo = novoSaldo;
+  if (loginJogador === login && eu) eu.saldo = novoSaldo;
 }
 
 // ============================================================
@@ -411,11 +365,66 @@ async function registrarPropriedadeNoCodex(casa, loginDono) {
 }
 
 // ============================================================
-// 🚀 AUTO-ADICIONA VOCÊ AO ABRIR
+// 💰 CONFIRMAR E COBRAR TAXA
 // ============================================================
-function adicionarEuAutomaticamente() {
-  if (!eu) return;
-  if (jogadores.some(j => j.login === eu.login)) return;
+async function confirmarECobrarTaxa() {
+  const saldoAtual = Number(eu?.saldo) || 0;
+
+  if (saldoAtual < TAXA_ENTRADA) {
+    window.__biDebug(
+      `❌ Saldo insuficiente para entrar.<br>` +
+      `Você tem <strong>${fmtSaldo(saldoAtual)}</strong> ` +
+      `mas precisa de <strong>${fmtSaldo(TAXA_ENTRADA)}</strong>.`,
+      'erro'
+    );
+    return false;
+  }
+
+  // 🔔 Pergunta antes de cobrar
+  const ok = confirm(
+    `🎲 Banco Imobiliário Online\n\n` +
+    `Para entrar no jogo é cobrada uma taxa de:\n` +
+    `💸 ${fmtSaldo(TAXA_ENTRADA)}\n\n` +
+    `Seu saldo atual: ${fmtSaldo(saldoAtual)}\n` +
+    `Saldo após pagar: ${fmtSaldo(saldoAtual - TAXA_ENTRADA)}\n\n` +
+    `Deseja pagar e entrar?`
+  );
+
+  if (!ok) {
+    window.__biDebug(
+      `ℹ️ Você optou por <strong>não entrar</strong>. ` +
+      `Nenhum valor foi cobrado.`,
+      'erro'
+    );
+    document.getElementById('btn-dados').disabled = true;
+    document.getElementById('btn-comprar').disabled = true;
+    document.getElementById('dados-jogador').innerHTML =
+      'Você não entrou no jogo. Recarregue para tentar novamente.';
+    return false;
+  }
+
+  // Cobra
+  await atualizarSaldoReal(login, -TAXA_ENTRADA);
+  console.log('[BI] taxa cobrada:', TAXA_ENTRADA);
+  return true;
+}
+
+// ============================================================
+// 🚀 ENTRAR AUTOMATICAMENTE
+// ============================================================
+async function entrarAutomaticamente() {
+  // Se já tem jogo salvo com você dentro, não cobra de novo
+  if (jogoIniciado && jogadores.some(j => j.login === login)) {
+    console.log('[BI] jogo em andamento, sem cobrança');
+    return true;
+  }
+
+  jogadores    = [];
+  jogadorAtual = 0;
+  tabuleiro    = JSON.parse(JSON.stringify(TABULEIRO_PADRAO));
+
+  const ok = await confirmarECobrarTaxa();
+  if (!ok) return false;
 
   jogadores.push({
     login: eu.login,
@@ -424,87 +433,11 @@ function adicionarEuAutomaticamente() {
     posicao: 0,
     propriedades: []
   });
-  console.log('[BI] você foi auto-adicionado');
-}
-
-// ============================================================
-// 🎮 CONVIDAR JOGADOR
-// ============================================================
-window.convidarJogador = async function () {
-  if (jogoIniciado) { alert('Jogo já iniciado!'); return; }
-  if (todosUsuarios.length === 0) await carregarUsuarios();
-
-  const disponiveis = todosUsuarios.filter(u => !jogadores.some(j => j.login === u.login));
-  if (disponiveis.length === 0) { alert('Todos já foram convidados!'); return; }
-
-  const lista = disponiveis.map((u, i) =>
-    `${i + 1}. ${u.nome || u.login} (${u.login}) — ${fmtSaldo(u.saldo)}`).join('\n');
-
-  const escolha = prompt(`Escolha:\n\n${lista}\n\nNúmero:`);
-  const idx = parseInt(escolha, 10) - 1;
-  if (isNaN(idx) || idx < 0 || idx >= disponiveis.length) return;
-
-  const u = disponiveis[idx];
-  jogadores.push({
-    login: u.login, nome: u.nome || u.login,
-    saldo: Number(u.saldo) || 0, posicao: 0, propriedades: []
-  });
-
-  await salvarJogo();
-  atualizarTela();
-  mostrarMsg(`✅ ${u.nome || u.login} entrou!`);
-};
-
-// ============================================================
-// ▶️ INICIAR — modo solo permitido
-// ============================================================
-window.iniciarJogo = async function () {
-  // ✅ CORRIGIDO: agora checa corretamente
-  adicionarEuAutomaticamente();
-
-  if (jogadores.length < 1) {
-    alert('Nenhum jogador! Recarregue a página.');
-    return;
-  }
-  if (jogadores.some(j => (j.saldo ?? 0) <= 0)) {
-    alert('Um ou mais jogadores estão com saldo zerado!');
-    return;
-  }
-
-  await sincronizarSaldos();
 
   jogoIniciado = true;
-  jogadorAtual = 0;
-  tabuleiro    = JSON.parse(JSON.stringify(TABULEIRO_PADRAO));
-
   await salvarJogo();
-  atualizarTela();
-  mostrarMsg(`🎮 Jogo iniciado! Vez de ${jogadores[0].nome}!`);
-};
-
-// ============================================================
-// 🔄 REINICIAR
-// ============================================================
-window.reiniciarJogo = async function () {
-  if (!confirm('Reiniciar o jogo? (saldos reais NÃO serão afetados)')) return;
-
-  const { data: atual } = await db.from(TABELA).select('fazendinha_dados').eq('login', login).maybeSingle();
-  const fazendinha = atual?.fazendinha_dados || {};
-  delete fazendinha.banco_imobiliario;
-
-  await db.from(TABELA).update({
-    fazendinha_dados: fazendinha,
-    updated_at: new Date().toISOString()
-  }).eq('login', login);
-
-  jogadores = []; jogadorAtual = 0; jogoIniciado = false;
-  tabuleiro = JSON.parse(JSON.stringify(TABULEIRO_PADRAO));
-
-  adicionarEuAutomaticamente();
-  montarTabuleiroDOM();
-  atualizarTela();
-  mostrarMsg('Jogo reiniciado!');
-};
+  return true;
+}
 
 // ============================================================
 // 🎲 JOGAR
@@ -528,30 +461,25 @@ async function moverJogador(passos) {
 
   jog.posicao = (jog.posicao + passos) % tabuleiro.length;
 
-  if (passouPartida) {
-    await atualizarSaldoReal(jog.login, +200);
-    mostrarMsg('🎉 Passou pela partida! +S$200');
+  if (passouPartida && BONUS_VOLTA > 0) {
+    await atualizarSaldoReal(jog.login, +BONUS_VOLTA);
+    mostrarMsg(`🎉 Passou pela partida! +${fmtSaldo(BONUS_VOLTA)}`);
+  } else if (passouPartida) {
+    mostrarMsg('➡️ Deu a volta (sem bônus).');
   }
 
   await processarCasa(jog.posicao);
 
-  // ✅ Falência só se não tiver propriedades
   if (jog.saldo <= 0 && jog.propriedades.length === 0) {
     setTimeout(async () => {
       alert(`💔 ${jog.nome} faliu! Fim de jogo.`);
-      await window.reiniciarJogo();
     }, 800);
     return;
   }
-  if (jog.saldo <= 0) {
-    mostrarMsg(`⚠️ ${jog.nome} está sem saldo!`);
-  }
 
-  // Próximo turno
   jogadorAtual = (jogadorAtual + 1) % jogadores.length;
   await salvarJogo();
   atualizarTela();
-  setTimeout(() => mostrarMsg(`⏭️ Vez de ${jogadores[jogadorAtual].nome}`), 1200);
 }
 
 // ============================================================
@@ -564,16 +492,16 @@ async function processarCasa(pos) {
   switch (casa.tipo) {
     case 'imposto':
       await atualizarSaldoReal(jog.login, -casa.preco);
-      mostrarMsg(`💸 Pagou S$${casa.preco} de imposto!`);
+      mostrarMsg(`💸 Pagou S$ ${casa.preco} de imposto!`);
       break;
 
     case 'chance': {
       if (Math.random() > 0.5) {
         await atualizarSaldoReal(jog.login, +100);
-        mostrarMsg('🍀 Sorte! +S$100!');
+        mostrarMsg('🍀 Sorte! +S$ 100!');
       } else {
         await atualizarSaldoReal(jog.login, -50);
-        mostrarMsg('😬 Azar! -S$50!');
+        mostrarMsg('😬 Azar! -S$ 50!');
       }
       break;
     }
@@ -611,8 +539,7 @@ window.comprar = async function () {
   const casa = tabuleiro[jog.posicao];
 
   if (!['propriedade', 'servico', 'ferrovia'].includes(casa.tipo)) {
-    mostrarMsg('❌ Aqui não dá pra comprar!');
-    return;
+    mostrarMsg('❌ Aqui não dá pra comprar!'); return;
   }
   if (casa.dono) { mostrarMsg('❌ Já tem dono!'); return; }
   if (jog.saldo < casa.preco) { mostrarMsg('❌ Sem saldo!'); return; }
@@ -642,7 +569,7 @@ function atualizarTela() {
   const lista = document.getElementById('lista-jogadores');
 
   if (jogadores.length === 0) {
-    lista.innerHTML = '<em style="opacity:0.6">Nenhum jogador. Recarregue.</em>';
+    lista.innerHTML = '<em style="opacity:0.6">Aguardando entrada...</em>';
   } else {
     lista.innerHTML = jogadores.map((j, i) => `
       <div class="jogador-card ${i === jogadorAtual && jogoIniciado ? 'vez' : ''}">
@@ -655,7 +582,6 @@ function atualizarTela() {
           💰 ${fmtSaldo(j.saldo)} |
           📍 ${esc(tabuleiro[j.posicao]?.nome || '—')}
           ${j.propriedades.length ? ` | 🏠 ${j.propriedades.length}` : ''}
-          ${!jogoIniciado && j.login !== login ? `<button class="perigo" onclick="removerJogador(${i})">✖</button>` : ''}
         </span>
       </div>
     `).join('');
@@ -666,15 +592,9 @@ function atualizarTela() {
     document.getElementById('dados-jogador').innerHTML =
       `<strong>Vez de: ${esc(jog.nome)}</strong> | Saldo: ${fmtSaldo(jog.saldo)}`;
   } else {
-    document.getElementById('dados-jogador').innerHTML =
-      jogadores.length === 0
-        ? 'Aguardando...'
-        : `${jogadores.length} jogador(es). Clique em "Iniciar Jogo".`;
+    document.getElementById('dados-jogador').innerHTML = 'Carregando...';
   }
 
-  document.getElementById('btn-convidar').disabled = jogoIniciado;
-  // ✅ Iniciar só precisa de 1+ jogador agora
-  document.getElementById('btn-iniciar').disabled  = jogoIniciado || jogadores.length < 1;
   document.getElementById('btn-dados').disabled    = !jogoIniciado;
   document.getElementById('btn-comprar').disabled  = !jogoIniciado;
 
@@ -712,21 +632,6 @@ function atualizarTela() {
 }
 
 // ============================================================
-// ❌ REMOVER
-// ============================================================
-window.removerJogador = async function (idx) {
-  if (jogoIniciado) return;
-  if (jogadores[idx]?.login === login) {
-    alert('Você não pode se remover.');
-    return;
-  }
-  if (!confirm(`Remover ${jogadores[idx].nome}?`)) return;
-  jogadores.splice(idx, 1);
-  await salvarJogo();
-  atualizarTela();
-};
-
-// ============================================================
 // 🔄 REALTIME
 // ============================================================
 function ativarRealtime() {
@@ -756,33 +661,35 @@ function ativarRealtime() {
 // ============================================================
 (async function init() {
   try {
-    await carregarUsuarios();
+    await carregarEu();
 
-    // Garante que "eu" está na lista antes de carregar o jogo
     if (!eu) {
-      window.__biDebug('❌ Seu login <code>' + esc(login) +
-        '</code> não foi achado na tabela <code>Geral</code>.', 'erro');
+      window.__biDebug('❌ Login <code>' + esc(login) +
+        '</code> não encontrado na tabela <code>Geral</code>.', 'erro');
       return;
     }
 
     await carregarJogo();
 
-    // ✅ Auto-adiciona você se ainda não estiver
-    adicionarEuAutomaticamente();
-    await salvarJogo();
+    const ok = await entrarAutomaticamente();
+    montarTabuleiroDOM();
     atualizarTela();
+
+    if (!ok) return;
 
     ativarRealtime();
 
     window.__biDebug(
-      `✅ Pronto, <strong>${esc(eu.nome || login)}</strong>! ` +
-      `${jogadores.length} jogador(es). Clique em "Iniciar Jogo".`,
+      `✅ Bem-vindo, <strong>${esc(eu.nome || login)}</strong>! ` +
+      `Saldo atual: <strong>${fmtSaldo(eu.saldo)}</strong>.`,
       'ok'
     );
     setTimeout(() => {
       const a = document.getElementById('aviso-login');
       if (a) a.style.display = 'none';
-    }, 4000);
+    }, 5000);
+
+    mostrarMsg(`🎮 Bem-vindo! Jogue os dados.`);
 
   } catch (err) {
     console.error('[BI] init:', err);
