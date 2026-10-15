@@ -1,382 +1,775 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Banco Imobiliário Online</title>
-    <!-- Firebase -->
-    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-database-compat.js"></script>
-    <style>
-        * {
-            box-sizing: border-box;
-            font-family: Arial, sans-serif;
-            margin: 0;
-            padding: 0;
-        }
-        body {
-            background: linear-gradient(135deg, #1e3a5f, #2c5364);
-            min-height: 100vh;
-            padding: 20px;
-            color: white;
-        }
-        h1 {
-            text-align: center;
-            color: #ffd700;
-            text-shadow: 2px 2px 4px rgba(0,0,0,0.5);
-            margin-bottom: 20px;
-        }
-        .painel-jogadores {
-            background: rgba(0,0,0,0.3);
-            padding: 15px;
-            border-radius: 10px;
-            margin-bottom: 20px;
-        }
-        .jogador-card {
-            background: rgba(255,255,255,0.1);
-            padding: 8px;
-            margin: 5px 0;
-            border-radius: 5px;
-        }
-        .jogador-card.vez {
-            background: #ffd700;
-            color: #000;
-            font-weight: bold;
-        }
-        button {
-            background: #ffd700;
-            color: #000;
-            border: none;
-            padding: 8px 16px;
-            margin: 5px;
-            border-radius: 5px;
-            font-weight: bold;
-            cursor: pointer;
-            transition: 0.2s;
-        }
-        button:hover {
-            background: #ffed4a;
-            transform: scale(1.05);
-        }
-        .tabuleiro {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
-            gap: 10px;
-            margin: 20px auto;
-            max-width: 900px;
-        }
-        .casa {
-            background: white;
-            color: #333;
-            padding: 12px;
-            border-radius: 8px;
-            text-align: center;
-            min-height: 100px;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            font-size: 13px;
-            font-weight: bold;
-            border: 3px solid #ccc;
-        }
-        .casa.inicio { background: #90EE90; border-color: #228B22; }
-        .casa.rua { background: #FFE4B5; border-color: #DEB887; }
-        .casa.chance { background: #87CEEB; border-color: #4682B4; }
-        .casa.servico { background: #DDA0DD; border-color: #BA55D3; }
-        .casa.ferrovia { background: #D3D3D3; border-color: #808080; }
-        .casa.prisao { background: #CD853F; border-color: #8B4513; }
-        .casa.imposto { background: #FF6347; border-color: #DC143C; }
-        .casa.descanso { background: #98FB98; border-color: #32CD32; }
-        .casa.ocupada { box-shadow: 0 0 10px #ffd700; }
-        .controles {
-            background: rgba(0,0,0,0.3);
-            padding: 20px;
-            border-radius: 10px;
-            text-align: center;
-            max-width: 600px;
-            margin: 0 auto;
-        }
-        #mensagem {
-            margin-top: 10px;
-            font-size: 16px;
-            color: #ffd700;
-        }
-        .aviso {
-            background: #fff3cd;
-            color: #856404;
-            padding: 10px;
-            border-radius: 5px;
-            margin-bottom: 15px;
-            text-align: center;
-        }
-    </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Banco Imobiliário Online</title>
+<style>
+  * { box-sizing: border-box; font-family: Arial, sans-serif; margin: 0; padding: 0; }
+  body {
+    background: linear-gradient(135deg, #1e3a5f, #2c5364);
+    min-height: 100vh;
+    padding: 20px;
+    color: white;
+  }
+  h1 {
+    text-align: center;
+    color: #ffd700;
+    text-shadow: 2px 2px 4px rgba(0,0,0,0.5);
+    margin-bottom: 20px;
+  }
+  .painel-jogadores {
+    background: rgba(0,0,0,0.3);
+    padding: 15px;
+    border-radius: 10px;
+    margin-bottom: 20px;
+    max-width: 900px;
+    margin-left: auto;
+    margin-right: auto;
+  }
+  .jogador-card {
+    background: rgba(255,255,255,0.1);
+    padding: 8px;
+    margin: 5px 0;
+    border-radius: 5px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 10px;
+    flex-wrap: wrap;
+  }
+  .jogador-card.vez {
+    background: #ffd700;
+    color: #000;
+    font-weight: bold;
+  }
+  .jogador-card button {
+    padding: 4px 10px;
+    font-size: 12px;
+    margin: 0;
+  }
+  button {
+    background: #ffd700;
+    color: #000;
+    border: none;
+    padding: 8px 16px;
+    margin: 5px;
+    border-radius: 5px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: 0.2s;
+  }
+  button:hover { background: #ffed4a; transform: scale(1.05); }
+  button:disabled { opacity: 0.4; cursor: not-allowed; transform: none; }
+  button.perigo { background: #ff6b6b; color: white; }
+  .tabuleiro {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+    gap: 10px;
+    margin: 20px auto;
+    max-width: 900px;
+  }
+  .casa {
+    background: white;
+    color: #333;
+    padding: 12px;
+    border-radius: 8px;
+    text-align: center;
+    min-height: 100px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    font-size: 13px;
+    font-weight: bold;
+    border: 3px solid #ccc;
+    transition: 0.3s;
+  }
+  .casa.ocupada { box-shadow: 0 0 10px #ffd700; }
+  .controles {
+    background: rgba(0,0,0,0.3);
+    padding: 20px;
+    border-radius: 10px;
+    text-align: center;
+    max-width: 600px;
+    margin: 0 auto;
+  }
+  #mensagem { margin-top: 10px; font-size: 16px; color: #ffd700; min-height: 22px; }
+  #resultado-dados { margin-top: 10px; font-size: 18px; color: #fff; min-height: 22px; }
+  .aviso {
+    background: #fff3cd;
+    color: #856404;
+    padding: 10px;
+    border-radius: 5px;
+    margin-bottom: 15px;
+    text-align: center;
+    max-width: 900px;
+    margin-left: auto;
+    margin-right: auto;
+  }
+  .aviso.erro { background: #f8d7da; color: #721c24; }
+  .aviso.ok   { background: #d1e7dd; color: #0f5132; }
+  .status-online {
+    display: inline-block;
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    background: #fbbf24;
+    margin-left: 6px;
+    animation: pulse 2s infinite;
+  }
+  .status-online.on  { background: #4ade80; }
+  .status-online.off { background: #f87171; }
+  @keyframes pulse {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.4; }
+  }
+  .badge-dono {
+    background: #16a34a;
+    color: white;
+    padding: 2px 6px;
+    border-radius: 4px;
+    font-size: 11px;
+    margin-left: 4px;
+  }
+</style>
 </head>
 <body>
 
-    <h1>🏦 BANCO IMOBILIÁRIO ONLINE</h1>
+<h1>🏦 BANCO IMOBILIÁRIO ONLINE</h1>
 
-    <div class="aviso">
-        ⚠️ Configure suas credenciais do Firebase no início do código antes de jogar!
-    </div>
+<div class="aviso" id="aviso-login">⚠️ Verificando sessão...</div>
 
-    <!-- Painel de Jogadores -->
-    <div class="painel-jogadores">
-        <h3>Jogadores</h3>
-        <div id="lista-jogadores"></div>
-        <button onclick="adicionarJogador()">➕ Adicionar Jogador</button>
-        <button onclick="iniciarJogo()">▶️ Iniciar Jogo</button>
-        <button onclick="reiniciarJogo()">🔄 Reiniciar Jogo</button>
-    </div>
+<div class="painel-jogadores">
+  <h3>Jogadores <span class="status-online" id="status-realtime"></span></h3>
+  <p style="font-size:12px; opacity:0.7; margin:6px 0 10px;">
+    Baseado na sua conta e nas contas da tabela <strong>Geral</strong>.
+    Saldo real (S$) é usado no jogo.
+  </p>
+  <div id="lista-jogadores"></div>
+  <button id="btn-convidar" onclick="convidarJogador()">➕ Convidar Jogador</button>
+  <button id="btn-iniciar" onclick="iniciarJogo()">▶️ Iniciar Jogo</button>
+  <button id="btn-reiniciar" class="perigo" onclick="reiniciarJogo()">🔄 Reiniciar Jogo</button>
+</div>
 
-    <!-- Tabuleiro -->
-    <div class="tabuleiro">
-        <div id="casa-0" class="casa inicio">Início<br>💰+200</div>
-        <div id="casa-1" class="casa rua">Rua das Flores<br>💰60</div>
-        <div id="casa-2" class="casa chance">Sorte/Azar</div>
-        <div id="casa-3" class="casa rua">Av. Brasil<br>💰100</div>
-        <div id="casa-4" class="casa servico">Água<br>💰150</div>
-        <div id="casa-5" class="casa ferrovia">Estação<br>💰200</div>
-        <div id="casa-6" class="casa rua">Rua Azul<br>💰140</div>
-        <div id="casa-7" class="casa prisao">Prisão/Visita</div>
-        <div id="casa-8" class="casa rua">Av. Central<br>💰220</div>
-        <div id="casa-9" class="casa imposto">Imposto<br>💸-100</div>
-        <div id="casa-10" class="casa rua">Praça Nova<br>💰400</div>
-        <div id="casa-11" class="casa descanso">Descanso ✌️</div>
-    </div>
+<div class="tabuleiro" id="tabuleiro"></div>
 
-    <!-- Controles -->
-    <div class="controles">
-        <div id="dados-jogador">Clique em "Adicionar Jogador" para começar!</div>
-        <br>
-        <button onclick="jogarDados()">🎲 Jogar Dados</button>
-        <button onclick="comprar()">🏠 Comprar Propriedade</button>
-        <div id="resultado-dados"></div>
-        <div id="mensagem"></div>
-    </div>
+<div class="controles">
+  <div id="dados-jogador">Convide jogadores e clique em "Iniciar Jogo".</div>
+  <br>
+  <button id="btn-dados" onclick="jogarDados()">🎲 Jogar Dados</button>
+  <button id="btn-comprar" onclick="comprar()">🏠 Comprar Propriedade</button>
+  <div id="resultado-dados"></div>
+  <div id="mensagem"></div>
+</div>
 
-    <script>
-        // ==================================================
-        // 🔧 COLOQUE SUAS CREDENCIAIS DO FIREBASE AQUI!
-        // ==================================================
-        const firebaseConfig = {
-            apiKey: "COLOQUE-SUA-CHAVE-AQUI",
-            authDomain: "seu-projeto.firebaseapp.com",
-            databaseURL: "https://seu-projeto-default-rtdb.firebaseio.com",
-            projectId: "seu-projeto",
-            storageBucket: "seu-projeto.appspot.com",
-            messagingSenderId: "123456789",
-            appId: "1:123456789:web:abc123def456"
-        };
+<script type="module">
+// ============================================================
+// 🔗 IMPORTA CONFIG
+// ============================================================
+import {
+  db,
+  TABELA,
+  SESSION_KEY,
+  fmtSaldo,
+  esc
+} from './config.js';
 
-        // Inicializar Firebase
-        firebase.initializeApp(firebaseConfig);
-        const db = firebase.database();
-        const refJogo = db.ref("jogo");
+// ============================================================
+// 🔐 SESSÃO
+// ============================================================
+const login = localStorage.getItem(SESSION_KEY);
+const aviso = document.getElementById('aviso-login');
 
-        // ==================== DADOS DO JOGO ====================
-        let jogadores = [];
-        let jogadorAtual = 0;
-        let jogoIniciado = false;
-        let tabuleiro = [
-            {nome: "Início", preco: 0, tipo: "inicio"},
-            {nome: "Rua das Flores", preco: 60, tipo: "propriedade"},
-            {nome: "Sorte ou Azar", preco: 0, tipo: "chance"},
-            {nome: "Avenida Brasil", preco: 100, tipo: "propriedade"},
-            {nome: "Serviço de Água", preco: 150, tipo: "servico"},
-            {nome: "Estação Ferroviária", preco: 200, tipo: "ferrovia"},
-            {nome: "Rua Azul", preco: 140, tipo: "propriedade"},
-            {nome: "Prisão / Visita", preco: 0, tipo: "especial"},
-            {nome: "Avenida Central", preco: 220, tipo: "propriedade"},
-            {nome: "Imposto de Renda", preco: 100, tipo: "imposto"},
-            {nome: "Praça Nova", preco: 400, tipo: "propriedade"},
-            {nome: "Descanso", preco: 0, tipo: "descanso"}
-        ];
-        let tabuleiroOriginal = JSON.parse(JSON.stringify(tabuleiro));
+if (!login) {
+  aviso.classList.add('erro');
+  aviso.innerHTML = '❌ Você precisa estar logado. Redirecionando...';
+  setTimeout(() => location.href = 'index.html', 2000);
+  throw new Error('Usuário não logado');
+}
 
-        // ==================== BANCO DE DADOS ====================
-        refJogo.on("value", (snapshot) => {
-            const dados = snapshot.val();
-            if (dados) {
-                jogadores = dados.jogadores || [];
-                jogadorAtual = dados.jogadorAtual || 0;
-                jogoIniciado = dados.jogoIniciado || false;
-                tabuleiro = dados.tabuleiro || JSON.parse(JSON.stringify(tabuleiroOriginal));
-                atualizarTela();
-            }
-        });
+// ============================================================
+// 🎯 ESTADO DO JOGO
+// ============================================================
+let jogadores       = [];   // [{ login, nome, saldo, posicao, propriedades }]
+let jogadorAtual    = 0;
+let jogoIniciado    = false;
+let canalRealtime   = null;
+let todosUsuarios   = [];   // cache da tabela Geral
 
-        function salvarNoBanco() {
-            refJogo.set({ jogadores, jogadorAtual, jogoIniciado, tabuleiro });
-        }
+const TABULEIRO_PADRAO = [
+  { nome: "Início",               preco: 0,   tipo: "inicio"      },
+  { nome: "Rua das Flores",       preco: 60,  tipo: "propriedade" },
+  { nome: "Sorte ou Azar",        preco: 0,   tipo: "chance"      },
+  { nome: "Avenida Brasil",       preco: 100, tipo: "propriedade" },
+  { nome: "Serviço de Água",      preco: 150, tipo: "servico"     },
+  { nome: "Estação Ferroviária",  preco: 200, tipo: "ferrovia"    },
+  { nome: "Rua Azul",             preco: 140, tipo: "propriedade" },
+  { nome: "Prisão / Visita",      preco: 0,   tipo: "especial"    },
+  { nome: "Avenida Central",      preco: 220, tipo: "propriedade" },
+  { nome: "Imposto de Renda",     preco: 100, tipo: "imposto"     },
+  { nome: "Praça Nova",           preco: 400, tipo: "propriedade" },
+  { nome: "Descanso",             preco: 0,   tipo: "descanso"    }
+];
+let tabuleiro = JSON.parse(JSON.stringify(TABULEIRO_PADRAO));
 
-        // ==================== FUNÇÕES DO JOGO ====================
-        function adicionarJogador() {
-            if (jogoIniciado) { alert("Jogo já iniciado!"); return; }
-            const nome = prompt("Nome do jogador:");
-            if (!nome) return;
-            jogadores.push({
-                nome: nome,
-                saldo: 1500,
-                posicao: 0,
-                propriedades: []
-            });
-            salvarNoBanco();
-        }
+// ============================================================
+// 🎨 MONTAR TABULEIRO NO DOM
+// ============================================================
+function montarTabuleiroDOM() {
+  document.getElementById('tabuleiro').innerHTML = tabuleiro.map((_, i) => `
+    <div id="casa-${i}" class="casa"></div>
+  `).join('');
+}
 
-        function iniciarJogo() {
-            if (jogadores.length < 1) {
-                alert("Adicione pelo menos 1 jogador!");
-                return;
-            }
-            jogoIniciado = true;
-            jogadorAtual = 0;
-            tabuleiro = JSON.parse(JSON.stringify(tabuleiroOriginal));
-            salvarNoBanco();
-            alert(`🎮 Jogo iniciado! Vez de ${jogadores[0].nome}!`);
-        }
+// ============================================================
+// 📥 CARREGAR TODOS OS USUÁRIOS DA TABELA Geral
+// ============================================================
+async function carregarUsuarios() {
+  const { data, error } = await db
+    .from(TABELA)
+    .select('login, nome, saldo')
+    .not('login', 'is', null)
+    .order('login', { ascending: true });
 
-        function reiniciarJogo() {
-            if(confirm("Deseja reiniciar todo o jogo?")) {
-                refJogo.remove();
-                jogadores = [];
-                jogadorAtual = 0;
-                jogoIniciado = false;
-                tabuleiro = JSON.parse(JSON.stringify(tabuleiroOriginal));
-                atualizarTela();
-                mostrarMsg("Jogo reiniciado!");
-            }
-        }
+  if (error) {
+    console.error('Erro ao carregar usuários:', error);
+    return [];
+  }
+  todosUsuarios = data || [];
+  return todosUsuarios;
+}
 
-        function jogarDados() {
-            if (!jogoIniciado) return;
-            const dado1 = Math.floor(Math.random() * 6) + 1;
-            const dado2 = Math.floor(Math.random() * 6) + 1;
-            const total = dado1 + dado2;
-            document.getElementById("resultado-dados").innerHTML =
-                `🎲 Dados: ${dado1} + ${dado2} = ${total}`;
-            moverJogador(total);
-        }
+// ============================================================
+// 📥 CARREGAR ESTADO DO JOGO
+// ============================================================
+async function carregarJogo() {
+  const { data, error } = await db
+    .from(TABELA)
+    .select('fazendinha_dados')
+    .eq('login', login)
+    .maybeSingle();
 
-        function moverJogador(passos) {
-            const jog = jogadores[jogadorAtual];
-            let novaPosicao = jog.posicao + passos;
-            
-            if (novaPosicao >= tabuleiro.length) {
-                jog.saldo += 200;
-                novaPosicao = novaPosicao % tabuleiro.length;
-                mostrarMsg("🎉 Passou pela partida! Ganhou R$200");
-            }
-            
-            jog.posicao = novaPosicao;
-            processarCasa(novaPosicao);
-            salvarNoBanco();
-            
-            jogadorAtual = (jogadorAtual + 1) % jogadores.length;
-            setTimeout(() => {
-                mostrarMsg(`⏭️ Vez de ${jogadores[jogadorAtual].nome}`);
-            }, 1500);
-        }
+  if (error) {
+    console.error('Erro ao carregar jogo:', error);
+    mostrarMsg('❌ Erro ao carregar o jogo.');
+    return;
+  }
 
-        function processarCasa(pos) {
-            const casa = tabuleiro[pos];
-            const jog = jogadores[jogadorAtual];
-            
-            switch(casa.tipo) {
-                case "imposto":
-                    jog.saldo -= casa.preco;
-                    mostrarMsg(`💸 Pagou R$${casa.preco} de imposto!`);
-                    break;
-                case "chance":
-                    const sorte = Math.random() > 0.5;
-                    if (sorte) {
-                        jog.saldo += 100;
-                        mostrarMsg("🍀 Sorte! Ganhou R$100!");
-                    } else {
-                        jog.saldo -= 50;
-                        mostrarMsg("😬 Azar! Perdeu R$50!");
-                    }
-                    break;
-                case "propriedade":
-                    if (!casa.dono) {
-                        mostrarMsg(`🏠 ${casa.nome} à venda: R$${casa.preco}`);
-                    } else if (casa.dono !== jog.nome) {
-                        const aluguel = Math.floor(casa.preco * 0.3);
-                        jog.saldo -= aluguel;
-                        const dono = jogadores.find(j => j.nome === casa.dono);
-                        if (dono) dono.saldo += aluguel;
-                        mostrarMsg(`💵 Pagou aluguel de R$${aluguel} para ${casa.dono}`);
-                    }
-                    break;
-            }
-            
-            if (jog.saldo < 0) {
-                alert(`💔 ${jog.nome} está falido! Fim de jogo!`);
-                refJogo.remove();
-            }
-        }
+  const jogo = data?.fazendinha_dados?.banco_imobiliario;
+  if (jogo) {
+    jogadores    = jogo.jogadores    || [];
+    jogadorAtual = jogo.jogadorAtual || 0;
+    jogoIniciado = jogo.jogoIniciado || false;
+    tabuleiro    = jogo.tabuleiro    || JSON.parse(JSON.stringify(TABULEIRO_PADRAO));
+  }
 
-        function comprar() {
-            if (!jogoIniciado) return;
-            const jog = jogadores[jogadorAtual];
-            const casa = tabuleiro[jog.posicao];
-            
-            if (casa.tipo !== "propriedade" || casa.dono) {
-                mostrarMsg("❌ Não pode comprar aqui!");
-                return;
-            }
-            
-            if (jog.saldo >= casa.preco) {
-                jog.saldo -= casa.preco;
-                casa.dono = jog.nome;
-                jog.propriedades.push(casa.nome);
-                mostrarMsg(`✅ Comprou ${casa.nome}!`);
-                salvarNoBanco();
-            } else {
-                mostrarMsg("❌ Saldo insuficiente!");
-            }
-        }
+  // Sincroniza saldos atuais
+  await sincronizarSaldos();
 
-        function mostrarMsg(texto) {
-            document.getElementById("mensagem").innerHTML = `<p>${texto}</p>`;
-        }
+  montarTabuleiroDOM();
+  atualizarTela();
+}
 
-        function atualizarTela() {
-            const lista = document.getElementById("lista-jogadores");
-            lista.innerHTML = jogadores.map((j, i) => `
-                <div class="jogador-card ${i === jogadorAtual ? 'vez' : ''}">
-                    <strong>${j.nome}</strong> | 💰 R$${j.saldo} | 📍 ${tabuleiro[j.posicao].nome}
-                </div>
-            `).join("");
-            
-            if (jogoIniciado && jogadores.length > 0) {
-                const jog = jogadores[jogadorAtual];
-                document.getElementById("dados-jogador").innerHTML =
-                    `<strong>Vez de: ${jog.nome}</strong> | Saldo: R$${jog.saldo}`;
-            }
-            
-            for (let i = 0; i < tabuleiro.length; i++) {
-                const el = document.getElementById(`casa-${i}`);
-                const jogadoresAqui = jogadores.filter(j => j.posicao === i);
-                el.innerHTML = tabuleiro[i].nome + `<br>💰${tabuleiro[i].preco}`;
-                if (jogadoresAqui.length > 0) {
-                    el.innerHTML += `<br>👤${jogadoresAqui.map(j=>j.nome.charAt(0)).join(',')}`;
-                    el.classList.add("ocupada");
-                } else {
-                    el.classList.remove("ocupada");
-                }
-                if (tabuleiro[i].dono) {
-                    el.innerHTML += `<br>🏠${tabuleiro[i].dono.charAt(0)}`;
-                    el.style.backgroundColor = "#90EE90";
-                } else {
-                    const tipos = {
-                        propriedade: "#FFE4B5", inicio: "#90EE90", chance: "#87CEEB",
-                        servico: "#DDA0DD", ferrovia: "#D3D3D3", prisao: "#CD853F",
-                        imposto: "#FF6347", descanso: "#98FB98"
-                    };
-                    el.style.backgroundColor = tipos[tabuleiro[i].tipo] || "#fff";
-                }
-            }
-        }
-    </script>
+// ============================================================
+// 🔄 SINCRONIZA SALDOS DOS JOGADORES COM A TABELA Geral
+// ============================================================
+async function sincronizarSaldos() {
+  if (jogadores.length === 0) return;
+
+  const logins = jogadores.map(j => j.login);
+  const { data } = await db
+    .from(TABELA)
+    .select('login, nome, saldo')
+    .in('login', logins);
+
+  if (!data) return;
+
+  for (const jog of jogadores) {
+    const u = data.find(d => d.login === jog.login);
+    if (u) {
+      jog.saldo = Number(u.saldo) || 0;
+      jog.nome  = u.nome || jog.login;
+    }
+  }
+}
+
+// ============================================================
+// 💾 SALVAR ESTADO DO JOGO (não mexe em saldos)
+// ============================================================
+async function salvarJogo() {
+  const { data: atual } = await db
+    .from(TABELA)
+    .select('fazendinha_dados')
+    .eq('login', login)
+    .maybeSingle();
+
+  const fazendinha = atual?.fazendinha_dados || {};
+
+  await db.from(TABELA).update({
+    fazendinha_dados: {
+      ...fazendinha,
+      banco_imobiliario: {
+        jogadores,
+        jogadorAtual,
+        jogoIniciado,
+        tabuleiro,
+        atualizado_em: new Date().toISOString()
+      }
+    },
+    updated_at: new Date().toISOString()
+  }).eq('login', login);
+}
+
+// ============================================================
+// 💸 ATUALIZAR SALDO REAL NO SUPABASE
+// ============================================================
+async function atualizarSaldoReal(loginJogador, deltaS) {
+  if (!loginJogador || deltaS === 0) return;
+
+  // Busca saldo atual
+  const { data } = await db
+    .from(TABELA)
+    .select('saldo')
+    .eq('login', loginJogador)
+    .maybeSingle();
+
+  const saldoAtual = Number(data?.saldo) || 0;
+  const novoSaldo  = Math.max(0, saldoAtual + deltaS);
+
+  await db.from(TABELA).update({
+    saldo: novoSaldo,
+    updated_at: new Date().toISOString()
+  }).eq('login', loginJogador);
+
+  // Atualiza local
+  const jog = jogadores.find(j => j.login === loginJogador);
+  if (jog) jog.saldo = novoSaldo;
+}
+
+// ============================================================
+// 🏆 REGISTRAR PROPRIEDADE NO CODEX
+// ============================================================
+async function registrarPropriedadeNoCodex(casa, loginDono) {
+  const { data: atual } = await db
+    .from(TABELA)
+    .select('itens')
+    .eq('login', loginDono)
+    .maybeSingle();
+
+  const itens = Array.isArray(atual?.itens) ? atual.itens : [];
+  const idItem = `bi_${casa.nome.toLowerCase().replace(/\s+/g, '_')}`;
+
+  if (itens.some(i => i.id_item === idItem)) return;
+
+  const raridade = casa.preco >= 400 ? 'lendario'
+                 : casa.preco >= 200 ? 'epico'
+                 : 'raro';
+
+  itens.push({
+    id_item: idItem,
+    nome: casa.nome,
+    tipo_peca: 'Propriedade',
+    raridade,
+    tier: Math.min(20, Math.max(1, Math.floor(casa.preco / 20))),
+    bonus: {
+      atk: Math.floor(casa.preco / 20),
+      def: Math.floor(casa.preco / 30),
+      hp:  casa.preco
+    },
+    origem: 'banco_imobiliario',
+    registrado_em: new Date().toISOString()
+  });
+
+  await db.from(TABELA).update({
+    itens,
+    updated_at: new Date().toISOString()
+  }).eq('login', loginDono);
+}
+
+// ============================================================
+// 🎮 CONVIDAR JOGADOR (a partir da tabela Geral)
+// ============================================================
+window.convidarJogador = async function () {
+  if (jogoIniciado) { alert('Jogo já iniciado!'); return; }
+
+  if (todosUsuarios.length === 0) {
+    await carregarUsuarios();
+  }
+
+  const disponiveis = todosUsuarios.filter(
+    u => !jogadores.some(j => j.login === u.login)
+  );
+
+  if (disponiveis.length === 0) {
+    alert('Todos os usuários já foram convidados!');
+    return;
+  }
+
+  const lista = disponiveis
+    .map((u, i) => `${i + 1}. ${u.nome || u.login} (${u.login}) — ${fmtSaldo(u.saldo)}`)
+    .join('\n');
+
+  const escolha = prompt(
+    `Escolha um usuário para convidar:\n\n${lista}\n\nDigite o número:`
+  );
+
+  const idx = parseInt(escolha, 10) - 1;
+  if (isNaN(idx) || idx < 0 || idx >= disponiveis.length) return;
+
+  const u = disponiveis[idx];
+  jogadores.push({
+    login: u.login,
+    nome: u.nome || u.login,
+    saldo: Number(u.saldo) || 0,
+    posicao: 0,
+    propriedades: []
+  });
+
+  await salvarJogo();
+  atualizarTela();
+  mostrarMsg(`✅ ${u.nome || u.login} entrou no jogo!`);
+};
+
+// ============================================================
+// ▶️ INICIAR JOGO
+// ============================================================
+window.iniciarJogo = async function () {
+  if (jogadores.length < 2) {
+    alert('Convide pelo menos 2 jogadores!');
+    return;
+  }
+  if (jogadores.saldo === 0) {
+    alert('Um ou mais jogadores estão com saldo zerado!');
+  }
+
+  await sincronizarSaldos();
+
+  jogoIniciado = true;
+  jogadorAtual = 0;
+  tabuleiro    = JSON.parse(JSON.stringify(TABULEIRO_PADRAO));
+
+  await salvarJogo();
+  atualizarTela();
+  mostrarMsg(`🎮 Jogo iniciado! Vez de ${jogadores[0].nome}!`);
+};
+
+// ============================================================
+// 🔄 REINICIAR JOGO
+// ============================================================
+window.reiniciarJogo = async function () {
+  if (!confirm('Deseja reiniciar todo o jogo? (saldos reais NÃO serão afetados)')) return;
+
+  const { data: atual } = await db
+    .from(TABELA)
+    .select('fazendinha_dados')
+    .eq('login', login)
+    .maybeSingle();
+
+  const fazendinha = atual?.fazendinha_dados || {};
+  delete fazendinha.banco_imobiliario;
+
+  await db.from(TABELA).update({
+    fazendinha_dados: fazendinha,
+    updated_at: new Date().toISOString()
+  }).eq('login', login);
+
+  jogadores    = [];
+  jogadorAtual = 0;
+  jogoIniciado = false;
+  tabuleiro    = JSON.parse(JSON.stringify(TABULEIRO_PADRAO));
+
+  montarTabuleiroDOM();
+  atualizarTela();
+  mostrarMsg('Jogo reiniciado!');
+};
+
+// ============================================================
+// 🎲 JOGAR DADOS
+// ============================================================
+window.jogarDados = async function () {
+  if (!jogoIniciado || jogadores.length === 0) return;
+
+  const d1 = Math.floor(Math.random() * 6) + 1;
+  const d2 = Math.floor(Math.random() * 6) + 1;
+  const total = d1 + d2;
+
+  document.getElementById('resultado-dados').innerHTML =
+    `🎲 Dados: ${d1} + ${d2} = <strong>${total}</strong>`;
+
+  await moverJogador(total);
+};
+
+async function moverJogador(passos) {
+  const jog = jogadores[jogadorAtual];
+  const passouPartida = jog.posicao + passos >= tabuleiro.length;
+
+  let nova = (jog.posicao + passos) % tabuleiro.length;
+  jog.posicao = nova;
+
+  if (passouPartida) {
+    await atualizarSaldoReal(jog.login, +200);
+    mostrarMsg('🎉 Passou pela partida! Ganhou R$200');
+  }
+
+  await processarCasa(nova);
+
+  // Falência
+  if (jog.saldo <= 0) {
+    setTimeout(async () => {
+      alert(`💔 ${jog.nome} faliu com saldo zerado! Fim de jogo.`);
+      await window.reiniciarJogo();
+    }, 800);
+    return;
+  }
+
+  // Próximo jogador
+  jogadorAtual = (jogadorAtual + 1) % jogadores.length;
+
+  await salvarJogo();
+  atualizarTela();
+
+  setTimeout(() => {
+    mostrarMsg(`⏭️ Vez de ${jogadores[jogadorAtual].nome}`);
+  }, 1200);
+}
+
+// ============================================================
+// 🏠 PROCESSAR CASA
+// ============================================================
+async function processarCasa(pos) {
+  const casa = tabuleiro[pos];
+  const jog  = jogadores[jogadorAtual];
+
+  switch (casa.tipo) {
+    case 'imposto':
+      await atualizarSaldoReal(jog.login, -casa.preco);
+      mostrarMsg(`💸 Pagou R$${casa.preco} de imposto!`);
+      break;
+
+    case 'chance': {
+      const sorte = Math.random() > 0.5;
+      if (sorte) {
+        await atualizarSaldoReal(jog.login, +100);
+        mostrarMsg('🍀 Sorte! Ganhou R$100!');
+      } else {
+        await atualizarSaldoReal(jog.login, -50);
+        mostrarMsg('😬 Azar! Perdeu R$50!');
+      }
+      break;
+    }
+
+    case 'propriedade':
+    case 'servico':
+    case 'ferrovia':
+      if (!casa.dono) {
+        mostrarMsg(`🏠 ${casa.nome} à venda por ${fmtSaldo(casa.preco)}`);
+      } else if (casa.dono !== jog.login) {
+        const taxa    = casa.tipo === 'propriedade' ? 0.3 : 0.25;
+        const aluguel = Math.floor(casa.preco * taxa);
+
+        await atualizarSaldoReal(jog.login, -aluguel);
+        await atualizarSaldoReal(casa.dono, +aluguel);
+
+        const dono = jogadores.find(j => j.login === casa.dono);
+        mostrarMsg(`💵 Pagou aluguel de ${fmtSaldo(aluguel)} para ${dono?.nome || casa.dono}`);
+      } else {
+        mostrarMsg(`🏠 Você já é dono de ${casa.nome}`);
+      }
+      break;
+
+    case 'inicio':
+      mostrarMsg('💰 Início — nada acontece.');
+      break;
+
+    case 'descanso':
+      mostrarMsg('✌️ Descanso — relaxe!');
+      break;
+
+    case 'especial':
+      mostrarMsg('🚔 Prisão / Visita — só passando!');
+      break;
+  }
+}
+
+// ============================================================
+// 🏠 COMPRAR
+// ============================================================
+window.comprar = async function () {
+  if (!jogoIniciado) return;
+
+  const jog  = jogadores[jogadorAtual];
+  const casa = tabuleiro[jog.posicao];
+
+  if (!['propriedade', 'servico', 'ferrovia'].includes(casa.tipo)) {
+    mostrarMsg('❌ Aqui não é possível comprar!');
+    return;
+  }
+  if (casa.dono) {
+    mostrarMsg('❌ Já possui dono!');
+    return;
+  }
+  if (jog.saldo < casa.preco) {
+    mostrarMsg('❌ Saldo insuficiente!');
+    return;
+  }
+
+  await atualizarSaldoReal(jog.login, -casa.preco);
+
+  casa.dono = jog.login;
+  jog.propriedades.push(casa.nome);
+
+  if (casa.tipo === 'propriedade') {
+    await registrarPropriedadeNoCodex(casa, jog.login);
+  }
+
+  await salvarJogo();
+  atualizarTela();
+  mostrarMsg(`✅ Comprou ${casa.nome} por ${fmtSaldo(casa.preco)}!`);
+};
+
+// ============================================================
+// 💬 MENSAGEM
+// ============================================================
+function mostrarMsg(texto) {
+  document.getElementById('mensagem').innerHTML = `<p>${esc(texto)}</p>`;
+}
+
+// ============================================================
+// 🖼️ ATUALIZAR TELA
+// ============================================================
+function atualizarTela() {
+  const lista = document.getElementById('lista-jogadores');
+
+  if (jogadores.length === 0) {
+    lista.innerHTML = '<em style="opacity:0.6">Nenhum jogador convidado ainda.</em>';
+  } else {
+    lista.innerHTML = jogadores.map((j, i) => `
+      <div class="jogador-card ${i === jogadorAtual && jogoIniciado ? 'vez' : ''}">
+        <span>
+          <strong>${esc(j.nome)}</strong>
+          <small style="opacity:0.7">(@${esc(j.login)})</small>
+          ${j.login === login ? '<span class="badge-dono">VOCÊ</span>' : ''}
+        </span>
+        <span>
+          💰 ${fmtSaldo(j.saldo)} |
+          📍 ${esc(tabuleiro[j.posicao]?.nome || '—')}
+          ${j.propriedades.length ? ` | 🏠 ${j.propriedades.length}` : ''}
+          ${!jogoIniciado ? `<button class="perigo" onclick="removerJogador(${i})">✖</button>` : ''}
+        </span>
+      </div>
+    `).join('');
+  }
+
+  if (jogoIniciado && jogadores.length > 0) {
+    const jog = jogadores[jogadorAtual];
+    document.getElementById('dados-jogador').innerHTML =
+      `<strong>Vez de: ${esc(jog.nome)}</strong> | Saldo: ${fmtSaldo(jog.saldo)}`;
+  } else {
+    document.getElementById('dados-jogador').innerHTML =
+      'Convide jogadores e clique em "Iniciar Jogo".';
+  }
+
+  document.getElementById('btn-convidar').disabled = jogoIniciado;
+  document.getElementById('btn-iniciar').disabled  = jogoIniciado || jogadores.length < 2;
+  document.getElementById('btn-dados').disabled    = !jogoIniciado;
+  document.getElementById('btn-comprar').disabled  = !jogoIniciado;
+
+  const tipos = {
+    propriedade: '#FFE4B5', inicio: '#90EE90', chance: '#87CEEB',
+    servico: '#DDA0DD', ferrovia: '#D3D3D3', especial: '#CD853F',
+    imposto: '#FF6347', descanso: '#98FB98'
+  };
+
+  for (let i = 0; i < tabuleiro.length; i++) {
+    const el = document.getElementById(`casa-${i}`);
+    if (!el) continue;
+
+    const casa = tabuleiro[i];
+    const aqui = jogadores.filter(j => j.posicao === i);
+
+    let html = esc(casa.nome);
+    if (casa.preco > 0) html += `<br>💰 ${fmtSaldo(casa.preco)}`;
+
+    if (aqui.length > 0) {
+      html += `<br>👤 ${aqui.map(j => esc(j.nome.charAt(0))).join(', ')}`;
+      el.classList.add('ocupada');
+    } else {
+      el.classList.remove('ocupada');
+    }
+
+    if (casa.dono) {
+      const dono = jogadores.find(j => j.login === casa.dono);
+      html += `<br>🏠 ${esc(dono?.nome || casa.dono)}`;
+      el.style.backgroundColor = '#90EE90';
+      el.style.color = '#000';
+    } else {
+      el.style.backgroundColor = tipos[casa.tipo] || '#fff';
+      el.style.color = '#333';
+    }
+
+    el.innerHTML = html;
+  }
+}
+
+// ============================================================
+// ❌ REMOVER JOGADOR (antes do jogo começar)
+// ============================================================
+window.removerJogador = async function (idx) {
+  if (jogoIniciado) return;
+  if (!confirm(`Remover ${jogadores[idx].nome}?`)) return;
+  jogadores.splice(idx, 1);
+  await salvarJogo();
+  atualizarTela();
+};
+
+// ============================================================
+// 🔄 REALTIME
+// ============================================================
+function ativarRealtime() {
+  canalRealtime = db
+    .channel('bi-' + login)
+    .on(
+      'postgres_changes',
+      {
+        event: 'UPDATE',
+        schema: 'public',
+        table: TABELA,
+        filter: `login=eq.${login}`
+      },
+      (payload) => {
+        const jogo = payload.new?.fazendinha_dados?.banco_imobiliario;
+        if (!jogo) return;
+        jogadores    = jogo.jogadores    || [];
+        jogadorAtual = jogo.jogadorAtual || 0;
+        jogoIniciado = jogo.jogoIniciado || false;
+        if (jogo.tabuleiro) tabuleiro = jogo.tabuleiro;
+        atualizarTela();
+      }
+    )
+    .subscribe((status) => {
+      const dot = document.getElementById('status-realtime');
+      dot.classList.remove('on', 'off');
+      if (status === 'SUBSCRIBED') dot.classList.add('on');
+      else if (status === 'CHANNEL_ERROR' || status === 'TIMED_OUT') dot.classList.add('off');
+    });
+}
+
+// ============================================================
+// 🚀 INICIALIZAÇÃO
+// ============================================================
+(async function init() {
+  aviso.classList.add('ok');
+  aviso.innerHTML = `✅ Logado como <strong>${esc(login)}</strong>`;
+  setTimeout(() => aviso.style.display = 'none', 3000);
+
+  await carregarUsuarios();
+  await carregarJogo();
+  ativarRealtime();
+
+  window.addEventListener('beforeunload', () => {
+    if (canalRealtime) db.removeChannel(canalRealtime);
+  });
+})();
+</script>
 </body>
 </html>
