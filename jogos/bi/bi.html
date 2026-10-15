@@ -5,134 +5,578 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Banco Imobiliário Online</title>
 <style>
-  * { box-sizing: border-box; font-family: Arial, sans-serif; margin: 0; padding: 0; }
+  /* ============== RESET ============== */
+  * { box-sizing: border-box; font-family: 'Segoe UI', system-ui, -apple-system, Arial, sans-serif; margin: 0; padding: 0; }
+
+  /* ============== FUNDO ANIMADO ============== */
   body {
-    background: linear-gradient(135deg, #1e3a5f, #2c5364);
+    background: #0a0f1e;
     min-height: 100vh;
-    padding: 20px;
-    color: white;
+    padding: 24px 20px 60px;
+    color: #e8eef7;
+    position: relative;
+    overflow-x: hidden;
   }
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background:
+      radial-gradient(circle at 15% 20%, rgba(255,215,0,0.12), transparent 45%),
+      radial-gradient(circle at 85% 70%, rgba(59,130,246,0.12), transparent 45%),
+      radial-gradient(circle at 50% 100%, rgba(22,163,74,0.10), transparent 50%),
+      linear-gradient(135deg, #0a0f1e 0%, #14203d 50%, #1a2d52 100%);
+    z-index: -2;
+  }
+  body::after {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background-image:
+      linear-gradient(rgba(255,215,0,0.03) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(255,215,0,0.03) 1px, transparent 1px);
+    background-size: 40px 40px;
+    z-index: -1;
+    pointer-events: none;
+    mask-image: radial-gradient(ellipse at center, black 40%, transparent 80%);
+  }
+
+  /* ============== TÍTULO ============== */
   h1 {
     text-align: center;
-    color: #ffd700;
-    text-shadow: 2px 2px 4px rgba(0,0,0,0.5);
+    font-size: clamp(22px, 4vw, 34px);
+    letter-spacing: 2px;
+    margin-bottom: 26px;
+    background: linear-gradient(90deg, #ffd700, #ffed4a, #ffd700);
+    background-size: 200% auto;
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+    animation: shimmer 3s linear infinite;
+    filter: drop-shadow(0 0 20px rgba(255,215,0,0.35));
+  }
+  @keyframes shimmer {
+    to { background-position: 200% center; }
+  }
+
+  /* ============== LAYOUT ============== */
+  .layout {
+    display: grid;
+    grid-template-columns: 1fr 400px;
+    gap: 22px;
+    max-width: 1500px;
+    margin: 0 auto;
+  }
+  @media (max-width: 1150px) {
+    .layout { grid-template-columns: 1fr; }
+  }
+
+  /* ============== GLASS CARD ============== */
+  .glass {
+    background: rgba(20, 30, 55, 0.55);
+    backdrop-filter: blur(14px) saturate(140%);
+    -webkit-backdrop-filter: blur(14px) saturate(140%);
+    border: 1px solid rgba(255, 215, 0, 0.15);
+    border-radius: 16px;
+    box-shadow:
+      0 8px 32px rgba(0,0,0,0.4),
+      inset 0 1px 0 rgba(255,255,255,0.06);
+  }
+
+  /* ============== PAINEL JOGADOR ============== */
+  .painel-jogadores {
+    padding: 18px;
     margin-bottom: 20px;
   }
-  .painel-jogadores {
-    background: rgba(0,0,0,0.3);
-    padding: 15px;
-    border-radius: 10px;
-    margin-bottom: 20px;
-    max-width: 900px;
-    margin-left: auto;
-    margin-right: auto;
+  .painel-jogadores h3 {
+    color: #ffd700;
+    font-size: 15px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 8px;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+  }
+  .painel-jogadores p {
+    font-size: 12px;
+    opacity: 0.75;
+    margin: 6px 0 12px;
+    line-height: 1.5;
   }
   .jogador-card {
-    background: rgba(255,255,255,0.1);
-    padding: 8px;
-    margin: 5px 0;
-    border-radius: 5px;
+    background: rgba(255,255,255,0.05);
+    padding: 12px 14px;
+    margin: 6px 0;
+    border-radius: 10px;
+    border-left: 3px solid rgba(255,215,0,0.3);
     display: flex;
     justify-content: space-between;
     align-items: center;
     gap: 10px;
     flex-wrap: wrap;
+    transition: all 0.25s ease;
+    font-size: 13px;
   }
+  .jogador-card:hover { background: rgba(255,255,255,0.08); }
   .jogador-card.vez {
-    background: #ffd700;
-    color: #000;
+    background: linear-gradient(90deg, #ffd700, #ffed4a);
+    color: #0a0f1e;
     font-weight: bold;
+    border-left-color: #ffd700;
+    box-shadow: 0 0 24px rgba(255,215,0,0.5);
+    transform: scale(1.01);
   }
+
+  /* ============== BOTÕES ============== */
   button {
-    background: #ffd700;
-    color: #000;
+    background: linear-gradient(135deg, #ffd700, #ffb800);
+    color: #0a0f1e;
     border: none;
-    padding: 8px 16px;
-    margin: 5px;
-    border-radius: 5px;
-    font-weight: bold;
+    padding: 10px 18px;
+    margin: 4px;
+    border-radius: 10px;
+    font-weight: 700;
     cursor: pointer;
-    transition: 0.2s;
+    transition: all 0.2s ease;
+    font-size: 13px;
+    letter-spacing: 0.4px;
+    box-shadow: 0 4px 12px rgba(255,215,0,0.25), inset 0 -2px 0 rgba(0,0,0,0.15);
+    position: relative;
+    overflow: hidden;
   }
-  button:hover { background: #ffed4a; transform: scale(1.05); }
-  button:disabled { opacity: 0.4; cursor: not-allowed; transform: none; }
+  button::before {
+    content: '';
+    position: absolute;
+    top: 0; left: -100%;
+    width: 100%; height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255,255,255,0.4), transparent);
+    transition: left 0.5s;
+  }
+  button:hover:not(:disabled)::before { left: 100%; }
+  button:hover:not(:disabled) {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 20px rgba(255,215,0,0.45), inset 0 -2px 0 rgba(0,0,0,0.15);
+  }
+  button:active:not(:disabled) { transform: translateY(0); }
+  button:disabled {
+    opacity: 0.35;
+    cursor: not-allowed;
+    filter: grayscale(0.6);
+  }
+  button.secundario {
+    background: linear-gradient(135deg, #3a4763, #2a3346);
+    color: #e8eef7;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+  }
+  button.perigo {
+    background: linear-gradient(135deg, #ef4444, #b91c1c);
+    color: #fff;
+    box-shadow: 0 4px 12px rgba(239,68,68,0.35);
+  }
+  button.ok {
+    background: linear-gradient(135deg, #22c55e, #15803d);
+    color: #fff;
+    box-shadow: 0 4px 12px rgba(34,197,94,0.35);
+  }
+  button.mini {
+    padding: 5px 10px;
+    font-size: 11px;
+    border-radius: 7px;
+  }
+
+  /* ============== TABULEIRO ============== */
   .tabuleiro {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
-    gap: 10px;
-    margin: 20px auto;
-    max-width: 900px;
+    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+    gap: 12px;
+    padding: 4px;
   }
   .casa {
-    background: white;
-    color: #333;
-    padding: 12px;
-    border-radius: 8px;
+    background: rgba(0, 8, 47, 0.95);
+    color: #1a2d52;
+    padding: 14px 10px;
+    border-radius: 12px;
     text-align: center;
-    min-height: 100px;
+    min-height: 130px;
     display: flex;
     flex-direction: column;
     justify-content: center;
-    font-size: 13px;
-    font-weight: bold;
-    border: 3px solid #ccc;
-    transition: 0.3s;
+    font-size: 12.5px;
+    font-weight: 600;
+    border: 2px solid rgba(0,0,0,0.08);
+    transition: all 0.3s cubic-bezier(0.4,0,0.2,1);
+    position: relative;
+    overflow: hidden;
+    cursor: default;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.15);
   }
-  .casa.ocupada { box-shadow: 0 0 10px #ffd700; }
-  .casa .dono-tag {
-    display: block;
-    margin-top: 4px;
+  .casa::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(180deg, rgba(255,255,255,0.3), transparent 40%);
+    pointer-events: none;
+  }
+  .casa:hover {
+    transform: translateY(-3px) scale(1.02);
+    box-shadow: 0 12px 24px rgba(0,0,0,0.3);
+  }
+  .casa.ocupada {
+    box-shadow: 0 0 0 3px #ffd700, 0 8px 24px rgba(255,215,0,0.4);
+    animation: pulseBorder 1.8s infinite;
+  }
+  @keyframes pulseBorder {
+    0%, 100% { box-shadow: 0 0 0 3px #ffd700, 0 8px 24px rgba(255,215,0,0.4); }
+    50%      { box-shadow: 0 0 0 3px #ffed4a, 0 8px 32px rgba(255,215,0,0.7); }
+  }
+  .casa .preco {
     font-size: 11px;
-    background: #16a34a;
+    opacity: 0.75;
+    margin-top: 3px;
+    color: #16a34a;
+    font-weight: 700;
+  }
+  .casa .dono-tag {
+    display: inline-block;
+    margin-top: 6px;
+    font-size: 10.5px;
+    background: linear-gradient(135deg, #16a34a, #15803d);
     color: #fff;
-    padding: 2px 4px;
-    border-radius: 4px;
+    padding: 3px 8px;
+    border-radius: 20px;
+    font-weight: 700;
+    letter-spacing: 0.3px;
+    box-shadow: 0 2px 6px rgba(22,163,74,0.35);
+    text-overflow: ellipsis;
+    max-width: 100%;
+    overflow: hidden;
+    white-space: nowrap;
   }
+  .casa .badge-anuncio {
+    position: absolute;
+    top: 6px;
+    right: 6px;
+    background: linear-gradient(135deg, #f59e0b, #d97706);
+    color: #fff;
+    padding: 3px 8px;
+    border-radius: 20px;
+    font-size: 9.5px;
+    font-weight: 800;
+    letter-spacing: 0.4px;
+    box-shadow: 0 2px 8px rgba(245,158,11,0.5);
+    animation: pulseBadge 2s infinite;
+  }
+  @keyframes pulseBadge {
+    0%, 100% { transform: scale(1); }
+    50%      { transform: scale(1.08); }
+  }
+  .casa .avatar-jogador {
+    display: inline-block;
+    width: 18px;
+    height: 18px;
+    line-height: 18px;
+    border-radius: 50%;
+    background: #ffd700;
+    color: #0a0f1e;
+    font-weight: 900;
+    font-size: 10px;
+    margin: 2px 1px 0;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.3);
+  }
+
+  /* ============== CONTROLES ============== */
   .controles {
-    background: rgba(0,0,0,0.3);
-    padding: 20px;
-    border-radius: 10px;
+    padding: 22px;
     text-align: center;
-    max-width: 600px;
-    margin: 0 auto;
+    margin-top: 20px;
   }
-  #mensagem { margin-top: 10px; font-size: 16px; color: #ffd700; min-height: 22px; }
-  #resultado-dados { margin-top: 10px; font-size: 18px; color: #fff; min-height: 22px; }
-  .aviso {
-    background: #fff3cd;
-    color: #856404;
+  #dados-jogador {
+    font-size: 15px;
+    color: #ffd700;
+    margin-bottom: 8px;
+  }
+  #resultado-dados {
+    margin-top: 14px;
+    font-size: 22px;
+    color: #fff;
+    min-height: 28px;
+    font-weight: 800;
+    text-shadow: 0 0 20px rgba(255,255,255,0.4);
+    letter-spacing: 1px;
+  }
+  #mensagem {
+    margin-top: 12px;
+    font-size: 14px;
+    color: #ffd700;
+    min-height: 20px;
     padding: 10px;
-    border-radius: 5px;
-    margin-bottom: 15px;
-    text-align: center;
-    max-width: 900px;
-    margin-left: auto;
-    margin-right: auto;
+    border-radius: 8px;
+    background: rgba(255,215,0,0.06);
+    transition: all 0.3s;
   }
-  .aviso.erro { background: #f8d7da; color: #721c24; }
-  .aviso.ok   { background: #d1e7dd; color: #0f5132; }
+  #mensagem:empty { background: transparent; }
+
+  /* ============== PAINÉIS LATERAIS ============== */
+  .painel-lateral {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+  }
+  .card-painel {
+    padding: 14px;
+    max-height: 380px;
+    display: flex;
+    flex-direction: column;
+  }
+  .card-painel h3 {
+    color: #ffd700;
+    margin-bottom: 10px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 13.5px;
+    letter-spacing: 0.6px;
+    text-transform: uppercase;
+    padding-bottom: 8px;
+    border-bottom: 1px solid rgba(255,215,0,0.12);
+  }
+  .card-painel h3 small {
+    font-size: 11px;
+    opacity: 1;
+    font-weight: 800;
+    background: linear-gradient(135deg, rgba(255,215,0,0.25), rgba(255,215,0,0.1));
+    color: #ffd700;
+    padding: 3px 9px;
+    border-radius: 20px;
+    min-width: 26px;
+    text-align: center;
+  }
+  .lista-scroll {
+    overflow-y: auto;
+    flex: 1;
+    padding-right: 4px;
+    scrollbar-width: thin;
+    scrollbar-color: #ffd700 rgba(255,255,255,0.05);
+  }
+  .lista-scroll::-webkit-scrollbar { width: 6px; }
+  .lista-scroll::-webkit-scrollbar-track { background: rgba(255,255,255,0.04); border-radius: 3px; }
+  .lista-scroll::-webkit-scrollbar-thumb {
+    background: linear-gradient(180deg, #ffd700, #d97706);
+    border-radius: 3px;
+  }
+
+  /* ============== ITENS ============== */
+  .item {
+    background: rgba(255,255,255,0.05);
+    border-left: 3px solid #22c55e;
+    padding: 10px 12px;
+    margin-bottom: 8px;
+    border-radius: 10px;
+    font-size: 12px;
+    line-height: 1.5;
+    animation: slideIn 0.35s cubic-bezier(0.4,0,0.2,1);
+    transition: all 0.2s;
+    position: relative;
+  }
+  .item:hover {
+    background: rgba(255,255,255,0.09);
+    transform: translateX(2px);
+  }
+  .item.eu {
+    background: linear-gradient(90deg, rgba(255,215,0,0.14), rgba(255,215,0,0.04));
+    border-left-color: #ffd700;
+    box-shadow: inset 0 0 20px rgba(255,215,0,0.06);
+  }
+  .item.mercado {
+    border-left-color: #f59e0b;
+    background: rgba(245,158,11,0.06);
+  }
+  .item.lance {
+    border-left-color: #3b82f6;
+    background: rgba(59,130,246,0.06);
+  }
+  .item.aceito { border-left-color: #16a34a; }
+  @keyframes slideIn {
+    from { opacity: 0; transform: translateX(-12px); }
+    to   { opacity: 1; transform: translateX(0); }
+  }
+  .item .quem {
+    font-weight: 800;
+    color: #ffd700;
+    font-size: 12px;
+    letter-spacing: 0.3px;
+  }
+  .item .casa {
+    color: #fff;
+    font-weight: 700;
+    display: block;
+    margin: 3px 0;
+    font-size: 13px;
+  }
+  .item .info {
+    font-size: 11px;
+    opacity: 0.9;
+    display: flex;
+    justify-content: space-between;
+    margin-top: 4px;
+    color: #b9c5d8;
+  }
+  .item .acoes {
+    margin-top: 8px;
+    display: flex;
+    gap: 5px;
+    flex-wrap: wrap;
+  }
+  .item .acoes button { margin: 0; }
+
+  .vazio {
+    text-align: center;
+    opacity: 0.45;
+    font-size: 12px;
+    padding: 24px 0;
+    font-style: italic;
+    color: #b9c5d8;
+  }
+
+  /* ============== STATUS ONLINE ============== */
   .status-online {
     display: inline-block;
-    width: 10px;
-    height: 10px;
+    width: 9px;
+    height: 9px;
     border-radius: 50%;
     background: #fbbf24;
-    margin-left: 6px;
-    animation: pulse 2s infinite;
+    margin-left: auto;
+    animation: pulse 1.8s infinite;
+    box-shadow: 0 0 8px currentColor;
   }
-  .status-online.on  { background: #4ade80; }
-  .status-online.off { background: #f87171; }
+  .status-online.on  { background: #4ade80; color: #4ade80; }
+  .status-online.off { background: #f87171; color: #f87171; }
   @keyframes pulse {
-    0%, 100% { opacity: 1; }
-    50% { opacity: 0.4; }
+    0%, 100% { opacity: 1; transform: scale(1); }
+    50%      { opacity: 0.5; transform: scale(1.2); }
   }
+
+  /* ============== BADGE DONO ============== */
   .badge-dono {
-    background: #16a34a;
-    color: white;
-    padding: 2px 6px;
-    border-radius: 4px;
-    font-size: 11px;
-    margin-left: 4px;
+    background: linear-gradient(135deg, #16a34a, #15803d);
+    color: #fff;
+    padding: 3px 8px;
+    border-radius: 20px;
+    font-size: 10px;
+    margin-left: 6px;
+    font-weight: 800;
+    letter-spacing: 0.5px;
+    box-shadow: 0 2px 6px rgba(22,163,74,0.4);
+  }
+
+  /* ============== AVISO ============== */
+  .aviso {
+    background: linear-gradient(135deg, rgba(255,215,0,0.15), rgba(255,215,0,0.05));
+    color: #ffd700;
+    padding: 12px 18px;
+    border-radius: 10px;
+    margin-bottom: 18px;
+    text-align: center;
+    max-width: 1500px;
+    margin-left: auto;
+    margin-right: auto;
+    border: 1px solid rgba(255,215,0,0.3);
+    font-size: 13px;
+    backdrop-filter: blur(10px);
+    transition: all 0.3s;
+  }
+  .aviso.erro {
+    background: linear-gradient(135deg, rgba(239,68,68,0.2), rgba(239,68,68,0.05));
+    color: #fca5a5;
+    border-color: rgba(239,68,68,0.4);
+  }
+  .aviso.ok {
+    background: linear-gradient(135deg, rgba(34,197,94,0.2), rgba(34,197,94,0.05));
+    color: #86efac;
+    border-color: rgba(34,197,94,0.4);
+  }
+
+  /* ============== MODAL ============== */
+  .modal-fundo {
+    position: fixed; inset: 0;
+    background: rgba(5, 8, 18, 0.85);
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+    display: none;
+    align-items: center;
+    justify-content: center;
+    z-index: 1000;
+    padding: 20px;
+    animation: fadeIn 0.25s ease;
+  }
+  .modal-fundo.on { display: flex; }
+  @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+  .modal-box {
+    background: linear-gradient(160deg, #1a2745, #0f1a35);
+    padding: 26px;
+    border-radius: 16px;
+    max-width: 480px;
+    width: 100%;
+    border: 1px solid rgba(255,215,0,0.35);
+    box-shadow:
+      0 20px 60px rgba(0,0,0,0.7),
+      0 0 0 1px rgba(255,215,0,0.1),
+      inset 0 1px 0 rgba(255,255,255,0.06);
+    animation: modalIn 0.3s cubic-bezier(0.4,0,0.2,1);
+    max-height: 85vh;
+    overflow-y: auto;
+  }
+  @keyframes modalIn {
+    from { opacity: 0; transform: translateY(20px) scale(0.96); }
+    to   { opacity: 1; transform: translateY(0) scale(1); }
+  }
+  .modal-box h3 {
+    color: #ffd700;
+    margin-bottom: 16px;
+    font-size: 18px;
+    letter-spacing: 0.5px;
+    padding-bottom: 10px;
+    border-bottom: 1px solid rgba(255,215,0,0.15);
+  }
+  .modal-box p {
+    font-size: 13px;
+    color: #b9c5d8;
+    margin: 8px 0;
+    line-height: 1.6;
+  }
+  .modal-box p strong { color: #ffd700; }
+  .modal-box label {
+    display: block;
+    font-size: 12px;
+    margin: 14px 0 6px;
+    opacity: 0.85;
+    letter-spacing: 0.4px;
+    text-transform: uppercase;
+    color: #b9c5d8;
+  }
+  .modal-box input, .modal-box select {
+    width: 100%;
+    padding: 12px 14px;
+    border-radius: 10px;
+    border: 1px solid rgba(255,215,0,0.25);
+    background: rgba(255,255,255,0.95);
+    color: #0a0f1e;
+    font-size: 14px;
+    font-weight: 600;
+    transition: all 0.2s;
+    outline: none;
+  }
+  .modal-box input:focus, .modal-box select:focus {
+    border-color: #ffd700;
+    box-shadow: 0 0 0 3px rgba(255,215,0,0.2);
+  }
+  .modal-box .linha {
+    display: flex;
+    justify-content: flex-end;
+    margin-top: 20px;
+    gap: 8px;
+    flex-wrap: wrap;
   }
 </style>
 </head>
@@ -142,31 +586,61 @@
 
 <div class="aviso" id="aviso-login">⚠️ Verificando sessão...</div>
 
-<div class="painel-jogadores">
-  <h3>Jogador <span class="status-online" id="status-realtime"></span></h3>
-  <p style="font-size:12px; opacity:0.7; margin:6px 0 10px;">
-    Entrada com taxa de <strong>S$ 1,00</strong> (você confirma antes).
-    Saldo real (S$) da tabela <strong>Geral</strong> é usado no jogo.
-    <br>🏠 Propriedades compradas ficam <strong>visíveis para todos os logins</strong>.
-  </p>
-  <div id="lista-jogadores"></div>
+<div class="layout">
+
+  <div>
+    <div class="painel-jogadores glass">
+      <h3>👤 Jogador <span class="status-online" id="status-realtime"></span></h3>
+      <p>
+        Taxa de entrada <strong>S$ 1,00</strong> • Saldo real (S$) da tabela <strong>Geral</strong><br>
+        Propriedades visíveis para todos • <strong>Mercado aberto 24h</strong>
+      </p>
+      <div id="lista-jogadores"></div>
+    </div>
+
+    <div class="tabuleiro" id="tabuleiro"></div>
+
+    <div class="controles glass">
+      <div id="dados-jogador">Carregando...</div>
+      <br>
+      <button id="btn-dados" onclick="jogarDados()">🎲 Jogar Dados</button>
+      <button id="btn-comprar" onclick="comprar()">🏠 Comprar Propriedade</button>
+      <div id="resultado-dados"></div>
+      <div id="mensagem"></div>
+    </div>
+  </div>
+
+  <aside class="painel-lateral">
+
+    <div class="card-painel glass">
+      <h3>🛒 Mercado Aberto <small id="count-mercado">0</small></h3>
+      <div class="lista-scroll" id="lista-mercado">
+        <div class="vazio">Nenhum anúncio.</div>
+      </div>
+    </div>
+
+    <div class="card-painel glass">
+      <h3>📨 Meus Anúncios / Lances <small id="count-meus">0</small></h3>
+      <div class="lista-scroll" id="lista-meus">
+        <div class="vazio">Sem atividade.</div>
+      </div>
+    </div>
+
+    <div class="card-painel glass">
+      <h3>📜 Histórico <small id="hist-count">0</small></h3>
+      <div class="lista-scroll" id="historico-lista">
+        <div class="vazio">Nenhuma compra ainda.</div>
+      </div>
+    </div>
+
+  </aside>
 </div>
 
-<div class="tabuleiro" id="tabuleiro"></div>
-
-<div class="controles">
-  <div id="dados-jogador">Carregando...</div>
-  <br>
-  <button id="btn-dados" onclick="jogarDados()">🎲 Jogar Dados</button>
-  <button id="btn-comprar" onclick="comprar()">🏠 Comprar Propriedade</button>
-  <div id="resultado-dados"></div>
-  <div id="mensagem"></div>
+<div class="modal-fundo" id="modal">
+  <div class="modal-box" id="modal-box"></div>
 </div>
 
 <script>
-// ============================================================
-// 🐞 DEBUG
-// ============================================================
 (function () {
   const aviso = document.getElementById('aviso-login');
   const setAviso = (txt, cls) => {
@@ -175,11 +649,9 @@
     aviso.innerHTML = txt;
   };
   window.__biDebug = setAviso;
-
   window.addEventListener('error', (e) => {
     console.error('[BI error]', e);
-    setAviso('❌ ' + (e.message || 'Erro') +
-      (e.filename ? '<br><small>' + e.filename + ':' + e.lineno + '</small>' : ''), 'erro');
+    setAviso('❌ ' + (e.message || 'Erro'), 'erro');
   });
   window.addEventListener('unhandledrejection', (e) => {
     console.error('[BI rejection]', e);
@@ -190,29 +662,27 @@
 
 <script type="module">
 // ============================================================
-// 🔗 IMPORTA CONFIG
+// IMPORTS
 // ============================================================
 let cfg;
-try {
-  cfg = await import('./config.js');
-} catch (err) {
-  window.__biDebug('❌ Falha ao importar config.js: ' + (err.message || err) +
-    '<br><small>Está na mesma pasta? Servindo via http://?</small>', 'erro');
+try { cfg = await import('./config.js'); }
+catch (err) {
+  window.__biDebug('❌ Falha ao importar config.js: ' + (err.message || err), 'erro');
   throw err;
 }
-
-const { db, TABELA, SESSION_KEY, fmtSaldo, esc } = cfg;
-console.log('[BI] config.js OK. TABELA =', TABELA);
+const { db, TABELA, SESSION_KEY, fmtSaldo, fmtData, esc } = cfg;
 
 // ============================================================
-// ⚙️ CONSTANTES
+// CONSTANTES
 // ============================================================
-const TAXA_ENTRADA  = 1.00;
-const BONUS_VOLTA   = 0.00;
-const TABELA_COMPRAS = 'banco_imobiliario_compras';
+const TAXA_ENTRADA    = 1.00;
+const BONUS_VOLTA     = 0.00;
+const TB_COMPRAS      = 'banco_imobiliario_compras';
+const TB_MERCADO      = 'banco_imobiliario_mercado';
+const TB_LANCES       = 'banco_imobiliario_lances';
 
 // ============================================================
-// 🔐 SESSÃO
+// SESSÃO
 // ============================================================
 function detectarLogin() {
   const chaves = [SESSION_KEY, 'usuario_logado', 'usuarioLogado', 'usuario', 'user', 'login', 'email'];
@@ -226,31 +696,25 @@ function detectarLogin() {
         const c = obj.login || obj.usuario || obj.email || obj.user || obj.nome;
         if (c && String(c).trim()) return String(c).trim();
       }
-    } catch {
-      if (raw.trim()) return raw.trim();
-    }
+    } catch { if (raw.trim()) return raw.trim(); }
   }
   return null;
 }
-
 const login = detectarLogin();
-if (!login) {
-  window.__biDebug('❌ Nenhuma sessão. Chaves: <code>' +
-    (Object.keys(localStorage).join(', ') || '(vazio)') + '</code>', 'erro');
-  throw new Error('Sem sessão');
-}
-window.__biDebug('✅ Logado como <strong>' + esc(login) + '</strong>. Carregando...', 'ok');
+if (!login) throw new Error('Sem sessão');
 
 // ============================================================
-// 🎯 ESTADO
+// ESTADO
 // ============================================================
 let jogadores       = [];
 let jogadorAtual    = 0;
 let jogoIniciado    = false;
-let canalRealtime   = null;
-let canalCompras    = null;
 let eu              = null;
-let comprasGlobais  = {};   // { [casa_id]: { dono_login, dono_nome, preco } }
+let comprasGlobais  = {};
+let historicoCompras = [];
+let mercado         = [];
+let lances          = [];
+let canais          = [];
 
 const TABULEIRO_PADRAO = [
   { nome: "Início",               preco: 0,   tipo: "inicio"      },
@@ -269,90 +733,74 @@ const TABULEIRO_PADRAO = [
 let tabuleiro = JSON.parse(JSON.stringify(TABULEIRO_PADRAO));
 
 // ============================================================
-// 🎨 TABULEIRO DOM
+// HELPERS
 // ============================================================
 function montarTabuleiroDOM() {
-  document.getElementById('tabuleiro').innerHTML = tabuleiro.map((_, i) => `
-    <div id="casa-${i}" class="casa"></div>
-  `).join('');
+  document.getElementById('tabuleiro').innerHTML = tabuleiro.map((_, i) =>
+    `<div id="casa-${i}" class="casa"></div>`).join('');
 }
+function tempoRelativo(iso) {
+  if (!iso) return '—';
+  const s = Math.floor((Date.now() - new Date(iso).getTime()) / 1000);
+  if (s < 60) return `há ${s}s`;
+  const m = Math.floor(s / 60); if (m < 60) return `há ${m}min`;
+  const h = Math.floor(m / 60); if (h < 24) return `há ${h}h`;
+  return `há ${Math.floor(h / 24)}d`;
+}
+function abrirModal(html) {
+  document.getElementById('modal-box').innerHTML = html;
+  document.getElementById('modal').classList.add('on');
+}
+window.fecharModal = function () {
+  document.getElementById('modal').classList.remove('on');
+};
+document.getElementById('modal').addEventListener('click', (e) => {
+  if (e.target.id === 'modal') fecharModal();
+});
 
 // ============================================================
-// 📥 CARREGAR MEU USUÁRIO
+// CARREGAR DADOS
 // ============================================================
 async function carregarEu() {
-  const { data, error } = await db
-    .from(TABELA)
-    .select('login, nome, saldo')
-    .eq('login', login)
-    .maybeSingle();
-
-  if (error) { console.error('[BI] erro eu:', error); return null; }
-  eu = data;
-  console.log('[BI] eu:', eu);
-  return eu;
+  const { data } = await db.from(TABELA).select('login, nome, saldo').eq('login', login).maybeSingle();
+  eu = data; return eu;
 }
 
-// ============================================================
-// 📥 CARREGAR COMPRAS GLOBAIS (de todos os usuários)
-// ============================================================
-async function carregarComprasGlobais() {
-  const { data, error } = await db
-    .from(TABELA_COMPRAS)
-    .select('casa_id, casa_nome, dono_login, dono_nome, preco, comprado_em');
-
-  if (error) {
-    console.error('[BI] erro compras globais:', error);
-    return;
-  }
+async function carregarCompras() {
+  const { data, error } = await db.from(TB_COMPRAS)
+    .select('id, casa_id, casa_nome, dono_login, dono_nome, preco, comprado_em')
+    .order('comprado_em', { ascending: false });
+  if (error) { console.error(error); return; }
 
   comprasGlobais = {};
+  historicoCompras = [];
   for (const c of (data || [])) {
     comprasGlobais[c.casa_id] = {
-      dono_login: c.dono_login,
-      dono_nome:  c.dono_nome,
-      preco:      Number(c.preco) || 0,
-      comprado_em: c.comprado_em
+      dono_login: c.dono_login, dono_nome: c.dono_nome,
+      preco: Number(c.preco), comprado_em: c.comprado_em
     };
+    historicoCompras.push({ ...c, preco: Number(c.preco) });
   }
-  console.log('[BI] compras globais:', Object.keys(comprasGlobais).length);
 }
 
-// ============================================================
-// 💾 REGISTRAR COMPRA GLOBAL
-// ============================================================
-async function registrarCompraGlobal(casaId, casaNome, preco) {
-  // Tenta inserir; se a casa já tem dono, o UNIQUE (casa_id) bloqueia
-  const { error } = await db.from(TABELA_COMPRAS).insert({
-    casa_id:    casaId,
-    casa_nome:  casaNome,
-    dono_login: login,
-    dono_nome:  eu?.nome || login,
-    preco:      preco
-  });
-
-  if (error) {
-    console.error('[BI] erro inserir compra global:', error);
-    return { ok: false, error };
-  }
-
-  comprasGlobais[casaId] = {
-    dono_login: login,
-    dono_nome:  eu?.nome || login,
-    preco
-  };
-  return { ok: true };
+async function carregarMercado() {
+  const { data, error } = await db.from(TB_MERCADO)
+    .select('*')
+    .order('criado_em', { ascending: false });
+  if (error) { console.error(error); return; }
+  mercado = (data || []).map(m => ({ ...m, preco_pedido: Number(m.preco_pedido) || 0 }));
 }
 
-// ============================================================
-// 📥 CARREGAR JOGO LOCAL
-// ============================================================
+async function carregarLances() {
+  const { data, error } = await db.from(TB_LANCES)
+    .select('*')
+    .order('criado_em', { ascending: false });
+  if (error) { console.error(error); return; }
+  lances = (data || []).map(l => ({ ...l, valor: Number(l.valor) || 0 }));
+}
+
 async function carregarJogo() {
-  const { data, error } = await db
-    .from(TABELA).select('fazendinha_dados').eq('login', login).maybeSingle();
-
-  if (error) { console.error('[BI] erro carregar:', error); return; }
-
+  const { data } = await db.from(TABELA).select('fazendinha_dados').eq('login', login).maybeSingle();
   const jogo = data?.fazendinha_dados?.banco_imobiliario;
   if (jogo) {
     jogadores    = jogo.jogadores    || [];
@@ -363,14 +811,12 @@ async function carregarJogo() {
 }
 
 // ============================================================
-// 💾 SALVAR JOGO LOCAL
+// SALVAR JOGO
 // ============================================================
 async function salvarJogo() {
-  const { data: atual } = await db
-    .from(TABELA).select('fazendinha_dados').eq('login', login).maybeSingle();
+  const { data: atual } = await db.from(TABELA).select('fazendinha_dados').eq('login', login).maybeSingle();
   const fazendinha = atual?.fazendinha_dados || {};
-
-  const { error } = await db.from(TABELA).update({
+  await db.from(TABELA).update({
     fazendinha_dados: {
       ...fazendinha,
       banco_imobiliario: {
@@ -380,217 +826,127 @@ async function salvarJogo() {
     },
     updated_at: new Date().toISOString()
   }).eq('login', login);
-
-  if (error) console.error('[BI] erro salvar:', error);
 }
 
 // ============================================================
-// 💸 SALDO REAL
+// SALDO / CODEX / TAXA / ENTRAR
 // ============================================================
-async function atualizarSaldoReal(loginJogador, deltaS) {
-  if (!loginJogador || deltaS === 0) return;
-
-  const { data } = await db
-    .from(TABELA).select('saldo').eq('login', loginJogador).maybeSingle();
-
-  const saldoAtual = Number(data?.saldo) || 0;
-  const novoSaldo  = Math.max(0, saldoAtual + deltaS);
-
-  const { error } = await db.from(TABELA).update({
-    saldo: novoSaldo,
-    updated_at: new Date().toISOString()
-  }).eq('login', loginJogador);
-
-  if (error) { console.error('[BI] erro saldo:', error); return; }
-
-  const jog = jogadores.find(j => j.login === loginJogador);
-  if (jog) jog.saldo = novoSaldo;
-  if (loginJogador === login && eu) eu.saldo = novoSaldo;
+async function atualizarSaldoReal(loginJ, deltaS) {
+  if (!loginJ || deltaS === 0) return;
+  const { data } = await db.from(TABELA).select('saldo').eq('login', loginJ).maybeSingle();
+  const atual = Number(data?.saldo) || 0;
+  const novo  = Math.max(0, atual + deltaS);
+  await db.from(TABELA).update({
+    saldo: novo, updated_at: new Date().toISOString()
+  }).eq('login', loginJ);
+  const jog = jogadores.find(j => j.login === loginJ);
+  if (jog) jog.saldo = novo;
+  if (loginJ === login && eu) eu.saldo = novo;
 }
 
-// ============================================================
-// 🏆 CODEX
-// ============================================================
 async function registrarPropriedadeNoCodex(casa, loginDono) {
   const { data: atual } = await db.from(TABELA).select('itens').eq('login', loginDono).maybeSingle();
   const itens = Array.isArray(atual?.itens) ? atual.itens : [];
   const idItem = `bi_${casa.nome.toLowerCase().replace(/\s+/g, '_')}`;
   if (itens.some(i => i.id_item === idItem)) return;
-
   const raridade = casa.preco >= 400 ? 'lendario' : casa.preco >= 200 ? 'epico' : 'raro';
   itens.push({
     id_item: idItem, nome: casa.nome, tipo_peca: 'Propriedade',
     raridade, tier: Math.min(20, Math.max(1, Math.floor(casa.preco / 20))),
-    bonus: { atk: Math.floor(casa.preco / 20), def: Math.floor(casa.preco / 30), hp: casa.preco },
+    bonus: { atk: Math.floor(casa.preco/20), def: Math.floor(casa.preco/30), hp: casa.preco },
     origem: 'banco_imobiliario', registrado_em: new Date().toISOString()
   });
-
   await db.from(TABELA).update({ itens, updated_at: new Date().toISOString() }).eq('login', loginDono);
 }
 
-// ============================================================
-// 💰 TAXA
-// ============================================================
 async function confirmarECobrarTaxa() {
   const saldoAtual = Number(eu?.saldo) || 0;
-
   if (saldoAtual < TAXA_ENTRADA) {
-    window.__biDebug(
-      `❌ Saldo insuficiente para entrar.<br>` +
-      `Você tem <strong>${fmtSaldo(saldoAtual)}</strong> ` +
-      `mas precisa de <strong>${fmtSaldo(TAXA_ENTRADA)}</strong>.`,
-      'erro'
-    );
+    window.__biDebug(`❌ Saldo insuficiente (${fmtSaldo(saldoAtual)})`, 'erro');
     return false;
   }
-
   const ok = confirm(
-    `🎲 Banco Imobiliário Online\n\n` +
-    `Para entrar no jogo é cobrada uma taxa de:\n` +
-    `💸 ${fmtSaldo(TAXA_ENTRADA)}\n\n` +
-    `Seu saldo atual: ${fmtSaldo(saldoAtual)}\n` +
-    `Saldo após pagar: ${fmtSaldo(saldoAtual - TAXA_ENTRADA)}\n\n` +
-    `Deseja pagar e entrar?`
+    `🎲 Banco Imobiliário Online\n\nTaxa de entrada: ${fmtSaldo(TAXA_ENTRADA)}\n` +
+    `Saldo: ${fmtSaldo(saldoAtual)} → ${fmtSaldo(saldoAtual - TAXA_ENTRADA)}\n\nEntrar?`
   );
-
-  if (!ok) {
-    window.__biDebug(`ℹ️ Você optou por <strong>não entrar</strong>. Nada foi cobrado.`, 'erro');
-    document.getElementById('btn-dados').disabled = true;
-    document.getElementById('btn-comprar').disabled = true;
-    document.getElementById('dados-jogador').innerHTML =
-      'Você não entrou no jogo. Recarregue para tentar novamente.';
-    return false;
-  }
-
+  if (!ok) return false;
   await atualizarSaldoReal(login, -TAXA_ENTRADA);
   return true;
 }
 
-// ============================================================
-// 🚀 ENTRAR
-// ============================================================
 async function entrarAutomaticamente() {
-  if (jogoIniciado && jogadores.some(j => j.login === login)) {
-    console.log('[BI] jogo em andamento');
-    return true;
-  }
-
-  jogadores    = [];
-  jogadorAtual = 0;
-  tabuleiro    = JSON.parse(JSON.stringify(TABULEIRO_PADRAO));
-
+  if (jogoIniciado && jogadores.some(j => j.login === login)) return true;
+  jogadores = []; jogadorAtual = 0;
+  tabuleiro = JSON.parse(JSON.stringify(TABULEIRO_PADRAO));
   const ok = await confirmarECobrarTaxa();
   if (!ok) return false;
-
   jogadores.push({
-    login: eu.login,
-    nome: eu.nome || eu.login,
-    saldo: Number(eu.saldo) || 0,
-    posicao: 0,
-    propriedades: []
+    login: eu.login, nome: eu.nome || eu.login,
+    saldo: Number(eu.saldo) || 0, posicao: 0, propriedades: []
   });
-
   jogoIniciado = true;
   await salvarJogo();
   return true;
 }
 
 // ============================================================
-// 🎲 JOGAR
+// JOGAR / CASA / COMPRAR
 // ============================================================
 window.jogarDados = async function () {
   if (!jogoIniciado || jogadores.length === 0) return;
-
-  const d1 = Math.floor(Math.random() * 6) + 1;
-  const d2 = Math.floor(Math.random() * 6) + 1;
-  const total = d1 + d2;
-
+  const d1 = Math.floor(Math.random()*6)+1;
+  const d2 = Math.floor(Math.random()*6)+1;
   document.getElementById('resultado-dados').innerHTML =
-    `🎲 ${d1} + ${d2} = <strong>${total}</strong>`;
-
-  await moverJogador(total);
+    `🎲 ${d1} + ${d2} = <strong>${d1+d2}</strong>`;
+  await moverJogador(d1 + d2);
 };
 
 async function moverJogador(passos) {
   const jog = jogadores[jogadorAtual];
-  const passouPartida = jog.posicao + passos >= tabuleiro.length;
-
+  const passou = jog.posicao + passos >= tabuleiro.length;
   jog.posicao = (jog.posicao + passos) % tabuleiro.length;
-
-  if (passouPartida && BONUS_VOLTA > 0) {
-    await atualizarSaldoReal(jog.login, +BONUS_VOLTA);
-    mostrarMsg(`🎉 Passou pela partida! +${fmtSaldo(BONUS_VOLTA)}`);
-  } else if (passouPartida) {
-    mostrarMsg('➡️ Deu a volta (sem bônus).');
-  }
-
+  if (passou) mostrarMsg('➡️ Deu a volta.');
   await processarCasa(jog.posicao);
-
   if (jog.saldo <= 0 && jog.propriedades.length === 0) {
-    setTimeout(async () => {
-      alert(`💔 ${jog.nome} faliu! Fim de jogo.`);
-    }, 800);
+    setTimeout(() => alert(`💔 ${jog.nome} faliu!`), 800);
     return;
   }
-
   jogadorAtual = (jogadorAtual + 1) % jogadores.length;
   await salvarJogo();
   atualizarTela();
 }
 
-// ============================================================
-// 🏠 CASA
-// ============================================================
 async function processarCasa(pos) {
   const casa = tabuleiro[pos];
   const jog  = jogadores[jogadorAtual];
-  const donoGlobal = comprasGlobais[pos];
+  const dono = comprasGlobais[pos];
 
   switch (casa.tipo) {
     case 'imposto':
       await atualizarSaldoReal(jog.login, -casa.preco);
-      mostrarMsg(`💸 Pagou S$ ${casa.preco} de imposto!`);
+      mostrarMsg(`💸 Imposto S$ ${casa.preco}.`); break;
+    case 'chance':
+      if (Math.random() > 0.5) { await atualizarSaldoReal(jog.login, +100); mostrarMsg('🍀 +S$ 100!'); }
+      else { await atualizarSaldoReal(jog.login, -50); mostrarMsg('😬 -S$ 50!'); }
       break;
-
-    case 'chance': {
-      if (Math.random() > 0.5) {
-        await atualizarSaldoReal(jog.login, +100);
-        mostrarMsg('🍀 Sorte! +S$ 100!');
-      } else {
-        await atualizarSaldoReal(jog.login, -50);
-        mostrarMsg('😬 Azar! -S$ 50!');
-      }
-      break;
-    }
-
-    case 'propriedade':
-    case 'servico':
-    case 'ferrovia':
-      if (!donoGlobal) {
-        mostrarMsg(`🏠 ${casa.nome} à venda por ${fmtSaldo(casa.preco)}`);
-      } else if (donoGlobal.dono_login !== jog.login) {
+    case 'propriedade': case 'servico': case 'ferrovia':
+      if (!dono) mostrarMsg(`🏠 ${casa.nome} à venda por ${fmtSaldo(casa.preco)}`);
+      else if (dono.dono_login !== jog.login) {
         const taxa = casa.tipo === 'propriedade' ? 0.3 : 0.25;
-        const aluguel = Math.floor(casa.preco * taxa);
-        await atualizarSaldoReal(jog.login, -aluguel);
-        await atualizarSaldoReal(donoGlobal.dono_login, +aluguel);
-        mostrarMsg(`💵 Aluguel ${fmtSaldo(aluguel)} → ${donoGlobal.dono_nome}`);
-      } else {
-        mostrarMsg(`🏠 Você já é dono de ${casa.nome}`);
-      }
+        const alug = Math.floor(casa.preco * taxa);
+        await atualizarSaldoReal(jog.login, -alug);
+        await atualizarSaldoReal(dono.dono_login, +alug);
+        mostrarMsg(`💵 Aluguel ${fmtSaldo(alug)} → ${dono.dono_nome}`);
+      } else mostrarMsg(`🏠 Sua propriedade.`);
       break;
-
     case 'inicio':   mostrarMsg('💰 Início.'); break;
     case 'descanso': mostrarMsg('✌️ Descanso.'); break;
     case 'especial': mostrarMsg('🚔 Prisão / Visita.'); break;
   }
 }
 
-// ============================================================
-// 🏠 COMPRAR — grava global
-// ============================================================
 window.comprar = async function () {
   if (!jogoIniciado) return;
-
   const pos  = jogadores[jogadorAtual].posicao;
   const jog  = jogadores[jogadorAtual];
   const casa = tabuleiro[pos];
@@ -599,89 +955,474 @@ window.comprar = async function () {
     mostrarMsg('❌ Aqui não dá pra comprar!'); return;
   }
   if (comprasGlobais[pos]) {
-    mostrarMsg(`❌ Já pertence a ${comprasGlobais[pos].dono_nome}!`);
-    return;
+    mostrarMsg(`❌ Já pertence a ${comprasGlobais[pos].dono_nome}!`); return;
   }
-  if (jog.saldo < casa.preco) {
-    mostrarMsg('❌ Sem saldo!'); return;
-  }
+  if (jog.saldo < casa.preco) { mostrarMsg('❌ Sem saldo!'); return; }
 
-  // 1) Cobra do saldo real
   await atualizarSaldoReal(jog.login, -casa.preco);
+  const { data, error } = await db.from(TB_COMPRAS).insert({
+    casa_id: pos, casa_nome: casa.nome,
+    dono_login: login, dono_nome: eu?.nome || login, preco: casa.preco
+  }).select().maybeSingle();
 
-  // 2) Tenta registrar global (UNIQUE casa_id bloqueia se outro pegou primeiro)
-  const res = await registrarCompraGlobal(pos, casa.nome, casa.preco);
-
-  if (!res.ok) {
-    // Devolve o dinheiro — outro usuário comprou antes
+  if (error) {
     await atualizarSaldoReal(jog.login, +casa.preco);
-    mostrarMsg('⚠️ Outro jogador comprou primeiro! Dinheiro devolvido.');
-    await carregarComprasGlobais();
+    mostrarMsg('⚠️ Alguém comprou primeiro!');
+    await carregarCompras();
     atualizarTela();
     return;
   }
 
-  // 3) Marca no tabuleiro local
-  casa.dono = jog.login;
+  comprasGlobais[pos] = {
+    dono_login: login, dono_nome: eu?.nome || login,
+    preco: casa.preco, comprado_em: data.comprado_em
+  };
+  historicoCompras.unshift({ ...data, preco: Number(data.preco) });
+  casa.dono = login;
   jog.propriedades.push(casa.nome);
 
-  // 4) Codex pessoal
-  if (casa.tipo === 'propriedade') {
-    await registrarPropriedadeNoCodex(casa, jog.login);
-  }
+  if (casa.tipo === 'propriedade') await registrarPropriedadeNoCodex(casa, login);
 
   await salvarJogo();
-  atualizarTela();
-  mostrarMsg(`✅ Comprou ${casa.nome} por ${fmtSaldo(casa.preco)}! (visível para todos)`);
+  atualizarTela(); renderizarHistorico();
+  mostrarMsg(`✅ Comprou ${casa.nome}!`);
 };
 
 // ============================================================
-// 💬 MSG
+// 💰 VENDER NO MERCADO
 // ============================================================
-function mostrarMsg(texto) {
-  document.getElementById('mensagem').innerHTML = `<p>${esc(texto)}</p>`;
-}
+window.abrirVender = function (casaId) {
+  const casa = tabuleiro[casaId];
+  if (!casa || comprasGlobais[casaId]?.dono_login !== login) {
+    alert('Você não é o dono.'); return;
+  }
+  abrirModal(`
+    <h3>💰 Vender "${esc(casa.nome)}"</h3>
+    <p>Defina o preço pedido. Outros jogadores poderão dar lances.</p>
+    <label>Preço pedido (S$)</label>
+    <input type="number" id="inp-preco" min="1" step="0.01" value="${casa.preco}">
+    <div class="linha">
+      <button class="secundario" onclick="fecharModal()">Cancelar</button>
+      <button onclick="confirmarVenda(${casaId})">📢 Anunciar</button>
+    </div>
+  `);
+};
+
+window.confirmarVenda = async function (casaId) {
+  const preco = parseFloat(document.getElementById('inp-preco').value);
+  if (isNaN(preco) || preco <= 0) { alert('Preço inválido'); return; }
+
+  const casa = tabuleiro[casaId];
+  const { error } = await db.from(TB_MERCADO).insert({
+    tipo: 'venda',
+    casa_id: casaId,
+    casa_nome: casa.nome,
+    vendedor_login: login,
+    vendedor_nome: eu?.nome || login,
+    preco_pedido: preco
+  });
+
+  if (error) { alert('Erro: ' + error.message); return; }
+  fecharModal();
+  mostrarMsg(`📢 "${casa.nome}" anunciado por ${fmtSaldo(preco)}!`);
+  await carregarMercado();
+  renderizarMercado();
+  atualizarTela();
+};
 
 // ============================================================
-// 🖼️ TELA — mostra dono GLOBAL
+// 🔁 TROCAR NO MERCADO
+// ============================================================
+window.abrirTrocar = function (casaId) {
+  const casa = tabuleiro[casaId];
+  if (!casa || comprasGlobais[casaId]?.dono_login !== login) {
+    alert('Você não é o dono.'); return;
+  }
+
+  const opcoes = Object.entries(comprasGlobais)
+    .filter(([cid, c]) => c.dono_login !== login)
+    .map(([cid, c]) => `<option value="${cid}">${esc(tabuleiro[cid].nome)} — dono: ${esc(c.dono_nome)}</option>`)
+    .join('');
+
+  if (!opcoes) { alert('Nenhuma propriedade de outro usuário.'); return; }
+
+  abrirModal(`
+    <h3>🔁 Trocar "${esc(casa.nome)}"</h3>
+    <p>Escolha qual propriedade você quer receber em troca.</p>
+    <label>Quero receber:</label>
+    <select id="inp-troca">${opcoes}</select>
+    <div class="linha">
+      <button class="secundario" onclick="fecharModal()">Cancelar</button>
+      <button onclick="confirmarTroca(${casaId})">🔁 Anunciar Troca</button>
+    </div>
+  `);
+};
+
+window.confirmarTroca = async function (casaId) {
+  const alvoId = parseInt(document.getElementById('inp-troca').value, 10);
+  const alvoCasa = tabuleiro[alvoId];
+  const casa = tabuleiro[casaId];
+
+  const { error } = await db.from(TB_MERCADO).insert({
+    tipo: 'troca',
+    casa_id: casaId,
+    casa_nome: casa.nome,
+    vendedor_login: login,
+    vendedor_nome: eu?.nome || login,
+    troca_por_casa_id: alvoId,
+    troca_por_casa_nome: alvoCasa.nome
+  });
+
+  if (error) { alert('Erro: ' + error.message); return; }
+  fecharModal();
+  mostrarMsg(`🔁 Troca anunciada: "${casa.nome}" por "${alvoCasa.nome}"`);
+  await carregarMercado();
+  renderizarMercado();
+};
+
+// ============================================================
+// 🎯 DAR LANCE
+// ============================================================
+window.abrirLance = function (anuncioId) {
+  const an = mercado.find(m => m.id === anuncioId);
+  if (!an) return;
+
+  if (an.vendedor_login === login) { alert('Você não pode dar lance no seu próprio anúncio.'); return; }
+
+  if (an.tipo === 'venda') {
+    const sugestao = Math.max(1, Math.floor(an.preco_pedido * 0.9));
+    abrirModal(`
+      <h3>🎯 Lance em "${esc(an.casa_nome)}"</h3>
+      <p>
+        Vendedor: <strong>${esc(an.vendedor_nome)}</strong><br>
+        Preço pedido: <strong>${fmtSaldo(an.preco_pedido)}</strong>
+      </p>
+      <label>Seu lance (S$)</label>
+      <input type="number" id="inp-lance" min="1" step="0.01" value="${sugestao}">
+      <div class="linha">
+        <button class="secundario" onclick="fecharModal()">Cancelar</button>
+        <button class="ok" onclick="confirmarLanceDinheiro(${anuncioId})">📨 Enviar Lance</button>
+      </div>
+    `);
+  } else {
+    const minhas = Object.entries(comprasGlobais)
+      .filter(([cid, c]) => c.dono_login === login)
+      .map(([cid]) => `<option value="${cid}">${esc(tabuleiro[cid].nome)}</option>`)
+      .join('');
+
+    if (!minhas) { alert('Você não tem propriedades para trocar.'); return; }
+
+    abrirModal(`
+      <h3>🎯 Oferta de Troca</h3>
+      <p>
+        Eles querem <strong>${esc(an.troca_por_casa_nome)}</strong> em troca de
+        <strong>${esc(an.casa_nome)}</strong>.
+      </p>
+      <label>Ofereça uma das suas:</label>
+      <select id="inp-lance-casa">${minhas}</select>
+      <div class="linha">
+        <button class="secundario" onclick="fecharModal()">Cancelar</button>
+        <button class="ok" onclick="confirmarLanceTroca(${anuncioId})">🤝 Oferecer</button>
+      </div>
+    `);
+  }
+};
+
+window.confirmarLanceDinheiro = async function (anuncioId) {
+  const valor = parseFloat(document.getElementById('inp-lance').value);
+  if (isNaN(valor) || valor <= 0) { alert('Valor inválido'); return; }
+
+  const saldoAtual = Number(eu?.saldo) || 0;
+  if (saldoAtual < valor) { alert(`Saldo insuficiente (${fmtSaldo(saldoAtual)})`); return; }
+
+  const { error } = await db.from(TB_LANCES).insert({
+    anuncio_id: anuncioId,
+    comprador_login: login,
+    comprador_nome: eu?.nome || login,
+    valor
+  });
+
+  if (error) { alert('Erro: ' + error.message); return; }
+  fecharModal();
+  mostrarMsg(`🎯 Lance de ${fmtSaldo(valor)} enviado!`);
+  await carregarLances();
+  renderizarMercado();
+  renderizarMeus();
+};
+
+window.confirmarLanceTroca = async function (anuncioId) {
+  const casaId = parseInt(document.getElementById('inp-lance-casa').value, 10);
+  const casa = tabuleiro[casaId];
+
+  const { error } = await db.from(TB_LANCES).insert({
+    anuncio_id: anuncioId,
+    comprador_login: login,
+    comprador_nome: eu?.nome || login,
+    casa_ofertada_id: casaId,
+    casa_ofertada_nome: casa.nome
+  });
+
+  if (error) { alert('Erro: ' + error.message); return; }
+  fecharModal();
+  mostrarMsg(`🎯 Oferta de "${casa.nome}" enviada!`);
+  await carregarLances();
+  renderizarMercado();
+  renderizarMeus();
+};
+
+// ============================================================
+// ✅ ACEITAR LANCE
+// ============================================================
+window.aceitarLance = async function (lanceId) {
+  const lance = lances.find(l => l.id === lanceId);
+  if (!lance) return;
+  const an = mercado.find(m => m.id === lance.anuncio_id);
+  if (!an) return;
+
+  if (an.vendedor_login !== login) { alert('Você não é o vendedor.'); return; }
+  if (!confirm(`Aceitar oferta de ${lance.comprador_nome}?`)) return;
+
+  await db.from(TB_LANCES).update({ status: 'aceito' }).eq('id', lanceId);
+  await db.from(TB_MERCADO).update({ status: 'aceito' }).eq('id', an.id);
+
+  const outros = lances.filter(l => l.anuncio_id === an.id && l.id !== lanceId && l.status === 'pendente');
+  for (const o of outros) {
+    await db.from(TB_LANCES).update({ status: 'recusado' }).eq('id', o.id);
+  }
+
+  if (an.tipo === 'venda') {
+    const valor = Number(lance.valor) || 0;
+    const saldoComprador = (await db.from(TABELA).select('saldo').eq('login', lance.comprador_login).maybeSingle()).data?.saldo;
+    if ((Number(saldoComprador) || 0) < valor) {
+      alert('Comprador sem saldo. Lance cancelado.');
+      await db.from(TB_LANCES).update({ status: 'cancelado' }).eq('id', lanceId);
+      await db.from(TB_MERCADO).update({ status: 'aberto' }).eq('id', an.id);
+      return;
+    }
+    await atualizarSaldoReal(lance.comprador_login, -valor);
+    await atualizarSaldoReal(login, +valor);
+
+    await db.from(TB_COMPRAS).update({
+      dono_login: lance.comprador_login,
+      dono_nome:  lance.comprador_nome,
+      preco:      valor,
+      comprado_em: new Date().toISOString()
+    }).eq('casa_id', an.casa_id);
+
+  } else {
+    await db.from(TB_COMPRAS).update({
+      dono_login: lance.comprador_login,
+      dono_nome:  lance.comprador_nome,
+      comprado_em: new Date().toISOString()
+    }).eq('casa_id', an.casa_id);
+
+    await db.from(TB_COMPRAS).update({
+      dono_login: login,
+      dono_nome:  eu?.nome || login,
+      comprado_em: new Date().toISOString()
+    }).eq('casa_id', lance.casa_ofertada_id);
+  }
+
+  alert('✅ Negócio fechado!');
+  await Promise.all([carregarCompras(), carregarMercado(), carregarLances()]);
+  renderizarMercado(); renderizarMeus(); atualizarTela();
+};
+
+// ============================================================
+// ❌ RECUSAR / CANCELAR
+// ============================================================
+window.recusarLance = async function (lanceId) {
+  if (!confirm('Recusar esta oferta?')) return;
+  await db.from(TB_LANCES).update({ status: 'recusado' }).eq('id', lanceId);
+  await carregarLances();
+  renderizarMercado(); renderizarMeus();
+};
+
+window.cancelarAnuncio = async function (anuncioId) {
+  if (!confirm('Cancelar este anúncio?')) return;
+  await db.from(TB_MERCADO).update({ status: 'cancelado' }).eq('id', anuncioId);
+  const pend = lances.filter(l => l.anuncio_id === anuncioId && l.status === 'pendente');
+  for (const l of pend) {
+    await db.from(TB_LANCES).update({ status: 'cancelado' }).eq('id', l.id);
+  }
+  await Promise.all([carregarMercado(), carregarLances()]);
+  renderizarMercado(); renderizarMeus(); atualizarTela();
+};
+
+// ============================================================
+// RENDERIZADORES
+// ============================================================
+function mostrarMsg(t) {
+  document.getElementById('mensagem').innerHTML = `<p>${esc(t)}</p>`;
+}
+
+function renderizarHistorico() {
+  const lista = document.getElementById('historico-lista');
+  document.getElementById('hist-count').textContent = historicoCompras.length;
+  if (historicoCompras.length === 0) {
+    lista.innerHTML = '<div class="vazio">Nenhuma compra ainda.</div>'; return;
+  }
+  lista.innerHTML = historicoCompras.slice(0, 30).map(h => {
+    const minha = h.dono_login === login;
+    return `
+      <div class="item ${minha ? 'eu' : ''}">
+        <span class="quem">${minha ? '⭐ Você' : esc(h.dono_nome || h.dono_login)}</span>
+        <span class="casa">🏠 ${esc(h.casa_nome)}</span>
+        <div class="info">
+          <span>${fmtSaldo(h.preco)}</span>
+          <span>${tempoRelativo(h.comprado_em)}</span>
+        </div>
+      </div>`;
+  }).join('');
+}
+
+function renderizarMercado() {
+  const lista = document.getElementById('lista-mercado');
+  const abertos = mercado.filter(m => m.status === 'aberto' && new Date(m.expira_em) > new Date());
+  document.getElementById('count-mercado').textContent = abertos.length;
+
+  if (abertos.length === 0) {
+    lista.innerHTML = '<div class="vazio">Nenhum anúncio.</div>'; return;
+  }
+
+  lista.innerHTML = abertos.map(m => {
+    const meu = m.vendedor_login === login;
+    const lancesDo = lances.filter(l => l.anuncio_id === m.id && l.status === 'pendente');
+    const melhor = lancesDo.sort((a, b) => b.valor - a.valor)[0];
+
+    const linhaPreco = m.tipo === 'venda'
+      ? `<strong>${fmtSaldo(m.preco_pedido)}</strong>`
+      : `por <strong>${esc(m.troca_por_casa_nome)}</strong>`;
+
+    return `
+      <div class="item mercado ${meu ? 'eu' : ''}">
+        <span class="quem">${meu ? '⭐ Você' : esc(m.vendedor_nome || m.vendedor_login)}</span>
+        <span class="casa">🏠 ${esc(m.casa_nome)}</span>
+        <div class="info">
+          <span>${m.tipo === 'venda' ? '💰 Venda' : '🔁 Troca'} ${linhaPreco}</span>
+          <span>${tempoRelativo(m.criado_em)}</span>
+        </div>
+        ${lancesDo.length ? `<div class="info"><span>🎯 ${lancesDo.length} lance(s)</span><span>${melhor?.valor ? fmtSaldo(melhor.valor) : '—'}</span></div>` : ''}
+        <div class="acoes">
+          ${meu ? `<button class="mini perigo" onclick="cancelarAnuncio(${m.id})">Cancelar</button>` : ''}
+          ${!meu ? `<button class="mini ok" onclick="abrirLance(${m.id})">🎯 Dar Lance</button>` : ''}
+        </div>
+      </div>`;
+  }).join('');
+}
+
+function renderizarMeus() {
+  const lista = document.getElementById('lista-meus');
+  const meusAnuncios = mercado.filter(m =>
+    m.vendedor_login === login && m.status === 'aberto');
+  const meusLancesEnviados = lances.filter(l => l.comprador_login === login && l.status === 'pendente');
+
+  const total = meusAnuncios.length + meusLancesEnviados.length;
+  document.getElementById('count-meus').textContent = total;
+
+  if (total === 0) {
+    lista.innerHTML = '<div class="vazio">Sem atividade.</div>'; return;
+  }
+
+  let html = '';
+
+  for (const m of meusAnuncios) {
+    const lancesDo = lances.filter(l => l.anuncio_id === m.id && l.status === 'pendente');
+    const melhor = lancesDo.sort((a, b) => b.valor - a.valor)[0];
+    html += `
+      <div class="item mercado eu">
+        <span class="quem">⭐ Meu anúncio</span>
+        <span class="casa">🏠 ${esc(m.casa_nome)}</span>
+        <div class="info">
+          <span>${m.tipo === 'venda' ? fmtSaldo(m.preco_pedido) : 'Troca'}</span>
+          <span>${lancesDo.length} lance(s)</span>
+        </div>
+        ${lancesDo.length ? `
+          <div class="acoes">
+            <button class="mini ok" onclick="abrirLancesAnuncio(${m.id})">
+              Ver lances (${lancesDo.length})${melhor?.valor ? ` — top ${fmtSaldo(melhor.valor)}` : ''}
+            </button>
+          </div>` : ''}
+      </div>`;
+  }
+
+  for (const l of meusLancesEnviados) {
+    const an = mercado.find(m => m.id === l.anuncio_id);
+    if (!an) continue;
+    html += `
+      <div class="item lance eu">
+        <span class="quem">⭐ Meu lance</span>
+        <span class="casa">🏠 ${esc(an.casa_nome)}</span>
+        <div class="info">
+          <span>${l.valor ? fmtSaldo(l.valor) : esc(l.casa_ofertada_nome)}</span>
+          <span>aguardando</span>
+        </div>
+      </div>`;
+  }
+
+  lista.innerHTML = html;
+}
+
+window.abrirLancesAnuncio = function (anuncioId) {
+  const an = mercado.find(m => m.id === anuncioId);
+  if (!an) return;
+  const ls = lances.filter(l => l.anuncio_id === anuncioId && l.status === 'pendente');
+
+  const linhas = ls.map(l => `
+    <div class="item lance">
+      <span class="quem">${esc(l.comprador_nome || l.comprador_login)}</span>
+      <span class="casa">${l.valor ? `💰 ${fmtSaldo(l.valor)}` : `🔁 ${esc(l.casa_ofertada_nome)}`}</span>
+      <div class="info"><span>${tempoRelativo(l.criado_em)}</span></div>
+      <div class="acoes">
+        <button class="mini ok" onclick="aceitarLance(${l.id});fecharModal()">✅ Aceitar</button>
+        <button class="mini perigo" onclick="recusarLance(${l.id});fecharModal()">✖ Recusar</button>
+      </div>
+    </div>
+  `).join('');
+
+  abrirModal(`
+    <h3>🎯 Lances em "${esc(an.casa_nome)}"</h3>
+    <div style="max-height:300px;overflow-y:auto;">${linhas || '<div class="vazio">Nenhum lance.</div>'}</div>
+    <div class="linha">
+      <button class="secundario" onclick="fecharModal()">Fechar</button>
+    </div>
+  `);
+};
+
+// ============================================================
+// TELA PRINCIPAL
 // ============================================================
 function atualizarTela() {
   const lista = document.getElementById('lista-jogadores');
-
-  if (jogadores.length === 0) {
-    lista.innerHTML = '<em style="opacity:0.6">Aguardando entrada...</em>';
-  } else {
-    lista.innerHTML = jogadores.map((j, i) => `
+  lista.innerHTML = jogadores.length === 0
+    ? '<em style="opacity:0.6">Aguardando...</em>'
+    : jogadores.map((j, i) => `
       <div class="jogador-card ${i === jogadorAtual && jogoIniciado ? 'vez' : ''}">
         <span>
           <strong>${esc(j.nome)}</strong>
           <small style="opacity:0.7">(@${esc(j.login)})</small>
           ${j.login === login ? '<span class="badge-dono">VOCÊ</span>' : ''}
         </span>
-        <span>
-          💰 ${fmtSaldo(j.saldo)} |
-          📍 ${esc(tabuleiro[j.posicao]?.nome || '—')}
-          ${j.propriedades.length ? ` | 🏠 ${j.propriedades.length}` : ''}
-        </span>
-      </div>
-    `).join('');
-  }
+        <span>💰 ${fmtSaldo(j.saldo)} | 📍 ${esc(tabuleiro[j.posicao]?.nome || '—')}</span>
+      </div>`).join('');
 
   if (jogoIniciado && jogadores.length > 0) {
-    const jog = jogadores[jogadorAtual];
+    const j = jogadores[jogadorAtual];
     document.getElementById('dados-jogador').innerHTML =
-      `<strong>Vez de: ${esc(jog.nome)}</strong> | Saldo: ${fmtSaldo(jog.saldo)}`;
-  } else {
-    document.getElementById('dados-jogador').innerHTML = 'Carregando...';
+      `<strong>Vez de: ${esc(j.nome)}</strong> | ${fmtSaldo(j.saldo)}`;
   }
-
-  document.getElementById('btn-dados').disabled    = !jogoIniciado;
-  document.getElementById('btn-comprar').disabled  = !jogoIniciado;
+  document.getElementById('btn-dados').disabled   = !jogoIniciado;
+  document.getElementById('btn-comprar').disabled = !jogoIniciado;
 
   const tipos = {
-    propriedade: '#FFE4B5', inicio: '#90EE90', chance: '#87CEEB',
-    servico: '#DDA0DD', ferrovia: '#D3D3D3', especial: '#CD853F',
-    imposto: '#FF6347', descanso: '#98FB98'
+    propriedade: 'linear-gradient(135deg, #FFE4B5, #FFD28A)',
+    inicio:      'linear-gradient(135deg, #90EE90, #4ADE80)',
+    chance:      'linear-gradient(135deg, #87CEEB, #60A5FA)',
+    servico:     'linear-gradient(135deg, #DDA0DD, #C084FC)',
+    ferrovia:    'linear-gradient(135deg, #D3D3D3, #9CA3AF)',
+    especial:    'linear-gradient(135deg, #CD853F, #A0522D)',
+    imposto:     'linear-gradient(135deg, #FF6347, #DC143C)',
+    descanso:    'linear-gradient(135deg, #98FB98, #86EFAC)'
   };
 
   for (let i = 0; i < tabuleiro.length; i++) {
@@ -689,127 +1430,122 @@ function atualizarTela() {
     if (!el) continue;
     const casa = tabuleiro[i];
     const aqui = jogadores.filter(j => j.posicao === i);
-    const donoGlobal = comprasGlobais[i];
+    const dono = comprasGlobais[i];
+    const anuncio = mercado.find(m =>
+      m.casa_id === i && m.status === 'aberto' &&
+      new Date(m.expira_em) > new Date());
 
-    let html = esc(casa.nome);
-    if (casa.preco > 0) html += `<br>💰 ${fmtSaldo(casa.preco)}`;
+    let html = `<div style="font-size:13px">${esc(casa.nome)}</div>`;
+    if (casa.preco > 0) html += `<div class="preco">💰 ${fmtSaldo(casa.preco)}</div>`;
 
     if (aqui.length > 0) {
-      html += `<br>👤 ${aqui.map(j => esc(j.nome.charAt(0))).join(', ')}`;
+      html += `<div>${aqui.map(j =>
+        `<span class="avatar-jogador" title="${esc(j.nome)}">${esc(j.nome.charAt(0))}</span>`
+      ).join('')}</div>`;
       el.classList.add('ocupada');
+    } else el.classList.remove('ocupada');
+
+    if (dono) {
+      html += `<span class="dono-tag">🏠 ${esc(dono.dono_nome || dono.dono_login)}</span>`;
+      el.style.background = dono.dono_login === login
+        ? 'linear-gradient(135deg, #d1fae5, #a7f3d0)'
+        : 'linear-gradient(135deg, #fef3c7, #fde68a)';
+      el.style.color = '#0a0f1e';
     } else {
-      el.classList.remove('ocupada');
+      el.style.background = tipos[casa.tipo] || '#fff';
+      el.style.color = '#0a0f1e';
     }
 
-    // ⭐ Destaque: dono VEM DA TABELA GLOBAL
-    if (donoGlobal) {
-      html += `<span class="dono-tag">🏠 ${esc(donoGlobal.dono_nome || donoGlobal.dono_login)}</span>`;
-      el.style.backgroundColor = donoGlobal.dono_login === login ? '#90EE90' : '#ffd28a';
-      el.style.color = '#000';
-    } else {
-      el.style.backgroundColor = tipos[casa.tipo] || '#fff';
-      el.style.color = '#333';
+    if (anuncio) {
+      html += `<span class="badge-anuncio">${anuncio.tipo === 'venda' ? '💰 VENDA' : '🔁 TROCA'}</span>`;
     }
 
     el.innerHTML = html;
+
+    if (dono && dono.dono_login === login && !anuncio &&
+        ['propriedade', 'servico', 'ferrovia'].includes(casa.tipo)) {
+      const botoes = document.createElement('div');
+      botoes.style.marginTop = '6px';
+      botoes.style.display = 'flex';
+      botoes.style.gap = '4px';
+      botoes.style.justifyContent = 'center';
+      botoes.innerHTML = `
+        <button class="mini" onclick="event.stopPropagation();abrirVender(${i})">💰 Vender</button>
+        <button class="mini" onclick="event.stopPropagation();abrirTrocar(${i})">🔁 Trocar</button>
+      `;
+      el.appendChild(botoes);
+    }
   }
 }
 
 // ============================================================
-// 🔄 REALTIME — JOGO LOCAL
+// REALTIME
 // ============================================================
 function ativarRealtime() {
-  canalRealtime = db
-    .channel('bi-' + login)
+  const c1 = db.channel('bi-user-' + login)
     .on('postgres_changes',
       { event: 'UPDATE', schema: 'public', table: TABELA, filter: `login=eq.${login}` },
-      (payload) => {
-        const jogo = payload.new?.fazendinha_dados?.banco_imobiliario;
+      (p) => {
+        const jogo = p.new?.fazendinha_dados?.banco_imobiliario;
         if (!jogo) return;
-        jogadores    = jogo.jogadores    || [];
+        jogadores = jogo.jogadores || [];
         jogadorAtual = jogo.jogadorAtual || 0;
         jogoIniciado = jogo.jogoIniciado || false;
         if (jogo.tabuleiro) tabuleiro = jogo.tabuleiro;
         atualizarTela();
-      })
-    .subscribe((status) => {
-      const dot = document.getElementById('status-realtime');
-      dot.classList.remove('on', 'off');
-      if (status === 'SUBSCRIBED') dot.classList.add('on');
-      else if (status === 'CHANNEL_ERROR' || status === 'TIMED_OUT') dot.classList.add('off');
-    });
-}
+      }).subscribe();
 
-// ============================================================
-// 🌐 REALTIME — COMPRAS GLOBAIS
-// ============================================================
-function ativarRealtimeCompras() {
-  canalCompras = db
-    .channel('bi-compras')
+  const c2 = db.channel('bi-compras')
     .on('postgres_changes',
-      { event: '*', schema: 'public', table: TABELA_COMPRAS },
-      (payload) => {
-        const row = payload.new || payload.old;
-        if (!row) return;
+      { event: '*', schema: 'public', table: TB_COMPRAS },
+      async () => { await carregarCompras(); atualizarTela(); renderizarHistorico(); }
+    ).subscribe();
 
-        if (payload.eventType === 'INSERT' || payload.eventType === 'UPDATE') {
-          comprasGlobais[row.casa_id] = {
-            dono_login: row.dono_login,
-            dono_nome:  row.dono_nome,
-            preco:      Number(row.preco) || 0,
-            comprado_em: row.comprado_em
-          };
-        } else if (payload.eventType === 'DELETE') {
-          delete comprasGlobais[row.casa_id];
-        }
+  const c3 = db.channel('bi-mercado')
+    .on('postgres_changes',
+      { event: '*', schema: 'public', table: TB_MERCADO },
+      async () => { await carregarMercado(); renderizarMercado(); renderizarMeus(); atualizarTela(); }
+    ).subscribe();
 
-        atualizarTela();
-        console.log('[BI] compra atualizada:', row.casa_nome, '→', row.dono_nome);
-      })
-    .subscribe((status) => {
-      console.log('[BI] realtime compras:', status);
-    });
+  const c4 = db.channel('bi-lances')
+    .on('postgres_changes',
+      { event: '*', schema: 'public', table: TB_LANCES },
+      async () => { await carregarLances(); renderizarMercado(); renderizarMeus(); }
+    ).subscribe();
+
+  canais = [c1, c2, c3, c4];
 }
 
 // ============================================================
-// 🚀 INIT
+// INIT
 // ============================================================
 (async function init() {
   try {
     await carregarEu();
-
-    if (!eu) {
-      window.__biDebug('❌ Login <code>' + esc(login) +
-        '</code> não encontrado na tabela <code>Geral</code>.', 'erro');
-      return;
-    }
+    if (!eu) { window.__biDebug('❌ Login não encontrado.', 'erro'); return; }
 
     await Promise.all([
-      carregarJogo(),
-      carregarComprasGlobais()
+      carregarJogo(), carregarCompras(),
+      carregarMercado(), carregarLances()
     ]);
 
     const ok = await entrarAutomaticamente();
     montarTabuleiroDOM();
-    atualizarTela();
+    atualizarTela(); renderizarHistorico(); renderizarMercado(); renderizarMeus();
 
     if (!ok) return;
-
     ativarRealtime();
-    ativarRealtimeCompras();
 
     window.__biDebug(
-      `✅ Bem-vindo, <strong>${esc(eu.nome || login)}</strong>! ` +
-      `Saldo: <strong>${fmtSaldo(eu.saldo)}</strong>. ` +
-      `${Object.keys(comprasGlobais).length} propriedade(s) já comprada(s) globalmente.`,
-      'ok'
-    );
+      `✅ ${esc(eu.nome || login)} | ${fmtSaldo(eu.saldo)} | ` +
+      `${mercado.filter(m=>m.status==='aberto').length} anúncio(s) no mercado.`,
+      'ok');
     setTimeout(() => {
       const a = document.getElementById('aviso-login');
       if (a) a.style.display = 'none';
     }, 5000);
 
-    mostrarMsg('🎮 Bem-vindo! Jogue os dados.');
+    mostrarMsg('🎮 Bem-vindo! Compre, venda, troque e dê lances.');
 
   } catch (err) {
     console.error('[BI] init:', err);
@@ -817,8 +1553,7 @@ function ativarRealtimeCompras() {
   }
 
   window.addEventListener('beforeunload', () => {
-    if (canalRealtime) db.removeChannel(canalRealtime);
-    if (canalCompras)  db.removeChannel(canalCompras);
+    canais.forEach(c => db.removeChannel(c));
   });
 })();
 </script>
