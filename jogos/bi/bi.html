@@ -142,8 +142,8 @@
 <div class="painel-jogadores">
   <h3>Jogadores <span class="status-online" id="status-realtime"></span></h3>
   <p style="font-size:12px; opacity:0.7; margin:6px 0 10px;">
-    Baseado na sua conta e nas contas da tabela <strong>Geral</strong>.
-    Saldo real (S$) é usado no jogo.
+    Você entra automaticamente. Convide mais gente se quiser (opcional).
+    Saldo real (S$) da tabela <strong>Geral</strong> é usado no jogo.
   </p>
   <div id="lista-jogadores"></div>
   <button id="btn-convidar" onclick="convidarJogador()">➕ Convidar Jogador</button>
@@ -154,7 +154,7 @@
 <div class="tabuleiro" id="tabuleiro"></div>
 
 <div class="controles">
-  <div id="dados-jogador">Convide jogadores e clique em "Iniciar Jogo".</div>
+  <div id="dados-jogador">Clique em "Iniciar Jogo" para começar.</div>
   <br>
   <button id="btn-dados" onclick="jogarDados()">🎲 Jogar Dados</button>
   <button id="btn-comprar" onclick="comprar()">🏠 Comprar Propriedade</button>
@@ -162,39 +162,91 @@
   <div id="mensagem"></div>
 </div>
 
+<script>
+// ============================================================
+// 🐞 DEBUG — captura erros antes do módulo carregar
+// ============================================================
+(function () {
+  const aviso = document.getElementById('aviso-login');
+  const setAviso = (txt, cls) => {
+    if (!aviso) return;
+    aviso.className = 'aviso ' + (cls || '');
+    aviso.innerHTML = txt;
+  };
+  window.__biDebug = setAviso;
+
+  window.addEventListener('error', (e) => {
+    console.error('[BI error]', e);
+    setAviso('❌ ' + (e.message || 'Erro') +
+      (e.filename ? '<br><small>' + e.filename + ':' + e.lineno + '</small>' : ''), 'erro');
+  });
+  window.addEventListener('unhandledrejection', (e) => {
+    console.error('[BI rejection]', e);
+    setAviso('❌ Promise: ' + (e.reason?.message || e.reason), 'erro');
+  });
+
+  console.log('[BI] localStorage:', Object.keys(localStorage));
+  for (const k of Object.keys(localStorage)) {
+    console.log(`[BI] "${k}" =`, localStorage.getItem(k)?.slice(0, 120));
+  }
+})();
+</script>
+
 <script type="module">
 // ============================================================
 // 🔗 IMPORTA CONFIG
 // ============================================================
-import {
-  db,
-  TABELA,
-  SESSION_KEY,
-  fmtSaldo,
-  esc
-} from './../../config.js';
-
-// ============================================================
-// 🔐 SESSÃO
-// ============================================================
-const login = localStorage.getItem(SESSION_KEY);
-const aviso = document.getElementById('aviso-login');
-
-if (!login) {
-  aviso.classList.add('erro');
-  aviso.innerHTML = '❌ Você precisa estar logado. Redirecionando...';
-  setTimeout(() => location.href = 'index.html', 2000);
-  throw new Error('Usuário não logado');
+let cfg;
+try {
+  cfg = await import('./config.js');
+} catch (err) {
+  window.__biDebug('❌ Falha ao importar config.js: ' + (err.message || err) +
+    '<br><small>Está na mesma pasta? Servindo via http://?</small>', 'erro');
+  throw err;
 }
 
+const { db, TABELA, SESSION_KEY, fmtSaldo, esc } = cfg;
+console.log('[BI] config.js OK. TABELA =', TABELA);
+
 // ============================================================
-// 🎯 ESTADO DO JOGO
+// 🔐 SESSÃO (com fallback)
 // ============================================================
-let jogadores       = [];   // [{ login, nome, saldo, posicao, propriedades }]
-let jogadorAtual    = 0;
-let jogoIniciado    = false;
-let canalRealtime   = null;
-let todosUsuarios   = [];   // cache da tabela Geral
+function detectarLogin() {
+  const chaves = [SESSION_KEY, 'usuario_logado', 'usuarioLogado', 'usuario', 'user', 'login', 'email'];
+  for (const k of chaves) {
+    const raw = localStorage.getItem(k);
+    if (!raw) continue;
+    try {
+      const obj = JSON.parse(raw);
+      if (typeof obj === 'string' && obj.trim()) return obj.trim();
+      if (obj && typeof obj === 'object') {
+        const c = obj.login || obj.usuario || obj.email || obj.user || obj.nome;
+        if (c && String(c).trim()) return String(c).trim();
+      }
+    } catch {
+      if (raw.trim()) return raw.trim();
+    }
+  }
+  return null;
+}
+
+const login = detectarLogin();
+if (!login) {
+  window.__biDebug('❌ Nenhuma sessão. Chaves: <code>' +
+    (Object.keys(localStorage).join(', ') || '(vazio)') + '</code>', 'erro');
+  throw new Error('Sem sessão');
+}
+window.__biDebug('✅ Logado como <strong>' + esc(login) + '</strong>. Carregando...', 'ok');
+
+// ============================================================
+// 🎯 ESTADO
+// ============================================================
+let jogadores      = [];
+let jogadorAtual   = 0;
+let jogoIniciado   = false;
+let canalRealtime  = null;
+let todosUsuarios  = [];
+let eu           = null;   // dados do jogador logado
 
 const TABULEIRO_PADRAO = [
   { nome: "Início",               preco: 0,   tipo: "inicio"      },
@@ -213,7 +265,7 @@ const TABULEIRO_PADRAO = [
 let tabuleiro = JSON.parse(JSON.stringify(TABULEIRO_PADRAO));
 
 // ============================================================
-// 🎨 MONTAR TABULEIRO NO DOM
+// 🎨 TABULEIRO DOM
 // ============================================================
 function montarTabuleiroDOM() {
   document.getElementById('tabuleiro').innerHTML = tabuleiro.map((_, i) => `
@@ -222,7 +274,7 @@ function montarTabuleiroDOM() {
 }
 
 // ============================================================
-// 📥 CARREGAR TODOS OS USUÁRIOS DA TABELA Geral
+// 📥 CARREGAR USUÁRIOS
 // ============================================================
 async function carregarUsuarios() {
   const { data, error } = await db
@@ -232,15 +284,17 @@ async function carregarUsuarios() {
     .order('login', { ascending: true });
 
   if (error) {
-    console.error('Erro ao carregar usuários:', error);
+    console.error('[BI] erro usuários:', error);
     return [];
   }
   todosUsuarios = data || [];
+  eu = todosUsuarios.find(u => u.login === login) || null;
+  console.log('[BI] usuários:', todosUsuarios.length, '| eu:', eu);
   return todosUsuarios;
 }
 
 // ============================================================
-// 📥 CARREGAR ESTADO DO JOGO
+// 📥 CARREGAR JOGO
 // ============================================================
 async function carregarJogo() {
   const { data, error } = await db
@@ -250,8 +304,8 @@ async function carregarJogo() {
     .maybeSingle();
 
   if (error) {
-    console.error('Erro ao carregar jogo:', error);
-    mostrarMsg('❌ Erro ao carregar o jogo.');
+    console.error('[BI] erro carregar:', error);
+    mostrarMsg('❌ Erro ao carregar.');
     return;
   }
 
@@ -263,27 +317,19 @@ async function carregarJogo() {
     tabuleiro    = jogo.tabuleiro    || JSON.parse(JSON.stringify(TABULEIRO_PADRAO));
   }
 
-  // Sincroniza saldos atuais
   await sincronizarSaldos();
-
   montarTabuleiroDOM();
   atualizarTela();
 }
 
 // ============================================================
-// 🔄 SINCRONIZA SALDOS DOS JOGADORES COM A TABELA Geral
+// 🔄 SALDOS
 // ============================================================
 async function sincronizarSaldos() {
   if (jogadores.length === 0) return;
-
   const logins = jogadores.map(j => j.login);
-  const { data } = await db
-    .from(TABELA)
-    .select('login, nome, saldo')
-    .in('login', logins);
-
+  const { data } = await db.from(TABELA).select('login, nome, saldo').in('login', logins);
   if (!data) return;
-
   for (const jog of jogadores) {
     const u = data.find(d => d.login === jog.login);
     if (u) {
@@ -294,39 +340,33 @@ async function sincronizarSaldos() {
 }
 
 // ============================================================
-// 💾 SALVAR ESTADO DO JOGO (não mexe em saldos)
+// 💾 SALVAR
 // ============================================================
 async function salvarJogo() {
   const { data: atual } = await db
-    .from(TABELA)
-    .select('fazendinha_dados')
-    .eq('login', login)
-    .maybeSingle();
-
+    .from(TABELA).select('fazendinha_dados').eq('login', login).maybeSingle();
   const fazendinha = atual?.fazendinha_dados || {};
 
-  await db.from(TABELA).update({
+  const { error } = await db.from(TABELA).update({
     fazendinha_dados: {
       ...fazendinha,
       banco_imobiliario: {
-        jogadores,
-        jogadorAtual,
-        jogoIniciado,
-        tabuleiro,
+        jogadores, jogadorAtual, jogoIniciado, tabuleiro,
         atualizado_em: new Date().toISOString()
       }
     },
     updated_at: new Date().toISOString()
   }).eq('login', login);
+
+  if (error) console.error('[BI] erro salvar:', error);
 }
 
 // ============================================================
-// 💸 ATUALIZAR SALDO REAL NO SUPABASE
+// 💸 SALDO REAL — corrigido, 1 query só
 // ============================================================
 async function atualizarSaldoReal(loginJogador, deltaS) {
   if (!loginJogador || deltaS === 0) return;
 
-  // Busca saldo atual
   const { data } = await db
     .from(TABELA)
     .select('saldo')
@@ -336,110 +376,99 @@ async function atualizarSaldoReal(loginJogador, deltaS) {
   const saldoAtual = Number(data?.saldo) || 0;
   const novoSaldo  = Math.max(0, saldoAtual + deltaS);
 
-  await db.from(TABELA).update({
+  const { error } = await db.from(TABELA).update({
     saldo: novoSaldo,
     updated_at: new Date().toISOString()
   }).eq('login', loginJogador);
 
-  // Atualiza local
+  if (error) {
+    console.error('[BI] erro saldo:', error);
+    return;
+  }
+
   const jog = jogadores.find(j => j.login === loginJogador);
   if (jog) jog.saldo = novoSaldo;
 }
 
 // ============================================================
-// 🏆 REGISTRAR PROPRIEDADE NO CODEX
+// 🏆 CODEX
 // ============================================================
 async function registrarPropriedadeNoCodex(casa, loginDono) {
-  const { data: atual } = await db
-    .from(TABELA)
-    .select('itens')
-    .eq('login', loginDono)
-    .maybeSingle();
-
+  const { data: atual } = await db.from(TABELA).select('itens').eq('login', loginDono).maybeSingle();
   const itens = Array.isArray(atual?.itens) ? atual.itens : [];
   const idItem = `bi_${casa.nome.toLowerCase().replace(/\s+/g, '_')}`;
-
   if (itens.some(i => i.id_item === idItem)) return;
 
-  const raridade = casa.preco >= 400 ? 'lendario'
-                 : casa.preco >= 200 ? 'epico'
-                 : 'raro';
-
+  const raridade = casa.preco >= 400 ? 'lendario' : casa.preco >= 200 ? 'epico' : 'raro';
   itens.push({
-    id_item: idItem,
-    nome: casa.nome,
-    tipo_peca: 'Propriedade',
-    raridade,
-    tier: Math.min(20, Math.max(1, Math.floor(casa.preco / 20))),
-    bonus: {
-      atk: Math.floor(casa.preco / 20),
-      def: Math.floor(casa.preco / 30),
-      hp:  casa.preco
-    },
-    origem: 'banco_imobiliario',
-    registrado_em: new Date().toISOString()
+    id_item: idItem, nome: casa.nome, tipo_peca: 'Propriedade',
+    raridade, tier: Math.min(20, Math.max(1, Math.floor(casa.preco / 20))),
+    bonus: { atk: Math.floor(casa.preco / 20), def: Math.floor(casa.preco / 30), hp: casa.preco },
+    origem: 'banco_imobiliario', registrado_em: new Date().toISOString()
   });
 
-  await db.from(TABELA).update({
-    itens,
-    updated_at: new Date().toISOString()
-  }).eq('login', loginDono);
+  await db.from(TABELA).update({ itens, updated_at: new Date().toISOString() }).eq('login', loginDono);
 }
 
 // ============================================================
-// 🎮 CONVIDAR JOGADOR (a partir da tabela Geral)
+// 🚀 AUTO-ADICIONA VOCÊ AO ABRIR
+// ============================================================
+function adicionarEuAutomaticamente() {
+  if (!eu) return;
+  if (jogadores.some(j => j.login === eu.login)) return;
+
+  jogadores.push({
+    login: eu.login,
+    nome: eu.nome || eu.login,
+    saldo: Number(eu.saldo) || 0,
+    posicao: 0,
+    propriedades: []
+  });
+  console.log('[BI] você foi auto-adicionado');
+}
+
+// ============================================================
+// 🎮 CONVIDAR JOGADOR
 // ============================================================
 window.convidarJogador = async function () {
   if (jogoIniciado) { alert('Jogo já iniciado!'); return; }
+  if (todosUsuarios.length === 0) await carregarUsuarios();
 
-  if (todosUsuarios.length === 0) {
-    await carregarUsuarios();
-  }
+  const disponiveis = todosUsuarios.filter(u => !jogadores.some(j => j.login === u.login));
+  if (disponiveis.length === 0) { alert('Todos já foram convidados!'); return; }
 
-  const disponiveis = todosUsuarios.filter(
-    u => !jogadores.some(j => j.login === u.login)
-  );
+  const lista = disponiveis.map((u, i) =>
+    `${i + 1}. ${u.nome || u.login} (${u.login}) — ${fmtSaldo(u.saldo)}`).join('\n');
 
-  if (disponiveis.length === 0) {
-    alert('Todos os usuários já foram convidados!');
-    return;
-  }
-
-  const lista = disponiveis
-    .map((u, i) => `${i + 1}. ${u.nome || u.login} (${u.login}) — ${fmtSaldo(u.saldo)}`)
-    .join('\n');
-
-  const escolha = prompt(
-    `Escolha um usuário para convidar:\n\n${lista}\n\nDigite o número:`
-  );
-
+  const escolha = prompt(`Escolha:\n\n${lista}\n\nNúmero:`);
   const idx = parseInt(escolha, 10) - 1;
   if (isNaN(idx) || idx < 0 || idx >= disponiveis.length) return;
 
   const u = disponiveis[idx];
   jogadores.push({
-    login: u.login,
-    nome: u.nome || u.login,
-    saldo: Number(u.saldo) || 0,
-    posicao: 0,
-    propriedades: []
+    login: u.login, nome: u.nome || u.login,
+    saldo: Number(u.saldo) || 0, posicao: 0, propriedades: []
   });
 
   await salvarJogo();
   atualizarTela();
-  mostrarMsg(`✅ ${u.nome || u.login} entrou no jogo!`);
+  mostrarMsg(`✅ ${u.nome || u.login} entrou!`);
 };
 
 // ============================================================
-// ▶️ INICIAR JOGO
+// ▶️ INICIAR — modo solo permitido
 // ============================================================
 window.iniciarJogo = async function () {
-  if (jogadores.length < 2) {
-    alert('Convide pelo menos 2 jogadores!');
+  // ✅ CORRIGIDO: agora checa corretamente
+  adicionarEuAutomaticamente();
+
+  if (jogadores.length < 1) {
+    alert('Nenhum jogador! Recarregue a página.');
     return;
   }
-  if (jogadores.saldo === 0) {
+  if (jogadores.some(j => (j.saldo ?? 0) <= 0)) {
     alert('Um ou mais jogadores estão com saldo zerado!');
+    return;
   }
 
   await sincronizarSaldos();
@@ -454,17 +483,12 @@ window.iniciarJogo = async function () {
 };
 
 // ============================================================
-// 🔄 REINICIAR JOGO
+// 🔄 REINICIAR
 // ============================================================
 window.reiniciarJogo = async function () {
-  if (!confirm('Deseja reiniciar todo o jogo? (saldos reais NÃO serão afetados)')) return;
+  if (!confirm('Reiniciar o jogo? (saldos reais NÃO serão afetados)')) return;
 
-  const { data: atual } = await db
-    .from(TABELA)
-    .select('fazendinha_dados')
-    .eq('login', login)
-    .maybeSingle();
-
+  const { data: atual } = await db.from(TABELA).select('fazendinha_dados').eq('login', login).maybeSingle();
   const fazendinha = atual?.fazendinha_dados || {};
   delete fazendinha.banco_imobiliario;
 
@@ -473,18 +497,17 @@ window.reiniciarJogo = async function () {
     updated_at: new Date().toISOString()
   }).eq('login', login);
 
-  jogadores    = [];
-  jogadorAtual = 0;
-  jogoIniciado = false;
-  tabuleiro    = JSON.parse(JSON.stringify(TABULEIRO_PADRAO));
+  jogadores = []; jogadorAtual = 0; jogoIniciado = false;
+  tabuleiro = JSON.parse(JSON.stringify(TABULEIRO_PADRAO));
 
+  adicionarEuAutomaticamente();
   montarTabuleiroDOM();
   atualizarTela();
   mostrarMsg('Jogo reiniciado!');
 };
 
 // ============================================================
-// 🎲 JOGAR DADOS
+// 🎲 JOGAR
 // ============================================================
 window.jogarDados = async function () {
   if (!jogoIniciado || jogadores.length === 0) return;
@@ -494,7 +517,7 @@ window.jogarDados = async function () {
   const total = d1 + d2;
 
   document.getElementById('resultado-dados').innerHTML =
-    `🎲 Dados: ${d1} + ${d2} = <strong>${total}</strong>`;
+    `🎲 ${d1} + ${d2} = <strong>${total}</strong>`;
 
   await moverJogador(total);
 };
@@ -503,38 +526,36 @@ async function moverJogador(passos) {
   const jog = jogadores[jogadorAtual];
   const passouPartida = jog.posicao + passos >= tabuleiro.length;
 
-  let nova = (jog.posicao + passos) % tabuleiro.length;
-  jog.posicao = nova;
+  jog.posicao = (jog.posicao + passos) % tabuleiro.length;
 
   if (passouPartida) {
     await atualizarSaldoReal(jog.login, +200);
-    mostrarMsg('🎉 Passou pela partida! Ganhou R$200');
+    mostrarMsg('🎉 Passou pela partida! +S$200');
   }
 
-  await processarCasa(nova);
+  await processarCasa(jog.posicao);
 
-  // Falência
-  if (jog.saldo <= 0) {
+  // ✅ Falência só se não tiver propriedades
+  if (jog.saldo <= 0 && jog.propriedades.length === 0) {
     setTimeout(async () => {
-      alert(`💔 ${jog.nome} faliu com saldo zerado! Fim de jogo.`);
+      alert(`💔 ${jog.nome} faliu! Fim de jogo.`);
       await window.reiniciarJogo();
     }, 800);
     return;
   }
+  if (jog.saldo <= 0) {
+    mostrarMsg(`⚠️ ${jog.nome} está sem saldo!`);
+  }
 
-  // Próximo jogador
+  // Próximo turno
   jogadorAtual = (jogadorAtual + 1) % jogadores.length;
-
   await salvarJogo();
   atualizarTela();
-
-  setTimeout(() => {
-    mostrarMsg(`⏭️ Vez de ${jogadores[jogadorAtual].nome}`);
-  }, 1200);
+  setTimeout(() => mostrarMsg(`⏭️ Vez de ${jogadores[jogadorAtual].nome}`), 1200);
 }
 
 // ============================================================
-// 🏠 PROCESSAR CASA
+// 🏠 CASA
 // ============================================================
 async function processarCasa(pos) {
   const casa = tabuleiro[pos];
@@ -543,17 +564,16 @@ async function processarCasa(pos) {
   switch (casa.tipo) {
     case 'imposto':
       await atualizarSaldoReal(jog.login, -casa.preco);
-      mostrarMsg(`💸 Pagou R$${casa.preco} de imposto!`);
+      mostrarMsg(`💸 Pagou S$${casa.preco} de imposto!`);
       break;
 
     case 'chance': {
-      const sorte = Math.random() > 0.5;
-      if (sorte) {
+      if (Math.random() > 0.5) {
         await atualizarSaldoReal(jog.login, +100);
-        mostrarMsg('🍀 Sorte! Ganhou R$100!');
+        mostrarMsg('🍀 Sorte! +S$100!');
       } else {
         await atualizarSaldoReal(jog.login, -50);
-        mostrarMsg('😬 Azar! Perdeu R$50!');
+        mostrarMsg('😬 Azar! -S$50!');
       }
       break;
     }
@@ -564,30 +584,20 @@ async function processarCasa(pos) {
       if (!casa.dono) {
         mostrarMsg(`🏠 ${casa.nome} à venda por ${fmtSaldo(casa.preco)}`);
       } else if (casa.dono !== jog.login) {
-        const taxa    = casa.tipo === 'propriedade' ? 0.3 : 0.25;
+        const taxa = casa.tipo === 'propriedade' ? 0.3 : 0.25;
         const aluguel = Math.floor(casa.preco * taxa);
-
         await atualizarSaldoReal(jog.login, -aluguel);
         await atualizarSaldoReal(casa.dono, +aluguel);
-
         const dono = jogadores.find(j => j.login === casa.dono);
-        mostrarMsg(`💵 Pagou aluguel de ${fmtSaldo(aluguel)} para ${dono?.nome || casa.dono}`);
+        mostrarMsg(`💵 Aluguel ${fmtSaldo(aluguel)} → ${dono?.nome || casa.dono}`);
       } else {
         mostrarMsg(`🏠 Você já é dono de ${casa.nome}`);
       }
       break;
 
-    case 'inicio':
-      mostrarMsg('💰 Início — nada acontece.');
-      break;
-
-    case 'descanso':
-      mostrarMsg('✌️ Descanso — relaxe!');
-      break;
-
-    case 'especial':
-      mostrarMsg('🚔 Prisão / Visita — só passando!');
-      break;
+    case 'inicio':   mostrarMsg('💰 Início.'); break;
+    case 'descanso': mostrarMsg('✌️ Descanso.'); break;
+    case 'especial': mostrarMsg('🚔 Prisão / Visita.'); break;
   }
 }
 
@@ -601,26 +611,17 @@ window.comprar = async function () {
   const casa = tabuleiro[jog.posicao];
 
   if (!['propriedade', 'servico', 'ferrovia'].includes(casa.tipo)) {
-    mostrarMsg('❌ Aqui não é possível comprar!');
+    mostrarMsg('❌ Aqui não dá pra comprar!');
     return;
   }
-  if (casa.dono) {
-    mostrarMsg('❌ Já possui dono!');
-    return;
-  }
-  if (jog.saldo < casa.preco) {
-    mostrarMsg('❌ Saldo insuficiente!');
-    return;
-  }
+  if (casa.dono) { mostrarMsg('❌ Já tem dono!'); return; }
+  if (jog.saldo < casa.preco) { mostrarMsg('❌ Sem saldo!'); return; }
 
   await atualizarSaldoReal(jog.login, -casa.preco);
-
   casa.dono = jog.login;
   jog.propriedades.push(casa.nome);
 
-  if (casa.tipo === 'propriedade') {
-    await registrarPropriedadeNoCodex(casa, jog.login);
-  }
+  if (casa.tipo === 'propriedade') await registrarPropriedadeNoCodex(casa, jog.login);
 
   await salvarJogo();
   atualizarTela();
@@ -628,20 +629,20 @@ window.comprar = async function () {
 };
 
 // ============================================================
-// 💬 MENSAGEM
+// 💬 MSG
 // ============================================================
 function mostrarMsg(texto) {
   document.getElementById('mensagem').innerHTML = `<p>${esc(texto)}</p>`;
 }
 
 // ============================================================
-// 🖼️ ATUALIZAR TELA
+// 🖼️ TELA
 // ============================================================
 function atualizarTela() {
   const lista = document.getElementById('lista-jogadores');
 
   if (jogadores.length === 0) {
-    lista.innerHTML = '<em style="opacity:0.6">Nenhum jogador convidado ainda.</em>';
+    lista.innerHTML = '<em style="opacity:0.6">Nenhum jogador. Recarregue.</em>';
   } else {
     lista.innerHTML = jogadores.map((j, i) => `
       <div class="jogador-card ${i === jogadorAtual && jogoIniciado ? 'vez' : ''}">
@@ -654,7 +655,7 @@ function atualizarTela() {
           💰 ${fmtSaldo(j.saldo)} |
           📍 ${esc(tabuleiro[j.posicao]?.nome || '—')}
           ${j.propriedades.length ? ` | 🏠 ${j.propriedades.length}` : ''}
-          ${!jogoIniciado ? `<button class="perigo" onclick="removerJogador(${i})">✖</button>` : ''}
+          ${!jogoIniciado && j.login !== login ? `<button class="perigo" onclick="removerJogador(${i})">✖</button>` : ''}
         </span>
       </div>
     `).join('');
@@ -666,11 +667,14 @@ function atualizarTela() {
       `<strong>Vez de: ${esc(jog.nome)}</strong> | Saldo: ${fmtSaldo(jog.saldo)}`;
   } else {
     document.getElementById('dados-jogador').innerHTML =
-      'Convide jogadores e clique em "Iniciar Jogo".';
+      jogadores.length === 0
+        ? 'Aguardando...'
+        : `${jogadores.length} jogador(es). Clique em "Iniciar Jogo".`;
   }
 
   document.getElementById('btn-convidar').disabled = jogoIniciado;
-  document.getElementById('btn-iniciar').disabled  = jogoIniciado || jogadores.length < 2;
+  // ✅ Iniciar só precisa de 1+ jogador agora
+  document.getElementById('btn-iniciar').disabled  = jogoIniciado || jogadores.length < 1;
   document.getElementById('btn-dados').disabled    = !jogoIniciado;
   document.getElementById('btn-comprar').disabled  = !jogoIniciado;
 
@@ -683,7 +687,6 @@ function atualizarTela() {
   for (let i = 0; i < tabuleiro.length; i++) {
     const el = document.getElementById(`casa-${i}`);
     if (!el) continue;
-
     const casa = tabuleiro[i];
     const aqui = jogadores.filter(j => j.posicao === i);
 
@@ -693,9 +696,7 @@ function atualizarTela() {
     if (aqui.length > 0) {
       html += `<br>👤 ${aqui.map(j => esc(j.nome.charAt(0))).join(', ')}`;
       el.classList.add('ocupada');
-    } else {
-      el.classList.remove('ocupada');
-    }
+    } else el.classList.remove('ocupada');
 
     if (casa.dono) {
       const dono = jogadores.find(j => j.login === casa.dono);
@@ -706,16 +707,19 @@ function atualizarTela() {
       el.style.backgroundColor = tipos[casa.tipo] || '#fff';
       el.style.color = '#333';
     }
-
     el.innerHTML = html;
   }
 }
 
 // ============================================================
-// ❌ REMOVER JOGADOR (antes do jogo começar)
+// ❌ REMOVER
 // ============================================================
 window.removerJogador = async function (idx) {
   if (jogoIniciado) return;
+  if (jogadores[idx]?.login === login) {
+    alert('Você não pode se remover.');
+    return;
+  }
   if (!confirm(`Remover ${jogadores[idx].nome}?`)) return;
   jogadores.splice(idx, 1);
   await salvarJogo();
@@ -728,14 +732,8 @@ window.removerJogador = async function (idx) {
 function ativarRealtime() {
   canalRealtime = db
     .channel('bi-' + login)
-    .on(
-      'postgres_changes',
-      {
-        event: 'UPDATE',
-        schema: 'public',
-        table: TABELA,
-        filter: `login=eq.${login}`
-      },
+    .on('postgres_changes',
+      { event: 'UPDATE', schema: 'public', table: TABELA, filter: `login=eq.${login}` },
       (payload) => {
         const jogo = payload.new?.fazendinha_dados?.banco_imobiliario;
         if (!jogo) return;
@@ -744,8 +742,7 @@ function ativarRealtime() {
         jogoIniciado = jogo.jogoIniciado || false;
         if (jogo.tabuleiro) tabuleiro = jogo.tabuleiro;
         atualizarTela();
-      }
-    )
+      })
     .subscribe((status) => {
       const dot = document.getElementById('status-realtime');
       dot.classList.remove('on', 'off');
@@ -755,16 +752,42 @@ function ativarRealtime() {
 }
 
 // ============================================================
-// 🚀 INICIALIZAÇÃO
+// 🚀 INIT
 // ============================================================
 (async function init() {
-  aviso.classList.add('ok');
-  aviso.innerHTML = `✅ Logado como <strong>${esc(login)}</strong>`;
-  setTimeout(() => aviso.style.display = 'none', 3000);
+  try {
+    await carregarUsuarios();
 
-  await carregarUsuarios();
-  await carregarJogo();
-  ativarRealtime();
+    // Garante que "eu" está na lista antes de carregar o jogo
+    if (!eu) {
+      window.__biDebug('❌ Seu login <code>' + esc(login) +
+        '</code> não foi achado na tabela <code>Geral</code>.', 'erro');
+      return;
+    }
+
+    await carregarJogo();
+
+    // ✅ Auto-adiciona você se ainda não estiver
+    adicionarEuAutomaticamente();
+    await salvarJogo();
+    atualizarTela();
+
+    ativarRealtime();
+
+    window.__biDebug(
+      `✅ Pronto, <strong>${esc(eu.nome || login)}</strong>! ` +
+      `${jogadores.length} jogador(es). Clique em "Iniciar Jogo".`,
+      'ok'
+    );
+    setTimeout(() => {
+      const a = document.getElementById('aviso-login');
+      if (a) a.style.display = 'none';
+    }, 4000);
+
+  } catch (err) {
+    console.error('[BI] init:', err);
+    window.__biDebug('❌ Init: ' + (err.message || err), 'erro');
+  }
 
   window.addEventListener('beforeunload', () => {
     if (canalRealtime) db.removeChannel(canalRealtime);
