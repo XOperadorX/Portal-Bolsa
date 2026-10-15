@@ -79,6 +79,15 @@
     transition: 0.3s;
   }
   .casa.ocupada { box-shadow: 0 0 10px #ffd700; }
+  .casa .dono-tag {
+    display: block;
+    margin-top: 4px;
+    font-size: 11px;
+    background: #16a34a;
+    color: #fff;
+    padding: 2px 4px;
+    border-radius: 4px;
+  }
   .controles {
     background: rgba(0,0,0,0.3);
     padding: 20px;
@@ -138,6 +147,7 @@
   <p style="font-size:12px; opacity:0.7; margin:6px 0 10px;">
     Entrada com taxa de <strong>S$ 1,00</strong> (você confirma antes).
     Saldo real (S$) da tabela <strong>Geral</strong> é usado no jogo.
+    <br>🏠 Propriedades compradas ficam <strong>visíveis para todos os logins</strong>.
   </p>
   <div id="lista-jogadores"></div>
 </div>
@@ -195,6 +205,13 @@ const { db, TABELA, SESSION_KEY, fmtSaldo, esc } = cfg;
 console.log('[BI] config.js OK. TABELA =', TABELA);
 
 // ============================================================
+// ⚙️ CONSTANTES
+// ============================================================
+const TAXA_ENTRADA  = 1.00;
+const BONUS_VOLTA   = 0.00;
+const TABELA_COMPRAS = 'banco_imobiliario_compras';
+
+// ============================================================
 // 🔐 SESSÃO
 // ============================================================
 function detectarLogin() {
@@ -225,19 +242,15 @@ if (!login) {
 window.__biDebug('✅ Logado como <strong>' + esc(login) + '</strong>. Carregando...', 'ok');
 
 // ============================================================
-// ⚙️ CONSTANTES
-// ============================================================
-const TAXA_ENTRADA = 1.00;   // S$ 1,00
-const BONUS_VOLTA  = 0.00;   // sem bônus ao passar pela partida
-
-// ============================================================
 // 🎯 ESTADO
 // ============================================================
-let jogadores      = [];
-let jogadorAtual   = 0;
-let jogoIniciado   = false;
-let canalRealtime  = null;
-let eu             = null;
+let jogadores       = [];
+let jogadorAtual    = 0;
+let jogoIniciado    = false;
+let canalRealtime   = null;
+let canalCompras    = null;
+let eu              = null;
+let comprasGlobais  = {};   // { [casa_id]: { dono_login, dono_nome, preco } }
 
 const TABULEIRO_PADRAO = [
   { nome: "Início",               preco: 0,   tipo: "inicio"      },
@@ -281,7 +294,58 @@ async function carregarEu() {
 }
 
 // ============================================================
-// 📥 CARREGAR JOGO
+// 📥 CARREGAR COMPRAS GLOBAIS (de todos os usuários)
+// ============================================================
+async function carregarComprasGlobais() {
+  const { data, error } = await db
+    .from(TABELA_COMPRAS)
+    .select('casa_id, casa_nome, dono_login, dono_nome, preco, comprado_em');
+
+  if (error) {
+    console.error('[BI] erro compras globais:', error);
+    return;
+  }
+
+  comprasGlobais = {};
+  for (const c of (data || [])) {
+    comprasGlobais[c.casa_id] = {
+      dono_login: c.dono_login,
+      dono_nome:  c.dono_nome,
+      preco:      Number(c.preco) || 0,
+      comprado_em: c.comprado_em
+    };
+  }
+  console.log('[BI] compras globais:', Object.keys(comprasGlobais).length);
+}
+
+// ============================================================
+// 💾 REGISTRAR COMPRA GLOBAL
+// ============================================================
+async function registrarCompraGlobal(casaId, casaNome, preco) {
+  // Tenta inserir; se a casa já tem dono, o UNIQUE (casa_id) bloqueia
+  const { error } = await db.from(TABELA_COMPRAS).insert({
+    casa_id:    casaId,
+    casa_nome:  casaNome,
+    dono_login: login,
+    dono_nome:  eu?.nome || login,
+    preco:      preco
+  });
+
+  if (error) {
+    console.error('[BI] erro inserir compra global:', error);
+    return { ok: false, error };
+  }
+
+  comprasGlobais[casaId] = {
+    dono_login: login,
+    dono_nome:  eu?.nome || login,
+    preco
+  };
+  return { ok: true };
+}
+
+// ============================================================
+// 📥 CARREGAR JOGO LOCAL
 // ============================================================
 async function carregarJogo() {
   const { data, error } = await db
@@ -299,7 +363,7 @@ async function carregarJogo() {
 }
 
 // ============================================================
-// 💾 SALVAR
+// 💾 SALVAR JOGO LOCAL
 // ============================================================
 async function salvarJogo() {
   const { data: atual } = await db
@@ -365,7 +429,7 @@ async function registrarPropriedadeNoCodex(casa, loginDono) {
 }
 
 // ============================================================
-// 💰 CONFIRMAR E COBRAR TAXA
+// 💰 TAXA
 // ============================================================
 async function confirmarECobrarTaxa() {
   const saldoAtual = Number(eu?.saldo) || 0;
@@ -380,7 +444,6 @@ async function confirmarECobrarTaxa() {
     return false;
   }
 
-  // 🔔 Pergunta antes de cobrar
   const ok = confirm(
     `🎲 Banco Imobiliário Online\n\n` +
     `Para entrar no jogo é cobrada uma taxa de:\n` +
@@ -391,11 +454,7 @@ async function confirmarECobrarTaxa() {
   );
 
   if (!ok) {
-    window.__biDebug(
-      `ℹ️ Você optou por <strong>não entrar</strong>. ` +
-      `Nenhum valor foi cobrado.`,
-      'erro'
-    );
+    window.__biDebug(`ℹ️ Você optou por <strong>não entrar</strong>. Nada foi cobrado.`, 'erro');
     document.getElementById('btn-dados').disabled = true;
     document.getElementById('btn-comprar').disabled = true;
     document.getElementById('dados-jogador').innerHTML =
@@ -403,19 +462,16 @@ async function confirmarECobrarTaxa() {
     return false;
   }
 
-  // Cobra
   await atualizarSaldoReal(login, -TAXA_ENTRADA);
-  console.log('[BI] taxa cobrada:', TAXA_ENTRADA);
   return true;
 }
 
 // ============================================================
-// 🚀 ENTRAR AUTOMATICAMENTE
+// 🚀 ENTRAR
 // ============================================================
 async function entrarAutomaticamente() {
-  // Se já tem jogo salvo com você dentro, não cobra de novo
   if (jogoIniciado && jogadores.some(j => j.login === login)) {
-    console.log('[BI] jogo em andamento, sem cobrança');
+    console.log('[BI] jogo em andamento');
     return true;
   }
 
@@ -488,6 +544,7 @@ async function moverJogador(passos) {
 async function processarCasa(pos) {
   const casa = tabuleiro[pos];
   const jog  = jogadores[jogadorAtual];
+  const donoGlobal = comprasGlobais[pos];
 
   switch (casa.tipo) {
     case 'imposto':
@@ -509,15 +566,14 @@ async function processarCasa(pos) {
     case 'propriedade':
     case 'servico':
     case 'ferrovia':
-      if (!casa.dono) {
+      if (!donoGlobal) {
         mostrarMsg(`🏠 ${casa.nome} à venda por ${fmtSaldo(casa.preco)}`);
-      } else if (casa.dono !== jog.login) {
+      } else if (donoGlobal.dono_login !== jog.login) {
         const taxa = casa.tipo === 'propriedade' ? 0.3 : 0.25;
         const aluguel = Math.floor(casa.preco * taxa);
         await atualizarSaldoReal(jog.login, -aluguel);
-        await atualizarSaldoReal(casa.dono, +aluguel);
-        const dono = jogadores.find(j => j.login === casa.dono);
-        mostrarMsg(`💵 Aluguel ${fmtSaldo(aluguel)} → ${dono?.nome || casa.dono}`);
+        await atualizarSaldoReal(donoGlobal.dono_login, +aluguel);
+        mostrarMsg(`💵 Aluguel ${fmtSaldo(aluguel)} → ${donoGlobal.dono_nome}`);
       } else {
         mostrarMsg(`🏠 Você já é dono de ${casa.nome}`);
       }
@@ -530,29 +586,53 @@ async function processarCasa(pos) {
 }
 
 // ============================================================
-// 🏠 COMPRAR
+// 🏠 COMPRAR — grava global
 // ============================================================
 window.comprar = async function () {
   if (!jogoIniciado) return;
 
+  const pos  = jogadores[jogadorAtual].posicao;
   const jog  = jogadores[jogadorAtual];
-  const casa = tabuleiro[jog.posicao];
+  const casa = tabuleiro[pos];
 
   if (!['propriedade', 'servico', 'ferrovia'].includes(casa.tipo)) {
     mostrarMsg('❌ Aqui não dá pra comprar!'); return;
   }
-  if (casa.dono) { mostrarMsg('❌ Já tem dono!'); return; }
-  if (jog.saldo < casa.preco) { mostrarMsg('❌ Sem saldo!'); return; }
+  if (comprasGlobais[pos]) {
+    mostrarMsg(`❌ Já pertence a ${comprasGlobais[pos].dono_nome}!`);
+    return;
+  }
+  if (jog.saldo < casa.preco) {
+    mostrarMsg('❌ Sem saldo!'); return;
+  }
 
+  // 1) Cobra do saldo real
   await atualizarSaldoReal(jog.login, -casa.preco);
+
+  // 2) Tenta registrar global (UNIQUE casa_id bloqueia se outro pegou primeiro)
+  const res = await registrarCompraGlobal(pos, casa.nome, casa.preco);
+
+  if (!res.ok) {
+    // Devolve o dinheiro — outro usuário comprou antes
+    await atualizarSaldoReal(jog.login, +casa.preco);
+    mostrarMsg('⚠️ Outro jogador comprou primeiro! Dinheiro devolvido.');
+    await carregarComprasGlobais();
+    atualizarTela();
+    return;
+  }
+
+  // 3) Marca no tabuleiro local
   casa.dono = jog.login;
   jog.propriedades.push(casa.nome);
 
-  if (casa.tipo === 'propriedade') await registrarPropriedadeNoCodex(casa, jog.login);
+  // 4) Codex pessoal
+  if (casa.tipo === 'propriedade') {
+    await registrarPropriedadeNoCodex(casa, jog.login);
+  }
 
   await salvarJogo();
   atualizarTela();
-  mostrarMsg(`✅ Comprou ${casa.nome} por ${fmtSaldo(casa.preco)}!`);
+  mostrarMsg(`✅ Comprou ${casa.nome} por ${fmtSaldo(casa.preco)}! (visível para todos)`);
 };
 
 // ============================================================
@@ -563,7 +643,7 @@ function mostrarMsg(texto) {
 }
 
 // ============================================================
-// 🖼️ TELA
+// 🖼️ TELA — mostra dono GLOBAL
 // ============================================================
 function atualizarTela() {
   const lista = document.getElementById('lista-jogadores');
@@ -609,6 +689,7 @@ function atualizarTela() {
     if (!el) continue;
     const casa = tabuleiro[i];
     const aqui = jogadores.filter(j => j.posicao === i);
+    const donoGlobal = comprasGlobais[i];
 
     let html = esc(casa.nome);
     if (casa.preco > 0) html += `<br>💰 ${fmtSaldo(casa.preco)}`;
@@ -616,23 +697,26 @@ function atualizarTela() {
     if (aqui.length > 0) {
       html += `<br>👤 ${aqui.map(j => esc(j.nome.charAt(0))).join(', ')}`;
       el.classList.add('ocupada');
-    } else el.classList.remove('ocupada');
+    } else {
+      el.classList.remove('ocupada');
+    }
 
-    if (casa.dono) {
-      const dono = jogadores.find(j => j.login === casa.dono);
-      html += `<br>🏠 ${esc(dono?.nome || casa.dono)}`;
-      el.style.backgroundColor = '#90EE90';
+    // ⭐ Destaque: dono VEM DA TABELA GLOBAL
+    if (donoGlobal) {
+      html += `<span class="dono-tag">🏠 ${esc(donoGlobal.dono_nome || donoGlobal.dono_login)}</span>`;
+      el.style.backgroundColor = donoGlobal.dono_login === login ? '#90EE90' : '#ffd28a';
       el.style.color = '#000';
     } else {
       el.style.backgroundColor = tipos[casa.tipo] || '#fff';
       el.style.color = '#333';
     }
+
     el.innerHTML = html;
   }
 }
 
 // ============================================================
-// 🔄 REALTIME
+// 🔄 REALTIME — JOGO LOCAL
 // ============================================================
 function ativarRealtime() {
   canalRealtime = db
@@ -657,6 +741,37 @@ function ativarRealtime() {
 }
 
 // ============================================================
+// 🌐 REALTIME — COMPRAS GLOBAIS
+// ============================================================
+function ativarRealtimeCompras() {
+  canalCompras = db
+    .channel('bi-compras')
+    .on('postgres_changes',
+      { event: '*', schema: 'public', table: TABELA_COMPRAS },
+      (payload) => {
+        const row = payload.new || payload.old;
+        if (!row) return;
+
+        if (payload.eventType === 'INSERT' || payload.eventType === 'UPDATE') {
+          comprasGlobais[row.casa_id] = {
+            dono_login: row.dono_login,
+            dono_nome:  row.dono_nome,
+            preco:      Number(row.preco) || 0,
+            comprado_em: row.comprado_em
+          };
+        } else if (payload.eventType === 'DELETE') {
+          delete comprasGlobais[row.casa_id];
+        }
+
+        atualizarTela();
+        console.log('[BI] compra atualizada:', row.casa_nome, '→', row.dono_nome);
+      })
+    .subscribe((status) => {
+      console.log('[BI] realtime compras:', status);
+    });
+}
+
+// ============================================================
 // 🚀 INIT
 // ============================================================
 (async function init() {
@@ -669,7 +784,10 @@ function ativarRealtime() {
       return;
     }
 
-    await carregarJogo();
+    await Promise.all([
+      carregarJogo(),
+      carregarComprasGlobais()
+    ]);
 
     const ok = await entrarAutomaticamente();
     montarTabuleiroDOM();
@@ -678,10 +796,12 @@ function ativarRealtime() {
     if (!ok) return;
 
     ativarRealtime();
+    ativarRealtimeCompras();
 
     window.__biDebug(
       `✅ Bem-vindo, <strong>${esc(eu.nome || login)}</strong>! ` +
-      `Saldo atual: <strong>${fmtSaldo(eu.saldo)}</strong>.`,
+      `Saldo: <strong>${fmtSaldo(eu.saldo)}</strong>. ` +
+      `${Object.keys(comprasGlobais).length} propriedade(s) já comprada(s) globalmente.`,
       'ok'
     );
     setTimeout(() => {
@@ -689,7 +809,7 @@ function ativarRealtime() {
       if (a) a.style.display = 'none';
     }, 5000);
 
-    mostrarMsg(`🎮 Bem-vindo! Jogue os dados.`);
+    mostrarMsg('🎮 Bem-vindo! Jogue os dados.');
 
   } catch (err) {
     console.error('[BI] init:', err);
@@ -698,6 +818,7 @@ function ativarRealtime() {
 
   window.addEventListener('beforeunload', () => {
     if (canalRealtime) db.removeChannel(canalRealtime);
+    if (canalCompras)  db.removeChannel(canalCompras);
   });
 })();
 </script>
