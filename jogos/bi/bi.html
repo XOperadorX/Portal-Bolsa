@@ -1,0 +1,382 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Banco Imobiliário Online</title>
+    <!-- Firebase -->
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-database-compat.js"></script>
+    <style>
+        * {
+            box-sizing: border-box;
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+        }
+        body {
+            background: linear-gradient(135deg, #1e3a5f, #2c5364);
+            min-height: 100vh;
+            padding: 20px;
+            color: white;
+        }
+        h1 {
+            text-align: center;
+            color: #ffd700;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.5);
+            margin-bottom: 20px;
+        }
+        .painel-jogadores {
+            background: rgba(0,0,0,0.3);
+            padding: 15px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+        }
+        .jogador-card {
+            background: rgba(255,255,255,0.1);
+            padding: 8px;
+            margin: 5px 0;
+            border-radius: 5px;
+        }
+        .jogador-card.vez {
+            background: #ffd700;
+            color: #000;
+            font-weight: bold;
+        }
+        button {
+            background: #ffd700;
+            color: #000;
+            border: none;
+            padding: 8px 16px;
+            margin: 5px;
+            border-radius: 5px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: 0.2s;
+        }
+        button:hover {
+            background: #ffed4a;
+            transform: scale(1.05);
+        }
+        .tabuleiro {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+            gap: 10px;
+            margin: 20px auto;
+            max-width: 900px;
+        }
+        .casa {
+            background: white;
+            color: #333;
+            padding: 12px;
+            border-radius: 8px;
+            text-align: center;
+            min-height: 100px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            font-size: 13px;
+            font-weight: bold;
+            border: 3px solid #ccc;
+        }
+        .casa.inicio { background: #90EE90; border-color: #228B22; }
+        .casa.rua { background: #FFE4B5; border-color: #DEB887; }
+        .casa.chance { background: #87CEEB; border-color: #4682B4; }
+        .casa.servico { background: #DDA0DD; border-color: #BA55D3; }
+        .casa.ferrovia { background: #D3D3D3; border-color: #808080; }
+        .casa.prisao { background: #CD853F; border-color: #8B4513; }
+        .casa.imposto { background: #FF6347; border-color: #DC143C; }
+        .casa.descanso { background: #98FB98; border-color: #32CD32; }
+        .casa.ocupada { box-shadow: 0 0 10px #ffd700; }
+        .controles {
+            background: rgba(0,0,0,0.3);
+            padding: 20px;
+            border-radius: 10px;
+            text-align: center;
+            max-width: 600px;
+            margin: 0 auto;
+        }
+        #mensagem {
+            margin-top: 10px;
+            font-size: 16px;
+            color: #ffd700;
+        }
+        .aviso {
+            background: #fff3cd;
+            color: #856404;
+            padding: 10px;
+            border-radius: 5px;
+            margin-bottom: 15px;
+            text-align: center;
+        }
+    </style>
+</head>
+<body>
+
+    <h1>🏦 BANCO IMOBILIÁRIO ONLINE</h1>
+
+    <div class="aviso">
+        ⚠️ Configure suas credenciais do Firebase no início do código antes de jogar!
+    </div>
+
+    <!-- Painel de Jogadores -->
+    <div class="painel-jogadores">
+        <h3>Jogadores</h3>
+        <div id="lista-jogadores"></div>
+        <button onclick="adicionarJogador()">➕ Adicionar Jogador</button>
+        <button onclick="iniciarJogo()">▶️ Iniciar Jogo</button>
+        <button onclick="reiniciarJogo()">🔄 Reiniciar Jogo</button>
+    </div>
+
+    <!-- Tabuleiro -->
+    <div class="tabuleiro">
+        <div id="casa-0" class="casa inicio">Início<br>💰+200</div>
+        <div id="casa-1" class="casa rua">Rua das Flores<br>💰60</div>
+        <div id="casa-2" class="casa chance">Sorte/Azar</div>
+        <div id="casa-3" class="casa rua">Av. Brasil<br>💰100</div>
+        <div id="casa-4" class="casa servico">Água<br>💰150</div>
+        <div id="casa-5" class="casa ferrovia">Estação<br>💰200</div>
+        <div id="casa-6" class="casa rua">Rua Azul<br>💰140</div>
+        <div id="casa-7" class="casa prisao">Prisão/Visita</div>
+        <div id="casa-8" class="casa rua">Av. Central<br>💰220</div>
+        <div id="casa-9" class="casa imposto">Imposto<br>💸-100</div>
+        <div id="casa-10" class="casa rua">Praça Nova<br>💰400</div>
+        <div id="casa-11" class="casa descanso">Descanso ✌️</div>
+    </div>
+
+    <!-- Controles -->
+    <div class="controles">
+        <div id="dados-jogador">Clique em "Adicionar Jogador" para começar!</div>
+        <br>
+        <button onclick="jogarDados()">🎲 Jogar Dados</button>
+        <button onclick="comprar()">🏠 Comprar Propriedade</button>
+        <div id="resultado-dados"></div>
+        <div id="mensagem"></div>
+    </div>
+
+    <script>
+        // ==================================================
+        // 🔧 COLOQUE SUAS CREDENCIAIS DO FIREBASE AQUI!
+        // ==================================================
+        const firebaseConfig = {
+            apiKey: "COLOQUE-SUA-CHAVE-AQUI",
+            authDomain: "seu-projeto.firebaseapp.com",
+            databaseURL: "https://seu-projeto-default-rtdb.firebaseio.com",
+            projectId: "seu-projeto",
+            storageBucket: "seu-projeto.appspot.com",
+            messagingSenderId: "123456789",
+            appId: "1:123456789:web:abc123def456"
+        };
+
+        // Inicializar Firebase
+        firebase.initializeApp(firebaseConfig);
+        const db = firebase.database();
+        const refJogo = db.ref("jogo");
+
+        // ==================== DADOS DO JOGO ====================
+        let jogadores = [];
+        let jogadorAtual = 0;
+        let jogoIniciado = false;
+        let tabuleiro = [
+            {nome: "Início", preco: 0, tipo: "inicio"},
+            {nome: "Rua das Flores", preco: 60, tipo: "propriedade"},
+            {nome: "Sorte ou Azar", preco: 0, tipo: "chance"},
+            {nome: "Avenida Brasil", preco: 100, tipo: "propriedade"},
+            {nome: "Serviço de Água", preco: 150, tipo: "servico"},
+            {nome: "Estação Ferroviária", preco: 200, tipo: "ferrovia"},
+            {nome: "Rua Azul", preco: 140, tipo: "propriedade"},
+            {nome: "Prisão / Visita", preco: 0, tipo: "especial"},
+            {nome: "Avenida Central", preco: 220, tipo: "propriedade"},
+            {nome: "Imposto de Renda", preco: 100, tipo: "imposto"},
+            {nome: "Praça Nova", preco: 400, tipo: "propriedade"},
+            {nome: "Descanso", preco: 0, tipo: "descanso"}
+        ];
+        let tabuleiroOriginal = JSON.parse(JSON.stringify(tabuleiro));
+
+        // ==================== BANCO DE DADOS ====================
+        refJogo.on("value", (snapshot) => {
+            const dados = snapshot.val();
+            if (dados) {
+                jogadores = dados.jogadores || [];
+                jogadorAtual = dados.jogadorAtual || 0;
+                jogoIniciado = dados.jogoIniciado || false;
+                tabuleiro = dados.tabuleiro || JSON.parse(JSON.stringify(tabuleiroOriginal));
+                atualizarTela();
+            }
+        });
+
+        function salvarNoBanco() {
+            refJogo.set({ jogadores, jogadorAtual, jogoIniciado, tabuleiro });
+        }
+
+        // ==================== FUNÇÕES DO JOGO ====================
+        function adicionarJogador() {
+            if (jogoIniciado) { alert("Jogo já iniciado!"); return; }
+            const nome = prompt("Nome do jogador:");
+            if (!nome) return;
+            jogadores.push({
+                nome: nome,
+                saldo: 1500,
+                posicao: 0,
+                propriedades: []
+            });
+            salvarNoBanco();
+        }
+
+        function iniciarJogo() {
+            if (jogadores.length < 1) {
+                alert("Adicione pelo menos 1 jogador!");
+                return;
+            }
+            jogoIniciado = true;
+            jogadorAtual = 0;
+            tabuleiro = JSON.parse(JSON.stringify(tabuleiroOriginal));
+            salvarNoBanco();
+            alert(`🎮 Jogo iniciado! Vez de ${jogadores[0].nome}!`);
+        }
+
+        function reiniciarJogo() {
+            if(confirm("Deseja reiniciar todo o jogo?")) {
+                refJogo.remove();
+                jogadores = [];
+                jogadorAtual = 0;
+                jogoIniciado = false;
+                tabuleiro = JSON.parse(JSON.stringify(tabuleiroOriginal));
+                atualizarTela();
+                mostrarMsg("Jogo reiniciado!");
+            }
+        }
+
+        function jogarDados() {
+            if (!jogoIniciado) return;
+            const dado1 = Math.floor(Math.random() * 6) + 1;
+            const dado2 = Math.floor(Math.random() * 6) + 1;
+            const total = dado1 + dado2;
+            document.getElementById("resultado-dados").innerHTML =
+                `🎲 Dados: ${dado1} + ${dado2} = ${total}`;
+            moverJogador(total);
+        }
+
+        function moverJogador(passos) {
+            const jog = jogadores[jogadorAtual];
+            let novaPosicao = jog.posicao + passos;
+            
+            if (novaPosicao >= tabuleiro.length) {
+                jog.saldo += 200;
+                novaPosicao = novaPosicao % tabuleiro.length;
+                mostrarMsg("🎉 Passou pela partida! Ganhou R$200");
+            }
+            
+            jog.posicao = novaPosicao;
+            processarCasa(novaPosicao);
+            salvarNoBanco();
+            
+            jogadorAtual = (jogadorAtual + 1) % jogadores.length;
+            setTimeout(() => {
+                mostrarMsg(`⏭️ Vez de ${jogadores[jogadorAtual].nome}`);
+            }, 1500);
+        }
+
+        function processarCasa(pos) {
+            const casa = tabuleiro[pos];
+            const jog = jogadores[jogadorAtual];
+            
+            switch(casa.tipo) {
+                case "imposto":
+                    jog.saldo -= casa.preco;
+                    mostrarMsg(`💸 Pagou R$${casa.preco} de imposto!`);
+                    break;
+                case "chance":
+                    const sorte = Math.random() > 0.5;
+                    if (sorte) {
+                        jog.saldo += 100;
+                        mostrarMsg("🍀 Sorte! Ganhou R$100!");
+                    } else {
+                        jog.saldo -= 50;
+                        mostrarMsg("😬 Azar! Perdeu R$50!");
+                    }
+                    break;
+                case "propriedade":
+                    if (!casa.dono) {
+                        mostrarMsg(`🏠 ${casa.nome} à venda: R$${casa.preco}`);
+                    } else if (casa.dono !== jog.nome) {
+                        const aluguel = Math.floor(casa.preco * 0.3);
+                        jog.saldo -= aluguel;
+                        const dono = jogadores.find(j => j.nome === casa.dono);
+                        if (dono) dono.saldo += aluguel;
+                        mostrarMsg(`💵 Pagou aluguel de R$${aluguel} para ${casa.dono}`);
+                    }
+                    break;
+            }
+            
+            if (jog.saldo < 0) {
+                alert(`💔 ${jog.nome} está falido! Fim de jogo!`);
+                refJogo.remove();
+            }
+        }
+
+        function comprar() {
+            if (!jogoIniciado) return;
+            const jog = jogadores[jogadorAtual];
+            const casa = tabuleiro[jog.posicao];
+            
+            if (casa.tipo !== "propriedade" || casa.dono) {
+                mostrarMsg("❌ Não pode comprar aqui!");
+                return;
+            }
+            
+            if (jog.saldo >= casa.preco) {
+                jog.saldo -= casa.preco;
+                casa.dono = jog.nome;
+                jog.propriedades.push(casa.nome);
+                mostrarMsg(`✅ Comprou ${casa.nome}!`);
+                salvarNoBanco();
+            } else {
+                mostrarMsg("❌ Saldo insuficiente!");
+            }
+        }
+
+        function mostrarMsg(texto) {
+            document.getElementById("mensagem").innerHTML = `<p>${texto}</p>`;
+        }
+
+        function atualizarTela() {
+            const lista = document.getElementById("lista-jogadores");
+            lista.innerHTML = jogadores.map((j, i) => `
+                <div class="jogador-card ${i === jogadorAtual ? 'vez' : ''}">
+                    <strong>${j.nome}</strong> | 💰 R$${j.saldo} | 📍 ${tabuleiro[j.posicao].nome}
+                </div>
+            `).join("");
+            
+            if (jogoIniciado && jogadores.length > 0) {
+                const jog = jogadores[jogadorAtual];
+                document.getElementById("dados-jogador").innerHTML =
+                    `<strong>Vez de: ${jog.nome}</strong> | Saldo: R$${jog.saldo}`;
+            }
+            
+            for (let i = 0; i < tabuleiro.length; i++) {
+                const el = document.getElementById(`casa-${i}`);
+                const jogadoresAqui = jogadores.filter(j => j.posicao === i);
+                el.innerHTML = tabuleiro[i].nome + `<br>💰${tabuleiro[i].preco}`;
+                if (jogadoresAqui.length > 0) {
+                    el.innerHTML += `<br>👤${jogadoresAqui.map(j=>j.nome.charAt(0)).join(',')}`;
+                    el.classList.add("ocupada");
+                } else {
+                    el.classList.remove("ocupada");
+                }
+                if (tabuleiro[i].dono) {
+                    el.innerHTML += `<br>🏠${tabuleiro[i].dono.charAt(0)}`;
+                    el.style.backgroundColor = "#90EE90";
+                } else {
+                    const tipos = {
+                        propriedade: "#FFE4B5", inicio: "#90EE90", chance: "#87CEEB",
+                        servico: "#DDA0DD", ferrovia: "#D3D3D3", prisao: "#CD853F",
+                        imposto: "#FF6347", descanso: "#98FB98"
+                    };
+                    el.style.backgroundColor = tipos[tabuleiro[i].tipo] || "#fff";
+                }
+            }
+        }
+    </script>
+</body>
+</html>
