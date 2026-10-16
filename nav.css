@@ -1,0 +1,170 @@
+/* ============================================================
+   NAV UNIVERSAL — Menu de navegação reutilizável
+   Inclui: 🏠 Voltar, 🏦 BANCO IMOBILIÁRIO e demais botões
+============================================================ */
+
+/* ============================================================
+   Container principal
+============================================================ */
+.nav-universal {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  align-items: center;
+  justify-content: center;
+  padding: 12px;
+  background: rgba(10, 15, 30, 0.85);
+  backdrop-filter: blur(14px) saturate(140%);
+  -webkit-backdrop-filter: blur(14px) saturate(140%);
+  border: 1px solid rgba(255, 215, 0, 0.15);
+  border-radius: 14px;
+  margin: 12px auto;
+  max-width: 1400px;
+  box-shadow: 0 8px 32px rgba(0,0,0,0.4);
+  position: relative;
+  z-index: 100;
+}
+
+.nav-universal .nav-buttons {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+}
+
+/* ============================================================
+   Botões genéricos (btn-bolsa e btn-voltar compartilham base)
+============================================================ */
+.nav-universal .btn-bolsa,
+.nav-universal .btn-voltar {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 8px 14px;
+  border-radius: 9px;
+  font-weight: 700;
+  font-size: 12.5px;
+  letter-spacing: 0.3px;
+  cursor: pointer;
+  text-decoration: none;
+  color: #fff;
+  background: linear-gradient(135deg, #3b82f6, #1e40af);
+  border: 1px solid rgba(255,255,255,0.1);
+  box-shadow: 0 3px 10px rgba(0,0,0,0.25), inset 0 -2px 0 rgba(0,0,0,0.15);
+  transition: all 0.2s ease;
+  white-space: nowrap;
+  font-family: 'Segoe UI', system-ui, -apple-system, Arial, sans-serif;
+}
+
+.nav-universal .btn-bolsa:hover,
+.nav-universal .btn-voltar:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 16px rgba(0,0,0,0.35), inset 0 -2px 0 rgba(0,0,0,0.15);
+  filter: brightness(1.1);
+}
+
+.nav-universal .btn-bolsa:active,
+.nav-universal .btn-voltar:active {
+  transform: translateY(0);
+}
+
+/* ============================================================
+   Cores específicas — Botões principais
+============================================================ */
+
+/* 🏠 Voltar — roxo (mesma cor dos botões MUMU/Troca) */
+.nav-universal .btn-voltar {
+  background: linear-gradient(135deg, #8b5cf6, #7000ff);
+}
+
+/* 🏦 Banco Imobiliário — dourado premium */
+.nav-universal .btn-bi {
+  background: linear-gradient(135deg, #ffd700, #b45309);
+  color: #0a0f1e;
+  text-shadow: 0 1px 0 rgba(255,255,255,0.25);
+  box-shadow:
+    0 3px 10px rgba(255,215,0,0.35),
+    inset 0 -2px 0 rgba(0,0,0,0.15);
+}
+
+.nav-universal .btn-bi:hover {
+  box-shadow:
+    0 6px 20px rgba(255,215,0,0.55),
+    inset 0 -2px 0 rgba(0,0,0,0.15);
+}
+
+/* ============================================================
+   Cores específicas — Demais botões
+============================================================ */
+.nav-universal .btn-loja     { background: linear-gradient(135deg, #f59e0b, #d97706); }
+.nav-universal .btn-diario   { background: linear-gradient(135deg, #22c55e, #15803d); }
+.nav-universal .btn-codex    { background: linear-gradient(135deg, #3b82f6, #1e40af); }
+.nav-universal .btn-player   { background: linear-gradient(135deg, #06b6d4, #0e7490); }
+.nav-universal .btn-mercado  { background: linear-gradient(135deg, #f59e0b, #b45309); }
+.nav-universal .btn-mochila  { background: linear-gradient(135deg, #8b5cf6, #7000ff); }
+.nav-universal .btn-mumu     { background: linear-gradient(135deg, #8b5cf6, #7000ff); }
+.nav-universal .btn-troca    { background: linear-gradient(135deg, #8b5cf6, #7000ff); }
+.nav-universal .btn-rank     { background: linear-gradient(135deg, #8b5cf6, #7000ff); }
+.nav-universal .btn-perfil   { background: linear-gradient(135deg, #8b5cf6, #7000ff); }
+.nav-universal .btn-carteira { background: linear-gradient(135deg, #a855f7, #7c3aed); }
+.nav-universal .btn-adm-bi   { background: linear-gradient(135deg, #ef4444, #b91c1c); }
+.nav-universal .btn-admin    { background: linear-gradient(135deg, #7000ff, #8b5cf6); }
+
+/* ============================================================
+   Botão Sair
+============================================================ */
+.nav-universal .btn-sair {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 8px 14px;
+  border-radius: 9px;
+  font-weight: 700;
+  font-size: 12.5px;
+  letter-spacing: 0.3px;
+  cursor: pointer;
+  color: #fff;
+  background: linear-gradient(135deg, #ef4444, #b91c1c);
+  border: 1px solid rgba(255,255,255,0.1);
+  box-shadow: 0 3px 10px rgba(0,0,0,0.25);
+  transition: all 0.2s ease;
+  font-family: 'Segoe UI', system-ui, -apple-system, Arial, sans-serif;
+  white-space: nowrap;
+}
+
+.nav-universal .btn-sair:hover {
+  transform: translateY(-2px);
+  filter: brightness(1.1);
+  box-shadow: 0 6px 16px rgba(239,68,68,0.4);
+}
+
+/* ============================================================
+   Grupo com borda pra separar (opcional)
+============================================================ */
+.nav-universal .nav-group {
+  display: inline-flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  padding: 4px 8px;
+  border-radius: 12px;
+  background: rgba(255,255,255,0.03);
+  border: 1px solid rgba(255,255,255,0.05);
+}
+
+/* ============================================================
+   Mobile
+============================================================ */
+@media (max-width: 768px) {
+  .nav-universal .btn-bolsa,
+  .nav-universal .btn-voltar,
+  .nav-universal .btn-sair {
+    padding: 7px 10px;
+    font-size: 11.5px;
+  }
+  .nav-universal {
+    padding: 8px;
+    border-radius: 10px;
+  }
+}

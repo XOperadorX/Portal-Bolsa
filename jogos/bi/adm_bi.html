@@ -1,0 +1,901 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>🛠️ ADM — Banco Imobiliário</title>
+<style>
+  * { box-sizing: border-box; font-family: 'Segoe UI', system-ui, -apple-system, Arial, sans-serif; margin: 0; padding: 0; }
+
+  body {
+    background: #0a0f1e;
+    min-height: 100vh;
+    padding: 24px 20px 60px;
+    color: #e8eef7;
+  }
+  body::before {
+    content: '';
+    position: fixed; inset: 0;
+    background:
+      radial-gradient(circle at 15% 20%, rgba(255,215,0,0.10), transparent 45%),
+      radial-gradient(circle at 85% 70%, rgba(239,68,68,0.10), transparent 45%),
+      linear-gradient(135deg, #0a0f1e 0%, #14203d 50%, #1a2d52 100%);
+    z-index: -2;
+  }
+
+  h1 {
+    text-align: center;
+    font-size: clamp(20px, 3.5vw, 30px);
+    letter-spacing: 2px;
+    margin-bottom: 8px;
+    background: linear-gradient(90deg, #ff6b6b, #ffd700, #ff6b6b);
+    background-size: 200% auto;
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+    animation: shimmer 3s linear infinite;
+  }
+  @keyframes shimmer { to { background-position: 200% center; } }
+
+  .sub {
+    text-align: center;
+    opacity: 0.65;
+    font-size: 12px;
+    margin-bottom: 24px;
+  }
+
+  .layout {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 20px;
+    max-width: 1600px;
+    margin: 0 auto;
+  }
+  @media (max-width: 1100px) { .layout { grid-template-columns: 1fr; } }
+
+  .glass {
+    background: rgba(20, 30, 55, 0.6);
+    backdrop-filter: blur(14px) saturate(140%);
+    -webkit-backdrop-filter: blur(14px) saturate(140%);
+    border: 1px solid rgba(255, 215, 0, 0.15);
+    border-radius: 14px;
+    box-shadow: 0 8px 32px rgba(0,0,0,0.4);
+    padding: 18px;
+  }
+
+  .section-title {
+    color: #ffd700;
+    font-size: 14px;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding-bottom: 10px;
+    margin-bottom: 14px;
+    border-bottom: 1px solid rgba(255,215,0,0.15);
+  }
+  .section-title small {
+    font-size: 11px;
+    background: rgba(255,215,0,0.2);
+    color: #ffd700;
+    padding: 3px 9px;
+    border-radius: 20px;
+    font-weight: 800;
+  }
+
+  button {
+    background: linear-gradient(135deg, #ffd700, #ffb800);
+    color: #0a0f1e;
+    border: none;
+    padding: 9px 16px;
+    margin: 3px;
+    border-radius: 9px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: all 0.2s;
+    font-size: 12px;
+    letter-spacing: 0.3px;
+    box-shadow: 0 3px 10px rgba(255,215,0,0.25);
+  }
+  button:hover:not(:disabled) { transform: translateY(-2px); box-shadow: 0 6px 16px rgba(255,215,0,0.4); }
+  button:disabled { opacity: 0.4; cursor: not-allowed; }
+  button.secundario { background: linear-gradient(135deg, #3a4763, #2a3346); color: #e8eef7; }
+  button.perigo     { background: linear-gradient(135deg, #ef4444, #b91c1c); color: #fff; }
+  button.ok         { background: linear-gradient(135deg, #22c55e, #15803d); color: #fff; }
+  button.info       { background: linear-gradient(135deg, #3b82f6, #1e40af); color: #fff; }
+  button.mini       { padding: 5px 9px; font-size: 11px; border-radius: 7px; }
+
+  table { width: 100%; border-collapse: collapse; font-size: 12.5px; }
+  th, td { padding: 9px 8px; text-align: left; border-bottom: 1px solid rgba(255,255,255,0.08); }
+  th {
+    color: #ffd700; font-size: 11px; text-transform: uppercase;
+    letter-spacing: 0.6px; font-weight: 700;
+  }
+  tr:hover { background: rgba(255,255,255,0.04); }
+
+  input, select {
+    padding: 7px 10px; border-radius: 7px;
+    border: 1px solid rgba(255,215,0,0.25);
+    background: rgba(255,255,255,0.95);
+    color: #0a0f1e; font-size: 13px; font-weight: 600;
+    outline: none; width: 100%;
+  }
+  input:focus, select:focus { border-color: #ffd700; box-shadow: 0 0 0 3px rgba(255,215,0,0.2); }
+
+  .tipo-badge {
+    display: inline-block; padding: 2px 8px; border-radius: 20px;
+    font-size: 10px; font-weight: 800; letter-spacing: 0.3px;
+  }
+  .tipo-inicio      { background: #22c55e; color: #fff; }
+  .tipo-propriedade { background: #f59e0b; color: #fff; }
+  .tipo-chance      { background: #3b82f6; color: #fff; }
+  .tipo-servico     { background: #a855f7; color: #fff; }
+  .tipo-ferrovia    { background: #64748b; color: #fff; }
+  .tipo-especial    { background: #a0522d; color: #fff; }
+  .tipo-imposto     { background: #ef4444; color: #fff; }
+  .tipo-descanso    { background: #84cc16; color: #fff; }
+
+  .aviso {
+    background: linear-gradient(135deg, rgba(255,215,0,0.15), rgba(255,215,0,0.05));
+    color: #ffd700; padding: 10px 16px; border-radius: 9px;
+    margin-bottom: 16px; text-align: center;
+    font-size: 12.5px; border: 1px solid rgba(255,215,0,0.3);
+  }
+  .aviso.erro { background: rgba(239,68,68,0.15); color: #fca5a5; border-color: rgba(239,68,68,0.4); }
+  .aviso.ok   { background: rgba(34,197,94,0.15); color: #86efac; border-color: rgba(34,197,94,0.4); }
+
+  .lista-scroll { max-height: 420px; overflow-y: auto; padding-right: 4px; }
+  .lista-scroll::-webkit-scrollbar { width: 6px; }
+  .lista-scroll::-webkit-scrollbar-thumb {
+    background: linear-gradient(180deg, #ffd700, #d97706); border-radius: 3px;
+  }
+
+  .item-mini {
+    background: rgba(255,255,255,0.05);
+    padding: 8px 10px; border-radius: 8px;
+    margin-bottom: 6px; font-size: 12px;
+    display: flex; justify-content: space-between; align-items: center;
+    gap: 8px; flex-wrap: wrap;
+  }
+  .item-mini.eu { border-left: 3px solid #ffd700; }
+  .item-mini.mercado { border-left: 3px solid #f59e0b; }
+
+  .modal-fundo {
+    position: fixed; inset: 0;
+    background: rgba(5, 8, 18, 0.85);
+    backdrop-filter: blur(8px);
+    display: none; align-items: center; justify-content: center;
+    z-index: 1000; padding: 20px;
+  }
+  .modal-fundo.on { display: flex; }
+  .modal-box {
+    background: linear-gradient(160deg, #1a2745, #0f1a35);
+    padding: 24px; border-radius: 14px;
+    max-width: 480px; width: 100%;
+    border: 1px solid rgba(255,215,0,0.35);
+    max-height: 85vh; overflow-y: auto;
+  }
+  .modal-box h3 {
+    color: #ffd700; margin-bottom: 16px; padding-bottom: 10px;
+    border-bottom: 1px solid rgba(255,215,0,0.15);
+  }
+  .modal-box label {
+    display: block; font-size: 11px; margin: 12px 0 4px;
+    color: #b9c5d8; text-transform: uppercase; letter-spacing: 0.4px;
+  }
+  .modal-box .linha {
+    display: flex; justify-content: flex-end; margin-top: 18px; gap: 6px;
+  }
+
+  .grid-btns {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+    gap: 6px; margin-top: 10px;
+  }
+</style>
+</head>
+<body>
+
+<h1>🛠️ ADM — BANCO IMOBILIÁRIO</h1>
+<p class="sub">Painel de administração • Foz do Iguaçu</p>
+
+<div class="aviso" id="aviso">⚠️ Verificando sessão...</div>
+
+<div class="layout">
+
+  <div class="glass">
+    <div class="section-title">
+      🏘️ Tabuleiro <small id="count-tab">0</small>
+    </div>
+    <div class="grid-btns" style="margin-bottom:12px;">
+      <button class="ok" onclick="ADM.novaCasa()">➕ Nova Casa</button>
+      <button class="secundario" onclick="ADM.recarregarTabuleiro()">🔄 Recarregar</button>
+      <button class="info" onclick="ADM.restaurarPadrao()">↺ Restaurar Padrão</button>
+      <button class="perigo" onclick="ADM.limparTudo()">🗑️ Limpar Tudo</button>
+    </div>
+    <div class="lista-scroll">
+      <table>
+        <thead>
+          <tr>
+            <th style="width:30px">#</th>
+            <th>Nome</th>
+            <th style="width:100px">Preço</th>
+            <th style="width:110px">Tipo</th>
+            <th style="width:160px">Ações</th>
+          </tr>
+        </thead>
+        <tbody id="tab-body"></tbody>
+      </table>
+    </div>
+  </div>
+
+  <div style="display:flex; flex-direction:column; gap:20px;">
+
+    <div class="glass">
+      <div class="section-title">
+        👥 Usuários <small id="count-users">0</small>
+      </div>
+      <input type="text" id="busca-user" placeholder="🔍 Buscar login/nome..."
+        oninput="ADM.renderizarUsuarios()" style="margin-bottom:10px;">
+      <div class="lista-scroll" id="lista-users" style="max-height:260px;">
+        <div style="text-align:center;opacity:0.5;padding:16px 0;font-size:12px;">Carregando...</div>
+      </div>
+    </div>
+
+    <div class="glass">
+      <div class="section-title">
+        🏠 Compras Globais <small id="count-compras">0</small>
+      </div>
+      <div class="grid-btns" style="margin-bottom:10px;">
+        <button class="secundario" onclick="ADM.recarregarCompras()">🔄 Atualizar</button>
+        <button class="perigo" onclick="ADM.limparCompras()">🗑️ Zerar Compras</button>
+      </div>
+      <div class="lista-scroll" id="lista-compras" style="max-height:260px;">
+        <div style="text-align:center;opacity:0.5;padding:16px 0;font-size:12px;">Carregando...</div>
+      </div>
+    </div>
+
+    <div class="glass">
+      <div class="section-title">
+        🛒 Mercado <small id="count-mercado">0</small>
+      </div>
+      <div class="grid-btns" style="margin-bottom:10px;">
+        <button class="secundario" onclick="ADM.recarregarMercado()">🔄 Atualizar</button>
+        <button class="perigo" onclick="ADM.limparMercado()">🗑️ Cancelar Tudo</button>
+      </div>
+      <div class="lista-scroll" id="lista-mercado" style="max-height:220px;">
+        <div style="text-align:center;opacity:0.5;padding:16px 0;font-size:12px;">Carregando...</div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<div class="modal-fundo" id="modal">
+  <div class="modal-box" id="modal-box"></div>
+</div>
+
+<script>
+(function () {
+  const aviso = document.getElementById('aviso');
+  const setAviso = (txt, cls) => {
+    if (!aviso) return;
+    aviso.className = 'aviso ' + (cls || '');
+    aviso.innerHTML = txt;
+  };
+  window.__admDebug = setAviso;
+
+  window.addEventListener('error', (e) => {
+    console.error('[ADM error]', e);
+    setAviso('❌ ' + (e.message || 'Erro'), 'erro');
+  });
+  window.addEventListener('unhandledrejection', (e) => {
+    console.error('[ADM rejection]', e);
+    setAviso('❌ Promise: ' + (e.reason?.message || e.reason), 'erro');
+  });
+
+  window.ADM = {};
+})();
+</script>
+
+<script type="module">
+// ============================================================
+// IMPORTS
+// ============================================================
+let cfg;
+try { cfg = await import('./config.js'); }
+catch (err) {
+  window.__admDebug('❌ Falha ao importar config.js: ' + (err.message || err), 'erro');
+  throw err;
+}
+const { db, TABELA, SESSION_KEY, fmtSaldo, esc } = cfg;
+
+// ============================================================
+// CONSTANTES
+// ============================================================
+const TB_TABULEIRO = 'banco_imobiliario_tabuleiro';
+const TB_COMPRAS   = 'banco_imobiliario_compras';
+const TB_MERCADO   = 'banco_imobiliario_mercado';
+const TB_LANCES    = 'banco_imobiliario_lances';
+
+const TIPOS = [
+  'inicio', 'propriedade', 'chance', 'servico',
+  'ferrovia', 'especial', 'imposto', 'descanso'
+];
+
+// ============================================================
+// SESSÃO
+// ============================================================
+function detectarLogin() {
+  const chaves = [SESSION_KEY, 'usuario_logado', 'usuarioLogado', 'usuario', 'user', 'login', 'email'];
+  for (const k of chaves) {
+    const raw = localStorage.getItem(k);
+    if (!raw) continue;
+    try {
+      const obj = JSON.parse(raw);
+      if (typeof obj === 'string' && obj.trim()) return obj.trim();
+      if (obj && typeof obj === 'object') {
+        const c = obj.login || obj.usuario || obj.email || obj.user || obj.nome;
+        if (c && String(c).trim()) return String(c).trim();
+      }
+    } catch { if (raw.trim()) return raw.trim(); }
+  }
+  return null;
+}
+const login = detectarLogin();
+if (!login) {
+  window.__admDebug('❌ Nenhuma sessão. Faça login primeiro.', 'erro');
+  throw new Error('Sem sessão');
+}
+
+// ============================================================
+// ESTADO
+// ============================================================
+let tabuleiro      = [];
+let usuarios       = [];
+let comprasGlobais = [];
+let mercado        = [];
+
+// ============================================================
+// HELPERS
+// ============================================================
+function abrirModal(html) {
+  document.getElementById('modal-box').innerHTML = html;
+  document.getElementById('modal').classList.add('on');
+}
+function fecharModal() {
+  document.getElementById('modal').classList.remove('on');
+}
+document.getElementById('modal').addEventListener('click', (e) => {
+  if (e.target.id === 'modal') fecharModal();
+});
+
+function classeTipo(t) {
+  const mapa = {
+    inicio: 'tipo-inicio', propriedade: 'tipo-propriedade',
+    chance: 'tipo-chance', servico: 'tipo-servico',
+    ferrovia: 'tipo-ferrovia', especial: 'tipo-especial',
+    imposto: 'tipo-imposto', descanso: 'tipo-descanso'
+  };
+  return mapa[t] || 'tipo-especial';
+}
+function msgAviso(txt, cls) {
+  if (window.__admDebug) window.__admDebug(txt, cls);
+}
+
+// ============================================================
+// CARREGAR DADOS
+// ============================================================
+async function carregarTabuleiro() {
+  const { data, error } = await db.from(TB_TABULEIRO).select('*').order('posicao', { ascending: true });
+  if (error) { console.error(error); msgAviso('❌ Erro: ' + error.message, 'erro'); return; }
+  tabuleiro = data || [];
+  renderizarTabuleiro();
+}
+
+async function carregarUsuarios() {
+  const { data, error } = await db.from(TABELA).select('login, nome, saldo').order('login', { ascending: true });
+  if (error) { console.error(error); return; }
+  usuarios = data || [];
+  renderizarUsuarios();
+}
+
+async function carregarCompras() {
+  const { data, error } = await db.from(TB_COMPRAS).select('*').order('casa_id', { ascending: true });
+  if (error) { console.error(error); return; }
+  comprasGlobais = data || [];
+}
+
+async function carregarMercado() {
+  const { data, error } = await db.from(TB_MERCADO).select('*').order('criado_em', { ascending: false });
+  if (error) { console.error(error); return; }
+  mercado = data || [];
+}
+
+// ============================================================
+// RENDER — TABULEIRO
+// ============================================================
+function renderizarTabuleiro() {
+  document.getElementById('count-tab').textContent = tabuleiro.length;
+  const body = document.getElementById('tab-body');
+
+  if (tabuleiro.length === 0) {
+    body.innerHTML = '<tr><td colspan="5" style="text-align:center;opacity:0.5;padding:20px;">Nenhuma casa. Clique em "Nova Casa".</td></tr>';
+    return;
+  }
+
+  body.innerHTML = tabuleiro.map((c, i) => `
+    <tr>
+      <td>${c.posicao}</td>
+      <td><strong>${esc(c.nome)}</strong></td>
+      <td>${c.preco > 0 ? fmtSaldo(c.preco) : '—'}</td>
+      <td><span class="tipo-badge ${classeTipo(c.tipo)}">${esc(c.tipo)}</span></td>
+      <td>
+        <button class="mini info"   onclick="ADM.editarCasa(${c.id})">✏️</button>
+        <button class="mini"        onclick="ADM.moverCasa(${c.id},-1)" ${i === 0 ? 'disabled' : ''}>⬆️</button>
+        <button class="mini"        onclick="ADM.moverCasa(${c.id},1)" ${i === tabuleiro.length - 1 ? 'disabled' : ''}>⬇️</button>
+        <button class="mini perigo" onclick="ADM.deletarCasa(${c.id})">🗑️</button>
+      </td>
+    </tr>
+  `).join('');
+}
+
+// ============================================================
+// RENDER — USUÁRIOS
+// ============================================================
+function renderizarUsuarios() {
+  const filtroEl = document.getElementById('busca-user');
+  const filtro = (filtroEl?.value || '').toLowerCase().trim();
+  const lista = usuarios.filter(u =>
+    !filtro ||
+    (u.login || '').toLowerCase().includes(filtro) ||
+    (u.nome || '').toLowerCase().includes(filtro)
+  );
+
+  document.getElementById('count-users').textContent = usuarios.length;
+  const el = document.getElementById('lista-users');
+
+  if (lista.length === 0) {
+    el.innerHTML = '<div style="text-align:center;opacity:0.5;padding:16px 0;font-size:12px;">Nenhum usuário.</div>';
+    return;
+  }
+
+  el.innerHTML = lista.map(u => {
+    // Escapa o login pra usar dentro de uma string JS em onclick
+    const l = esc(u.login).replace(/'/g, "&#39;").replace(/\\/g, "\\\\");
+    return `
+      <div class="item-mini ${u.login === login ? 'eu' : ''}">
+        <div>
+          <strong>${esc(u.nome || u.login)}</strong>
+          <small style="opacity:0.7">@${esc(u.login)}</small><br>
+          💰 <strong>${fmtSaldo(u.saldo)}</strong>
+        </div>
+        <div>
+          <button class="mini ok"     onclick="ADM.ajustarSaldo('${l}', 1)">+S$</button>
+          <button class="mini perigo" onclick="ADM.ajustarSaldo('${l}', -1)">-S$</button>
+          <button class="mini info"   onclick="ADM.definirSaldo('${l}')">✏️</button>
+        </div>
+      </div>
+    `;
+  }).join('');
+}
+
+// ============================================================
+// RENDER — COMPRAS
+// ============================================================
+function renderizarCompras() {
+  document.getElementById('count-compras').textContent = comprasGlobais.length;
+  const el = document.getElementById('lista-compras');
+
+  if (comprasGlobais.length === 0) {
+    el.innerHTML = '<div style="text-align:center;opacity:0.5;padding:16px 0;font-size:12px;">Nenhuma compra.</div>';
+    return;
+  }
+
+  el.innerHTML = comprasGlobais.map(c => `
+    <div class="item-mini">
+      <div>
+        🏠 <strong>${esc(c.casa_nome)}</strong><br>
+        <small style="opacity:0.75">
+          Dono: <strong>${esc(c.dono_nome || c.dono_login)}</strong> (@${esc(c.dono_login)})
+          — ${fmtSaldo(c.preco)}
+        </small>
+      </div>
+      <div>
+        <button class="mini info"   onclick="ADM.transferirDono(${c.casa_id})">↔️</button>
+        <button class="mini perigo" onclick="ADM.deletarCompra(${c.casa_id})">🗑️</button>
+      </div>
+    </div>
+  `).join('');
+}
+
+// ============================================================
+// RENDER — MERCADO
+// ============================================================
+function renderizarMercado() {
+  const abertos = mercado.filter(m => m.status === 'aberto');
+  document.getElementById('count-mercado').textContent = abertos.length;
+  const el = document.getElementById('lista-mercado');
+
+  if (abertos.length === 0) {
+    el.innerHTML = '<div style="text-align:center;opacity:0.5;padding:16px 0;font-size:12px;">Nenhum anúncio.</div>';
+    return;
+  }
+
+  el.innerHTML = abertos.map(m => `
+    <div class="item-mini mercado">
+      <div>
+        ${m.tipo === 'venda' ? '💰 Venda' : '🔁 Troca'} —
+        <strong>${esc(m.casa_nome)}</strong><br>
+        <small style="opacity:0.75">
+          Vendedor: ${esc(m.vendedor_nome || m.vendedor_login)}
+          ${m.tipo === 'venda' ? `— ${fmtSaldo(m.preco_pedido)}` : `por ${esc(m.troca_por_casa_nome)}`}
+        </small>
+      </div>
+      <div>
+        <button class="mini perigo" onclick="ADM.cancelarAnuncio(${m.id})">✖</button>
+      </div>
+    </div>
+  `).join('');
+}
+
+// ============================================================
+// CRUD — TABULEIRO
+// ============================================================
+function novaCasa() {
+  const proxima = tabuleiro.length ? Math.max(...tabuleiro.map(t => t.posicao)) + 1 : 0;
+  abrirModal(`
+    <h3>➕ Nova Casa</h3>
+    <label>Nome</label>
+    <input id="inp-nome" placeholder="Ex: Vila Yolanda">
+    <label>Preço (S$)</label>
+    <input id="inp-preco" type="number" min="0" step="0.01" value="100">
+    <label>Tipo</label>
+    <select id="inp-tipo">
+      ${TIPOS.map(t => `<option value="${t}" ${t === 'propriedade' ? 'selected' : ''}>${t}</option>`).join('')}
+    </select>
+    <div class="linha">
+      <button class="secundario" onclick="ADM.fecharModal()">Cancelar</button>
+      <button class="ok" onclick="ADM.salvarNovaCasa(${proxima})">Criar</button>
+    </div>
+  `);
+}
+
+async function salvarNovaCasa(posicao) {
+  const nome = document.getElementById('inp-nome').value.trim();
+  const preco = parseFloat(document.getElementById('inp-preco').value) || 0;
+  const tipo = document.getElementById('inp-tipo').value;
+  if (!nome) { alert('Nome obrigatório'); return; }
+
+  const { error } = await db.from(TB_TABULEIRO).insert({
+    posicao, nome, preco, tipo, ativo: true
+  });
+  if (error) { alert('Erro: ' + error.message); return; }
+  fecharModal();
+  msgAviso(`✅ Casa "${nome}" criada na posição ${posicao}.`, 'ok');
+  await carregarTabuleiro();
+}
+
+function editarCasa(id) {
+  const c = tabuleiro.find(t => t.id === id);
+  if (!c) return;
+  abrirModal(`
+    <h3>✏️ Editar Casa #${c.posicao}</h3>
+    <label>Nome</label>
+    <input id="inp-nome" value="${esc(c.nome)}">
+    <label>Preço (S$)</label>
+    <input id="inp-preco" type="number" min="0" step="0.01" value="${c.preco}">
+    <label>Tipo</label>
+    <select id="inp-tipo">
+      ${TIPOS.map(t => `<option value="${t}" ${t === c.tipo ? 'selected' : ''}>${t}</option>`).join('')}
+    </select>
+    <div class="linha">
+      <button class="secundario" onclick="ADM.fecharModal()">Cancelar</button>
+      <button class="ok" onclick="ADM.salvarEdicao(${id})">Salvar</button>
+    </div>
+  `);
+}
+
+async function salvarEdicao(id) {
+  const nome = document.getElementById('inp-nome').value.trim();
+  const preco = parseFloat(document.getElementById('inp-preco').value) || 0;
+  const tipo = document.getElementById('inp-tipo').value;
+  if (!nome) { alert('Nome obrigatório'); return; }
+
+  const { error } = await db.from(TB_TABULEIRO)
+    .update({ nome, preco, tipo, updated_at: new Date().toISOString() })
+    .eq('id', id);
+
+  if (error) { alert('Erro: ' + error.message); return; }
+  fecharModal();
+  msgAviso(`✅ Casa atualizada.`, 'ok');
+  await carregarTabuleiro();
+}
+
+async function deletarCasa(id) {
+  const c = tabuleiro.find(t => t.id === id);
+  if (!c) return;
+  if (!confirm(`Deletar "${c.nome}"?`)) return;
+
+  const { error } = await db.from(TB_TABULEIRO).delete().eq('id', id);
+  if (error) { alert('Erro: ' + error.message); return; }
+  msgAviso(`🗑️ Casa "${c.nome}" deletada.`, 'ok');
+  await carregarTabuleiro();
+}
+
+async function moverCasa(id, direcao) {
+  const idx = tabuleiro.findIndex(t => t.id === id);
+  if (idx < 0) return;
+  const vizinho = tabuleiro[idx + direcao];
+  if (!vizinho) return;
+
+  const atual = tabuleiro[idx];
+
+  await db.from(TB_TABULEIRO).update({ posicao: -1 }).eq('id', atual.id);
+  await db.from(TB_TABULEIRO).update({ posicao: atual.posicao }).eq('id', vizinho.id);
+  await db.from(TB_TABULEIRO).update({ posicao: vizinho.posicao }).eq('id', atual.id);
+
+  await carregarTabuleiro();
+}
+
+async function recarregarTabuleiro() {
+  await carregarTabuleiro();
+  msgAviso('🔄 Tabuleiro recarregado.', 'ok');
+}
+
+async function restaurarPadrao() {
+  if (!confirm('Restaurar o tabuleiro padrão? Todas as alterações serão perdidas.')) return;
+
+  const PADRAO = [
+    { posicao: 0,  nome: 'Início',            preco: 0,   tipo: 'inicio'      },
+    { posicao: 1,  nome: 'Jardim América',    preco: 60,  tipo: 'propriedade' },
+    { posicao: 2,  nome: 'Sorte ou Azar',     preco: 0,   tipo: 'chance'      },
+    { posicao: 3,  nome: 'Vila A',            preco: 100, tipo: 'propriedade' },
+    { posicao: 4,  nome: 'Sanepar',           preco: 150, tipo: 'servico'     },
+    { posicao: 5,  nome: 'Itaipu Binacional', preco: 200, tipo: 'ferrovia'    },
+    { posicao: 6,  nome: 'Jardim Central',    preco: 140, tipo: 'propriedade' },
+    { posicao: 7,  nome: 'Prisão / Visita',   preco: 0,   tipo: 'especial'    },
+    { posicao: 8,  nome: 'Centro',            preco: 220, tipo: 'propriedade' },
+    { posicao: 9,  nome: 'Pedágio',           preco: 100, tipo: 'imposto'     },
+    { posicao: 10, nome: 'Parque Nacional',   preco: 400, tipo: 'propriedade' },
+    { posicao: 11, nome: 'Descanso',          preco: 0,   tipo: 'descanso'    }
+  ];
+
+  await db.from(TB_TABULEIRO).delete().neq('id', 0);
+  await db.from(TB_TABULEIRO).insert(PADRAO);
+
+  msgAviso('↺ Tabuleiro restaurado ao padrão.', 'ok');
+  await carregarTabuleiro();
+}
+
+async function limparTudo() {
+  if (!confirm('⚠️ ATENÇÃO: isso vai apagar o tabuleiro, compras, mercado e lances.\n\nContinuar?')) return;
+  if (!confirm('Tem certeza MESMO? Isso não pode ser desfeito.')) return;
+
+  await db.from(TB_TABULEIRO).delete().neq('id', 0);
+  await db.from(TB_COMPRAS).delete().neq('id', 0);
+  await db.from(TB_MERCADO).delete().neq('id', 0);
+  await db.from(TB_LANCES).delete().neq('id', 0);
+
+  msgAviso('🗑️ Tudo limpo.', 'ok');
+  await Promise.all([carregarTabuleiro(), carregarCompras(), carregarMercado()]);
+  renderizarCompras(); renderizarMercado();
+}
+
+// ============================================================
+// SALDO — USUÁRIOS
+// ============================================================
+async function ajustarSaldo(loginUser, sinal) {
+  const u = usuarios.find(x => x.login === loginUser);
+  if (!u) return;
+  const valor = prompt(`Quanto ${sinal > 0 ? 'adicionar' : 'retirar'} de ${u.nome || u.login}?`, '10');
+  if (!valor) return;
+  const n = parseFloat(valor);
+  if (isNaN(n) || n <= 0) { alert('Valor inválido'); return; }
+
+  const novo = Math.max(0, Number(u.saldo || 0) + sinal * n);
+  const { error } = await db.from(TABELA)
+    .update({ saldo: novo, updated_at: new Date().toISOString() })
+    .eq('login', loginUser);
+
+  if (error) { alert('Erro: ' + error.message); return; }
+  msgAviso(`💰 ${sinal > 0 ? 'Adicionado' : 'Retirado'} ${fmtSaldo(n)} de ${u.nome || u.login}.`, 'ok');
+  await carregarUsuarios();
+}
+
+async function definirSaldo(loginUser) {
+  const u = usuarios.find(x => x.login === loginUser);
+  if (!u) return;
+  const valor = prompt(`Novo saldo de ${u.nome || u.login}:`, u.saldo);
+  if (valor === null) return;
+  const n = parseFloat(valor);
+  if (isNaN(n) || n < 0) { alert('Valor inválido'); return; }
+
+  const { error } = await db.from(TABELA)
+    .update({ saldo: n, updated_at: new Date().toISOString() })
+    .eq('login', loginUser);
+
+  if (error) { alert('Erro: ' + error.message); return; }
+  msgAviso(`💰 Saldo de ${u.nome || u.login} → ${fmtSaldo(n)}.`, 'ok');
+  await carregarUsuarios();
+}
+
+// ============================================================
+// COMPRAS — FORÇAR DONO / DELETAR
+// ============================================================
+function transferirDono(casaId) {
+  const c = comprasGlobais.find(x => x.casa_id === casaId);
+  if (!c) return;
+
+  const opcoes = usuarios.map(u => {
+    const loginSeguro = esc(u.login).replace(/'/g, '&#39;').replace(/"/g, '&quot;');
+    return `<option value="${loginSeguro}" ${u.login === c.dono_login ? 'selected' : ''}>
+       ${esc(u.nome || u.login)} (@${esc(u.login)})
+     </option>`;
+  }).join('');
+
+  abrirModal(`
+    <h3>↔️ Transferir "${esc(c.casa_nome)}"</h3>
+    <p style="font-size:12px;opacity:0.75;">
+      Dono atual: <strong>${esc(c.dono_nome || c.dono_login)}</strong>
+    </p>
+    <label>Novo dono</label>
+    <select id="inp-novo-dono">${opcoes}</select>
+    <label>Preço (S$)</label>
+    <input id="inp-preco" type="number" min="0" step="0.01" value="${c.preco}">
+    <div class="linha">
+      <button class="secundario" onclick="ADM.fecharModal()">Cancelar</button>
+      <button class="ok" onclick="ADM.confirmarTransferencia(${casaId})">Transferir</button>
+    </div>
+  `);
+}
+
+async function confirmarTransferencia(casaId) {
+  const select = document.getElementById('inp-novo-dono');
+  const novoLogin = select.options[select.selectedIndex].value
+    .replace(/&#39;/g, "'")
+    .replace(/&quot;/g, '"');
+
+  const preco = parseFloat(document.getElementById('inp-preco').value) || 0;
+  const u = usuarios.find(x => x.login === novoLogin);
+  if (!u) { alert('Usuário não encontrado.'); return; }
+
+  const { error } = await db.from(TB_COMPRAS)
+    .update({
+      dono_login: novoLogin,
+      dono_nome: u.nome || novoLogin,
+      preco,
+      comprado_em: new Date().toISOString()
+    })
+    .eq('casa_id', casaId);
+
+  if (error) { alert('Erro: ' + error.message); return; }
+  fecharModal();
+  msgAviso(`↔️ Casa transferida para ${u.nome || novoLogin}.`, 'ok');
+  await carregarCompras();
+  renderizarCompras();
+}
+
+async function deletarCompra(casaId) {
+  if (!confirm('Remover esta compra? A casa ficará livre novamente.')) return;
+  const { error } = await db.from(TB_COMPRAS).delete().eq('casa_id', casaId);
+  if (error) { alert('Erro: ' + error.message); return; }
+  msgAviso('🗑️ Compra removida.', 'ok');
+  await carregarCompras();
+  renderizarCompras();
+}
+
+async function limparCompras() {
+  if (!confirm('Zerar TODAS as compras? As casas voltam a ficar livres.')) return;
+  const { error } = await db.from(TB_COMPRAS).delete().neq('id', 0);
+  if (error) { alert('Erro: ' + error.message); return; }
+  msgAviso('🗑️ Compras zeradas.', 'ok');
+  await carregarCompras();
+  renderizarCompras();
+}
+
+// ============================================================
+// MERCADO — CANCELAR
+// ============================================================
+async function cancelarAnuncio(anuncioId) {
+  if (!confirm('Cancelar este anúncio?')) return;
+  await db.from(TB_MERCADO).update({ status: 'cancelado' }).eq('id', anuncioId);
+  await db.from(TB_LANCES).update({ status: 'cancelado' }).eq('anuncio_id', anuncioId);
+  msgAviso('✖ Anúncio cancelado.', 'ok');
+  await carregarMercado();
+  renderizarMercado();
+}
+
+async function limparMercado() {
+  if (!confirm('Cancelar TODOS os anúncios e lances?')) return;
+  await db.from(TB_MERCADO).update({ status: 'cancelado' }).eq('status', 'aberto');
+  await db.from(TB_LANCES).update({ status: 'cancelado' }).eq('status', 'pendente');
+  msgAviso('🗑️ Mercado limpo.', 'ok');
+  await carregarMercado();
+  renderizarMercado();
+}
+
+async function recarregarCompras() {
+  await carregarCompras();
+  renderizarCompras();
+  msgAviso('🔄 Compras recarregadas.', 'ok');
+}
+async function recarregarMercado() {
+  await carregarMercado();
+  renderizarMercado();
+  msgAviso('🔄 Mercado recarregado.', 'ok');
+}
+
+// ============================================================
+// 🚀 EXPÕE TUDO EM window.ADM
+// ============================================================
+window.ADM = {
+  fecharModal,
+  novaCasa, salvarNovaCasa, editarCasa, salvarEdicao,
+  deletarCasa, moverCasa, recarregarTabuleiro,
+  restaurarPadrao, limparTudo,
+  ajustarSaldo, definirSaldo, renderizarUsuarios,
+  transferirDono, confirmarTransferencia, deletarCompra,
+  limparCompras, recarregarCompras, renderizarCompras,
+  cancelarAnuncio, limparMercado, recarregarMercado, renderizarMercado,
+  carregarTabuleiro, carregarUsuarios, carregarCompras, carregarMercado
+};
+
+// ============================================================
+// INIT
+// ============================================================
+(async function init() {
+  try {
+    await Promise.all([
+      carregarTabuleiro(),
+      carregarUsuarios(),
+      carregarCompras(),
+      carregarMercado()
+    ]);
+    renderizarCompras();
+    renderizarMercado();
+
+    msgAviso(
+      `✅ Painel ADM carregado. Logado como <strong>${esc(login)}</strong> — ` +
+      `${tabuleiro.length} casas, ${usuarios.length} usuários, ` +
+      `${comprasGlobais.length} compras, ` +
+      `${mercado.filter(m => m.status === 'aberto').length} anúncios.`,
+      'ok'
+    );
+
+    db.channel('adm-tab')
+      .on('postgres_changes',
+        { event: '*', schema: 'public', table: TB_TABULEIRO },
+        () => carregarTabuleiro()).subscribe();
+
+    db.channel('adm-compras')
+      .on('postgres_changes',
+        { event: '*', schema: 'public', table: TB_COMPRAS },
+        async () => { await carregarCompras(); renderizarCompras(); }).subscribe();
+
+    db.channel('adm-mercado')
+      .on('postgres_changes',
+        { event: '*', schema: 'public', table: TB_MERCADO },
+        async () => { await carregarMercado(); renderizarMercado(); }).subscribe();
+
+    db.channel('adm-users')
+      .on('postgres_changes',
+        { event: 'UPDATE', schema: 'public', table: TABELA },
+        () => carregarUsuarios()).subscribe();
+
+    // ✅ Canal extra para lances
+    db.channel('adm-lances')
+      .on('postgres_changes',
+        { event: '*', schema: 'public', table: TB_LANCES },
+        () => carregarMercado()).subscribe();
+
+  } catch (err) {
+    console.error('[ADM] init:', err);
+    msgAviso('❌ Init: ' + (err.message || err), 'erro');
+  }
+})();
+</script>
+<script src="../../nav.js" data-base="../../"></script>
+</body>
+</html>

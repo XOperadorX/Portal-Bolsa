@@ -3,12 +3,10 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Banco Imobiliário Online</title>
+<title>Banco Imobiliário Online — Foz do Iguaçu</title>
 <style>
-  /* ============== RESET ============== */
   * { box-sizing: border-box; font-family: 'Segoe UI', system-ui, -apple-system, Arial, sans-serif; margin: 0; padding: 0; }
 
-  /* ============== FUNDO ANIMADO ============== */
   body {
     background: #0a0f1e;
     min-height: 100vh;
@@ -41,7 +39,6 @@
     mask-image: radial-gradient(ellipse at center, black 40%, transparent 80%);
   }
 
-  /* ============== TÍTULO ============== */
   h1 {
     text-align: center;
     font-size: clamp(22px, 4vw, 34px);
@@ -55,11 +52,8 @@
     animation: shimmer 3s linear infinite;
     filter: drop-shadow(0 0 20px rgba(255,215,0,0.35));
   }
-  @keyframes shimmer {
-    to { background-position: 200% center; }
-  }
+  @keyframes shimmer { to { background-position: 200% center; } }
 
-  /* ============== LAYOUT ============== */
   .layout {
     display: grid;
     grid-template-columns: 1fr 400px;
@@ -67,11 +61,8 @@
     max-width: 1500px;
     margin: 0 auto;
   }
-  @media (max-width: 1150px) {
-    .layout { grid-template-columns: 1fr; }
-  }
+  @media (max-width: 1150px) { .layout { grid-template-columns: 1fr; } }
 
-  /* ============== GLASS CARD ============== */
   .glass {
     background: rgba(20, 30, 55, 0.55);
     backdrop-filter: blur(14px) saturate(140%);
@@ -83,26 +74,14 @@
       inset 0 1px 0 rgba(255,255,255,0.06);
   }
 
-  /* ============== PAINEL JOGADOR ============== */
-  .painel-jogadores {
-    padding: 18px;
-    margin-bottom: 20px;
-  }
+  .painel-jogadores { padding: 18px; margin-bottom: 20px; }
   .painel-jogadores h3 {
-    color: #ffd700;
-    font-size: 15px;
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    margin-bottom: 8px;
-    letter-spacing: 1px;
-    text-transform: uppercase;
+    color: #ffd700; font-size: 15px;
+    display: flex; align-items: center; gap: 8px;
+    margin-bottom: 8px; letter-spacing: 1px; text-transform: uppercase;
   }
   .painel-jogadores p {
-    font-size: 12px;
-    opacity: 0.75;
-    margin: 6px 0 12px;
-    line-height: 1.5;
+    font-size: 12px; opacity: 0.75; margin: 6px 0 12px; line-height: 1.5;
   }
   .jogador-card {
     background: rgba(255,255,255,0.05);
@@ -110,46 +89,70 @@
     margin: 6px 0;
     border-radius: 10px;
     border-left: 3px solid rgba(255,215,0,0.3);
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    gap: 10px;
-    flex-wrap: wrap;
+    display: flex; justify-content: space-between; align-items: center;
+    gap: 10px; flex-wrap: wrap;
     transition: all 0.25s ease;
     font-size: 13px;
   }
   .jogador-card:hover { background: rgba(255,255,255,0.08); }
   .jogador-card.vez {
     background: linear-gradient(90deg, #ffd700, #ffed4a);
-    color: #0a0f1e;
-    font-weight: bold;
+    color: #0a0f1e; font-weight: bold;
     border-left-color: #ffd700;
     box-shadow: 0 0 24px rgba(255,215,0,0.5);
     transform: scale(1.01);
   }
 
-  /* ============== BOTÕES ============== */
-  button {
-    background: linear-gradient(135deg, #ffd700, #ffb800);
-    color: #0a0f1e;
-    border: none;
-    padding: 10px 18px;
-    margin: 4px;
+  /* ========== BARRA DE STAMINA ========== */
+  .stamina-box {
+    margin-top: 10px;
+    padding: 10px 12px;
+    background: rgba(59,130,246,0.08);
+    border: 1px solid rgba(59,130,246,0.3);
     border-radius: 10px;
-    font-weight: 700;
-    cursor: pointer;
-    transition: all 0.2s ease;
-    font-size: 13px;
-    letter-spacing: 0.4px;
-    box-shadow: 0 4px 12px rgba(255,215,0,0.25), inset 0 -2px 0 rgba(0,0,0,0.15);
-    position: relative;
+    font-size: 12px;
+  }
+  .stamina-label {
+    display: flex; justify-content: space-between;
+    margin-bottom: 6px; color: #93c5fd; font-weight: 700;
+  }
+  .stamina-bar {
+    height: 10px;
+    background: rgba(255,255,255,0.08);
+    border-radius: 6px;
     overflow: hidden;
   }
+  .stamina-fill {
+    height: 100%;
+    background: linear-gradient(90deg, #3b82f6, #06b6d4);
+    border-radius: 6px;
+    transition: width 0.4s ease, background 0.3s;
+  }
+  .stamina-fill.baixa {
+    background: linear-gradient(90deg, #f59e0b, #ef4444);
+  }
+  .stamina-fill.critica {
+    background: linear-gradient(90deg, #ef4444, #b91c1c);
+    animation: pulseBar 1s infinite;
+  }
+  @keyframes pulseBar {
+    0%,100% { opacity: 1; }
+    50%     { opacity: 0.55; }
+  }
+
+  button {
+    background: linear-gradient(135deg, #ffd700, #ffb800);
+    color: #0a0f1e; border: none;
+    padding: 10px 18px; margin: 4px;
+    border-radius: 10px; font-weight: 700;
+    cursor: pointer; transition: all 0.2s ease;
+    font-size: 13px; letter-spacing: 0.4px;
+    box-shadow: 0 4px 12px rgba(255,215,0,0.25), inset 0 -2px 0 rgba(0,0,0,0.15);
+    position: relative; overflow: hidden;
+  }
   button::before {
-    content: '';
-    position: absolute;
-    top: 0; left: -100%;
-    width: 100%; height: 100%;
+    content: ''; position: absolute;
+    top: 0; left: -100%; width: 100%; height: 100%;
     background: linear-gradient(90deg, transparent, rgba(255,255,255,0.4), transparent);
     transition: left 0.5s;
   }
@@ -159,38 +162,16 @@
     box-shadow: 0 8px 20px rgba(255,215,0,0.45), inset 0 -2px 0 rgba(0,0,0,0.15);
   }
   button:active:not(:disabled) { transform: translateY(0); }
-  button:disabled {
-    opacity: 0.35;
-    cursor: not-allowed;
-    filter: grayscale(0.6);
-  }
-  button.secundario {
-    background: linear-gradient(135deg, #3a4763, #2a3346);
-    color: #e8eef7;
-    box-shadow: 0 4px 12px rgba(0,0,0,0.3);
-  }
-  button.perigo {
-    background: linear-gradient(135deg, #ef4444, #b91c1c);
-    color: #fff;
-    box-shadow: 0 4px 12px rgba(239,68,68,0.35);
-  }
-  button.ok {
-    background: linear-gradient(135deg, #22c55e, #15803d);
-    color: #fff;
-    box-shadow: 0 4px 12px rgba(34,197,94,0.35);
-  }
-  button.mini {
-    padding: 5px 10px;
-    font-size: 11px;
-    border-radius: 7px;
-  }
+  button:disabled { opacity: 0.35; cursor: not-allowed; filter: grayscale(0.6); }
+  button.secundario { background: linear-gradient(135deg, #3a4763, #2a3346); color: #e8eef7; box-shadow: 0 4px 12px rgba(0,0,0,0.3); }
+  button.perigo { background: linear-gradient(135deg, #ef4444, #b91c1c); color: #fff; box-shadow: 0 4px 12px rgba(239,68,68,0.35); }
+  button.ok { background: linear-gradient(135deg, #22c55e, #15803d); color: #fff; box-shadow: 0 4px 12px rgba(34,197,94,0.35); }
+  button.mini { padding: 5px 10px; font-size: 11px; border-radius: 7px; }
 
-  /* ============== TABULEIRO ============== */
   .tabuleiro {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
-    gap: 12px;
-    padding: 4px;
+    gap: 12px; padding: 4px;
   }
   .casa {
     background: rgba(0, 8, 47, 0.95);
@@ -199,29 +180,19 @@
     border-radius: 12px;
     text-align: center;
     min-height: 130px;
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    font-size: 12.5px;
-    font-weight: 600;
+    display: flex; flex-direction: column; justify-content: center;
+    font-size: 12.5px; font-weight: 600;
     border: 2px solid rgba(0,0,0,0.08);
     transition: all 0.3s cubic-bezier(0.4,0,0.2,1);
-    position: relative;
-    overflow: hidden;
-    cursor: default;
+    position: relative; overflow: hidden; cursor: default;
     box-shadow: 0 4px 12px rgba(0,0,0,0.15);
   }
   .casa::before {
-    content: '';
-    position: absolute;
-    inset: 0;
+    content: ''; position: absolute; inset: 0;
     background: linear-gradient(180deg, rgba(255,255,255,0.3), transparent 40%);
     pointer-events: none;
   }
-  .casa:hover {
-    transform: translateY(-3px) scale(1.02);
-    box-shadow: 0 12px 24px rgba(0,0,0,0.3);
-  }
+  .casa:hover { transform: translateY(-3px) scale(1.02); box-shadow: 0 12px 24px rgba(0,0,0,0.3); }
   .casa.ocupada {
     box-shadow: 0 0 0 3px #ffd700, 0 8px 24px rgba(255,215,0,0.4);
     animation: pulseBorder 1.8s infinite;
@@ -230,224 +201,113 @@
     0%, 100% { box-shadow: 0 0 0 3px #ffd700, 0 8px 24px rgba(255,215,0,0.4); }
     50%      { box-shadow: 0 0 0 3px #ffed4a, 0 8px 32px rgba(255,215,0,0.7); }
   }
-  .casa .preco {
-    font-size: 11px;
-    opacity: 0.75;
-    margin-top: 3px;
-    color: #16a34a;
-    font-weight: 700;
-  }
+  .casa .preco { font-size: 11px; opacity: 0.75; margin-top: 3px; color: #16a34a; font-weight: 700; }
   .casa .dono-tag {
-    display: inline-block;
-    margin-top: 6px;
-    font-size: 10.5px;
+    display: inline-block; margin-top: 6px; font-size: 10.5px;
     background: linear-gradient(135deg, #16a34a, #15803d);
-    color: #fff;
-    padding: 3px 8px;
-    border-radius: 20px;
-    font-weight: 700;
-    letter-spacing: 0.3px;
+    color: #fff; padding: 3px 8px; border-radius: 20px;
+    font-weight: 700; letter-spacing: 0.3px;
     box-shadow: 0 2px 6px rgba(22,163,74,0.35);
-    text-overflow: ellipsis;
-    max-width: 100%;
-    overflow: hidden;
-    white-space: nowrap;
+    text-overflow: ellipsis; max-width: 100%; overflow: hidden; white-space: nowrap;
   }
   .casa .badge-anuncio {
-    position: absolute;
-    top: 6px;
-    right: 6px;
+    position: absolute; top: 6px; right: 6px;
     background: linear-gradient(135deg, #f59e0b, #d97706);
-    color: #fff;
-    padding: 3px 8px;
-    border-radius: 20px;
-    font-size: 9.5px;
-    font-weight: 800;
-    letter-spacing: 0.4px;
+    color: #fff; padding: 3px 8px; border-radius: 20px;
+    font-size: 9.5px; font-weight: 800; letter-spacing: 0.4px;
     box-shadow: 0 2px 8px rgba(245,158,11,0.5);
     animation: pulseBadge 2s infinite;
   }
-  @keyframes pulseBadge {
-    0%, 100% { transform: scale(1); }
-    50%      { transform: scale(1.08); }
-  }
+  @keyframes pulseBadge { 0%,100% { transform: scale(1); } 50% { transform: scale(1.08); } }
   .casa .avatar-jogador {
-    display: inline-block;
-    width: 18px;
-    height: 18px;
-    line-height: 18px;
-    border-radius: 50%;
-    background: #ffd700;
-    color: #0a0f1e;
-    font-weight: 900;
-    font-size: 10px;
+    display: inline-block; width: 18px; height: 18px;
+    line-height: 18px; border-radius: 50%;
+    background: #ffd700; color: #0a0f1e;
+    font-weight: 900; font-size: 10px;
     margin: 2px 1px 0;
     box-shadow: 0 2px 4px rgba(0,0,0,0.3);
   }
 
-  /* ============== CONTROLES ============== */
-  .controles {
-    padding: 22px;
-    text-align: center;
-    margin-top: 20px;
-  }
-  #dados-jogador {
-    font-size: 15px;
-    color: #ffd700;
-    margin-bottom: 8px;
-  }
+  .controles { padding: 22px; text-align: center; margin-top: 20px; }
+  #dados-jogador { font-size: 15px; color: #ffd700; margin-bottom: 8px; }
   #resultado-dados {
-    margin-top: 14px;
-    font-size: 22px;
-    color: #fff;
-    min-height: 28px;
-    font-weight: 800;
-    text-shadow: 0 0 20px rgba(255,255,255,0.4);
-    letter-spacing: 1px;
+    margin-top: 14px; font-size: 22px; color: #fff;
+    min-height: 28px; font-weight: 800;
+    text-shadow: 0 0 20px rgba(255,255,255,0.4); letter-spacing: 1px;
   }
   #mensagem {
-    margin-top: 12px;
-    font-size: 14px;
-    color: #ffd700;
-    min-height: 20px;
-    padding: 10px;
-    border-radius: 8px;
-    background: rgba(255,215,0,0.06);
-    transition: all 0.3s;
+    margin-top: 12px; font-size: 14px; color: #ffd700;
+    min-height: 20px; padding: 10px; border-radius: 8px;
+    background: rgba(255,215,0,0.06); transition: all 0.3s;
   }
   #mensagem:empty { background: transparent; }
 
-  /* ============== PAINÉIS LATERAIS ============== */
-  .painel-lateral {
-    display: flex;
-    flex-direction: column;
-    gap: 16px;
-  }
-  .card-painel {
-    padding: 14px;
-    max-height: 380px;
-    display: flex;
-    flex-direction: column;
-  }
+  .painel-lateral { display: flex; flex-direction: column; gap: 16px; }
+  .card-painel { padding: 14px; max-height: 380px; display: flex; flex-direction: column; }
   .card-painel h3 {
-    color: #ffd700;
-    margin-bottom: 10px;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    font-size: 13.5px;
-    letter-spacing: 0.6px;
-    text-transform: uppercase;
-    padding-bottom: 8px;
-    border-bottom: 1px solid rgba(255,215,0,0.12);
+    color: #ffd700; margin-bottom: 10px;
+    display: flex; justify-content: space-between; align-items: center;
+    font-size: 13.5px; letter-spacing: 0.6px; text-transform: uppercase;
+    padding-bottom: 8px; border-bottom: 1px solid rgba(255,215,0,0.12);
   }
   .card-painel h3 small {
-    font-size: 11px;
-    opacity: 1;
-    font-weight: 800;
+    font-size: 11px; opacity: 1; font-weight: 800;
     background: linear-gradient(135deg, rgba(255,215,0,0.25), rgba(255,215,0,0.1));
-    color: #ffd700;
-    padding: 3px 9px;
-    border-radius: 20px;
-    min-width: 26px;
-    text-align: center;
+    color: #ffd700; padding: 3px 9px; border-radius: 20px;
+    min-width: 26px; text-align: center;
   }
   .lista-scroll {
-    overflow-y: auto;
-    flex: 1;
-    padding-right: 4px;
-    scrollbar-width: thin;
-    scrollbar-color: #ffd700 rgba(255,255,255,0.05);
+    overflow-y: auto; flex: 1; padding-right: 4px;
+    scrollbar-width: thin; scrollbar-color: #ffd700 rgba(255,255,255,0.05);
   }
   .lista-scroll::-webkit-scrollbar { width: 6px; }
   .lista-scroll::-webkit-scrollbar-track { background: rgba(255,255,255,0.04); border-radius: 3px; }
   .lista-scroll::-webkit-scrollbar-thumb {
-    background: linear-gradient(180deg, #ffd700, #d97706);
-    border-radius: 3px;
+    background: linear-gradient(180deg, #ffd700, #d97706); border-radius: 3px;
   }
 
-  /* ============== ITENS ============== */
   .item {
     background: rgba(255,255,255,0.05);
     border-left: 3px solid #22c55e;
     padding: 10px 12px;
     margin-bottom: 8px;
     border-radius: 10px;
-    font-size: 12px;
-    line-height: 1.5;
+    font-size: 12px; line-height: 1.5;
     animation: slideIn 0.35s cubic-bezier(0.4,0,0.2,1);
-    transition: all 0.2s;
-    position: relative;
+    transition: all 0.2s; position: relative;
   }
-  .item:hover {
-    background: rgba(255,255,255,0.09);
-    transform: translateX(2px);
-  }
+  .item:hover { background: rgba(255,255,255,0.09); transform: translateX(2px); }
   .item.eu {
     background: linear-gradient(90deg, rgba(255,215,0,0.14), rgba(255,215,0,0.04));
     border-left-color: #ffd700;
     box-shadow: inset 0 0 20px rgba(255,215,0,0.06);
   }
-  .item.mercado {
-    border-left-color: #f59e0b;
-    background: rgba(245,158,11,0.06);
-  }
-  .item.lance {
-    border-left-color: #3b82f6;
-    background: rgba(59,130,246,0.06);
-  }
+  .item.mercado { border-left-color: #f59e0b; background: rgba(245,158,11,0.06); }
+  .item.lance { border-left-color: #3b82f6; background: rgba(59,130,246,0.06); }
   .item.aceito { border-left-color: #16a34a; }
   @keyframes slideIn {
     from { opacity: 0; transform: translateX(-12px); }
     to   { opacity: 1; transform: translateX(0); }
   }
-  .item .quem {
-    font-weight: 800;
-    color: #ffd700;
-    font-size: 12px;
-    letter-spacing: 0.3px;
-  }
-  .item .casa {
-    color: #fff;
-    font-weight: 700;
-    display: block;
-    margin: 3px 0;
-    font-size: 13px;
-  }
+  .item .quem { font-weight: 800; color: #ffd700; font-size: 12px; letter-spacing: 0.3px; }
+  .item .casa { color: #fff; font-weight: 700; display: block; margin: 3px 0; font-size: 13px; }
   .item .info {
-    font-size: 11px;
-    opacity: 0.9;
-    display: flex;
-    justify-content: space-between;
-    margin-top: 4px;
-    color: #b9c5d8;
+    font-size: 11px; opacity: 0.9;
+    display: flex; justify-content: space-between;
+    margin-top: 4px; color: #b9c5d8;
   }
-  .item .acoes {
-    margin-top: 8px;
-    display: flex;
-    gap: 5px;
-    flex-wrap: wrap;
-  }
+  .item .acoes { margin-top: 8px; display: flex; gap: 5px; flex-wrap: wrap; }
   .item .acoes button { margin: 0; }
 
   .vazio {
-    text-align: center;
-    opacity: 0.45;
-    font-size: 12px;
-    padding: 24px 0;
-    font-style: italic;
-    color: #b9c5d8;
+    text-align: center; opacity: 0.45; font-size: 12px;
+    padding: 24px 0; font-style: italic; color: #b9c5d8;
   }
 
-  /* ============== STATUS ONLINE ============== */
   .status-online {
-    display: inline-block;
-    width: 9px;
-    height: 9px;
-    border-radius: 50%;
-    background: #fbbf24;
-    margin-left: auto;
-    animation: pulse 1.8s infinite;
+    display: inline-block; width: 9px; height: 9px;
+    border-radius: 50%; background: #fbbf24;
+    margin-left: auto; animation: pulse 1.8s infinite;
     box-shadow: 0 0 8px currentColor;
   }
   .status-online.on  { background: #4ade80; color: #4ade80; }
@@ -457,132 +317,88 @@
     50%      { opacity: 0.5; transform: scale(1.2); }
   }
 
-  /* ============== BADGE DONO ============== */
   .badge-dono {
     background: linear-gradient(135deg, #16a34a, #15803d);
-    color: #fff;
-    padding: 3px 8px;
-    border-radius: 20px;
-    font-size: 10px;
-    margin-left: 6px;
-    font-weight: 800;
-    letter-spacing: 0.5px;
-    box-shadow: 0 2px 6px rgba(22,163,74,0.4);
+    color: #fff; padding: 3px 8px; border-radius: 20px;
+    font-size: 10px; margin-left: 6px; font-weight: 800;
+    letter-spacing: 0.5px; box-shadow: 0 2px 6px rgba(22,163,74,0.4);
   }
 
-  /* ============== AVISO ============== */
   .aviso {
     background: linear-gradient(135deg, rgba(255,215,0,0.15), rgba(255,215,0,0.05));
-    color: #ffd700;
-    padding: 12px 18px;
-    border-radius: 10px;
-    margin-bottom: 18px;
-    text-align: center;
-    max-width: 1500px;
-    margin-left: auto;
-    margin-right: auto;
+    color: #ffd700; padding: 12px 18px;
+    border-radius: 10px; margin-bottom: 18px; text-align: center;
+    max-width: 1500px; margin-left: auto; margin-right: auto;
     border: 1px solid rgba(255,215,0,0.3);
-    font-size: 13px;
-    backdrop-filter: blur(10px);
-    transition: all 0.3s;
+    font-size: 13px; backdrop-filter: blur(10px); transition: all 0.3s;
   }
   .aviso.erro {
     background: linear-gradient(135deg, rgba(239,68,68,0.2), rgba(239,68,68,0.05));
-    color: #fca5a5;
-    border-color: rgba(239,68,68,0.4);
+    color: #fca5a5; border-color: rgba(239,68,68,0.4);
   }
   .aviso.ok {
     background: linear-gradient(135deg, rgba(34,197,94,0.2), rgba(34,197,94,0.05));
-    color: #86efac;
-    border-color: rgba(34,197,94,0.4);
+    color: #86efac; border-color: rgba(34,197,94,0.4);
   }
 
-  /* ============== MODAL ============== */
   .modal-fundo {
     position: fixed; inset: 0;
     background: rgba(5, 8, 18, 0.85);
     backdrop-filter: blur(8px);
-    -webkit-backdrop-filter: blur(8px);
-    display: none;
-    align-items: center;
-    justify-content: center;
-    z-index: 1000;
-    padding: 20px;
+    display: none; align-items: center; justify-content: center;
+    z-index: 1000; padding: 20px;
     animation: fadeIn 0.25s ease;
   }
   .modal-fundo.on { display: flex; }
   @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
   .modal-box {
     background: linear-gradient(160deg, #1a2745, #0f1a35);
-    padding: 26px;
-    border-radius: 16px;
-    max-width: 480px;
-    width: 100%;
+    padding: 26px; border-radius: 16px;
+    max-width: 480px; width: 100%;
     border: 1px solid rgba(255,215,0,0.35);
     box-shadow:
       0 20px 60px rgba(0,0,0,0.7),
       0 0 0 1px rgba(255,215,0,0.1),
       inset 0 1px 0 rgba(255,255,255,0.06);
     animation: modalIn 0.3s cubic-bezier(0.4,0,0.2,1);
-    max-height: 85vh;
-    overflow-y: auto;
+    max-height: 85vh; overflow-y: auto;
   }
   @keyframes modalIn {
     from { opacity: 0; transform: translateY(20px) scale(0.96); }
     to   { opacity: 1; transform: translateY(0) scale(1); }
   }
   .modal-box h3 {
-    color: #ffd700;
-    margin-bottom: 16px;
-    font-size: 18px;
-    letter-spacing: 0.5px;
-    padding-bottom: 10px;
+    color: #ffd700; margin-bottom: 16px; font-size: 18px;
+    letter-spacing: 0.5px; padding-bottom: 10px;
     border-bottom: 1px solid rgba(255,215,0,0.15);
   }
-  .modal-box p {
-    font-size: 13px;
-    color: #b9c5d8;
-    margin: 8px 0;
-    line-height: 1.6;
-  }
+  .modal-box p { font-size: 13px; color: #b9c5d8; margin: 8px 0; line-height: 1.6; }
   .modal-box p strong { color: #ffd700; }
   .modal-box label {
-    display: block;
-    font-size: 12px;
-    margin: 14px 0 6px;
-    opacity: 0.85;
-    letter-spacing: 0.4px;
-    text-transform: uppercase;
+    display: block; font-size: 12px; margin: 14px 0 6px;
+    opacity: 0.85; letter-spacing: 0.4px; text-transform: uppercase;
     color: #b9c5d8;
   }
   .modal-box input, .modal-box select {
-    width: 100%;
-    padding: 12px 14px;
+    width: 100%; padding: 12px 14px;
     border-radius: 10px;
     border: 1px solid rgba(255,215,0,0.25);
     background: rgba(255,255,255,0.95);
     color: #0a0f1e;
-    font-size: 14px;
-    font-weight: 600;
-    transition: all 0.2s;
-    outline: none;
+    font-size: 14px; font-weight: 600;
+    transition: all 0.2s; outline: none;
   }
   .modal-box input:focus, .modal-box select:focus {
-    border-color: #ffd700;
-    box-shadow: 0 0 0 3px rgba(255,215,0,0.2);
+    border-color: #ffd700; box-shadow: 0 0 0 3px rgba(255,215,0,0.2);
   }
   .modal-box .linha {
-    display: flex;
-    justify-content: flex-end;
-    margin-top: 20px;
-    gap: 8px;
-    flex-wrap: wrap;
+    display: flex; justify-content: flex-end; margin-top: 20px; gap: 8px; flex-wrap: wrap;
   }
 </style>
 </head>
 <body>
 
-<h1>🏦 BANCO IMOBILIÁRIO ONLINE</h1>
+<h1>🏦 BANCO IMOBILIÁRIO ONLINE — FOZ DO IGUAÇU</h1>
 
 <div class="aviso" id="aviso-login">⚠️ Verificando sessão...</div>
 
@@ -593,9 +409,23 @@
       <h3>👤 Jogador <span class="status-online" id="status-realtime"></span></h3>
       <p>
         Taxa de entrada <strong>S$ 1,00</strong> • Saldo real (S$) da tabela <strong>Geral</strong><br>
-        Propriedades visíveis para todos • <strong>Mercado aberto 24h</strong>
+        Cada rolagem de dados custa <strong>10 sm_atual</strong> • Mercado aberto 24h
       </p>
       <div id="lista-jogadores"></div>
+
+      <!-- Barra de stamina -->
+      <div class="stamina-box" id="stamina-box" style="display:none;">
+        <div class="stamina-label">
+          <span>⚡ Stamina (sm_atual)</span>
+          <span id="stamina-texto">0 / 0</span>
+        </div>
+        <div class="stamina-bar">
+          <div class="stamina-fill" id="stamina-fill" style="width:0%"></div>
+        </div>
+        <div style="margin-top:6px; font-size:11px; opacity:0.7;">
+          Custo por rolagem: <strong>10 sm_atual</strong>
+        </div>
+      </div>
     </div>
 
     <div class="tabuleiro" id="tabuleiro"></div>
@@ -603,7 +433,7 @@
     <div class="controles glass">
       <div id="dados-jogador">Carregando...</div>
       <br>
-      <button id="btn-dados" onclick="jogarDados()">🎲 Jogar Dados</button>
+      <button id="btn-dados" onclick="jogarDados()">🎲 Jogar Dados (−10 sm)</button>
       <button id="btn-comprar" onclick="comprar()">🏠 Comprar Propriedade</button>
       <div id="resultado-dados"></div>
       <div id="mensagem"></div>
@@ -611,7 +441,6 @@
   </div>
 
   <aside class="painel-lateral">
-
     <div class="card-painel glass">
       <h3>🛒 Mercado Aberto <small id="count-mercado">0</small></h3>
       <div class="lista-scroll" id="lista-mercado">
@@ -632,7 +461,6 @@
         <div class="vazio">Nenhuma compra ainda.</div>
       </div>
     </div>
-
   </aside>
 </div>
 
@@ -675,11 +503,13 @@ const { db, TABELA, SESSION_KEY, fmtSaldo, fmtData, esc } = cfg;
 // ============================================================
 // CONSTANTES
 // ============================================================
-const TAXA_ENTRADA    = 1.00;
-const BONUS_VOLTA     = 0.00;
-const TB_COMPRAS      = 'banco_imobiliario_compras';
-const TB_MERCADO      = 'banco_imobiliario_mercado';
-const TB_LANCES       = 'banco_imobiliario_lances';
+const TAXA_ENTRADA   = 1.00;
+const BONUS_VOLTA    = 0.00;
+const CUSTO_STAMINA  = 10;   // ⚡ custo por rolagem de dados
+const TB_COMPRAS     = 'banco_imobiliario_compras';
+const TB_MERCADO     = 'banco_imobiliario_mercado';
+const TB_LANCES      = 'banco_imobiliario_lances';
+const TB_TABULEIRO   = 'banco_imobiliario_tabuleiro';
 
 // ============================================================
 // SESSÃO
@@ -709,25 +539,28 @@ if (!login) throw new Error('Sem sessão');
 let jogadores       = [];
 let jogadorAtual    = 0;
 let jogoIniciado    = false;
-let eu              = null;
+let eu              = null;   // { login, nome, saldo, sm_atual, sm_max }
 let comprasGlobais  = {};
 let historicoCompras = [];
 let mercado         = [];
 let lances          = [];
 let canais          = [];
 
+// ============================================================
+// 🏘️ TABULEIRO PADRÃO (fallback)
+// ============================================================
 const TABULEIRO_PADRAO = [
   { nome: "Início",               preco: 0,   tipo: "inicio"      },
-  { nome: "Rua das Flores",       preco: 60,  tipo: "propriedade" },
+  { nome: "Jardim América",       preco: 60,  tipo: "propriedade" },
   { nome: "Sorte ou Azar",        preco: 0,   tipo: "chance"      },
-  { nome: "Avenida Brasil",       preco: 100, tipo: "propriedade" },
-  { nome: "Serviço de Água",      preco: 150, tipo: "servico"     },
-  { nome: "Estação Ferroviária",  preco: 200, tipo: "ferrovia"    },
-  { nome: "Rua Azul",             preco: 140, tipo: "propriedade" },
+  { nome: "Vila A",               preco: 100, tipo: "propriedade" },
+  { nome: "Sanepar",              preco: 150, tipo: "servico"     },
+  { nome: "Itaipu Binacional",    preco: 200, tipo: "ferrovia"    },
+  { nome: "Jardim Central",       preco: 140, tipo: "propriedade" },
   { nome: "Prisão / Visita",      preco: 0,   tipo: "especial"    },
-  { nome: "Avenida Central",      preco: 220, tipo: "propriedade" },
-  { nome: "Imposto de Renda",     preco: 100, tipo: "imposto"     },
-  { nome: "Praça Nova",           preco: 400, tipo: "propriedade" },
+  { nome: "Centro",               preco: 220, tipo: "propriedade" },
+  { nome: "Pedágio",              preco: 100, tipo: "imposto"     },
+  { nome: "Parque Nacional",      preco: 400, tipo: "propriedade" },
   { nome: "Descanso",             preco: 0,   tipo: "descanso"    }
 ];
 let tabuleiro = JSON.parse(JSON.stringify(TABULEIRO_PADRAO));
@@ -759,11 +592,40 @@ document.getElementById('modal').addEventListener('click', (e) => {
 });
 
 // ============================================================
+// 🎨 BARRA DE STAMINA
+// ============================================================
+function renderizarStamina() {
+  const box = document.getElementById('stamina-box');
+  if (!eu) { box.style.display = 'none'; return; }
+
+  const atual = Number(eu.sm_atual) || 0;
+  const max   = Number(eu.sm_max)   || 0;
+
+  box.style.display = 'block';
+  document.getElementById('stamina-texto').textContent = `${atual} / ${max}`;
+
+  const pct = max > 0 ? Math.max(0, Math.min(100, (atual / max) * 100)) : 0;
+  const fill = document.getElementById('stamina-fill');
+  fill.style.width = pct + '%';
+  fill.classList.remove('baixa', 'critica');
+  if (atual < CUSTO_STAMINA)      fill.classList.add('critica');
+  else if (pct < 30)              fill.classList.add('baixa');
+}
+
+// ============================================================
 // CARREGAR DADOS
 // ============================================================
 async function carregarEu() {
-  const { data } = await db.from(TABELA).select('login, nome, saldo').eq('login', login).maybeSingle();
-  eu = data; return eu;
+  const { data, error } = await db
+    .from(TABELA)
+    .select('login, nome, saldo, sm_atual, sm_max')
+    .eq('login', login)
+    .maybeSingle();
+
+  if (error) { console.error('[BI] carregarEu:', error); return null; }
+  eu = data;
+  renderizarStamina();
+  return eu;
 }
 
 async function carregarCompras() {
@@ -806,7 +668,24 @@ async function carregarJogo() {
     jogadores    = jogo.jogadores    || [];
     jogadorAtual = jogo.jogadorAtual || 0;
     jogoIniciado = jogo.jogoIniciado || false;
-    tabuleiro    = jogo.tabuleiro    || JSON.parse(JSON.stringify(TABULEIRO_PADRAO));
+  }
+  await carregarTabuleiroGlobal();
+}
+
+async function carregarTabuleiroGlobal() {
+  const { data: tabData, error } = await db
+    .from(TB_TABULEIRO)
+    .select('posicao, nome, preco, tipo')
+    .order('posicao', { ascending: true });
+
+  if (error) { console.warn('[BI] erro tabuleiro global:', error); return; }
+
+  if (tabData && tabData.length) {
+    tabuleiro = tabData.map(t => ({
+      nome: t.nome, preco: Number(t.preco) || 0, tipo: t.tipo
+    }));
+  } else {
+    tabuleiro = JSON.parse(JSON.stringify(TABULEIRO_PADRAO));
   }
 }
 
@@ -829,7 +708,7 @@ async function salvarJogo() {
 }
 
 // ============================================================
-// SALDO / CODEX / TAXA / ENTRAR
+// SALDO / STAMINA / CODEX / TAXA / ENTRAR
 // ============================================================
 async function atualizarSaldoReal(loginJ, deltaS) {
   if (!loginJ || deltaS === 0) return;
@@ -842,6 +721,39 @@ async function atualizarSaldoReal(loginJ, deltaS) {
   const jog = jogadores.find(j => j.login === loginJ);
   if (jog) jog.saldo = novo;
   if (loginJ === login && eu) eu.saldo = novo;
+}
+
+// ============================================================
+// ⚡ CONSUMIR STAMINA
+// ============================================================
+async function consumirStamina(qtde) {
+  if (!eu) return false;
+
+  // Recarrega sm_atual do banco pra evitar dado defasado
+  const { data, error } = await db
+    .from(TABELA)
+    .select('sm_atual')
+    .eq('login', login)
+    .maybeSingle();
+
+  if (error) { console.error('[BI] ler sm_atual:', error); return false; }
+
+  const atual = Number(data?.sm_atual) || 0;
+  if (atual < qtde) {
+    mostrarMsg(`⚡ Stamina insuficiente! Você tem ${atual}, precisa de ${qtde}.`);
+    return false;
+  }
+
+  const novo = atual - qtde;
+  const { error: errUp } = await db.from(TABELA)
+    .update({ sm_atual: novo, updated_at: new Date().toISOString() })
+    .eq('login', login);
+
+  if (errUp) { console.error('[BI] update sm_atual:', errUp); return false; }
+
+  eu.sm_atual = novo;
+  renderizarStamina();
+  return true;
 }
 
 async function registrarPropriedadeNoCodex(casa, loginDono) {
@@ -866,7 +778,8 @@ async function confirmarECobrarTaxa() {
     return false;
   }
   const ok = confirm(
-    `🎲 Banco Imobiliário Online\n\nTaxa de entrada: ${fmtSaldo(TAXA_ENTRADA)}\n` +
+    `🎲 Banco Imobiliário Online — Foz do Iguaçu\n\n` +
+    `Taxa de entrada: ${fmtSaldo(TAXA_ENTRADA)}\n` +
     `Saldo: ${fmtSaldo(saldoAtual)} → ${fmtSaldo(saldoAtual - TAXA_ENTRADA)}\n\nEntrar?`
   );
   if (!ok) return false;
@@ -877,7 +790,6 @@ async function confirmarECobrarTaxa() {
 async function entrarAutomaticamente() {
   if (jogoIniciado && jogadores.some(j => j.login === login)) return true;
   jogadores = []; jogadorAtual = 0;
-  tabuleiro = JSON.parse(JSON.stringify(TABULEIRO_PADRAO));
   const ok = await confirmarECobrarTaxa();
   if (!ok) return false;
   jogadores.push({
@@ -890,14 +802,23 @@ async function entrarAutomaticamente() {
 }
 
 // ============================================================
-// JOGAR / CASA / COMPRAR
+// 🎲 JOGAR DADOS — consome 10 sm_atual
 // ============================================================
 window.jogarDados = async function () {
   if (!jogoIniciado || jogadores.length === 0) return;
+
+  // ⚡ Consome stamina
+  const ok = await consumirStamina(CUSTO_STAMINA);
+  if (!ok) return;
+
   const d1 = Math.floor(Math.random()*6)+1;
   const d2 = Math.floor(Math.random()*6)+1;
+
   document.getElementById('resultado-dados').innerHTML =
     `🎲 ${d1} + ${d2} = <strong>${d1+d2}</strong>`;
+
+  mostrarMsg(`⚡ −${CUSTO_STAMINA} sm_atual • Rolando dados...`);
+
   await moverJogador(d1 + d2);
 };
 
@@ -924,10 +845,11 @@ async function processarCasa(pos) {
   switch (casa.tipo) {
     case 'imposto':
       await atualizarSaldoReal(jog.login, -casa.preco);
-      mostrarMsg(`💸 Imposto S$ ${casa.preco}.`); break;
+      mostrarMsg(`💸 ${casa.nome} S$ ${casa.preco} — você pagou!`);
+      break;
     case 'chance':
-      if (Math.random() > 0.5) { await atualizarSaldoReal(jog.login, +100); mostrarMsg('🍀 +S$ 100!'); }
-      else { await atualizarSaldoReal(jog.login, -50); mostrarMsg('😬 -S$ 50!'); }
+      if (Math.random() > 0.5) { await atualizarSaldoReal(jog.login, +100); mostrarMsg('🍀 Sorte! +S$ 100!'); }
+      else { await atualizarSaldoReal(jog.login, -50); mostrarMsg('😬 Azar! -S$ 50!'); }
       break;
     case 'propriedade': case 'servico': case 'ferrovia':
       if (!dono) mostrarMsg(`🏠 ${casa.nome} à venda por ${fmtSaldo(casa.preco)}`);
@@ -937,10 +859,10 @@ async function processarCasa(pos) {
         await atualizarSaldoReal(jog.login, -alug);
         await atualizarSaldoReal(dono.dono_login, +alug);
         mostrarMsg(`💵 Aluguel ${fmtSaldo(alug)} → ${dono.dono_nome}`);
-      } else mostrarMsg(`🏠 Sua propriedade.`);
+      } else mostrarMsg(`🏠 Você já é dono de ${casa.nome}.`);
       break;
     case 'inicio':   mostrarMsg('💰 Início.'); break;
-    case 'descanso': mostrarMsg('✌️ Descanso.'); break;
+    case 'descanso': mostrarMsg('✌️ Descanso — aproveite a vista das Cataratas!'); break;
     case 'especial': mostrarMsg('🚔 Prisão / Visita.'); break;
   }
 }
@@ -958,6 +880,20 @@ window.comprar = async function () {
     mostrarMsg(`❌ Já pertence a ${comprasGlobais[pos].dono_nome}!`); return;
   }
   if (jog.saldo < casa.preco) { mostrarMsg('❌ Sem saldo!'); return; }
+
+  const { data: tabCheck } = await db
+    .from(TB_TABULEIRO)
+    .select('nome, preco, tipo')
+    .eq('posicao', pos)
+    .maybeSingle();
+
+  if (tabCheck && (tabCheck.nome !== casa.nome || Number(tabCheck.preco) !== casa.preco)) {
+    mostrarMsg('⚠️ O tabuleiro foi alterado! Recarregando...');
+    await carregarTabuleiroGlobal();
+    montarTabuleiroDOM();
+    atualizarTela();
+    return;
+  }
 
   await atualizarSaldoReal(jog.login, -casa.preco);
   const { data, error } = await db.from(TB_COMPRAS).insert({
@@ -1414,6 +1350,16 @@ function atualizarTela() {
   document.getElementById('btn-dados').disabled   = !jogoIniciado;
   document.getElementById('btn-comprar').disabled = !jogoIniciado;
 
+  // Desabilita rolar dados se faltar stamina
+  if (jogoIniciado && eu) {
+    const smAtual = Number(eu.sm_atual) || 0;
+    if (smAtual < CUSTO_STAMINA) {
+      document.getElementById('btn-dados').disabled = true;
+      document.getElementById('btn-dados').title =
+        `Precisa de ${CUSTO_STAMINA} sm_atual (você tem ${smAtual})`;
+    }
+  }
+
   const tipos = {
     propriedade: 'linear-gradient(135deg, #FFE4B5, #FFD28A)',
     inicio:      'linear-gradient(135deg, #90EE90, #4ADE80)',
@@ -1486,12 +1432,20 @@ function ativarRealtime() {
     .on('postgres_changes',
       { event: 'UPDATE', schema: 'public', table: TABELA, filter: `login=eq.${login}` },
       (p) => {
+        // Atualiza saldo e stamina
+        if (p.new) {
+          if (eu) {
+            eu.saldo    = Number(p.new.saldo)    || 0;
+            eu.sm_atual = Number(p.new.sm_atual) || 0;
+            eu.sm_max   = Number(p.new.sm_max)   || 0;
+            renderizarStamina();
+          }
+        }
         const jogo = p.new?.fazendinha_dados?.banco_imobiliario;
         if (!jogo) return;
         jogadores = jogo.jogadores || [];
         jogadorAtual = jogo.jogadorAtual || 0;
         jogoIniciado = jogo.jogoIniciado || false;
-        if (jogo.tabuleiro) tabuleiro = jogo.tabuleiro;
         atualizarTela();
       }).subscribe();
 
@@ -1513,7 +1467,16 @@ function ativarRealtime() {
       async () => { await carregarLances(); renderizarMercado(); renderizarMeus(); }
     ).subscribe();
 
-  canais = [c1, c2, c3, c4];
+  const c5 = db.channel('bi-tabuleiro-global')
+    .on('postgres_changes',
+      { event: '*', schema: 'public', table: TB_TABULEIRO },
+      async () => {
+        await carregarTabuleiroGlobal();
+        montarTabuleiroDOM();
+        atualizarTela();
+      }).subscribe();
+
+  canais = [c1, c2, c3, c4, c5];
 }
 
 // ============================================================
@@ -1536,16 +1499,17 @@ function ativarRealtime() {
     if (!ok) return;
     ativarRealtime();
 
+    const smAtual = Number(eu.sm_atual) || 0;
     window.__biDebug(
-      `✅ ${esc(eu.nome || login)} | ${fmtSaldo(eu.saldo)} | ` +
-      `${mercado.filter(m=>m.status==='aberto').length} anúncio(s) no mercado.`,
+      `✅ ${esc(eu.nome || login)} | ${fmtSaldo(eu.saldo)} | ⚡ ${smAtual} sm_atual ` +
+      `| ${mercado.filter(m=>m.status==='aberto').length} anúncio(s).`,
       'ok');
     setTimeout(() => {
       const a = document.getElementById('aviso-login');
       if (a) a.style.display = 'none';
     }, 5000);
 
-    mostrarMsg('🎮 Bem-vindo! Compre, venda, troque e dê lances.');
+    mostrarMsg('🎮 Bem-vindo a Foz do Iguaçu! Cada rolagem custa 10 sm_atual.');
 
   } catch (err) {
     console.error('[BI] init:', err);
@@ -1557,5 +1521,6 @@ function ativarRealtime() {
   });
 })();
 </script>
+<script src="../../nav.js" data-base="../../"></script>
 </body>
 </html>
