@@ -144,6 +144,52 @@
             }
         }
 
+        function mostrarErroValidacao(usuario, erro) {
+            console.error('[index] Falha ao validar perfil na tabela Geral:', erro);
+            if (spinner) spinner.style.display = 'none';
+            msg.textContent = 'Não foi possível validar sua conta no banco de dados.';
+
+            const detalhe = document.createElement('span');
+            detalhe.style.display = 'block';
+            detalhe.textContent = 'Verifique sua conexão e tente novamente. Sua sessão foi mantida.';
+            msg.appendChild(detalhe);
+
+            const tentarNovamente = document.createElement('button');
+            tentarNovamente.type = 'button';
+            tentarNovamente.textContent = 'Tentar novamente';
+            tentarNovamente.addEventListener('click', () => validarPerfil(usuario));
+            msg.appendChild(tentarNovamente);
+        }
+
+        async function validarPerfil(usuario) {
+            msg.textContent = 'Validando sua conta...';
+            if (spinner) spinner.style.display = 'block';
+
+            try {
+                const { db, TABELA } = await import('./config.js');
+                const { data, error } = await db
+                    .from(TABELA)
+                    .select('id')
+                    .eq('login', usuario.login)
+                    .maybeSingle();
+
+                if (error) throw error;
+
+                if (!data) {
+                    limparSessao();
+                    msg.textContent = 'Conta não encontrada. Redirecionando...';
+                    window.location.replace('./noticias.html');
+                    return;
+                }
+
+                msg.textContent = `Bem-vindo, ${usuario.nome || usuario.login}!`;
+                limparLoop();
+                window.location.replace('dashboard.html');
+            } catch (e) {
+                mostrarErroValidacao(usuario, e);
+            }
+        }
+
         // ══════════════════════════════════════════════════════════════
         // 🛡️ PROTEÇÃO ANTI-LOOP
         // ══════════════════════════════════════════════════════════════
@@ -195,14 +241,10 @@
             console.error('[index] Loop de redirecionamento detectado — sessão limpa.');
 
         } else if (sessaoValida()) {
-            // ✅ Tem sessão válida → vai para dashboard
             const user = obterUsuario();
-            if (user && user.login) {
-                msg.textContent = `Bem-vindo, ${user.nome || user.login}!`;
-                limparLoop();
-                window.location.replace('dashboard.html');
+            if (user && typeof user.login === 'string' && user.login.trim()) {
+                validarPerfil({ ...user, login: user.login.trim() });
             } else {
-                // Sessão corrompida → limpa e vai para noticias (NÃO login)
                 limparSessao();
                 msg.textContent = 'Sessão corrompida. Redirecionando...';
                 setTimeout(() => {
