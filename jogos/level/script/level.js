@@ -1,3 +1,4 @@
+import { anexarFichaCombate } from '../../../shared/ficha-combate.js';
 import { createClient } from '@supabase/supabase-js';
 
 // ============================================================
@@ -268,7 +269,7 @@ class LevelSystem {
         try {
             const { data, error } = await supabase
                 .from(TABELA)
-                .select('nivel, experiencia, exp_proximo, hp_max, mp_max, sm_max, ataque_base, defesa_base, magia_base, hp_atual, mp_atual, sm_atual')
+                .select('meta, nivel, experiencia, exp_proximo, hp_max, mp_max, sm_max, ataque_base, defesa_base, magia_base, hp_atual, mp_atual, sm_atual')
                 .eq('login', usuario.login)
                 .single();
 
@@ -284,6 +285,7 @@ class LevelSystem {
             if (data) {
                 this.nivel = data.nivel || 1;
                 this.experiencia = data.experiencia || 0;
+                this.combate = data.meta?.combate || {};
                 this.hpMax = data.hp_max || 100;
                 this.mpMax = data.mp_max || 50;
                 this.smMax = data.sm_max || 40;
@@ -601,3 +603,4 @@ window.syncLevelWithCharacter = syncLevelWithCharacter;
 window.getLevelSystem = getLevelSystem;
 
 console.log('📊 Sistema de Nível carregado e pronto para uso!');
+anexarFichaCombate(()=>({...levelSystem,maxHp:levelSystem.getHpMax(),dano:levelSystem.getAtaque(),armadura:levelSystem.getDefesa()}));

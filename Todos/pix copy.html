@@ -343,14 +343,14 @@
         </div>
 
         <div class="info-box">
-            Converta seus MUMU em dinheiro por Pix: <strong>1,00 MUMU = R$ 10,00</strong>. O saque mínimo é de R$ 10,00, e o Pix é feito em até 8 horas depois do pedido.
+            Converta seus MUMU em dinheiro por Pix: <strong>1,00 MUMU = S$ 10,00</strong>. O saque mínimo é de S$ 10,00, e o Pix é feito em até 8 horas depois do pedido.
         </div>
 
         <!-- SALDO MUMU -->
         <div class="linha-dado bloco-valor">
             <div class="rotulo">SALDO</div>
             <div class="valor destaque" id="saldoMumu">0,00</div>
-            <div class="equiv">Equivale a <span id="equivReais">R$ 0,42</span></div>
+            <div class="equiv">Equivale a <span id="equivReais">S$ 0,42</span></div>
         </div>
 
         <div class="linha-dado">
@@ -361,7 +361,7 @@
 
         <div class="linha-dado">
             <div class="rotulo">TOTAL RECEBIDO</div>
-            <div class="valor">R$ <span id="totalRecebido">0,00</span></div>
+            <div class="valor">S$ <span id="totalRecebido">0,00</span></div>
             <div class="equiv">Pix já pagos</div>
         </div>
 
@@ -371,9 +371,9 @@
         <div class="caixa-conversao">
             <div class="linha-conversao">
                 <span class="rotulo">CONVERSÃO</span>
-                <span class="valor">R$ 10,00 = 1,00 MUMU</span>
+                <span class="valor">S$ 10,00 = 1,00 MUMU</span>
             </div>
-            <div class="equiv" style="margin-bottom: 16px;">1,00 MUMU = R$ 10,00</div>
+            <div class="equiv" style="margin-bottom: 16px;">1,00 MUMU = S$ 10,00</div>
 
             <div class="grupo-input">
                 <label class="etiqueta-input">SACAR — Converter MUMU em Pix</label>
@@ -386,7 +386,7 @@
 
             <div>
                 <span>Você recebe</span>
-                <div class="valor-receber" id="valorReceber">R$ 0,00</div>
+                <div class="valor-receber" id="valorReceber">S$ 0,00</div>
             </div>
 
             <div class="aviso" id="avisoMinimo">Você precisa de pelo menos 1,00 MUMU. Faltam <span id="faltam">0,9979</span>.</div>
@@ -503,7 +503,7 @@ function fmtNum(valor, casas=2) {
     return Number(valor).toLocaleString('pt-BR', { minimumFractionDigits: casas, maximumFractionDigits: casas });
 }
 function fmtDinheiro(valor) {
-    return `R$ ${fmtNum(valor)}`;
+    return `S$ ${fmtNum(valor)}`;
 }
 
 // Formatar CPF
@@ -617,7 +617,7 @@ function atualizarTela() {
     const valorMumu = mumu * TAXA_MUMU_REAIS;
     
     el.saldoMumu.textContent = valoresOcultos ? "••••" : fmtNum(mumu, 4);
-    el.equivReais.textContent = valoresOcultos ? "R$ ••••" : fmtDinheiro(valorMumu);
+    el.equivReais.textContent = valoresOcultos ? "S$ ••••" : fmtDinheiro(valorMumu);
     el.totalRecebido.textContent = fmtNum(banco.totalJaPago);
 
     if (banco.pixPendente) {

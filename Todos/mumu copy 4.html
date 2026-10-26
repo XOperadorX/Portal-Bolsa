@@ -296,7 +296,7 @@
                 </div>
             </div>
             <div class="saldo-container reais">
-                <div class="saldo-label">💵 Saldo (R$)</div>
+                <div class="saldo-label">💵 Saldo (S$)</div>
                 <div class="saldo-valor" id="saldoReais">
                     <span class="carregando"><span class="spinner"></span></span>
                 </div>
@@ -324,42 +324,42 @@
         <div class="troca-section">
             <h3>🔄 Trocar Mumu por Saldo</h3>
             <p class="regra">
-                10,00 Mumu = R$ 1,00 Saldo<br>
-                <small>Desfazer: R$ 1,00 Saldo = 5,00 Mumu</small>
+                10,00 Mumu = S$ 1,00 Saldo<br>
+                <small>Desfazer: S$ 1,00 Saldo = 5,00 Mumu</small>
             </p>
 
             <div class="pacotes-grid" id="pacotesGrid">
                 <div class="pacote" data-pacote="1">
                     <div class="custo">🪙 10,00 Mumu</div>
-                    <div class="ganho">R$ 1,00 <small>Saldo</small></div>
+                    <div class="ganho">S$ 1,00 <small>Saldo</small></div>
                     <button class="btn-trocar" data-mumu="10" data-saldo="1">Trocar</button>
                     <button class="btn-desfazer desfazer" data-saldo="1" data-mumu="5" disabled>Desfazer</button>
                     <span class="aviso-desfazer">Volta: 5,00 Mumu</span>
                 </div>
                 <div class="pacote" data-pacote="2">
                     <div class="custo">🪙 20,00 Mumu</div>
-                    <div class="ganho">R$ 2,00 <small>Saldo</small></div>
+                    <div class="ganho">S$ 2,00 <small>Saldo</small></div>
                     <button class="btn-trocar" data-mumu="20" data-saldo="2">Trocar</button>
                     <button class="btn-desfazer desfazer" data-saldo="2" data-mumu="10" disabled>Desfazer</button>
                     <span class="aviso-desfazer">Volta: 10,00 Mumu</span>
                 </div>
                 <div class="pacote" data-pacote="3">
                     <div class="custo">🪙 50,00 Mumu</div>
-                    <div class="ganho">R$ 5,00 <small>Saldo</small></div>
+                    <div class="ganho">S$ 5,00 <small>Saldo</small></div>
                     <button class="btn-trocar" data-mumu="50" data-saldo="5">Trocar</button>
                     <button class="btn-desfazer desfazer" data-saldo="5" data-mumu="25" disabled>Desfazer</button>
                     <span class="aviso-desfazer">Volta: 25,00 Mumu</span>
                 </div>
                 <div class="pacote" data-pacote="4">
                     <div class="custo">🪙 100,00 Mumu</div>
-                    <div class="ganho">R$ 10,00 <small>Saldo</small></div>
+                    <div class="ganho">S$ 10,00 <small>Saldo</small></div>
                     <button class="btn-trocar" data-mumu="100" data-saldo="10">Trocar</button>
                     <button class="btn-desfazer desfazer" data-saldo="10" data-mumu="50" disabled>Desfazer</button>
                     <span class="aviso-desfazer">Volta: 50,00 Mumu</span>
                 </div>
                 <div class="pacote" data-pacote="5">
                     <div class="custo">🪙 200,00 Mumu</div>
-                    <div class="ganho">R$ 20,00 <small>Saldo</small></div>
+                    <div class="ganho">S$ 20,00 <small>Saldo</small></div>
                     <button class="btn-trocar" data-mumu="200" data-saldo="20">Trocar</button>
                     <button class="btn-desfazer desfazer" data-saldo="20" data-mumu="100" disabled>Desfazer</button>
                     <span class="aviso-desfazer">Volta: 100,00 Mumu</span>
@@ -530,7 +530,7 @@
                 el.appendChild(document.createTextNode(' ' + formatarMoeda(valor)));
             };
             render('saldoMumu', 'M$', mumu);
-            render('saldoReais', 'R$', reais);
+            render('saldoReais', 'S$', reais);
         }
 
         function renderizarHistorico() {
@@ -573,16 +573,16 @@
 
                 if (item.tipo === 'troca') {
                     classe = 'troca'; icone = '🔄'; rotulo = 'Troca';
-                    detalhe = `${formatarMoeda(item.mumuGasto)} Mumu → R$ ${formatarMoeda(item.saldoGanho)}`;
+                    detalhe = `${formatarMoeda(item.mumuGasto)} Mumu → S$ ${formatarMoeda(item.saldoGanho)}`;
                 } else if (item.tipo === 'desfazer') {
                     classe = 'desfazer'; icone = '↩️'; rotulo = 'Desfazer';
-                    detalhe = `R$ ${formatarMoeda(item.saldoGasto)} → ${formatarMoeda(item.mumuGanho)} Mumu`;
+                    detalhe = `S$ ${formatarMoeda(item.saldoGasto)} → ${formatarMoeda(item.mumuGanho)} Mumu`;
                 } else {
                     classe = 'resgate'; icone = '🎁';
                     rotulo = `Resgate "${item.codigo || ''}"`;
                     const partes = [];
                     if (item.mumuGanho > 0) partes.push(`${formatarMoeda(item.mumuGanho)} Mumu`);
-                    if (item.saldoGanho > 0) partes.push(`R$ ${formatarMoeda(item.saldoGanho)}`);
+                    if (item.saldoGanho > 0) partes.push(`S$ ${formatarMoeda(item.saldoGanho)}`);
                     detalhe = partes.join(' + ') || 'Sem recompensa';
                 }
 
@@ -725,7 +725,7 @@
                 mostrarMensagemTroca('Sessão expirada.', 'erro'); return;
             }
             if (operacaoEmAndamento) return;
-            if (!confirm(`Confirmar troca?\n\n🪙 ${formatarMoeda(mumuGasto)} Mumu → 💵 R$ ${formatarMoeda(saldoGanho)}`)) return;
+            if (!confirm(`Confirmar troca?\n\n🪙 ${formatarMoeda(mumuGasto)} Mumu → 💵 S$ ${formatarMoeda(saldoGanho)}`)) return;
 
             operacaoEmAndamento = true;
             bloquearBotoes(true);
@@ -748,7 +748,7 @@
                 atualizarBotoesPacotes();
                 await buscarSaldo();
 
-                mostrarMensagemTroca(`✅ Troca realizada! ${formatarMoeda(mumuGasto)} Mumu → R$ ${formatarMoeda(saldoGanho)}`, 'sucesso');
+                mostrarMensagemTroca(`✅ Troca realizada! ${formatarMoeda(mumuGasto)} Mumu → S$ ${formatarMoeda(saldoGanho)}`, 'sucesso');
 
             } catch (erro) {
                 mostrarMensagemTroca(`❌ ${erro.message}`, 'erro');
@@ -766,7 +766,7 @@
                 mostrarMensagemTroca('Sessão expirada.', 'erro'); return;
             }
             if (operacaoEmAndamento) return;
-            if (!confirm(`Desfazer troca?\n\n💵 R$ ${formatarMoeda(saldoGasto)} → 🪙 ${formatarMoeda(mumuGanho)} Mumu\n\n⚠️ Você recebe 50% do valor original.`)) return;
+            if (!confirm(`Desfazer troca?\n\n💵 S$ ${formatarMoeda(saldoGasto)} → 🪙 ${formatarMoeda(mumuGanho)} Mumu\n\n⚠️ Você recebe 50% do valor original.`)) return;
 
             operacaoEmAndamento = true;
             bloquearBotoes(true);
@@ -789,7 +789,7 @@
                 atualizarBotoesPacotes();
                 await buscarSaldo();
 
-                mostrarMensagemTroca(`✅ Troca desfeita! R$ ${formatarMoeda(saldoGasto)} → ${formatarMoeda(mumuGanho)} Mumu`, 'sucesso');
+                mostrarMensagemTroca(`✅ Troca desfeita! S$ ${formatarMoeda(saldoGasto)} → ${formatarMoeda(mumuGanho)} Mumu`, 'sucesso');
 
             } catch (erro) {
                 mostrarMensagemTroca(`❌ ${erro.message}`, 'erro');
@@ -838,7 +838,7 @@
 
                 const partes = [];
                 if (json.bonusMumu > 0) partes.push(`${formatarMoeda(json.bonusMumu)} Mumu`);
-                if (json.bonusSaldo > 0) partes.push(`R$ ${formatarMoeda(json.bonusSaldo)}`);
+                if (json.bonusSaldo > 0) partes.push(`S$ ${formatarMoeda(json.bonusSaldo)}`);
                 mostrarMsgResgate(`✅ Código resgatado! Você ganhou ${partes.join(' + ')}`, 'sucesso');
 
                 input.value = '';

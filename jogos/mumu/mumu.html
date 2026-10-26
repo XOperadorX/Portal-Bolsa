@@ -375,6 +375,7 @@
         @media (max-width: 400px) {
             .pacotes-grid { grid-template-columns: 1fr; }
         }
+        .taxa-pacote{margin:12px 0;padding:10px;border:1px solid #4c618044;border-radius:9px;color:#bcc9df;background:#101c2c;font-size:.76rem;line-height:1.7;text-align:left}
     </style>
 </head>
 <body>
@@ -405,7 +406,7 @@
                 </div>
             </div>
             <div class="saldo-container reais">
-                <div class="saldo-label">💵 SALDO (R$)</div>
+                <div class="saldo-label">💵 SALDO (S$)</div>
                 <div class="saldo-valor" id="saldoReais">
                     <span class="carregando"><span class="spinner"></span></span>
                 </div>
@@ -419,7 +420,7 @@
         <!-- ===== RESGATAR CÓDIGO ===== -->
         <div class="resgate-section">
             <h3>🎁 Resgatar Código</h3>
-            <p class="regra">Digite um código promocional para ganhar recompensas</p>
+            <p class="regra" id="regraMumu">Digite um código promocional para ganhar recompensas</p>
 
             <div class="resgate-input-group">
                 <input type="text" id="inputCodigo" placeholder="Digite o código..." maxlength="30" autocomplete="off">
@@ -433,42 +434,42 @@
         <div class="troca-section">
             <h3>🔄 Trocar Mumu por Saldo</h3>
             <p class="regra">
-                10,00 Mumu = R$ 1,00 Saldo<br>
-                <small>Desfazer: R$ 1,00 Saldo = 5,00 Mumu</small>
+                10,00 Mumu = S$ 1,00 Saldo<br>
+                <small>Desfazer: S$ 1,00 Saldo = 5,00 Mumu</small>
             </p>
 
             <div class="pacotes-grid" id="pacotesGrid">
                 <div class="pacote" data-pacote="1">
                     <div class="custo">🪙 10,00 Mumu</div>
-                    <div class="ganho">R$ 1,00 <small>Saldo</small></div>
+                    <div class="ganho">S$ 1,00 <small>Saldo</small></div>
                     <button class="btn-trocar" data-mumu="10" data-saldo="1">Trocar</button>
                     <button class="btn-desfazer desfazer" data-saldo="1" data-mumu="5" disabled>Desfazer</button>
                     <span class="aviso-desfazer">Volta: 5,00 Mumu</span>
                 </div>
                 <div class="pacote" data-pacote="2">
                     <div class="custo">🪙 20,00 Mumu</div>
-                    <div class="ganho">R$ 2,00 <small>Saldo</small></div>
+                    <div class="ganho">S$ 2,00 <small>Saldo</small></div>
                     <button class="btn-trocar" data-mumu="20" data-saldo="2">Trocar</button>
                     <button class="btn-desfazer desfazer" data-saldo="2" data-mumu="10" disabled>Desfazer</button>
                     <span class="aviso-desfazer">Volta: 10,00 Mumu</span>
                 </div>
                 <div class="pacote" data-pacote="3">
                     <div class="custo">🪙 50,00 Mumu</div>
-                    <div class="ganho">R$ 5,00 <small>Saldo</small></div>
+                    <div class="ganho">S$ 5,00 <small>Saldo</small></div>
                     <button class="btn-trocar" data-mumu="50" data-saldo="5">Trocar</button>
                     <button class="btn-desfazer desfazer" data-saldo="5" data-mumu="25" disabled>Desfazer</button>
                     <span class="aviso-desfazer">Volta: 25,00 Mumu</span>
                 </div>
                 <div class="pacote" data-pacote="4">
                     <div class="custo">🪙 100,00 Mumu</div>
-                    <div class="ganho">R$ 10,00 <small>Saldo</small></div>
+                    <div class="ganho">S$ 10,00 <small>Saldo</small></div>
                     <button class="btn-trocar" data-mumu="100" data-saldo="10">Trocar</button>
                     <button class="btn-desfazer desfazer" data-saldo="10" data-mumu="50" disabled>Desfazer</button>
                     <span class="aviso-desfazer">Volta: 50,00 Mumu</span>
                 </div>
                 <div class="pacote" data-pacote="5">
                     <div class="custo">🪙 200,00 Mumu</div>
-                    <div class="ganho">R$ 20,00 <small>Saldo</small></div>
+                    <div class="ganho">S$ 20,00 <small>Saldo</small></div>
                     <button class="btn-trocar" data-mumu="200" data-saldo="20">Trocar</button>
                     <button class="btn-desfazer desfazer" data-saldo="20" data-mumu="100" disabled>Desfazer</button>
                     <span class="aviso-desfazer">Volta: 100,00 Mumu</span>
@@ -491,7 +492,9 @@
 
     </div>
 
-    <script>
+    <script type="module">
+        import { obterTaxa } from '../../shared/taxas-globais.js';
+        import { pacotesMumu } from '../../shared/mumu-taxas.js';
         // ============================================================
         // CONFIGURAÇÃO
         // ============================================================
@@ -600,7 +603,7 @@
                 el.appendChild(document.createTextNode(' ' + formatarMoeda(valor)));
             };
             render('saldoMumu', 'M$', mumu);
-            render('saldoReais', 'R$', reais);
+            render('saldoReais', 'S$', reais);
         }
 
         function renderizarHistorico() {
@@ -634,16 +637,16 @@
                 let classe, icone, rotulo, detalhe;
                 if (item.tipo === 'troca') {
                     classe = 'troca'; icone = '🔄'; rotulo = 'Troca';
-                    detalhe = `${formatarMoeda(item.mumuGasto)} Mumu → R$ ${formatarMoeda(item.saldoGanho)}`;
+                    detalhe = `${formatarMoeda(item.mumuGasto)} Mumu → S$ ${formatarMoeda(item.saldoGanho)}`;
                 } else if (item.tipo === 'desfazer') {
                     classe = 'desfazer'; icone = '↩️'; rotulo = 'Desfazer';
-                    detalhe = `R$ ${formatarMoeda(item.saldoGasto)} → ${formatarMoeda(item.mumuGanho)} Mumu`;
+                    detalhe = `S$ ${formatarMoeda(item.saldoGasto)} → ${formatarMoeda(item.mumuGanho)} Mumu`;
                 } else {
                     classe = 'resgate'; icone = '🎁';
                     rotulo = `Resgate "${item.codigo || ''}"`;
                     const partes = [];
                     if (item.mumuGanho > 0) partes.push(`${formatarMoeda(item.mumuGanho)} Mumu`);
-                    if (item.saldoGanho > 0) partes.push(`R$ ${formatarMoeda(item.saldoGanho)}`);
+                    if (item.saldoGanho > 0) partes.push(`S$ ${formatarMoeda(item.saldoGanho)}`);
                     detalhe = partes.join(' + ') || 'Sem recompensa';
                 }
                 const div = document.createElement('div');
@@ -741,7 +744,7 @@
         async function trocarMumuPorSaldo(mumuGasto, saldoGanho) {
             if (!usuarioAtual || !usuarioAtual.login) { mostrarMensagemTroca('Sessão expirada.', 'erro'); return; }
             if (operacaoEmAndamento) return;
-            if (!confirm(`Confirmar troca?\n\n🪙 ${formatarMoeda(mumuGasto)} Mumu → 💵 R$ ${formatarMoeda(saldoGanho)}`)) return;
+            if (!confirm(`Confirmar troca?\n\n🪙 ${formatarMoeda(mumuGasto)} Mumu → 💵 S$ ${formatarMoeda(saldoGanho)}`)) return;
 
             operacaoEmAndamento = true; bloquearBotoes(true);
             mostrarMensagemTroca('Processando troca...', 'carregando');
@@ -752,7 +755,7 @@
                 localStorage.setItem('usuario_logado', JSON.stringify(usuarioAtual));
                 exibirSaldos(saldoMumuAtual, saldoReaisAtual); atualizarBotoesPacotes();
                 await buscarSaldo();
-                mostrarMensagemTroca(`✅ Troca realizada! ${formatarMoeda(mumuGasto)} Mumu → R$ ${formatarMoeda(saldoGanho)}`, 'sucesso');
+                mostrarMensagemTroca(`✅ Troca realizada! ${formatarMoeda(mumuGasto)} Mumu → S$ ${formatarMoeda(saldoGanho)}`, 'sucesso');
             } catch (erro) { mostrarMensagemTroca(`❌ ${erro.message}`, 'erro'); }
             finally { operacaoEmAndamento = false; bloquearBotoes(false); }
         }
@@ -760,7 +763,7 @@
         async function desfazerTroca(saldoGasto, mumuGanho) {
             if (!usuarioAtual || !usuarioAtual.login) { mostrarMensagemTroca('Sessão expirada.', 'erro'); return; }
             if (operacaoEmAndamento) return;
-            if (!confirm(`Desfazer troca?\n\n💵 R$ ${formatarMoeda(saldoGasto)} → 🪙 ${formatarMoeda(mumuGanho)} Mumu\n\n⚠️ Você recebe 50% do valor original.`)) return;
+            if (!confirm(`Desfazer troca?\n\n💵 S$ ${formatarMoeda(saldoGasto)} → 🪙 ${formatarMoeda(mumuGanho)} Mumu\n\n⚠️ Você recebe ${formatarMoeda(100-obterTaxa('mumu_desfazer_desconto'))}% do valor original (desconto de ${formatarMoeda(obterTaxa('mumu_desfazer_desconto'))}%).`)) return;
 
             operacaoEmAndamento = true; bloquearBotoes(true);
             mostrarMensagemTroca('Processando desfazer...', 'carregando');
@@ -771,7 +774,7 @@
                 localStorage.setItem('usuario_logado', JSON.stringify(usuarioAtual));
                 exibirSaldos(saldoMumuAtual, saldoReaisAtual); atualizarBotoesPacotes();
                 await buscarSaldo();
-                mostrarMensagemTroca(`✅ Troca desfeita! R$ ${formatarMoeda(saldoGasto)} → ${formatarMoeda(mumuGanho)} Mumu`, 'sucesso');
+                mostrarMensagemTroca(`✅ Troca desfeita! S$ ${formatarMoeda(saldoGasto)} → ${formatarMoeda(mumuGanho)} Mumu`, 'sucesso');
             } catch (erro) { mostrarMensagemTroca(`❌ ${erro.message}`, 'erro'); }
             finally { operacaoEmAndamento = false; bloquearBotoes(false); }
         }
@@ -794,7 +797,7 @@
                 await buscarSaldo();
                 const partes = [];
                 if (json.bonusMumu > 0) partes.push(`${formatarMoeda(json.bonusMumu)} Mumu`);
-                if (json.bonusSaldo > 0) partes.push(`R$ ${formatarMoeda(json.bonusSaldo)}`);
+                if (json.bonusSaldo > 0) partes.push(`S$ ${formatarMoeda(json.bonusSaldo)}`);
                 mostrarMsgResgate(`✅ Código resgatado! Você ganhou ${partes.join(' + ')}`, 'sucesso');
                 input.value = '';
             } catch (erro) { mostrarMsgResgate(`❌ ${erro.message}`, 'erro'); }
@@ -826,11 +829,23 @@
         function iniciarVerificacaoSessao() {
             if (intervaloSessao) clearInterval(intervaloSessao);
             intervaloSessao = setInterval(() => {
-                if (!carregarUsuarioLogado()) { pararPolling(); window.location.href = 'login.html'; }
+                if (!carregarUsuarioLogado()) { pararPolling(); window.location.href = '../../login.html'; }
             }, CONFIG.INTERVALO_SESSAO);
         }
 
-        document.addEventListener('DOMContentLoaded', () => {
+        function iniciarInterface() {
+            const pacotes=pacotesMumu();
+            document.getElementById('regraMumu').textContent='Cotação de cada pacote abaixo. Desfazer aplica desconto de '+formatarMoeda(obterTaxa('mumu_desfazer_desconto'))+'% sobre o MUMU original. Códigos de resgate concedem os valores definidos pelo ADM, sem taxa de conversão.';
+            document.getElementById('pacotesGrid').innerHTML=pacotes.map((p,i)=>`
+                <div class="pacote" data-pacote="${i+1}">
+                    <div class="custo">M$ ${formatarMoeda(p.mumu)} MUMU</div>
+                    <div class="ganho">S$ ${formatarMoeda(p.saldo)} <small>Saldo</small></div>
+                    <div class="taxa-pacote">Cotação: 1 MUMU = S$ ${p.saldo/p.mumu < .01 ? (p.saldo/p.mumu).toLocaleString('pt-BR',{maximumFractionDigits:8}) : formatarMoeda(p.saldo/p.mumu)}<br>Conversão direta: sem desconto adicional.<br>Desfazer: desconto de ${formatarMoeda(p.desconto)}%<br>S$ ${formatarMoeda(p.saldo)} → M$ ${formatarMoeda(p.retorno)}</div>
+                    <button class="btn-trocar" data-mumu="${p.mumu}" data-saldo="${p.saldo}">Trocar</button>
+                    <button class="btn-desfazer desfazer" data-saldo="${p.saldo}" data-mumu="${p.retorno}" disabled>Desfazer</button>
+                    <span class="aviso-desfazer">Volta: M$ ${formatarMoeda(p.retorno)} MUMU</span>
+                </div>`).join('');
+
             document.querySelectorAll('.btn-trocar').forEach(btn => {
                 btn.addEventListener('click', () => trocarMumuPorSaldo(parseFloat(btn.dataset.mumu), parseFloat(btn.dataset.saldo)));
             });
@@ -844,9 +859,10 @@
                 if (document.hidden) { pararPolling(); }
                 else { buscarSaldo(); iniciarPolling(); }
             });
-        });
+        }
+        if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',iniciarInterface,{once:true});else iniciarInterface();
 
-        if (!carregarUsuarioLogado()) { window.location.href = 'login.html'; }
+        if (!carregarUsuarioLogado()) { window.location.href = '../../login.html'; }
         else { buscarSaldo(); iniciarPolling(); iniciarVerificacaoSessao(); }
 
         console.log('🔄 Sistema de saldo Mumu (RPC) iniciado');

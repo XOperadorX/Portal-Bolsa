@@ -1566,6 +1566,9 @@ body {
          SCRIPT PRINCIPAL — importa tudo do config.js
     ============================================================ -->
     <script type="module">
+        import { iniciarPresencaJogador } from './shared/presenca-jogador.js';
+        import { registrarEntradaJogo } from './shared/dashboard-persistencia.js';
+        import { anexarFichaCombate } from './shared/ficha-combate.js';
         import { OfflineRegen } from './shared/offline-regen.js';
         import {
             db as supabase,
@@ -1656,9 +1659,9 @@ body {
             getAtaque()  { return this.ataqueBase + Math.floor(this.nivel * 1.5); }
             getDefesa()  { return this.defesaBase + Math.floor(this.nivel * 1.2); }
             getMagia()   { return this.magiaBase  + Math.floor(this.nivel * 1.0); }
-            getHpMax()   { return this.hpMax + Math.floor(this.nivel * 6); }
-            getMpMax()   { return this.mpMax + Math.floor(this.nivel * 4); }
-            getSmMax()   { return this.smMax + Math.floor(this.nivel * 3); }
+            getHpMax()   { return this._limitesBanco?.hp ?? this.hpMax + Math.floor(this.nivel * 6); }
+            getMpMax()   { return this._limitesBanco?.mp ?? this.mpMax + Math.floor(this.nivel * 4); }
+            getSmMax()   { return this._limitesBanco?.sm ?? this.smMax + Math.floor(this.nivel * 3); }
 
             calcularExpProximo(nivel = this.nivel) { return Math.floor(100 * Math.pow(1.2, nivel - 1)); }
             getExpProximo() { return this.calcularExpProximo(this.nivel); }
@@ -1675,9 +1678,18 @@ body {
 
                 this.offlineRegen = new OfflineRegen({
                     supabase, tabela: TABELA, login: this.usuario.login,
-                    container: document.getElementById('offlineRegenSlot'),
+                    container: document.getElementById('offlineRegenSlot'), observarBanco: true,
+                    onRecord: dados => {
+                        if(Object.hasOwn(dados,'meta'))this.combate=dados.meta?.combate||{};
+                        for (const [campo, coluna, antiga] of [['nivel','nivel'],['experiencia','experiencia'],['saldo','saldo'],['btc','btc'],['poderHash','poder_hash'],['ataqueBase','ataque_base','atk'],['defesaBase','defesa_base','def'],['magiaBase','magia_base','mag']]) {
+                            const valor = dados[coluna] ?? dados[antiga]; if (valor != null) this[campo] = Number(valor);
+                        }
+                        const admin = document.getElementById('btnAdmin');
+                        if (admin && typeof dados.cadeado === 'boolean') { admin.style.display = dados.cadeado ? '' : 'none'; admin.classList.toggle('visivel',dados.cadeado); }
+                    },
                     onApply: (dados) => {
                         this.sm = dados.sm; this.hp = dados.hp; this.mp = dados.mp;
+                        this._limitesBanco = {hp:dados.hpMax,mp:dados.mpMax,sm:dados.smMax};
                         this.atualizarUI(); sincronizarRegenState();
                     }
                 });
@@ -1733,11 +1745,12 @@ body {
             async salvarLog(mensagem, tipo) {
                 if (!this.usuario || !this.supabaseOnline) return;
                 try {
-                    await supabase.from(TABELA_ATIVIDADES).insert({
+                    const { error } = await supabase.from(TABELA_ATIVIDADES).insert({
                         login: this.usuario.login, mensagem, tipo,
                         nivel: this.nivel, exp: this.experiencia,
                         created_at: new Date().toISOString()
                     });
+                    if(error)throw error;
                 } catch (e) { console.warn('⚠️ Erro ao salvar log:', e); }
             }
 
@@ -1835,28 +1848,24 @@ body {
                     }
                 }, 150);
 
-                const staminaAntes = this.sm;
-                this.sm -= custoStamina;
-                this.ultimaVezOnline = Date.now();
-                this.atualizarUI();
-
-                if (this.offlineRegen) {
-                    this.offlineRegen.onSmReduzida(this.sm, this.getSmMax());
-                    if (typeof this.offlineRegen.render === 'function') this.offlineRegen.render();
-                }
-                sincronizarRegenState();
-                const msg = `🎮 Entrou em ${gameName} (-${custoStamina} SM: ${staminaAntes} → ${this.sm})`;
-                this.addLog(msg, 'info');
-
                 try {
-                    if (this.usuario && this.supabaseOnline) {
-                        await supabase.from(TABELA).update({
-                            sm_atual: this.sm, sm: this.sm,
-                            ultima_vez_online: new Date().toISOString(),
-                            updated_at: new Date().toISOString()
-                        }).eq('login', this.usuario.login);
-                    }
-                } catch (e) { console.error('❌ Exceção ao salvar SM:', e); }
+                    if(!this.usuario||!this.supabaseOnline)throw Error('Sem conexão com o Supabase. Tente novamente.');
+                    const resultado=await registrarEntradaJogo({db:supabase,tabela:TABELA,login:this.usuario.login,minimo:REGEN_CFG.SM_MINIMA_JOGO});
+                    this.sm=Number(resultado.registro.sm_atual??resultado.registro.sm);
+                    this.ultimaVezOnline=Date.now();
+                    if(this.offlineRegen)this.offlineRegen.aplicarRegistro(resultado.registro);
+                    this.atualizarUI();sincronizarRegenState();
+                    if(loadingStamina)loadingStamina.textContent=`⚡ -${resultado.custo} STAMINA — ${resultado.antes} → ${this.sm}`;
+                    this.addLog(`🎮 Entrou em ${gameName} (-${resultado.custo} SM: ${resultado.antes} → ${this.sm})`,'info');
+                    try{localStorage.setItem('portal_bolsa_dados_atualizados',String(Date.now()));}catch{}
+                } catch(erro) {
+                    clearInterval(progressInterval);
+                    if(loadingOverlay)loadingOverlay.classList.remove('active');
+                    this._processandoJogo=false;
+                    this.mostrarToast('⚠️ Não foi possível confirmar a entrada: '+erro.message,'erro');
+                    if(this.offlineRegen)await this.offlineRegen.sincronizarDoBanco();
+                    return;
+                }
 
                 clearInterval(progressInterval);
                 if (loadingProgressFill) loadingProgressFill.style.width = '100%';
@@ -1877,8 +1886,6 @@ body {
                         hp_atual: this.hp, mp_atual: this.mp, sm_atual: this.sm,
                         hp: this.hp, mp: this.mp, sm: this.sm,
                         btc: this.btc, poder_hash: this.poderHash,
-                        total_treinos: this.totalTreinos, total_descansos: this.totalDescansos,
-                        ultima_atividade: this.ultimaAtividade, ultimo_reset: this.ultimoReset,
                         ultima_vez_online: new Date().toISOString(),
                         updated_at: new Date().toISOString()
                     };
@@ -1892,8 +1899,6 @@ body {
                 if (!this.usuario || !this.supabaseOnline) return;
                 try {
                     await supabase.from(TABELA).update({
-                        total_treinos: this.totalTreinos, total_descansos: this.totalDescansos,
-                        ultima_atividade: this.ultimaAtividade, ultimo_reset: this.ultimoReset,
                         ultima_vez_online: new Date().toISOString(),
                         updated_at: new Date().toISOString()
                     }).eq('login', this.usuario.login);
@@ -1911,12 +1916,12 @@ body {
                     if (data) {
                         this.nivel = data.nivel || 1;
                         this.experiencia = data.experiencia || 0;
-                        this.hpMax = data.max_hp ?? 100;
-                        this.mpMax = data.max_mp ?? 50;
-                        this.smMax = data.max_sm ?? 100;
-                        this.ataqueBase = data.atk ?? 15;
-                        this.defesaBase = data.def ?? 10;
-                        this.magiaBase = data.mag ?? 8;
+                        this.hpMax = data.hp_max || data.max_hp || 100;
+                        this.mpMax = data.mp_max || data.max_mp || 50;
+                        this.smMax = data.sm_max || data.max_sm || 100;
+                        this.ataqueBase = data.ataque_base ?? data.atk ?? 15;
+                        this.defesaBase = data.defesa_base ?? data.def ?? 10;
+                        this.magiaBase = data.magia_base ?? data.mag ?? 8;
                         this.hp = data.hp_atual ?? data.hp ?? this.getHpMax();
                         this.mp = data.mp_atual ?? data.mp ?? this.getMpMax();
                         this.sm = data.sm_atual ?? data.sm ?? this.getSmMax();
@@ -1930,7 +1935,6 @@ body {
                         this.atualizarUI();
                         await this.carregarLogs(usuario.login);
                         await this.iniciarOfflineRegen();
-                        this.salvarComDelay();
                         return true;
                     }
                     return false;
@@ -2080,11 +2084,12 @@ body {
 
         const levelSystem = new LevelSystem();
         window.levelSystem = levelSystem;
+        anexarFichaCombate(()=>({...levelSystem,maxHp:levelSystem.getHpMax(),dano:levelSystem.getAtaque(),armadura:levelSystem.getDefesa()}),{base:'./'});
         let saveInterval = null;
 
         function iniciarSalvamentoAutomatico() {
             saveInterval = setInterval(async () => {
-                if (levelSystem.usuario && levelSystem.supabaseOnline) await levelSystem.salvar();
+                if (levelSystem.offlineRegen) await levelSystem.offlineRegen.sincronizarDoBanco();
             }, 15000);
         }
 
@@ -2155,6 +2160,7 @@ body {
         }
 
         document.addEventListener('DOMContentLoaded', async function() {
+            iniciarPresencaJogador({db:supabase,tabela:TABELA});
             console.log('🚀 Dashboard carregado!');
             console.log('🎨 Símbolos:', SIMB);
 
@@ -2182,7 +2188,7 @@ body {
                     if (!confirm('Tem certeza que deseja sair?\n\n⚡ HP, MP e STAMINA começarão a regenerar automaticamente.')) return;
                     novoBtnSair.disabled = true; novoBtnSair.textContent = 'Saindo...';
                     try {
-                        if (levelSystem.usuario && levelSystem.supabaseOnline) await levelSystem.salvar();
+                        if (levelSystem.offlineRegen) await levelSystem.offlineRegen.sincronizarDoBanco();
                         if (levelSystem.offlineRegen) { levelSystem.offlineRegen.destroy(); levelSystem.offlineRegen = null; }
                         limparSessao();
                         window.location.href = 'login.html';
@@ -2204,7 +2210,7 @@ body {
             }
 
             window.addEventListener('beforeunload', () => {
-                if (levelSystem.usuario && levelSystem.supabaseOnline) levelSystem.salvar();
+
                 if (levelSystem.offlineRegen) levelSystem.offlineRegen.destroy();
                 if (saveInterval) clearInterval(saveInterval);
                 if (regenState.intervalo) clearInterval(regenState.intervalo);

@@ -1,0 +1,165 @@
+
+Loja
+Lista de Lojas Secondil:
+Principalmente tipos de armas simples e diretos. O material pode ser de madeira, pedra, minério cinza ou outra coisa. Alguns são normais, outros podem ter uso mais detalhado em certos campos.
+
+Conjunto de Equipamentos de Couro Splitblade
+Máscara de Couro Splitblade
+Espada de Ferro: Uma espada feita de ferro.
+Adaga de Ferro: Uma adaga curta feita de ferro.
+Lança de Ferro: Uma lança longa feita de ferro.
+Martelo de Ferro: Um grande martelo de ferro feito de martelo.
+Bastão de Madeira: Um cajado feito de madeira. Um sorriso, arma direta.
+Cajado de Pedra: Um cajado feito de pedra.
+Vara Fóssil: Uma vara feita de algum tipo de fóssil. Extremamente frágil.
+Escudo de Madeira: Um escudo redondo de madeira.
+Piqueta: Um cabo marrom com uma picareta prateada. Uma ferramenta/arma usada para minerar, porém é muito pesada (como empunhar uma grande espada) e consome um pouco da resistência do jogador.
+ITENS DE MONSTRO QUE SOLTAM
+Na maioria das vezes, são itens que os jogadores encontram ao derrotar certos monstros. Às vezes podem ser encontrados em lojas de itens, mas a menos que alguém esteja disposto a pagar, a maioria das aventuras caça os itens. Às vezes trazendo certos itens que podem ser usados para criar e forjar novos itens e armas.
+
+Gruta da Floresta Prismática:
+Bolsa de Néctar Papillon de Armazenamento: Uma bolsa transparente cheia de néctar de seiva coletado.
+Pelo de pólen de abelha dos Trabalhadores do Império: Um pedaço do pelo de pólen da abelha.
+Picada de Abelha Caçadora do Impore: Um pedaço do ferrão da abelha.
+Mandíbula da Abelha Caçadora do Imprécio: Um pedaço da mandíbula da abelha.
+Asa furtiva Mimic Mantis: Um pedaço da asa da louva-a-deus.
+Mimar Braço de Foice Louva-a-Deus: Um pedaço do braço de foice da louva-a-deus.
+Chifre de Besouro Quádruple: Um enorme pedaço do chifre do besouro.
+Mandíbula do Besouro Quádruplo: Uma peça em forma de crescente da mandíbula.
+Carapaça de Besouro Quádruplo: Uma parte plana da armadura de carapaça do besouro.
+Élitron Quad Besouro: Um enorme pedaço da asa do besouro.
+
+Publicidade
+Equipamento:
+Mercenário Twinblade
+Mercenário Twinblade	A arma que Sunraku inicialmente equipou ao criar seu personagem.
+Machado de Mão Goblin
+Machado de Mão Goblin	O Machado de Mão dos Duendes (ゴブリンの手斧 Goburin no Teono) é uma arma contundente que pode ser lançada por um duende. A arma em si não tem alta durabilidade e vende por um valor muito baixo.
+Vorpal Chopper
+Helicópteros Vorpal	O Helicóptero Vorpal (致命の包丁 [ヴォーパルチョッパー] Vōparu Choppā) é uma queda rara do raro monstro Vorpal Bunny. O efeito especial da arma está dando bônus ao dano crítico.
+Adagas do Pântano
+Adagas do Pântano	As Adagas do Pântano (湖沼の短剣 Koshō no Tanken) é uma arma fabricável no armeiro em Secondil. Para forjá-lo, o jogador deve coletar um raro minério fóssil de Marshcoffin. O efeito especial da arma reduz pela metade a redução de durabilidade por um tempo após um acerto crítico.
+Faca de arremesso
+Faca de arremesso	Como Sunraku é um trabalho de combate corpo a corpo, ele foi traumatizado pela Águia Tóxica desde a quinta rodada do Treinamento Prático do Coliseu Vorpal e precisava de um item consumível, que permitisse arremessar uma faca nos inimigos à distância.
+Togetsu
+Togetsu	Togetsu Crescente/Decadente foi ascendido (recriado) pelo Divino Artesão Vysache ao infundir a Concha do Besouro Quádruplo com Vorpal Choppers. Em um acerto crítico enquanto luta contra um oponente de nível mais alto, Enfraquecimento causa dsdasddces, mas em vez disso aumenta a barra de fusão das duas armas. Uma vez alcançado um certo ponto no medidor, os dois podem se combinar para formar a Lua Gêmea. Twin Moon aumenta as chances e o poder de um crítico com base na diferença entre o nível do usuário e inimigos de nível mais alto.
+Abelha Império Twinblade
+Abelha Império Twinblade	Uma espada gêmea feita de materiais da Rainha Abelha do Império pelas mãos de Bilac. A espada da direita tem o efeito 'Veneno Corrosivo', contaminando e destruindo a área atingida
+Gilta Brille
+Anime
+Mangá
+Gilta Brille Anime
+
+Ao ter ou equipar um item que te dá 400+ vitalidade, você pode equipar essa arma. A arma é acionada por comandos de voz, disparando cristais com o comando "Shoot Out" e ampliando esse cristal com "Cresça".
+Colar da Alma Vorpal
+Colar da Alma Vorpal	Os pontos de experiência que você ganha serão reduzidos pela metade, mas os pontos de status que você ganhará ao subir de nível serão multiplicados por 2,5 vezes. Um colar de mandamento criado pelos Vysache. Não pode ser removido sem a permissão do rei.
+Ritual Medjed Keffiyeh
+Festa Mejor Keffiyeh	A mysterious white hood. Previously, despite its high price, it wasn't a very strong piece of equipment, and since you couldn't use both arms, it was just a joke piece of equipment. However, its popularity exploded due to rumors of a white cloth ghost seen at Third Dream. A certain peddler NPC sells it on rare occasions, but the price has risen modestly since its popularity exploded.
+Staring Bird Mask
+Staring Bird Mask	The mask Sunraku chose to hide his face when creating his own avatar.
+Spiked Battlehelm
+Spiked Battlehelm	Head equipment made from Quad Beetle material. There is a collision detection in the corner, and attacks and parries are possible. It has extremely good impact resistance, and even a half-hearted attack won't even scratch it. There is also a legend that even when it was trampled by a giant beast, the armor remained unharmed (aside from the wearer). If there were to be a situation where this would be shattered, it would be a force too great for humans to handle.
+Splitblade Leather Mask
+Splitblade Leather Mask	Leather mask made from Mud Frog skin. Grants slash resistance.
+Splitblade Leather Overalls
+Splitblade Leather Overalls	Leather clothing made from Mud Frog skin. Grants slash resistance. Overalls and the mask costed 4,000 mahni
+Waist belt of life tide
+Waist Belt of Life Tide	Purchased from an armor shop in Thirdrema. Endurance (VIT) is increased by +19
+Excavated Grindsash [Veteran]
+Excavated Grindsash Veteran	Purchased from an armor shop in Eleventar, Endurance (VIT) is increased by +400
+Antinomy
+Antinomy	A unique weapon owned by Psyger-0. It has two forms: the ominous jet-black great sword ``Satan El, and the pure white great sword ``Satan, the Emperor. When the jet-black greatsword is on, Saiga-0's body is white, giving it the appearance of a platinum holy knight, and when the pure-white greatsword is on, it is dyed black, giving it the impression of a demon lord.
+Inventoria Key
+Inventoria Key	A special bracelet-shaped accessory that was both the key and the door to the storage space, and was only carried by a few people even in the age of the gods. Even if the wearer is killed by the player, this accessory and the items in the storage space will not be looted. There is no capacity limit to the storage space, and non-living objects up to 50m in length and width can be stored.
+General Dullahan's Decapitator
+General Dullahan's Decapitator	A drop item from General Dullahan. This long sword was once powerful, but now it has decayed and can only cut flesh with brute force. When attacking the target's neck, the damage is super effective.
+Flame General's Decapitator
+Flame General's Decapitator	New beheading sword reworked by Bilac from the beheading sword of General Dullahan
+Holy Spear Caledfwlch
+Lança Sagrada Caledfwlch	Uma das únicas cinco "armas de herói" na Fronteira Shangri-La. Possuir essa arma desbloqueia o "herói" como uma ocupação especial (trabalho).
+Pulseira Misteriosa Vorpal
+Pulseira Misteriosa Vorpal	Permite que Emul se transforme em um avatar humano.
+Adebane de Armadura Especializada Não Padrão
+Adebane de Armadura Especializada Não Padrão	Um equipamento especializado armazenado dentro do Inventaria obtido ao derrotar Wezaemon, o Guardião do Túmulo
+Tático Não Padrão Avain Suzaku
+Suzaku Tático Aviário Não Padrão	Pássaro robô que pode ser controlado/comunicado usando a armadura especial não padrão Adebane. Também requer o Reator de Éter Não Padrão.
+
+Publicidade
+Materiais
+Itens que se podem obter minerando em certas áreas, como o Deserto do Pântano Dire. Exige uma picareta para ajudar os jogadores a minerar itens de certos ambientes.
+
+Stone
+Stone	A Pedra (石 Yishi) é apenas uma pedra comum, sem nada de especial.
+Python Scale
+Python Scale	Item drop ao derrotar a Serpente Voraz.
+Cabelo Branco
+Python Scale	Item drop ao derrotar a Serpente Voraz.
+Minério Cinzento
+Minério Cinzento	O Minério Cinzento (灰色の鉱石 Haiiro no Kouseki), assemelha-se a um objeto cinza em forma de diamante. Um ferreiro precisa de 5 ou 6 peças para fabricar uma boa arma, ela confere resistência mágica ao equipamento.
+Fóssil de Marshcoffin
+Fóssil de Marshcoffin	O Fóssil de Marshcoffin (マーシュコフィン化石 Māshukofin Kaseki), assemelha-se a um objeto fóssil cristalizado semelhante ao verde. É um item raro necessário para criar Adagas do Pântano. Provavelmente já fez parte de algum monstro, há muito tempo.
+Pele de Sapo de Lama
+Pele de Sapo de Lama	A Pele do Sapo de Lama (泥カエルの皮 Doro Kaeru no Kawa) é um item obtido após derrotar o Sapo de Lama, e com ele, você pode criar equipamentos como "Couro Splitblade e Máscara de Couro Splitblade."
+Aroncaleth Hard Lapis
+Anime
+Mangá
+Aroncaleth Hard Lapis
+
+Um belo material cristalino azul, com uma concentração extremamente alta de poder mágico, criado por ser repetidamente comprimido e purificado por monstros devoradores de minerais ao longo de um longo período de tempo. É cocô do Escorpião de Cristal. Sua dureza como minério é tão baixa que até um toque leve pode fazê-lo rachar. No entanto, quando aplicado como revestimento em armas e armaduras, confere à arma uma resistência mágica extremamente alta. Comumente conhecido como "Rei dos agentes de revestimento"
+Quartzo Amurcidiano
+Anime
+Mangá
+Quartzo Amurcidiano
+
+Um minério negro como azeviche que ostenta o maior nível de dureza entre os minérios que sempre são formados em formato hexagonal perfeitamente regular. Diz-se que um pequeno número de artesãos habilidosos pode processá-lo mais facilmente do que doces derretidos. Comumente conhecido como "A ponta da lança"
+Cristal de Âmbar de Lowenanva
+Cristal de Âmbar de Lowenanva	Âmbar é feito a partir da seiva endurecida de uma árvore extinta chamada "Árvore Brilhante". Muito raramente, poderes e criaturas mágicas antigas são selados dentro do âmbar, e um joalheiro habilidoso pode reviver o poder antigo selado no mundo moderno. Comumente conhecido como "Brilho Âmbar"
+Cristal Estelar Lapisteria
+Cristal Estelar Lapisteria	Uma joia que ostenta a beleza de um item como se estivesse solidificado em um céu estrelado. Tem a característica de que quanto mais estrelas brilham dentro da gema, maior a quantidade de poder mágico que ela acumula. Comumente conhecida como "A primeira estrela no dossel"
+Areia cristalina
+A ser definido	A ser definido
+Barbatana de Firehair de Arctus Regacles
+Arctus Regalecus Barbatana de Cabelo de Chama	Item drop ao derrotar Arctus Regalecus
+
+Publicidade
+Outros Itens
+Teletransporte de Coordenadas
+Teletransporte de Coordenadas	Parece uma caixa redonda preta com um selo prateado no topo. Possível uso para teletransportar o jogador para uma coordenada específica.
+Boneca de Palha Kármica
+Boneca de Palha Kármica	Item Consumível: Aplicado a si mesmo ao esmagá-lo. Possui a habilidade de refletir o xamanismo. Se alguém expor algo dentro do núcleo da boneca de palha, isso resulta em morte instantânea. No entanto, ele só pode refletir até cinco debuffs.
+Herb
+Herb	Item Consumível: Recuperar uma pequena quantidade de Pontos de Vida
+Poção MP
+Poção MP	Item Consumível: Recupera seus Pontos de Mana
+Mapa
+Mapa	Permite que os jogadores visualizem os mapas de Shangri-La
+Escalas de Recompensa
+Escala de Recompensa	Um item único pertencente à empresa NPC "Golden Scales". Ao colocar os itens no "Prato de Oferendas" à esquerda, você pode receber vários benefícios do "Prato de Bênção" à direita, dependendo do preço. Para pontos de status, a taxa é 100.000 mahni = 1 ponto. Pode ser concedido a pessoas além do usuário. É um item único da classe mais alta, e seus benefícios têm prioridade sobre a anulação de buffs causada pela "Maldição de Lycaon".
+Colar de Fragmento de ID
+Colar de Fragmento de ID	Um colar que Emuru usa como talismã. Um item com um mistério oculto.
+Joia da Lágrima do Renascimento
+Joia da Lágrima do Renascimento	Um item que revive o jogador com recuperação total quando usado dentro de 10 segundos após seu HP atingir 0. O preço é de 4 milhões de mani, que é um dos maiores entre os itens consumíveis.
+Salvamento Divino
+Salvamento Divino	Um item que revive o jogador com metade do HP quando usado dentro de 10 segundos após o HP chegar a 0. O número máximo de itens que uma pessoa pode possuir é 5.
+Pílula da Força do Mal
+Pílula da Força do Mal	Por 15 minutos, o jogador que a usar pode ganhar atributos equivalentes ao nível máximo (99). No entanto, o usuário deve pagar por efeitos colaterais, como cores aparecendo invertidas e o nível diminuindo em 1 a cada 30 segundos.
+Seiten Skillbook
+Livro de Habilidades Céu Claro	Um meio de armazenamento que registra as técnicas secretas de esgrima empunhadas por Wezaemon, o guardião do túmulo. Ao carregá-lo no equipamento da Era dos Deuses, o usuário poderá aprender Seiten-ryu/Clear Sky.
+Salmão Lifestide
+Salmão Lifestide	Um salmão que vive nas correntes da vida. Aqueles que comerem seu corpo recuperarão sua força física, e seus ovos se tornarão excelentes catalisadores mágicos. Há vida até na grande terra, e a vida do sangue circula.
+Tenda de Salvação
+Tenda de Salvação	Uma tenda verde com uma lanterninha dentro e estilo como uma grande cabana. Usado para jogadores terem Pontos de Salvamento quando não estão em cidades para se hospedarem em estalagens. Usado principalmente na natureza e/ou em masmorras. Podem não ser os mais confortáveis, mas ajudam em emergências. No entanto, eles são caros e têm um número limitado de usos.
+Água Benta do Santo
+Água Benta do Santo	É a água benta na qual a Santa do Amor, Eristella, colocou seu coração em fazer. Enfraquece monstros mortos-vivos.
+Poção de Habilidade de Ligação
+Poção de Habilidade Combine	Um meio de armazenamento que permite ao jogador combinar/conectar habilidades entre si.
+Broche da Oração Distante
+Alfinete de Flores das Orações Passadas	Um acessório obtido por Arthur Pencilgon como recompensa por lutar contra Wezaemon, o Guardião do Túmulo
+Tomo da Verdade, O Guardião do Túmulo
+Tomo da Verdade, O Guardião do Túmulo	Um tomo obtido por Arthur Pencilgon como recompensa por lutar contra Wezaemon, o Guardião do Túmulo
+Reator de Éter Não Padronizado
+Reator de Éter Não Substando	Uma ferramenta da civilização da Era dos Deuses que serve como fonte de energia para as aeronaves táticas e blindagem especialmente reforçada alinhada no espaço de armazenamento do Inventário de Chaves de Armazenamento. Oikatzo o obteve como recompensa pela batalha contra Wezaemon, o Guardião do Túmulo, mas foi danificado. Reparos exigem o trabalho de Artesão Divino.
+Explodindo Ídolo de Terra
+Explodindo Ídolo de Terra	Uma pequena autopartícula que raramente é produzida por golems naturais. Os ídolos produzidos pelo Golem Cannonball causam pequenas explosões quando recebem um impacto forte. Quando a dança do ídolo de argila atinge seu auge, uma chama é produzida da terra.
+Ídolo Negador de Espadas
+Ídolo Negador de Espadas	Isso atrai fortemente a atenção de certos monstros. Quanto mais o Ídolo Negador da Espada os rejeita, mais ele atrai seu interesse.

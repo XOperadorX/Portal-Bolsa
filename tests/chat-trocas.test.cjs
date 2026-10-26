@@ -1,0 +1,27 @@
+const fs=require('node:fs'),assert=require('node:assert/strict'),vm=require('node:vm');
+const config=fs.readFileSync('config.js','utf8').match(/export const CHAT_TROCAS_CONFIG = Object.freeze\(([\s\S]*?)\);/)[1];
+const CONFIG=new Function('return ('+config+');')();
+const source=fs.readFileSync('shared/chat-trocas.js','utf8').replace(/^import .*;\s*/gm,'').replace('export class','class');
+function setup({token='token-valido',admin=false}={}){
+ const nodes=new Map(),timers=new Map(),events=new Map();let nextTimer=0;const calls=[],messages=[];let fail=false;
+ const node=id=>{if(!nodes.has(id))nodes.set(id,{value:'',hidden:true,innerHTML:'',textContent:'',scrollTop:0,scrollHeight:0,clientHeight:300,events:{},addEventListener(e,fn){this.events[e]=fn}});return nodes.get(id);};
+ const client={async rpc(name,args){calls.push({name,args});if(name===CONFIG.RPC_CONVERSAS)return {data:[{id:'chat-1',vendedor:'vendedor',comprador:'comprador'}]};if(name===CONFIG.RPC_ABRIR){if(args.p_comprador==='inexistente')return {error:{message:'Nick não encontrado'}};return {data:{id:'chat-1',vendedor:'vendedor',comprador:args.p_comprador}};}if(name===CONFIG.RPC_HISTORICO)return {data:{mensagens:messages,antes:0,total:messages.length}};if(name===CONFIG.RPC_ENVIAR){if(!messages.some(m=>m.id===args.p_id))messages.push({id:args.p_id,remetente:'vendedor',texto:args.p_texto,enviado_em:'2026-10-26T12:30:00Z'});if(fail)return {error:{message:'Resposta perdida'}};return {data:messages.at(-1)};}throw Error('RPC desconhecida') }};
+ const ctx={CONFIG,db:client,crypto:{randomUUID:()=> 'nonce-'+calls.length},console,document:{hidden:false,addEventListener:(e,fn)=>events.set('doc:'+e,fn),removeEventListener:e=>events.delete('doc:'+e)},window:{addEventListener:(e,fn)=>events.set('win:'+e,fn),removeEventListener:e=>events.delete('win:'+e)},setTimeout:(fn)=>{timers.set(++nextTimer,fn);return nextTimer},clearTimeout:id=>timers.delete(id),setInterval:fn=>{timers.set(++nextTimer,fn);return nextTimer},clearInterval:id=>timers.delete(id)};
+ vm.createContext(ctx);vm.runInContext(source+';globalThis.Chat=ChatTrocas;',ctx);
+ const chat=new ctx.Chat({usuario:{login:'vendedor',chat_token:token},admin,cliente:client,root:{getElementById:node}});
+ return {chat,node,calls,messages,timers,events,set fail(v){fail=v}};
+}
+(async()=>{
+ const unauth=setup({token:null});await unauth.chat.init();assert.equal(unauth.calls.length,0);assert.equal(unauth.node('chat-login').hidden,true);assert(unauth.node('chat-status').textContent.includes('credencial do servidor'));assert(!unauth.node('chat-status').textContent.includes('Entre novamente'));
+ const s=setup();await s.chat.init();assert.equal(s.calls[0].args.p_token,'token-valido');await s.chat.abrir('comprador');assert.equal(s.chat.ativo.comprador,'comprador');assert.equal(s.node('chat-enviar').disabled,false);
+ s.node('chat-texto').value='<img src=x onerror=alert(1)>';s.fail=true;await s.chat.enviar();assert.equal(s.messages.length,1);assert(s.node('chat-status').textContent.includes('não confirmada'));const first=s.calls.find(c=>c.name===CONFIG.RPC_ENVIAR).args;
+ s.fail=false;await s.chat.enviar();assert.equal(s.messages.length,1);const sent=s.calls.filter(c=>c.name===CONFIG.RPC_ENVIAR).at(-1).args;assert.equal(sent.p_id,first.p_id);assert(!('p_remetente' in sent));assert.equal(s.node('chat-texto').value,'');assert(s.node('chat-mensagens').innerHTML.includes('&lt;img'));assert(!s.node('chat-mensagens').innerHTML.includes('<img'));assert(s.node('chat-mensagens').innerHTML.includes('2026-10-26T12:30:00Z'));
+ await s.chat.selecionar({id:'chat-1',vendedor:'outro-vendedor',comprador:'vendedor'});assert.equal(s.chat.ativo.vendedor,'outro-vendedor');
+ s.node('comprador').value='novo';s.node('comprador').events.input();assert.equal(s.chat.ativo,null);assert.equal(s.node('chat-enviar').disabled,true);
+ s.chat.destroy();assert.equal(s.timers.size,0);assert.equal(s.events.size,0);
+ const adm=setup({admin:true});await adm.chat.init();await adm.chat.selecionar({id:'chat-1',vendedor:'a',comprador:'b'});await adm.chat.enviar();assert(!adm.calls.some(c=>c.name===CONFIG.RPC_ENVIAR));assert(adm.calls.some(c=>c.name===CONFIG.RPC_CONVERSAS&&c.args.p_admin===true));adm.chat.destroy();
+ for(const path of ['jogos/mochila/trocap.html','dados/admin/chat.html','login.html']){const html=fs.readFileSync(path,'utf8');for(const m of html.matchAll(/<script\b([^>]*)>([\s\S]*?)<\/script>/gi)){if(/src\s*=|importmap/.test(m[1]))continue;if(/type="module"/.test(m[1]))new vm.SourceTextModule(m[2]);else new vm.Script(m[2]);}}
+ const html=fs.readFileSync('jogos/mochila/trocap.html','utf8');assert(html.indexOf('id="chat-trocas"')>html.indexOf('🔐 Criar e gerar código'));assert(html.includes('chat_token: u.chat_token'));
+ const sql=fs.readFileSync('dados/admin/sql/instalar-chat-trocas.sql','utf8');assert(sql.includes('public.login_usuario(p_login,p_senha)'));assert(sql.includes('uid not in(c.vendedor_id,c.comprador_id)'));assert(sql.includes('for update'));assert(sql.includes('meta.chat_trocas'));assert(sql.includes("'enviado_em',horario"));assert(sql.includes('pgp_sym_encrypt'));assert(sql.includes('revoke all on schema portal_chat_privado'));assert(sql.includes('coalesce(g.bloqueado,false)'));
+ console.log('OK: sessão, abertura por nick, conversas recebidas, envio, data/hora, texto escapado, repetição sem duplicação, bloqueio do ADM para envio, limpeza e sintaxe. SQL preparado; execução remota não simulada.');
+})().catch(e=>{console.error(e);process.exitCode=1});

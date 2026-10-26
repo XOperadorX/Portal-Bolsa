@@ -268,7 +268,7 @@ export class SupabaseClient {
             const ok = await this.salvarDados(login, { saldo: novoSaldo });
 
             if (ok && motivo) {
-                await this.adicionarHistorico(login, `💰 ${motivo}: R$ ${valor.toFixed(2)}`, 'financeiro');
+                await this.adicionarHistorico(login, `💰 ${motivo}: S$ ${valor.toFixed(2)}`, 'financeiro');
             }
 
             return ok;

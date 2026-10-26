@@ -515,7 +515,7 @@
             </div>
             <div class="stat-card pago">
                 <div class="stat-label">✅ Total Pago</div>
-                <div class="stat-value" id="statTotalPago">R$ 0,00</div>
+                <div class="stat-value" id="statTotalPago">S$ 0,00</div>
                 <div class="stat-sub">Somas confirmadas</div>
             </div>
             <div class="stat-card total">
@@ -632,7 +632,7 @@
         const _fmtMumu = new Intl.NumberFormat('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 4 });
         const fmtNum = (v) => _fmtNum.format(parseFloat(v || 0));
         const fmtMumu = (v) => _fmtMumu.format(parseFloat(v || 0));
-        const fmtDinheiro = (v) => `R$ ${fmtNum(v)}`;
+        const fmtDinheiro = (v) => `S$ ${fmtNum(v)}`;
 
         // ============================================================
         // HELPERS

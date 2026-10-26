@@ -2,136 +2,20 @@
 <html lang="pt-BR">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>MM Quase Tudo - Shangri-La</title>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-<style>
-* { box-sizing: border-box; }
-body {
-    background: #0a0a0a; color: #eee; font-family: 'Segoe UI', Arial, sans-serif;
-    margin: 0; padding: 10px; min-height: 100vh;
-}
-.container { max-width: 1200px; margin: auto; padding: 15px; }
-.game-dashboard { display: block; background: #111; border-radius: 15px; overflow: hidden; }
-.top-bar {
-    background: #1a1a1a; padding: 12px 20px; display: flex; justify-content: space-between;
-    align-items: center; flex-wrap: wrap; gap: 10px; border-bottom: 2px solid gold;
-}
-.top-bar h2 { margin: 0; color: gold; font-size: 1.2rem; }
-.logout-btn { background: #dc3545; color: white; padding: 6px 15px; font-size: 14px; }
-.logout-btn:hover { background: #c82333; }
-.main-grid {
-    display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-    gap: 15px; padding: 20px;
-}
-.card { background: #1e1e2a; border-radius: 12px; padding: 15px; border: 1px solid #333; }
-.card h3 { color: gold; margin-top: 0; border-bottom: 1px solid #444; padding-bottom: 8px; }
-.stat-row { display: flex; justify-content: space-between; padding: 6px 0; border-bottom: 1px solid #2a2a2a; }
-.inventory-item {
-    background: #2a2a3a; margin: 5px 0; padding: 8px; border-radius: 6px;
-    display: flex; justify-content: space-between; align-items: center; gap: 8px; flex-wrap: wrap;
-}
-.item-name { font-weight: bold; flex: 1; }
-.item-qty { color: gold; min-width: 50px; }
-.sell-btn { background: #28a745; color: white; padding: 4px 12px; font-size: 12px; border-radius: 5px; }
-.sell-btn:hover { background: #218838; transform: scale(1.02); }
-.use-btn { background: #17a2b8; color: white; padding: 4px 12px; font-size: 12px; border-radius: 5px; }
-.use-btn:hover { background: #138496; transform: scale(1.02); }
-button {
-    background: gold; color: black; border: none; padding: 8px 16px; border-radius: 6px;
-    cursor: pointer; font-weight: bold; transition: 0.2s;
-}
-button:hover { transform: scale(1.02); background: #ffc107; }
-button:disabled { opacity: 0.5; cursor: not-allowed; transform: none; }
-.action-buttons { display: flex; gap: 10px; flex-wrap: wrap; margin-top: 10px; }
-.action-btn { flex: 1; background: #3a6ea5; color: white; min-width: 80px; }
-.action-btn:hover { background: #2c5a8c; }
-.shop-item {
-    background: #252530; margin: 10px 0; padding: 10px; border-radius: 8px;
-    display: flex; justify-content: space-between; align-items: center; gap: 10px; flex-wrap: wrap;
-}
-.shop-buy-btn { background: gold; color: black; padding: 5px 12px; font-size: 12px; }
-.battle-log {
-    background: #0a0a0f; height: 150px; overflow-y: auto; padding: 10px;
-    border-radius: 8px; font-family: monospace; font-size: 13px;
-}
-.battle-log p { margin: 5px 0; color: #aaa; }
-.hp-bar { background: #333; border-radius: 10px; overflow: hidden; margin: 5px 0; }
-.hp-fill { background: #28a745; height: 20px; width: 100%; transition: width 0.3s; }
-.enemy-hp-fill { background: #dc3545; }
-.legendary-tag {
-    background: #e67e22; color: white; font-size: 11px; padding: 2px 6px;
-    border-radius: 10px; margin-left: 8px; display: inline-block;
-}
-.mythic-tag {
-    background: linear-gradient(45deg, #ff0066, #ff6600); color: gold; font-size: 12px;
-    padding: 3px 10px; border-radius: 15px; margin-left: 8px; display: inline-block;
-    font-weight: bold; text-shadow: 0 0 3px black;
-}
-.unique-tag {
-    background: #9b59b6; color: white; font-size: 11px; padding: 2px 6px;
-    border-radius: 10px; margin-left: 8px; display: inline-block;
-}
-.clue-item {
-    background: #2a2a3a; margin: 8px 0; padding: 8px; border-radius: 6px;
-    border-left: 3px solid gold; font-size: 12px;
-}
-.work-timer {
-    background: #1a1a2e; border: 1px solid #ffaa00; border-radius: 8px;
-    padding: 10px; margin-top: 8px; text-align: center; color: #ffaa00; font-size: 14px;
-}
-.work-timer .time-display {
-    font-size: 24px; font-weight: bold; font-family: monospace; color: #ffdd44;
-}
-.cost-tag { font-size: 11px; color: #ffaa66; display: block; }
-.item-buttons { display: flex; gap: 4px; flex-wrap: wrap; }
-.combat-stats {
-    background: #1a1a2e; padding: 8px; border-radius: 6px; margin-top: 5px;
-    font-size: 12px; color: #aaa;
-}
-.combat-stats span { color: #eee; }
-.sync-badge {
-    font-size: 11px; padding: 2px 8px; border-radius: 10px;
-    background: #0f5132; color: #86efac; border: 1px solid #22c55e;
-}
-.sync-badge.off { background: #4a1d1d; color: #fca5a5; border-color: #ef4444; }
-.btn-voltar {
-    background: #3a6ea5; color: white; padding: 6px 15px; font-size: 14px;
-    border-radius: 6px; text-decoration: none; font-weight: bold; transition: 0.2s;
-    display: inline-block;
-}
-.btn-voltar:hover { background: #2c5a8c; transform: scale(1.02); }
-.sm-bar {
-    background: #333; border-radius: 10px; overflow: hidden;
-    height: 14px; margin: 4px 0;
-}
-.sm-fill { background: linear-gradient(90deg, #3b82f6, #60a5fa); height: 100%; transition: width 0.3s; }
-.sm-warning {
-    color: #fbbf24; font-size: 11px; text-align: center;
-    animation: pulse 1.5s infinite;
-}
-@keyframes pulse {
-    0%, 100% { opacity: 1; }
-    50% { opacity: 0.5; }
-}
-@media (max-width: 700px) {
-    .main-grid { grid-template-columns: 1fr; }
-    .top-bar { flex-direction: column; text-align: center; }
-    .inventory-item { flex-direction: column; align-items: stretch; }
-    .sell-btn, .use-btn { margin-top: 3px; }
-    .work-timer .time-display { font-size: 18px; }
-}
-</style>
+<link rel="stylesheet" href="shagrila.css">
 </head>
 <body>
 
 <!-- DASHBOARD DO JOGO (entra direto) -->
 <div id="gameDashboard" class="game-dashboard">
     <div class="top-bar">
-        <h2>⚔️ SHANGRI-LA ⚔️</h2>
-        <div>
+        <div class="game-brand"><span class="brand-eyebrow">MM QUASE TUDO · RPG</span><h1>Shangri-La <span>Frontier</span></h1><p>Prepare seu equipamento. Explore a próxima fronteira.</p></div>
+        <div class="player-toolbar">
             <span id="playerNameDisplay" style="margin-right: 15px;">👤 ...</span>
-            <span id="playerCoinsDisplay">🪙 R$ 0,00</span>
+            <span id="playerCoinsDisplay">🪙 S$ 0,00</span>
             <span id="playerSmDisplay" style="margin-left: 10px;">⚡ 0/0</span>
             <span id="syncBadge" class="sync-badge off" style="margin-left:10px;">⏳ conectando</span>
             <a href="../../dashboard.html" class="btn-voltar" style="margin-left: 15px;">🏠 Voltar</a>
@@ -140,7 +24,7 @@ button:disabled { opacity: 0.5; cursor: not-allowed; transform: none; }
 
     <div class="main-grid">
         <!-- STATUS -->
-        <div class="card">
+        <section class="card status-card">
             <h3>📊 STATUS DO PERSONAGEM</h3>
             <div class="stat-row"><span>❤️ HP</span><span id="statHp">100</span></div>
             <div class="stat-row"><span>💙 MP</span><span id="statMp">30</span></div>
@@ -159,38 +43,51 @@ button:disabled { opacity: 0.5; cursor: not-allowed; transform: none; }
             <div class="stat-row"><span>✨ EXP</span><span id="statExp">0/100</span></div>
             <div class="stat-row"><span>🏆 Boss Kills</span><span id="statBossKills">0</span></div>
             <div class="stat-row"><span>🔮 Sorte Bônus</span><span id="statLuckBonus">+0%</span></div>
-        </div>
+        </section>
 
         <!-- INVENTÁRIO -->
-        <div class="card">
+        <section class="card inventory-card">
             <h3>🎒 INVENTÁRIO <span style="font-size:12px;">(Vender/Usar)</span></h3>
             <div id="inventoryList"></div>
-        </div>
+        </section>
 
         <!-- EQUIPAMENTOS -->
-        <div class="card">
-            <h3>⚔️ EQUIPAMENTOS</h3>
+        <section class="card equipment-card">
+            <h3>⚔️ Equipamentos <span class="section-caption">Seu conjunto de batalha</span></h3>
+            <div class="stat-row combat-power"><strong>💪 Poder de Combate</strong><strong id="poderCombate">0</strong></div>
+            <p style="font-size:12px;color:#b8c4d9">Escolha um item da mochila em cada espaço. A descrição mostra os bônus e a compatibilidade.</p>
             <div id="equipList"></div>
-        </div>
+        </section>
 
         <!-- PISTAS -->
-        <div class="card">
+        <section class="card clues-card">
             <h3>🔍 PISTAS DOS LENDÁRIOS</h3>
             <div id="cluesList"></div>
             <button id="searchClueBtn" class="action-btn" style="background:#6c3483;">
                 📜 Procurar Pistas
-                <span class="cost-tag">💰 -R$ 0,10 | ⚡ -10 SM</span>
+                <span class="cost-tag">💰 -S$ 0,10 | ⚡ -10 SM</span>
             </button>
-        </div>
+        </section>
 
         <!-- LOJA -->
-        <div class="card">
-            <h3>🏪 LOJA DO VIAJANTE</h3>
+        <section class="card shop-card">
+            <h3>🏪 Loja do viajante <span class="section-caption">Suprimentos e relíquias</span></h3>
             <div id="shopList"></div>
+            <details class="frontier-panel" open>
+                <summary>🌏 Shangri-La Frontier — lojas, materiais e relíquias</summary>
+                <p>Valores e efeitos adaptados à economia e ao combate deste jogo. Consulte a descrição de cada item.</p>
+                <label>Categoria <select id="frontierCategoria"><option value="">Todos</option></select></label>
+                <label>Buscar <input id="frontierBusca" type="search" placeholder="Nome, procedência ou elemento"></label>
+                <label>Afinidade defensiva <select id="frontierElemento"></select></label>
+                <p>Fogo → Ar → Terra → Água → Fogo. A arma define o elemento do ataque; a afinidade escolhida define a defesa.</p>
+                <button id="frontierColetar" class="use-btn">⛏️ Coletar materiais · 10 SM · requer Piqueta</button>
+                <div id="frontierContagem" aria-live="polite"></div>
+                <div id="frontierCatalogo"></div>
+            </details>
             <div style="margin-top: 10px; padding: 8px; background: #252530; border-radius: 8px;">
-                <span style="color:#ffaa66;">💰 Venda no inventário por METADE do preço da loja!</span>
+                <span style="color:#ffaa66;">💰 Venda no inventário pelo preço indicado em cada item.</span>
             </div>
-            <button id="workBtn" class="action-btn" style="background: #6c757d; margin-top: 10px;">💼 Trabalhar (+R$ 0,10)</button>
+            <button id="workBtn" class="action-btn" style="background: #6c757d; margin-top: 10px;">💼 Trabalhar (+S$ 0,10)</button>
             <div id="workTimerContainer" style="display: none;">
                 <div class="work-timer">
                     ⏳ TRABALHANDO...<br>
@@ -198,11 +95,11 @@ button:disabled { opacity: 0.5; cursor: not-allowed; transform: none; }
                     <span style="font-size: 11px; color: #888;">Aguarde para receber o pagamento</span>
                 </div>
             </div>
-        </div>
+        </section>
 
         <!-- BATALHA -->
-        <div class="card">
-            <h3>🐉 COMBATE - CHEFES ÚNICOS</h3>
+        <section class="card battle-card">
+            <h3>🐉 Arena de combate <span class="section-caption">Encontros e chefes únicos</span></h3>
             <div id="enemyArea">
                 <div><strong>🗡️ INIMIGO:</strong> <span id="enemyName">Nenhum</span></div>
                 <div class="hp-bar"><div id="enemyHpBar" class="hp-fill enemy-hp-fill" style="width: 0%"></div></div>
@@ -221,34 +118,39 @@ button:disabled { opacity: 0.5; cursor: not-allowed; transform: none; }
             <div class="battle-log" id="battleLog">
                 <p>✨ Bem-vindo ao mundo de Shangri-La Frontier!</p>
             </div>
-        </div>
+        </section>
 
         <!-- AÇÕES ESPECIAIS -->
-        <div class="card">
+        <section class="card actions-card">
             <h3>🌟 AÇÕES ESPECIAIS</h3>
             <div class="action-buttons">
                 <button id="exploreBtn" class="action-btn">
                     🗺️ Explorar
-                    <span class="cost-tag">💰 -R$ 0,10 | ⚡ -10 SM</span>
+                    <span class="cost-tag">💰 -S$ 0,10 | ⚡ -10 SM</span>
                 </button>
                 <button id="searchRareBtn" class="action-btn">
                     🔮 Item Raro
-                    <span class="cost-tag">💰 -R$ 0,50 | ⚡ -10 SM</span>
+                    <span class="cost-tag">💰 -S$ 0,50 | ⚡ -10 SM</span>
                 </button>
                 <button id="healBtn" class="action-btn">
                     🏥 Descansar
-                    <span class="cost-tag">💰 -R$ 0,05 | ⚡ -10 SM</span>
+                    <span class="cost-tag">💰 -S$ 0,05 | ⚡ -10 SM</span>
                 </button>
                 <button id="summonLegendaryBtn" class="action-btn" style="background:#8b0000;">
                     👑 INVOCAR (1%)
                     <span class="cost-tag">⚡ -10 SM</span>
                 </button>
             </div>
-        </div>
+        </section>
     </div>
 </div>
 
-<script>
+<script type="module">
+import { migrarInventarioLaminas, SLOTS_SHAGRILA, slotsItemShagrila, normalizarEquipShagrila, ITENS_SHAGRILA, CATALOGO_SHAGRILA, ELEMENTOS_SHAGRILA, RECEITAS_SHAGRILA, forjarShagrila, equiparShagrila, resumoItemShagrila } from '../../shared/shagrila-catalogo.js';
+import { aplicarCombate, atributosPersonagem, tempoAtaque, curaPocao, achadoEfetivo, normalizarAtributos, chanceEsquiva } from '../../shared/combate.js';
+import { anexarFichaCombate } from '../../shared/ficha-combate.js';
+import { obterTaxa } from '../../shared/taxas-globais.js';
+
 // ==================== SUPABASE ====================
 const SUPABASE_URL = 'https://xrcxvizzdumcxbylmkvn.supabase.co';
 const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InhyY3h2aXp6ZHVtY3hieWxta3ZuIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODY2NjA0NzIsImV4cCI6MjEwMjIzNjQ3Mn0.ohB4tW0UQ-k1PcwoZxm4u9XSGNLsFphv1_UwTWoklOM';
@@ -300,32 +202,49 @@ const commonEnemies = [
     { name: "👹 Troll da Montanha", hp: 150, maxHp: 150, atk: 25, exp: 100, coins: 0.18, drop: "Poção Maior", rarity: "épico" }
 ];
 
+commonEnemies.push(
+ {name:'🐇 Vorpal Bunny',hp:85,maxHp:85,atk:18,exp:65,coins:.08,drop:'Vorpal Chopper',rarity:'raro',elemento:'ar'},
+ {name:'🐸 Sapo de Lama',hp:65,maxHp:65,atk:13,exp:35,coins:.05,drop:'Pele de Sapo de Lama',rarity:'comum',elemento:'agua'},
+ {name:'🐍 Serpente Voraz',hp:100,maxHp:100,atk:20,exp:70,coins:.09,drop:'Python Scale',rarity:'raro',elemento:'terra'},
+ {name:'🪲 Besouro Quádruplo',hp:180,maxHp:180,atk:24,exp:110,coins:.15,drop:'Carapaça de Besouro Quádruplo',rarity:'épico',elemento:'terra'},
+ {name:'🦂 Escorpião de Cristal',hp:150,maxHp:150,atk:25,exp:100,coins:.12,drop:'Aroncaleth Hard Lapis',rarity:'raro',elemento:'terra'},
+ {name:'🔥 Arctus Regalecus',hp:240,maxHp:240,atk:32,exp:170,coins:.2,drop:'Barbatana de Firehair de Arctus Regacles',rarity:'épico',elemento:'fogo'},
+ {name:'⚔️ General Dullahan',hp:300,maxHp:300,atk:38,exp:230,coins:.25,drop:'General Dullahan’s Decapitator',rarity:'épico',elemento:'terra',mortoVivo:true}
+);
+for(const [i,inimigo]of [...commonEnemies,...LEGENDARY_LIST].entries())inimigo.elemento??=['terra','agua','ar','fogo'][i%4];
+
 // ==================== PREÇOS EM REAIS (1000x MAIS BARATO) ====================
 // 💡 Todos os valores divididos por 1000 em relação ao preço original.
 const BUY_PRICES = {
-    "Poção": 0.01,        // R$ 0,01
-    "Poção Maior": 0.02,  // R$ 0,02
-    "Elixir": 0.04,       // R$ 0,04
-    "Gema Rara": 0.06     // R$ 0,06
+    "Poção": 0.01,        // S$ 0,01
+    "Poção Maior": 0.02,  // S$ 0,02
+    "Elixir": 0.04,       // S$ 0,04
+    "Gema Rara": 0.06     // S$ 0,06
 };
 
 const SELL_PRICES = {
-    "Poção": 0.01,        // R$ 0,01 (mínimo possível)
-    "Poção Maior": 0.01,  // R$ 0,01 (mínimo possível)
-    "Elixir": 0.02,       // R$ 0,02
-    "Gema Rara": 0.03     // R$ 0,03
+    "Poção": 0.01,        // S$ 0,01 (mínimo possível)
+    "Poção Maior": 0.01,  // S$ 0,01 (mínimo possível)
+    "Elixir": 0.02,       // S$ 0,02
+    "Gema Rara": 0.03     // S$ 0,03
 };
 
 const LEGENDARY_SELL_PRICES = {
-    "Máscara de Lycagon": 0.08,        // R$ 0,08
-    "Coração da Tempestade": 0.09,     // R$ 0,09
-    "Olho de Ctarnidd": 0.10,          // R$ 0,10
-    "Escama de Bahamut": 0.10,         // R$ 0,10
-    "Fruto de Yggdrasil": 0.10,        // R$ 0,10
-    "Máscara do Coelho Vorpal": 0.10,  // R$ 0,10
-    "Espada Divina Ashura": 0.10       // R$ 0,10
+    "Máscara de Lycagon": 0.08,        // S$ 0,08
+    "Coração da Tempestade": 0.09,     // S$ 0,09
+    "Olho de Ctarnidd": 0.10,          // S$ 0,10
+    "Escama de Bahamut": 0.10,         // S$ 0,10
+    "Fruto de Yggdrasil": 0.10,        // S$ 0,10
+    "Máscara do Coelho Vorpal": 0.10,  // S$ 0,10
+    "Espada Divina Ashura": 0.10       // S$ 0,10
 };
 for (let [item, price] of Object.entries(LEGENDARY_SELL_PRICES)) SELL_PRICES[item] = price;
+for(const item of ITENS_SHAGRILA) BUY_PRICES[item.nome]=item.preco;
+for(const [nome,preco] of Object.entries(BUY_PRICES)) SELL_PRICES[nome]=Math.max(.01,Math.round(preco*(1-obterTaxa('shagrila_venda')/100)*100)/100);
+for (const nome of Object.keys(SELL_PRICES)) {
+ const referencia = BUY_PRICES[nome] ?? LEGENDARY_SELL_PRICES[nome] * 2;
+ SELL_PRICES[nome] = Math.max(.01, Math.round((referencia * (1 - obterTaxa('shagrila_venda') / 100) + Number.EPSILON) * 100) / 100);
+}
 
 const ITEM_EFFECTS = {
     "Poção": { heal: 30, desc: "Cura 30 HP" },
@@ -338,7 +257,7 @@ const SM_COST_PER_ACTION = 10;
 const SM_MIN_TO_PLAY = 10;
 
 // ==================== FORMATAÇÃO DE MOEDAS (IGUAL AO DASHBOARD) ====================
-// Recebe valor EM REAIS e formata como "R$ 1.234,56"
+// Recebe valor EM REAIS e formata como "S$ 1.234,56"
 function formatCoins(reais) {
     const v = Number(reais) || 0;
     return v.toLocaleString('pt-BR', {
@@ -347,10 +266,10 @@ function formatCoins(reais) {
     });
 }
 
-// Versão com prefixo R$ (para exibição em loja / preços)
+// Versão com prefixo S$ (para exibição em loja / preços)
 function formatBRL(reais) {
     const v = Number(reais) || 0;
-    return 'R$ ' + v.toLocaleString('pt-BR', {
+    return 'S$ ' + v.toLocaleString('pt-BR', {
         minimumFractionDigits: 2,
         maximumFractionDigits: 2
     });
@@ -365,7 +284,7 @@ let isRedirecting = false;
 
 // Trabalho
 const WORK_TIME = 3600;
-const WORK_REWARD = 0.10; // ✅ R$ 0,10
+const WORK_REWARD = 0.10; // ✅ S$ 0,10
 let workEndTime = null;
 let workTimerInterval = null;
 
@@ -380,13 +299,9 @@ function normalizarJogador(row) {
         inv = { "Poção": 5, "Poção Maior": 1, "Elixir": 0, "Gema Rara": 0 };
     }
 
+    inv = migrarInventarioLaminas(inv);
     const equipMeta = meta.equip || {};
-    const equip = {
-        arma:   equipMeta.arma   || "Lâmina Gêmea",
-        cabeca: equipMeta.cabeca || "Máscara do Pássaro",
-        corpo:  equipMeta.corpo  || "Nenhum",
-        bota:   equipMeta.bota   || "Nenhum"
-    };
+    const equip = normalizarEquipShagrila({...(!('mao_esquerda' in equipMeta)&&!('mao_direita' in equipMeta)&&!('arma' in equipMeta)&&!('lamina_esquerda' in equipMeta)&&!('lamina_direita' in equipMeta)?{lamina_esquerda:'Lâmina Gêmea Esquerda',lamina_direita:'Lâmina Gêmea Direita'}:{}),...(!equipMeta.elmo&&!equipMeta.cabeca?{elmo:'Máscara do Pássaro'}:{}),...equipMeta},inv);
 
     const clues = Array.isArray(meta.clues) ? meta.clues : [];
 
@@ -422,6 +337,10 @@ function normalizarJogador(row) {
         luckBonus:  Number(row.poder_hash     || 0),
 
         clues: clues,
+        shagrila: meta.shagrila || {},
+        combate: meta.combate || {},
+        ultimoDanoEm: meta.combate?.ultimoDanoEm || 0,
+        ultimoAtaqueEm: meta.combate?.ultimoAtaqueEm || 0,
         inventory: inv,
         equip: equip
     };
@@ -472,6 +391,8 @@ function saveDB() {
                 dodge:      p.dodge,
                 drop_bonus: p.dropBonus,
                 clues:      p.clues,
+                combate: {...p.combate, ultimoDanoEm:p.ultimoDanoEm||0, ultimoAtaqueEm:p.ultimoAtaqueEm||0},
+                shagrila: p.shagrila,
                 equip:      p.equip
             },
             updated_at: new Date().toISOString()
@@ -479,7 +400,14 @@ function saveDB() {
 
         const { error } = await supabaseClient.from(TABELA).update(payload).eq('id', dbRowId);
         if (error) console.error('Erro ao salvar no Supabase:', error);
-        else setSyncBadge(true);
+        else {
+            setSyncBadge(true);
+            try {
+                localStorage.setItem('portal_bolsa_dados_atualizados', String(Date.now()));
+            } catch (e) {
+                console.warn('Não foi possível avisar outras abas sobre a atualização.', e);
+            }
+        }
     }, 400);
 }
 
@@ -566,7 +494,7 @@ function startWork() {
     document.getElementById('workBtn').disabled = true;
     document.getElementById('workBtn').textContent = '⏳ Trabalhando...';
     document.getElementById('workTimerContainer').style.display = 'block';
-    addLog(`💼 Começou a trabalhar! Volte em 1 hora para receber R$ ${formatCoins(WORK_REWARD)}.`);
+    addLog(`💼 Começou a trabalhar! Volte em 1 hora para receber S$ ${formatCoins(WORK_REWARD)}.`);
     updateWorkTimer();
     workTimerInterval = setInterval(updateWorkTimer, 1000);
 }
@@ -587,10 +515,10 @@ function completeWork() {
     workTimerInterval = null;
     localStorage.removeItem('slf_work_' + currentPlayer.nome);
     currentPlayer.coins += WORK_REWARD;
-    addLog(`💰🎉 Trabalho concluído! Recebeu R$ ${formatCoins(WORK_REWARD)}!`);
+    addLog(`💰🎉 Trabalho concluído! Recebeu S$ ${formatCoins(WORK_REWARD)}!`);
     workEndTime = null;
     document.getElementById('workBtn').disabled = false;
-    document.getElementById('workBtn').textContent = `💼 Trabalhar (+R$ ${formatCoins(WORK_REWARD)})`;
+    document.getElementById('workBtn').textContent = `💼 Trabalhar (+S$ ${formatCoins(WORK_REWARD)})`;
     document.getElementById('workTimerContainer').style.display = 'none';
     updateUI();
     saveDB();
@@ -637,11 +565,11 @@ function sellItem(itemName, currentQty) {
     if (!currentPlayer) return;
     let sellPrice = SELL_PRICES[itemName];
     if (!sellPrice) { addLog(`❌ ${itemName} não pode ser vendido!`); return; }
-    if (currentQty <= 0) { addLog(`❌ Você não possui ${itemName}!`); return; }
+    if (!(currentPlayer.inventory[itemName] > 0)) { addLog(`❌ Você não possui ${itemName}!`); return; }
     currentPlayer.inventory[itemName]--;
     if (currentPlayer.inventory[itemName] === 0) delete currentPlayer.inventory[itemName];
     currentPlayer.coins += sellPrice;
-    addLog(`💰 Vendeu ${itemName} por R$ ${formatCoins(sellPrice)}!`);
+    addLog(`💰 Vendeu ${itemName} por S$ ${formatCoins(sellPrice)}!`);
     updateUI(); saveDB();
 }
 
@@ -650,10 +578,12 @@ function useItem(itemName) {
     if (!currentPlayer.inventory[itemName] || currentPlayer.inventory[itemName] <= 0) {
         addLog(`❌ Você não possui ${itemName}!`); return;
     }
+    const novo = CATALOGO_SHAGRILA[itemName];
+    if(novo) { usarItemFrontier(novo); return; }
     const effect = ITEM_EFFECTS[itemName];
     if (!effect) { addLog(`❌ ${itemName} não pode ser usado!`); return; }
     if (currentPlayer.hp >= currentPlayer.maxHp) { addLog(`❤️ HP já está cheio!`); return; }
-    let actualHeal = Math.min(effect.heal, currentPlayer.maxHp - currentPlayer.hp);
+    let actualHeal = Math.min(curaPocao(effect.heal, atributosPersonagem(currentPlayer).curaPocao), currentPlayer.maxHp - currentPlayer.hp);
     currentPlayer.inventory[itemName]--;
     if (currentPlayer.inventory[itemName] === 0) delete currentPlayer.inventory[itemName];
     currentPlayer.hp += actualHeal;
@@ -665,7 +595,7 @@ window.useItemHandler = function (itemName) { useItem(itemName); };
 window.sellItemHandler = function (itemName, qty) { sellItem(itemName, qty); };
 
 function findEnemyWithLegendaryChance() {
-    let luckMult = calculateLuckChanceMultiplier();
+    let luckMult = 1 + achadoEfetivo(atributosPersonagem(currentPlayer).achadoRaridade);
     let legendarySpawns = LEGENDARY_LIST.map(boss => ({ boss, chance: boss.baseChance * luckMult }));
     let roll = Math.random() * 100;
     let cumulative = 0;
@@ -684,39 +614,31 @@ function findEnemyWithLegendaryChance() {
 }
 
 function calculatePlayerDamage() {
-    if (!currentPlayer) return { damage: 0, isCrit: false };
-    let p = currentPlayer;
-    let baseDmg = p.str + Math.floor(Math.random() * 16);
-    let isCrit = Math.random() * 100 < p.crit;
-    let damage = isCrit ? Math.floor(baseDmg * 2.5) : baseDmg;
-    damage += Math.floor(p.agi / 5);
-    return { damage, isCrit };
+    if (!currentPlayer || !currentEnemy) return {damage:0,isCrit:false};
+    const resultado = aplicarCombate(currentPlayer,currentEnemy,{atributosAtacante:{...atributosPersonagem(currentPlayer),elemento:CATALOGO_SHAGRILA[currentPlayer.equip?.mao_direita]?.elemento||'fisico'},danoBase:atributosPersonagem(currentPlayer).dano+Math.floor(Math.random()*16)+Math.floor(currentPlayer.agi/5),atributosDefensor:{tipo:'monstro'}});
+    return {damage:resultado.danoTotal,isCrit:resultado.golpes.some(g=>g.critico),resultado};
 }
-
 function calculateEnemyDamage() {
-    if (!currentPlayer || !currentEnemy) return 0;
-    let p = currentPlayer;
-    let enemyAtk = currentEnemy.atk;
-    let defense = Math.floor(p.vit * 1.2);
-    let damage = Math.max(1, enemyAtk - defense + Math.floor(Math.random() * 6));
-    if (Math.random() * 100 < p.dodge) return { damage: 0, dodged: true };
-    return { damage: Math.max(1, damage), dodged: false };
+    if (!currentPlayer || !currentEnemy) return {damage:0,dodged:false};
+    const resultado = aplicarCombate(currentEnemy,currentPlayer,{danoBase:currentEnemy.atk+Math.floor(Math.random()*6),atributosAtacante:{tipo:'monstro'},atributosDefensor:atributosPersonagem({...currentPlayer,armadura:Math.floor(currentPlayer.vit*1.2)})});
+    if(currentPlayer.shagrila?.protecao>0)currentPlayer.shagrila.protecao--;
+    return {damage:resultado.danoTotal,dodged:resultado.golpes.every(g=>g.esquivado),resultado};
 }
 
 function updateCombatStats() {
     if (!currentPlayer) return;
     let p = currentPlayer;
-    document.getElementById('combatDmg').textContent = `${p.str} + 0-15 (${p.crit}% crítico)`;
-    document.getElementById('combatCrit').textContent = `${p.crit}%`;
-    document.getElementById('combatDodge').textContent = `${p.dodge}%`;
+    document.getElementById('combatDmg').textContent = `${normalizarAtributos(atributosPersonagem(p)).dano.toFixed(1)} base (${normalizarAtributos(atributosPersonagem(p)).critico}% crítico) · ${ELEMENTOS_SHAGRILA[CATALOGO_SHAGRILA[p.equip.mao_direita]?.elemento||'fisico']}`;
+    document.getElementById('combatCrit').textContent = `${normalizarAtributos(atributosPersonagem(p)).critico}%`;
+    document.getElementById('combatDodge').textContent = `${(chanceEsquiva(atributosPersonagem(p).evasao)*100).toFixed(1)}%`;
 }
 
 function updateUI() {
     if (!currentPlayer) return;
     const p = currentPlayer;
     document.getElementById('playerNameDisplay').innerHTML = `👤 ${p.nome}`;
-    // ✅ Saldo em REAIS, formatado como "R$ 1.234,56"
-    document.getElementById('playerCoinsDisplay').innerHTML = `🪙 R$ ${formatCoins(p.coins)}`;
+    // ✅ Saldo em REAIS, formatado como "S$ 1.234,56"
+    document.getElementById('playerCoinsDisplay').innerHTML = `🪙 S$ ${formatCoins(p.coins)}`;
     document.getElementById('playerSmDisplay').innerHTML = `⚡ ${p.sm}/${p.maxSm}`;
     document.getElementById('statHp').innerHTML = `${p.hp}/${p.maxHp}`;
     document.getElementById('statMp').innerHTML = `${p.mp}/${p.maxMp}`;
@@ -752,38 +674,45 @@ function updateUI() {
         smWarning.style.display = 'none';
     }
 
-    const invDiv = document.getElementById('inventoryList');
-    invDiv.innerHTML = '';
-    for (let [item, qty] of Object.entries(p.inventory)) {
-        if (qty > 0) {
-            let sellPrice = SELL_PRICES[item] || 0;
-            let buyPrice = BUY_PRICES[item] || 0;
-            let isUsable = ITEM_EFFECTS[item] !== undefined;
-            let buttonsHtml = '';
-            if (isUsable) buttonsHtml += `<button class="use-btn" onclick="window.useItemHandler('${item}')">💊 Usar</button>`;
-            if (sellPrice > 0) {
-                // ✅ R$ em reais diretos
-                let priceDisplay = `💰 R$ ${formatCoins(sellPrice)}`;
-                if (buyPrice > 0) priceDisplay += ` [↗ R$ ${formatCoins(buyPrice)}]`;
-                buttonsHtml += `<button class="sell-btn" onclick="window.sellItemHandler('${item}', ${qty})">${priceDisplay}</button>`;
-            } else {
-                buttonsHtml += `<span style="color:#888; font-size:11px;">🚫 não vende</span>`;
-            }
-            invDiv.innerHTML += `<div class="inventory-item">
-                <span class="item-name">${item}</span>
-                <span class="item-qty">x${qty}</span>
-                <div class="item-buttons">${buttonsHtml}</div>
-            </div>`;
-        }
+    const invDiv = document.getElementById('inventoryList');invDiv.replaceChildren();
+    for(const [nome,qtd]of Object.entries(p.inventory)) {
+        if(!(qtd>0))continue;
+        const item=CATALOGO_SHAGRILA[nome],card=document.createElement('div');card.className='inventory-item';
+        const titulo=document.createElement('span');titulo.className='item-name';titulo.textContent=nome;
+        const quantidade=document.createElement('span');quantidade.className='item-qty';quantidade.textContent='×'+qtd;
+        const atributos=document.createElement('div');atributos.className='inventory-attributes';
+        atributos.textContent='📊 '+(item?resumoItemShagrila(item):ITEM_EFFECTS[nome]?.desc||'Sem bônus de combate cadastrado');
+        const elemento=document.createElement('div');elemento.className='inventory-element';elemento.textContent='Elemento: '+(item?ELEMENTOS_SHAGRILA[item.elemento]:'Não se aplica');
+        const acoes=document.createElement('div');acoes.className='item-buttons';
+        const botao=(texto,classe,acao)=>{const b=document.createElement('button');b.textContent=texto;b.className=classe;b.onclick=acao;acoes.append(b);};
+        if(slotsItemShagrila(item).length){const slot=document.createElement('small');slot.className='inventory-slots';slot.textContent='Equipar: '+slotsItemShagrila(item).map(s=>SLOTS_SHAGRILA[s]).join(' / ');card.append(slot);botao('⚔️ Equipar','use-btn',()=>window.equiparFrontier(ITENS_SHAGRILA.indexOf(item)));}
+        if(ITEM_EFFECTS[nome]||item?.heal||item?.mana||item?.acao)botao('💊 Usar','use-btn',()=>useItem(nome));
+        if(SELL_PRICES[nome]>0)botao('💰 Vender S$ '+formatCoins(SELL_PRICES[nome]),'sell-btn',()=>sellItem(nome,qtd));
+        card.prepend(titulo,quantidade);card.append(atributos,elemento,acoes);invDiv.append(card);
     }
-    if (invDiv.innerHTML === '') invDiv.innerHTML = '<p style="color:#888;">Vazio</p>';
+    if(!invDiv.children.length){const vazio=document.createElement('p');vazio.textContent='Inventário vazio';invDiv.append(vazio);}
 
-    document.getElementById('equipList').innerHTML = `
-        <div class="stat-row"><span>⚔️ Arma</span><span>${p.equip.arma}</span></div>
-        <div class="stat-row"><span>🎭 Cabeça</span><span>${p.equip.cabeca}</span></div>
-        <div class="stat-row"><span>🛡️ Corpo</span><span>${p.equip.corpo}</span></div>
-        <div class="stat-row"><span>👢 Botas</span><span>${p.equip.bota}</span></div>
-    `;
+    const equipamentoHost=document.getElementById('equipList');equipamentoHost.replaceChildren();
+    for(const [slot,rotulo] of Object.entries(SLOTS_SHAGRILA)) {
+        const nome=p.equip[slot]||'Nenhum',item=CATALOGO_SHAGRILA[nome];
+        const row=document.createElement('div');row.className='frontier-item';
+        const label=document.createElement('strong');label.textContent=rotulo+' · '+nome;
+        const detalhe=document.createElement('small');detalhe.textContent=item?resumoItemShagrila(item):'Espaço vazio';
+        const escolher=document.createElement('select');escolher.setAttribute('aria-label','Equipar '+rotulo);escolher.style.maxWidth='100%';
+        const inicial=document.createElement('option');inicial.value='';inicial.textContent='Itens compatíveis da mochila';escolher.append(inicial);
+        for(const candidato of ITENS_SHAGRILA.filter(i=>slotsItemShagrila(i).includes(slot)&&p.inventory[i.nome]>0)){
+            const opcao=document.createElement('option');opcao.value=candidato.nome;opcao.textContent=candidato.nome+' ×'+p.inventory[candidato.nome];escolher.append(opcao);
+        }
+        escolher.disabled=escolher.options.length===1||!!currentEnemy;
+        escolher.onchange=()=>{if(escolher.value)window.equiparFrontier(ITENS_SHAGRILA.findIndex(i=>i.nome===escolher.value),slot);};
+        const btn=document.createElement('button');btn.className='use-btn';btn.textContent='Retirar';btn.disabled=nome==='Nenhum'||!!currentEnemy;
+        btn.onclick=()=>{if(currentEnemy)return;p.inventory[nome]=(p.inventory[nome]||0)+1;p.equip[slot]='Nenhum';updateUI();saveDB();};
+        row.append(label,detalhe,escolher,btn);equipamentoHost.append(row);
+    }
+    const atributos=normalizarAtributos(atributosPersonagem(p));
+    const poder=Math.round(atributos.dano*(1+atributos.critico/100*.5)*(1+atributos.golpeDuplo/100)*10+atributos.armadura*5+atributos.vidaMaxima/10);
+    document.getElementById('poderCombate').textContent=poder.toLocaleString('pt-BR');
+    renderFrontier();
 
     const cluesDiv = document.getElementById('cluesList');
     if (p.clues && p.clues.length > 0) {
@@ -795,7 +724,7 @@ function updateUI() {
     const attackBtn = document.getElementById('attackBtn');
     attackBtn.disabled = !currentEnemy;
     if (currentEnemy) {
-        document.getElementById('enemyName').innerHTML = currentEnemy.name;
+        document.getElementById('enemyName').textContent = currentEnemy.name+' · '+ELEMENTOS_SHAGRILA[currentEnemy.elemento||'fisico'];
         document.getElementById('enemyHpText').innerHTML = `HP: ${currentEnemy.hp}/${currentEnemy.maxHp}`;
         let percent = (currentEnemy.hp / currentEnemy.maxHp) * 100;
         document.getElementById('enemyHpBar').style.width = Math.min(100, percent) + '%';
@@ -847,7 +776,7 @@ function addItem(itemName, qty = 1) {
 function hasEnoughCoins(cost) {
     if (!currentPlayer) return false;
     if (currentPlayer.coins < cost) {
-        addLog(`❌ Moedas insuficientes! Precisa de R$ ${formatCoins(cost)} (tem R$ ${formatCoins(currentPlayer.coins)})`);
+        addLog(`❌ Moedas insuficientes! Precisa de S$ ${formatCoins(cost)} (tem S$ ${formatCoins(currentPlayer.coins)})`);
         return false;
     }
     return true;
@@ -861,13 +790,26 @@ function spendCoins(cost) {
 }
 
 window.buyItem = function (item, price) {
+    price=BUY_PRICES[item];
+    if(!currentPlayer||!Number.isFinite(price)||price<=0)return;
+    if(item==='Salvamento Divino'&&(currentPlayer.inventory[item]||0)>=5){addLog('Limite de cinco Salvamentos Divinos.');return;}
     if (currentPlayer.coins >= price) {
         currentPlayer.coins -= price;
         addItem(item, 1);
-        addLog(`🛒 Comprou ${item} por R$ ${formatCoins(price)}.`);
+        addLog(`🛒 Comprou ${item} por S$ ${formatCoins(price)}.`);
     } else addLog(`💰 Moedas insuficientes!`);
 };
 
+let proximoAtaqueCombate = 0;
+function finalizarVitoriaCombate() {
+    if (!currentEnemy || currentEnemy.hp > 0) return false;
+    const p=currentPlayer, inimigo=currentEnemy;
+    addLog(`🏆 DERROTOU ${inimigo.name}! +${inimigo.exp.toLocaleString('pt-BR')} EXP, +S$ ${formatCoins(inimigo.coins)}!`);
+    gainExp(p.equip.pescoco==='Colar da Alma Vorpal'?inimigo.exp/2:inimigo.exp);addCoin(inimigo.coins);
+    if(inimigo.isLegendary||inimigo.isMythic){p.bossKills=(p.bossKills||0)+1;addItem(inimigo.drop,1);addCoin(inimigo.coins*2);}
+    else if(Math.random()*100<50+p.lck/2)addItem(inimigo.drop,1);
+    currentEnemy=null;updateUI();saveDB();return true;
+}
 // ==================== EVENTOS ====================
 function setupEventListeners() {
     document.getElementById('findEnemyBtn').onclick = () => {
@@ -889,42 +831,28 @@ function setupEventListeners() {
 
     document.getElementById('attackBtn').onclick = () => {
         if (!currentEnemy) return;
+        if (Date.now() < proximoAtaqueCombate) return;
         if (!checkSm()) return;
         if (!consumeSm()) return;
 
         let p = currentPlayer;
+        proximoAtaqueCombate = Date.now() + tempoAtaque(atributosPersonagem(p).velocidadeAtaque);
         let { damage, isCrit } = calculatePlayerDamage();
-        if (currentEnemy.isLegendary || currentEnemy.isMythic) damage = Math.max(1, Math.floor(damage / 50));
-        currentEnemy.hp -= damage;
         addLog(`⚔️ Causou ${damage} de dano${isCrit ? ' (💥 CRÍTICO!)' : ''} em ${currentEnemy.name}.`);
 
-        if (currentEnemy.hp <= 0) {
-            let gainedExp = currentEnemy.exp;
-            let gainedCoins = currentEnemy.coins;
-            addLog(`🏆 DERROTOU ${currentEnemy.name}! +${gainedExp.toLocaleString('pt-BR')} EXP, +R$ ${formatCoins(gainedCoins)}!`);
-            gainExp(gainedExp); addCoin(gainedCoins);
-            if (currentEnemy.isLegendary || currentEnemy.isMythic) {
-                currentPlayer.bossKills = (currentPlayer.bossKills || 0) + 1;
-                addLog(`🎖️ CONQUISTA ÉPICA: ${currentEnemy.name} derrotado!`);
-                addItem(currentEnemy.drop, 1);
-                addCoin(currentEnemy.coins * 2);
-            } else {
-                let dropChance = 50 + p.lck / 2;
-                if (Math.random() * 100 < dropChance) addItem(currentEnemy.drop, 1);
-            }
-            currentEnemy = null; updateUI(); saveDB(); return;
-        }
+        if (finalizarVitoriaCombate()) return;
 
         let enemyResult = calculateEnemyDamage();
         if (enemyResult.dodged) {
             addLog(`💨 Desviou do ataque de ${currentEnemy.name}! (${p.dodge}% esquiva)`);
         } else {
-            p.hp -= enemyResult.damage;
+            if (p.hp > 0 && finalizarVitoriaCombate()) return;
             addLog(`💥 ${currentEnemy.name} causou ${enemyResult.damage} de dano.`);
             if (p.hp <= 0) {
+                if(p.shagrila?.resgate){p.hp=p.shagrila.resgate==='renascer'?p.maxHp:Math.max(1,Math.floor(p.maxHp/2));delete p.shagrila.resgate;addLog('✨ Resgate ativado sem perda de saldo.');currentEnemy=null;updateUI();saveDB();return;}
                 p.hp = p.maxHp;
-                p.coins = Math.max(0, p.coins - 0.5); // ✅ Perde R$ 0,50
-                addLog(`💀 DERROTA! Perdeu R$ ${formatCoins(0.5)}.`);
+                p.coins = Math.max(0, p.coins - 0.5); // ✅ Perde S$ 0,50
+                addLog(`💀 DERROTA! Perdeu S$ ${formatCoins(0.5)}.`);
                 currentEnemy = null;
             }
         }
@@ -933,7 +861,7 @@ function setupEventListeners() {
 
     document.getElementById('searchClueBtn').onclick = () => {
         if (!checkSm()) return;
-        if (!spendCoins(0.10)) return; // ✅ R$ 0,10
+        if (!spendCoins(0.10)) return; // ✅ S$ 0,10
         if (!consumeSm()) return;
 
         let luck = currentPlayer.lck + (currentPlayer.luckBonus || 0);
@@ -962,18 +890,18 @@ function setupEventListeners() {
 
     document.getElementById('exploreBtn').onclick = () => {
         if (!checkSm()) return;
-        if (!spendCoins(0.10)) return; // ✅ R$ 0,10
+        if (!spendCoins(0.10)) return; // ✅ S$ 0,10
         if (!consumeSm()) return;
 
         let rand = Math.random();
-        if (rand < 0.4) { let a = (Math.floor(Math.random() * 8) + 3) / 100; addCoin(a); addLog(`🗺️ Encontrou R$ ${formatCoins(a)}!`); }
+        if (rand < 0.4) { let a = (Math.floor(Math.random() * 8) + 3) / 100; addCoin(a); addLog(`🗺️ Encontrou S$ ${formatCoins(a)}!`); }
         else if (rand < 0.7) { addItem("Poção", 1); addLog(`🗺️ Encontrou uma Poção!`); }
         else addLog(`🗺️ Não encontrou nada...`);
     };
 
     document.getElementById('searchRareBtn').onclick = () => {
         if (!checkSm()) return;
-        if (!spendCoins(0.50)) return; // ✅ R$ 0,50
+        if (!spendCoins(0.50)) return; // ✅ S$ 0,50
         if (!consumeSm()) return;
 
         let sorte = currentPlayer.lck;
@@ -989,14 +917,14 @@ function setupEventListeners() {
         if (!currentPlayer) return;
         if (!checkSm()) return;
         if (currentPlayer.hp >= currentPlayer.maxHp) { addLog(`❤️ HP já está cheio! Não precisa descansar.`); return; }
-        if (!spendCoins(0.05)) return; // ✅ R$ 0,05
+        if (!spendCoins(0.05)) return; // ✅ S$ 0,05
         if (!consumeSm()) return;
 
         let cura = 20 + Math.floor(currentPlayer.vit * 1.5);
         let curaReal = Math.min(cura, currentPlayer.maxHp - currentPlayer.hp);
         currentPlayer.hp = Math.min(currentPlayer.maxHp, currentPlayer.hp + curaReal);
         updateUI(); saveDB();
-        addLog(`🏥 Descansou e recuperou ${curaReal} HP. (R$ ${formatCoins(0.05)} gastos)`);
+        addLog(`🏥 Descansou e recuperou ${curaReal} HP. (S$ ${formatCoins(0.05)} gastos)`);
     };
 
     document.getElementById('summonLegendaryBtn').onclick = () => {
@@ -1004,7 +932,7 @@ function setupEventListeners() {
         if (!checkSm()) return;
         if (!consumeSm()) return;
 
-        let luckMult = calculateLuckChanceMultiplier();
+        let luckMult = 1 + achadoEfetivo(atributosPersonagem(currentPlayer).achadoRaridade);
         let chance = 1 * luckMult;
         if (Math.random() * 100 < chance) {
             let legendaryBosses = LEGENDARY_LIST.filter(b => !b.isMythic);
@@ -1017,27 +945,103 @@ function setupEventListeners() {
     };
 
     function updateShop() {
-        const shopDiv = document.getElementById('shopList');
-        if (shopDiv) shopDiv.innerHTML = `
-            <div class="shop-item"><span>💊 Poção <span style="font-size:11px; color:#ffaa66;">(venda: R$ ${formatCoins(SELL_PRICES['Poção'])})</span></span><button class="shop-buy-btn" onclick="buyItem('Poção', ${BUY_PRICES['Poção']})">Comprar R$ ${formatCoins(BUY_PRICES['Poção'])}</button></div>
-            <div class="shop-item"><span>💪 Poção Maior <span style="font-size:11px; color:#ffaa66;">(venda: R$ ${formatCoins(SELL_PRICES['Poção Maior'])})</span></span><button class="shop-buy-btn" onclick="buyItem('Poção Maior', ${BUY_PRICES['Poção Maior']})">Comprar R$ ${formatCoins(BUY_PRICES['Poção Maior'])}</button></div>
-            <div class="shop-item"><span>✨ Elixir <span style="font-size:11px; color:#ffaa66;">(venda: R$ ${formatCoins(SELL_PRICES['Elixir'])})</span></span><button class="shop-buy-btn" onclick="buyItem('Elixir', ${BUY_PRICES['Elixir']})">Comprar R$ ${formatCoins(BUY_PRICES['Elixir'])}</button></div>
-            <div class="shop-item"><span>💎 Gema Rara <span style="font-size:11px; color:#ffaa66;">(venda: R$ ${formatCoins(SELL_PRICES['Gema Rara'])})</span></span><button class="shop-buy-btn" onclick="buyItem('Gema Rara', ${BUY_PRICES['Gema Rara']})">Comprar R$ ${formatCoins(BUY_PRICES['Gema Rara'])}</button></div>
-        `;
+        const shopDiv=document.getElementById('shopList');shopDiv.replaceChildren();
+        for(const nome of ['Poção','Poção Maior','Elixir','Gema Rara']) {
+            const row=document.createElement('div');row.className='shop-item';
+            const label=document.createElement('span');label.textContent=nome;
+            const button=document.createElement('button');button.className='shop-buy-btn';button.textContent='Comprar S$ '+formatCoins(BUY_PRICES[nome]);button.onclick=()=>window.buyItem(nome);
+            row.append(label,button);shopDiv.append(row);
+        }
+        iniciarFrontier();renderFrontier();
     }
     updateShop();
 }
 
+// ==================== CATÁLOGO FRONTIER ====================
+function iniciarFrontier() {
+    const categoria=document.getElementById('frontierCategoria');
+    if(categoria.options.length===1)for(const nome of new Set(ITENS_SHAGRILA.map(i=>i.categoria))){const o=document.createElement('option');o.value=nome;o.textContent=nome;categoria.append(o);}
+    const elemento=document.getElementById('frontierElemento');elemento.replaceChildren();
+    for(const [id,nome]of Object.entries(ELEMENTOS_SHAGRILA)){const o=document.createElement('option');o.value=id;o.textContent=nome;elemento.append(o);}
+    elemento.value=currentPlayer.combate.elemento||'fisico';
+    elemento.onchange=()=>{currentPlayer.combate.elemento=elemento.value;updateUI();saveDB();};
+    categoria.onchange=renderFrontier;document.getElementById('frontierBusca').oninput=renderFrontier;
+    document.getElementById('frontierColetar').onclick=()=>{
+        const p=currentPlayer;if(currentEnemy){addLog('Termine o combate antes de coletar.');return;}
+        if(!(p.inventory.Piqueta>0)&&p.equip.mao_direita!=='Piqueta'&&p.equip.mao_esquerda!=='Piqueta'){addLog('É preciso possuir uma Piqueta.');return;}
+        if(!checkSm()||!consumeSm())return;
+        const materiais=ITENS_SHAGRILA.filter(i=>i.categoria==='Materiais');
+        const item=materiais[Math.floor(Math.random()*materiais.length)];addItem(item.nome,1);addLog('⛏️ Coletou '+item.nome+' · '+item.origem);updateUI();saveDB();
+    };
+}
+function renderFrontier() {
+    const host=document.getElementById('frontierCatalogo');if(!host||!currentPlayer)return;
+    const categoria=document.getElementById('frontierCategoria').value;
+    const busca=document.getElementById('frontierBusca').value.toLocaleLowerCase('pt-BR');
+    const itens=ITENS_SHAGRILA.filter(i=>(!categoria||i.categoria===categoria)&&[i.nome,i.origem,i.elemento].join(' ').toLocaleLowerCase('pt-BR').includes(busca));
+    document.getElementById('frontierContagem').textContent=itens.length+' de '+ITENS_SHAGRILA.length+' itens';host.replaceChildren();
+    for(const item of itens){
+        const card=document.createElement('article');card.className='frontier-item';
+        const titulo=document.createElement('strong');titulo.textContent=item.nome;
+        const origem=document.createElement('small');origem.textContent=item.origem+' · '+ELEMENTOS_SHAGRILA[item.elemento]+' · '+item.categoria+(item.slot?' · '+slotsItemShagrila(item).map(s=>SLOTS_SHAGRILA[s]).join(' / '):'');
+        const stats=document.createElement('p');stats.textContent=resumoItemShagrila(item);
+        const descricao=document.createElement('details');const sum=document.createElement('summary');sum.textContent='Descrição e efeito';const texto=document.createElement('p');texto.textContent=[item.descricao,DESCRICOES_FRONTIER[item.acao],item.slot?'Efeito no jogo: '+resumoItemShagrila(item):!item.acao&&!item.heal&&!item.mana?'No jogo: material de forja ou relíquia de coleção; poderes narrativos não concedem ações adicionais.':''].filter(Boolean).join(' ' )||'Material ou relíquia de coleção e forja. Os poderes narrativos não descritos como efeito no jogo são apenas referência.';descricao.append(sum,texto);
+        const estoque=document.createElement('small');estoque.textContent='Na mochila: '+(currentPlayer.inventory[item.nome]||0)+' · Venda: S$ '+formatCoins(SELL_PRICES[item.nome]);
+        const comprar=document.createElement('button');comprar.className='shop-buy-btn';comprar.textContent='Comprar S$ '+formatCoins(item.preco);comprar.onclick=()=>window.buyItem(item.nome);
+        card.append(titulo,origem,stats,descricao,estoque,comprar);
+        const receita=RECEITAS_SHAGRILA.find(r=>r.item===item.nome);
+        if(receita){const forja=document.createElement('button');forja.className='use-btn';forja.textContent='⚒️ Forjar';forja.title=Object.entries(receita.materiais).map(([n,q])=>q+' × '+n).join(' + ');forja.onclick=()=>{try{currentPlayer.inventory=forjarShagrila(currentPlayer.inventory,item.nome);addLog('⚒️ Forjou '+item.nome);updateUI();saveDB();}catch(e){addLog(e.message);}};const ingredientes=document.createElement('small');ingredientes.textContent='Receita: '+forja.title;card.append(forja,ingredientes);}
+        host.append(card);
+    }
+}
+const DESCRICOES_FRONTIER={
+ teleporte:'Adaptação: encerra o encontro atual sem penalidade.',protecao:'Adaptação: concede 10% de resistência geral para os próximos cinco ataques recebidos.',
+ recompensa:'Adaptação: relíquia reutilizável; troca S$ 100 por +1 de força base a cada uso.',renascer:'Adaptação: prepara recuperação total no próximo golpe fatal, sem perda de saldo.',
+ reviver:'Adaptação: prepara recuperação de metade do HP no próximo golpe fatal. Máximo de cinco no inventário.',
+ pilula:'Adaptação: +99% de dano por 15 minutos; perde um nível a cada 30 segundos de efeito, até o mínimo de 1.',
+ habilidade:'Adaptação: aprende Céu Claro, concedendo +10% de dano contra chefes uma única vez.',
+ bencao:'Adaptação: causa dano de purificação a um inimigo morto-vivo.',ligacao:'Adaptação: aprende ligação de habilidades, concedendo +5% de golpe duplo uma única vez.',
+ explosao:'Adaptação: ataque de fogo com 60 de dano base, sujeito às defesas do alvo e ao custo de 10 SM.',atrair:'Adaptação: inicia um encontro quando não há inimigo ativo.'
+};
+window.equiparFrontier=(index,slot)=>{try{if(currentEnemy)throw Error('Troque os equipamentos fora de combate.');equiparShagrila(currentPlayer,ITENS_SHAGRILA[index]?.nome,slot);updateUI();saveDB();}catch(e){addLog(e.message);}};
+function usarItemFrontier(item) {
+ const p=currentPlayer;if(!p||!(p.inventory[item.nome]>0))return;
+ p.shagrila??={};
+ const consumir=()=>{p.inventory[item.nome]--;if(!p.inventory[item.nome])delete p.inventory[item.nome];};
+ if(item.heal||item.mana){
+    const hp=Math.min(curaPocao(item.heal||0,atributosPersonagem(p).curaPocao),Math.max(0,p.maxHp-p.hp));
+    const mp=Math.min(item.mana||0,Math.max(0,p.maxMp-p.mp));
+    if(!hp&&!mp){addLog('HP e MP já estão recuperados.');return;}p.hp+=hp;p.mp+=mp;
+ } else switch(item.acao){
+ case 'teleporte':if(!currentEnemy){addLog('Não há encontro para abandonar.');return;}currentEnemy=null;break;
+ case 'protecao':p.shagrila.protecao=5;break;
+ case 'recompensa':if(p.coins<100){addLog('Requer S$ 100,00 por ponto de força.');return;}p.coins-=100;p.str++;addLog('⚖️ +1 de força base.');updateUI();saveDB();return;
+ case 'renascer':case 'reviver':if(p.shagrila.resgate){addLog('Já existe um resgate preparado.');return;}p.shagrila.resgate=item.acao;break;
+ case 'pilula':if(p.shagrila.pilulaAte>Date.now()){addLog('A pílula já está ativa.');return;}p.shagrila.pilulaAte=Date.now()+900000;p.shagrila.pilulaUltimo=Date.now();break;
+ case 'habilidade':case 'ligacao':if(p.shagrila[item.acao]){addLog('Habilidade já aprendida.');return;}p.shagrila[item.acao]=true;break;
+ case 'bencao':if(!currentEnemy?.mortoVivo){addLog('Requer um inimigo morto-vivo.');return;}if(!checkSm()||!consumeSm())return;aplicarCombate(p,currentEnemy,{danoBase:80,atributosAtacante:{elemento:'ar'}});finalizarVitoriaCombate();break;
+ case 'explosao':if(!currentEnemy){addLog('Encontre um inimigo primeiro.');return;}if(!checkSm()||!consumeSm())return;aplicarCombate(p,currentEnemy,{danoBase:60,atributosAtacante:{elemento:'fogo'}});finalizarVitoriaCombate();break;
+ case 'atrair':if(currentEnemy){addLog('Já existe um encontro ativo.');return;}if(!checkSm()||!consumeSm())return;currentEnemy=findEnemyWithLegendaryChance().enemy;break;
+ default:addLog(item.descricao||item.nome+' é uma relíquia de coleção.');return;
+ }
+ consumir();addLog('✨ Usou '+item.nome);updateUI();saveDB();
+}
 // ==================== INICIALIZAÇÃO ====================
+setInterval(()=>{
+ const p=currentPlayer,e=p?.shagrila;if(!e?.pilulaAte)return;
+ const limite=Math.min(Date.now(),e.pilulaAte),ciclos=Math.max(0,Math.floor((limite-e.pilulaUltimo)/30000));
+ if(ciclos>0){p.level=Math.max(1,p.level-ciclos);e.pilulaUltimo+=ciclos*30000;updateUI();saveDB();}
+ if(Date.now()>=e.pilulaAte){delete e.pilulaAte;delete e.pilulaUltimo;updateUI();saveDB();}
+},1000);
 (async function init() {
     if (!sessaoValida()) {
-        window.location.href = 'login.html';
+        window.location.href = '../../login.html';
         return;
     }
 
     const sessao = getUsuarioSessao();
     if (!sessao || !sessao.id) {
-        window.location.href = 'login.html';
+        window.location.href = '../../login.html';
         return;
     }
 
@@ -1056,7 +1060,7 @@ function setupEventListeners() {
     }
     if (row.bloqueado === true) {
         addLog('🚫 Conta bloqueada.');
-        setTimeout(() => { sairSessao(); window.location.href = 'login.html'; }, 2000);
+        setTimeout(() => { sairSessao(); window.location.href = '../../login.html'; }, 2000);
         return;
     }
 
@@ -1088,6 +1092,9 @@ function setupEventListeners() {
         if (realtimeChannel) supabaseClient.removeChannel(realtimeChannel);
     });
 })();
+
+anexarFichaCombate(() => currentPlayer, {onAlterar:()=>{updateUI();saveDB();}});
+Object.assign(window,{});
 </script>
 
 </body>

@@ -463,7 +463,7 @@
         ============================================================ */
         .conquistas-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+            grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
             gap: 10px;
             margin-top: 12px;
         }
@@ -485,9 +485,19 @@
         }
 
         .conquista.bloqueada {
-            opacity: 0.35;
-            filter: grayscale(1);
+            border-color: rgba(160, 180, 210, 0.18);
+            background: rgba(0, 0, 0, 0.25);
         }
+
+        .conquista .conquista-descricao {
+            display: block; margin-top: 8px; color: #bcc8da;
+            font-size: 0.75em; line-height: 1.5; overflow-wrap: anywhere;
+        }
+        .conquista .conquista-status {
+            display: block; margin-top: 10px; font-size: 0.65em; color: #a7b8ce;
+        }
+        .conquista.desbloqueada .conquista-status { color: #e7c96d; }
+        .conquista.bloqueada .icon { opacity: 0.5; filter: grayscale(1); }
 
         .conquista:hover {
             transform: translateY(-3px) scale(1.05);
@@ -692,7 +702,7 @@
             .lw-num { width: 48px; height: 48px; font-size: 1.2em; }
             .lw-title { font-size: 0.95em; }
             .info-box .valor { font-size: 1.4em; }
-            .conquistas-grid { grid-template-columns: repeat(auto-fill, minmax(90px, 1fr)); }
+            .conquistas-grid { grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); }
         }
     </style>
 </head>
@@ -812,6 +822,7 @@
          SCRIPT PRINCIPAL — importa tudo do config.js
     ============================================================ -->
     <script type="module">
+    import { anexarFichaCombate } from './shared/ficha-combate.js';
     import { 
         db as supabase, 
         TABELA,
@@ -877,22 +888,22 @@
     // CONQUISTAS
     // ============================================================
     const CONQUISTAS = [
-        { id: 'primeiro_passo',  icon: '👣', nome: 'Primeiro Passo',  check: j => j.nivel >= 2 },
-        { id: 'aprendiz',        icon: '🌿', nome: 'Aprendiz',         check: j => j.nivel >= 5 },
-        { id: 'guerreiro',       icon: '⚔️', nome: 'Guerreiro',        check: j => j.nivel >= 10 },
-        { id: 'cavaleiro',       icon: '🛡️', nome: 'Cavaleiro',        check: j => j.nivel >= 20 },
-        { id: 'campeao',         icon: '🔥', nome: 'Campeão',          check: j => j.nivel >= 30 },
-        { id: 'mestre',          icon: '💎', nome: 'Mestre',           check: j => j.nivel >= 50 },
-        { id: 'lenda',           icon: '👑', nome: 'Lenda',            check: j => j.nivel >= 70 },
-        { id: 'mitico',          icon: '🌌', nome: 'Mítico',           check: j => j.nivel >= 90 },
-        { id: 'rico',            icon: '💰', nome: 'Rico',             check: j => j.saldo >= 1000 },
-        { id: 'magnata',         icon: '🏦', nome: 'Magnata',          check: j => j.saldo_poupanca >= 5000 },
-        { id: 'investidor',      icon: '📈', nome: 'Investidor',       check: j => j.itensCount >= 5 },
-        { id: 'colecionador',    icon: '📚', nome: 'Colecionador',     check: j => j.itensCount >= 15 },
-        { id: 'full_set',        icon: '🎯', nome: 'Set Completo',     check: j => j.conjuntosCompletos >= 1 },
-        { id: 'comerciante',     icon: '🛒', nome: 'Comerciante',      check: j => j.carteira && Object.keys(j.carteira).length >= 3 },
-        { id: 'cristalino',      icon: '💎', nome: 'Cristalino',       check: j => j.cristais >= 100 },
-        { id: 'poupador',        icon: '🏛️', nome: 'Poupador',         check: j => j.saldo_poupanca >= 100 }
+        { id: 'primeiro_passo',  icon: '👣', nome: 'Primeiro Passo',  descricao: 'Alcance o nível 2.', check: j => j.nivel >= 2 },
+        { id: 'aprendiz',        icon: '🌿', nome: 'Aprendiz',         descricao: 'Alcance o nível 5.', check: j => j.nivel >= 5 },
+        { id: 'guerreiro',       icon: '⚔️', nome: 'Guerreiro',        descricao: 'Alcance o nível 10.', check: j => j.nivel >= 10 },
+        { id: 'cavaleiro',       icon: '🛡️', nome: 'Cavaleiro',        descricao: 'Alcance o nível 20.', check: j => j.nivel >= 20 },
+        { id: 'campeao',         icon: '🔥', nome: 'Campeão',          descricao: 'Alcance o nível 30.', check: j => j.nivel >= 30 },
+        { id: 'mestre',          icon: '💎', nome: 'Mestre',           descricao: 'Alcance o nível 50.', check: j => j.nivel >= 50 },
+        { id: 'lenda',           icon: '👑', nome: 'Lenda',            descricao: 'Alcance o nível 70.', check: j => j.nivel >= 70 },
+        { id: 'mitico',          icon: '🌌', nome: 'Mítico',           descricao: 'Alcance o nível 90.', check: j => j.nivel >= 90 },
+        { id: 'rico',            icon: '💰', nome: 'Rico',             descricao: 'Tenha pelo menos S$ 1.000,00 no saldo.', check: j => j.saldo >= 1000 },
+        { id: 'magnata',         icon: '🏦', nome: 'Magnata',          descricao: 'Tenha pelo menos S$ 5.000,00 na poupança.', check: j => j.saldo_poupanca >= 5000 },
+        { id: 'investidor',      icon: '📈', nome: 'Investidor',       descricao: 'Registre pelo menos 5 itens no Codex.', check: j => j.itensCount >= 5 },
+        { id: 'colecionador',    icon: '📚', nome: 'Colecionador',     descricao: 'Registre pelo menos 15 itens no Codex.', check: j => j.itensCount >= 15 },
+        { id: 'full_set',        icon: '🎯', nome: 'Set Completo',     descricao: 'Registre pelo menos 7 itens do mesmo conjunto no Codex.', check: j => j.conjuntosCompletos >= 1 },
+        { id: 'comerciante',     icon: '🛒', nome: 'Comerciante',      descricao: 'Tenha pelo menos 3 ativos diferentes registrados na carteira.', check: j => j.carteira && Object.keys(j.carteira).length >= 3 },
+        { id: 'cristalino',      icon: '💎', nome: 'Cristalino',       descricao: 'Acumule pelo menos 100 cristais.', check: j => j.cristais >= 100 },
+        { id: 'poupador',        icon: '🏛️', nome: 'Poupador',         descricao: 'Tenha pelo menos S$ 100,00 na poupança.', check: j => j.saldo_poupanca >= 100 }
     ];
 
     // Cache de conquistas já notificadas (evita toast repetido)
@@ -986,7 +997,7 @@
                     ataque_base, defesa_base, magia_base,
                     hp, max_hp, mp, max_mp, sm, max_sm,
                     saldo, saldo_poupanca, proventos_pendentes,
-                    cristais, carteira, itens
+                    cristais, carteira, itens, meta
                 `)
                 .eq('login', usuarioLogado)
                 .maybeSingle();
@@ -1020,6 +1031,7 @@
             jogador.exp_proximo = Number(data.exp_proximo) || 100;
 
             jogador.hp_atual = Number(data.hp_atual ?? data.hp ?? 0);
+            jogador.combate = data.meta?.combate || {};
             jogador.hp_max   = Number(data.hp_max   ?? data.max_hp ?? 0);
             jogador.mp_atual = Number(data.mp_atual ?? data.mp ?? 0);
             jogador.mp_max   = Number(data.mp_max   ?? data.max_mp ?? 0);
@@ -1199,9 +1211,11 @@
             }
 
             return `
-                <div class="conquista ${classe}" title="${c.nome}">
+                <div class="conquista ${classe}" title="${c.nome} — ${c.descricao}">
                     <span class="icon">${c.icon}</span>
                     <span class="nome">${c.nome}</span>
+                    <span class="conquista-descricao">${c.descricao}</span>
+                    <span class="conquista-status">${desbloqueada ? '✓ Desbloqueada' : '🔒 A desbloquear'}</span>
                 </div>
             `;
         }).join('');
@@ -1269,6 +1283,7 @@
                     jogador.experiencia = Number(novo.experiencia) ?? jogador.experiencia;
                     jogador.exp_proximo = Number(novo.exp_proximo) || jogador.exp_proximo;
 
+                    if(Object.hasOwn(novo,'meta'))jogador.combate=novo.meta?.combate||{};
                     // Stats
                     jogador.hp_atual = Number(novo.hp_atual ?? novo.hp ?? jogador.hp_atual);
                     jogador.hp_max   = Number(novo.hp_max   ?? novo.max_hp ?? jogador.hp_max);
@@ -1354,6 +1369,7 @@
         console.log('✅ Player inicializado!');
     }
 
+    anexarFichaCombate(()=>({...jogador,hp:jogador.hp_atual,maxHp:jogador.hp_max}),{base:'./'});
     if (document.readyState === 'loading') {
         document.addEventListener('DOMContentLoaded', init);
     } else {

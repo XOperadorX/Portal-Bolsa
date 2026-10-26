@@ -237,7 +237,10 @@ canvas {
     <div id="info-text">🎮 mm quase tudo</div>
 </div>
 
-<script>
+<script type="module">
+import { atributoBase, aplicarCombate, executarAtaque, atributosPersonagem, tempoAtaque, velocidadeMovimento, normalizarAtributos } from '../../shared/combate.js';
+import { anexarFichaCombate } from '../../shared/ficha-combate.js';
+
     (function(){
         // ---------- CONFIGURAÇÕES DO MUNDO ----------
         const canvas = document.getElementById('gameCanvas');
@@ -270,9 +273,10 @@ canvas {
             collisionCooldown: 0
         };
         
+        Object.defineProperty(player,'vidaBase',{get:function(){return getMaxHpForLevel(this.lvl);}});
         // Propriedade computada para maxHp (sincronizada com nível)
         Object.defineProperty(player, 'maxHp', {
-            get: function() { return getMaxHpForLevel(this.lvl); }
+            get: function() { return Math.max(1,atributoBase(getMaxHpForLevel(this.lvl),this.combate?.vidaPercentual)); }
         });
         
         const WORLD_SIZE = 3600;
@@ -463,21 +467,10 @@ canvas {
         }
         
         // ATAQUE (ganha XP ao matar)
-        function performAttack() {
-            if(player.attackCooldown > 0) {
-                addFloatingText(player.x, player.y-20, "⏳ Cooldown", "#aa8866");
-                return;
-            }
-            player.attackCooldown = 20;
-            let hitCount = 0;
-            for(let i=0; i<mobs.length; i++) {
-                const m = mobs[i];
-                if(m.hp > 0 && distance(player, m) < 72) {
-                    const dmg = player.attackDamage + Math.floor(Math.random() * 9);
-                    m.hp -= dmg;
-                    addFloatingText(m.x, m.y-22, `-${dmg}`, '#ffaa77');
-                    addParticles(m.x, m.y, 'hit');
-                    if(m.hp <= 0) {
+        function finalizarMobCombate(m,i) {
+            if(m.hp>0||m._recompensado)return false;
+            m._recompensado=true;
+
                         addXP(m.xpReward);
                         addFloatingText(m.x, m.y-38, `+${m.xpReward} XP`, '#ffdd99');
                         addParticles(m.x, m.y, 'death');
@@ -496,12 +489,33 @@ canvas {
                                 });
                             }
                         }, 100);
+
+
+            return true;
+        }
+        function performAttack() {
+            if(Date.now() < (player.proximoAtaqueCombate||0)) {
+                addFloatingText(player.x, player.y-20, "⏳ Cooldown", "#aa8866");
+                return;
+            }
+            player.proximoAtaqueCombate=Date.now()+tempoAtaque(atributosPersonagem(player).velocidadeAtaque);
+            player.attackCooldown = 20;
+            let hitCount = 0;
+            for(let i=0; i<mobs.length; i++) {
+                const m = mobs[i];
+                if(m.hp > 0 && distance(player, m) < 72) {
+                    const golpe=aplicarCombate(player,m,{danoBase:atributosPersonagem(player).dano+Math.floor(Math.random()*9),atributosDefensor:{tipo:'monstro'}});
+                    const dmg=golpe.danoTotal;
+                    addFloatingText(m.x, m.y-22, `-${dmg}`, '#ffaa77');
+                    addParticles(m.x, m.y, 'hit');
+                    if(finalizarMobCombate(m,i)) {
                         hitCount++;
                     } else {
                         // Contra-ataque do mob (dano sem regeneração)
                         if(m.attackTimer <= 0 && player.invincibleTimer <= 0) {
                             let dmgMob = 8 + Math.floor(player.lvl/3);
-                            player.hp = Math.max(0, player.hp - dmgMob);
+                            dmgMob=aplicarCombate(m,player,{danoBase:dmgMob,atributosAtacante:{tipo:'monstro'}}).danoTotal;
+                            if(m.hp<=0)finalizarMobCombate(m,i);
                             player.invincibleTimer = 22;
                             addFloatingText(player.x, player.y-20, `-${dmgMob}`, '#ff7777');
                             m.attackTimer = 45;
@@ -577,7 +591,7 @@ canvas {
         
         function updateMovementByJoystick() {
             if (joyVector.x !== 0 || joyVector.y !== 0) {
-                const speed = 5.2;
+                const speed = velocidadeMovimento(5.2,atributosPersonagem(player).movimento);
                 player.x += joyVector.x * speed;
                 player.y += joyVector.y * speed;
                 player.x = Math.min(Math.max(player.x, 60), WORLD_SIZE - 60);
@@ -596,7 +610,8 @@ canvas {
                 if(m.hp <= 0) continue;
                 const distToMob = distance(player, m);
                 if(distToMob < 38) {
-                    player.hp = Math.max(0, player.hp - 1);
+                    aplicarCombate(m,player,{danoBase:1,atributosAtacante:{tipo:'monstro'}});
+                    if(m.hp<=0)finalizarMobCombate(m,i);
                     player.collisionCooldown = 12;
                     addFloatingText(player.x, player.y-10, "-1 HP (colisão)", "#ff9999");
                     if(player.hp <= 0) {
@@ -636,7 +651,8 @@ canvas {
                 // Ataque corpo a corpo do mob (dano adicional)
                 if(distToPlayer < 56 && m.attackTimer <= 0 && m.hp > 0 && player.invincibleTimer <= 0) {
                     let dmgMob = 6 + Math.floor(player.lvl/3);
-                    player.hp = Math.max(0, player.hp - dmgMob);
+                    dmgMob=aplicarCombate(m,player,{danoBase:dmgMob,atributosAtacante:{tipo:'monstro'}}).danoTotal;
+                            if(m.hp<=0)finalizarMobCombate(m,i);
                     player.invincibleTimer = 20;
                     addFloatingText(player.x, player.y-18, `-${dmgMob} (ataque)`, '#ff8866');
                     m.attackTimer = 45;
@@ -747,7 +763,9 @@ canvas {
         attachActionButtons();
         updateUI();
         gameLoop();
+        anexarFichaCombate(()=>player,{flutuante:true,onAlterar:()=>updateUI()});
     })();
+
 </script>
 </body>
 </html>

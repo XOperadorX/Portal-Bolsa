@@ -660,7 +660,7 @@
                     <div class="user-avatar" id="userAvatar">👤</div>
                     <div class="user-info">
                         <span class="user-nick" id="nomeJogador">Desconectado</span>
-                        <span class="user-balance" id="saldosaldo">R$ 0,00</span>
+                        <span class="user-balance" id="saldosaldo">S$ 0,00</span>
                     </div>
                 </div>
             </div>
@@ -676,7 +676,7 @@
                 <div class="stat-box"><label>⛏️ BTC acumulado</label><div class="value btc" id="btcTotal">0.00000000</div></div>
                 <div class="stat-box"><label>⚡ Poder ativo</label><div class="value hash" id="poderMineracao">1.0 MH/s</div></div>
                 <div class="stat-box"><label>⏱️ Mineração passiva</label><div class="value" id="mineracaoPassiva">0.00000000 BTC/s</div></div>
-                <div class="stat-box"><label>📈 Ganho por clique</label><div class="value hash" id="ganhoClique">0.0000000025</div></div>
+                <div class="stat-box"><label>📈 Ganho por clique</label><div class="value hash" id="ganhoClique">0.00000001</div></div>
             </div>
             <div class="grid-2 mt-2">
                 <div class="stat-box"><label>🔒 Poder base (permanente)</label><div class="value hash" id="poderBase">1.0 MH/s</div></div>
@@ -684,7 +684,7 @@
             </div>
             <div class="flex mt-2">
                 <button class="btn" onclick="minerar()">⛏️ Minerar (clique)</button>
-                <button class="btn btn-secondary" onclick="upgradeMineracao()">⬆️ Upgrade (+0.5 MH/s base) - 10 BTC</button>
+                <button class="btn btn-secondary" onclick="upgradeMineracao()">⬆️ Upgrade (+0.5 MH/s base) - 10.00000000 BTC</button>
             </div>
             <div id="logMineracao" class="mt-2">⛏️ Pronto para minerar!</div>
         </div>
@@ -739,8 +739,8 @@
                         <span>Vender Poder</span>
                     </div>
                     <div class="mercado-info">
-                        <b>Mercado:</b> <span id="precoVenda">0.00080000 BTC</span>/MH/s (taxa 20%)<br>
-                        <b>Base:</b> <span id="precoVendaBase">0.00065000 BTC</span>/MH/s (taxa 35%)
+                        <b>Mercado:</b> <span id="precoVenda">0.00080000 BTC</span>/MH/s (taxa <span class="taxa-global-mercado"></span>%)<br>
+                        <b>Base:</b> <span id="precoVendaBase">0.00065000 BTC</span>/MH/s (taxa <span class="taxa-global-base"></span>%)
                     </div>
                     <div class="tipo-venda">
                         <button class="tipo-btn ativo mercado" id="tipoMercado" onclick="setTipoVenda('mercado')">⏳ Mercado</button>
@@ -767,7 +767,7 @@
             </div>
 
             <div class="taxa-info mt-2">
-                ⚠️ <b>Poder do mercado</b> dura 24h e substitui o base &nbsp;|&nbsp; <b>Taxa mercado:</b> 20% &nbsp;|&nbsp; <b>Taxa base:</b> 35% &nbsp;|&nbsp; <b>Base mínima:</b> 1.0 MH/s
+                ⚠️ <b>Poder do mercado</b> dura 24h e substitui o base &nbsp;|&nbsp; <b>Taxa mercado:</b> <span class="taxa-global-mercado"></span>% &nbsp;|&nbsp; <b>Taxa base:</b> <span class="taxa-global-base"></span>% &nbsp;|&nbsp; <b>Base mínima:</b> 1.0 MH/s
             </div>
         </div>
 
@@ -794,7 +794,9 @@
 
     <div id="toast" class="toast"></div>
 
-<script>
+<script type="module">
+import { obterTaxa } from "../../shared/taxas-globais.js";
+
     // ============================================================
     // CONFIG SUPABASE
     // ============================================================
@@ -807,23 +809,23 @@
     // ============================================================
     // CONSTANTES
     // ============================================================
-    const TAXA_BASE = 0.00000001;
+    const TAXA_BASE = obterTaxa('mineracao_passiva');
     const INTERVALO_PASSIVA_MS = 3000;
     const MAX_LOG_LINHAS = 20;
     const CUSTO_UPGRADE = 10;
 
     // ===== GANHO POR CLIQUE =====
-    // 1000 cliques em 1 MH/s = 0.00000247 BTC
-    // → 0.00000000247 BTC por clique por MH/s
-    const GANHO_CLIQUE_BASE = 0.00000000247;
-    const VARIACAO_CLIQUE = 0.4; // ±20%
+    // Meta fixa: 0.00000001 BTC por clique. O crédito real é confirmado pela RPC.
+    const GANHO_CLIQUE_BASE = 0.00000001;
 
     // ===== MERCADO =====
     const PRECO_COMPRA_BTC      = 0.001;    // compra: 1 MH/s = 0.001 BTC
-    const PRECO_VENDA_MERCADO   = 0.0008;   // venda mercado: 20% taxa
-    const PRECO_VENDA_BASE      = 0.00065;  // venda base: 35% taxa
-    const TAXA_VENDA_MERCADO    = 0.20;
-    const TAXA_VENDA_BASE       = 0.35;
+    const PRECO_VENDA_MERCADO = 0.001 * (1 - obterTaxa('mineracao_mercado') / 100);   // venda mercado: 20% taxa
+    const PRECO_VENDA_BASE = 0.001 * (1 - obterTaxa('mineracao_base') / 100);  // venda base: 35% taxa
+    const TAXA_VENDA_MERCADO = obterTaxa('mineracao_mercado') / 100;
+    const TAXA_VENDA_BASE = obterTaxa('mineracao_base') / 100;
+    document.querySelectorAll('.taxa-global-mercado').forEach(e => e.textContent = obterTaxa('mineracao_mercado'));
+    document.querySelectorAll('.taxa-global-base').forEach(e => e.textContent = obterTaxa('mineracao_base'));
     const QTD_MINIMA            = 0.1;
     const PODER_BASE_MINIMO     = 1.0;
     const DURACAO_HORAS         = 24;
@@ -836,6 +838,7 @@
     let estado = {
         id: null,
         login: '',
+        nome: '',
         saldo: 0,
         btc: 0,
         poderHash: 1.0,
@@ -866,15 +869,13 @@
         toast._timeout = setTimeout(() => toast.classList.remove('show'), 4000);
     }
 
-    function formatarBTC(valor) { return Number(valor).toFixed(8); }
-
-    // Formata BTC com mais casas para valores muito pequenos (ganho por clique)
-    function formatarBTCPreciso(valor) {
-        const n = Number(valor);
-        if (n === 0) return '0.0000000000';
-        if (Math.abs(n) < 0.00000001) return n.toFixed(10);
-        return n.toFixed(8);
+    // Todos os valores BTC da tela usam a mesma apresentação: oito casas decimais.
+    // A formatação não altera o saldo armazenado nem os cálculos das operações.
+    function formatarBTC(valor) {
+        const numero = Number(valor);
+        return (Number.isFinite(numero) ? numero : 0).toFixed(8);
     }
+    function formatarBTCPreciso(valor) { return formatarBTC(valor); }
 
     function formatarDuracao(segundos) {
         if (segundos < 60) return `${Math.floor(segundos)}s`;
@@ -934,16 +935,15 @@
 
     // ============================================================
     // GANHO POR CLIQUE (fonte única da verdade no front-end)
-    // 1000 cliques em 1 MH/s = 0.00000247 BTC
+    // Meta fixa: 0.00000001 BTC por clique. O crédito real é confirmado pela RPC.
     // ============================================================
     function calcularGanhoClique() {
-        const variacao = 1 - VARIACAO_CLIQUE / 2 + Math.random() * VARIACAO_CLIQUE;
-        return GANHO_CLIQUE_BASE * poderAtivo() * variacao;
+        return GANHO_CLIQUE_BASE;
     }
 
     // Ganho médio (sem random) — usado para exibir na UI
     function ganhoCliqueMedio() {
-        return GANHO_CLIQUE_BASE * poderAtivo();
+        return GANHO_CLIQUE_BASE;
     }
 
     // ============================================================
@@ -953,7 +953,7 @@
         const usuarioLogado = localStorage.getItem('usuario_logado');
         if (!usuarioLogado) {
             showToast('❌ Faça login primeiro!', true);
-            setTimeout(() => window.location.href = 'login.html', 1500);
+            setTimeout(() => window.location.href = '../../login.html', 1500);
             return false;
         }
         try {
@@ -963,7 +963,7 @@
         } catch (e) {
             localStorage.removeItem('usuario_logado');
             showToast('❌ Sessão inválida!', true);
-            setTimeout(() => window.location.href = 'login.html', 1500);
+            setTimeout(() => window.location.href = '../../login.html', 1500);
             return false;
         }
     }
@@ -975,7 +975,7 @@
         try {
             const { data, error } = await supabase
                 .from(TABELA)
-                .select('id, login, saldo, btc, poder_hash, poder_mercado, poder_mercado_expira_em')
+                .select('id, login, nome, saldo, btc, poder_hash, poder_mercado, poder_mercado_expira_em')
                 .eq('login', login)
                 .maybeSingle();
 
@@ -985,6 +985,7 @@
             usuarioAtual = data;
             estado.id = data.id;
             estado.login = data.login;
+            estado.nome = String(data.nome || data.login || 'Jogador').trim();
             estado.saldo = parseFloat(data.saldo) || 0;
             estado.btc = parseFloat(data.btc) || 0;
             estado.poderHash = parseFloat(data.poder_hash) || 1.0;
@@ -1007,7 +1008,7 @@
             if (error) throw error;
             if (!data || !data.ok) return;
             if (data.segundos > 5) {
-                estado.btc = parseFloat(data.btc) || estado.btc;
+                if(data.btc!=null&&Number.isFinite(Number(data.btc)))estado.btc=Number(data.btc);
                 atualizarUI();
                 adicionarLog(`💤 Mineração offline: +${formatarBTC(data.ganho)} BTC (${formatarDuracao(data.segundos)})`);
                 showToast(`💤 Ausente ${formatarDuracao(data.segundos)}: +${formatarBTC(data.ganho)} BTC`);
@@ -1023,9 +1024,9 @@
         const nick = document.getElementById('nomeJogador');
         const saldo = document.getElementById('saldosaldo');
 
-        nick.textContent = estado.login || 'Desconectado';
-        avatar.textContent = estado.login ? estado.login.charAt(0).toUpperCase() : '👤';
-        saldo.textContent = new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(estado.saldo);
+        nick.textContent = estado.nome || estado.login || 'Desconectado';
+        avatar.textContent = (estado.nome || estado.login)?.charAt(0).toUpperCase() || '👤';
+        saldo.textContent = 'S$ ' + new Intl.NumberFormat('pt-BR', { style: 'decimal', minimumFractionDigits: 2, maximumFractionDigits: 2 }).format(estado.saldo);
 
         const btcEl = document.getElementById('btcTotal');
         if (btcEl) btcEl.textContent = formatarBTC(estado.btc);
@@ -1035,9 +1036,9 @@
         if (poderEl) poderEl.textContent = `${ativo.toFixed(1)} MH/s`;
 
         const passivaEl = document.getElementById('mineracaoPassiva');
-        if (passivaEl) passivaEl.textContent = (ativo * TAXA_BASE).toFixed(8) + ' BTC/s';
+        if (passivaEl) passivaEl.textContent = formatarBTC(ativo * TAXA_BASE) + ' BTC/s';
 
-        // Ganho por clique: média exata (0.00000000247 * MH/s)
+        // Ganho fixo por clique configurado na página
         const ganhoCliqueEl = document.getElementById('ganhoClique');
         if (ganhoCliqueEl) ganhoCliqueEl.textContent = formatarBTCPreciso(ganhoCliqueMedio());
 
@@ -1360,42 +1361,31 @@
     // MINERAÇÃO (clique)
     // ============================================================
     async function minerar() {
-        if (!usuarioAtual) { showToast('❌ Faça login primeiro!', true); return; }
+        if (!usuarioAtual || !estado.login) { showToast('❌ Faça login primeiro!', true); return; }
         if (rpcEmAndamento) return;
-
         const ativo = poderAtivo();
-        const ganhoPreview = calcularGanhoClique();
-        estado.btc += ganhoPreview;
-        atualizarUI();
-
         try {
             rpcEmAndamento = true;
             const { data, error } = await supabase.rpc('minerar_clique', { p_login: estado.login });
             if (error) throw error;
-            if (!data || !data.ok) {
-                estado.btc -= ganhoPreview;
-                atualizarUI();
-                showToast('❌ ' + (data?.erro || 'erro'), true);
-                return;
-            }
-            estado.btc = parseFloat(data.btc) || estado.btc;
+            if (!data?.ok) throw new Error(data?.erro || 'Não foi possível confirmar a mineração.');
+            const btcConfirmado = Number(data.btc);
+            if (!Number.isFinite(btcConfirmado)) throw new Error('O servidor não confirmou o saldo BTC.');
+            estado.btc = btcConfirmado;
             atualizarUI();
-            adicionarLog(`⛏️ +${formatarBTCPreciso(data.ganho)} BTC`);
-
-            inserirHistoricoLocal({
-                tipo: 'clique',
-                ganho: data.ganho,
-                btc_apos: data.btc,
-                poder_apos: ativo,
-                criado_em: new Date().toISOString()
-            });
+            const confirmadoEm = new Date().toISOString();
+            const dataHora = formatarData(confirmadoEm);
+            const ganho = data.ganho == null ? null : Number(data.ganho);
+            if (ganho != null && Number.isFinite(ganho) && ganho > 0) {
+                adicionarLog(`⛏️ ${dataHora} · +${formatarBTCPreciso(ganho)} BTC`);
+                inserirHistoricoLocal({tipo:'clique',ganho,btc_apos:btcConfirmado,poder_apos:ativo,criado_em:confirmadoEm});
+            } else {
+                adicionarLog(`⛏️ ${dataHora}`);
+            }
         } catch (err) {
             console.error('Erro ao minerar:', err);
-            estado.btc -= ganhoPreview;
-            atualizarUI();
-        } finally {
-            rpcEmAndamento = false;
-        }
+            showToast('❌ '+err.message,true);
+        } finally { rpcEmAndamento = false; }
     }
 
     // ============================================================
@@ -1406,7 +1396,7 @@
         if (rpcEmAndamento) return;
 
         const custo = calcularCusto(qtd);
-        if (estado.btc < custo) { showToast(`❌ Precisa de ${custo} BTC.`, true); return; }
+        if (estado.btc < custo) { showToast(`❌ Precisa de ${formatarBTC(custo)} BTC.`, true); return; }
 
         try {
             rpcEmAndamento = true;
@@ -1417,8 +1407,13 @@
             if (error) throw error;
             if (!data || !data.ok) { showToast('❌ ' + (data?.erro || 'erro'), true); return; }
 
-            estado.btc = parseFloat(data.btc);
-            estado.poderHash = parseFloat(data.poder);
+            const btcSalvo=Number(data.btc);
+            const poderSalvo=Number(data.poder_base??data.poder_hash??data.poder);
+            if(!Number.isFinite(btcSalvo)||!Number.isFinite(poderSalvo)){
+                await carregarDadosDoUsuario(estado.login);
+            }else{
+                estado.btc=btcSalvo;estado.poderHash=poderSalvo;
+            }
             atualizarUI();
 
             const label = qtd === 1 ? 'Upgrade' : `Pack ×${qtd}`;
@@ -1451,8 +1446,7 @@
         if (mineracaoInterval) clearInterval(mineracaoInterval);
         mineracaoInterval = setInterval(() => {
             if (!usuarioAtual) return;
-            const ganho = poderAtivo() * TAXA_BASE * (INTERVALO_PASSIVA_MS / 1000);
-            estado.btc += ganho;
+            // O saldo acumulado exibe apenas créditos confirmados pelo servidor.
             atualizarUI();
         }, INTERVALO_PASSIVA_MS);
 
@@ -1468,7 +1462,7 @@
             if (error) throw error;
             if (!data || !data.ok) return;
 
-            estado.btc = parseFloat(data.btc) || estado.btc;
+            if(data.btc!=null&&Number.isFinite(Number(data.btc)))estado.btc=Number(data.btc);
             atualizarUI();
 
             if (data.ganho > 0) {
@@ -1616,7 +1610,9 @@
         showToast(`✅ Bem-vindo, ${estado.login}!`);
     }
 
-    document.addEventListener('DOMContentLoaded', init);
+    if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', init); else init();
+
+Object.assign(window,{minerar,upgradeMineracao,atualizarResumoCompra,setCompra,setCompraMax,comprarPoder,setTipoVenda,atualizarResumoVenda,setVenda,setVendaMax,venderPoder,aplicarFiltro,carregarHistorico});
 </script>
 </body>
 </html>

@@ -139,8 +139,8 @@
     function atualizarSaldoGlobal() {
         const total = getSaldoTotal();
         if (headerSaldo) headerSaldo.textContent = formatSaldo(total);
-        if (marketSaldo) marketSaldo.textContent = `R$ ${formatSaldo(total)}`;
-        if (userBalanceDisplay) userBalanceDisplay.textContent = `💰 R$ ${formatSaldo(total)}`;
+        if (marketSaldo) marketSaldo.textContent = `S$ ${formatSaldo(total)}`;
+        if (userBalanceDisplay) userBalanceDisplay.textContent = `💰 S$ ${formatSaldo(total)}`;
     }
 
     function showToast(text, duration = 2200) {
@@ -681,7 +681,7 @@
                         </div>
                     </div>
                     <div class="item-price">
-                        R$ ${preco} <span>cada</span>
+                        S$ ${preco} <span>cada</span>
                         <span style="font-size:0.7rem; ${variacaoClass}">(${variacaoText})</span>
                     </div>
                     <div class="item-stock">
@@ -754,7 +754,7 @@
         const custo = item.precoAtual * qty;
 
         if (saldo < custo) {
-            showToast(`😅 Saldo insuficiente! Precisa de R$ ${formatSaldo(custo)}`, 2000);
+            showToast(`😅 Saldo insuficiente! Precisa de S$ ${formatSaldo(custo)}`, 2000);
             return;
         }
 
@@ -782,7 +782,7 @@
             showToast(`🎉 SUBIU PARA NÍVEL ${personagem.nivel}!`, 3000);
         }
 
-        showToast(`✅ Comprou ${qty} ${item.nome} por R$ ${formatSaldo(custo)} +${expGanha} EXP`, 2000);
+        showToast(`✅ Comprou ${qty} ${item.nome} por S$ ${formatSaldo(custo)} +${expGanha} EXP`, 2000);
 
         atualizarUIPersonagem();
         atualizarSaldoGlobal();
@@ -840,7 +840,7 @@
             showToast(`🎉 SUBIU PARA NÍVEL ${personagem.nivel}!`, 3000);
         }
 
-        showToast(`💰 Vendeu ${qty} ${item.nome} por R$ ${formatSaldo(total)} +${expGanha} EXP`, 2000);
+        showToast(`💰 Vendeu ${qty} ${item.nome} por S$ ${formatSaldo(total)} +${expGanha} EXP`, 2000);
 
         atualizarUIPersonagem();
         atualizarSaldoGlobal();

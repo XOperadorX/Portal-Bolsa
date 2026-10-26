@@ -2,7 +2,7 @@
   "name": "MM Quase Tudo — Central de Jogos",
   "short_name": "MMQuaseTudo",
   "displayName": "MM Quase Tudo",
-  "version": "1.0.0",
+  "version": "1.3.0",
   "description": "Central de jogos, economia virtual e negociações entre jogadores",
   "start_url": "./index.html",
   "display": "standalone",

@@ -450,7 +450,7 @@
                 <div class="user-avatar" id="userAvatar">👤</div>
                 <div class="user-info">
                     <span class="user-nick" id="nomeJogador">Desconectado</span>
-                    <span class="user-balance" id="saldosaldo">R$ 0,00</span>
+                    <span class="user-balance" id="saldosaldo">S$ 0,00</span>
                 </div>
             </div>
 
@@ -626,9 +626,9 @@
 
             nick.textContent = estado.login || 'Desconectado';
             avatar.textContent = estado.login ? estado.login.charAt(0).toUpperCase() : '👤';
-            saldo.textContent = new Intl.NumberFormat('pt-BR', {
-                style: 'currency',
-                currency: 'BRL'
+            saldo.textContent = 'S$ ' + new Intl.NumberFormat('pt-BR', {
+                style: 'decimal',
+                minimumFractionDigits: 2, maximumFractionDigits: 2
             }).format(estado.saldo);
 
             document.getElementById('hpValue').textContent = `${estado.hp}/${estado.maxHp}`;

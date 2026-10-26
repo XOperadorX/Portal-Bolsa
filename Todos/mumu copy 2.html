@@ -495,7 +495,7 @@
                 </div>
             </div>
             <div class="saldo-container reais">
-                <div class="saldo-label">💵 Saldo (R$)</div>
+                <div class="saldo-label">💵 Saldo (S$)</div>
                 <div class="saldo-valor" id="saldoReais">
                     <span class="carregando"><span class="spinner"></span></span>
                 </div>
@@ -523,42 +523,42 @@
         <div class="troca-section">
             <h3>🔄 Trocar Mumu por Saldo</h3>
             <p class="regra">
-                10,00 Mumu = R$ 1,00 Saldo<br>
-                <small>Desfazer: R$ 1,00 Saldo = 5,00 Mumu</small>
+                10,00 Mumu = S$ 1,00 Saldo<br>
+                <small>Desfazer: S$ 1,00 Saldo = 5,00 Mumu</small>
             </p>
 
             <div class="pacotes-grid" id="pacotesGrid">
                 <div class="pacote" data-pacote="1">
                     <div class="custo">🪙 10,00 Mumu</div>
-                    <div class="ganho">R$ 1,00 <small>Saldo</small></div>
+                    <div class="ganho">S$ 1,00 <small>Saldo</small></div>
                     <button class="btn-trocar" data-mumu="10" data-saldo="1">Trocar</button>
                     <button class="btn-desfazer desfazer" data-saldo="1" data-mumu="5" disabled>Desfazer</button>
                     <span class="aviso-desfazer">Volta: 5,00 Mumu</span>
                 </div>
                 <div class="pacote" data-pacote="2">
                     <div class="custo">🪙 20,00 Mumu</div>
-                    <div class="ganho">R$ 2,00 <small>Saldo</small></div>
+                    <div class="ganho">S$ 2,00 <small>Saldo</small></div>
                     <button class="btn-trocar" data-mumu="20" data-saldo="2">Trocar</button>
                     <button class="btn-desfazer desfazer" data-saldo="2" data-mumu="10" disabled>Desfazer</button>
                     <span class="aviso-desfazer">Volta: 10,00 Mumu</span>
                 </div>
                 <div class="pacote" data-pacote="3">
                     <div class="custo">🪙 50,00 Mumu</div>
-                    <div class="ganho">R$ 5,00 <small>Saldo</small></div>
+                    <div class="ganho">S$ 5,00 <small>Saldo</small></div>
                     <button class="btn-trocar" data-mumu="50" data-saldo="5">Trocar</button>
                     <button class="btn-desfazer desfazer" data-saldo="5" data-mumu="25" disabled>Desfazer</button>
                     <span class="aviso-desfazer">Volta: 25,00 Mumu</span>
                 </div>
                 <div class="pacote" data-pacote="4">
                     <div class="custo">🪙 100,00 Mumu</div>
-                    <div class="ganho">R$ 10,00 <small>Saldo</small></div>
+                    <div class="ganho">S$ 10,00 <small>Saldo</small></div>
                     <button class="btn-trocar" data-mumu="100" data-saldo="10">Trocar</button>
                     <button class="btn-desfazer desfazer" data-saldo="10" data-mumu="50" disabled>Desfazer</button>
                     <span class="aviso-desfazer">Volta: 50,00 Mumu</span>
                 </div>
                 <div class="pacote" data-pacote="5">
                     <div class="custo">🪙 200,00 Mumu</div>
-                    <div class="ganho">R$ 20,00 <small>Saldo</small></div>
+                    <div class="ganho">S$ 20,00 <small>Saldo</small></div>
                     <button class="btn-trocar" data-mumu="200" data-saldo="20">Trocar</button>
                     <button class="btn-desfazer desfazer" data-saldo="20" data-mumu="100" disabled>Desfazer</button>
                     <span class="aviso-desfazer">Volta: 100,00 Mumu</span>
@@ -668,7 +668,7 @@
             document.getElementById('saldoMumu').innerHTML =
                 `<span class="simbolo">M$</span> ${formatarMoeda(mumu)}`;
             document.getElementById('saldoReais').innerHTML =
-                `<span class="simbolo">R$</span> ${formatarMoeda(reais)}`;
+                `<span class="simbolo">S$</span> ${formatarMoeda(reais)}`;
         }
 
         // ====== HISTÓRICO ======
@@ -703,15 +703,15 @@
 
                 if (item.tipo === 'troca') {
                     classe = 'troca'; icone = '🔄'; rotulo = 'Troca';
-                    detalhe = `${formatarMoeda(item.mumuGasto)} Mumu → R$ ${formatarMoeda(item.saldoGanho)}`;
+                    detalhe = `${formatarMoeda(item.mumuGasto)} Mumu → S$ ${formatarMoeda(item.saldoGanho)}`;
                 } else if (item.tipo === 'desfazer') {
                     classe = 'desfazer'; icone = '↩️'; rotulo = 'Desfazer';
-                    detalhe = `R$ ${formatarMoeda(item.saldoGasto)} → ${formatarMoeda(item.mumuGanho)} Mumu`;
+                    detalhe = `S$ ${formatarMoeda(item.saldoGasto)} → ${formatarMoeda(item.mumuGanho)} Mumu`;
                 } else {
                     classe = 'resgate'; icone = '🎁'; rotulo = `Resgate "${item.codigo || ''}"`;
                     const partes = [];
                     if (item.mumuGanho > 0) partes.push(`${formatarMoeda(item.mumuGanho)} Mumu`);
-                    if (item.saldoGanho > 0) partes.push(`R$ ${formatarMoeda(item.saldoGanho)}`);
+                    if (item.saldoGanho > 0) partes.push(`S$ ${formatarMoeda(item.saldoGanho)}`);
                     detalhe = partes.join(' + ') || 'Sem recompensa';
                 }
 
@@ -924,7 +924,7 @@
                 exibirSaldos(novoMumu, novoSaldo);
                 renderizarHistorico();
                 atualizarBotoesPacotes();
-                mostrarMensagemTroca(`✅ Troca realizada! ${formatarMoeda(mumuGasto)} Mumu → R$ ${formatarMoeda(saldoGanho)}`, 'sucesso');
+                mostrarMensagemTroca(`✅ Troca realizada! ${formatarMoeda(mumuGasto)} Mumu → S$ ${formatarMoeda(saldoGanho)}`, 'sucesso');
 
             } catch (erro) {
                 mostrarMensagemTroca(`❌ ${erro.message}`, 'erro');
@@ -936,7 +936,7 @@
                 mostrarMensagemTroca('Sessão expirada.', 'erro'); return;
             }
             if (saldoReaisAtual < saldoGasto) {
-                mostrarMensagemTroca(`Saldo em R$ insuficiente.`, 'erro'); return;
+                mostrarMensagemTroca(`Saldo em S$ insuficiente.`, 'erro'); return;
             }
 
             mostrarMensagemTroca('Processando desfazer...', 'carregando');
@@ -955,7 +955,7 @@
                 let historicoAtual = dadosAtuais[0].historico_trocas || [];
                 if (!Array.isArray(historicoAtual)) historicoAtual = [];
 
-                if (saldoAtual < saldoGasto) throw new Error(`Saldo em R$ insuficiente.`);
+                if (saldoAtual < saldoGasto) throw new Error(`Saldo em S$ insuficiente.`);
 
                 const novoMumu = mumuAtual + mumuGanho;
                 const novoSaldo = saldoAtual - saldoGasto;
@@ -998,7 +998,7 @@
                 exibirSaldos(novoMumu, novoSaldo);
                 renderizarHistorico();
                 atualizarBotoesPacotes();
-                mostrarMensagemTroca(`✅ Troca desfeita! R$ ${formatarMoeda(saldoGasto)} → ${formatarMoeda(mumuGanho)} Mumu`, 'sucesso');
+                mostrarMensagemTroca(`✅ Troca desfeita! S$ ${formatarMoeda(saldoGasto)} → ${formatarMoeda(mumuGanho)} Mumu`, 'sucesso');
 
             } catch (erro) {
                 mostrarMensagemTroca(`❌ ${erro.message}`, 'erro');
@@ -1146,7 +1146,7 @@
                 // 10) Mensagem
                 const partes = [];
                 if (bonusMumu > 0) partes.push(`${formatarMoeda(bonusMumu)} Mumu`);
-                if (bonusSaldo > 0) partes.push(`R$ ${formatarMoeda(bonusSaldo)}`);
+                if (bonusSaldo > 0) partes.push(`S$ ${formatarMoeda(bonusSaldo)}`);
                 mostrarMsgResgate(`✅ Código resgatado! Você ganhou ${partes.join(' + ')}`, 'sucesso');
 
                 input.value = '';

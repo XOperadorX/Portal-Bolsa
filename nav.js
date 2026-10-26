@@ -24,6 +24,7 @@
     loja:      BASE + 'jogos/loja/loja.html',
     diario:    null, // abre modal via #btnAbrirDiario
     codex:     BASE + 'codex.html',
+    combate:   BASE + 'combate.html',
     player:    BASE + 'player.html',
     mercado:   BASE + 'jogos/mercado/mercado.html',
     mochila:   BASE + 'jogos/mochila/mochila.html',
@@ -47,6 +48,7 @@
 
         <a href="${PAGINAS.loja}"     class="btn-bolsa btn-loja">🛒 Loja</a>
         <button type="button" class="btn-bolsa btn-diario" id="btnAbrirDiario">📅 DIÁRIO</button>
+        <a href="${PAGINAS.combate}" class="btn-bolsa">⚔️ Dano e defesa</a>
         <a href="${PAGINAS.codex}"    class="btn-bolsa btn-codex">📖 CODEX</a>
         <a href="${PAGINAS.player}"   class="btn-bolsa btn-player">👶 Player</a>
         <a href="${PAGINAS.mercado}"  class="btn-bolsa btn-mercado">💰 Mercado</a>
@@ -76,6 +78,10 @@
     const wrapper = document.createElement('div');
     wrapper.innerHTML = HTML_MENU.trim();
     const nav = wrapper.firstElementChild;
+    // Páginas com navegação compacta mantêm Voltar e o acesso administrativo.
+    if (scriptTag?.getAttribute('data-menu') === 'compacto') {
+      nav.querySelectorAll('.btn-bolsa:not(.btn-admin)').forEach(botao => botao.remove());
+    }
 
     // Insere como PRIMEIRO elemento do body
     if (document.body.firstChild) {

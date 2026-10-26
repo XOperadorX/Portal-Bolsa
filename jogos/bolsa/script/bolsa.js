@@ -1,7 +1,9 @@
+import { obterTaxa, estadoTaxas } from '../../../shared/taxas-globais.js';
 // ====================================================================
 //  IMPORTAÇÕES
 // ====================================================================
 import { createClient } from '@supabase/supabase-js';
+import { sincronizarCodexNaCarteira } from '../../../shared/codex-carteira.js';
 
 // ====================================================================
 //  CONFIGURAÇÕES
@@ -12,7 +14,7 @@ const supabase      = createClient(SUPABASE_URL, SUPABASE_KEY);
 const TABELA        = 'Geral';
 const BRAPI_TOKEN   = 'uFgACspaiXowFi5JF9UhUZ';
 const BRAPI_BASE    = 'https://brapi.dev/api';
-const MOEDA         = 'Mumu';
+const MOEDA         = 'S$';
 
 // ====================================================================
 //  DADOS DO USUÁRIO
@@ -156,7 +158,7 @@ const tickersBrapi = {
 //  FUNÇÕES AUXILIARES
 // ====================================================================
 function formatarMoeda(valor) {
-    return `${valor.toFixed(2)} ${MOEDA}`;
+    return `${MOEDA} ${Number(valor).toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
 }
 
 function getValorInput() {
@@ -226,7 +228,8 @@ async function carregarDadosDoSupabase() {
         }
 
         if (data) {
-            aplicarDadosDoRegistro(data);
+            const sincronizado = await sincronizarCodexNaCarteira(supabase, TABELA, data);
+            aplicarDadosDoRegistro(sincronizado);
             dadosCarregados = true;
             registrar('📂 Dados carregados do Supabase!', 'operacao');
             atualizarDisplayRPG();
@@ -327,6 +330,26 @@ async function salvarDadosNoSupabase() {
 // ====================================================================
 //  🔄 SUPABASE REALTIME — Atualização em tempo real
 // ====================================================================
+// Inclui o catálogo do Codex, inclusive tickers que não fazem parte da lista inicial.
+function integrarAtivosCodex(bolsa) {
+    const categorias = { acoes: [acoes, 'Ação', 'Acao'], fiis: [fiis, 'FII', 'FII'], etfs: [etfs, 'ETF', 'ETF'], tesouro: [tesouros, 'Tesouro', 'Tesouro'] };
+    for (const [categoria, [lista, tipo, grupo]] of Object.entries(categorias)) {
+        for (const item of bolsa?.[categoria] || []) {
+            if (!item.id || !Number.isFinite(Number(item.preco))) continue;
+            if (todosAtivos.some(a => a.ticker === item.id)) continue;
+            const ativo = {
+                ticker: item.id, nome: item.nome || item.id, tipo, categoria: grupo,
+                preco: Number(item.preco), vencimento: item.vencimento || '—',
+                dividendoUnitario: Number(item.preco) * Number(item.dy || 0) / 1200
+            };
+            lista.push(ativo);
+            todosAtivos.push(ativo);
+            precoHistorico[ativo.ticker] = ativo.preco;
+        }
+    }
+    initEstruturas();
+}
+
 function aplicarDadosDoRegistro(data) {
     if (!data) return;
 
@@ -341,24 +364,22 @@ function aplicarDadosDoRegistro(data) {
         proventosPendentes = parseFloat(data.proventos_pendentes);
     }
 
+    integrarAtivosCodex(data.fazendinha_dados?.bolsa);
+
     // Carteira
     if (data.carteira) {
         Object.keys(data.carteira).forEach(key => {
-            if (carteira[key] !== undefined) carteira[key] = data.carteira[key] || 0;
+            carteira[key] = data.carteira[key] || 0;
         });
     }
     if (data.preco_medio_compra) {
         Object.keys(data.preco_medio_compra).forEach(key => {
-            if (precoMedioCompra[key] !== undefined) {
-                precoMedioCompra[key] = data.preco_medio_compra[key] || 0;
-            }
+            precoMedioCompra[key] = data.preco_medio_compra[key] || 0;
         });
     }
     if (data.proventos_por_ativo) {
         Object.keys(data.proventos_por_ativo).forEach(key => {
-            if (proventosPorAtivo[key] !== undefined) {
-                proventosPorAtivo[key] = data.proventos_por_ativo[key] || 0;
-            }
+            proventosPorAtivo[key] = data.proventos_por_ativo[key] || 0;
         });
     }
 
@@ -378,7 +399,7 @@ function aplicarDadosDoRegistro(data) {
 
     // SELIC
     if (data.selic !== undefined && data.selic !== null) {
-        const novaSelic = parseFloat(data.selic);
+        const novaSelic = estadoTaxas.origem === 'banco' ? obterTaxa('bolsa_selic') : parseFloat(data.selic);
         if (novaSelic !== selicAtual) {
             selicAtual = novaSelic;
             atualizarDisplaySelicBolsa(selicAtual);
@@ -800,12 +821,12 @@ async function resgatarPoupanca() {
 
 function renderPoupanca() {
     if (saldoPoupanca > 0) {
-        const taxa = 0.006;
+        const taxa = obterTaxa('poupanca_rendimento') / 100;
         const rendimento = saldoPoupanca * taxa;
         saldoPoupanca = parseFloat((saldoPoupanca + rendimento).toFixed(2));
         rendimentosPoupancaAcumulados += rendimento;
         rendimentosPoupancaAcumulados = parseFloat(rendimentosPoupancaAcumulados.toFixed(2));
-        registrar(`🏦 POUPANÇA RENDEU 0,6%! Rendimento de ${formatarMoeda(rendimento)}.`, "poupanca");
+        registrar(`🏦 POUPANÇA RENDEU ${obterTaxa('poupanca_rendimento')}%! Rendimento de ${formatarMoeda(rendimento)}.`, "poupanca");
         if (rendimento > 0.01) {
             mostrarToast(`Rendimento de ${formatarMoeda(rendimento)} na Poupança!`, 'sucesso', '💰 Rendimento Creditado');
         }
@@ -1026,12 +1047,12 @@ function atualizarPatrimonio() {
     const saldoPoupancaEl = document.getElementById("saldoPoupanca");
     const userSaldoEl = document.getElementById("userSaldoDisplay");
 
-    if (saldoEl) saldoEl.innerHTML = `${saldo.toFixed(2)} <span class="moeda-simbolo">${MOEDA}</span>`;
-    if (patrimonioEl) patrimonioEl.innerHTML = `${patrimonioTotal.toFixed(2)} <span class="moeda-simbolo">${MOEDA}</span>`;
-    if (investidoEl) investidoEl.innerHTML = `${totalCustoInvestido.toFixed(2)} <span class="moeda-simbolo">${MOEDA}</span>`;
-    if (proventosEl) proventosEl.innerHTML = `${proventosPendentes.toFixed(2)} <span class="moeda-simbolo">${MOEDA}</span>`;
-    if (saldoPoupancaEl) saldoPoupancaEl.innerHTML = `${saldoPoupanca.toFixed(2)} <span class="moeda-simbolo">${MOEDA}</span>`;
-    if (userSaldoEl) userSaldoEl.textContent = `${saldo.toFixed(2)} ${MOEDA}`;
+    if (saldoEl) saldoEl.innerHTML = `<span class="moeda-simbolo">${MOEDA}</span> ${formatarMoeda(saldo).slice(MOEDA.length + 1)}`;
+    if (patrimonioEl) patrimonioEl.innerHTML = `<span class="moeda-simbolo">${MOEDA}</span> ${formatarMoeda(patrimonioTotal).slice(MOEDA.length + 1)}`;
+    if (investidoEl) investidoEl.innerHTML = `<span class="moeda-simbolo">${MOEDA}</span> ${formatarMoeda(totalCustoInvestido).slice(MOEDA.length + 1)}`;
+    if (proventosEl) proventosEl.innerHTML = `<span class="moeda-simbolo">${MOEDA}</span> ${formatarMoeda(proventosPendentes).slice(MOEDA.length + 1)}`;
+    if (saldoPoupancaEl) saldoPoupancaEl.innerHTML = `<span class="moeda-simbolo">${MOEDA}</span> ${formatarMoeda(saldoPoupanca).slice(MOEDA.length + 1)}`;
+    if (userSaldoEl) userSaldoEl.textContent = formatarMoeda(saldo);
 }
 
 function atualizarTudo() {
@@ -1112,6 +1133,7 @@ function atualizarDisplaySelicBolsa(valor) {
 }
 
 async function carregarSelicDoSupabase() {
+    if (estadoTaxas.origem === 'banco') return obterTaxa('bolsa_selic');
     try {
         if (!usuario || !usuario.id) return 10.75;
         
@@ -1187,7 +1209,7 @@ if (historicoEl) historicoEl.innerHTML = "";
 registrar(`🚀 Jogo iniciado com SALDO DE ${formatarMoeda(saldo)}!`);
 registrar(`👤 Usuário: ${usuario.nome || usuario.login}`);
 registrar("💰 Ações: proventos a cada 60s | FIIs: 30s | ETFs: 90s");
-registrar("🏦 Poupança: rende 0,6% a cada 60s. Boa sorte!");
+registrar(`🏦 Poupança: rende ${obterTaxa('poupanca_rendimento')}% a cada 60s. Boa sorte!`);
 if (supabaseOnline) registrar("☁️ Supabase disponível para salvar seu progresso!");
 if (realtimeConectado) registrar("🔄 Realtime conectado — dados sincronizados em tempo real!");
 

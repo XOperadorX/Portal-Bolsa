@@ -327,7 +327,9 @@
         </div>
     </div>
 
-    <script>
+    <script type="module">
+        import { CONFIG } from './script/config.js';
+
         // ══════════════════════════════════════════════════════════════
         // MENU MOBILE
         // ══════════════════════════════════════════════════════════════
@@ -371,9 +373,10 @@
         // ══════════════════════════════════════════════════════════════
         // SUPABASE
         // ══════════════════════════════════════════════════════════════
-        const SUPABASE_URL = 'https://xrcxvizzdumcxbylmkvn.supabase.co';
-        const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InhyY3h2aXp6ZHVtY3hieWxta3ZuIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODY2NjA0NzIsImV4cCI6MjEwMjIzNjQ3Mn0.ohB4tW0UQ-k1PcwoZxm4u9XSGNLsFphv1_UwTWoklOM';
-        const supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+        const supabaseClient = window.supabase.createClient(
+            CONFIG.SUPABASE_URL,
+            CONFIG.SUPABASE_KEY
+        );
 
         // ══════════════════════════════════════════════════════════════
         // SESSÃO
@@ -395,9 +398,12 @@
             return (Date.now() - t) < SESSION_DURATION;
         }
 
+        const retornoSolicitado = new URLSearchParams(window.location.search).get('retorno');
+        const retornoLogin = ['dados/admin/chat.html','jogos/mochila/trocap.html'].includes(retornoSolicitado) ? retornoSolicitado : 'dashboard.html';
+
         // Redireciona se já logado
-        if (sessaoValida()) {
-            window.location.replace('dashboard.html');
+        if (sessaoValida() && new URLSearchParams(window.location.search).get('chat') !== '1') {
+            window.location.replace(retornoLogin);
             throw new Error('REDIRECT_LOGGED_IN');
         }
 
@@ -489,11 +495,14 @@
         // ✅ CORRIGIDO: sessão só é salva DEPOIS da regeneração
         async function fazerLogin(login, senha) {
             try {
-                const { data, error } = await supabaseClient.rpc('login_usuario', {
+                let { data, error } = await supabaseClient.rpc('login_chat', {
                     p_login: login,
                     p_senha: senha
                 });
 
+                if (error?.code === 'PGRST202' || error?.code === '42883') {
+                    ({ data, error } = await supabaseClient.rpc('login_usuario', { p_login: login, p_senha: senha }));
+                }
                 if (error) {
                     console.error('Erro RPC login_usuario:', error);
                     mostrarErro('❌ Erro ao consultar usuário. (' + error.message + ')');
@@ -511,6 +520,7 @@
 
                 // 2. Só agora salva a sessão com dados atualizados
                 const usuario = {
+                    chat_token: data.chat_token || null,
                     id:    data.id,
                     login: data.login,
                     nome:  data.nome,
@@ -525,7 +535,7 @@
                 // 3. Redireciona
                 const delay = (regenResult && regenResult.regenerou) ? 2000 : 800;
                 setTimeout(() => {
-                    window.location.replace('dashboard.html');
+                    window.location.replace(retornoLogin);
                 }, delay);
 
                 return true;

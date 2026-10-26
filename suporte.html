@@ -906,18 +906,9 @@
                     <form id="formSuporte">
                         <div class="form-row">
                             <div class="form-group">
-                                <label for="nome">Nome <span class="obrigatorio">*</span></label>
-                                <input type="text" id="nome" name="nome" placeholder="Seu nome completo" required maxlength="120">
-                            </div>
-                            <div class="form-group">
                                 <label for="login">Login no jogo</label>
                                 <input type="text" id="login" name="login" placeholder="Seu login" maxlength="60">
                             </div>
-                        </div>
-
-                        <div class="form-group">
-                            <label for="email">Email <span class="obrigatorio">*</span></label>
-                            <input type="email" id="email" name="email" placeholder="seu@email.com" required maxlength="150">
                         </div>
 
                         <div class="form-row">
@@ -1370,9 +1361,9 @@
             e.preventDefault();
 
             const dados = {
-                nome: document.getElementById('nome').value.trim(),
+                nome: document.getElementById('login').value.trim() || 'Visitante',
                 login: document.getElementById('login').value.trim() || null,
-                email: document.getElementById('email').value.trim().toLowerCase(),
+                email: null,
                 categoria: document.getElementById('categoria').value,
                 prioridade: document.getElementById('prioridade').value,
                 assunto: document.getElementById('assunto').value.trim(),
@@ -1380,7 +1371,7 @@
                 status: 'aberto'
             };
 
-            if (!dados.nome || !dados.email || !dados.categoria || !dados.assunto || !dados.mensagem) {
+            if (!dados.categoria || !dados.assunto || !dados.mensagem) {
                 mostrarMensagem('erro', 'Preencha todos os campos obrigatórios.');
                 return;
             }
@@ -1397,10 +1388,10 @@
                 if (dados.login) {
                     const { data: usuario } = await supabaseClient
                         .from('Geral')
-                        .select('id')
+                        .select('id, nome, email')
                         .eq('login', dados.login)
                         .maybeSingle();
-                    if (usuario) userId = usuario.id;
+                    if (usuario) { userId = usuario.id; dados.nome = usuario.nome || dados.login; dados.email = usuario.email || null; }
                 }
 
                 const { data, error } = await supabaseClient

@@ -291,7 +291,10 @@
   </div>
 </div>
 
-<script>
+<script type="module">
+import { anexarFichaCombate } from '../shared/ficha-combate.js';
+import { obterTaxa } from '../shared/taxas-globais.js';
+
 // ============================================================
 //  ESTADO GLOBAL
 // ============================================================
@@ -312,10 +315,10 @@ const estado = {
   ]
 };
 
-const TAXA_COMPRA_BTC = 10000;
-const TAXA_VENDA_BTC = 999;
-const PRECO_COMPRA_SM = 12;
-const PRECO_VENDA_SM = 8;
+const TAXA_COMPRA_BTC = obterTaxa('btc_compra');
+const TAXA_VENDA_BTC = obterTaxa('btc_venda');
+const PRECO_COMPRA_SM = obterTaxa('sm_compra');
+const PRECO_VENDA_SM = obterTaxa('sm_venda');
 
 // ============================================================
 //  RENDERIZAÇÃO
@@ -557,6 +560,9 @@ function adicionarMoeda() {
 
 // inicia tudo
 init();
+
+Object.assign(window,{comprarBTC,venderBTC,adicionarMoeda,comprarStamina,venderStamina,minerar,upgradeMineracao,comprarItem,venderItem});
+
 </script>
 </body>
 </html>

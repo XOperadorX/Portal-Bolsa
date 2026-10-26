@@ -1,0 +1,285 @@
+Dano e defesa
+Cada golpe passa por uma linha de montagem fixa. Saber a ordem explica por que um golpe forte às vezes sai pequeno.
+
+
+1
+Atributos
+
+2
+A ordem de um golpe
+
+3
+Velocidade de ataque
+
+4
+Armadura, resistência e esquiva
+
+5
+Espinhos e vida
+
+6
+DPS da ficha
+
+7
+Tetos
+Termos deste capítulo:
+Dominado
+Achado de raridade
+Atributos
+
+Cada atributo que aparece na ficha do personagem e nas linhas dos itens, em uma frase e com um exemplo. Os números dos exemplos são só ilustração; o teto é o do jogo. O botão Ver a fórmula leva à conta exata.
+
+Vida
+Quanto dano o personagem aguenta antes de cair. Vem do nível e dos itens (Vida máxima e Vida em porcentagem).
+
+Exemplo: com 1.000 de vida e +10% de Vida, você passa a ter 1.100.
+
+
+Ver a fórmula
+Dano
+O dano de cada golpe básico. Há dano fixo (da arma e de itens) e Dano em porcentagem, que aumenta o total.
+
+Exemplo: um golpe de 100 com +20% de dano passa a bater 120.
+
+
+Ver a fórmula
+Dano por elemento
+Dano de fogo, água, ar ou terra: aumenta o dano que você causa com aquele elemento. Costuma vir das infusões da arma.
+
+Exemplo: +10% de dano de fogo: um golpe de fogo de 100 passa a causar 110.
+
+
+Ver a fórmula
+Velocidade de ataque
+Diminui o tempo entre um ataque e o outro.
+
+Exemplo: +25% de velocidade: um ataque que levava 1,0 s passa a levar 0,8 s.
+
+Teto: +80%
+
+
+Ver a fórmula
+Chance de crítico
+A chance de um golpe sair crítico, que causa mais dano (×1,5).
+
+Exemplo: crítico 10%: em cada 10 golpes, em média 1 é crítico e causa ×1,5 o dano.
+
+Teto: 30%
+
+
+Ver a fórmula
+Golpe duplo
+A chance de o golpe se repetir inteiro, com os mesmos bônus. A vida por golpe também conta duas vezes.
+
+Exemplo: golpe duplo 10%: em cada 10 ataques, em média 1 acerta duas vezes.
+
+Teto: 20%
+
+
+Ver a fórmula
+Armadura
+Corta uma parte de cada golpe que você leva. Os primeiros pontos rendem mais, e o corte vale menos contra monstros de grau alto.
+
+Exemplo: 60 de armadura contra um monstro de grau 1–2 corta 50% de cada golpe.
+
+Teto: 75%
+
+
+Ver a fórmula
+Grau de defesa
+A média do Grau em que agem as seis peças de defesa (elmo, peitoral, calça, botas, luvas e colar). Espaço vazio conta 0. Hunts de Grau bem acima dele machucam mais.
+
+Exemplo: cinco peças no Grau 3 e um espaço vazio: (3×5 + 0) ÷ 6 = 2,5.
+
+
+Ver a fórmula
+Evasão (esquiva)
+A chance de o golpe de um monstro errar você. Os primeiros pontos rendem mais.
+
+Exemplo: 60 de evasão contra um monstro de grau 1–2 dá 40% de esquiva.
+
+Teto: 40%
+
+
+Ver a fórmula
+Resistência
+Reduz o dano de um elemento (fogo, água, ar, terra) ou o dano físico que você leva. Existe a resistência a um elemento só e a resistência a todos.
+
+Exemplo: resistência a fogo 20%: um golpe de fogo de 100 chega como 80.
+
+Teto: Resistência elemental 50% · Resistência física 30%
+
+
+Ver a fórmula
+Espinhos
+Devolve dano fixo ao monstro a cada golpe que você leva.
+
+Exemplo: espinhos 15: cada golpe que acerta você devolve 15 de dano a quem bateu.
+
+
+Ver a fórmula
+Vida por golpe
+Cura uma quantidade fixa de vida a cada acerto seu. É o que outros jogos chamam de roubo de vida, mas aqui é um valor fixo, não uma parte do dano.
+
+Exemplo: vida por golpe 4: cada acerto cura 4 de vida; num golpe duplo, 8.
+
+
+Ver a fórmula
+Cura ao matar
+Ao derrotar um monstro, você recupera uma parte da sua vida máxima.
+
+Exemplo: cura ao matar 2%: com 1.000 de vida máxima, cada monstro derrotado devolve 20.
+
+Teto: 5%
+
+
+Ver a fórmula
+Regeneração de vida
+Recupera uma parte da vida base a cada segundo, depois de um tempo sem levar dano (em combate recupera bem menos).
+
+Exemplo: regeneração 1% por segundo com 1.000 de vida base: 10 de vida por segundo.
+
+Teto: 1,5%/s
+
+
+Ver a fórmula
+Cura das poções
+Aumenta quanto cada poção cura.
+
+Exemplo: +30% de cura: uma poção que curava 200 passa a curar 260.
+
+Teto: +80%
+
+
+Ver a fórmula
+Dano contra chefes
+Aumenta o dano de todo golpe seu em chefes (Despertos, Selados e outros).
+
+Exemplo: +20% contra chefes: um golpe de 100 num chefe causa 120.
+
+Teto: +75%
+
+
+Ver a fórmula
+Dano recebido de chefes
+Reduz o dano que os chefes causam a você.
+
+Exemplo: −20%: um golpe de chefe que faria 100 chega como 80.
+
+Teto: −30%
+
+
+Ver a fórmula
+Velocidade de movimento
+Faz o personagem andar mais rápido, na cidade e na hunt.
+
+Exemplo: +20%: o personagem anda um quinto mais rápido.
+
+Teto: +35%
+
+
+Ver a fórmula
+Achado de raridade
+O único atributo que melhora a raridade do que cai. Cada ponto rende um pouco menos que o anterior.
+
+Exemplo: Achado bruto 1,0 vale +50% (efetivo = bruto ÷ (bruto + 1)).
+
+Teto: +100%
+
+
+Ver a fórmula
+Atributos da base
+Aumenta em porcentagem os números fixos da própria peça (o dano ou a armadura da base dela). Aparece só em algumas peças.
+
+Exemplo: +10%: uma base com 100 de armadura passa a ter 110.
+
+
+Ver a fórmula
+A ordem de um golpe
+
+O número entra no topo e passa por cada estação, sempre nesta ordem. Os bônus multiplicam antes das defesas; a armadura vem por último e o arredondamento nunca deixa um golpe abaixo de 1.
+
+1
+Grau de defesa
+Só no golpe de um monstro em você: numa hunt de Grau acima do seu Grau de defesa (mais a folga), o golpe entra multiplicado (veja Itens › Grau de defesa).
+2
+Esquiva
+Só você esquiva: o golpe de um monstro que você esquiva não acontece.
+3
+Bônus
+Dominado +2% · Execução +10% com o alvo abaixo de 20% da vida (somam)
+4
+Crítico
+×1,5
+5
+Contra boss
+Seu bônus contra boss; o dano que um boss causa cai com a sua redução
+6
+Elemento
+×1,30 · ×1,00 · ×0,85 · ×0,85
+7
+Resistência
+dano × (1 − resistência)
+8
+Armadura
+corta armadura ÷ (armadura + 60 × o fator do grau do monstro)
+9
+Arredonda
+mínimo 1
+10
+Golpe duplo
+repete o golpe inteiro
+Velocidade de ataque
+
+Em palavras: você ataca a cada 1,1 s; a velocidade divide esse tempo. O teto é +80%.
+
+tempo de ataque = 1,1 s ÷ (1 + velocidade)
+Exemplo: +18% → 0,93 s. No teto, 0,61 s.
+
+Armadura, resistência e esquiva
+
+Armadura e esquiva têm a mesma curva: os primeiros pontos rendem mais.
+
+Armadura
+Reduz armadura ÷ (armadura + 60 × o fator do grau do monstro), até 75%. Contra um monstro de grau 1–2: 20 → 25% · 60 → 50% · 180 → 75%
+
+Resistência
+dano × (1 − resistência). Teto: elemental 50% · físico 30%
+
+Esquiva
+chance = esquiva ÷ (esquiva + 60 × o fator do grau do monstro). Contra grau 1–2: 20 → 25% · 60 → 40% · teto 40%
+
+Espinhos e vida
+
+Espinhos
+Devolvem dano fixo a cada golpe que você leva. Perk Espinhos: 2% do dano recebido.
+
+Vida por golpe
+Cura um pouco a cada acerto — conta duas vezes no golpe duplo.
+
+Vida ao matar
+Cura ao final de cada morte. Infusão Voraz no amuleto: +1%.
+
+DPS da ficha
+
+Em palavras: o dano médio por segundo, contando quantas vezes o crítico e o golpe duplo aparecem.
+
+DPS = golpe × (1 + crítico × 0,5) × (1 + golpe duplo) ÷ tempo de ataque
+Exemplo: golpe 75, crítico 12%, golpe duplo 6%, 0,93 s → 90,4.
+
+Tetos
+
+Passou do teto, o excesso não conta — a ficha mostra o valor em âmbar.
+
+Atributo	Teto
+Velocidade de ataque	+80%
+Movimento	+35%
+Crítico	30%
+Golpe duplo	20%
+Esquiva	40%
+Resistência elemental	50%
+Resistência física	30%
+Dano recebido de boss	−30%
+Regeneração	1,5%/s
+Cura de poção	+80%
+Achado efetivo	+100%

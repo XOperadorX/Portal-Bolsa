@@ -175,17 +175,9 @@
   </div>
 </div>
 
-<script>
-// ============================================================
-// ⚙️ CONFIGURAÇÃO — troque pelos seus dados do Supabase
-// ============================================================
-const SUPABASE_URL = 'https://xrcxvizzdumcxbylmkvn.supabase.co';
-const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InhyY3h2aXp6ZHVtY3hieWxta3ZuIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODY2NjA0NzIsImV4cCI6MjEwMjIzNjQ3Mn0.ohB4tW0UQ-k1PcwoZxm4u9XSGNLsFphv1_UwTWoklOM';
-// ============================================================
-
-const { createClient } = supabase;
-const sb = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
-
+<script type="module">
+import { db as sb } from '../../config.js';
+import { iniciarPresencaJogador } from '../../shared/presenca-jogador.js';
 const COLS = [
   'id','nome','saldo','saldo_poupanca','created_at','updated_at',
   'nivel','btc','mumu','cadeado','bloqueado','ultima_vez_online'
@@ -224,7 +216,8 @@ const escapeHtml = s => String(s ?? '')
 
 function isOnline(ts) {
   if (!ts) return false;
-  return (Date.now() - new Date(ts).getTime()) < 5 * 60 * 1000; // 5 min
+  const idade=Date.now()-new Date(ts).getTime();
+  return Number.isFinite(idade)&&idade>=-60000&&idade<5*60*1000;
 }
 
 // ---------- Render ----------
@@ -261,7 +254,7 @@ function render() {
     const online = isOnline(d.ultima_vez_online);
 
     let statusTags = '';
-    if (d.cadeado)  statusTags += `<span class="tag lock">🔒 Cadeado</span> `;
+    if (d.cadeado)  statusTags += `<span class="tag lock">🔒 ADM</span> `;
     if (d.bloqueado) statusTags += `<span class="tag lock">⛔ Bloqueado</span> `;
     statusTags += online
       ? `<span class="tag on">● Online</span>`
@@ -271,8 +264,8 @@ function render() {
       <tr data-id="${d.id}">
         <td class="pos ${posClass}">${pos}</td>
         <td class="login">${escapeHtml(d.nome) || '—'}</td>
-        <td class="money">R$ ${fmtMoney(d.saldo)}</td>
-        <td class="money">R$ ${fmtMoney(d.saldo_poupanca)}</td>
+        <td class="money">S$ ${fmtMoney(d.saldo)}</td>
+        <td class="money">S$ ${fmtMoney(d.saldo_poupanca)}</td>
         <td class="btc">${fmtBtc(d.btc)}</td>
         <td class="num">${fmtNum(d.nivel)}</td>
         <td class="num">${fmtNum(d.mumu)}</td>
@@ -378,7 +371,13 @@ document.querySelectorAll('thead th[data-sort]').forEach(th => {
 setInterval(render, 30000);
 
 // ---------- Início ----------
-carregar().then(conectarRealtime);
+carregar().then(()=>{
+ conectarRealtime();
+ iniciarPresencaJogador({db:sb,aoAtualizar:registro=>{const linha=dados.find(d=>d.id===registro.id);if(linha){linha.ultima_vez_online=registro.ultima_vez_online;render();}}});
+});
+// Atualiza outros jogadores mesmo se Realtime estiver indisponível.
+const atualizarLista=setInterval(()=>{if(!document.hidden)carregar();},60000);
+window.addEventListener('pagehide',()=>clearInterval(atualizarLista),{once:true});
 </script>
 </body>
 </html>

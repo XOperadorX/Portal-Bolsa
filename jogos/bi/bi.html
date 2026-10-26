@@ -486,6 +486,7 @@
 </script>
 
 <script type="module">
+import { obterTaxa } from '../../shared/taxas-globais.js';
 // ============================================================
 // IMPORTS
 // ============================================================
@@ -500,7 +501,7 @@ const { db, TABELA, SESSION_KEY, fmtSaldo, fmtData, esc } = cfg;
 // ============================================================
 // CONSTANTES
 // ============================================================
-const TAXA_ENTRADA   = 1.00;
+const TAXA_ENTRADA = obterTaxa('bi_entrada');
 const BONUS_VOLTA    = 0.00;
 const CUSTO_STAMINA  = 10;   // ⚡ custo por rolagem de dados
 const TB_COMPRAS     = 'banco_imobiliario_compras';
@@ -851,7 +852,7 @@ async function processarCasa(pos) {
     case 'propriedade': case 'servico': case 'ferrovia':
       if (!dono) mostrarMsg(`🏠 ${casa.nome} à venda por ${fmtSaldo(casa.preco)}`);
       else if (dono.dono_login !== jog.login) {
-        const taxa = casa.tipo === 'propriedade' ? 0.3 : 0.25;
+        const taxa = casa.tipo === 'propriedade' ? obterTaxa('bi_aluguel') / 100 : obterTaxa('bi_servico') / 100;
         const alug = Math.floor(casa.preco * taxa);
         await atualizarSaldoReal(jog.login, -alug);
         await atualizarSaldoReal(dono.dono_login, +alug);
@@ -1518,6 +1519,6 @@ function ativarRealtime() {
   });
 })();
 </script>
-<script src="../../nav.js" data-base="../../"></script>
+<script src="../../nav.js" data-base="../../" data-menu="compacto"></script>
 </body>
 </html>

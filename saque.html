@@ -931,9 +931,11 @@ import {
   db as sb,
   TABELA,
   SIMB,
-  TAXA_MUMU,
-  TAXA_USDT
 } from './config.js';
+import { obterTaxa } from './shared/taxas-globais.js';
+const TAXA_MUMU = {reais_por_mumu:obterTaxa('mumu_saldo'),saldo_minimo:obterTaxa('mumu_minimo')};
+const TAXA_USDT = {saldo_por_dolar:obterTaxa('usdt_saldo'),minimo_dolares:obterTaxa('usdt_minimo'),saldo_minimo:obterTaxa('usdt_saldo')*obterTaxa('usdt_minimo')};
+
 
 /* ============================================================
    ESTADO

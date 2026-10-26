@@ -568,7 +568,7 @@
                 <div class="user-avatar" id="userAvatar">?</div>
                 <div class="user-info">
                     <span class="user-nick" id="userName">Visitante</span>
-                    <span class="user-balance" id="userBalanceDisplay">💰 R$ 0,00</span>
+                    <span class="user-balance" id="userBalanceDisplay">💰 S$ 0,00</span>
                 </div>
             </div>
             <div style="display:flex; gap:8px; flex-wrap:wrap; align-items:center;">
@@ -583,7 +583,7 @@
                     <button class="status-reconnect" id="btnReconnectSupabase" title="Reconectar">🔄</button>
                 </div>
                 <div class="status-item" style="margin-left:auto;">
-                    <span>💰 R$ <span id="headerSaldo">0,00</span></span>
+                    <span>💰 S$ <span id="headerSaldo">0,00</span></span>
                 </div>
             </div>
         </nav>
@@ -640,7 +640,7 @@
                         </span>
                         <span class="saldo-display" id="saldoDisplay">
                             <i class="fas fa-coins"></i>
-                            <span class="num" id="saldoDisplayValue">R$ 0,00</span>
+                            <span class="num" id="saldoDisplayValue">S$ 0,00</span>
                         </span>
                     </div>
                 </div>
@@ -864,8 +864,8 @@
             function atualizarSaldoGlobal() {
                 const total = getJogo().saldo || 0;
                 if (DOM.headerSaldo) DOM.headerSaldo.textContent = formatSaldo(total);
-                if (DOM.userBalance) DOM.userBalance.textContent = `💰 R$ ${formatSaldo(total)}`;
-                if (DOM.saldoDisplay) DOM.saldoDisplay.textContent = `R$ ${formatSaldo(total)}`;
+                if (DOM.userBalance) DOM.userBalance.textContent = `💰 S$ ${formatSaldo(total)}`;
+                if (DOM.saldoDisplay) DOM.saldoDisplay.textContent = `S$ ${formatSaldo(total)}`;
             }
 
             function limparTimers() {
@@ -979,7 +979,7 @@
                 DOM.harvestCount.textContent  = `🌽 ${j.harvested || 0}`;
                 DOM.bucketCount.textContent   = `🪣 ${j.buckets || 0}`;
                 DOM.expDisplay.textContent    = `✨ ${j.experiencia || 0}`;
-                DOM.saldoDisplay.textContent  = `R$ ${formatSaldo(j.saldo || 0)}`;
+                DOM.saldoDisplay.textContent  = `S$ ${formatSaldo(j.saldo || 0)}`;
                 DOM.stockDisplay.innerHTML    = `<i class="fas fa-warehouse"></i> <span class="num">🌽 ${j.stock || 0}</span>`;
                 DOM.bucketStatus.textContent  = `🪣 ${j.buckets || 0}`;
                 atualizarSaldoGlobal();
@@ -1043,7 +1043,7 @@
 
                 let msg = '';
                 if (harvested > 0) {
-                    msg = `🟫 ${harvested} colhido(s). Clique para limpar (R$ ${CONFIG.CLEAR_COST.toFixed(2)})`;
+                    msg = `🟫 ${harvested} colhido(s). Clique para limpar (S$ ${CONFIG.CLEAR_COST.toFixed(2)})`;
                 } else if (j.seeds <= 0 && empty > 0) {
                     msg = '😅 <span class="highlight">Sem sementes!</span> Colha milho para conseguir mais.';
                 } else if (mature > 0) {
@@ -1159,13 +1159,13 @@
                 const p = j.plots[id];
                 if (!p || p.stage !== STAGES.HARVESTED) return false;
                 if (j.saldo < CONFIG.CLEAR_COST) {
-                    showToast(`😅 Precisa de R$ ${CONFIG.CLEAR_COST.toFixed(2)}`, 1600);
+                    showToast(`😅 Precisa de S$ ${CONFIG.CLEAR_COST.toFixed(2)}`, 1600);
                     return false;
                 }
                 j.saldo = (j.saldo || 0) - CONFIG.CLEAR_COST;
                 p.stage = STAGES.EMPTY;
                 p.progress = 0;
-                showToast(`🟫 Canteiro ${id + 1} limpo! (-R$ ${CONFIG.CLEAR_COST.toFixed(2)})`, 1600);
+                showToast(`🟫 Canteiro ${id + 1} limpo! (-S$ ${CONFIG.CLEAR_COST.toFixed(2)})`, 1600);
                 renderMilharal();
                 salvarDadosCompletos();
                 return true;
@@ -1289,7 +1289,7 @@
                 const sold = j.stock;
                 j.stock = 0;
 
-                showToast(`💰 Vendeu ${sold} milho(s) do estoque por R$ ${total.toFixed(2)}!`, 2500);
+                showToast(`💰 Vendeu ${sold} milho(s) do estoque por S$ ${total.toFixed(2)}!`, 2500);
                 renderMilharal();
                 salvarDadosCompletos();
             }
@@ -1312,10 +1312,10 @@
                 const custoTotal = harvestedPlots.length * CONFIG.CLEAR_COST;
 
                 if (j.saldo < custoTotal) {
-                    showToast(`😅 Precisa de R$ ${custoTotal.toFixed(2)} para limpar ${harvestedPlots.length} canteiro(s).`, 2500);
+                    showToast(`😅 Precisa de S$ ${custoTotal.toFixed(2)} para limpar ${harvestedPlots.length} canteiro(s).`, 2500);
                     return;
                 }
-                if (!confirm(`🧹 Limpar ${harvestedPlots.length} canteiro(s) colhido(s) por R$ ${custoTotal.toFixed(2)}?`)) {
+                if (!confirm(`🧹 Limpar ${harvestedPlots.length} canteiro(s) colhido(s) por S$ ${custoTotal.toFixed(2)}?`)) {
                     return;
                 }
 
@@ -1325,7 +1325,7 @@
                     p.progress = 0;
                 }
 
-                showToast(`🧹 ${harvestedPlots.length} canteiro(s) limpo(s)! (-R$ ${custoTotal.toFixed(2)})`, 2500);
+                showToast(`🧹 ${harvestedPlots.length} canteiro(s) limpo(s)! (-S$ ${custoTotal.toFixed(2)})`, 2500);
                 renderMilharal();
                 salvarDadosCompletos();
             }

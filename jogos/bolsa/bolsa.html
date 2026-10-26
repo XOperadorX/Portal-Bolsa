@@ -76,7 +76,7 @@
             <div class="user-avatar" id="userAvatar">👤</div>
             <div class="user-info">
                 <span class="user-nick" id="usuarioLogado">Carregando...</span>
-                <span class="user-balance" id="userSaldoDisplay">0,00 Mumu</span>
+                <span class="user-balance" id="userSaldoDisplay">0,00 S$</span>
             </div>
         </div>
         <a href="../../dashboard.html" class="btn-bolsa" style="background: linear-gradient(135deg, #00ff66, #00cc55); color: #0a0b10;">🏠 Voltar</a>
@@ -86,12 +86,12 @@
     <div class="container">
         <!-- INFO -->
         <div class="info">
-            <div class="box"><h3>💵 Saldo Disponível</h3><h2 id="saldo">0,00 <span class="moeda-simbolo">Mumu</span></h2></div>
-            <div class="box"><h3>🏆 Patrimônio Total</h3><h2 id="patrimonio">0,00 <span class="moeda-simbolo">Mumu</span></h2></div>
-            <div class="box"><h3>📊 Total Investido</h3><h2 id="investido">0,00 <span class="moeda-simbolo">Mumu</span></h2></div>
+            <div class="box"><h3>💵 Saldo Disponível</h3><h2 id="saldo"><span class="moeda-simbolo">S$</span> 0,00</h2></div>
+            <div class="box"><h3>🏆 Patrimônio Total</h3><h2 id="patrimonio"><span class="moeda-simbolo">S$</span> 0,00</h2></div>
+            <div class="box"><h3>📊 Total Investido</h3><h2 id="investido"><span class="moeda-simbolo">S$</span> 0,00</h2></div>
             <div class="box">
                 <h3>🎁 Proventos Recebidos</h3>
-                <h2 id="proventosAcumulados">0,00 <span class="moeda-simbolo">Mumu</span></h2>
+                <h2 id="proventosAcumulados"><span class="moeda-simbolo">S$</span> 0,00</h2>
                 <button class="btn-transferir" id="btnTransferirProventos">💰 Transferir para Saldo</button>
             </div>
         </div>
@@ -122,10 +122,10 @@
         <div class="card poupanca-destaque">
             <h2>🏦 POUPANÇA BAEP <span class="badge-categoria">Rendimento 0,6% a cada 60s</span></h2>
             <div class="poupanca-flex">
-                <div class="poupanca-saldo">💰 Saldo na Poupança: <strong id="saldoPoupanca">0,00 <span class="moeda-simbolo">Mumu</span></strong></div>
+                <div class="poupanca-saldo">💰 Saldo na Poupança: <strong id="saldoPoupanca"><span class="moeda-simbolo">S$</span> 0,00</strong></div>
                 <div class="poupanca-acoes">
                     <div class="grupo-input">
-                        <label>Mumu</label>
+                        <label>S$</label>
                         <input type="number" id="valorPoupanca" class="input-poupanca" placeholder="Valor" step="0.01" min="0.01" value="10.00">
                     </div>
                     <button class="btn-poupanca" id="btnAplicarPoupanca">📈 Aplicar</button>
@@ -133,7 +133,7 @@
                 </div>
                 <div class="valor-rendimento">
                     ⚡ Rendimento de 0,6% sobre o saldo a cada 60s<br>
-                    <span style="font-size:0.7rem; color: #8a99ad;">Ex: 10,00 Mumu → 10,06 Mumu</span>
+                    <span style="font-size:0.7rem; color: #8a99ad;">Ex: 10,00 S$ → 10,06 S$</span>
                 </div>
             </div>
         </div>
@@ -142,7 +142,7 @@
         <div class="card">
             <h2>📈 AÇÕES <span class="badge-categoria">Proventos a cada 60s</span></h2>
             <div class="table-wrapper">
-                <table><thead><tr><th>Ativo</th><th>Preço (Mumu)</th><th>Rentab. %</th><th>DY Anual %</th><th>Variação %</th><th>Comprar</th><th>Vender</th></tr></thead>
+                <table><thead><tr><th>Ativo</th><th>Preço (S$)</th><th>Rentab. %</th><th>DY Anual %</th><th>Variação %</th><th>Comprar</th><th>Vender</th></tr></thead>
                 <tbody id="tabelaAcoes"></tbody></table>
             </div>
         </div>
@@ -151,7 +151,7 @@
         <div class="card">
             <h2>🏢 FUNDOS IMOBILIÁRIOS (FIIs) <span class="badge-categoria">Proventos a cada 30s</span></h2>
             <div class="table-wrapper">
-                <table><thead><tr><th>Ativo</th><th>Preço (Mumu)</th><th>Rentab. %</th><th>DY Anual %</th><th>Variação %</th><th>Comprar</th><th>Vender</th></tr></thead>
+                <table><thead><tr><th>Ativo</th><th>Preço (S$)</th><th>Rentab. %</th><th>DY Anual %</th><th>Variação %</th><th>Comprar</th><th>Vender</th></tr></thead>
                 <tbody id="tabelaFIIs"></tbody></table>
             </div>
         </div>
@@ -160,7 +160,7 @@
         <div class="card">
             <h2>📊 ETFs <span class="badge-categoria">Proventos a cada 90s</span></h2>
             <div class="table-wrapper">
-                <table><thead><tr><th>Ativo</th><th>Preço (Mumu)</th><th>Rentab. %</th><th>DY Anual %</th><th>Variação %</th><th>Comprar</th><th>Vender</th></tr></thead>
+                <table><thead><tr><th>Ativo</th><th>Preço (S$)</th><th>Rentab. %</th><th>DY Anual %</th><th>Variação %</th><th>Comprar</th><th>Vender</th></tr></thead>
                 <tbody id="tabelaETFs"></tbody></table>
             </div>
         </div>
@@ -169,7 +169,7 @@
         <div class="card">
             <h2>🇧🇷 TESOURO DIRETO <span class="badge-categoria">Marcação a mercado a cada 120s | Sem proventos</span></h2>
             <div class="table-wrapper">
-                <table><thead><tr><th>Título</th><th>Vencimento</th><th>Preço (Mumu)</th><th>Rentab. %</th><th>Variação %</th><th>Comprar</th><th>Vender</th></tr></thead>
+                <table><thead><tr><th>Título</th><th>Vencimento</th><th>Preço (S$)</th><th>Rentab. %</th><th>Variação %</th><th>Comprar</th><th>Vender</th></tr></thead>
                 <tbody id="tabelaTesouro"></tbody></table>
             </div>
         </div>
@@ -179,7 +179,7 @@
             <h2>📋 MINHA CARTEIRA (Todos os ativos)</h2>
             <div class="table-wrapper">
                 <table>
-                    <thead><tr><th>Ativo</th><th>Quantidade</th><th>Preço Médio (Mumu)</th><th>Valor Atual (Mumu)</th><th>Rendimentos Recebidos (Mumu)</th><th>Rentab. %</th><th>Ações</th></tr></thead>
+                    <thead><tr><th>Ativo</th><th>Quantidade</th><th>Preço Médio (S$)</th><th>Valor Atual (S$)</th><th>Rendimentos Recebidos (S$)</th><th>Rentab. %</th><th>Ações</th></tr></thead>
                     <tbody id="carteira"></tbody>
                 </table>
             </div>
@@ -192,7 +192,7 @@
             <ul id="historico"></ul>
         </div>
 
-        <footer>💡 Saldo inicial: 0,00 Mumu • Ações: proventos 60s | FIIs: 30s | ETFs: 90s | Tesouro: marcação 120s | Poupança: 0,6%/60s</footer>
+        <footer>💡 Saldo inicial: 0,00 S$ • Ações: proventos 60s | FIIs: 30s | ETFs: 90s | Tesouro: marcação 120s | Poupança: 0,6%/60s</footer>
     </div>
 
     <!-- ========== TOAST CONTAINER ========== -->

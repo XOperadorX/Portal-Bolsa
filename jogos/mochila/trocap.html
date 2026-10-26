@@ -23,9 +23,7 @@
   <meta name="twitter:description" content="Negociação segura de itens entre jogadores.">
   <meta name="twitter:image"       content="https://xoperadorx.github.io/Portal-Bolsa/assets/og-image.png">
 
-  <link rel="stylesheet" href="./shared/menu.css">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
-  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
   <style>
     *{box-sizing:border-box}
@@ -230,10 +228,10 @@
       margin-top:8px;
     }
   </style>
+  <link rel="stylesheet" href="../../shared/chat-trocas.css">
 </head>
 <body>
 
-<div id="menu-slot"></div>
 
 <header class="troca-header">
   <div class="brand">🛡️ TrocaSegura <small>negociação entre jogadores</small></div>
@@ -311,6 +309,16 @@
         🔐 Criar e gerar código
       </button>
     </form>
+
+    <div class="chat-trocas" id="chat-trocas" aria-label="Conversa entre vendedor e comprador">
+      <h3>💬 Conversa da negociação</h3>
+      <p class="chat-status" id="chat-status" role="status">Informe o nick do comprador para conversar.</p>
+      <label for="chat-conversas">Conversas recebidas e enviadas</label><select id="chat-conversas"><option value="">— Nenhuma conversa selecionada —</option></select>
+      <button type="button" id="chat-mais" hidden>Carregar mensagens anteriores</button>
+      <div class="chat-mensagens" id="chat-mensagens" role="log" aria-label="Histórico da conversa" aria-live="polite"><p class="chat-vazio">Nenhuma conversa selecionada.</p></div>
+      <form id="chat-form"><label for="chat-texto">Mensagem</label><textarea id="chat-texto" maxlength="2000" rows="2" placeholder="Combine os detalhes da negociação…" disabled required></textarea><button id="chat-enviar" type="submit" disabled>Enviar mensagem</button></form>
+      <small>As conversas ficam registradas com data e hora e podem ser consultadas pela administração.</small>
+    </div>
   </section>
 
   <section>
@@ -345,7 +353,7 @@
         <span class="val" id="modal-preco">0.00</span>
       </div>
       <div class="row">
-        <span>Taxa do sistema (5%)</span>
+        <span>Taxa do sistema (<span id="taxa-sistema-percentual"></span>%)</span>
         <span class="val" id="modal-taxa">0.00</span>
       </div>
       <div class="row destaque">
@@ -368,9 +376,15 @@ import {
   TABELA,
   TABELA_ATIVIDADES,
   TABELA_TROCAS,
-  TAXA_PERCENTUAL,
-  db
-} from './config.js';
+  db,
+  SESSION_DURATION,
+  STATUS_TROCA as STATUS,
+  TROCAS_CONFIG
+} from '../../config.js';
+import { ChatTrocas } from '../../shared/chat-trocas.js';
+import { obterTaxa } from '../../shared/taxas-globais.js';
+const TAXA_PERCENTUAL = obterTaxa('trocas_taxa') / 100;
+document.getElementById('taxa-sistema-percentual').textContent = obterTaxa('trocas_taxa');
 
 /* ============================================================
    CONSTANTES
@@ -382,19 +396,13 @@ const SESSION_KEYS = [
 const TIMESTAMP_KEYS = [
   'session_timestamp','login_time','timestamp','login_timestamp','session_time'
 ];
-const SESSION_DURATION = 24 * 60 * 60 * 1000;
 
-const STATUS = {
-  aguardando:           { txt: 'Aguardando pagamento', cls: 'warn' },
-  pagamento_confirmado: { txt: 'Pagamento confirmado', cls: 'info' },
-  concluida:            { txt: 'Concluída',            cls: 'ok'   },
-  cancelada:            { txt: 'Cancelada',            cls: 'err'  }
-};
 
 /* ============================================================
    ESTADO
 ============================================================ */
 let usuarioLogado    = null;
+let chatTrocas = null;
 let mostrarTodas     = false;
 let cache            = [];
 let codigoModalAtual = '';
@@ -453,6 +461,7 @@ function lerSessao() {
           }
         }
         return {
+          chat_token: u.chat_token || null,
           id:    u.id,
           login: u.login || u.nome || u.email?.split('@')[0] || u.username,
           nome:  u.nome || u.login || u.email?.split('@')[0] || u.username,
@@ -490,7 +499,7 @@ function identificarUsuario() {
     usuarioLogado = null;
     area.innerHTML = `
       <span style="color:#fbbf24;font-size:13px">⚠️ Não logado</span>
-      <a class="btn pri" href="./login.html" style="margin-left:8px">Fazer login</a>`;
+      <a class="btn pri" href="../../login.html" style="margin-left:8px">Fazer login</a>`;
     return null;
   }
 
@@ -516,16 +525,17 @@ function atualizarStatus(online, msg) {
 
 async function verificarSupabase() {
   try {
-    const resp = await fetch(`${SUPABASE_URL}/rest/v1/`, {
-      method: 'HEAD',
+    const resp = await fetch(`${SUPABASE_URL}/rest/v1/${TABELA}?select=id&limit=0`, {
+      method: 'GET',
+      cache: 'no-store',
       headers: {
         'apikey': SUPABASE_KEY,
         'Authorization': `Bearer ${SUPABASE_KEY}`
       },
       signal: (typeof AbortSignal !== 'undefined' && AbortSignal.timeout)
-        ? AbortSignal.timeout(5000) : undefined
+        ? AbortSignal.timeout(TROCAS_CONFIG.REQUEST_TIMEOUT_MS) : undefined
     });
-    if (resp.status < 500) { atualizarStatus(true); return true; }
+    if (resp.ok) { atualizarStatus(true); return true; }
     atualizarStatus(false, 'HTTP ' + resp.status);
     return false;
   } catch (e) {
@@ -537,7 +547,7 @@ async function verificarSupabase() {
 function iniciarMonitorStatus() {
   if (statusInterval) clearInterval(statusInterval);
   verificarSupabase();
-  statusInterval = setInterval(verificarSupabase, 30000);
+  statusInterval = setInterval(verificarSupabase, TROCAS_CONFIG.STATUS_INTERVAL_MS);
 }
 
 /* ============================================================
@@ -552,7 +562,7 @@ async function carregarMochilaESaldo() {
     aviso.innerHTML = `
       <div class="erro-box">
         ⚠️ Faça login para carregar seus itens.
-        <br><a href="./login.html">Ir para o Login →</a>
+        <br><a href="../../login.html">Ir para o Login →</a>
       </div>`;
     select.innerHTML = '<option value="">— Faça login —</option>';
     return;
@@ -651,9 +661,19 @@ function extrairTodosItens(d) {
 /* ============================================================
    INIT
 ============================================================ */
-document.addEventListener('DOMContentLoaded', async () => {
+let paginaIniciada = false;
+async function iniciarPagina() {
+  if (paginaIniciada) return;
+  paginaIniciada = true;
+  try {
   bindEventos();
   identificarUsuario();
+  if(!usuarioLogado){window.location.replace('../../login.html?retorno=jogos%2Fmochila%2Ftrocap.html');return;}
+  if (usuarioLogado) {
+    chatTrocas = new ChatTrocas({ usuario: usuarioLogado, onLoginNecessario:()=>{if(!usuarioLogado)window.location.replace('../../login.html?retorno=jogos%2Fmochila%2Ftrocap.html');} });
+    chatTrocas.init().catch(erro => chatTrocas.aviso(erro.message));
+    window.addEventListener('pagehide', () => chatTrocas.destroy(), { once: true });
+  }
   iniciarMonitorStatus();
 
   if (usuarioLogado) {
@@ -663,7 +683,15 @@ document.addEventListener('DOMContentLoaded', async () => {
   } else {
     render();
   }
-});
+  } catch (erro) {
+    atualizarStatus(false, erro.message);
+    const area = $('#user-area');
+    if (!usuarioLogado && area) area.textContent = 'Não foi possível verificar a sessão.';
+    $('#erro').textContent = 'Não foi possível iniciar as trocas: ' + erro.message;
+  }
+}
+if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', iniciarPagina, { once: true });
+else iniciarPagina();
 
 function bindEventos() {
   $('#chk-todas')?.addEventListener('change', (e) => {
@@ -706,7 +734,7 @@ function bindEventos() {
     info.style.display = 'block';
     info.innerHTML = `
       <div style="display:flex;justify-content:space-between;">
-        <span>Taxa (5%)</span>
+        <span>Taxa (${obterTaxa('trocas_taxa')}%)</span>
         <strong>💎 ${taxa.toFixed(2)}</strong>
       </div>
       <div style="display:flex;justify-content:space-between;">
@@ -864,7 +892,7 @@ function cardHTML(r) {
               <span class="val">💎 ${preco.toFixed(2)}</span>
             </div>
             <div class="row taxa">
-              <span>Taxa do sistema (5%)</span>
+              <span>Taxa do sistema (${obterTaxa('trocas_taxa')}%)</span>
               <span class="val">💎 ${taxa.toFixed(2)}</span>
             </div>
             <div class="row total">
@@ -924,7 +952,7 @@ function cardHTML(r) {
         <strong class="preco">💎 ${preco.toFixed(2)}</strong>
       </div>
       <div class="linha">
-        <span>Taxa do sistema (5%)</span>
+        <span>Taxa do sistema (${obterTaxa('trocas_taxa')}%)</span>
         <strong style="color:#fbbf24;">💎 ${taxa.toFixed(2)}</strong>
       </div>
       <div class="linha">
@@ -1239,10 +1267,7 @@ async function copiar(texto) {
 }
 </script>
 
-<script type="module">
-  import { renderMenu } from './shared/menu.js';
-  renderMenu('menu-slot', 'troca');
-</script>
+
 
 </body>
 </html>

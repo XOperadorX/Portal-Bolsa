@@ -268,7 +268,7 @@
     <h2>📊 Estatísticas do Mercado</h2>
     <div class="grid">
       <div class="stat"><div class="lbl">USUÁRIOS</div><div class="val" id="stUsers">—</div></div>
-      <div class="stat"><div class="lbl">SALDO TOTAL (R$)</div><div class="val gold" id="stSaldo">—</div></div>
+      <div class="stat"><div class="lbl">SALDO TOTAL (S$)</div><div class="val gold" id="stSaldo">—</div></div>
       <div class="stat"><div class="lbl">SEMENTES EM ESTOQUE</div><div class="val green" id="stSeeds">—</div></div>
       <div class="stat"><div class="lbl">BALDES EM ESTOQUE</div><div class="val info" id="stBuckets">—</div></div>
       <div class="stat"><div class="lbl">ESTAMINA (un.)</div><div class="val stamina" id="stStamina">—</div></div>
@@ -344,7 +344,7 @@
         <input id="simTaxa" type="number" step="0.1" value="10" />
       </div>
       <div class="field" style="min-width:160px">
-        <label>Preço-base (R$)</label>
+        <label>Preço-base (S$)</label>
         <input id="simBase" type="number" step="0.01" value="15.00" />
       </div>
       <button id="btnSimular">🧮 Simular</button>
@@ -353,12 +353,12 @@
     <div class="sim-box" id="simBox">
       <div class="sim-line"><span class="lbl">Fórmula fachada</span><span class="val">base × (1 + nível × mult)</span></div>
       <div class="sim-line"><span class="lbl">Fórmula real</span><span class="val">fachada × (1 − taxa)</span></div>
-      <div class="sim-line"><span class="lbl">Preço FACHADA (o que o jogador vê)</span><span class="val fachada" id="simFachada">R$ 0,00</span></div>
-      <div class="sim-line"><span class="lbl">Preço REAL (o que o jogador paga)</span><span class="val real" id="simReal">R$ 0,00</span></div>
-      <div class="sim-line"><span class="lbl">Diferença (lucro oculto)</span><span class="val lucro" id="simLucro">R$ 0,00</span></div>
+      <div class="sim-line"><span class="lbl">Preço FACHADA (o que o jogador vê)</span><span class="val fachada" id="simFachada">S$ 0,00</span></div>
+      <div class="sim-line"><span class="lbl">Preço REAL (o que o jogador paga)</span><span class="val real" id="simReal">S$ 0,00</span></div>
+      <div class="sim-line"><span class="lbl">Diferença (lucro oculto)</span><span class="val lucro" id="simLucro">S$ 0,00</span></div>
     </div>
 
-    <h3 style="margin-top:16px">Tabela por nível (base R$ 15,00)</h3>
+    <h3 style="margin-top:16px">Tabela por nível (base S$ 15,00)</h3>
     <div style="overflow:auto; max-height:40vh; border:1px solid var(--border); border-radius:10px; margin-top:8px;">
       <table>
         <thead>
@@ -685,7 +685,7 @@
       const rtp = pSeed > 0 ? (pCorn / (pSeed * (1 + mult * 1) * (1 + taxa)) * 100) : 0;
 
       $('stUsers').textContent   = fmtInt(data.length);
-      $('stSaldo').textContent   = 'R$ ' + fmt(totalSaldo);
+      $('stSaldo').textContent   = 'S$ ' + fmt(totalSaldo);
       $('stSeeds').textContent   = fmtInt(totalSeeds);
       $('stBuckets').textContent = fmtInt(totalBuckets);
       $('stStamina').textContent = fmtInt(totalStamina);
@@ -784,9 +784,9 @@
     const mult   = Number($('simMult').value) || 0;
     const taxa   = (Number($('simTaxa').value) || 0) / 100;
     const r = simularUma(base, nivel, mult, taxa);
-    $('simFachada').textContent = 'R$ ' + fmt(r.fachada);
-    $('simReal').textContent    = 'R$ ' + fmt(r.real);
-    $('simLucro').textContent   = 'R$ ' + fmt(r.lucro);
+    $('simFachada').textContent = 'S$ ' + fmt(r.fachada);
+    $('simReal').textContent    = 'S$ ' + fmt(r.real);
+    $('simLucro').textContent   = 'S$ ' + fmt(r.lucro);
     renderSimTable();
   };
 
@@ -801,9 +801,9 @@
       html += `
         <tr>
           <td>${n}</td>
-          <td style="color:var(--gold)">R$ ${fmt(r.fachada)}</td>
-          <td style="color:var(--neon-green)">R$ ${fmt(r.real)}</td>
-          <td style="color:var(--neon-pink)">R$ ${fmt(r.lucro)}</td>
+          <td style="color:var(--gold)">S$ ${fmt(r.fachada)}</td>
+          <td style="color:var(--neon-green)">S$ ${fmt(r.real)}</td>
+          <td style="color:var(--neon-pink)">S$ ${fmt(r.lucro)}</td>
           <td>${margem.toFixed(1)}%</td>
         </tr>`;
     }
@@ -850,7 +850,7 @@
         <td>${r.id}</td>
         <td title="${esc(r.nome)}">${esc(r.nome)}</td>
         <td>${esc(r.login)}</td>
-        <td style="color:var(--gold)">R$ ${fmt(r.saldo)}</td>
+        <td style="color:var(--gold)">S$ ${fmt(r.saldo)}</td>
         <td>${fmtInt(r.seeds)}</td>
         <td>${fmtInt(r.buckets)}</td>
         <td style="color:var(--stamina)">${fmtInt(r.stamina_qty)}</td>
@@ -898,7 +898,7 @@
         method: 'PATCH',
         body: JSON.stringify({ saldo: novo, historico: hist }),
       });
-      toast(`Saldo de #${id} atualizado para R$ ${fmt(novo)}`, 'ok');
+      toast(`Saldo de #${id} atualizado para S$ ${fmt(novo)}`, 'ok');
       loadUsers(); loadStats();
     } catch (e) {
       toast('Erro: ' + e.message, 'err');
@@ -1139,7 +1139,7 @@
     const ultima = h[0]?.data;
 
     $('histTotalCompras').textContent = compras.length;
-    $('histTotalGasto').textContent   = 'R$ ' + fmt(totalCompras);
+    $('histTotalGasto').textContent   = 'S$ ' + fmt(totalCompras);
     $('histTotalVendas').textContent  = vendas.length;
     $('histUltima').textContent       = fmtDate(ultima);
 
@@ -1157,8 +1157,8 @@
         <td>${esc(x.tipo)}</td>
         <td>${esc(x.item)}</td>
         <td>${fmtInt(x.quantidade)}</td>
-        <td style="color:${cor}">${sinal} R$ ${fmt(x.valor)}</td>
-        <td>R$ ${fmt(x.saldo_apos)}</td>
+        <td style="color:${cor}">${sinal} S$ ${fmt(x.valor)}</td>
+        <td>S$ ${fmt(x.saldo_apos)}</td>
       </tr>`;
     }).join('');
 

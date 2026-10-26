@@ -491,7 +491,10 @@
         </div>
     </div>
 
-    <script>
+    <script type="module">
+import { aplicarCombate, executarAtaque, atributosPersonagem, tempoAtaque, velocidadeMovimento, normalizarAtributos } from '../../shared/combate.js';
+import { anexarFichaCombate } from '../../shared/ficha-combate.js';
+
         // ═══════════════════════════════════════════════════════════════
         //  BANCO DE DADOS SIMULADO (localStorage) - Estrutura Geral
         // ═══════════════════════════════════════════════════════════════
@@ -728,8 +731,9 @@
                 this.maxHp = CONFIG.TOWER_HP;
                 this.hp = CONFIG.TOWER_HP;
                 this.damage = CONFIG.TOWER_DAMAGE;
+                this.combate = CONFIG.TOWER_COMBATE || {};
                 this.range = CONFIG.TOWER_RANGE;
-                this.cooldown = CONFIG.TOWER_COOLDOWN;
+                this.cooldown = tempoAtaque(this.combate.velocidadeAtaque||0)/1000;
                 this.cooldownTimer = 0;
                 this.attackCount = 0;
                 this.size = CONFIG.TOWER_SIZE;
@@ -750,7 +754,7 @@
                     }
                 }
                 if (target && this.cooldownTimer <= 0) {
-                    target.hp -= this.damage;
+                    aplicarCombate(this,target,{danoBase:this.damage});
                     this.attackCount++;
                     this.cooldownTimer = this.cooldown;
                     state.projectiles.push({
@@ -783,9 +787,10 @@
                 this.maxHp = troopDef.hp;
                 this.hp = troopDef.hp;
                 this.damage = troopDef.damage;
-                this.speed = troopDef.speed;
+                this.combate = troopDef.combate || {};
+                this.speed = velocidadeMovimento(troopDef.speed,this.combate.movimento);
                 this.range = troopDef.range;
-                this.cooldown = troopDef.cooldown;
+                this.cooldown = tempoAtaque(this.combate.velocidadeAtaque||troopDef.velocidadeAtaque||0)/1000;
                 this.cooldownTimer = 0;
                 this.size = CONFIG.TROOP_SIZE;
                 this.alive = true;
@@ -831,7 +836,7 @@
                 }
                 if (this.state === 'attacking' && this.target && this.target.alive !== false) {
                     if (this.attackCooldown <= 0) {
-                        this.target.hp -= this.damage;
+                        aplicarCombate(this,this.target,{danoBase:this.damage});
                         this.attackCooldown = this.cooldown;
                         state.projectiles.push({
                             x: this.x,
@@ -1518,6 +1523,9 @@
 
         console.log('⚔️ Castle Clash carregado!');
         console.log('📦 Dados do jogador:', getDB());
-    </script>
+
+anexarFichaCombate(()=>state.playerTower,{flutuante:true});
+
+</script>
 </body>
 </html>

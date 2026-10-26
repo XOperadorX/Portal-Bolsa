@@ -481,7 +481,7 @@
         <div class="global-stats">
             <div class="global-stat">
                 <div class="label">📊 Total Arrecadado</div>
-                <div class="value green" id="totalRaisedDisplay">R$ 0,00</div>
+                <div class="value green" id="totalRaisedDisplay">S$ 0,00</div>
             </div>
             <div class="global-stat">
                 <div class="label">🪙 MuMu em Circulação</div>
@@ -534,7 +534,7 @@
         <div class="package-box">
             <div class="package-title">📦 PACOTE DE APOIO</div>
             <div class="package-sub">
-                R$ 10,00 <small>→</small> 1.000 MuMu
+                S$ 10,00 <small>→</small> 1.000 MuMu
             </div>
             <ul class="features">
                 <li>10 partidas garantidas</li>
@@ -542,7 +542,7 @@
                 <li>Entrada imediata via Pix</li>
             </ul>
             <button class="btn-donate" id="donateBtn">
-                💳 DOAR R$10 E JOGAR AGORA
+                💳 DOAR S$10 E JOGAR AGORA
             </button>
         </div>
 
@@ -592,7 +592,7 @@
 
             function updateUI() {
                 balanceSpan.textContent = balance.toLocaleString('pt-BR');
-                totalRaisedSpan.textContent = `R$ ${totalRaised.toFixed(2).replace('.', ',')}`;
+                totalRaisedSpan.textContent = `S$ ${totalRaised.toFixed(2).replace('.', ',')}`;
                 totalMumuSpan.textContent = totalMumu.toLocaleString('pt-BR');
             }
 
@@ -658,7 +658,7 @@
                     donateBtn.style.background = 'linear-gradient(135deg, #22c55e, #16a34a)';
                     donateBtn.style.color = 'white';
 
-                    showToast(`R$10 recebido! +1000 MuMu. Total em circulação: ${totalMumu.toLocaleString()}`, '🪙');
+                    showToast(`S$10 recebido! +1000 MuMu. Total em circulação: ${totalMumu.toLocaleString()}`, '🪙');
 
                     setTimeout(() => {
                         donateBtn.disabled = false;

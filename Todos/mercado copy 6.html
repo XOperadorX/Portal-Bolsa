@@ -473,7 +473,7 @@
                 <div class="user-avatar" id="userAvatar">?</div>
                 <div class="user-info">
                     <span class="user-nick" id="userName">Visitante</span>
-                    <span class="user-balance" id="userBalanceDisplay">💰 R$ 0,00</span>
+                    <span class="user-balance" id="userBalanceDisplay">💰 S$ 0,00</span>
                 </div>
             </div>
             <div style="display:flex; gap:8px; flex-wrap:wrap; align-items:center;">
@@ -488,7 +488,7 @@
                     <button class="status-reconnect" id="btnReconnectSupabase" title="Reconectar">🔄</button>
                 </div>
                 <div class="status-item" style="margin-left:auto;">
-                    <span>💰 R$ <span id="headerSaldo">0,00</span></span>
+                    <span>💰 S$ <span id="headerSaldo">0,00</span></span>
                 </div>
             </div>
         </nav>
@@ -498,7 +498,7 @@
             Mercado
             <span class="saldo-badge" style="margin-left:auto;">
                 <i class="fas fa-coins"></i>
-                <span class="num" id="saldoDisplayValue">R$ 0,00</span>
+                <span class="num" id="saldoDisplayValue">S$ 0,00</span>
             </span>
         </div>
 
@@ -715,8 +715,8 @@
             function atualizarSaldoGlobal() {
                 const total = getJogo().saldo || 0;
                 if (DOM.headerSaldo) DOM.headerSaldo.textContent = formatSaldo(total);
-                if (DOM.userBalance) DOM.userBalance.textContent = `💰 R$ ${formatSaldo(total)}`;
-                if (DOM.saldoDisplayValue) DOM.saldoDisplayValue.textContent = `R$ ${formatSaldo(total)}`;
+                if (DOM.userBalance) DOM.userBalance.textContent = `💰 S$ ${formatSaldo(total)}`;
+                if (DOM.saldoDisplayValue) DOM.saldoDisplayValue.textContent = `S$ ${formatSaldo(total)}`;
             }
 
             // ============================================================
@@ -761,7 +761,7 @@
                                     <span class="h-date">${data}</span>
                                 </div>
                             </div>
-                            <span class="h-value ${valorClass}">${sinal} R$ ${valor}</span>
+                            <span class="h-value ${valorClass}">${sinal} S$ ${valor}</span>
                         </div>
                     `;
                 }
@@ -787,7 +787,7 @@
                             <span class="item-desc">${item.desc}</span>
                             <span class="item-price">
                                 <i class="fas fa-coins"></i>
-                                R$ ${formatSaldo(item.price)}
+                                S$ ${formatSaldo(item.price)}
                             </span>
                             <button class="btn-buy" data-item-id="${item.id}" ${disabled ? 'disabled' : ''}>
                                 <i class="fas fa-shopping-cart"></i>
@@ -805,7 +805,7 @@
                 } else if (saldo <= 0) {
                     DOM.message.innerHTML = '😅 Você está <span class="highlight">sem saldo</span>. Venda milho no milharal para ganhar dinheiro!';
                 } else {
-                    DOM.message.innerHTML = `🛒 Saldo disponível: <span class="gold-highlight">R$ ${formatSaldo(saldo)}</span> — Escolha seus itens!`;
+                    DOM.message.innerHTML = `🛒 Saldo disponível: <span class="gold-highlight">S$ ${formatSaldo(saldo)}</span> — Escolha seus itens!`;
                 }
             }
 
@@ -823,7 +823,7 @@
                 }
 
                 if (j.saldo < item.price) {
-                    showToast(`😅 Saldo insuficiente! Precisa de R$ ${formatSaldo(item.price)}`, 2000);
+                    showToast(`😅 Saldo insuficiente! Precisa de S$ ${formatSaldo(item.price)}`, 2000);
                     return;
                 }
 
@@ -833,10 +833,10 @@
                 // Adicionar item
                 if (item.type === 'seeds') {
                     j.seeds = (j.seeds || 0) + item.amount;
-                    showToast(`🌰 +${item.amount} semente(s) comprada(s)! (-R$ ${formatSaldo(item.price)})`, 2200);
+                    showToast(`🌰 +${item.amount} semente(s) comprada(s)! (-S$ ${formatSaldo(item.price)})`, 2200);
                 } else if (item.type === 'buckets') {
                     j.buckets = (j.buckets || 0) + item.amount;
-                    showToast(`🪣 +${item.amount} balde(s) comprado(s)! (-R$ ${formatSaldo(item.price)})`, 2200);
+                    showToast(`🪣 +${item.amount} balde(s) comprado(s)! (-S$ ${formatSaldo(item.price)})`, 2200);
                 }
 
                 // ===== REGISTRAR NO HISTÓRICO =====

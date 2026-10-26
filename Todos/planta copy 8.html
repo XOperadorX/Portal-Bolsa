@@ -673,7 +673,7 @@
                 <div class="user-avatar" id="userAvatar">?</div>
                 <div class="user-info">
                     <span class="user-nick" id="userName">Visitante</span>
-                    <span class="user-balance" id="userBalanceDisplay">💰 R$ 0,00</span>
+                    <span class="user-balance" id="userBalanceDisplay">💰 S$ 0,00</span>
                 </div>
             </div>
             <div style="display:flex; gap:8px; flex-wrap:wrap; align-items:center;">
@@ -688,7 +688,7 @@
                     <button class="status-reconnect" id="btnReconnectSupabase" title="Reconectar">🔄</button>
                 </div>
                 <div class="status-item" style="margin-left:auto;">
-                    <span>💰 R$ <span id="headerSaldo">0,00</span></span>
+                    <span>💰 S$ <span id="headerSaldo">0,00</span></span>
                 </div>
             </div>
         </nav>
@@ -746,7 +746,7 @@
                         </span>
                         <span class="saldo-display" id="saldoDisplay">
                             <i class="fas fa-coins"></i>
-                            <span class="num" id="saldoDisplayValue">R$ 0,00</span>
+                            <span class="num" id="saldoDisplayValue">S$ 0,00</span>
                         </span>
                     </div>
                 </div>
@@ -754,7 +754,7 @@
                 <!-- 💰 PREÇO DINÂMICO -->
                 <div style="margin-bottom:0.5rem; display:flex; gap:0.4rem; flex-wrap:wrap; align-items:center;">
                     <span class="dynamic-price-badge">
-                        💰 Venda do milho: R$ <span id="dynamicPriceValue">10,00</span>
+                        💰 Venda do milho: S$ <span id="dynamicPriceValue">10,00</span>
                         <span style="color:#8a99ad; font-weight:600;">(nível <span id="dynamicPriceLevel">1</span> × <span id="dynamicPriceMult">0.50</span>)</span>
                     </span>
                 </div>
@@ -769,7 +769,7 @@
                         <div class="shop-item">
                             <div class="shop-emoji">🌰</div>
                             <div class="shop-name">Semente de Milho</div>
-                            <div class="shop-price">R$ <span id="shopPriceSeed">5,00</span></div>
+                            <div class="shop-price">S$ <span id="shopPriceSeed">5,00</span></div>
                             <div class="shop-stock">Estoque: <span id="shopStockSeed">∞</span></div>
                             <div class="shop-buttons">
                                 <button id="btnBuySeed1">+1</button>
@@ -779,7 +779,7 @@
                         <div class="shop-item">
                             <div class="shop-emoji">🪣</div>
                             <div class="shop-name">Balde de Água</div>
-                            <div class="shop-price">R$ <span id="shopPriceBucket">3,00</span></div>
+                            <div class="shop-price">S$ <span id="shopPriceBucket">3,00</span></div>
                             <div class="shop-stock">Estoque: <span id="shopStockBucket">∞</span></div>
                             <div class="shop-buttons">
                                 <button id="btnBuyBucket1">+1</button>
@@ -789,7 +789,7 @@
                         <div class="shop-item">
                             <div class="shop-emoji">🌿</div>
                             <div class="shop-name">Adubo Mágico</div>
-                            <div class="shop-price">R$ <span id="shopPriceFert">8,00</span></div>
+                            <div class="shop-price">S$ <span id="shopPriceFert">8,00</span></div>
                             <div class="shop-stock">Você tem: <span id="shopStockFert">0</span></div>
                             <div class="shop-buttons">
                                 <button id="btnBuyFert1">+1</button>
@@ -799,7 +799,7 @@
                         <div class="shop-item">
                             <div class="shop-emoji">🧪</div>
                             <div class="shop-name">Poção de EXP</div>
-                            <div class="shop-price">R$ <span id="shopPricePotion">15,00</span></div>
+                            <div class="shop-price">S$ <span id="shopPricePotion">15,00</span></div>
                             <div class="shop-stock">Você tem: <span id="shopStockPotion">0</span></div>
                             <div class="shop-buttons">
                                 <button id="btnBuyPotion1">+1</button>
@@ -1077,8 +1077,8 @@
             function atualizarSaldoGlobal() {
                 const total = getJogo().saldo || 0;
                 if (DOM.headerSaldo) DOM.headerSaldo.textContent = formatSaldo(total);
-                if (DOM.userBalance) DOM.userBalance.textContent = `💰 R$ ${formatSaldo(total)}`;
-                if (DOM.saldoDisplay) DOM.saldoDisplay.textContent = `R$ ${formatSaldo(total)}`;
+                if (DOM.userBalance) DOM.userBalance.textContent = `💰 S$ ${formatSaldo(total)}`;
+                if (DOM.saldoDisplay) DOM.saldoDisplay.textContent = `S$ ${formatSaldo(total)}`;
             }
 
             function atualizarPrecosUI() {
@@ -1092,7 +1092,7 @@
                 if (DOM.dynamicPriceValue) DOM.dynamicPriceValue.textContent = formatSaldo(getPrecoMilho());
                 if (DOM.dynamicPriceLevel) DOM.dynamicPriceLevel.textContent = j.nivel;
                 if (DOM.dynamicPriceMult) DOM.dynamicPriceMult.textContent = formatSaldo(CONFIG.PRECOS.mult);
-                if (DOM.btnSellAll) DOM.btnSellAll.title = `Vender cada milho por R$ ${formatSaldo(getPrecoMilho())}`;
+                if (DOM.btnSellAll) DOM.btnSellAll.title = `Vender cada milho por S$ ${formatSaldo(getPrecoMilho())}`;
             }
 
             function limparTimers() {
@@ -1210,7 +1210,7 @@
                 DOM.bucketCount.textContent   = `🪣 ${j.buckets || 0}`;
                 DOM.fertCount.textContent     = `🌿 ${j.fert || 0}`;
                 DOM.expDisplay.textContent    = `✨ ${j.experiencia || 0}`;
-                DOM.saldoDisplay.textContent  = `R$ ${formatSaldo(j.saldo || 0)}`;
+                DOM.saldoDisplay.textContent  = `S$ ${formatSaldo(j.saldo || 0)}`;
                 DOM.stockDisplay.innerHTML    = `<i class="fas fa-warehouse"></i> <span class="num">🌽 ${j.stock || 0}</span>`;
                 DOM.bucketStatus.textContent  = `🪣 ${j.buckets || 0}`;
                 atualizarSaldoGlobal();
@@ -1275,11 +1275,11 @@
 
                 let msg = '';
                 if (harvested > 0) {
-                    msg = `🟫 ${harvested} colhido(s). Clique para limpar (R$ ${formatSaldo(CONFIG.PRECOS.clear)})`;
+                    msg = `🟫 ${harvested} colhido(s). Clique para limpar (S$ ${formatSaldo(CONFIG.PRECOS.clear)})`;
                 } else if (j.seeds <= 0 && empty > 0) {
                     msg = '😅 <span class="highlight">Sem sementes!</span> Abra a 🏪 Loja para comprar.';
                 } else if (mature > 0) {
-                    msg = `🌽 <span class="highlight">${mature}</span> maduro(s)! Venda a R$ ${formatSaldo(getPrecoMilho())} cada.`;
+                    msg = `🌽 <span class="highlight">${mature}</span> maduro(s)! Venda a S$ ${formatSaldo(getPrecoMilho())} cada.`;
                 } else if (growing) {
                     msg = j.buckets > 0 ?
                         '💧 <span class="highlight">Regue tudo</span> para acelerar o crescimento' :
@@ -1390,13 +1390,13 @@
                 if (!p || p.stage !== STAGES.HARVESTED) return false;
                 const custo = CONFIG.PRECOS.clear;
                 if (j.saldo < custo) {
-                    showToast(`😅 Precisa de R$ ${formatSaldo(custo)}`, 1600);
+                    showToast(`😅 Precisa de S$ ${formatSaldo(custo)}`, 1600);
                     return false;
                 }
                 j.saldo = (j.saldo || 0) - custo;
                 p.stage = STAGES.EMPTY;
                 p.progress = 0;
-                showToast(`🟫 Canteiro ${id + 1} limpo! (-R$ ${formatSaldo(custo)})`, 1600);
+                showToast(`🟫 Canteiro ${id + 1} limpo! (-S$ ${formatSaldo(custo)})`, 1600);
                 renderMilharal();
                 salvarDadosCompletos();
                 return true;
@@ -1541,7 +1541,7 @@
                 const sold = j.stock;
                 j.stock = 0;
 
-                showToast(`💰 Vendeu ${sold} milho(s) a R$ ${formatSaldo(price)} = R$ ${formatSaldo(total)}!`, 2800);
+                showToast(`💰 Vendeu ${sold} milho(s) a S$ ${formatSaldo(price)} = S$ ${formatSaldo(total)}!`, 2800);
                 renderMilharal();
                 salvarDadosCompletos();
             }
@@ -1565,10 +1565,10 @@
                 const custoTotal = harvestedPlots.length * custoUnit;
 
                 if (j.saldo < custoTotal) {
-                    showToast(`😅 Precisa de R$ ${formatSaldo(custoTotal)} para limpar ${harvestedPlots.length} canteiro(s).`, 2500);
+                    showToast(`😅 Precisa de S$ ${formatSaldo(custoTotal)} para limpar ${harvestedPlots.length} canteiro(s).`, 2500);
                     return;
                 }
-                if (!confirm(`🧹 Limpar ${harvestedPlots.length} canteiro(s) colhido(s) por R$ ${formatSaldo(custoTotal)}?`)) {
+                if (!confirm(`🧹 Limpar ${harvestedPlots.length} canteiro(s) colhido(s) por S$ ${formatSaldo(custoTotal)}?`)) {
                     return;
                 }
 
@@ -1578,7 +1578,7 @@
                     p.progress = 0;
                 }
 
-                showToast(`🧹 ${harvestedPlots.length} canteiro(s) limpo(s)! (-R$ ${formatSaldo(custoTotal)})`, 2500);
+                showToast(`🧹 ${harvestedPlots.length} canteiro(s) limpo(s)! (-S$ ${formatSaldo(custoTotal)})`, 2500);
                 renderMilharal();
                 salvarDadosCompletos();
             }
@@ -1601,7 +1601,7 @@
 
                 const custo = preco * qtd;
                 if (j.saldo < custo) {
-                    showToast(`😅 Precisa de R$ ${formatSaldo(custo)} para ${qtd} item(ns).`, 2200);
+                    showToast(`😅 Precisa de S$ ${formatSaldo(custo)} para ${qtd} item(ns).`, 2200);
                     return false;
                 }
                 j.saldo -= custo;
@@ -1609,7 +1609,7 @@
 
                 const nomes = { seed: 'semente(s)', bucket: 'balde(s)', fert: 'adubo(s)', potion: 'poção(ões)' };
                 const emojis = { seed: '🌰', bucket: '🪣', fert: '🌿', potion: '🧪' };
-                showToast(`${emojis[tipo]} Comprou ${qtd} ${nomes[tipo]} por R$ ${formatSaldo(custo)}!`, 2200);
+                showToast(`${emojis[tipo]} Comprou ${qtd} ${nomes[tipo]} por S$ ${formatSaldo(custo)}!`, 2200);
 
                 renderMilharal();
                 salvarDadosCompletos();
@@ -1716,7 +1716,7 @@
                 if (data.price_potion != null && !isNaN(Number(data.price_potion))) CONFIG.PRECOS.potion = Number(data.price_potion);
                 if (data.price_mult   != null && !isNaN(Number(data.price_mult)))   CONFIG.PRECOS.mult   = Number(data.price_mult);
 
-                console.log(`💰 Preços SQL: milho R$ ${CONFIG.PRECOS.corn} | semente R$ ${CONFIG.PRECOS.seed} | balde R$ ${CONFIG.PRECOS.bucket} | adubo R$ ${CONFIG.PRECOS.fert} | poção R$ ${CONFIG.PRECOS.potion} | mult ${CONFIG.PRECOS.mult}`);
+                console.log(`💰 Preços SQL: milho S$ ${CONFIG.PRECOS.corn} | semente S$ ${CONFIG.PRECOS.seed} | balde S$ ${CONFIG.PRECOS.bucket} | adubo S$ ${CONFIG.PRECOS.fert} | poção S$ ${CONFIG.PRECOS.potion} | mult ${CONFIG.PRECOS.mult}`);
             }
 
             async function verificarSupabase() {

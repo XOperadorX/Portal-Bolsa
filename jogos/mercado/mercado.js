@@ -27,7 +27,7 @@ const ITENS_DISPONIVEIS = [
     { id: 'pocao_energia',   nome: 'Poção de Energia',   icone: '⚡', preco: 50.00,  sub: 'Recupera stamina',      tipo: 'consumivel', stockMax: 999 },
     { id: 'pocao_vida',      nome: 'Poção de Vida',      icone: '❤️', preco: 75.00,  sub: 'Recupera HP',           tipo: 'consumivel', stockMax: 999 },
     { id: 'pocao_mana',      nome: 'Poção de Mana',      icone: '🔮', preco: 75.00,  sub: 'Recupera MP',           tipo: 'consumivel', stockMax: 999 },
-    { id: 'cadeado',         nome: 'Cadeado',            icone: '🔒', preco: 200.00, sub: 'Protege sua conta',     tipo: 'especial',   stockMax: 1   },
+    { id: 'cadeado',         nome: 'ADM',            icone: '🔒', preco: 200.00, sub: 'Protege sua conta',     tipo: 'especial',   stockMax: 1   },
     { id: 'buckets',         nome: 'Balde Extra',        icone: '🪣', preco: 150.00, sub: '+1 capacidade',         tipo: 'upgrade',    stockMax: 10  },
     { id: 'poder_hash',      nome: 'Poder de Hash',      icone: '⛏️', preco: 500.00, sub: '+1 poder de mineração', tipo: 'upgrade',    stockMax: 10  },
     { id: 'btc',             nome: 'Bitcoin',            icone: '₿',  preco: 1000.00, sub: 'Criptomoeda',          tipo: 'recurso',    stockMax: 999 },
@@ -249,7 +249,7 @@ function atualizarUIUsuario() {
     if (userName) userName.textContent = nome;
 
     const balanceDisplay = document.getElementById('userBalanceDisplay');
-    if (balanceDisplay) balanceDisplay.textContent = `💰 R$ ${formatarMoeda(saldo)}`;
+    if (balanceDisplay) balanceDisplay.textContent = `💰 S$ ${formatarMoeda(saldo)}`;
 
     const seedsDisplay = document.getElementById('userSeedsDisplay');
     if (seedsDisplay) seedsDisplay.textContent = `🌰 ${seeds} sementes`;
@@ -261,7 +261,7 @@ function atualizarUIUsuario() {
     if (seedsEl) seedsEl.textContent = seeds;
 
     const marketSaldo = document.getElementById('marketSaldo');
-    if (marketSaldo) marketSaldo.textContent = `R$ ${formatarMoeda(saldo)}`;
+    if (marketSaldo) marketSaldo.textContent = `S$ ${formatarMoeda(saldo)}`;
 
     const marketSeeds = document.getElementById('marketSeeds');
     if (marketSeeds) marketSeeds.textContent = seeds;
@@ -348,9 +348,9 @@ function renderizarMercado() {
                     <div class="item-sub">${item.sub}</div>
                 </div>
             </div>
-            <div class="item-price">R$ ${formatarMoeda(item.preco)} <span>/ unidade</span></div>
+            <div class="item-price">S$ ${formatarMoeda(item.preco)} <span>/ unidade</span></div>
             <div class="item-price" style="color:var(--neon-green); font-size:0.8rem;">
-                Venda: R$ ${formatarMoeda(item.preco * 0.7)}
+                Venda: S$ ${formatarMoeda(item.preco * 0.7)}
             </div>
             <div class="item-stock">Estoque: <strong>∞</strong> | Limite: <strong>${item.stockMax}</strong></div>
             <div class="item-actions">
@@ -406,7 +406,7 @@ async function comprarItem(itemId) {
     const saldoAtual = parseFloat(usuarioAtual.saldo || 0);
 
     if (saldoAtual < custoTotal) {
-        mostrarToast(`❌ Saldo insuficiente. Necessário: R$ ${formatarMoeda(custoTotal)}`);
+        mostrarToast(`❌ Saldo insuficiente. Necessário: S$ ${formatarMoeda(custoTotal)}`);
         return;
     }
 
@@ -436,7 +436,7 @@ async function comprarItem(itemId) {
 
         atualizarUIUsuario();
         await carregarInventario();
-        mostrarToast(`✅ Comprou ${qty}x ${item.nome} por R$ ${formatarMoeda(custoTotal)}`);
+        mostrarToast(`✅ Comprou ${qty}x ${item.nome} por S$ ${formatarMoeda(custoTotal)}`);
     } catch (err) {
         console.error('Erro na compra:', err);
         mostrarToast('❌ Erro ao processar compra');
@@ -487,7 +487,7 @@ async function venderItem(itemId) {
 
         atualizarUIUsuario();
         await carregarInventario();
-        mostrarToast(`✅ Vendeu ${qty}x ${item.nome} por R$ ${formatarMoeda(valorVenda)}`);
+        mostrarToast(`✅ Vendeu ${qty}x ${item.nome} por S$ ${formatarMoeda(valorVenda)}`);
     } catch (err) {
         console.error('Erro na venda:', err);
         mostrarToast('❌ Erro ao processar venda');
@@ -535,7 +535,7 @@ function abrirTroca(itemId) {
             </select>
             <input type="number" id="tradeRequestQty" value="0" min="0" placeholder="Qtd pedida" style="width:100%; padding:10px; background:var(--bg-input); border:1px solid rgba(0,255,136,0.1); border-radius:10px; color:var(--text-primary); font-family:'Share Tech Mono'; margin-bottom:10px;">
 
-            <label style="display:block; font-size:0.8rem; color:var(--text-muted); margin-bottom:6px;">Ou pedir saldo (R$):</label>
+            <label style="display:block; font-size:0.8rem; color:var(--text-muted); margin-bottom:6px;">Ou pedir saldo (S$):</label>
             <input type="number" id="tradeRequestSaldo" value="0" min="0" step="0.01" style="width:100%; padding:10px; background:var(--bg-input); border:1px solid rgba(0,255,136,0.1); border-radius:10px; color:var(--text-primary); font-family:'Share Tech Mono'; margin-bottom:16px;">
 
             <div style="display:flex; gap:10px; justify-content:flex-end;">
@@ -589,7 +589,7 @@ async function confirmarTroca(itemId, modal) {
         }
 
         if (requestSaldo > 0 && parseFloat(destino.saldo || 0) < requestSaldo) {
-            mostrarToast(`❌ ${destino.nome || destino.login} não tem R$ ${formatarMoeda(requestSaldo)}`);
+            mostrarToast(`❌ ${destino.nome || destino.login} não tem S$ ${formatarMoeda(requestSaldo)}`);
             return;
         }
 

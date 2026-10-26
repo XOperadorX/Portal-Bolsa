@@ -1,0 +1,13 @@
+<!doctype html><html lang="pt-BR"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>ADM · Conversas das negociações</title><link rel="stylesheet" href="../../shared/chat-trocas.css"><style>body{background:#0b121e;color:#e5eef9;font-family:system-ui;margin:0;padding:24px}main{max-width:1000px;margin:auto}a{color:#8cdbd0}h1{font-size:1.5rem}small{color:#a9bdd2}</style></head><body><main><a href="admin.html">← Voltar ao admin</a><h1>💬 Histórico das negociações</h1><p>Consulte as mensagens entre vendedor e comprador, com data e hora.</p><div class="chat-trocas"><p id="chat-status" role="status">Carregando conversas…</p><label for="chat-busca">Buscar vendedor ou comprador</label><input id="chat-busca" type="search" placeholder="Nick do jogador"><button type="button" id="chat-filtrar">Buscar</button><label for="chat-conversas">Conversas — até 100 resultados por busca</label><select id="chat-conversas"></select><button id="chat-mais" type="button" hidden>Carregar mensagens anteriores</button><div id="chat-mensagens" class="chat-mensagens" role="log" aria-live="polite"></div></div><p><small>Consulta disponível somente à administração validada no servidor. O histórico completo permanece salvo, com navegação pelas mensagens anteriores.</small></p><script type="module">
+import { ChatTrocas } from '../../shared/chat-trocas.js';
+import { db } from '../../config.js';
+import { sessaoChatAdmin } from '../../shared/sessao-chat-admin.js';
+const {usuario,sessao}=await sessaoChatAdmin(db);
+if(!usuario&&!sessao)window.location.replace('../../login.html');
+else {
+ const avisoSessao=()=>{document.getElementById('chat-status').textContent='A sessão existente não foi aceita pelo servidor para consultar as conversas. Nenhum novo login foi aberto.';};
+ const chat=new ChatTrocas({usuario,admin:true,onLoginNecessario:avisoSessao});await chat.init();
+ document.getElementById('chat-filtrar').onclick=()=>chat.atualizar().catch(e=>chat.aviso(e.message));
+ window.addEventListener('pagehide',()=>chat.destroy(),{once:true});
+}
+</script></main></body></html>

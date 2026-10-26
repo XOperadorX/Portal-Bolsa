@@ -1,3 +1,6 @@
+import { aplicarCombate, atributosPersonagem, tempoAtaque } from '../../../shared/combate.js';
+import { anexarFichaCombate } from '../../../shared/ficha-combate.js';
+import { obterTaxa } from '../../../shared/taxas-globais.js';
 // ============================================================
 //  ESTADO GLOBAL
 // ============================================================
@@ -24,21 +27,21 @@ const estado = {
     incubacao: { active: false, stage: 0, progress: 0 },
 
     investimentos: {
-        selic: { nome: 'SELIC', simbolo: 'SEL', preco: 1.05, qtd: 0, taxa: 0.0000005 },
-        acoes: { nome: 'Ações', simbolo: 'BOVA', preco: 50.0, qtd: 0, taxa: 0.0000003 },
-        fiis: { nome: 'FIIs', simbolo: 'IFIX', preco: 100.0, qtd: 0, taxa: 0.0000007 },
-        cdb: { nome: 'CDB', simbolo: 'CDB', preco: 1.02, qtd: 0, taxa: 0.0000006 },
-        poupanca: { nome: 'Poupança', simbolo: 'POUP', preco: 1.01, qtd: 0, taxa: 0.0000004 },
+        selic: { nome: 'SELIC', simbolo: 'SEL', preco: 1.05, qtd: 0, taxa: obterTaxa('geral_selic') },
+        acoes: { nome: 'Ações', simbolo: 'BOVA', preco: 50.0, qtd: 0, taxa: obterTaxa('geral_acoes') },
+        fiis: { nome: 'FIIs', simbolo: 'IFIX', preco: 100.0, qtd: 0, taxa: obterTaxa('geral_fiis') },
+        cdb: { nome: 'CDB', simbolo: 'CDB', preco: 1.02, qtd: 0, taxa: obterTaxa('geral_cdb') },
+        poupanca: { nome: 'Poupança', simbolo: 'POUP', preco: 1.01, qtd: 0, taxa: obterTaxa('geral_poupanca') },
     },
 
     intervalos: [],
     logBatalha: [],
 };
 
-const TAXA_COMPRA_BTC = 10000;
-const TAXA_VENDA_BTC = 999;
-const PRECO_COMPRA_SM = 12;
-const PRECO_VENDA_SM = 8;
+const TAXA_COMPRA_BTC = obterTaxa('btc_compra');
+const TAXA_VENDA_BTC = obterTaxa('btc_venda');
+const PRECO_COMPRA_SM = obterTaxa('sm_compra');
+const PRECO_VENDA_SM = obterTaxa('sm_venda');
 
 // ============================================================
 //  RENDERIZAÇÃO
@@ -437,15 +440,10 @@ function novoInimigo() {
     adicionarLog('Batalha', `👾 Apareceu ${nome}!`);
 }
 
-function atacar() {
-    if (estado.sm < 5) { alert('Sem stamina!'); return; }
-    estado.sm -= 5;
-    const dano = Math.max(1, estado.atk - inimigoAtual.def + Math.floor(Math.random() * 8));
-    inimigoAtual.hp -= dano;
-    document.getElementById('danoCausado').textContent = dano;
-    document.getElementById('inimigoHp').textContent = `HP: ${Math.max(0, inimigoAtual.hp)}/${inimigoAtual.maxHp}`;
-    adicionarLog('Batalha', `💥 Causou ${dano} em ${inimigoAtual.nome}.`);
-    if (inimigoAtual.hp <= 0) {
+let proximoAtaqueCombate=0;
+function finalizarInimigoCombate(){
+    if(!inimigoAtual||inimigoAtual.hp>0)return false;
+
         const expGanha = 20 + estado.lvl * 5;
         estado.exp += expGanha;
         if (Math.random() < 0.3) { estado.mumu += 5; }
@@ -468,10 +466,24 @@ function atacar() {
         }
         atualizarPersonagem();
         atualizarMercadoUI();
-    } else {
-        const danoInimigo = Math.max(1, inimigoAtual.atk - estado.def + Math.floor(Math.random() * 4));
-        estado.hp = Math.max(0, estado.hp - danoInimigo);
+
+    return true;
+}
+function atacar() {
+    if(Date.now()<proximoAtaqueCombate)return;
+    if (estado.sm < 5) { alert('Sem stamina!'); return; }
+    proximoAtaqueCombate=Date.now()+tempoAtaque(atributosPersonagem(estado).velocidadeAtaque);
+    estado.sm -= 5;
+    const golpe=aplicarCombate(estado,inimigoAtual,{danoBase:atributosPersonagem(estado).dano+Math.floor(Math.random()*8),atributosDefensor:{tipo:'monstro'}});
+    const dano=golpe.danoTotal;
+    document.getElementById('danoCausado').textContent = dano;
+    document.getElementById('inimigoHp').textContent = `HP: ${Math.max(0, inimigoAtual.hp)}/${inimigoAtual.maxHp}`;
+    adicionarLog('Batalha', `💥 Causou ${dano} em ${inimigoAtual.nome}.`);
+    if (!finalizarInimigoCombate()) {
+        const retorno=aplicarCombate(inimigoAtual,estado,{danoBase:inimigoAtual.atk+Math.floor(Math.random()*4),atributosAtacante:{tipo:'monstro'}});
+        const danoInimigo=retorno.danoTotal;
         adicionarLog('Batalha', `💢 ${inimigoAtual.nome} causou ${danoInimigo}.`);
+        finalizarInimigoCombate();
         if (estado.hp <= 0) {
             alert('💀 Derrotado! Recupere-se.');
             estado.hp = Math.floor(estado.maxHp * 0.5);
@@ -683,3 +695,8 @@ function init() {
 }
 
 init();
+Object.assign(window,{treinar,descansar,atacar,novoInimigo,comprarBTC,venderBTC,comprarStamina,venderStamina,atualizarMercado,adicionarMoeda,minerar,upgradeMineracao,plantarMilho,colherMilho,incubarOvo,alimentarGalinha,venderProducao,trocarAtivos});
+
+Object.assign(window,{comprarItem,venderItem,comprarAtivo,venderAtivo});
+
+anexarFichaCombate(()=>estado,{onAlterar:()=>atualizarPersonagem()});

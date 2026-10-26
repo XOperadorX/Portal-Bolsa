@@ -1,3 +1,4 @@
+import { anexarFichaCombate } from '../../../shared/ficha-combate.js';
 // ============================================================
 // CONFIGURAÇÕES SUPABASE
 // ============================================================
@@ -136,9 +137,9 @@ function atualizarUI() {
 
     nick.textContent = state.login || 'Desconectado';
     avatar.textContent = state.login ? state.login.charAt(0).toUpperCase() : '👤';
-    saldo.textContent = new Intl.NumberFormat('pt-BR', {
-        style: 'currency',
-        currency: 'BRL'
+    saldo.textContent = 'S$ ' + new Intl.NumberFormat('pt-BR', {
+        style: 'decimal',
+        minimumFractionDigits: 2, maximumFractionDigits: 2
     }).format(state.saldo);
 
     // Nível
@@ -240,6 +241,7 @@ async function carregarDadosDoUsuario(login) {
             state.experiencia = parseFloat(data.experiencia) || 0;
             state.expProximo = parseFloat(data.exp_next) || 100;
             state.itens = data.itens || [];
+        state.combate = data.meta?.combate || {};
 
             atualizarUI();
             return true;
@@ -433,6 +435,7 @@ async function carregarDadosAtualizados() {
         state.nivel = data.nivel || 1;
         state.experiencia = parseFloat(data.experiencia) || 0;
         state.itens = data.itens || [];
+        state.combate = data.meta?.combate || {};
 
         atualizarUI();
     } catch (error) {
@@ -480,3 +483,4 @@ async function init() {
 // INICIALIZAR QUANDO O DOM ESTIVER PRONTO
 // ============================================================
 document.addEventListener('DOMContentLoaded', init);
+anexarFichaCombate(()=>state);

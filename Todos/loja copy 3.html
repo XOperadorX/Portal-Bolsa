@@ -917,9 +917,9 @@
                         <p>${escapeHtml(p.descricao)}</p>
                         <div class="produto-preco">
                             <span class="valor" style="color:${p.cor};">
-                                R$ ${p.preco.toFixed(2).replace('.', ',')}
+                                S$ ${p.preco.toFixed(2).replace('.', ',')}
                             </span>
-                            <span class="moeda">BRL</span>
+                            <span class="moeda">S$</span>
                         </div>
                         <button class="btn-comprar" data-comprar="${p.id}">
                             <i class="fas fa-shopping-cart"></i> Comprar
@@ -968,7 +968,7 @@
 
             produtoSelecionado = p;
             compraProduto.textContent = p.nome;
-            compraPreco.textContent = `R$ ${p.preco.toFixed(2).replace('.', ',')}`;
+            compraPreco.textContent = `S$ ${p.preco.toFixed(2).replace('.', ',')}`;
             compraDuracao.textContent = `${p.duracao_meses} mês(es)`;
             compraChavePix.textContent = CHAVE_PIX_FIXA;
             compraObs.value = '';
@@ -1026,7 +1026,7 @@
                     '',
                     `Produto: ${produtoSelecionado.nome} (${produtoSelecionado.codigo})`,
                     `Nível: ${produtoSelecionado.nivel}`,
-                    `Preço: R$ ${produtoSelecionado.preco.toFixed(2).replace('.', ',')}`,
+                    `Preço: S$ ${produtoSelecionado.preco.toFixed(2).replace('.', ',')}`,
                     `Duração: ${produtoSelecionado.duracao_meses} mês(es)`,
                     '',
                     `💳 PIX para pagamento: ${CHAVE_PIX_FIXA}`,
@@ -1045,7 +1045,7 @@
                         login: logado.login || '',
                         email: logado.email || '',
                         categoria: 'pagamento',
-                        assunto: `[LOJA] ${produtoSelecionado.nome} — R$ ${produtoSelecionado.preco.toFixed(2)}`,
+                        assunto: `[LOJA] ${produtoSelecionado.nome} — S$ ${produtoSelecionado.preco.toFixed(2)}`,
                         mensagem: mensagem,
                         prioridade: 'alta',
                         status: 'em_andamento',

@@ -1,7 +1,7 @@
 {
   "name": "br.seuusuario.portalbolsa",
   "displayName": "PortalBolsa",
-  "version": "1.0.0",
+  "version": "1.3.0",
   "description": "Aplicativo MM Quase Tudo - Central de Jogos",
   "main": "index.js",
   "scripts": {

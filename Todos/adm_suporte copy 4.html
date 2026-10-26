@@ -1161,7 +1161,7 @@
             <div class="stat-card">
                 <div class="icone verde"><i class="fas fa-circle-check"></i></div>
                 <div class="info">
-                    <div class="valor" id="statTotalPago">R$ 0,00</div>
+                    <div class="valor" id="statTotalPago">S$ 0,00</div>
                     <div class="rotulo">Total Pago</div>
                 </div>
             </div>
@@ -1505,7 +1505,7 @@
         const _fmtMumu = new Intl.NumberFormat('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
         const fmtNum = (v) => _fmtNum.format(parseFloat(v || 0));
         const fmtMumu = (v) => _fmtMumu.format(parseFloat(v || 0));
-        const fmtDinheiro = (v) => `R$ ${fmtNum(v)}`;
+        const fmtDinheiro = (v) => `S$ ${fmtNum(v)}`;
 
         async function supabaseFetch(url, opts = {}) {
             const resp = await fetch(url, {

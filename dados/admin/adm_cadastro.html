@@ -266,7 +266,7 @@
                 <option value="">Todos os status</option>
                 <option value="ativo">Ativos</option>
                 <option value="bloqueado">Bloqueados</option>
-                <option value="cadeado">Com cadeado</option>
+                <option value="cadeado">Administradores (ADM)</option>
             </select>
 
             <select id="filtroNivel">
@@ -345,7 +345,7 @@
                         <div class="detalhe-item"><div class="rotulo">Proventos Pendentes</div><div class="valor" id="detProventos">—</div></div>
                         <div class="detalhe-item"><div class="rotulo">Criado em</div><div class="valor" id="detCriado">—</div></div>
                         <div class="detalhe-item"><div class="rotulo">Bloqueado</div><div class="valor" id="detBloqueado">—</div></div>
-                        <div class="detalhe-item"><div class="rotulo">Cadeado</div><div class="valor" id="detCadeado">—</div></div>
+                        <div class="detalhe-item"><div class="rotulo">ADM</div><div class="valor" id="detCadeado">—</div></div>
                         <div class="detalhe-item full"><div class="rotulo">Carteira (JSON)</div><div class="valor mono" id="detCarteira">—</div></div>
                         <div class="detalhe-item full"><div class="rotulo">Itens (JSON)</div><div class="valor mono" id="detItens">—</div></div>
                     </div>
@@ -421,7 +421,7 @@
                             </select>
                         </div>
                         <div class="campo-acao">
-                            <label for="editCadeado">Cadeado</label>
+                            <label for="editCadeado">ADM</label>
                             <select id="editCadeado">
                                 <option value="false">Não</option>
                                 <option value="true">Sim</option>
@@ -630,7 +630,7 @@
                 const statusBadge = u.bloqueado
                     ? '<span class="badge bloqueado">Bloqueado</span>'
                     : (u.cadeado
-                        ? '<span class="badge cadeado">Cadeado</span>'
+                        ? '<span class="badge cadeado">ADM</span>'
                         : '<span class="badge ativo">Ativo</span>');
 
                 const macCurto = u.mac_address && u.mac_address !== 'desconhecido'

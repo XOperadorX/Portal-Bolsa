@@ -3,6 +3,7 @@
 // ============================================================
 
 const LINKS = [
+  { id:'combate',href:new URL('../combate.html',import.meta.url).href,icon:'fa-shield-halved',label:'Dano e defesa' },
   { id: 'index',       href: './index.html',                     icon: 'fa-house',           label: 'Início' },
   { id: 'noticias',    href: './noticias.html',                  icon: 'fa-newspaper',       label: 'Notícias' },
   { id: 'ranking',     href: './jogos/ranking/ranking002.html',  icon: 'fa-trophy',          label: 'Classificações' },

@@ -604,8 +604,8 @@
         </div>
 
         <div class="info-box">
-            Converta seus MUMU em dinheiro por Pix: <strong>10,00 MUMU = R$ 5,00</strong>.
-            O saque mínimo é de <strong>R$ 1,00</strong>, e o Pix é feito em até <strong>8 horas</strong> depois do pedido.
+            Converta seus MUMU em dinheiro por Pix: <strong>M$ 0,00 MUMU R$ 0,01</strong> Reais.
+            O saque mínimo é de <strong>1000,00 MUMU (R$ 0,01)</strong> antes do desconto da taxa administrativa de <strong>10%</strong>, e o Pix é feito em até <strong>8 horas</strong> depois do pedido.
         </div>
 
         <div class="linha-dado bloco-valor">
@@ -631,9 +631,9 @@
         <div class="caixa-conversao">
             <div class="linha-conversao">
                 <span class="rotulo" style="margin-bottom:0;">CONVERSÃO</span>
-                <span class="valor" style="color: var(--neon-pix); font-size: 0.95rem;">10,00 MUMU = R$ 5,00</span>
+                <span class="valor" style="color: var(--neon-pix); font-size: 0.95rem;">M$ 0,00 MUMU R$ 0,01</span>
             </div>
-            <div class="equiv" style="margin-bottom: 16px;">10,00 MUMU = R$ 5,00 saldo</div>
+            <div class="equiv" style="margin-bottom: 16px;">M$ 0,00 MUMU R$ 0,01 saldo</div>
 
             <div class="grupo-input">
                 <label class="etiqueta-input">SACAR — Converter MUMU em Pix</label>
@@ -657,7 +657,7 @@
                 </div>
                 <div class="linha-taxa">
                     <span class="label">📊 Taxa de conversão</span>
-                    <span class="value" id="taxaConversao">10,00 MUMU = R$ 5,00</span>
+                    <span class="value" id="taxaConversao">M$ 0,00 MUMU R$ 0,01</span>
                 </div>
                 <div class="linha-taxa">
                     <span class="label">💵 Valor bruto em R$</span>
@@ -665,7 +665,7 @@
                 </div>
                 <div class="linha-taxa">
                     <span class="label">🏦 Taxa administrativa</span>
-                    <span class="value taxa" id="taxaAdministrativa">R$ 0,00 (0%)</span>
+                    <span class="value taxa" id="taxaAdministrativa">- R$ 0,00 (10%)</span>
                 </div>
                 <div class="linha-taxa">
                     <span class="label">➖ Desconto total</span>
@@ -709,7 +709,7 @@
                 <span>Cadastre uma <strong>Chave Pix</strong> abaixo antes de solicitar o saque.</span>
             </div>
 
-            <div class="aviso" id="avisoMinimo">Você precisa de pelo menos 2,00 MUMU. Faltam <span id="faltam">0,99</span>.</div>
+            <div class="aviso" id="avisoMinimo">Você precisa de pelo menos 1000,00 MUMU para sacar R$ 0,01.</div>
             <div class="sucesso oculto" id="msgDisponivel">✅ Valor disponível para saque!</div>
 
             <button class="btn-acao" id="btnSolicitarPix">🔒 Cadastre uma Chave Pix Primeiro</button>
@@ -773,7 +773,9 @@
         </div>
     </div>
 
-    <script>
+    <script type="module">
+import { obterTaxa } from "../../shared/taxas-globais.js";
+
         // ============================================================
         // CONFIGURAÇÃO SUPABASE
         // ============================================================
@@ -787,10 +789,10 @@
         // ============================================================
         // TAXAS
         // ============================================================
-        const TAXA_MUMU_REAIS = 0.50;
-        const SAQUE_MINIMO_MUMU = 2.00;
-        const TAXA_ADMIN_PERCENT = 0.00; // 0% = sem desconto
-        const LIMITE_DIARIO_PADRAO = 500.00; // R$ 500,00 por dia
+        const TAXA_MUMU_REAIS = obterTaxa('pix_conversao');
+        const SAQUE_MINIMO_MUMU = obterTaxa('pix_minimo'); // R$ 0,01 em MUMU
+        const TAXA_ADMIN_PERCENT = obterTaxa('pix_admin'); // Desconto de 10% sobre o valor bruto
+        const LIMITE_DIARIO_PADRAO = obterTaxa('pix_limite'); // R$ 500,00 por dia
 
         let usuarioAtual = null;
         let valoresOcultos = false;
@@ -818,6 +820,9 @@
         const fmtNum = (v) => _fmtNum.format(parseFloat(v || 0));
         const fmtMumu = (v) => _fmtMumu.format(parseFloat(v || 0));
         const fmtDinheiro = (v) => `R$ ${fmtNum(v)}`;
+        const textoConversao = () => `${fmtMumu(1000)} MUMU = ${fmtDinheiro(1000 * TAXA_MUMU_REAIS)}`;
+        document.querySelector('.info-box').innerHTML = `Converta seus MUMU em dinheiro por Pix: <strong>${textoConversao()}</strong>. O saque mínimo é de <strong>${fmtMumu(SAQUE_MINIMO_MUMU)} MUMU</strong>, antes da taxa administrativa de <strong>${TAXA_ADMIN_PERCENT}%</strong>. Processamento em até 8 horas.`;
+        document.querySelectorAll('.caixa-conversao .linha-conversao .valor, .caixa-conversao > .equiv').forEach(e => e.textContent = textoConversao());
 
         // ============================================================
         // VALIDAÇÃO REAL DE CPF
@@ -1257,9 +1262,9 @@
             el.valorReceber.textContent = fmtDinheiro(calc.valorLiquido);
 
             el.taxaMumuSolicitado.textContent = `${fmtMumu(calc.mumu)} MUMU`;
-            el.taxaConversao.textContent = `10,00 MUMU = R$ 5,00`;
+            el.taxaConversao.textContent = textoConversao();
             el.taxaValorBruto.textContent = fmtDinheiro(calc.valorBruto);
-            el.taxaAdministrativa.textContent = `${fmtDinheiro(calc.taxaAdmin)} (${calc.taxaAdminPercent.toFixed(2)}%)`;
+            el.taxaAdministrativa.textContent = `- ${fmtDinheiro(calc.taxaAdmin)} (${calc.taxaAdminPercent.toLocaleString('pt-BR', { maximumFractionDigits: 2 })}%)`;
             el.taxaDescontoTotal.textContent = `- ${fmtDinheiro(calc.descontoTotal)}`;
             el.taxaValorLiquido.textContent = fmtDinheiro(calc.valorLiquido);
 
@@ -1374,9 +1379,9 @@
                     `📧 Email: ${email}\n` +
                     `━━━━━━━━━━━━━━━━━━━━━━━━━\n` +
                     `🪙 MUMU gasto: ${fmtMumu(valorMumu)} MUMU\n` +
-                    `📊 Taxa de conversão: 10,00 MUMU = R$ 5,00\n` +
+                    `📊 Taxa de conversão: ${textoConversao()}\n` +
                     `💵 Valor bruto: ${fmtDinheiro(calc.valorBruto)}\n` +
-                    `🏦 Taxa administrativa: ${fmtDinheiro(calc.taxaAdmin)} (${calc.taxaAdminPercent.toFixed(2)}%)\n` +
+                    `🏦 Taxa administrativa: - ${fmtDinheiro(calc.taxaAdmin)} (${calc.taxaAdminPercent.toLocaleString('pt-BR', { maximumFractionDigits: 2 })}%)\n` +
                     `➖ Desconto total: ${fmtDinheiro(calc.descontoTotal)}\n` +
                     `✅ VALOR LÍQUIDO: ${fmtDinheiro(calc.valorLiquido)}\n` +
                     `━━━━━━━━━━━━━━━━━━━━━━━━━\n` +
@@ -1583,7 +1588,7 @@
         // BOTÕES DE ATALHO
         // ============================================================
         document.getElementById('btnMinimo').addEventListener('click', () => {
-            el.inputMumu.value = SAQUE_MINIMO_MUMU;
+            el.inputMumu.value = SAQUE_MINIMO_MUMU.toFixed(2);
             validarEntrada();
         });
         document.getElementById('btnTudo').addEventListener('click', () => {
@@ -1621,9 +1626,9 @@
                 `Confirmar saque?\n\n` +
                 `━━━━━━━━━━━━━━━━━━━━━\n` +
                 `🪙 MUMU solicitado: ${fmtMumu(calc.mumu)} MUMU\n` +
-                `📊 Taxa: 10,00 MUMU = R$ 5,00\n` +
+                `📊 Taxa: ${textoConversao()}\n` +
                 `💵 Valor bruto: ${fmtDinheiro(calc.valorBruto)}\n` +
-                `🏦 Taxa administrativa: ${fmtDinheiro(calc.taxaAdmin)} (${calc.taxaAdminPercent.toFixed(2)}%)\n` +
+                `🏦 Taxa administrativa: - ${fmtDinheiro(calc.taxaAdmin)} (${calc.taxaAdminPercent.toLocaleString('pt-BR', { maximumFractionDigits: 2 })}%)\n` +
                 `➖ Desconto total: ${fmtDinheiro(calc.descontoTotal)}\n` +
                 `✅ VALOR LÍQUIDO: ${fmtDinheiro(calc.valorLiquido)}\n` +
                 `━━━━━━━━━━━━━━━━━━━━━\n` +
@@ -1744,6 +1749,8 @@
         }
 
         console.log('💸 Carteira Pix — histórico com pendente em destaque');
-    </script>
+
+
+</script>
 </body>
 </html>

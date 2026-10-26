@@ -236,7 +236,7 @@ function render() {
     const online = isOnline(d.ultima_vez_online);
 
     let statusTags = '';
-    if (d.cadeado)  statusTags += `<span class="tag lock">🔒 Cadeado</span> `;
+    if (d.cadeado)  statusTags += `<span class="tag lock">🔒 ADM</span> `;
     if (d.bloqueado) statusTags += `<span class="tag lock">⛔ Bloqueado</span> `;
     statusTags += online
       ? `<span class="tag on">● Online</span>`
@@ -246,8 +246,8 @@ function render() {
       <tr data-id="${d.id}">
         <td class="pos ${posClass}">${pos}</td>
         <td class="login">${escapeHtml(d.login) || '—'}</td>
-        <td class="money">R$ ${fmtMoney(d.saldo)}</td>
-        <td class="money">R$ ${fmtMoney(d.saldo_poupanca)}</td>
+        <td class="money">S$ ${fmtMoney(d.saldo)}</td>
+        <td class="money">S$ ${fmtMoney(d.saldo_poupanca)}</td>
         <td class="btc">${fmtBtc(d.btc)}</td>
         <td class="num">${fmtNum(d.nivel)}</td>
         <td class="num">${fmtNum(d.mumu)}</td>

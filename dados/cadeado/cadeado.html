@@ -33,7 +33,7 @@
 <link rel="manifest" href="./manifest.json">
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>MMQuaseTudo · Cadeado</title>
+  <title>MMQuaseTudo · ADM</title>
   <!-- Supabase JS -->
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <style>
@@ -534,7 +534,7 @@
             .nav-bar .nav-links { justify-content: center; }
             .nav-bar .nav-buttons { justify-content: center; }
         }
-		
+
 		    </style>
 </head>
 <body>
@@ -557,24 +557,24 @@
 <div class="card" id="app">
 
   <h1>
-    Cadeado
+    ADM
     <span class="badge-lock">🔐 proteção</span>
   </h1>
   <div class="subhead">Mais proteção para sua conta</div>
 
   <div class="description">
-    <strong>O Cadeado</strong> é um sistema desenvolvido para aumentar a segurança de sua conta de jogo. 
+    <strong>O ADM</strong> é um sistema desenvolvido para aumentar a segurança de sua conta de jogo.
     Ele adiciona uma verificação extra para evitar que seus itens/moedas estejam em risco. Veja como é simples:
   </div>
 
   <div class="highlight-box">
     <ul>
-      <li><span class="icon-bullet">1</span> Ao ativar esse sistema, o botão <strong>"Cadeado"</strong> aparecerá da seguinte forma: <span style="background:#2d3650; padding:0.2rem 0.8rem; border-radius:40px; color:#f5c842;">🔒 Cadeado Ativo</span></li>
+      <li><span class="icon-bullet">1</span> Ao ativar esse sistema, o botão <strong>"ADM"</strong> aparecerá da seguinte forma: <span style="background:#2d3650; padding:0.2rem 0.8rem; border-radius:40px; color:#f5c842;">🔒 ADM Ativo</span></li>
       <li><span class="icon-bullet">2</span> Desta forma você <strong>não poderá se conectar ao jogo</strong>, mesmo informando Login e Senha corretamente.</li>
-      <li><span class="icon-bullet">3</span> Para liberar a conexão, acesse sua conta , localize a conta de jogo e <strong>destranque o cadeado</strong>.</li>
+      <li><span class="icon-bullet">3</span> Para liberar a conexão, acesse sua conta , localize a conta de jogo e <strong>desative o ADM</strong>.</li>
       <li><span class="icon-bullet">4</span> Abra o jogo e entre normalmente com seu Login e Senha.</li>
-      <li><span class="icon-bullet">5</span> O Cadeado será <strong>TRANCADO novamente depois de 1 hora</strong>, mas não se preocupe, caso já esteja no jogo, não será desconectado.</li>
-      <li><span class="icon-bullet">6</span> Você também pode optar por <strong>TRANCAR</strong> o Cadeado diretamente em sua Conta MM Quase Tudo após acessar o jogo.</li>
+      <li><span class="icon-bullet">5</span> O ADM será <strong>TRANCADO novamente depois de 1 hora</strong>, mas não se preocupe, caso já esteja no jogo, não será desconectado.</li>
+      <li><span class="icon-bullet">6</span> Você também pode optar por <strong>TRANCAR</strong> o ADM diretamente em sua Conta MM Quase Tudo após acessar o jogo.</li>
     </ul>
   </div>
 
@@ -621,7 +621,7 @@
   </div>
 
   <div class="small-note">
-    <strong>IMPORTANTE:</strong> Para ativar o Cadeado , você deverá confirmar a sua senha de jogo. 
+    <strong>IMPORTANTE:</strong> Para ativar o ADM , você deverá confirmar a sua senha de jogo.
     Caso tenha dúvidas, acesse a <a href="#">Central de Suporte</a>.
   </div>
 </div>
@@ -664,12 +664,12 @@
         statusDot.className = 'status-dot locked';
         statusText.innerText = message || '🔒 Trancado';
         lockIcon.innerText = '🔒';
-        lockLabel.innerText = 'Cadeado';
+        lockLabel.innerText = 'ADM';
       } else if (lockState === false) {
         statusDot.className = 'status-dot';
         statusText.innerText = message || '🔓 Destrancado';
         lockIcon.innerText = '🔓';
-        lockLabel.innerText = 'Destrancar Cadeado';
+        lockLabel.innerText = 'Destrancar ADM';
       } else {
         statusDot.className = 'status-dot';
         statusDot.style.background = '#ffaa33';
@@ -691,7 +691,7 @@
         setStatus(null, '⏳ Indefinido');
         toggleBtn.disabled = true;
       }
-      
+
       if (userLogin) {
         currentUserDisplay.textContent = userLogin;
       }
@@ -720,7 +720,7 @@
         }
 
         usersList = data;
-        
+
         // Preenche select
         userSelect.innerHTML = '<option value="">Selecione um usuário...</option>';
         data.forEach(user => {
@@ -758,11 +758,11 @@
     function selectUser(user) {
       currentUser = user;
       currentUserDisplay.textContent = user.login;
-      
+
       // Atualiza UI com o estado do cadeado
       const isLocked = user.cadeado === true;
       updateUIFromState(isLocked, user.login);
-      
+
       // Habilita botão
       toggleBtn.disabled = false;
     }
@@ -802,7 +802,7 @@
 
         if (error) {
           console.error("Erro ao atualizar:", error);
-          alert(`Erro ao ${label} o cadeado. Verifique o console.`);
+          alert(`Erro ao ${label} o ADM. Verifique o console.`);
           isUpdating = false;
           toggleBtn.disabled = false;
           return;
@@ -812,10 +812,10 @@
           // Atualiza o usuário atual
           currentUser = data;
           currentUserDisplay.textContent = data.login;
-          
+
           const isLocked = data.cadeado === true;
           updateUIFromState(isLocked, data.login);
-          
+
           // Atualiza a opção no select
           const option = userSelect.querySelector(`option[value="${data.id}"]`);
           if (option) {
@@ -825,9 +825,9 @@
 
           // Feedback
           if (isLocked) {
-            alert("🔒 Cadeado TRANCADO! A conexão ao jogo está bloqueada.");
+            alert("🔒 ADM TRANCADO! A conexão ao jogo está bloqueada.");
           } else {
-            alert("🔓 Cadeado DESTRANCADO! Acesso liberado.");
+            alert("🔓 ADM DESTRANCADO! Acesso liberado.");
           }
         } else {
           alert("Usuário não encontrado. Recarregue a lista.");
@@ -851,7 +851,7 @@
         setStatus(null, 'Selecione um usuário');
         return;
       }
-      
+
       const user = usersList.find(u => u.id === userId);
       if (user) {
         selectUser(user);
@@ -867,7 +867,7 @@
     // ========== INICIALIZAÇÃO ==========
     async function init() {
       await loadUsers();
-      
+
       // Se não carregou usuários, tenta novamente
       if (usersList.length === 0) {
         setTimeout(() => {
@@ -883,7 +883,7 @@
     // Adiciona coluna 'cadeado' se não existir (instrução)
     console.log("⚠️ Certifique-se de que a coluna 'cadeado' existe na tabela 'Geral'.");
     console.log("SQL para adicionar: ALTER TABLE public.\"Geral\" ADD COLUMN IF NOT EXISTS cadeado BOOLEAN DEFAULT false;");
-    
+
   })();
 </script><script type="module">
 import {
@@ -903,7 +903,7 @@ console.log('Logado como:', usuario.login);
 </script>
 
 <!-- Instrução SQL para adicionar a coluna cadeado -->
-<!-- 
+<!--
   ALTER TABLE public."Geral" ADD COLUMN IF NOT EXISTS cadeado BOOLEAN DEFAULT false;
   UPDATE public."Geral" SET cadeado = false WHERE cadeado IS NULL;
 -->

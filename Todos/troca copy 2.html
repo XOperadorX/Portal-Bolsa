@@ -139,7 +139,7 @@
   <div class="saldos-grid">
     <div class="saldo-box">
       <div class="label">💰 Saldo</div>
-      <div class="value" id="saldoDisplay">R$ 0,00</div>
+      <div class="value" id="saldoDisplay">S$ 0,00</div>
     </div>
     <div class="saldo-box">
       <div class="label">₿ Bitcoin</div>
@@ -148,8 +148,8 @@
   </div>
 
   <div class="taxa-info">
-    <span>📈 <strong>1 BTC = R$ 1,00</strong></span>
-    <span>📉 Desfazer: <strong>R$ 0,50 = 0,00050000 BTC</strong></span>
+    <span>📈 <strong>1 BTC = S$ 1,00</strong></span>
+    <span>📉 Desfazer: <strong>S$ 0,50 = 0,00050000 BTC</strong></span>
   </div>
 
   <div class="operacao">
@@ -167,7 +167,7 @@
     <h3>🔄 Trocar Saldo por BTC (desfazer)</h3>
     <div class="input-group">
       <input type="number" id="saldoInput" placeholder="0.00" step="0.01" min="0">
-      <span class="moeda">R$</span>
+      <span class="moeda">S$</span>
     </div>
     <div class="btn-group">
       <button class="btn btn-saldo-to-btc" id="btnSaldoToBtc">💰 → ₿ Converter</button>
@@ -200,7 +200,7 @@
   // ============================================================
   // AUXILIARES
   // ============================================================
-  const fmtSaldo = v => Number(v).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
+  const fmtSaldo = v => ('S$ ' + Number(v).toLocaleString('pt-BR', { style: 'decimal', minimumFractionDigits: 2, maximumFractionDigits: 2 }));
   const fmtBTC   = v => Number(v).toFixed(8).replace('.', ',');
 
   function mostrarMensagem(texto, tipo = 'sucesso') {

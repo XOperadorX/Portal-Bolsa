@@ -302,29 +302,29 @@ const commonEnemies = [
 
 // ==================== PREÇOS (VALORES BAIXOS 0.01 - 0.10) ====================
 // 💡 Os valores são armazenados em CENTAVOS (inteiros).
-// 10 centavos = R$ 0,10 | 1 centavo = R$ 0,01
+// 10 centavos = S$ 0,10 | 1 centavo = S$ 0,01
 const BUY_PRICES = {
-    "Poção": 10,        // R$ 0,10
-    "Poção Maior": 20,  // R$ 0,20
-    "Elixir": 40,       // R$ 0,40
-    "Gema Rara": 60     // R$ 0,60
+    "Poção": 10,        // S$ 0,10
+    "Poção Maior": 20,  // S$ 0,20
+    "Elixir": 40,       // S$ 0,40
+    "Gema Rara": 60     // S$ 0,60
 };
 
 const SELL_PRICES = {
-    "Poção": 1,         // R$ 0,01
-    "Poção Maior": 2,   // R$ 0,02
-    "Elixir": 4,        // R$ 0,04
-    "Gema Rara": 6      // R$ 0,06
+    "Poção": 1,         // S$ 0,01
+    "Poção Maior": 2,   // S$ 0,02
+    "Elixir": 4,        // S$ 0,04
+    "Gema Rara": 6      // S$ 0,06
 };
 
 const LEGENDARY_SELL_PRICES = {
-    "Máscara de Lycagon": 8,          // R$ 0,08
-    "Coração da Tempestade": 9,       // R$ 0,09
-    "Olho de Ctarnidd": 10,           // R$ 0,10
-    "Escama de Bahamut": 10,          // R$ 0,10
-    "Fruto de Yggdrasil": 10,         // R$ 0,10
-    "Máscara do Coelho Vorpal": 10,   // R$ 0,10
-    "Espada Divina Ashura": 10        // R$ 0,10
+    "Máscara de Lycagon": 8,          // S$ 0,08
+    "Coração da Tempestade": 9,       // S$ 0,09
+    "Olho de Ctarnidd": 10,           // S$ 0,10
+    "Escama de Bahamut": 10,          // S$ 0,10
+    "Fruto de Yggdrasil": 10,         // S$ 0,10
+    "Máscara do Coelho Vorpal": 10,   // S$ 0,10
+    "Espada Divina Ashura": 10        // S$ 0,10
 };
 for (let [item, price] of Object.entries(LEGENDARY_SELL_PRICES)) SELL_PRICES[item] = price;
 
@@ -339,7 +339,7 @@ const SM_COST_PER_ACTION = 10;
 const SM_MIN_TO_PLAY = 10;
 
 // ==================== FORMATAÇÃO DE MOEDAS (PADRÃO BRASILEIRO COMPLETO) ====================
-// Converte centavos (inteiro) em string no formato "R$ 0,01" até "R$ 999.999,99"
+// Converte centavos (inteiro) em string no formato "S$ 0,01" até "S$ 999.999,99"
 function formatCoins(centavos) {
     const moedas = (Number(centavos) || 0) / 100;
     return moedas.toLocaleString('pt-BR', {
@@ -348,10 +348,10 @@ function formatCoins(centavos) {
     });
 }
 
-// Versão com prefixo R$ (para exibição em loja / preços)
+// Versão com prefixo S$ (para exibição em loja / preços)
 function formatBRL(centavos) {
     const moedas = (Number(centavos) || 0) / 100;
-    return 'R$ ' + moedas.toLocaleString('pt-BR', {
+    return 'S$ ' + moedas.toLocaleString('pt-BR', {
         minimumFractionDigits: 2,
         maximumFractionDigits: 2
     });
@@ -639,7 +639,7 @@ function sellItem(itemName, currentQty) {
     currentPlayer.inventory[itemName]--;
     if (currentPlayer.inventory[itemName] === 0) delete currentPlayer.inventory[itemName];
     currentPlayer.coins += sellPrice;
-    addLog(`💰 Vendeu ${itemName} por R$ ${formatCoins(sellPrice)}!`);
+    addLog(`💰 Vendeu ${itemName} por S$ ${formatCoins(sellPrice)}!`);
     updateUI(); saveDB();
 }
 
@@ -713,7 +713,7 @@ function updateUI() {
     if (!currentPlayer) return;
     const p = currentPlayer;
     document.getElementById('playerNameDisplay').innerHTML = `👤 ${p.nome}`;
-    document.getElementById('playerCoinsDisplay').innerHTML = `🪙 R$ ${formatCoins(p.coins)}`;
+    document.getElementById('playerCoinsDisplay').innerHTML = `🪙 S$ ${formatCoins(p.coins)}`;
     document.getElementById('playerSmDisplay').innerHTML = `⚡ ${p.sm}/${p.maxSm}`;
     document.getElementById('statHp').innerHTML = `${p.hp}/${p.maxHp}`;
     document.getElementById('statMp').innerHTML = `${p.mp}/${p.maxMp}`;
@@ -759,9 +759,9 @@ function updateUI() {
             let buttonsHtml = '';
             if (isUsable) buttonsHtml += `<button class="use-btn" onclick="window.useItemHandler('${item}')">💊 Usar</button>`;
             if (sellPrice > 0) {
-                // ✅ PADRÃO BRASILEIRO: R$ 0,01
-                let priceDisplay = `💰 R$ ${formatCoins(sellPrice)}`;
-                if (buyPrice > 0) priceDisplay += ` [↗ R$ ${formatCoins(buyPrice)}]`;
+                // ✅ PADRÃO BRASILEIRO: S$ 0,01
+                let priceDisplay = `💰 S$ ${formatCoins(sellPrice)}`;
+                if (buyPrice > 0) priceDisplay += ` [↗ S$ ${formatCoins(buyPrice)}]`;
                 buttonsHtml += `<button class="sell-btn" onclick="window.sellItemHandler('${item}', ${qty})">${priceDisplay}</button>`;
             } else {
                 buttonsHtml += `<span style="color:#888; font-size:11px;">🚫 não vende</span>`;
@@ -844,7 +844,7 @@ function addItem(itemName, qty = 1) {
 function hasEnoughCoins(cost) {
     if (!currentPlayer) return false;
     if (currentPlayer.coins < cost) {
-        addLog(`❌ Moedas insuficientes! Precisa de R$ ${formatCoins(cost)} (tem R$ ${formatCoins(currentPlayer.coins)})`);
+        addLog(`❌ Moedas insuficientes! Precisa de S$ ${formatCoins(cost)} (tem S$ ${formatCoins(currentPlayer.coins)})`);
         return false;
     }
     return true;
@@ -861,7 +861,7 @@ window.buyItem = function (item, price) {
     if (currentPlayer.coins >= price) {
         currentPlayer.coins -= price;
         addItem(item, 1);
-        addLog(`🛒 Comprou ${item} por R$ ${formatCoins(price)}.`);
+        addLog(`🛒 Comprou ${item} por S$ ${formatCoins(price)}.`);
     } else addLog(`💰 Moedas insuficientes!`);
 };
 
@@ -898,7 +898,7 @@ function setupEventListeners() {
         if (currentEnemy.hp <= 0) {
             let gainedExp = currentEnemy.exp;
             let gainedCoins = currentEnemy.coins;
-            addLog(`🏆 DERROTOU ${currentEnemy.name}! +${gainedExp.toLocaleString('pt-BR')} EXP, +R$ ${formatCoins(gainedCoins)}!`);
+            addLog(`🏆 DERROTOU ${currentEnemy.name}! +${gainedExp.toLocaleString('pt-BR')} EXP, +S$ ${formatCoins(gainedCoins)}!`);
             gainExp(gainedExp); addCoin(gainedCoins);
             if (currentEnemy.isLegendary || currentEnemy.isMythic) {
                 currentPlayer.bossKills = (currentPlayer.bossKills || 0) + 1;
@@ -921,7 +921,7 @@ function setupEventListeners() {
             if (p.hp <= 0) {
                 p.hp = p.maxHp;
                 p.coins = Math.max(0, p.coins - 500);
-                addLog(`💀 DERROTA! Perdeu R$ ${formatCoins(500)}.`);
+                addLog(`💀 DERROTA! Perdeu S$ ${formatCoins(500)}.`);
                 currentEnemy = null;
             }
         }
@@ -963,7 +963,7 @@ function setupEventListeners() {
         if (!consumeSm()) return;
 
         let rand = Math.random();
-        if (rand < 0.4) { let a = Math.floor(Math.random() * 80) + 30; addCoin(a); addLog(`🗺️ Encontrou R$ ${formatCoins(a)}!`); }
+        if (rand < 0.4) { let a = Math.floor(Math.random() * 80) + 30; addCoin(a); addLog(`🗺️ Encontrou S$ ${formatCoins(a)}!`); }
         else if (rand < 0.7) { addItem("Poção", 1); addLog(`🗺️ Encontrou uma Poção!`); }
         else addLog(`🗺️ Não encontrou nada...`);
     };
@@ -993,7 +993,7 @@ function setupEventListeners() {
         let curaReal = Math.min(cura, currentPlayer.maxHp - currentPlayer.hp);
         currentPlayer.hp = Math.min(currentPlayer.maxHp, currentPlayer.hp + curaReal);
         updateUI(); saveDB();
-        addLog(`🏥 Descansou e recuperou ${curaReal} HP. (R$ ${formatCoins(50)} gastos)`);
+        addLog(`🏥 Descansou e recuperou ${curaReal} HP. (S$ ${formatCoins(50)} gastos)`);
     };
 
     document.getElementById('summonLegendaryBtn').onclick = () => {
@@ -1016,10 +1016,10 @@ function setupEventListeners() {
     function updateShop() {
         const shopDiv = document.getElementById('shopList');
         if (shopDiv) shopDiv.innerHTML = `
-            <div class="shop-item"><span>💊 Poção <span style="font-size:11px; color:#ffaa66;">(venda: R$ ${formatCoins(SELL_PRICES['Poção'])})</span></span><button class="shop-buy-btn" onclick="buyItem('Poção', ${BUY_PRICES['Poção']})">Comprar R$ ${formatCoins(BUY_PRICES['Poção'])}</button></div>
-            <div class="shop-item"><span>💪 Poção Maior <span style="font-size:11px; color:#ffaa66;">(venda: R$ ${formatCoins(SELL_PRICES['Poção Maior'])})</span></span><button class="shop-buy-btn" onclick="buyItem('Poção Maior', ${BUY_PRICES['Poção Maior']})">Comprar R$ ${formatCoins(BUY_PRICES['Poção Maior'])}</button></div>
-            <div class="shop-item"><span>✨ Elixir <span style="font-size:11px; color:#ffaa66;">(venda: R$ ${formatCoins(SELL_PRICES['Elixir'])})</span></span><button class="shop-buy-btn" onclick="buyItem('Elixir', ${BUY_PRICES['Elixir']})">Comprar R$ ${formatCoins(BUY_PRICES['Elixir'])}</button></div>
-            <div class="shop-item"><span>💎 Gema Rara <span style="font-size:11px; color:#ffaa66;">(venda: R$ ${formatCoins(SELL_PRICES['Gema Rara'])})</span></span><button class="shop-buy-btn" onclick="buyItem('Gema Rara', ${BUY_PRICES['Gema Rara']})">Comprar R$ ${formatCoins(BUY_PRICES['Gema Rara'])}</button></div>
+            <div class="shop-item"><span>💊 Poção <span style="font-size:11px; color:#ffaa66;">(venda: S$ ${formatCoins(SELL_PRICES['Poção'])})</span></span><button class="shop-buy-btn" onclick="buyItem('Poção', ${BUY_PRICES['Poção']})">Comprar S$ ${formatCoins(BUY_PRICES['Poção'])}</button></div>
+            <div class="shop-item"><span>💪 Poção Maior <span style="font-size:11px; color:#ffaa66;">(venda: S$ ${formatCoins(SELL_PRICES['Poção Maior'])})</span></span><button class="shop-buy-btn" onclick="buyItem('Poção Maior', ${BUY_PRICES['Poção Maior']})">Comprar S$ ${formatCoins(BUY_PRICES['Poção Maior'])}</button></div>
+            <div class="shop-item"><span>✨ Elixir <span style="font-size:11px; color:#ffaa66;">(venda: S$ ${formatCoins(SELL_PRICES['Elixir'])})</span></span><button class="shop-buy-btn" onclick="buyItem('Elixir', ${BUY_PRICES['Elixir']})">Comprar S$ ${formatCoins(BUY_PRICES['Elixir'])}</button></div>
+            <div class="shop-item"><span>💎 Gema Rara <span style="font-size:11px; color:#ffaa66;">(venda: S$ ${formatCoins(SELL_PRICES['Gema Rara'])})</span></span><button class="shop-buy-btn" onclick="buyItem('Gema Rara', ${BUY_PRICES['Gema Rara']})">Comprar S$ ${formatCoins(BUY_PRICES['Gema Rara'])}</button></div>
         `;
     }
     updateShop();

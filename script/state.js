@@ -242,7 +242,7 @@ class StateManager {
         if (sucesso) {
             await this.recarregar();
             if (motivo) {
-                await supabase.adicionarHistorico(this.login, `💰 ${motivo}: R$ ${valor.toFixed(2)}`, 'financeiro');
+                await supabase.adicionarHistorico(this.login, `💰 ${motivo}: S$ ${valor.toFixed(2)}`, 'financeiro');
             }
         }
         return sucesso;

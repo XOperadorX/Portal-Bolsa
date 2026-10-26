@@ -131,7 +131,7 @@ button:disabled { opacity: 0.5; cursor: not-allowed; transform: none; }
         <h2>⚔️ SHANGRI-LA FRONTIER - LOJA COM VENDA ⚔️</h2>
         <div>
             <span id="playerNameDisplay" style="margin-right: 15px;">👤 ...</span>
-            <span id="playerCoinsDisplay">🪙 R$ 0,00</span>
+            <span id="playerCoinsDisplay">🪙 S$ 0,00</span>
             <span id="playerSmDisplay" style="margin-left: 10px;">⚡ 0/0</span>
             <span id="syncBadge" class="sync-badge off" style="margin-left:10px;">⏳ conectando</span>
             <a href="../../dashboard.html" class="btn-voltar" style="margin-left: 15px;">🏠 Voltar</a>
@@ -179,7 +179,7 @@ button:disabled { opacity: 0.5; cursor: not-allowed; transform: none; }
             <div id="cluesList"></div>
             <button id="searchClueBtn" class="action-btn" style="background:#6c3483;">
                 📜 Procurar Pistas
-                <span class="cost-tag">💰 -R$ 100,00 | ⚡ -10 SM</span>
+                <span class="cost-tag">💰 -S$ 100,00 | ⚡ -10 SM</span>
             </button>
         </div>
 
@@ -190,7 +190,7 @@ button:disabled { opacity: 0.5; cursor: not-allowed; transform: none; }
             <div style="margin-top: 10px; padding: 8px; background: #252530; border-radius: 8px;">
                 <span style="color:#ffaa66;">💰 Venda no inventário por METADE do preço da loja!</span>
             </div>
-            <button id="workBtn" class="action-btn" style="background: #6c757d; margin-top: 10px;">💼 Trabalhar (+R$ 100,00)</button>
+            <button id="workBtn" class="action-btn" style="background: #6c757d; margin-top: 10px;">💼 Trabalhar (+S$ 100,00)</button>
             <div id="workTimerContainer" style="display: none;">
                 <div class="work-timer">
                     ⏳ TRABALHANDO...<br>
@@ -229,15 +229,15 @@ button:disabled { opacity: 0.5; cursor: not-allowed; transform: none; }
             <div class="action-buttons">
                 <button id="exploreBtn" class="action-btn">
                     🗺️ Explorar
-                    <span class="cost-tag">💰 -R$ 100,00 | ⚡ -10 SM</span>
+                    <span class="cost-tag">💰 -S$ 100,00 | ⚡ -10 SM</span>
                 </button>
                 <button id="searchRareBtn" class="action-btn">
                     🔮 Item Raro
-                    <span class="cost-tag">💰 -R$ 500,00 | ⚡ -10 SM</span>
+                    <span class="cost-tag">💰 -S$ 500,00 | ⚡ -10 SM</span>
                 </button>
                 <button id="healBtn" class="action-btn">
                     🏥 Descansar
-                    <span class="cost-tag">💰 -R$ 50,00 | ⚡ -10 SM</span>
+                    <span class="cost-tag">💰 -S$ 50,00 | ⚡ -10 SM</span>
                 </button>
                 <button id="summonLegendaryBtn" class="action-btn" style="background:#8b0000;">
                     👑 INVOCAR (1%)
@@ -303,27 +303,27 @@ const commonEnemies = [
 // ==================== PREÇOS EM REAIS (iguais ao dashboard) ====================
 // 💡 Agora tudo é em REAIS diretos, sem conversão de centavos.
 const BUY_PRICES = {
-    "Poção": 10,        // R$ 10,00
-    "Poção Maior": 20,  // R$ 20,00
-    "Elixir": 40,       // R$ 40,00
-    "Gema Rara": 60     // R$ 60,00
+    "Poção": 10,        // S$ 10,00
+    "Poção Maior": 20,  // S$ 20,00
+    "Elixir": 40,       // S$ 40,00
+    "Gema Rara": 60     // S$ 60,00
 };
 
 const SELL_PRICES = {
-    "Poção": 5,         // R$ 5,00
-    "Poção Maior": 10,  // R$ 10,00
-    "Elixir": 20,       // R$ 20,00
-    "Gema Rara": 30     // R$ 30,00
+    "Poção": 5,         // S$ 5,00
+    "Poção Maior": 10,  // S$ 10,00
+    "Elixir": 20,       // S$ 20,00
+    "Gema Rara": 30     // S$ 30,00
 };
 
 const LEGENDARY_SELL_PRICES = {
-    "Máscara de Lycagon": 80,          // R$ 80,00
-    "Coração da Tempestade": 90,       // R$ 90,00
-    "Olho de Ctarnidd": 100,           // R$ 100,00
-    "Escama de Bahamut": 100,          // R$ 100,00
-    "Fruto de Yggdrasil": 100,         // R$ 100,00
-    "Máscara do Coelho Vorpal": 100,   // R$ 100,00
-    "Espada Divina Ashura": 100        // R$ 100,00
+    "Máscara de Lycagon": 80,          // S$ 80,00
+    "Coração da Tempestade": 90,       // S$ 90,00
+    "Olho de Ctarnidd": 100,           // S$ 100,00
+    "Escama de Bahamut": 100,          // S$ 100,00
+    "Fruto de Yggdrasil": 100,         // S$ 100,00
+    "Máscara do Coelho Vorpal": 100,   // S$ 100,00
+    "Espada Divina Ashura": 100        // S$ 100,00
 };
 for (let [item, price] of Object.entries(LEGENDARY_SELL_PRICES)) SELL_PRICES[item] = price;
 
@@ -338,7 +338,7 @@ const SM_COST_PER_ACTION = 10;
 const SM_MIN_TO_PLAY = 10;
 
 // ==================== FORMATAÇÃO DE MOEDAS (IGUAL AO DASHBOARD) ====================
-// Recebe valor EM REAIS e formata como "R$ 1.234,56"
+// Recebe valor EM REAIS e formata como "S$ 1.234,56"
 function formatCoins(reais) {
     const v = Number(reais) || 0;
     return v.toLocaleString('pt-BR', {
@@ -347,10 +347,10 @@ function formatCoins(reais) {
     });
 }
 
-// Versão com prefixo R$ (para exibição em loja / preços)
+// Versão com prefixo S$ (para exibição em loja / preços)
 function formatBRL(reais) {
     const v = Number(reais) || 0;
-    return 'R$ ' + v.toLocaleString('pt-BR', {
+    return 'S$ ' + v.toLocaleString('pt-BR', {
         minimumFractionDigits: 2,
         maximumFractionDigits: 2
     });
@@ -565,7 +565,7 @@ function startWork() {
     document.getElementById('workBtn').disabled = true;
     document.getElementById('workBtn').textContent = '⏳ Trabalhando...';
     document.getElementById('workTimerContainer').style.display = 'block';
-    addLog('💼 Começou a trabalhar! Volte em 1 hora para receber R$ 100,00.');
+    addLog('💼 Começou a trabalhar! Volte em 1 hora para receber S$ 100,00.');
     updateWorkTimer();
     workTimerInterval = setInterval(updateWorkTimer, 1000);
 }
@@ -586,10 +586,10 @@ function completeWork() {
     workTimerInterval = null;
     localStorage.removeItem('slf_work_' + currentPlayer.nome);
     currentPlayer.coins += 100;
-    addLog('💰🎉 Trabalho concluído! Recebeu R$ 100,00!');
+    addLog('💰🎉 Trabalho concluído! Recebeu S$ 100,00!');
     workEndTime = null;
     document.getElementById('workBtn').disabled = false;
-    document.getElementById('workBtn').textContent = '💼 Trabalhar (+R$ 100,00)';
+    document.getElementById('workBtn').textContent = '💼 Trabalhar (+S$ 100,00)';
     document.getElementById('workTimerContainer').style.display = 'none';
     updateUI();
     saveDB();
@@ -640,7 +640,7 @@ function sellItem(itemName, currentQty) {
     currentPlayer.inventory[itemName]--;
     if (currentPlayer.inventory[itemName] === 0) delete currentPlayer.inventory[itemName];
     currentPlayer.coins += sellPrice;
-    addLog(`💰 Vendeu ${itemName} por R$ ${formatCoins(sellPrice)}!`);
+    addLog(`💰 Vendeu ${itemName} por S$ ${formatCoins(sellPrice)}!`);
     updateUI(); saveDB();
 }
 
@@ -714,8 +714,8 @@ function updateUI() {
     if (!currentPlayer) return;
     const p = currentPlayer;
     document.getElementById('playerNameDisplay').innerHTML = `👤 ${p.nome}`;
-    // ✅ Saldo em REAIS, formatado como "R$ 1.234,56"
-    document.getElementById('playerCoinsDisplay').innerHTML = `🪙 R$ ${formatCoins(p.coins)}`;
+    // ✅ Saldo em REAIS, formatado como "S$ 1.234,56"
+    document.getElementById('playerCoinsDisplay').innerHTML = `🪙 S$ ${formatCoins(p.coins)}`;
     document.getElementById('playerSmDisplay').innerHTML = `⚡ ${p.sm}/${p.maxSm}`;
     document.getElementById('statHp').innerHTML = `${p.hp}/${p.maxHp}`;
     document.getElementById('statMp').innerHTML = `${p.mp}/${p.maxMp}`;
@@ -761,9 +761,9 @@ function updateUI() {
             let buttonsHtml = '';
             if (isUsable) buttonsHtml += `<button class="use-btn" onclick="window.useItemHandler('${item}')">💊 Usar</button>`;
             if (sellPrice > 0) {
-                // ✅ R$ em reais diretos
-                let priceDisplay = `💰 R$ ${formatCoins(sellPrice)}`;
-                if (buyPrice > 0) priceDisplay += ` [↗ R$ ${formatCoins(buyPrice)}]`;
+                // ✅ S$ em reais diretos
+                let priceDisplay = `💰 S$ ${formatCoins(sellPrice)}`;
+                if (buyPrice > 0) priceDisplay += ` [↗ S$ ${formatCoins(buyPrice)}]`;
                 buttonsHtml += `<button class="sell-btn" onclick="window.sellItemHandler('${item}', ${qty})">${priceDisplay}</button>`;
             } else {
                 buttonsHtml += `<span style="color:#888; font-size:11px;">🚫 não vende</span>`;
@@ -846,7 +846,7 @@ function addItem(itemName, qty = 1) {
 function hasEnoughCoins(cost) {
     if (!currentPlayer) return false;
     if (currentPlayer.coins < cost) {
-        addLog(`❌ Moedas insuficientes! Precisa de R$ ${formatCoins(cost)} (tem R$ ${formatCoins(currentPlayer.coins)})`);
+        addLog(`❌ Moedas insuficientes! Precisa de S$ ${formatCoins(cost)} (tem S$ ${formatCoins(currentPlayer.coins)})`);
         return false;
     }
     return true;
@@ -863,7 +863,7 @@ window.buyItem = function (item, price) {
     if (currentPlayer.coins >= price) {
         currentPlayer.coins -= price;
         addItem(item, 1);
-        addLog(`🛒 Comprou ${item} por R$ ${formatCoins(price)}.`);
+        addLog(`🛒 Comprou ${item} por S$ ${formatCoins(price)}.`);
     } else addLog(`💰 Moedas insuficientes!`);
 };
 
@@ -900,7 +900,7 @@ function setupEventListeners() {
         if (currentEnemy.hp <= 0) {
             let gainedExp = currentEnemy.exp;
             let gainedCoins = currentEnemy.coins;
-            addLog(`🏆 DERROTOU ${currentEnemy.name}! +${gainedExp.toLocaleString('pt-BR')} EXP, +R$ ${formatCoins(gainedCoins)}!`);
+            addLog(`🏆 DERROTOU ${currentEnemy.name}! +${gainedExp.toLocaleString('pt-BR')} EXP, +S$ ${formatCoins(gainedCoins)}!`);
             gainExp(gainedExp); addCoin(gainedCoins);
             if (currentEnemy.isLegendary || currentEnemy.isMythic) {
                 currentPlayer.bossKills = (currentPlayer.bossKills || 0) + 1;
@@ -923,7 +923,7 @@ function setupEventListeners() {
             if (p.hp <= 0) {
                 p.hp = p.maxHp;
                 p.coins = Math.max(0, p.coins - 500);
-                addLog(`💀 DERROTA! Perdeu R$ ${formatCoins(500)}.`);
+                addLog(`💀 DERROTA! Perdeu S$ ${formatCoins(500)}.`);
                 currentEnemy = null;
             }
         }
@@ -965,7 +965,7 @@ function setupEventListeners() {
         if (!consumeSm()) return;
 
         let rand = Math.random();
-        if (rand < 0.4) { let a = Math.floor(Math.random() * 80) + 30; addCoin(a); addLog(`🗺️ Encontrou R$ ${formatCoins(a)}!`); }
+        if (rand < 0.4) { let a = Math.floor(Math.random() * 80) + 30; addCoin(a); addLog(`🗺️ Encontrou S$ ${formatCoins(a)}!`); }
         else if (rand < 0.7) { addItem("Poção", 1); addLog(`🗺️ Encontrou uma Poção!`); }
         else addLog(`🗺️ Não encontrou nada...`);
     };
@@ -995,7 +995,7 @@ function setupEventListeners() {
         let curaReal = Math.min(cura, currentPlayer.maxHp - currentPlayer.hp);
         currentPlayer.hp = Math.min(currentPlayer.maxHp, currentPlayer.hp + curaReal);
         updateUI(); saveDB();
-        addLog(`🏥 Descansou e recuperou ${curaReal} HP. (R$ ${formatCoins(50)} gastos)`);
+        addLog(`🏥 Descansou e recuperou ${curaReal} HP. (S$ ${formatCoins(50)} gastos)`);
     };
 
     document.getElementById('summonLegendaryBtn').onclick = () => {
@@ -1018,10 +1018,10 @@ function setupEventListeners() {
     function updateShop() {
         const shopDiv = document.getElementById('shopList');
         if (shopDiv) shopDiv.innerHTML = `
-            <div class="shop-item"><span>💊 Poção <span style="font-size:11px; color:#ffaa66;">(venda: R$ ${formatCoins(SELL_PRICES['Poção'])})</span></span><button class="shop-buy-btn" onclick="buyItem('Poção', ${BUY_PRICES['Poção']})">Comprar R$ ${formatCoins(BUY_PRICES['Poção'])}</button></div>
-            <div class="shop-item"><span>💪 Poção Maior <span style="font-size:11px; color:#ffaa66;">(venda: R$ ${formatCoins(SELL_PRICES['Poção Maior'])})</span></span><button class="shop-buy-btn" onclick="buyItem('Poção Maior', ${BUY_PRICES['Poção Maior']})">Comprar R$ ${formatCoins(BUY_PRICES['Poção Maior'])}</button></div>
-            <div class="shop-item"><span>✨ Elixir <span style="font-size:11px; color:#ffaa66;">(venda: R$ ${formatCoins(SELL_PRICES['Elixir'])})</span></span><button class="shop-buy-btn" onclick="buyItem('Elixir', ${BUY_PRICES['Elixir']})">Comprar R$ ${formatCoins(BUY_PRICES['Elixir'])}</button></div>
-            <div class="shop-item"><span>💎 Gema Rara <span style="font-size:11px; color:#ffaa66;">(venda: R$ ${formatCoins(SELL_PRICES['Gema Rara'])})</span></span><button class="shop-buy-btn" onclick="buyItem('Gema Rara', ${BUY_PRICES['Gema Rara']})">Comprar R$ ${formatCoins(BUY_PRICES['Gema Rara'])}</button></div>
+            <div class="shop-item"><span>💊 Poção <span style="font-size:11px; color:#ffaa66;">(venda: S$ ${formatCoins(SELL_PRICES['Poção'])})</span></span><button class="shop-buy-btn" onclick="buyItem('Poção', ${BUY_PRICES['Poção']})">Comprar S$ ${formatCoins(BUY_PRICES['Poção'])}</button></div>
+            <div class="shop-item"><span>💪 Poção Maior <span style="font-size:11px; color:#ffaa66;">(venda: S$ ${formatCoins(SELL_PRICES['Poção Maior'])})</span></span><button class="shop-buy-btn" onclick="buyItem('Poção Maior', ${BUY_PRICES['Poção Maior']})">Comprar S$ ${formatCoins(BUY_PRICES['Poção Maior'])}</button></div>
+            <div class="shop-item"><span>✨ Elixir <span style="font-size:11px; color:#ffaa66;">(venda: S$ ${formatCoins(SELL_PRICES['Elixir'])})</span></span><button class="shop-buy-btn" onclick="buyItem('Elixir', ${BUY_PRICES['Elixir']})">Comprar S$ ${formatCoins(BUY_PRICES['Elixir'])}</button></div>
+            <div class="shop-item"><span>💎 Gema Rara <span style="font-size:11px; color:#ffaa66;">(venda: S$ ${formatCoins(SELL_PRICES['Gema Rara'])})</span></span><button class="shop-buy-btn" onclick="buyItem('Gema Rara', ${BUY_PRICES['Gema Rara']})">Comprar S$ ${formatCoins(BUY_PRICES['Gema Rara'])}</button></div>
         `;
     }
     updateShop();

@@ -787,6 +787,8 @@
 
         <div class="section-title">🧭 Painéis Administrativos</div>
         <div class="admin-menu-grid">
+            <a href="./chat.html" class="admin-menu-btn" data-cor="azul"><div class="menu-icon"><i class="fas fa-comments"></i></div><div class="menu-label"><span class="titulo">Conversas das trocas</span><span class="subtitulo">Histórico de vendedor e comprador</span></div></a>
+            <a href="./taxa.html" class="admin-menu-btn" data-cor="verde"><div class="menu-icon"><i class="fas fa-percent"></i></div><div class="menu-label"><span class="titulo">Taxas do projeto</span><span class="subtitulo">Valores globais & procedimentos</span></div></a>
             <a href="./001admin.html" class="admin-menu-btn" data-cor="ciano">
                 <div class="menu-icon"><i class="fas fa-database"></i></div>
                 <div class="menu-label">
@@ -898,7 +900,7 @@
             <p style="color: #8a99ad; margin-bottom: 16px; font-size: 0.9rem;">
                 Crie códigos que os usuários podem resgatar na página de saldo.
                 Você pode dar <strong style="color:var(--neon-green);">Mumu</strong> e/ou
-                <strong style="color:var(--neon-blue);">Saldo R$</strong>.
+                <strong style="color:var(--neon-blue);">Saldo S$</strong>.
                 <br><small style="color:#f59e0b;">💡 Valores negativos são aceitos (ex: -0.01) para penalidades.</small>
             </p>
 
@@ -915,7 +917,7 @@
 
             <div class="form-row">
                 <div class="form-group">
-                    <label for="codigoSaldo">Recompensa Saldo R$ (pode ser negativo)</label>
+                    <label for="codigoSaldo">Recompensa Saldo S$ (pode ser negativo)</label>
                     <input type="number" id="codigoSaldo" placeholder="0.00" step="0.01" value="0">
                 </div>
                 <div class="form-group">
@@ -937,7 +939,7 @@
                         <tr>
                             <th>Código</th>
                             <th>Mumu</th>
-                            <th>Saldo R$</th>
+                            <th>Saldo S$</th>
                             <th>Usos</th>
                             <th>Limite</th>
                             <th>Status</th>
@@ -1040,7 +1042,7 @@
                 </div>
                 <div class="stat-box">
                     <h3>Total Saldo</h3>
-                    <p class="stat-cyan" id="totalSaldo">0,00 <span class="moeda-simbolo">R$</span></p>
+                    <p class="stat-cyan" id="totalSaldo">0,00 <span class="moeda-simbolo">S$</span></p>
                 </div>
                 <div class="stat-box">
                     <h3>Total Poupança</h3>
@@ -1048,7 +1050,7 @@
                 </div>
                 <div class="stat-box">
                     <h3>Proventos Pendentes</h3>
-                    <p class="stat-gold" id="totalProventos">0,00 <span class="moeda-simbolo">R$</span></p>
+                    <p class="stat-gold" id="totalProventos">0,00 <span class="moeda-simbolo">S$</span></p>
                 </div>
                 <div class="stat-box">
                     <h3>Total BTC</h3>
@@ -1056,7 +1058,7 @@
                 </div>
                 <div class="stat-box">
                     <h3>Poder de Mercado</h3>
-                    <p class="stat-purple" id="totalPoderMercado">0,00 <span class="moeda-simbolo">R$</span></p>
+                    <p class="stat-purple" id="totalPoderMercado">0,00 <span class="moeda-simbolo">S$</span></p>
                 </div>
                 <div class="stat-box">
                     <h3>Usuários Bloqueados</h3>
@@ -1520,11 +1522,11 @@
 
             document.getElementById('totalUsuarios').textContent = total;
             document.getElementById('totalMumu').innerHTML = `${totalMumu.toFixed(2)} <span class="moeda-simbolo">${MOEDA}</span>`;
-            document.getElementById('totalSaldo').innerHTML = `${totalSaldo.toFixed(2)} <span class="moeda-simbolo">R$</span>`;
+            document.getElementById('totalSaldo').innerHTML = `${totalSaldo.toFixed(2)} <span class="moeda-simbolo">S$</span>`;
             document.getElementById('totalPoupanca').innerHTML = `${totalPoupanca.toFixed(2)} <span class="moeda-simbolo">${MOEDA}</span>`;
-            document.getElementById('totalProventos').innerHTML = `${totalProventos.toFixed(2)} <span class="moeda-simbolo">R$</span>`;
+            document.getElementById('totalProventos').innerHTML = `${totalProventos.toFixed(2)} <span class="moeda-simbolo">S$</span>`;
             document.getElementById('totalBtc').innerHTML = `${totalBtc.toFixed(8)} <span class="moeda-simbolo">BTC</span>`;
-            document.getElementById('totalPoderMercado').innerHTML = `${totalPoderMercado.toFixed(2)} <span class="moeda-simbolo">R$</span>`;
+            document.getElementById('totalPoderMercado').innerHTML = `${totalPoderMercado.toFixed(2)} <span class="moeda-simbolo">S$</span>`;
 
             const elBloq = document.getElementById('totalBloqueados');
             if (elBloq) elBloq.textContent = totalBloqueados;
@@ -1853,7 +1855,7 @@
                     <tr style="${emEdicao ? 'background: rgba(245,158,11,0.1);' : ''}">
                         <td><span class="codigo-badge">${c.codigo}</span></td>
                         <td style="color: ${mumuColor}; font-weight: 600;">${mumuVal.toFixed(2)}</td>
-                        <td style="color: ${saldoColor}; font-weight: 600;">R$ ${saldoVal.toFixed(2)}</td>
+                        <td style="color: ${saldoColor}; font-weight: 600;">S$ ${saldoVal.toFixed(2)}</td>
                         <td>${usos}</td>
                         <td>${limite === 0 ? '∞' : limite}</td>
                         <td><span class="codigo-status ${statusClasse}">${statusTexto}</span></td>
@@ -1894,7 +1896,7 @@
 
             if (!codigo || codigo.length < 3) { mostrarMensagem('⚠️ O código deve ter pelo menos 3 caracteres.', 'erro'); return; }
             if (!/^[A-Z0-9_-]+$/.test(codigo)) { mostrarMensagem('⚠️ Use apenas letras, números, _ ou -.', 'erro'); return; }
-            if (mumu === 0 && saldo === 0) { mostrarMensagem('⚠️ Defina pelo menos uma recompensa (Mumu ou Saldo R$) diferente de zero.', 'erro'); return; }
+            if (mumu === 0 && saldo === 0) { mostrarMensagem('⚠️ Defina pelo menos uma recompensa (Mumu ou Saldo S$) diferente de zero.', 'erro'); return; }
 
             if (codigoEditando) {
                 const idx = codigosCache.findIndex(c => c.codigo === codigoEditando);

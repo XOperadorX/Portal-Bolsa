@@ -435,7 +435,10 @@ html, body {
   <a href="../../dashboard.html" class="btn-voltar-go">🏠 Voltar ao Dashboard</a>
 </div>
 
-<script>
+<script type="module">
+import { aplicarCombate, executarAtaque, atributosPersonagem, tempoAtaque, velocidadeMovimento, normalizarAtributos } from '../../shared/combate.js';
+import { anexarFichaCombate } from '../../shared/ficha-combate.js';
+
 // ================= SUPABASE =================
 const SUPABASE_URL = "https://xrcxvizzdumcxbylmkvn.supabase.co";
 const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InhyY3h2aXp6ZHVtY3hieWxta3ZuIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODY2NjA0NzIsImV4cCI6MjEwMjIzNjQ3Mn0.ohB4tW0UQ-k1PcwoZxm4u9XSGNLsFphv1_UwTWoklOM";
@@ -1111,7 +1114,7 @@ function updateGame() {
   cameraX = player.x - canvas.width/2 + player.w/2;
   if(cameraX < 0) cameraX = 0;
 
-  let speed = 5;
+  let speed = velocidadeMovimento(5,atributosPersonagem(jogador||{}).movimento);
   isMoving = false;
   
   if(touchRight) { player.x += speed; isMoving = true; lookingRight = true; }
@@ -1172,17 +1175,18 @@ function updateEnemies() {
       continue;
     }
 
+    if(enemy.hp!=null&&enemy.hp<=0){enemyList.splice(i,1);continue;}
     const colidiu = colide(player, enemy);
     const podeTomarDano = player.invincible <= 0 && enemy.invincible <= 0;
 
     if(colidiu && podeTomarDano) {
-      const dano = 10;
-      playerHp = Math.max(0, playerHp - dano);
+      const resultado=executarAtaque({tipo:'monstro',hp:enemy.hp??20,maxHp:20,dano:10},{...atributosPersonagem(jogador||{}),hp:playerHp,maxHp:playerHpMax,tipo:'jogador'});
+      const dano=resultado.danoTotal;playerHp=resultado.vidaDefensor;enemy.hp=resultado.vidaAtacante;
 
       // ⚠️ Trava o HP: a partir de agora ele NÃO regenera mais
       hpTravado = true;
 
-      perderExpEBtcPorDano(10, 10);
+      if(dano>0)perderExpEBtcPorDano(10, 10);
 
       player.invincible = 60;
       enemy.invincible = 60;
@@ -1599,6 +1603,9 @@ window.addEventListener("load", () => {
   }
   initLoading();
 });
+
+anexarFichaCombate(()=>({...jogador,hp:playerHp,maxHp:playerHpMax}),{flutuante:true,onAlterar:p=>{playerHp=p.hp;atualizarLevelWidget();}});
+
 </script>
 
 </body>

@@ -495,7 +495,7 @@
                 <div class="user-avatar" id="userAvatar">👤</div>
                 <div class="user-info">
                     <span class="user-nick" id="nomeJogador">Desconectado</span>
-                    <span class="user-balance" id="saldosaldo">R$ 0,00</span>
+                    <span class="user-balance" id="saldosaldo">S$ 0,00</span>
                 </div>
             </div>
 
@@ -543,7 +543,9 @@
 
     <div id="toast" class="toast"></div>
 
-    <script>
+    <script type="module">
+import { obterTaxa } from "../../shared/taxas-globais.js";
+
         // ============================================================
         // CONFIGURAÇÕES SUPABASE
         // ============================================================
@@ -553,10 +555,10 @@
 
         const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
-        const PRECO_COMPRA_BTC = 10000;
-        const PRECO_VENDA_BTC = 999;
-        const PRECO_COMPRA_SM = 12;
-        const PRECO_VENDA_SM = 8;
+        const PRECO_COMPRA_BTC = obterTaxa('btc_compra');
+        const PRECO_VENDA_BTC = obterTaxa('btc_venda');
+        const PRECO_COMPRA_SM = obterTaxa('sm_compra');
+        const PRECO_VENDA_SM = obterTaxa('sm_venda');
 
         let usuarioAtual = null;
         let estado = {
@@ -692,9 +694,9 @@
 
             nick.textContent = estado.login || 'Desconectado';
             avatar.textContent = estado.login ? estado.login.charAt(0).toUpperCase() : '👤';
-            saldo.textContent = new Intl.NumberFormat('pt-BR', {
-                style: 'currency',
-                currency: 'BRL'
+            saldo.textContent = 'S$ ' + new Intl.NumberFormat('pt-BR', {
+                style: 'decimal',
+                minimumFractionDigits: 2, maximumFractionDigits: 2
             }).format(estado.saldo);
 
             document.getElementById('btcCompra').textContent = PRECO_COMPRA_BTC.toFixed(0);
@@ -901,10 +903,10 @@
             showToast(`✅ Bem-vindo, ${estado.login}!`);
         }
 
-        document.addEventListener('DOMContentLoaded', init);
+        if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', init); else init();
 
         // Substitua a função redirecionarLogin() por:
-        function redirecionarLogin() {
+        function redirecionarLoginLegado() {
             window.location.href = 'login.html';
         }
 
@@ -916,6 +918,8 @@
         };
 
         
-    </script>
+    
+Object.assign(window,{redirecionarLogin,comprarBTC,venderBTC,comprarStamina,venderStamina,adicionarMoeda,comprarItem,venderItem});
+</script>
 </body>
 </html>

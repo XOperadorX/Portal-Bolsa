@@ -649,7 +649,7 @@
             <div class="item-estatistica">
                 <span class="icone">💰</span>
                 <span>Dinheiro:</span>
-                <span class="valor dinheiro" id="exibirDinheiro">R$ 0,00</span>
+                <span class="valor dinheiro" id="exibirDinheiro">S$ 0,00</span>
             </div>
             <div class="item-estatistica">
                 <span class="icone">📦</span>
@@ -659,7 +659,7 @@
             <div class="item-estatistica">
                 <span class="icone">💲</span>
                 <span>Preço:</span>
-                <span class="valor preco" id="exibirPreco">R$ 0,01</span>
+                <span class="valor preco" id="exibirPreco">S$ 0,01</span>
             </div>
             <div class="item-estatistica">
                 <span class="icone">🎯</span>
@@ -677,7 +677,7 @@
         <!-- ===== INDICADOR DE PREÇO FIXO ===== -->
         <div class="indicador-preco">
             <span>📊 Preço fixo:</span>
-            <span class="preco-fixo">R$ 0,01</span>
+            <span class="preco-fixo">S$ 0,01</span>
             <span style="opacity:0.5;margin-left:4px;">por papelão</span>
         </div>
 
@@ -694,7 +694,7 @@
             </button>
             <button class="botao botao-comprar" id="botaoComprar" disabled>
                 🍹 Comprar Líquido
-                <small style="font-weight:400;opacity:0.8;">R$ 8,00</small>
+                <small style="font-weight:400;opacity:0.8;">S$ 8,00</small>
             </button>
         </div>
 
@@ -722,7 +722,7 @@
             dinheiro: 0, // dinheiro em reais
             papelao: 0, // quantidade de papelão
             preco: 0.01, // preço fixo por unidade
-            meta: 8.00, // meta em reais (R$ 8,00)
+            meta: 8.00, // meta em reais (S$ 8,00)
             vitoria: false,
             estaJogando: true,
             temporizadorSpawn: 0,
@@ -757,7 +757,7 @@
             texto: '👦 <span class="destaque">Carlinhos</span> viu outra criança tomando um líquido doce. Sua mãe não tinha dinheiro. Ele decidiu <span class="destaque">pegar papelão</span> no lixo para vender e comprar seu próprio líquido!',
             dinheiroMinimo: 0,
         }, {
-            texto: '📦 Carlinhos começou a juntar papelão. Cada peça vale <span class="destaque">R$ 0,01</span>. Ele precisa de <span class="destaque">muitas</span> para comprar o líquido. Ele não desiste!',
+            texto: '📦 Carlinhos começou a juntar papelão. Cada peça vale <span class="destaque">S$ 0,01</span>. Ele precisa de <span class="destaque">muitas</span> para comprar o líquido. Ele não desiste!',
             dinheiroMinimo: 0.50,
         }, {
             texto: '💪 "Vou continuar!", pensou Carlinhos. Ele já juntou alguns papelões. Cada um ajuda a chegar mais perto do <span class="destaque">líquido doce</span>!',
@@ -777,7 +777,7 @@
         //  FUNÇÕES AUXILIARES
         // ================================================================
         function formatarDinheiro(v) {
-            return 'R$ ' + v.toFixed(2).replace('.', ',');
+            return 'S$ ' + v.toFixed(2).replace('.', ',');
         }
 
         function limitar(v, min, max) { return Math.max(min, Math.min(max, v)); }
@@ -808,7 +808,7 @@
             } else {
                 botaoComprar.classList.remove('pronto');
                 botaoComprar.innerHTML =
-                    `🍹 Comprar Líquido <small style="font-weight:400;opacity:0.8;">R$ ${ESTADO.meta.toFixed(2)}</small>`;
+                    `🍹 Comprar Líquido <small style="font-weight:400;opacity:0.8;">S$ ${ESTADO.meta.toFixed(2)}</small>`;
             }
 
             // Botão vender
@@ -1109,8 +1109,8 @@
         }, 2500);
 
         console.log('🍹 Jornada do Líquido Doce - carregado!');
-        console.log('📦 Preço fixo: R$ 0,01 por papelão');
-        console.log('🎯 Meta: R$ 8,00 (800 papelões)');
+        console.log('📦 Preço fixo: S$ 0,01 por papelão');
+        console.log('🎯 Meta: S$ 8,00 (800 papelões)');
         console.log('👆 Clique nos papelões para coletar, venda e compre o líquido!');
     </script>
 

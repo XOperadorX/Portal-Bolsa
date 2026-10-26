@@ -1,11 +1,11 @@
 # Portal_Bolsa
 
-![Versão](https://img.shields.io/badge/versão-1.2.0-blue?style=for-the-badge)
+![Versão](https://img.shields.io/badge/versão-1.3.0-blue?style=for-the-badge)
 ![Status](https://img.shields.io/badge/status-ativo-success?style=for-the-badge)
 ![Plataforma](https://img.shields.io/badge/plataforma-Web%20%7C%20Android%20%7C%20iOS-orange?style=for-the-badge)
 ![Supabase](https://img.shields.io/badge/backend-Supabase-3ECF8E?style=for-the-badge&logo=supabase&logoColor=white)
 
-**Versão Atual:** `1.2.0` · **Temporada:** 2026 · **Última atualização:** 12/10/2026
+**Versão Atual:** `1.3.0` · **Temporada:** 2026 · **Última atualização:** 26/10/2026
 
 Plataforma **MM Quase Tudo** — Central de jogos, economia virtual e negociações entre jogadores, construída com **HTML/CSS/JS puro** e **Supabase** como backend.
 
@@ -15,10 +15,10 @@ Plataforma **MM Quase Tudo** — Central de jogos, economia virtual e negociaç�
 
 | Item | Valor |
 |---|---|
-| **Versão** | `1.2.0` |
+| **Versão** | `1.3.0` |
 | **Codinome** | Temporada 2026 |
 | **Lançamento** | 30/09/2026 |
-| **Última atualização** | 12/10/2026 |
+| **Última atualização** | 26/10/2026 |
 | **Status** | 🟢 Ativo |
 | **Compatibilidade** | Web · Android 7.0+ · Windows 10+ |
 
@@ -30,7 +30,64 @@ O projeto é um portal web (também empacotável como app mobile via **Apache Co
 
 ---
 
-## ✨ Novidades da Versão 1.2.0
+## ✨ Novidades da Versão 1.3.0 (26/10/2026)
+
+### Combate compartilhado
+
+- Motor de dano e defesa integrado em Shagrila, RPG Geral, Lyra Azure, Sandbox, Ninos, Torre e Gax.
+- Cálculo de graus, esquiva, crítico, elementos, resistências, armadura, golpe duplo, espinhos, cura e regeneração com limites por atributo.
+- Ficha de combate nas telas dos personagens e guia com simulador em [combate.html](combate.html).
+- Padrões configuráveis em [shared/combate-config.js](shared/combate-config.js): fator 1 nos graus 1–2, aumentando a cada dois graus; ciclo fogo → ar → terra → água → fogo.
+- Consulte [docs/combate.md](docs/combate.md) para fórmulas, integração e limitações. As cópias históricas em `Todos/` e `GeralZip/` mantêm suas fórmulas anteriores.
+
+### Catálogo de Shangri-La Frontier em Shagrila
+
+- 90 itens, incluindo os textos enviados e peças para os novos espaços de equipamento, com categorias, procedência, atributos, elementos e preços em S$.
+- Equipar e retirar peças, oito receitas de forja, coleta com Piqueta e novos encontros com recompensas.
+- Integração com mochila, mercado e motor compartilhado de combate.
+- Consulte [o guia do catálogo](docs/shagrila-frontier.md) para efeitos adaptados, persistência e poderes mantidos como referência narrativa.
+
+### Mercado, mochila, Codex e Pix
+
+- Mercado com filtro por procedência, opção **Todos**, compra e venda em cartões compactos.
+- Compra com acréscimo padrão de 50% e venda com desconto padrão de 50% sobre a referência; itens sem referência recebem valores definidos pelo catálogo.
+- Mochila reúne inventário e equipamentos de Shagrila e identifica a procedência dos itens.
+- Compras do Codex cobram acréscimo padrão de 40% e entram na carteira da Bolsa. Registros antigos são incorporados uma vez, sem nova cobrança.
+- Pix: conversão padrão de **1.000 MUMU = R$ 0,01**, mínimo de 1.000 MUMU e taxa administrativa de 10%. Os parâmetros são configuráveis na central de taxas.
+- A economia usa `S$` e `M$`; a conversão para reais fica na página Pix.
+
+### Administração e conversas
+
+- [Central de taxas](dados/admin/taxa.html) com 39 parâmetros, validação, histórico e controle de versão para publicação global.
+- A central reaproveita a sessão existente. Publicar exige autorização administrativa no banco via Supabase Auth (`app_metadata.role = admin`); o perfil local não concede essa permissão.
+- TrocaSegura usa o `config.js` central e verifica conexão e sessão sem ficar presa em “Verificando”.
+- Chat iniciado ao informar o nick do comprador, com data/hora do servidor e consulta pelo [painel administrativo](dados/admin/chat.html).
+- Histórico do chat cifrado e espelhado em `Geral.meta.chat_trocas`, com cópia em esquema privado. A consulta usa atualização periódica a cada quatro segundos.
+
+### Dashboard e recuperação
+
+- Acompanha atualizações do jogador na tabela `Geral` via Realtime, com consulta de segurança a cada dez segundos e ao retornar à aba.
+- O painel observa os valores do banco; o contador não grava recuperação simulada.
+- A barra de recuperação fica oculta quando `sm_atual` ultrapassa 10% da stamina máxima.
+
+### Instalação dos recursos no banco
+
+As mudanças no repositório não executam SQL no Supabase. Para ativar os recursos, siga os procedimentos abaixo no projeto correspondente:
+
+| Recurso | Script e procedimento |
+|---|---|
+| Taxas globais | [instalar-taxas.sql](dados/admin/sql/instalar-taxas.sql) e [procedimentos](dados/admin/sql/README-taxas.md). Execute a versão atual para incluir os dois parâmetros novos sem substituir os valores já salvos. |
+| Chat das trocas | [instalar-chat-trocas.sql](dados/admin/sql/instalar-chat-trocas.sql) e [procedimentos](dados/admin/sql/README-chat-trocas.md). Após instalar, entre novamente pelo `login.html` para obter a sessão do chat. |
+| Realtime de `Geral` | [ativar-realtime-geral.sql](dados/admin/sql/ativar-realtime-geral.sql), somente se a tabela ainda não estiver na publicação. As políticas de acesso continuam necessárias. |
+
+Quatro parâmetros de taxas dependem de integração nas funções existentes do servidor: `trocas_taxa` em `criar_troca`, `mineracao_mercado` e `mineracao_base` em `vender_poder`, e `mineracao_passiva` em `coletar_passiva`/`minerar_offline`. Permanecem bloqueados até essa integração. Use a [consulta de exportação](dados/admin/sql/exportar-funcoes-taxas.sql) para obter as definições reais antes de alterá-las.
+
+A versão **1.3.0** identifica o código-fonte, o manifesto e a configuração Cordova. As versões dos arquivos disponíveis em `download.html` são independentes; atualizar estes metadados não recompila nem publica APKs.
+
+---
+
+## Histórico: novidades da Versão 1.2.0
+
 
 ### 🎮 Novo Sistema: Player Dashboard
 - **`player.html`** — página dedicada ao jogador, com **Level Widget em tempo real**.
@@ -133,7 +190,7 @@ O projeto é um portal web (também empacotável como app mobile via **Apache Co
 ### 🔐 Autenticação
 | Arquivo | Descrição |
 |---|---|
-| `login.html` | Login via RPC `login_usuario` + regen offline. |
+| `login.html` | Login via `login_chat`, com fallback para `login_usuario` quando o chat não está instalado. |
 | `cadastro.html` | Cadastro com fingerprint de dispositivo. |
 | `confirmar.html` | Confirmação de e-mail (Supabase Auth). |
 | `esqueci-login.html` | Recuperar login por nome. |
@@ -155,7 +212,7 @@ O projeto é um portal web (também empacotável como app mobile via **Apache Co
 | `player.html` | 🆕 **Dashboard do jogador** — level widget, conquistas, stats. |
 | `codex.html` | Códice de equipamentos (unificado com bolsa). |
 | `diario.html` | Login diário — 30 dias. |
-| `trocap.html` | TrocaSegura (com fallback NaN). |
+| `jogos/mochila/trocap.html` | TrocaSegura com chat entre vendedor e comprador. |
 | `saque.html` | 💎 **Carteira** — saque MUMU/USDT com realtime. |
 | `testetet.html` | Visualizador de tickets. |
 
@@ -182,10 +239,10 @@ O projeto é um portal web (também empacotável como app mobile via **Apache Co
 | `bolsa_admin.html` | Bolsa — painel detalhado. |
 | `delete.html` | Realtime + Delete de usuários. |
 | `sys.html` | Configurações do sistema. |
-| `cadeado.html` | Sistema de cadeado (conta). |
+| `dados/cadeado/cadeado.html` | Tela ADM (campo legado `cadeado`). |
 
 ### 📁 `jogos/`
-18 jogos/minigames: `planta`, `bolsa`, `torre`, `minerar`, `faz`, `ninos`, `shagrila`, `ponto`, `papelao`, `loja`, `mercado`, `mochila`, `mumu`, `troca`, `ranking`, `ranking002`, `perfil`.
+Entre os jogos e módulos disponíveis: `planta`, `bolsa`, `torre`, `minerar`, `faz`, `ninos`, `shagrila`, `ponto`, `papelao`, `loja`, `mercado`, `mochila`, `mumu`, `troca`, `ranking`, `ranking002`, `perfil`.
 
 ### 📁 `style/`
 | Arquivo | Descrição |
@@ -334,10 +391,31 @@ O projeto é um portal web (também empacotável como app mobile via **Apache Co
         "bonus": { "atk": 7, "def": 5, "hp": 50 }
       }
     ],
-    "fiis": [...],
-    "etfs": [...],
-    "tesouro": [...],
+    "fiis": [],
+    "etfs": [],
+    "tesouro": [],
     "selic": 10.75,
     "ultima_atualizacao": "2025-01-01T00:00:00Z"
   }
 }
+```
+
+## Executar localmente
+
+1. Configure o `config.js` local usando `config.example.js` como ponto de partida e preserve as exportações usadas pelos módulos atuais. O arquivo local é ignorado pelo Git.
+2. Use a URL e a chave pública do projeto Supabase. Nunca coloque uma chave `service_role` no navegador.
+3. Sirva a pasta por HTTP, por exemplo com `python -m http.server 8000`, e abra `http://localhost:8000`. Os módulos não devem ser abertos diretamente por `file://`.
+4. Instale no banco os recursos opcionais descritos acima e confira as permissões necessárias.
+
+## Verificação local
+
+Os testes usam Node.js e clientes simulados para validar regras e integrações locais. No PowerShell, execute todos com:
+
+```powershell
+Get-ChildItem tests/*.test.cjs | ForEach-Object {
+    node --experimental-vm-modules --disable-warning=ExperimentalWarning $_.FullName
+    if ($LASTEXITCODE -ne 0) { throw "Falha no teste: $($_.Name)" }
+}
+```
+
+A suíte cobre combate, ficha do personagem, carteira do Codex, inventário de Shagrila, mercado, taxas, recuperação do dashboard, inicialização do TrocaSegura e chat. Ela não substitui a execução dos scripts SQL, a validação de permissões no Supabase ou a inspeção visual no navegador.

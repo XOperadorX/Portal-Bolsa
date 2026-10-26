@@ -996,7 +996,7 @@
             <p style="color: #8a99ad; margin-bottom: 16px; font-size: 0.9rem;">
                 Crie códigos que os usuários podem resgatar na página de saldo.
                 Você pode dar <strong style="color:var(--neon-green);">Mumu</strong> e/ou
-                <strong style="color:var(--neon-blue);">Saldo R$</strong>.
+                <strong style="color:var(--neon-blue);">Saldo S$</strong>.
             </p>
 
             <div class="form-row">
@@ -1012,7 +1012,7 @@
 
             <div class="form-row">
                 <div class="form-group">
-                    <label for="codigoSaldo">Recompensa Saldo R$ (opcional)</label>
+                    <label for="codigoSaldo">Recompensa Saldo S$ (opcional)</label>
                     <input type="number" id="codigoSaldo" placeholder="0.00" step="0.01" min="0" value="0">
                 </div>
                 <div class="form-group">
@@ -1033,7 +1033,7 @@
                         <tr>
                             <th>Código</th>
                             <th>Mumu</th>
-                            <th>Saldo R$</th>
+                            <th>Saldo S$</th>
                             <th>Usos</th>
                             <th>Limite</th>
                             <th>Status</th>
@@ -1142,7 +1142,7 @@
                 </div>
                 <div class="stat-box">
                     <h3>Total Saldo</h3>
-                    <p class="stat-cyan" id="totalSaldo">0,00 <span class="moeda-simbolo">R$</span></p>
+                    <p class="stat-cyan" id="totalSaldo">0,00 <span class="moeda-simbolo">S$</span></p>
                 </div>
                 <div class="stat-box">
                     <h3>Total Poupança</h3>
@@ -1150,7 +1150,7 @@
                 </div>
                 <div class="stat-box">
                     <h3>Proventos Pendentes</h3>
-                    <p class="stat-gold" id="totalProventos">0,00 <span class="moeda-simbolo">R$</span></p>
+                    <p class="stat-gold" id="totalProventos">0,00 <span class="moeda-simbolo">S$</span></p>
                 </div>
                 <div class="stat-box">
                     <h3>Total BTC</h3>
@@ -1158,7 +1158,7 @@
                 </div>
                 <div class="stat-box">
                     <h3>Poder de Mercado</h3>
-                    <p class="stat-purple" id="totalPoderMercado">0,00 <span class="moeda-simbolo">R$</span></p>
+                    <p class="stat-purple" id="totalPoderMercado">0,00 <span class="moeda-simbolo">S$</span></p>
                 </div>
                 <div class="stat-box">
                     <h3>Usuários Bloqueados</h3>
@@ -1730,11 +1730,11 @@
 
             document.getElementById('totalUsuarios').textContent = total;
             document.getElementById('totalMumu').innerHTML = `${totalMumu.toFixed(2)} <span class="moeda-simbolo">${MOEDA}</span>`;
-            document.getElementById('totalSaldo').innerHTML = `${totalSaldo.toFixed(2)} <span class="moeda-simbolo">R$</span>`;
+            document.getElementById('totalSaldo').innerHTML = `${totalSaldo.toFixed(2)} <span class="moeda-simbolo">S$</span>`;
             document.getElementById('totalPoupanca').innerHTML = `${totalPoupanca.toFixed(2)} <span class="moeda-simbolo">${MOEDA}</span>`;
-            document.getElementById('totalProventos').innerHTML = `${totalProventos.toFixed(2)} <span class="moeda-simbolo">R$</span>`;
+            document.getElementById('totalProventos').innerHTML = `${totalProventos.toFixed(2)} <span class="moeda-simbolo">S$</span>`;
             document.getElementById('totalBtc').innerHTML = `${totalBtc.toFixed(8)} <span class="moeda-simbolo">BTC</span>`;
-            document.getElementById('totalPoderMercado').innerHTML = `${totalPoderMercado.toFixed(2)} <span class="moeda-simbolo">R$</span>`;
+            document.getElementById('totalPoderMercado').innerHTML = `${totalPoderMercado.toFixed(2)} <span class="moeda-simbolo">S$</span>`;
 
             const elBloq = document.getElementById('totalBloqueados');
             if (elBloq) elBloq.textContent = totalBloqueados;
@@ -2189,7 +2189,7 @@
                     <tr>
                         <td><span class="codigo-badge">${c.codigo}</span></td>
                         <td style="color: var(--neon-green); font-weight: 600;">${(c.mumu || 0).toFixed(2)}</td>
-                        <td style="color: var(--neon-blue); font-weight: 600;">R$ ${(c.saldo || 0).toFixed(2)}</td>
+                        <td style="color: var(--neon-blue); font-weight: 600;">S$ ${(c.saldo || 0).toFixed(2)}</td>
                         <td>${usos}</td>
                         <td>${limite === 0 ? '∞' : limite}</td>
                         <td><span class="codigo-status ${statusClasse}">${statusTexto}</span></td>
@@ -2242,7 +2242,7 @@
                 return;
             }
             if (mumu <= 0 && saldo <= 0) {
-                mostrarMensagem('⚠️ Defina pelo menos uma recompensa (Mumu ou Saldo R$).', 'erro');
+                mostrarMensagem('⚠️ Defina pelo menos uma recompensa (Mumu ou Saldo S$).', 'erro');
                 return;
             }
 

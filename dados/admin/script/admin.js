@@ -993,7 +993,7 @@ function renderizarTabelaCodigos() {
             <tr>
                 <td><span class="codigo-badge">${c.codigo}</span></td>
                 <td style="color: var(--neon-green); font-weight: 600;">${(c.mumu || 0).toFixed(2)}</td>
-                <td style="color: var(--neon-blue); font-weight: 600;">R$ ${(c.saldo || 0).toFixed(2)}</td>
+                <td style="color: var(--neon-blue); font-weight: 600;">S$ ${(c.saldo || 0).toFixed(2)}</td>
                 <td>${usos}</td>
                 <td>${limite === 0 ? '∞' : limite}</td>
                 <td><span class="codigo-status ${statusClasse}">${statusTexto}</span></td>
@@ -1046,7 +1046,7 @@ async function criarCodigo() {
         return;
     }
     if (mumu <= 0 && saldo <= 0) {
-        mostrarMensagem('⚠️ Defina pelo menos uma recompensa (Mumu ou Saldo R$).', 'erro');
+        mostrarMensagem('⚠️ Defina pelo menos uma recompensa (Mumu ou Saldo S$).', 'erro');
         return;
     }
 

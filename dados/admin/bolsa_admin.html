@@ -983,7 +983,7 @@ textarea {
         <h2>🔒 Segurança e Bloqueios</h2>
         <div class="fields-grid">
           <div class="field">
-            <label>🔒 Cadeado</label>
+            <label>🔒 ADM</label>
             <select id="f_cadeado">
               <option value="false">Desativado</option>
               <option value="true">Ativado</option>
@@ -1039,8 +1039,8 @@ textarea {
         <div class="quick-actions">
           <button class="btn ok" data-acao="desbloquear">✅ Desbloquear</button>
           <button class="btn err" data-acao="bloquear">🚫 Bloquear</button>
-          <button class="btn warn" data-acao="ativarCadeado">🔒 Ativar Cadeado</button>
-          <button class="btn ok" data-acao="desativarCadeado">🔓 Desativar Cadeado</button>
+          <button class="btn warn" data-acao="ativarCadeado">🔒 Ativar ADM</button>
+          <button class="btn ok" data-acao="desativarCadeado">🔓 Desativar ADM</button>
         </div>
       </div>
     </div>
@@ -1220,7 +1220,7 @@ function renderLista(arr) {
     <div class="jogador-item" data-id="${j.id}">
       <div>
         <div class="nick">${esc(j.login || j.nome || '—')}</div>
-        <div class="info">ID ${j.id} · Nível ${j.nivel ?? '?'} · R$ ${(j.saldo || 0).toFixed ? j.saldo.toFixed(2) : '0.00'}</div>
+        <div class="info">ID ${j.id} · Nível ${j.nivel ?? '?'} · S$ ${(j.saldo || 0).toFixed ? j.saldo.toFixed(2) : '0.00'}</div>
       </div>
       <span>👉</span>
     </div>

@@ -318,7 +318,7 @@
   <div class="saldos-grid">
     <div class="saldo-box">
       <div class="label">💰 Saldo</div>
-      <div class="value" id="saldoDisplay">R$ 0,00</div>
+      <div class="value" id="saldoDisplay">S$ 0,00</div>
     </div>
     <div class="saldo-box">
       <div class="label">₿ Bitcoin</div>
@@ -338,31 +338,31 @@
         <span class="pacote-emoji">🥉</span>
         <span class="pacote-nome">Bronze</span>
         <span class="pacote-btc">₿ 0,00010000</span>
-        <span class="pacote-saldo">→ R$ 0,10</span>
+        <span class="pacote-saldo">→ S$ 0,10</span>
       </button>
       <button class="pacote pacote-2" data-pacote="2" data-direcao="btc2saldo">
         <span class="pacote-emoji">🥈</span>
         <span class="pacote-nome">Prata</span>
         <span class="pacote-btc">₿ 0,00050000</span>
-        <span class="pacote-saldo">→ R$ 0,50</span>
+        <span class="pacote-saldo">→ S$ 0,50</span>
       </button>
       <button class="pacote pacote-3" data-pacote="3" data-direcao="btc2saldo">
         <span class="pacote-emoji">🥇</span>
         <span class="pacote-nome">Ouro</span>
         <span class="pacote-btc">₿ 0,00100000</span>
-        <span class="pacote-saldo">→ R$ 1,00</span>
+        <span class="pacote-saldo">→ S$ 1,00</span>
       </button>
       <button class="pacote pacote-4" data-pacote="4" data-direcao="btc2saldo">
         <span class="pacote-emoji">💎</span>
         <span class="pacote-nome">Platina</span>
         <span class="pacote-btc">₿ 0,00500000</span>
-        <span class="pacote-saldo">→ R$ 5,00</span>
+        <span class="pacote-saldo">→ S$ 5,00</span>
       </button>
       <button class="pacote pacote-5" data-pacote="5" data-direcao="btc2saldo">
         <span class="pacote-emoji">💠</span>
         <span class="pacote-nome">Diamante</span>
         <span class="pacote-btc">₿ 0,01000000</span>
-        <span class="pacote-saldo">→ R$ 10,00</span>
+        <span class="pacote-saldo">→ S$ 10,00</span>
       </button>
     </div>
   </div>
@@ -376,31 +376,31 @@
       <button class="pacote pacote-1" data-pacote="1" data-direcao="saldo2btc">
         <span class="pacote-emoji">🥉</span>
         <span class="pacote-nome">Bronze</span>
-        <span class="pacote-saldo">R$ 0,10</span>
+        <span class="pacote-saldo">S$ 0,10</span>
         <span class="pacote-btc">→ ₿ 0,00005000</span>
       </button>
       <button class="pacote pacote-2" data-pacote="2" data-direcao="saldo2btc">
         <span class="pacote-emoji">🥈</span>
         <span class="pacote-nome">Prata</span>
-        <span class="pacote-saldo">R$ 0,50</span>
+        <span class="pacote-saldo">S$ 0,50</span>
         <span class="pacote-btc">→ ₿ 0,00025000</span>
       </button>
       <button class="pacote pacote-3" data-pacote="3" data-direcao="saldo2btc">
         <span class="pacote-emoji">🥇</span>
         <span class="pacote-nome">Ouro</span>
-        <span class="pacote-saldo">R$ 1,00</span>
+        <span class="pacote-saldo">S$ 1,00</span>
         <span class="pacote-btc">→ ₿ 0,00050000</span>
       </button>
       <button class="pacote pacote-4" data-pacote="4" data-direcao="saldo2btc">
         <span class="pacote-emoji">💎</span>
         <span class="pacote-nome">Platina</span>
-        <span class="pacote-saldo">R$ 5,00</span>
+        <span class="pacote-saldo">S$ 5,00</span>
         <span class="pacote-btc">→ ₿ 0,00250000</span>
       </button>
       <button class="pacote pacote-5" data-pacote="5" data-direcao="saldo2btc">
         <span class="pacote-emoji">💠</span>
         <span class="pacote-nome">Diamante</span>
-        <span class="pacote-saldo">R$ 10,00</span>
+        <span class="pacote-saldo">S$ 10,00</span>
         <span class="pacote-btc">→ ₿ 0,00500000</span>
       </button>
     </div>
@@ -492,7 +492,7 @@
   // ============================================================
   // AUXILIARES
   // ============================================================
-  const fmtSaldo = v => Number(v).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
+  const fmtSaldo = v => ('S$ ' + Number(v).toLocaleString('pt-BR', { style: 'decimal', minimumFractionDigits: 2, maximumFractionDigits: 2 }));
   const fmtBTC   = v => Number(v).toFixed(8).replace('.', ',');
 
   function mostrarMensagem(texto, tipo = 'sucesso') {

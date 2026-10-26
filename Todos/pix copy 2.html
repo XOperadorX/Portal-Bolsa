@@ -479,15 +479,15 @@
         </div>
 
         <div class="info-box">
-            Converta seus MUMU em dinheiro por Pix: <strong>1,00 MUMU = R$ 10,00</strong>.
-            O saque mínimo é de <strong>R$ 10,00</strong>, e o Pix é feito em até <strong>8 horas</strong> depois do pedido.
+            Converta seus MUMU em dinheiro por Pix: <strong>1,00 MUMU = S$ 10,00</strong>.
+            O saque mínimo é de <strong>S$ 10,00</strong>, e o Pix é feito em até <strong>8 horas</strong> depois do pedido.
         </div>
 
         <!-- SALDO MUMU -->
         <div class="linha-dado bloco-valor">
             <div class="rotulo">SALDO MUMU</div>
             <div class="valor destaque" id="saldoMumu">0,0000</div>
-            <div class="equiv">Equivale a <span id="equivReais">R$ 0,00</span></div>
+            <div class="equiv">Equivale a <span id="equivReais">S$ 0,00</span></div>
         </div>
 
         <div class="linha-dado">
@@ -498,7 +498,7 @@
 
         <div class="linha-dado">
             <div class="rotulo">TOTAL RECEBIDO</div>
-            <div class="valor" style="color: var(--neon-green);">R$ <span id="totalRecebido">0,00</span></div>
+            <div class="valor" style="color: var(--neon-green);">S$ <span id="totalRecebido">0,00</span></div>
             <div class="equiv">Pix já pagos</div>
         </div>
 
@@ -508,9 +508,9 @@
         <div class="caixa-conversao">
             <div class="linha-conversao">
                 <span class="rotulo" style="margin-bottom:0;">CONVERSÃO</span>
-                <span class="valor" style="color: var(--neon-pix); font-size: 0.95rem;">1,00 MUMU = R$ 10,00</span>
+                <span class="valor" style="color: var(--neon-pix); font-size: 0.95rem;">1,00 MUMU = S$ 10,00</span>
             </div>
-            <div class="equiv" style="margin-bottom: 16px;">1,00 MUMU = R$ 10,00</div>
+            <div class="equiv" style="margin-bottom: 16px;">1,00 MUMU = S$ 10,00</div>
 
             <div class="grupo-input">
                 <label class="etiqueta-input">SACAR — Converter MUMU em Pix</label>
@@ -523,7 +523,7 @@
 
             <div>
                 <span style="font-size: 0.85rem; color: var(--text-muted);">Você recebe</span>
-                <div class="valor-receber" id="valorReceber">R$ 0,00</div>
+                <div class="valor-receber" id="valorReceber">S$ 0,00</div>
             </div>
 
             <div class="aviso" id="avisoMinimo">Você precisa de pelo menos 1,00 MUMU. Faltam <span id="faltam">0,9979</span>.</div>
@@ -614,7 +614,7 @@
         const _fmtMumu = new Intl.NumberFormat('pt-BR', { minimumFractionDigits: 4, maximumFractionDigits: 4 });
         const fmtNum = (v) => _fmtNum.format(parseFloat(v || 0));
         const fmtMumu = (v) => _fmtMumu.format(parseFloat(v || 0));
-        const fmtDinheiro = (v) => `R$ ${fmtNum(v)}`;
+        const fmtDinheiro = (v) => `S$ ${fmtNum(v)}`;
 
         // Elementos
         const el = {
@@ -769,7 +769,7 @@
             const valorMumu = mumu * TAXA_MUMU_REAIS;
 
             el.saldoMumu.textContent = valoresOcultos ? "••••" : fmtMumu(mumu);
-            el.equivReais.textContent = valoresOcultos ? "R$ ••••" : fmtDinheiro(valorMumu);
+            el.equivReais.textContent = valoresOcultos ? "S$ ••••" : fmtDinheiro(valorMumu);
             el.totalRecebido.textContent = fmtNum(banco.totalJaPago);
 
             if (banco.pixPendente) {

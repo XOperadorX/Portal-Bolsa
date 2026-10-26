@@ -417,7 +417,7 @@
                 <div class="user-avatar" id="userAvatar">?</div>
                 <div class="user-info">
                     <span class="user-nick" id="userName">Carregando...</span>
-                    <span class="user-balance" id="userBalanceDisplay">💰 R$ 0,00</span>
+                    <span class="user-balance" id="userBalanceDisplay">💰 S$ 0,00</span>
                 </div>
             </div>
 
@@ -433,7 +433,7 @@
                     <button class="status-reconnect" id="btnReconnectSupabase" title="Reconectar">🔄</button>
                 </div>
                 <div class="status-item" style="margin-left:auto;">
-                    <span>💰 R$ <span id="headerSaldo">0,00</span></span>
+                    <span>💰 S$ <span id="headerSaldo">0,00</span></span>
                 </div>
             </div>
         </nav>
@@ -472,7 +472,7 @@
             <h2><i class="fas fa-store"></i> Mercado</h2>
             <div class="saldo-box">
                 <span class="label">💰 Saldo:</span>
-                <span class="value" id="marketSaldo">R$ 0,00</span>
+                <span class="value" id="marketSaldo">S$ 0,00</span>
             </div>
         </div>
 
@@ -556,8 +556,8 @@
         function atualizarSaldoGlobal() {
             const total = getSaldoTotal();
             if (headerSaldo)        headerSaldo.textContent = formatSaldo(total);
-            if (marketSaldo)        marketSaldo.textContent = `R$ ${formatSaldo(total)}`;
-            if (userBalanceDisplay) userBalanceDisplay.textContent = `💰 R$ ${formatSaldo(total)}`;
+            if (marketSaldo)        marketSaldo.textContent = `S$ ${formatSaldo(total)}`;
+            if (userBalanceDisplay) userBalanceDisplay.textContent = `💰 S$ ${formatSaldo(total)}`;
         }
 
         function showToast(text, duration = 2200) {
@@ -925,7 +925,7 @@
                                 <div class="item-sub">${item.descricao}</div>
                             </div>
                         </div>
-                        <div class="item-price">R$ ${preco} <span>cada</span></div>
+                        <div class="item-price">S$ ${preco} <span>cada</span></div>
                         <div class="item-stock">
                             Você tem: <strong>${qtd}</strong> | Mercado:
                             <strong style="color:var(--neon-blue);">${item.qtdDisponivel}</strong> disponíveis
@@ -977,7 +977,7 @@
             if (qty <= 0) { showToast('⚠️ Quantidade inválida', 1500); return; }
 
             const custo = item.precoAtual * qty;
-            if (saldo < custo)            { showToast(`😅 Saldo insuficiente! Precisa R$ ${formatSaldo(custo)}`, 2000); return; }
+            if (saldo < custo)            { showToast(`😅 Saldo insuficiente! Precisa S$ ${formatSaldo(custo)}`, 2000); return; }
             if (item.qtdDisponivel < qty) { showToast(`😅 Mercado tem só ${item.qtdDisponivel}`, 2000); return; }
 
             saldo = Math.round((saldo - custo) * 100) / 100;
@@ -989,7 +989,7 @@
             renderizarInventario();
 
             await salvarDadosDoJogador();
-            showToast(`✅ Comprou ${qty} ${item.nome} por R$ ${formatSaldo(custo)}`, 2500);
+            showToast(`✅ Comprou ${qty} ${item.nome} por S$ ${formatSaldo(custo)}`, 2500);
         };
 
         window.venderItem = async function(itemId) {
@@ -1015,7 +1015,7 @@
             renderizarInventario();
 
             await salvarDadosDoJogador();
-            showToast(`💰 Vendeu ${qty} ${item.nome} por R$ ${formatSaldo(total)}`, 2500);
+            showToast(`💰 Vendeu ${qty} ${item.nome} por S$ ${formatSaldo(total)}`, 2500);
         };
 
         // ============================================================

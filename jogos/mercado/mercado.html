@@ -228,6 +228,11 @@
         }
         .market-title i { color: var(--gold); }
 
+        .menu-procedencia { display:flex; flex-wrap:wrap; gap:8px; margin:16px 0; }
+        .menu-procedencia button { padding:9px 14px; border:1px solid rgba(0,240,255,.25); border-radius:20px; background:var(--card-bg, #121520); color:var(--text-color, #fff); cursor:pointer; font:inherit; }
+        .menu-procedencia button[aria-pressed="true"] { background:rgba(0,240,255,.18); border-color:var(--neon-blue, #00f0ff); color:#fff; }
+        .menu-procedencia button:focus-visible { outline:2px solid #00f0ff; outline-offset:3px; }
+
         .market-grid {
             display: grid;
             grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
@@ -524,6 +529,62 @@
             .market-item .btn-use { font-size: 0.6rem; padding: 0.25rem 0.4rem; }
             .history-item { font-size: 0.6rem; padding: 5px 8px; }
         }
+
+        /* Visual compacto do catálogo */
+        body { align-items:flex-start; padding:28px 20px; background-image:radial-gradient(ellipse at 10% 0%,rgba(70,95,190,.13),transparent 50%),radial-gradient(ellipse at 100% 40%,rgba(0,180,190,.06),transparent 50%); }
+        .card { max-width:1100px; padding:24px; background:rgba(17,22,33,.97); border-color:rgba(149,174,209,.14); box-shadow:0 16px 60px rgba(0,0,0,.3); }
+        .card:hover { transform:none; box-shadow:0 16px 60px rgba(0,0,0,.3); }
+        .nav-bar { background:#141c29; border-color:rgba(149,174,209,.14); box-shadow:none; padding:12px 16px; }
+        .menu-procedencia { gap:6px; padding:12px 0 16px; margin:12px 0 8px; border-bottom:1px solid rgba(149,174,209,.12); }
+        .menu-procedencia button { padding:7px 12px; min-height:34px; border-radius:9px; font-size:.85rem; font-weight:600; color:#aebed1; border-color:rgba(149,174,209,.14); background:#151d2b; transition:background .15s,border-color .15s; }
+        .menu-procedencia button:hover { background:#1c2b3c; border-color:#53748c; }
+        .menu-procedencia button[aria-pressed="true"] { color:#9bf1ef; background:rgba(46,196,190,.13); border-color:rgba(46,196,190,.55); }
+        .market-grid { grid-template-columns:repeat(auto-fill,minmax(215px,1fr)); gap:14px; align-items:stretch; }
+        .market-item { align-items:stretch; text-align:left; padding:16px; border-radius:12px; background:linear-gradient(145deg,#182130,#131b28); border-color:rgba(149,174,209,.13); transition:border-color .18s,box-shadow .18s; }
+        .market-item:hover { transform:none; border-color:rgba(77,199,194,.4); box-shadow:0 6px 20px rgba(0,0,0,.18); }
+        .market-item::before { display:none; }
+        .market-item .item-icon { font-size:1.8rem; margin-bottom:12px; filter:none; }
+        .market-item:hover .item-icon { transform:none; }
+        .market-item .item-name { font-family:'Rajdhani',sans-serif; font-size:1rem; line-height:1.25; letter-spacing:0; overflow-wrap:anywhere; }
+        .market-item .item-desc { font-size:.8rem; line-height:1.4; min-height:2.8em; margin:5px 0 8px; color:#a7b7ca; }
+        .item-origin { align-self:flex-start; max-width:100%; padding:4px 7px; margin-bottom:12px; border-radius:6px; background:rgba(113,151,189,.1); color:#b7cadf; font-size:.72rem; overflow-wrap:anywhere; }
+        .market-item .item-price { justify-content:flex-start; align-self:stretch; margin:0 0 8px; padding:8px 0; border:0; border-radius:0; background:none; color:#88e6b3; font-size:.94rem; font-weight:700; }
+        .item-quote { display:grid; gap:5px; padding:9px 0; border-top:1px solid rgba(149,174,209,.1); font-size:.78rem; color:#9eb0c5; }
+        .item-quote span { display:flex; flex-wrap:wrap; justify-content:space-between; gap:4px; }
+        .item-quote b { color:#d9e4f0; font-weight:600; font-variant-numeric:tabular-nums; }
+        .item-owned { display:flex; justify-content:space-between; gap:8px; margin-top:auto; padding:8px 0 12px; color:#9eb0c5; font-size:.8rem; }
+        .item-owned b { color:#f0f4f8; font-variant-numeric:tabular-nums; }
+        .item-actions { display:grid; grid-template-columns:1fr 1fr; gap:7px; }
+        .market-item .item-actions .btn-buy { width:100%; min-height:32px; margin:0; padding:6px 8px; border-radius:7px; border:1px solid rgba(86,210,150,.3); background:rgba(43,167,104,.16); color:#9ce6bd; font-family:inherit; font-size:.78rem; font-weight:700; box-shadow:none; gap:5px; white-space:nowrap; transition:background .15s,border-color .15s; }
+        .market-item .item-actions .btn-sell { color:#f1cf8b; border-color:rgba(225,177,81,.3); background:rgba(185,135,41,.13); }
+        .market-item .item-actions .btn-buy:hover:not(:disabled) { transform:none; box-shadow:none; background:rgba(43,167,104,.3); border-color:#56d296; }
+        .market-item .item-actions .btn-sell:hover:not(:disabled) { background:rgba(185,135,41,.27); border-color:#d8b05f; }
+        .market-item .item-actions .btn-buy:disabled { opacity:.45; }
+        button:focus-visible { outline:2px solid #85d9e1; outline-offset:3px; }
+        .market-item .btn-use { min-height:32px; margin-top:8px; border-radius:7px; font-family:inherit; font-size:.78rem; box-shadow:none; }
+        .history-panel { border-color:rgba(149,174,209,.14); box-shadow:none; }
+        .history-item { font-size:.85rem; padding:10px 12px; }
+        .history-item .h-qty { font-size:.75rem; }
+        @media(max-width:600px) {
+            body { padding:12px 8px; }
+            .card { padding:14px 10px; border-radius:12px; }
+            .market-grid { grid-template-columns:repeat(2,minmax(0,1fr)); gap:9px; }
+            .market-item { padding:12px 10px; }
+            .market-item .item-name { font-size:.9rem; }
+            .market-item .item-desc { font-size:.75rem; }
+            .item-origin { font-size:.68rem; }
+            .market-item .item-actions .btn-buy { font-size:.73rem; padding:6px 4px; gap:3px; }
+            .market-item .item-price { font-size:.82rem; }
+            .menu-procedencia button { padding:6px 9px; font-size:.78rem; }
+        }
+        @media(max-width:360px) { .market-grid { grid-template-columns:1fr; } }
+        @media(prefers-reduced-motion:reduce) { *,*::before,*::after { transition:none !important; animation:none !important; } }
+        .cristais-nota{margin:12px 0;padding:11px 14px;border:1px solid #61527d;border-radius:9px;background:#35264740;color:#c9bddf;font-size:.78rem;line-height:1.6}
+        .item-details,.item-attributes,.item-element,.item-slots{font-size:.76rem;line-height:1.5;color:#bbcade;margin:5px 0;overflow-wrap:anywhere}
+        .item-details summary{cursor:pointer;color:#96dbde}.item-details p{margin:8px 0}.item-details small{color:#889bb3}
+        .item-element{color:#e4ce99}.item-equipment{display:grid;gap:7px;margin-top:9px}
+        .equip-slot,.btn-equip{width:100%;box-sizing:border-box;padding:8px;border:1px solid #4a6385;border-radius:7px;background:#1d2a40;color:#d6e7ff;font:inherit;font-size:.78rem}
+        .btn-equip{cursor:pointer}.btn-equip:disabled,.equip-slot:disabled{opacity:.45;cursor:default}
     </style>
 </head>
 
@@ -536,7 +597,7 @@
                 <div class="user-avatar" id="userAvatar">?</div>
                 <div class="user-info">
                     <span class="user-nick" id="userName">Visitante</span>
-                    <span class="user-balance" id="userBalanceDisplay">💰 R$ 0,00</span>
+                    <span class="user-balance" id="userBalanceDisplay">💰 S$ 0,00</span>
                 </div>
             </div>
             <div style="display:flex; gap:8px; flex-wrap:wrap; align-items:center;">
@@ -551,7 +612,7 @@
                     <button class="status-reconnect" id="btnReconnectSupabase" title="Reconectar">🔄</button>
                 </div>
                 <div class="status-item" style="margin-left:auto;">
-                    <span>💰 R$ <span id="headerSaldo">0,00</span></span>
+                    <span>💰 S$ <span id="headerSaldo">0,00</span></span>
                 </div>
             </div>
         </nav>
@@ -561,7 +622,7 @@
             Mercado
             <span class="saldo-badge" style="margin-left:auto;">
                 <i class="fas fa-coins"></i>
-                <span class="num" id="saldoDisplayValue">R$ 0,00</span>
+                <span class="num" id="saldoDisplayValue">S$ 0,00</span>
             </span>
         </div>
 
@@ -569,7 +630,7 @@
         <div style="margin-bottom:0.6rem; display:flex; gap:0.4rem; flex-wrap:wrap; align-items:center;">
             <span class="dynamic-price-badge" style="display:inline-flex; align-items:center; gap:0.3rem; background:rgba(0,240,255,0.06); border:1px solid rgba(0,240,255,0.15); padding:0.15rem 0.7rem; border-radius:30px; font-size:0.7rem; color:var(--text-muted);">
                 💰 Preços nível <span id="dynamicPriceLevel" style="color:#fff; font-weight:700;">1</span> × <span id="dynamicPriceMult" style="color:#fff; font-weight:700;">0.50</span>
-                <span style="color:#8a99ad; font-weight:600;">(taxa oculta: <span id="hiddenTaxDisplay">10%</span>)</span>
+                <span style="color:#8a99ad; font-weight:600;">(<span id="regraTaxasMercado">Compra e venda globais</span>)</span>
             </span>
             <span class="stamina-badge" id="staminaBadge" style="display:inline-flex; align-items:center; gap:0.3rem; background:rgba(255,107,53,0.1); border:1px solid rgba(255,107,53,0.3); padding:0.15rem 0.7rem; border-radius:30px; font-size:0.7rem; color:var(--stamina-color); font-weight:600;">
                 ⚡ Estamina: <span id="staminaQtyDisplay" style="color:#fff; font-weight:700;">0</span> un. |
@@ -577,29 +638,33 @@
             </span>
         </div>
 
+        <p class="cristais-nota">💎 Cristais são uma moeda rara doada pelo ADM. Não estão à venda neste mercado. Após recebê-los, você escolhe como utilizá-los nos recursos disponíveis do projeto.</p>
+        <nav class="menu-procedencia" id="menuProcedencia" aria-label="Filtrar itens por procedência"></nav>
         <div class="market-grid" id="marketGrid">
             <!-- Itens renderizados via JS -->
         </div>
 
         <div class="message" id="message">
             <i class="fas fa-shopping-cart"></i>
-            Compre <span class="highlight">sementes</span>, <span class="highlight">baldes</span> e <span class="stamina-highlight">estamina</span> para cuidar do seu milharal!
+            Compre e venda itens por procedência. Consulte os preços de compra e venda de cada item. Valores arredondados para centavos.
         </div>
 
         <!-- ===== HISTÓRICO DE COMPRAS ===== -->
         <div class="history-section">
             <div class="history-title">
                 <i class="fas fa-history"></i>
-                Histórico de Compras
+                Histórico de Compras e Vendas
             </div>
             <div class="history-list" id="historyList">
-                <div class="history-empty">Nenhuma compra registrada ainda.</div>
+                <div class="history-empty">Nenhuma compra ou venda registrada ainda.</div>
             </div>
         </div>
 
     </div>
 
-    <script>
+    <script type="module">
+        import { obterTaxa } from '../../shared/taxas-globais.js';
+        import { catalogoComplementar, precosMercado, quantidadeItem, negociarItem, detalhesItemMercado, equiparItemMercado } from '../../shared/mercado-itens.js';
         (function() {
             'use strict';
 
@@ -614,7 +679,7 @@
                 SYNC_INTERVAL: 15000,
                 MAX_HISTORICO: 50,
 
-                // ⚠️ MESMOS PREÇOS DO PLANTA (jogador SEMPRE perde)
+                // Preços de referência da Fazendinha
                 PRECOS: {
                     corn:   9.00,    // venda do milho (baixo)
                     seed:   15.00,   // semente cara
@@ -622,9 +687,8 @@
                     clear:  15.00,   // limpeza cara
                     fert:   11.00,   // adubo caro
                     potion: 150.00,  // poção caríssima
-                    mult:   0.50,    // multiplicador por nível
-                    taxa:   0.10,    // 🕵️ taxa oculta de 10% na venda
-                    stamina: 10.00,  // ⚡ estamina - preço fixo R$ 10,00
+                    mult:   obterTaxa('nivel_multiplicador'),    // multiplicador por nível
+                    stamina: 10.00,  // ⚡ estamina - preço fixo S$ 10,00
                 },
 
                 // ⚡ Estamina: bônus de SM por unidade usada
@@ -715,6 +779,8 @@
                 autoSaveTimer: null,
                 reconnectTimer: null,
                 dadosDB: null,
+                procedenciaSelecionada: '',
+                negociando: false,
 
                 jogo: {
                     saldo: 0,
@@ -734,36 +800,24 @@
             };
 
             function getJogo() { return state.jogo; }
+            function getCatalogo() {
+                const j = getJogo();
+                const base = MARKET_ITEMS_BASE.map(item => ({ ...item, procedencia: item.type === 'stamina' ? 'Mercado · Estamina' : 'Fazendinha',
+                    coluna: item.type === 'stamina' ? 'stamina_qty' : item.type,
+                    basePrice: item.type === 'seeds' ? CONFIG.PRECOS.seed * item.amount : item.type === 'buckets' ? CONFIG.PRECOS.bucket * item.amount : item.basePrice
+                }));
+                return [...base, ...catalogoComplementar({ ...state.dadosDB, ...j })];
+            }
+            function escaparItem(valor) { return String(valor ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])); }
 
             // ============================================================
             // 💰 PREÇO DINÂMICO COM TAXA OCULTA (MESMO ALGORITMO DO PLANTA)
-            // ============================================================
-            function getPrecoDinamico(basePrice, isFixed) {
-                if (isFixed) return +basePrice.toFixed(2);
-                const j = getJogo();
-                const base = basePrice;
-                const mult = CONFIG.PRECOS.mult;
-                const bruto = base * (1 + j.nivel * mult);
-                const taxa = 1 - CONFIG.PRECOS.taxa; // 90% do valor bruto
-                return +(bruto * taxa).toFixed(2);
-            }
-
-            // Preço "de fachada" mostrado na UI (sem taxa)
-            function getPrecoFachada(basePrice, isFixed) {
-                if (isFixed) return +basePrice.toFixed(2);
-                const j = getJogo();
-                const base = basePrice;
-                const mult = CONFIG.PRECOS.mult;
-                return +(base * (1 + j.nivel * mult)).toFixed(2);
-            }
-
-            // ============================================================
-            // DOM REFS
             // ============================================================
             const DOM = {};
 
             function initDOM() {
                 DOM.marketGrid = document.getElementById('marketGrid');
+                DOM.menuProcedencia = document.getElementById('menuProcedencia');
                 DOM.message = document.getElementById('message');
                 DOM.headerSaldo = document.getElementById('headerSaldo');
                 DOM.userAvatar = document.getElementById('userAvatar');
@@ -850,15 +904,15 @@
             function atualizarSaldoGlobal() {
                 const total = getJogo().saldo || 0;
                 if (DOM.headerSaldo) DOM.headerSaldo.textContent = formatSaldo(total);
-                if (DOM.userBalance) DOM.userBalance.textContent = `💰 R$ ${formatSaldo(total)}`;
-                if (DOM.saldoDisplayValue) DOM.saldoDisplayValue.textContent = `R$ ${formatSaldo(total)}`;
+                if (DOM.userBalance) DOM.userBalance.textContent = `💰 S$ ${formatSaldo(total)}`;
+                if (DOM.saldoDisplayValue) DOM.saldoDisplayValue.textContent = `S$ ${formatSaldo(total)}`;
             }
 
             function atualizarPrecosUI() {
+                document.getElementById('regraTaxasMercado').textContent = 'Compra +' + obterTaxa('mercado_compra') + '% · Venda −' + obterTaxa('mercado_venda') + '%';
                 const j = getJogo();
                 if (DOM.dynamicPriceLevel) DOM.dynamicPriceLevel.textContent = j.nivel;
                 if (DOM.dynamicPriceMult) DOM.dynamicPriceMult.textContent = formatSaldo(CONFIG.PRECOS.mult);
-                if (DOM.hiddenTaxDisplay) DOM.hiddenTaxDisplay.textContent = (CONFIG.PRECOS.taxa * 100).toFixed(0) + '%';
             }
 
             // ⚡ Atualizar exibição de estamina/SM
@@ -898,7 +952,7 @@
                     const sinal = isVenda ? '+' : (isUso ? '⚡' : '-');
                     const valorClass = isVenda ? 'sale' : '';
                     const qtd = h.quantidade ? `x${h.quantidade}` : '';
-                    const valor = h.valor ? `R$ ${formatSaldo(h.valor)}` : '';
+                    const valor = h.valor ? `S$ ${formatSaldo(h.valor)}` : '';
                     const data = formatarDataHora(h.data);
                     const icone = h.icon || (isVenda ? '💰' : (isUso ? '⚡' : '🛒'));
 
@@ -907,7 +961,7 @@
                             <div class="h-left">
                                 <span class="h-icon">${icone}</span>
                                 <div class="h-info">
-                                    <span class="h-name">${h.item || 'Item'} <span class="h-qty">${qtd}</span></span>
+                                    <span class="h-name">${escaparItem(h.item || 'Item')} <span class="h-qty">${qtd}</span></span>
                                     <span class="h-date">${data}</span>
                                 </div>
                             </div>
@@ -921,20 +975,39 @@
             // ============================================================
             // RENDERIZAÇÃO DO MERCADO (COM PREÇO DINÂMICO + ESTAMINA)
             // ============================================================
+            function filtrarProcedencia(catalogo, procedencia) {
+                return procedencia ? catalogo.filter(item => item.procedencia === procedencia) : catalogo;
+            }
+
+            function renderMenuProcedencia(catalogo) {
+                const procedencias = [...new Set(catalogo.map(item => item.procedencia))].sort((a,b) => a.localeCompare(b, 'pt-BR'));
+                if (state.procedenciaSelecionada && !procedencias.includes(state.procedenciaSelecionada)) state.procedenciaSelecionada = '';
+                DOM.menuProcedencia.innerHTML = ['', ...procedencias].map(procedencia => {
+                    const quantidade = filtrarProcedencia(catalogo, procedencia).length;
+                    return `<button type="button" data-procedencia="${escaparItem(procedencia)}" aria-pressed="${state.procedenciaSelecionada === procedencia}">${escaparItem(procedencia || 'Todos')} (${quantidade})</button>`;
+                }).join('');
+            }
+
             function renderMarket() {
                 const j = getJogo();
                 const saldo = j.saldo || 0;
 
+                const catalogo = getCatalogo();
+                renderMenuProcedencia(catalogo);
                 let html = '';
-                for (const item of MARKET_ITEMS_BASE) {
+                for (const item of filtrarProcedencia(catalogo, state.procedenciaSelecionada)) {
                     const isFixed = item.isFixedPrice || false;
 
-                    // 💰 PREÇO DINÂMICO (fachada para exibir, real para cobrar)
-                    const precoFachada = getPrecoFachada(item.basePrice, isFixed);
-                    const precoReal = getPrecoDinamico(item.basePrice, isFixed);
+                    // O preço mostrado é o mesmo utilizado na operação.
+                    const precos = precosMercado(item, j.nivel, CONFIG.PRECOS.mult);
+                    const precoFachada = precos.compra;
+                    const precoReal = precos.compra;
 
                     const canAfford = saldo >= precoReal;
-                    const disabled = !canAfford || !state.online;
+                    const disabled = !canAfford || !state.online || state.salvando || state.negociando;
+                    const quantidade = quantidadeItem(j, item);
+                    const detalhes = detalhesItemMercado(item);
+                    const vendaDisabled = quantidade < (item.amount || 1) || !state.online || state.salvando || state.negociando;
 
                     // ⚡ Item de estamina tem botão extra "Usar"
                     const isStamina = item.type === 'stamina';
@@ -943,16 +1016,32 @@
                     html += `
                         <div class="market-item" data-item-id="${item.id}">
                             <span class="item-icon">${item.icon}</span>
-                            <span class="item-name">${item.name}</span>
-                            <span class="item-desc">${item.desc}</span>
-                            <span class="item-price ${isFixed ? 'fixed' : 'dynamic'}" title="Preço real: R$ ${formatSaldo(precoReal)}">
+                            <span class="item-name">${escaparItem(item.name)}</span>
+                            <details class="item-details"><summary>Descrição do item</summary><p>${escaparItem(detalhes.descricao)}</p><small>Efeitos narrativos são referência; os bônus efetivos estão abaixo.</small></details>
+                            <span class="item-attributes">📊 ${escaparItem(detalhes.atributos)}</span>
+                            <span class="item-element">Elemento: ${escaparItem(detalhes.elemento)}</span>
+                            ${detalhes.espacos ? `<span class="item-slots">Equipamento: ${escaparItem(detalhes.espacos)}</span>` : ''}
+                            <span class="item-origin">📍 ${escaparItem(item.procedencia)}</span>
+                            <span class="item-price ${isFixed ? 'fixed' : 'dynamic'}" title="${precoReal === null ? 'Consulte no jogo de origem' : 'Preço real: S$ ' + formatSaldo(precoReal)}">
                                 <i class="fas fa-coins"></i>
-                                R$ ${formatSaldo(precoFachada)}
+                                Compra: S$ ${formatSaldo(precos.compra)}
                             </span>
+                            <div class="item-quote"><span>Referência <b>S$ ${formatSaldo(precos.referencia)}</b></span><span>Venda <b>S$ ${formatSaldo(precos.venda)}</b></span></div>
+                            <span class="item-owned">Em estoque <b>${quantidade}</b></span>
+                            <div class="item-actions">
                             <button class="btn-buy" data-item-id="${item.id}" ${disabled ? 'disabled' : ''}>
                                 <i class="fas fa-shopping-cart"></i>
                                 Comprar
                             </button>
+                            <button class="btn-buy btn-sell" data-item-id="${item.id}" ${vendaDisabled ? 'disabled' : ''}><i class="fas fa-coins" aria-hidden="true"></i> Vender ${item.amount || 1}</button>
+                            </div>
+                            ${detalhes.slots.length && item.type === 'inventario' ? `
+                                <div class="item-equipment">
+                                    <select class="equip-slot" aria-label="Espaço para ${escaparItem(item.name)}" ${vendaDisabled ? 'disabled' : ''}>
+                                        ${detalhes.slots.map(slot=>`<option value="${escaparItem(slot)}">${escaparItem(detalhes.espacos.split(' / ')[detalhes.slots.indexOf(slot)])}</option>`).join('')}
+                                    </select>
+                                    <button class="btn-equip" data-item-id="${item.id}" ${vendaDisabled ? 'disabled' : ''}>⚔️ Equipar</button>
+                                </div>` : item.type === 'equipado' ? '<span class="item-element">⚔️ Equipado no personagem</span>' : ''}
                             ${isStamina && qtyAtual > 0 ? `
                                 <button class="btn-use" data-item-id="${item.id}" ${!state.online ? 'disabled' : ''}>
                                     <i class="fas fa-bolt"></i>
@@ -978,74 +1067,50 @@
                 } else if (saldo <= 0) {
                     DOM.message.innerHTML = '😅 Você está <span class="highlight">sem saldo</span>. Venda milho no milharal para ganhar dinheiro!';
                 } else {
-                    DOM.message.innerHTML = `🛒 Saldo disponível: <span class="gold-highlight">R$ ${formatSaldo(saldo)}</span> — <span class="stamina-highlight">⚡ Estamina: ${j.stamina_qty || 0} un.</span> SM: <span class="highlight">${Math.floor(j.sm_atual || 0)}/${Math.floor(j.sm_max || 0)}</span>`;
+                    DOM.message.innerHTML = `🛒 Saldo disponível: <span class="gold-highlight">S$ ${formatSaldo(saldo)}</span> — <span class="stamina-highlight">⚡ Estamina: ${j.stamina_qty || 0} un.</span> SM: <span class="highlight">${Math.floor(j.sm_atual || 0)}/${Math.floor(j.sm_max || 0)}</span>`;
                 }
             }
 
             // ============================================================
             // COMPRA (COM TAXA OCULTA E PREÇO DINÂMICO)
             // ============================================================
-            function comprarItem(itemId) {
-                const j = getJogo();
-                const item = MARKET_ITEMS_BASE.find(i => i.id === itemId);
+            async function executarNegociacao(itemId, operacao) {
+                if (!state.online || state.salvando || state.carregando || state.negociando || !state.dadosDB) return;
+                const item = getCatalogo().find(i => i.id === itemId);
                 if (!item) return;
-
-                if (!state.online) {
-                    showToast('⚠️ Sem conexão com o banco. Não é possível comprar.', 2500);
-                    return;
+                const antes = structuredClone(getJogo());
+                const precos = precosMercado(item, antes.nivel, CONFIG.PRECOS.mult);
+                const preco = operacao === 'venda' ? precos.venda : precos.compra;
+                state.negociando = true;
+                try {
+                    state.jogo = negociarItem(antes, item, operacao, preco);
+                    adicionarAoHistorico({tipo:operacao,item:item.name,icon:item.icon,quantidade:item.amount||1,valor:preco,data:new Date().toISOString(),saldo_apos:state.jogo.saldo});
+                    renderMarket();
+                    if (!await salvarDadosCompletos()) throw new Error('Não foi possível salvar. Atualize a página e tente novamente.');
+                    showToast((operacao === 'venda' ? '💰 Venda' : '🛒 Compra') + ' de ' + item.name + ' por S$ ' + formatSaldo(preco), 2400);
+                } catch (erro) {
+                    state.jogo = antes;
+                    showToast('⚠️ ' + erro.message, 3000);
+                } finally {
+                    state.negociando = false;
+                    renderMarket();
+                    renderHistorico();
                 }
-
-                const isFixed = item.isFixedPrice || false;
-
-                // 💰 PREÇO REAL (com taxa oculta) — o jogador paga mais do que vê
-                const precoReal = getPrecoDinamico(item.basePrice, isFixed);
-                const precoFachada = getPrecoFachada(item.basePrice, isFixed);
-
-                if (j.saldo < precoReal) {
-                    showToast(`😅 Saldo insuficiente! Precisa de R$ ${formatSaldo(precoReal)}`, 2000);
-                    return;
-                }
-
-                // Deduzir saldo com preço REAL
-                j.saldo = Number((j.saldo - precoReal).toFixed(2));
-
-                // Adicionar item
-                if (item.type === 'seeds') {
-                    j.seeds = (j.seeds || 0) + item.amount;
-                } else if (item.type === 'buckets') {
-                    j.buckets = (j.buckets || 0) + item.amount;
-                } else if (item.type === 'stamina') {
-                    // ⚡ Adicionar estamina ao inventário
-                    j.stamina_qty = (j.stamina_qty || 0) + item.amount;
-                }
-
-                // Toast mostra preço de FACHADA (o jogador não percebe a taxa)
-                let tipoNome = '';
-                if (item.type === 'seeds') tipoNome = 'semente(s)';
-                else if (item.type === 'buckets') tipoNome = 'balde(s)';
-                else if (item.type === 'stamina') tipoNome = 'estamina(s)';
-
-                showToast(`${item.icon} +${item.amount} ${tipoNome} por R$ ${formatSaldo(precoFachada)}!`, 2200);
-
-                // ===== REGISTRAR NO HISTÓRICO (valor de fachada) =====
-                adicionarAoHistorico({
-                    tipo: 'compra',
-                    item: item.name,
-                    icon: item.icon,
-                    quantidade: item.amount,
-                    valor: precoFachada,
-                    data: new Date().toISOString(),
-                    saldo_apos: j.saldo,
-                });
-
-                renderMarket();
-                renderHistorico();
-                salvarDadosCompletos();
             }
+            async function equiparDoMercado(itemId, slot) {
+                if (!state.online || state.salvando || state.carregando || state.negociando || !state.dadosDB) return;
+                const item=getCatalogo().find(i=>i.id===itemId);if(!item)return;
+                const antes=structuredClone(getJogo());state.negociando=true;
+                try {
+                    state.jogo=equiparItemMercado(antes,item,slot);renderMarket();
+                    if(!await salvarDadosCompletos())throw Error('Não foi possível salvar o equipamento. Tente novamente.');
+                    showToast('⚔️ '+item.name+' equipado em Shagrila!',2400);
+                }catch(erro){state.jogo=antes;showToast('⚠️ '+erro.message,3000);}
+                finally{state.negociando=false;renderMarket();}
+            }
+            async function comprarItem(itemId) { return executarNegociacao(itemId, 'compra'); }
+            async function venderItem(itemId) { return executarNegociacao(itemId, 'venda'); }
 
-            // ============================================================
-            // ⚡ USAR ESTAMINA (soma +10 SM)
-            // ============================================================
             function usarEstamina() {
                 const j = getJogo();
 
@@ -1171,6 +1236,12 @@
                     j.harvested = db.harvested ?? 0;
                     j.nivel     = db.nivel     ?? 1;
                     j.experiencia = db.experiencia ?? 0;
+                    j.defesa_base = Number(db.defesa_base || 0);
+                    j.itens = structuredClone(db.itens || []);
+                    j.meta = structuredClone(db.meta || {});
+                    j.carteira = structuredClone(db.carteira || {});
+                    j.preco_medio_compra = structuredClone(db.preco_medio_compra || {});
+                    for (const campo of ['fert_qty','potion_qty','cristais','btc','mumu','poder_hash']) j[campo] = db[campo] ?? 0;
 
                     // ⚡ Carregar dados de estamina/SM
                     j.stamina_qty = db.stamina_qty ?? 0;
@@ -1182,7 +1253,7 @@
                     if (db.price_bucket != null && !isNaN(Number(db.price_bucket))) CONFIG.PRECOS.bucket = Number(db.price_bucket);
                     if (db.price_fert   != null && !isNaN(Number(db.price_fert)))   CONFIG.PRECOS.fert   = Number(db.price_fert);
                     if (db.price_potion != null && !isNaN(Number(db.price_potion))) CONFIG.PRECOS.potion = Number(db.price_potion);
-                    if (db.price_mult   != null && !isNaN(Number(db.price_mult)))   CONFIG.PRECOS.mult   = Number(db.price_mult);
+                    CONFIG.PRECOS.mult = obterTaxa('nivel_multiplicador');
 
                     // ===== CARREGAR HISTÓRICO =====
                     let hist = db.historico;
@@ -1202,7 +1273,7 @@
             }
 
             async function salvarDadosCompletos() {
-                if (!state.usuario || !state.online || state.salvando) return;
+                if (!state.usuario || !state.online || state.salvando || !state.dadosDB) return false;
                 state.salvando = true;
                 try {
                     const j = getJogo();
@@ -1216,6 +1287,15 @@
                         nivel: j.nivel || 1,
                         experiencia: j.experiencia || 0,
                         historico: j.historico || [],
+                        itens: j.itens || [],
+                        fert_qty: j.fert_qty || 0,
+                        potion_qty: j.potion_qty || 0,
+                        btc: j.btc || 0,
+                        mumu: j.mumu || 0,
+                        poder_hash: j.poder_hash || 0,
+                        meta: j.meta || {},
+                        carteira: j.carteira || {},
+                        preco_medio_compra: j.preco_medio_compra || {},
                         updated_at: new Date().toISOString(),
 
                         // ⚡ Salvar dados de estamina/SM
@@ -1236,7 +1316,7 @@
                     console.log(`💾 Salvando mercado... Saldo: ${payload.saldo}, Seeds: ${payload.seeds}, Buckets: ${payload.buckets}, Estamina: ${payload.stamina_qty}, SM: ${payload.sm_atual}/${payload.sm_max}`);
 
                     const response = await fetch(
-                        `${CONFIG.SUPABASE_URL}/rest/v1/${CONFIG.TABELA}?login=eq.${encodeURIComponent(state.usuario.login)}`, {
+                        `${CONFIG.SUPABASE_URL}/rest/v1/${CONFIG.TABELA}?login=eq.${encodeURIComponent(state.usuario.login)}&updated_at=${state.dadosDB.updated_at == null ? 'is.null' : 'eq.' + encodeURIComponent(state.dadosDB.updated_at)}`, {
                             method: 'PATCH',
                             headers: {
                                 'Content-Type': 'application/json',
@@ -1250,14 +1330,19 @@
                     if (!response.ok) throw new Error(`Erro ao salvar: ${response.status}`);
 
                     const updated = await response.json();
+                    if (!Array.isArray(updated) || !updated.length) throw new Error('Nenhum registro atualizado');
                     if (Array.isArray(updated) && updated.length > 0) {
                         state.dadosDB = updated[0];
+                        try { localStorage.setItem('portal_bolsa_dados_atualizados', String(Date.now())); } catch (_) {}
                         console.log(`✅ Mercado salvo! Saldo no banco: ${updated[0].saldo}`);
                     }
+                    return true;
                 } catch (error) {
                     console.error('Erro ao salvar:', error);
+                    return false;
                 } finally {
                     state.salvando = false;
+                    renderMarket();
                 }
             }
 
@@ -1293,12 +1378,23 @@
             // EVENTOS
             // ============================================================
             function setupEvents() {
+                DOM.menuProcedencia.addEventListener('click', event => {
+                    const botao = event.target.closest('button[data-procedencia]');
+                    if (!botao) return;
+                    state.procedenciaSelecionada = botao.dataset.procedencia;
+                    renderMarket();
+                    [...DOM.menuProcedencia.querySelectorAll('button')].find(el => el.dataset.procedencia === state.procedenciaSelecionada)?.focus();
+                });
                 DOM.marketGrid.addEventListener('click', function(e) {
+                    const btnEquip=e.target.closest('.btn-equip');
+                    if(btnEquip){if(!btnEquip.disabled)equiparDoMercado(btnEquip.dataset.itemId,btnEquip.closest('.market-item').querySelector('.equip-slot').value);return;}
                     // Botão comprar
+                    const btnSell = e.target.closest('.btn-sell');
+                    if (btnSell) { if (!btnSell.disabled) venderItem(btnSell.dataset.itemId); return; }
                     const btnBuy = e.target.closest('.btn-buy');
                     if (btnBuy) {
                         const itemId = btnBuy.dataset.itemId;
-                        if (itemId) comprarItem(itemId);
+                        if (itemId && !btnBuy.disabled) comprarItem(itemId);
                         return;
                     }
 
@@ -1306,7 +1402,7 @@
                     const btnUse = e.target.closest('.btn-use');
                     if (btnUse) {
                         const itemId = btnUse.dataset.itemId;
-                        if (itemId === 'stamina_1') usarEstamina();
+                        if (itemId === 'stamina_1' && !state.salvando && !state.negociando) usarEstamina();
                         return;
                     }
                 });
@@ -1390,8 +1486,8 @@
                 });
 
                 console.log('🛒 Mercado carregado com sucesso!');
-                console.log('⚡ Item Estamina disponível: R$ 10,00 por unidade (+10 SM)');
-                console.log(`📊 RTP do jogo: ~18% (jogador perde ~82% do investido)`);
+                console.log('⚡ Item Estamina disponível: S$ 10,00 por unidade (+10 SM)');
+
             }
 
             if (document.readyState === 'loading') {

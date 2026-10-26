@@ -1209,7 +1209,7 @@
             <div class="user-avatar" id="userAvatar">👤</div>
             <div class="user-info">
                 <span class="user-nick" id="userNick">Carregando...</span>
-                <span class="saldo" id="saldo">R$ 0,00</span>
+                <span class="saldo" id="saldo">S$ 0,00</span>
             </div>
         </div>
 
@@ -2082,8 +2082,8 @@
                 if ($('lwMag')) $('lwMag').textContent = this.getMagia();
 
                 if ($('saldo')) {
-                    $('saldo').textContent = new Intl.NumberFormat('pt-BR', {
-                        style: 'currency', currency: 'BRL'
+                    $('saldo').textContent = 'S$ ' + new Intl.NumberFormat('pt-BR', {
+                        style: 'decimal', minimumFractionDigits: 2, maximumFractionDigits: 2
                     }).format(this.saldo || 0);
                 }
                 if ($('btcTotal')) $('btcTotal').textContent = (this.btc || 0).toFixed(8);
@@ -2239,7 +2239,7 @@
                 const headerUser = document.getElementById('headerUser');
 
                 if (nick) nick.textContent = 'Visitante';
-                if (saldo) saldo.textContent = 'R$ 0,00';
+                if (saldo) saldo.textContent = 'S$ 0,00';
                 if (avatar) avatar.textContent = '👤';
                 if (headerUser) headerUser.textContent = 'Visitante';
             }

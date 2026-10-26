@@ -264,7 +264,7 @@
             <p style="color: var(--cinza); margin-bottom: 15px; font-size: 0.9em;">
                 Todos os ativos são carregados <strong>exclusivamente do banco de dados</strong>
                 (<code>fazendinha_dados.bolsa</code> da tabela <code>Geral</code>).
-                Clique em <strong>"➕ Registrar no Codex"</strong> para adicioná-los ao seu inventário.
+                Clique em <strong>"🛒 Comprar e registrar"</strong> para comprar 1 unidade com saldo S$, registrar no Codex e adicionar à carteira da Bolsa.
             </p>
 
             <div class="bolsa-tabs" id="bolsaTabs">
@@ -367,12 +367,13 @@ import {
   TABELA, 
   carregarBolsa, 
   salvarBolsa,
-  registrarAtivoNoCodex,
   listarItensCodex,
   calcularResumoBonus,
   calcularBonusAtivo,
   RARIDADE_MAP
 } from './config.js';
+import { obterTaxa, estadoTaxas } from './shared/taxas-globais.js';
+import { registrarAtivoNoCodex } from './shared/codex-compra.js';
 
 // ==========================================
 // ESTADO
@@ -597,6 +598,7 @@ async function carregarDadosBolsa() {
     // 1. Tentar carregar normalmente
     let dados = await carregarBolsa(usuarioLogado);
     bolsa = dados.bolsa;
+    if (estadoTaxas.origem === 'banco') bolsa.selic = obterTaxa('bolsa_selic');
 
     // 2. Se vazia, popular automaticamente
     if (bolsaEstaVazia(bolsa)) {
@@ -762,13 +764,13 @@ function renderizarAtivosBolsa() {
               DY Anual: <strong>${dy}%</strong>
             </div>
             <div class="bolsa-item-preco">
-              R$ ${preco.toFixed(2)}
+              S$ ${(preco * (1 + obterTaxa('codex_acrescimo') / 100)).toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
               <span class="bolsa-item-variacao ${variacaoClass}">${variacaoSign}${variacao.toFixed(2)}%</span>
             </div>
             <button class="btn-registrar-bolsa"
                     onclick="registrarAtivoBolsa('${ativo.id}', '${nomeSafe}', ${preco}, '${categoriaAtual}')"
                     ${registrado ? 'disabled' : ''}>
-              ${registrado ? '✓ Já Registrado' : '➕ Registrar no Codex'}
+              ${registrado ? '✓ Já Registrado' : '🛒 Comprar e registrar'}
             </button>
           </div>
         `;
@@ -809,12 +811,17 @@ window.forcarSeedBolsa = async function() {
 // ==========================================
 // REGISTRAR ATIVO NO CODEX (modifica o próprio ativo)
 // ==========================================
+let compraCodexEmAndamento = false;
 window.registrarAtivoBolsa = async function(id, nome, preco, categoria) {
   if (!usuarioLogado) {
     alert('⚠️ Faça login primeiro!');
     return;
   }
 
+  if (compraCodexEmAndamento) return;
+  const custo = (preco * (1 + obterTaxa('codex_acrescimo') / 100)).toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+  if (!confirm(`Comprar 1 unidade de ${nome} por S$ ${custo} e adicionar à carteira da Bolsa?`)) return;
+  compraCodexEmAndamento = true;
   try {
     const resultado = await registrarAtivoNoCodex(usuarioLogado, categoria, id);
     
@@ -829,11 +836,13 @@ window.registrarAtivoBolsa = async function(id, nome, preco, categoria) {
     atualizarResumo();
 
     const bonus = resultado.ativo.bonus || {};
-    alert(`✅ ${nome} registrado no Codex!\n\nBônus: +${bonus.atk || 0} ATK / +${bonus.def || 0} DEF / +${bonus.hp || 0} HP`);
+    alert(`✅ ${nome} comprado e registrado no Codex!\nAdicionado à Minha Carteira da Bolsa.\n\nBônus: +${bonus.atk || 0} ATK / +${bonus.def || 0} DEF / +${bonus.hp || 0} HP`);
 
   } catch (e) {
     console.error('Erro ao registrar:', e);
-    alert('❌ Erro ao registrar ativo: ' + (e.message || 'Tente novamente.'));
+    alert('❌ Erro ao comprar ativo: ' + (e.message || 'Tente novamente.'));
+  } finally {
+    compraCodexEmAndamento = false;
   }
 };
 
@@ -873,7 +882,7 @@ function renderizarListaItens() {
         <div class="info-pequena">
           ${item.tipo_peca} • Tier ${item.tier} • ${conjuntoNome}<br>
           ⚔️+${item.bonus?.atk || 0} 🛡️+${item.bonus?.def || 0} ❤️+${item.bonus?.hp || 0}
-          ${item.preco_atual ? `<br>💰 Preço atual: R$ ${item.preco_atual.toFixed(2)}` : ''}
+          ${item.preco_atual ? `<br>💰 Preço atual: S$ ${(item.preco_atual * (1 + obterTaxa('codex_acrescimo') / 100)).toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}` : ''}
         </div>
       </div>
     `;

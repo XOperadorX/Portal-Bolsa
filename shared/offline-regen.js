@@ -36,6 +36,11 @@ export class OfflineRegen {
         this.login = opts.login;
         this.container = opts.container || null;
         this.onApply = opts.onApply || null;
+        this.observarBanco = opts.observarBanco === true;
+        this.onRecord = opts.onRecord || null;
+        this._channel = null; this._pollInterval = null; this._readPromise = null; this._revision = 0;
+        this._onFocus = () => this.sincronizarDoBanco();
+        this._onVisible = () => { if (!document.hidden) this.sincronizarDoBanco(); };
 
         // Estado local
         this.offlineRegenStart = null;
@@ -54,7 +59,8 @@ export class OfflineRegen {
     // INICIALIZAÇÃO
     // ============================================================
     async init() {
-        await this._carregarDoBanco();
+        if (this.observarBanco) this._iniciarObservacao();
+        await this.sincronizarDoBanco();
         this._aplicarRegenOffline();
         this._injetarWidgetSeNecessario();
         this._renderizar();
@@ -65,6 +71,7 @@ export class OfflineRegen {
      * Chame quando a SM for reduzida em qualquer ação.
      */
     onSmReduzida(novoSm, smMax) {
+        if (this.observarBanco) { this.sincronizarDoBanco(); return; }
         if (typeof novoSm === 'number') this.sm = novoSm;
         if (typeof smMax === 'number') this.smMax = smMax;
 
@@ -84,6 +91,7 @@ export class OfflineRegen {
      * ✅ Persiste a limpeza do timer.
      */
     onSmAumentada(novoSm) {
+        if (this.observarBanco) { this.sincronizarDoBanco(); return; }
         if (typeof novoSm === 'number') this.sm = novoSm;
         const limiar = this.smMax * (REGEN_CONFIG.STAMINA_CRITICAL_PCT / 100);
 
@@ -127,6 +135,10 @@ export class OfflineRegen {
     destroy() {
         this._destroyed = true;
         this.stopAutoTick();
+        if (this._pollInterval) clearInterval(this._pollInterval);
+        if (this._channel) this.supabase.removeChannel(this._channel);
+        window.removeEventListener('focus', this._onFocus);
+        document.removeEventListener('visibilitychange', this._onVisible);
         if (this._autoSaveTimeout) clearTimeout(this._autoSaveTimeout);
         if (this._widget && this._widget.parentNode) {
             this._widget.parentNode.removeChild(this._widget);
@@ -139,6 +151,7 @@ export class OfflineRegen {
     // NÚCLEO — REGENERAÇÃO
     // ============================================================
     _aplicarRegenOffline() {
+        if (this.observarBanco) return false;
         const agora = Date.now();
         const limiar = this.smMax * (REGEN_CONFIG.STAMINA_CRITICAL_PCT / 100);
 
@@ -212,33 +225,51 @@ export class OfflineRegen {
     // ============================================================
     // PERSISTÊNCIA
     // ============================================================
+    _iniciarObservacao() {
+        this._channel = this.supabase.channel('dashboard-registro-' + this.login)
+            .on('postgres_changes', {event:'UPDATE',schema:'public',table:this.tabela,filter:'login=eq.'+this.login}, payload => {
+                if (!this._destroyed && payload.new?.login === this.login) { this._revision++; this.aplicarRegistro(payload.new); }
+            }).subscribe(status => { if (status === 'SUBSCRIBED') this.sincronizarDoBanco(); });
+        this._pollInterval = setInterval(() => { if (!document.hidden) this.sincronizarDoBanco(); }, 10000);
+        window.addEventListener('focus', this._onFocus);
+        document.addEventListener('visibilitychange', this._onVisible);
+    }
+
+    sincronizarDoBanco() {
+        if (this._destroyed) return Promise.resolve();
+        if (this._readPromise) return this._readPromise;
+        this._readPromise = this._carregarDoBanco().finally(() => { this._readPromise = null; });
+        return this._readPromise;
+    }
+
+    aplicarRegistro(data) {
+        if (this._destroyed || !data) return;
+        const maximo = (a,b,fallback) => Number(a)>0 ? Number(a) : Number(b)>0 ? Number(b) : fallback;
+        this.smMax = maximo(data.sm_max,data.max_sm,this.smMax);
+        this.hpMax = maximo(data.hp_max,data.max_hp,this.hpMax);
+        this.mpMax = maximo(data.mp_max,data.max_mp,this.mpMax);
+        this.sm = Number(data.sm_atual ?? data.sm ?? this.sm);
+        this.hp = Number(data.hp_atual ?? data.hp ?? this.hp);
+        this.mp = Number(data.mp_atual ?? data.mp ?? this.mp);
+        if (Object.hasOwn(data,'offline_regen_start')) {
+            const ts = data.offline_regen_start ? Date.parse(data.offline_regen_start) : NaN;
+            this.offlineRegenStart = Number.isFinite(ts) ? ts : null;
+        }
+        if (!this.observarBanco && this.sm >= this.smMax * REGEN_CONFIG.STAMINA_CRITICAL_PCT / 100) this.offlineRegenStart = null;
+        if (this.onRecord) this.onRecord(data);
+        if (this.observarBanco && this.onApply) this.onApply(this._snapshot());
+        this._renderizar();
+    }
+
     async _carregarDoBanco() {
-        const { data, error } = await this.supabase
-            .from(this.tabela)
-            .select('sm_atual, sm, max_sm, hp_atual, hp, max_hp, mp_atual, mp, max_mp, offline_regen_start')
-            .eq('login', this.login)
-            .maybeSingle();
-
-        if (error || !data) {
-            console.warn('⚠️ [OfflineRegen] Não foi possível carregar:', error);
-            return;
-        }
-
-        this.smMax = data.max_sm ?? 100;
-        this.hpMax = data.max_hp ?? 100;
-        this.mpMax = data.max_mp ?? 50;
-
-        this.sm = data.sm_atual ?? data.sm ?? this.smMax;
-        this.hp = data.hp_atual ?? data.hp ?? this.hpMax;
-        this.mp = data.mp_atual ?? data.mp ?? this.mpMax;
-
-        const ts = data.offline_regen_start;
-        this.offlineRegenStart = ts ? new Date(ts).getTime() : null;
-
-        const limiar = this.smMax * (REGEN_CONFIG.STAMINA_CRITICAL_PCT / 100);
-        if (this.sm >= limiar) {
-            this.offlineRegenStart = null;
-        }
+        const revision = this._revision;
+        try {
+            const { data, error } = await this.supabase.from(this.tabela)
+                .select('meta,login,nivel,experiencia,hp_atual,mp_atual,sm_atual,hp_max,mp_max,sm_max,hp,mp,sm,max_hp,max_mp,max_sm,ataque_base,defesa_base,magia_base,atk,def,mag,saldo,btc,poder_hash,offline_regen_start,cadeado,updated_at')
+                .eq('login', this.login).maybeSingle();
+            if (error || !data) { console.warn('[OfflineRegen] Falha na sincronização:', error); return; }
+            if (!this._destroyed && revision === this._revision) this.aplicarRegistro(data);
+        } catch (e) { console.warn('[OfflineRegen] Falha na sincronização:', e); }
     }
 
     _agendarPersistencia() {
@@ -247,6 +278,7 @@ export class OfflineRegen {
     }
 
     async _persistir() {
+        if (this.observarBanco || this._destroyed) return;
         const payload = {
             sm_atual: this.sm, sm: this.sm,
             hp_atual: this.hp, hp: this.hp,
@@ -334,7 +366,7 @@ export class OfflineRegen {
         if (!widget) return;
 
         const limiar = this.smMax * (REGEN_CONFIG.STAMINA_CRITICAL_PCT / 100);
-        const deveMostrar = this.sm < limiar && !!this.offlineRegenStart;
+        const deveMostrar = !!this.offlineRegenStart && (this.observarBanco ? this.sm <= limiar : this.sm < limiar);
 
         if (!deveMostrar) {
             widget.style.display = 'none';
@@ -361,7 +393,8 @@ export class OfflineRegen {
 
         const ogSub = document.getElementById('ogSub');
         if (ogSub) {
-            if (pct < 30)      ogSub.textContent = '⚠️ Stamina crítica! Continue offline para recuperar.';
+            if (this.observarBanco && pct >= 100) ogSub.textContent = '⏳ Prazo concluído. Aguardando atualização do banco.';
+            else if (pct < 30) ogSub.textContent = '⚠️ Stamina crítica! Continue offline para recuperar.';
             else if (pct < 70) ogSub.textContent = '⏳ Recuperando energia... mantenha-se offline.';
             else               ogSub.textContent = '✨ Quase lá! Sua recuperação total está próxima.';
         }
@@ -370,14 +403,14 @@ export class OfflineRegen {
         if (ogHint) {
             ogHint.textContent = pct < 100
                 ? 'Ao completar 24h, HP, MP e SM serão restaurados ao máximo'
-                : 'Recuperação completa!';
+                : this.observarBanco ? 'Os atributos serão exibidos assim que o banco confirmar a recuperação.' : 'Recuperação completa!';
         }
     }
 
     _calcularProgresso() {
         if (!this.offlineRegenStart) return 0;
         const decorrido = Date.now() - this.offlineRegenStart;
-        return Math.min(decorrido / REGEN_CONFIG.OFFLINE_FULL_MS, 1);
+        return Math.max(0, Math.min(decorrido / REGEN_CONFIG.OFFLINE_FULL_MS, 1));
     }
 
     _formatarTempo(ms) {

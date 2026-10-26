@@ -1,0 +1,50 @@
+const assert = require('node:assert/strict');
+const fs = require('node:fs');
+const vm = require('node:vm');
+
+const defaultsSource=fs.readFileSync('shared/taxas-definicoes.js','utf8').replaceAll('export const','const').replace(/^import .*;\s*/gm,'').replaceAll('export function','function');
+const defaults=new Function(defaultsSource+';return TAXAS_PADRAO;')();
+globalThis.obterTaxa = id => defaults[id];
+const source = fs.readFileSync('shared/codex-compra.js', 'utf8').replace(/^import .*;\s*/gm,'').replace('export async function','async function');
+function setup(overrides = {}, conflict = false) {
+  let row = {id:1, login:'teste', saldo:100, updated_at:'antes', carteira:{PETR4:2}, preco_medio_compra:{PETR4:8}, fazendinha_dados:{milhos:7, bolsa:{acoes:[{id:'PETR4',nome:'Petrobras',preco:10}],fiis:[],etfs:[],tesouro:[]}}, ...overrides};
+  let writes = 0, pending;
+  const db = {from(){ return {select(){return this},eq(){return this},is(){return this},async single(){return {data:structuredClone(row)}},update(data){pending=data;return this},async maybeSingle(){if(conflict)return {data:null};row={...row,...pending};writes++;return {data:{id:1}}}}}};
+  const buy = new Function('db','TABELA','calcularBonusAtivo',source+';return registrarAtivoNoCodex;')(db,'Geral',()=>({tier:1,raridade:'comum',bonus:{atk:1},tipo:'Ação'}));
+  return {buy, get row(){return row}, get writes(){return writes}};
+}
+(async()=>{
+ const migrationSource = fs.readFileSync('shared/codex-carteira.js','utf8').replace('export async function','async function');
+ const migrate = new Function(migrationSource+';return sincronizarCodexNaCarteira;')();
+ let row={id:1, saldo:80, carteira:{PETR4:2}, preco_medio_compra:{PETR4:9}, fazendinha_dados:{milhos:5, bolsa:{acoes:[{id:'PETR4',preco:10,registrado_codex:true},{id:'BBDC4',preco:20,registrado_codex:true},{id:'VALE3',preco:30,registrado_codex:false}],tesouro:[{id:'TESOURO_SELIC_2029',preco:100,registrado_codex:true}],fiis:[],etfs:[]}}};
+ let writes=0;
+ const client={from(){return {update(patch){this.patch=patch;return this},eq(){return this},is(){return this},select(){return this},async maybeSingle(){row={...row,...this.patch};writes++;return {data:row}}}}};
+ row=await migrate(client,'Geral',row);
+ assert.equal(row.saldo,80);assert.equal(row.carteira.PETR4,2);assert.equal(row.preco_medio_compra.PETR4,9);
+ assert.equal(row.carteira.BBDC4,1);assert.equal(row.preco_medio_compra.BBDC4,28);
+ assert.equal(row.carteira.TESOURO_SELIC_2029,1);assert.equal(row.carteira.VALE3,undefined);
+ assert.equal(row.fazendinha_dados.milhos,5);
+ await migrate(client,'Geral',row);assert.equal(writes,1);
+ row.carteira.BBDC4=0;await migrate(client,'Geral',row);assert.equal(row.carteira.BBDC4,0);assert.equal(writes,1);
+ console.log('OK: registros antigos, posição existente, sem cobrança, sem duplicação e sem recriar ativos vendidos.');
+ const s=setup();
+ const result=await s.buy('teste','acoes','PETR4');
+ assert.equal(result.custo,14); assert.equal(s.row.saldo,86);
+ assert.equal(s.row.carteira.PETR4,3); assert.equal(s.row.preco_medio_compra.PETR4,10);
+ assert.equal(s.row.fazendinha_dados.milhos,7);
+ assert.equal(s.row.fazendinha_dados.bolsa.acoes[0].registrado_codex,true);
+ assert.equal(s.row.fazendinha_dados.bolsa.acoes[0].carteira_codex_sincronizada,true);
+ assert.equal((await s.buy('teste','acoes','PETR4')).jaRegistrado,true);
+ assert.equal(s.writes,1);
+ const low=setup({saldo:1});await assert.rejects(low.buy('teste','acoes','PETR4'),/insuficiente/);assert.equal(low.writes,0);
+ const conflict=setup({},true);await assert.rejects(conflict.buy('teste','acoes','PETR4'),/mudaram/);assert.equal(conflict.writes,0);
+ const bolsa=fs.readFileSync('jogos/bolsa/script/bolsa.js','utf8');
+ const integration=bolsa.slice(bolsa.indexOf('function integrarAtivosCodex('),bolsa.indexOf('function aplicarDadosDoRegistro('));
+ const context=vm.createContext({acoes:[],fiis:[],etfs:[],tesouros:[],todosAtivos:[],precoHistorico:{},initEstruturas(){}});
+ vm.runInContext(integration,context);
+ const catalog={acoes:[{id:'BBDC4',preco:10}],fiis:[{id:'KNRI11',preco:20}],etfs:[{id:'SMAL11',preco:30}],tesouro:[{id:'TESOURO_SELIC_2029',preco:40}]};
+ context.integrarAtivosCodex(catalog);context.integrarAtivosCodex(catalog);
+ assert.equal(context.todosAtivos.length,4);assert.equal(context.tesouros[0].ticker,'TESOURO_SELIC_2029');
+ assert.ok(bolsa.includes('carteira[key] = data.carteira[key] || 0;'));
+ console.log('OK: compra com 40%, saldo, quantidade, preço médio, registro único, saldo insuficiente, conflito e catálogo das quatro categorias.');
+})().catch(e=>{console.error(e);process.exitCode=1});
