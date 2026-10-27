@@ -165,6 +165,50 @@ export const DEFINICOES_TAXAS = [
     "origem": "jogos/bi/bi.html"
   },
   {
+    "id": "bi_compra",
+    "grupo": "Banco Imobiliário",
+    "nome": "Taxa de compra de propriedade",
+    "padrao": 0,
+    "min": 0,
+    "max": 100,
+    "unidade": "%",
+    "procedimento": "Acrescentada ao preço atualizado pela SELIC na compra de uma propriedade.",
+    "origem": "jogos/bi/bi.html"
+  },
+  {
+    "id": "bi_venda",
+    "grupo": "Banco Imobiliário",
+    "nome": "Taxa de venda de propriedade",
+    "padrao": 0,
+    "min": 0,
+    "max": 100,
+    "unidade": "%",
+    "procedimento": "Descontada do valor negociado e paga pelo vendedor ao concluir uma venda.",
+    "origem": "jogos/bi/bi.html"
+  },
+  {
+    "id": "bi_troca",
+    "grupo": "Banco Imobiliário",
+    "nome": "Taxa de troca de propriedade",
+    "padrao": 0,
+    "min": 0,
+    "max": 100,
+    "unidade": "%",
+    "procedimento": "Cobrança de cada participante sobre o valor SELIC da propriedade que entrega na troca.",
+    "origem": "jogos/bi/bi.html"
+  },
+  {
+    "id": "bi_imposto",
+    "grupo": "Banco Imobiliário",
+    "nome": "Acréscimo de imposto das casas",
+    "padrao": 0,
+    "min": 0,
+    "max": 100,
+    "unidade": "%",
+    "procedimento": "Acrescentado ao valor-base da casa de imposto, após atualização pela SELIC.",
+    "origem": "jogos/bi/bi.html"
+  },
+  {
     "id": "mineracao_mercado",
     "grupo": "Mineração",
     "nome": "Desconto na venda no mercado",

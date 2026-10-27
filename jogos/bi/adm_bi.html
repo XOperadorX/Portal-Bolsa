@@ -202,6 +202,13 @@
 
 <div class="aviso" id="aviso">⚠️ Verificando sessão...</div>
 
+<div class="glass" style="max-width:1600px;margin:0 auto 20px;">
+  <div class="section-title">💰 Taxas e regras do jogo <a href="../../dados/admin/taxa.html" style="color:#ffd700">Administrar taxas</a></div>
+  <div id="taxas-jogo-lista" style="font-size:13px;line-height:1.8"></div>
+  <p>⚡ Cada rolagem consome 10 de stamina. Bônus por volta: S$ 0,00.</p>
+  <small id="taxas-jogo-status"></small>
+  <p><a href="bi.html" style="color:#ffd700">Abrir Banco Imobiliário</a></p>
+</div>
 <div class="layout">
 
   <div class="glass">
@@ -209,6 +216,7 @@
       🏘️ Tabuleiro <small id="count-tab">0</small>
     </div>
     <div class="grid-btns" style="margin-bottom:12px;">
+      <button class="info" onclick="ADM.completarBairros()">➕ Completar bairros de Foz</button>
       <button class="ok" onclick="ADM.novaCasa()">➕ Nova Casa</button>
       <button class="secundario" onclick="ADM.recarregarTabuleiro()">🔄 Recarregar</button>
       <button class="info" onclick="ADM.restaurarPadrao()">↺ Restaurar Padrão</button>
@@ -220,7 +228,7 @@
           <tr>
             <th style="width:30px">#</th>
             <th>Nome</th>
-            <th style="width:100px">Preço</th>
+            <th style="width:140px">Preço-base / SELIC</th>
             <th style="width:110px">Tipo</th>
             <th style="width:160px">Ações</th>
           </tr>
@@ -272,6 +280,11 @@
   </div>
 </div>
 
+<div class="glass" style="max-width:1600px;margin:20px auto;">
+  <div class="section-title">🎯 Lances <small id="count-lances">0</small></div>
+  <button class="secundario" onclick="ADM.carregarLances()">🔄 Atualizar</button>
+  <div id="lista-lances" class="lista-scroll"></div>
+</div>
 <div class="modal-fundo" id="modal">
   <div class="modal-box" id="modal-box"></div>
 </div>
@@ -309,7 +322,23 @@ catch (err) {
   window.__admDebug('❌ Falha ao importar config.js: ' + (err.message || err), 'erro');
   throw err;
 }
-const { db, TABELA, SESSION_KEY, fmtSaldo, esc } = cfg;
+const { db, TABELA, SESSION_KEY, fmtSaldo, fmtData, esc } = cfg;
+const { obterTaxa, estadoTaxas } = await import('../../shared/taxas-globais.js');
+
+// ============================================================
+// CONSTANTES
+// ============================================================
+const TAXA_ENTRADA = obterTaxa('bi_entrada');
+const TAXA_ALUGUEL_PROPRIEDADE = obterTaxa('bi_aluguel');
+const TAXA_ALUGUEL_SERVICO = obterTaxa('bi_servico');
+const TAXA_COMPRA_PROPRIEDADE = obterTaxa('bi_compra');
+const TAXA_VENDA_PROPRIEDADE = obterTaxa('bi_venda');
+const TAXA_TROCA_PROPRIEDADE = obterTaxa('bi_troca');
+const TAXA_IMPOSTO_CASA = obterTaxa('bi_imposto');
+const TAXA_SELIC_BOLSA = obterTaxa('bolsa_selic');
+const BONUS_VOLTA    = 0.00;
+const CUSTO_STAMINA  = 10;   // ⚡ custo por rolagem de dados
+
 
 // ============================================================
 // CONSTANTES
@@ -412,6 +441,7 @@ let tabuleiroLimpoIntencionalmente = false;
 let usuarios       = [];
 let comprasGlobais = [];
 let mercado        = [];
+let lances = [];
 
 // ============================================================
 // HELPERS
@@ -426,6 +456,84 @@ function fecharModal() {
 document.getElementById('modal').addEventListener('click', (e) => {
   if (e.target.id === 'modal') fecharModal();
 });
+
+function formatarPercentual(valor) {
+  return `${Number(valor).toLocaleString('pt-BR', { maximumFractionDigits: 2 })}%`;
+}
+
+function arredondarMoeda(valor) {
+  return Math.round((Number(valor) + Number.EPSILON) * 100) / 100;
+}
+
+function precoCasaAtual(casa) {
+  const precoBase = Number(casa?.preco) || 0;
+  return arredondarMoeda(precoBase * (1 + TAXA_SELIC_BOLSA / 100));
+}
+
+function valorTaxa(valor, percentual) {
+  return arredondarMoeda(Number(valor) * Number(percentual) / 100);
+}
+
+function renderizarTaxasJogo() {
+  const lista = document.getElementById('taxas-jogo-lista');
+  if (!lista) return;
+
+  const impostos = tabuleiro
+    .filter(casa => casa.tipo === 'imposto')
+    .map(casa => {
+      const base = precoCasaAtual(casa);
+      const total = arredondarMoeda(base + valorTaxa(base, TAXA_IMPOSTO_CASA));
+      return `${esc(casa.nome)}: ${fmtSaldo(total)} (base SELIC ${fmtSaldo(base)} + ${fmtSaldo(valorTaxa(base, TAXA_IMPOSTO_CASA))})`;
+    });
+  const detalhesImpostos = impostos.length
+    ? impostos.join(' · ')
+    : 'Nenhuma casa de imposto cadastrada.';
+
+  lista.innerHTML = `
+    <p>Entrada no jogo: <strong>${fmtSaldo(TAXA_ENTRADA)}</strong> (cobrada ao entrar).</p>
+    <p>Aluguel de propriedade: <strong>${formatarPercentual(TAXA_ALUGUEL_PROPRIEDADE)}</strong> do preço da casa.</p>
+    <p>Aluguel de serviço/ferrovia: <strong>${formatarPercentual(TAXA_ALUGUEL_SERVICO)}</strong> do preço da casa.</p>
+    <p>Taxa de compra: <strong>${formatarPercentual(TAXA_COMPRA_PROPRIEDADE)}</strong> sobre o preço da casa.</p>
+    <p>Taxa de venda: <strong>${formatarPercentual(TAXA_VENDA_PROPRIEDADE)}</strong> descontada do vendedor.</p>
+    <p>Taxa de troca: <strong>${formatarPercentual(TAXA_TROCA_PROPRIEDADE)}</strong> cobrada de cada participante sobre o valor da casa entregue.</p>
+    <p>Impostos do tabuleiro (acréscimo de ${formatarPercentual(TAXA_IMPOSTO_CASA)}): <strong>${detalhesImpostos}</strong>.</p>
+    <p>SELIC da Bolsa: <strong>${formatarPercentual(TAXA_SELIC_BOLSA)} a.a.</strong>; preço atualizado = preço-base × (1 + SELIC/100), sem acumular reajustes.</p>
+    <p>Sorte ou Azar: pode pagar ${fmtSaldo(50)} ou receber S$ 100.</p>
+  `;
+
+  const status = document.getElementById('taxas-jogo-status');
+  if (status) {
+    status.textContent = estadoTaxas.erro
+      ? 'Não foi possível carregar a configuração global; os valores padrão estão sendo usados.'
+      : `Valores da configuração global${estadoTaxas.versao ? ` (versão ${estadoTaxas.versao})` : ''}.`;
+  }
+}
+
+const BAIRROS_FOZ_NOMES = new Set([
+  'Alvorada', 'Náutica', 'Três Lagoas', 'Cidade Nova',
+  'Bairro Itaipu Binacional', 'Itaipu C', 'Polo Universitário', 'Porto Belo',
+  'Morumbi', 'Portal da Foz', 'Bourbon', 'Porto Meira', 'Três Fronteiras',
+  'Panorama', 'São Roque', 'América', 'Monjolo', 'Portes', 'Lancaster',
+  'Três Bandeiras', 'Itaipu A', 'Itaipu B', 'KLP', 'Ipê', 'Centro',
+  'Maracanã', 'Yolanda', 'Polo Centro', 'Centro Cívico', 'Campos do Iguaçu',
+  'Carimã', 'Mata Verde', 'Cataratas', 'Cognópolis', 'Lote Grande',
+  'Remanso', 'Parque Nacional'
+]);
+
+function incluirBairrosFoz(tabuleiroBase) {
+  const normalizar = nome => String(nome || '')
+    .normalize('NFD')
+    .replace(/[\u0300-\u036f]/g, '')
+    .trim()
+    .toLocaleLowerCase('pt-BR');
+  const nomesExistentes = new Set(tabuleiroBase.map(casa => normalizar(casa.nome)));
+  const bairrosAusentes = TABULEIRO_PADRAO.filter(casa => {
+    const nomeNormalizado = normalizar(casa.nome);
+    return BAIRROS_FOZ_NOMES.has(casa.nome) && !nomesExistentes.has(nomeNormalizado);
+  });
+  return [...tabuleiroBase, ...bairrosAusentes];
+}
+
 
 function classeTipo(t) {
   const mapa = {
@@ -450,6 +558,7 @@ async function carregarTabuleiro() {
     tabuleiroUsaPadraoLocal = true;
     tabuleiro = TABULEIRO_PADRAO.map((casa, posicao) => ({ ...casa, posicao }));
     renderizarTabuleiro();
+  renderizarTaxasJogo();
     msgAviso('⚠️ Não foi possível carregar o tabuleiro do banco. Exibindo as 47 casas padrão localmente. ' + esc(error.message), 'erro');
     return;
   }
@@ -460,13 +569,14 @@ async function carregarTabuleiro() {
     : (data || []);
   if (data?.length) tabuleiroLimpoIntencionalmente = false;
   renderizarTabuleiro();
+  renderizarTaxasJogo();
   if (tabuleiroUsaPadraoLocal) {
     msgAviso('⚠️ As 47 casas padrão estão sendo exibidas localmente. Clique em “Restaurar Padrão” para gravá-las no banco e habilitar as ações.', 'erro');
   }
 }
 
 async function carregarUsuarios() {
-  const { data, error } = await db.from(TABELA).select('login, nome, saldo').order('login', { ascending: true });
+  const { data, error } = await db.from(TABELA).select('login, nome, saldo, sm_atual, sm_max, fazendinha_dados').order('login', { ascending: true });
   if (error) { console.error(error); return; }
   usuarios = data || [];
   renderizarUsuarios();
@@ -500,7 +610,7 @@ function renderizarTabuleiro() {
     <tr>
       <td>${c.posicao}</td>
       <td><strong>${esc(c.nome)}</strong></td>
-      <td>${c.preco > 0 ? fmtSaldo(c.preco) : '—'}</td>
+      <td>${c.preco > 0 ? fmtSaldo(c.preco) : '—'}<br><small>SELIC: ${fmtSaldo(precoCasaAtual(c))}</small></td>
       <td><span class="tipo-badge ${classeTipo(c.tipo)}">${esc(c.tipo)}</span></td>
       <td>
         ${c.id == null ? '<small>Salve o padrão para habilitar</small>' : `
@@ -542,7 +652,10 @@ function renderizarUsuarios() {
         <div>
           <strong>${esc(u.nome || u.login)}</strong>
           <small style="opacity:0.7">@${esc(u.login)}</small><br>
-          💰 <strong>${fmtSaldo(u.saldo)}</strong>
+          💰 <strong>${fmtSaldo(u.saldo)}</strong><br>
+          ⚡ Stamina: ${Number(u.sm_atual) || 0} / ${Number(u.sm_max) || 0}<br>
+          🎲 Partida: ${u.fazendinha_dados?.banco_imobiliario?.jogoIniciado ? 'Em andamento' : 'Não iniciada'}
+          · ${(u.fazendinha_dados?.banco_imobiliario?.jogadores || []).length} jogador(es)
         </div>
         <div>
           <button class="mini ok"     onclick="ADM.ajustarSaldo('${l}', 1)">+S$</button>
@@ -572,7 +685,7 @@ function renderizarCompras() {
         🏠 <strong>${esc(c.casa_nome)}</strong><br>
         <small style="opacity:0.75">
           Dono: <strong>${esc(c.dono_nome || c.dono_login)}</strong> (@${esc(c.dono_login)})
-          — ${fmtSaldo(c.preco)}
+          — ${fmtSaldo(c.preco)} · ${esc(fmtData(c.comprado_em))}
         </small>
       </div>
       <div>
@@ -587,7 +700,7 @@ function renderizarCompras() {
 // RENDER — MERCADO
 // ============================================================
 function renderizarMercado() {
-  const abertos = mercado.filter(m => m.status === 'aberto');
+  const abertos = mercado.filter(m => m.status === 'aberto' && new Date(m.expira_em) > new Date());
   document.getElementById('count-mercado').textContent = abertos.length;
   const el = document.getElementById('lista-mercado');
 
@@ -607,6 +720,8 @@ function renderizarMercado() {
         </small>
       </div>
       <div>
+        <small>Vence: ${esc(fmtData(m.expira_em))}<br>
+          ${lances.filter(l => l.anuncio_id === m.id && l.status === 'pendente').length} lance(s)</small>
         <button class="mini perigo" onclick="ADM.cancelarAnuncio(${m.id})">✖</button>
       </div>
     </div>
@@ -762,6 +877,7 @@ async function limparTudo() {
   tabuleiroLimpoIntencionalmente = true;
   msgAviso('🗑️ Tudo limpo.', 'ok');
   await Promise.all([carregarTabuleiro(), carregarCompras(), carregarMercado()]);
+  await carregarLances();
   renderizarCompras(); renderizarMercado();
 }
 
@@ -884,6 +1000,7 @@ async function cancelarAnuncio(anuncioId) {
   if (!confirm('Cancelar este anúncio?')) return;
   await db.from(TB_MERCADO).update({ status: 'cancelado' }).eq('id', anuncioId);
   await db.from(TB_LANCES).update({ status: 'cancelado' }).eq('anuncio_id', anuncioId);
+  await carregarLances();
   msgAviso('✖ Anúncio cancelado.', 'ok');
   await carregarMercado();
   renderizarMercado();
@@ -893,11 +1010,49 @@ async function limparMercado() {
   if (!confirm('Cancelar TODOS os anúncios e lances?')) return;
   await db.from(TB_MERCADO).update({ status: 'cancelado' }).eq('status', 'aberto');
   await db.from(TB_LANCES).update({ status: 'cancelado' }).eq('status', 'pendente');
+  await carregarLances();
   msgAviso('🗑️ Mercado limpo.', 'ok');
   await carregarMercado();
   renderizarMercado();
 }
 
+async function carregarLances() {
+  const { data, error } = await db.from(TB_LANCES).select('*').order('criado_em', { ascending: false });
+  if (error) { msgAviso('❌ Erro ao carregar lances: ' + esc(error.message), 'erro'); return; }
+  lances = data || [];
+  renderizarLances();
+  renderizarMercado();
+}
+function renderizarLances() {
+  document.getElementById('count-lances').textContent = lances.length;
+  document.getElementById('lista-lances').innerHTML = lances.map(l => {
+    const anuncio = mercado.find(m => m.id === l.anuncio_id);
+    return `<div class="item-mini"><div><strong>${esc(anuncio?.casa_nome || 'Anúncio #' + l.anuncio_id)}</strong><br>
+      ${esc(l.comprador_nome || l.comprador_login)} · ${l.casa_ofertada_nome ? '🔁 ' + esc(l.casa_ofertada_nome) : fmtSaldo(l.valor)}
+      <br><small>${esc(l.status)} · ${esc(fmtData(l.criado_em))}</small></div>
+      ${l.status === 'pendente' ? `<button class="mini perigo" onclick="ADM.recusarLance(${Number(l.id)})">Recusar</button>` : ''}</div>`;
+  }).join('') || '<p>Nenhum lance.</p>';
+}
+async function recusarLance(id) {
+  if (!confirm('Recusar este lance?')) return;
+  const { error } = await db.from(TB_LANCES).update({ status: 'recusado' }).eq('id', id).eq('status', 'pendente');
+  if (error) { msgAviso('❌ ' + esc(error.message), 'erro'); return; }
+  await carregarLances();
+}
+
+async function completarBairros() {
+  if (tabuleiroUsaPadraoLocal) {
+    alert('Restaure o padrão para gravar o tabuleiro no banco primeiro.'); return;
+  }
+  const ausentes = incluirBairrosFoz(tabuleiro).slice(tabuleiro.length);
+  if (!ausentes.length) { msgAviso('✅ Todos os bairros de Foz já estão cadastrados.', 'ok'); return; }
+  if (!confirm(`Acrescentar ${ausentes.length} bairro(s) ao tabuleiro atual?`)) return;
+  const proxima = tabuleiro.length ? Math.max(...tabuleiro.map(c => Number(c.posicao))) + 1 : 0;
+  const { error } = await db.from(TB_TABULEIRO).insert(ausentes.map((c, i) => ({ ...c, posicao: proxima + i, ativo: true })));
+  if (error) { msgAviso('❌ ' + esc(error.message), 'erro'); return; }
+  await carregarTabuleiro();
+  msgAviso('✅ Bairros acrescentados ao tabuleiro.', 'ok');
+}
 async function recarregarCompras() {
   await carregarCompras();
   renderizarCompras();
@@ -913,7 +1068,7 @@ async function recarregarMercado() {
 // 🚀 EXPÕE TUDO EM window.ADM
 // ============================================================
 window.ADM = {
-  fecharModal,
+  fecharModal, completarBairros, carregarLances, renderizarLances, recusarLance,
   novaCasa, salvarNovaCasa, editarCasa, salvarEdicao,
   deletarCasa, moverCasa, recarregarTabuleiro,
   restaurarPadrao, limparTudo,
@@ -933,7 +1088,8 @@ window.ADM = {
       carregarTabuleiro(),
       carregarUsuarios(),
       carregarCompras(),
-      carregarMercado()
+      carregarMercado(),
+      carregarLances()
     ]);
     renderizarCompras();
     renderizarMercado();
@@ -967,7 +1123,7 @@ window.ADM = {
     db.channel('adm-mercado')
       .on('postgres_changes',
         { event: '*', schema: 'public', table: TB_MERCADO },
-        async () => { await carregarMercado(); renderizarMercado(); }).subscribe();
+        async () => { await carregarMercado(); renderizarMercado(); renderizarLances(); }).subscribe();
 
     db.channel('adm-users')
       .on('postgres_changes',
@@ -978,7 +1134,7 @@ window.ADM = {
     db.channel('adm-lances')
       .on('postgres_changes',
         { event: '*', schema: 'public', table: TB_LANCES },
-        () => carregarMercado()).subscribe();
+        () => carregarLances()).subscribe();
 
   } catch (err) {
     console.error('[ADM] init:', err);

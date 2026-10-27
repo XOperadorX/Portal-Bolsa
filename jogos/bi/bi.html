@@ -84,6 +84,7 @@
     white-space: nowrap;
     transition: border-color .2s, transform .2s, box-shadow .2s;
   }
+  .page-actions a[hidden] { display: none !important; }
   .page-actions a:hover {
     transform: translateY(-2px);
     border-color: #ffd700;
@@ -94,6 +95,17 @@
     background: linear-gradient(135deg, #6d28d9, #4c1d95);
   }
   .page-actions .btn-admin:hover { border-color: #e9d5ff; }
+  .taxas-jogo {
+    max-width: 1500px;
+    margin: 0 auto 20px;
+    padding: 14px 18px;
+    color: #e8eef7;
+    font-size: 13px;
+    line-height: 1.6;
+  }
+  .taxas-jogo h2 { color: #ffd700; font-size: 15px; margin-bottom: 6px; }
+  .taxas-jogo p { margin: 3px 0; }
+  .taxas-jogo .taxas-status { opacity: .7; font-size: 11px; }
 
   .layout {
     display: grid;
@@ -470,6 +482,12 @@
   <div id="mensagem"></div>
 </div>
 
+<section class="taxas-jogo glass" aria-labelledby="taxas-jogo-titulo" aria-live="polite">
+  <h2 id="taxas-jogo-titulo">💸 Taxas e custos do jogo</h2>
+  <div id="taxas-jogo-lista">Carregando taxas...</div>
+  <p id="taxas-jogo-status" class="taxas-status"></p>
+</section>
+
 <div class="aviso" id="aviso-login">⚠️ Verificando sessão...</div>
 
 <div class="layout">
@@ -557,12 +575,19 @@ catch (err) {
   throw err;
 }
 const { db, TABELA, SESSION_KEY, fmtSaldo, fmtData, esc } = cfg;
-const { obterTaxa } = await import('../../shared/taxas-globais.js');
+const { obterTaxa, estadoTaxas } = await import('../../shared/taxas-globais.js');
 
 // ============================================================
 // CONSTANTES
 // ============================================================
 const TAXA_ENTRADA = obterTaxa('bi_entrada');
+const TAXA_ALUGUEL_PROPRIEDADE = obterTaxa('bi_aluguel');
+const TAXA_ALUGUEL_SERVICO = obterTaxa('bi_servico');
+const TAXA_COMPRA_PROPRIEDADE = obterTaxa('bi_compra');
+const TAXA_VENDA_PROPRIEDADE = obterTaxa('bi_venda');
+const TAXA_TROCA_PROPRIEDADE = obterTaxa('bi_troca');
+const TAXA_IMPOSTO_CASA = obterTaxa('bi_imposto');
+const TAXA_SELIC_BOLSA = obterTaxa('bolsa_selic');
 const BONUS_VOLTA    = 0.00;
 const CUSTO_STAMINA  = 10;   // ⚡ custo por rolagem de dados
 const TB_COMPRAS     = 'banco_imobiliario_compras';
@@ -595,10 +620,11 @@ if (!login) throw new Error('Sem sessão');
 async function verificarAcessoAdmin() {
   const botaoAdmin = document.getElementById('btnAdminBi');
   if (!botaoAdmin) return;
+  botaoAdmin.hidden = true;
 
   const { data, error } = await db
     .from(TABELA)
-    .select('login, tipo, cargo_codigo, email')
+    .select('cadeado')
     .eq('login', login)
     .maybeSingle();
 
@@ -607,13 +633,7 @@ async function verificarAcessoAdmin() {
     return;
   }
 
-  const isAdmin = data && (
-    data.tipo === 'admin' ||
-    data.cargo_codigo === 'admin' ||
-    data.email === 'admin@admin.com' ||
-    (data.login || '').toLowerCase() === 'admin'
-  );
-  botaoAdmin.hidden = !isAdmin;
+  botaoAdmin.hidden = data?.cadeado !== true;
 }
 
 // ============================================================
@@ -687,6 +707,58 @@ let tabuleiro = JSON.parse(JSON.stringify(TABULEIRO_PADRAO));
 // ============================================================
 // HELPERS
 // ============================================================
+function formatarPercentual(valor) {
+  return `${Number(valor).toLocaleString('pt-BR', { maximumFractionDigits: 2 })}%`;
+}
+
+function arredondarMoeda(valor) {
+  return Math.round((Number(valor) + Number.EPSILON) * 100) / 100;
+}
+
+function precoCasaAtual(casa) {
+  const precoBase = Number(casa?.preco) || 0;
+  return arredondarMoeda(precoBase * (1 + TAXA_SELIC_BOLSA / 100));
+}
+
+function valorTaxa(valor, percentual) {
+  return arredondarMoeda(Number(valor) * Number(percentual) / 100);
+}
+
+function renderizarTaxasJogo() {
+  const lista = document.getElementById('taxas-jogo-lista');
+  if (!lista) return;
+
+  const impostos = tabuleiro
+    .filter(casa => casa.tipo === 'imposto')
+    .map(casa => {
+      const base = precoCasaAtual(casa);
+      const total = arredondarMoeda(base + valorTaxa(base, TAXA_IMPOSTO_CASA));
+      return `${esc(casa.nome)}: ${fmtSaldo(total)} (base SELIC ${fmtSaldo(base)} + ${fmtSaldo(valorTaxa(base, TAXA_IMPOSTO_CASA))})`;
+    });
+  const detalhesImpostos = impostos.length
+    ? impostos.join(' · ')
+    : 'Nenhuma casa de imposto cadastrada.';
+
+  lista.innerHTML = `
+    <p>Entrada no jogo: <strong>${fmtSaldo(TAXA_ENTRADA)}</strong> (cobrada ao entrar).</p>
+    <p>Aluguel de propriedade: <strong>${formatarPercentual(TAXA_ALUGUEL_PROPRIEDADE)}</strong> do preço da casa.</p>
+    <p>Aluguel de serviço/ferrovia: <strong>${formatarPercentual(TAXA_ALUGUEL_SERVICO)}</strong> do preço da casa.</p>
+    <p>Taxa de compra: <strong>${formatarPercentual(TAXA_COMPRA_PROPRIEDADE)}</strong> sobre o preço da casa.</p>
+    <p>Taxa de venda: <strong>${formatarPercentual(TAXA_VENDA_PROPRIEDADE)}</strong> descontada do vendedor.</p>
+    <p>Taxa de troca: <strong>${formatarPercentual(TAXA_TROCA_PROPRIEDADE)}</strong> cobrada de cada participante sobre o valor da casa entregue.</p>
+    <p>Impostos do tabuleiro (acréscimo de ${formatarPercentual(TAXA_IMPOSTO_CASA)}): <strong>${detalhesImpostos}</strong>.</p>
+    <p>SELIC da Bolsa: <strong>${formatarPercentual(TAXA_SELIC_BOLSA)} a.a.</strong>; preço atualizado = preço-base × (1 + SELIC/100), sem acumular reajustes.</p>
+    <p>Sorte ou Azar: pode pagar ${fmtSaldo(50)} ou receber S$ 100.</p>
+  `;
+
+  const status = document.getElementById('taxas-jogo-status');
+  if (status) {
+    status.textContent = estadoTaxas.erro
+      ? 'Não foi possível carregar a configuração global; os valores padrão estão sendo usados.'
+      : `Valores da configuração global${estadoTaxas.versao ? ` (versão ${estadoTaxas.versao})` : ''}.`;
+  }
+}
+
 const BAIRROS_FOZ_NOMES = new Set([
   'Alvorada', 'Náutica', 'Três Lagoas', 'Cidade Nova',
   'Bairro Itaipu Binacional', 'Itaipu C', 'Polo Universitário', 'Porto Belo',
@@ -822,7 +894,11 @@ async function carregarTabuleiroGlobal() {
     .select('posicao, nome, preco, tipo')
     .order('posicao', { ascending: true });
 
-  if (error) { console.warn('[BI] erro tabuleiro global:', error); return; }
+  if (error) {
+    console.warn('[BI] erro tabuleiro global:', error);
+    renderizarTaxasJogo();
+    return;
+  }
 
   if (tabData && tabData.length) {
     const tabuleiroGlobal = tabData.map(t => ({
@@ -832,6 +908,7 @@ async function carregarTabuleiroGlobal() {
   } else {
     tabuleiro = JSON.parse(JSON.stringify(TABULEIRO_PADRAO));
   }
+  renderizarTaxasJogo();
 }
 
 // ============================================================
@@ -856,16 +933,31 @@ async function salvarJogo() {
 // SALDO / STAMINA / CODEX / TAXA / ENTRAR
 // ============================================================
 async function atualizarSaldoReal(loginJ, deltaS) {
-  if (!loginJ || deltaS === 0) return;
-  const { data } = await db.from(TABELA).select('saldo').eq('login', loginJ).maybeSingle();
+  if (!loginJ || deltaS === 0) return true;
+  const { data, error: erroLeitura } = await db.from(TABELA).select('saldo').eq('login', loginJ).maybeSingle();
+  if (erroLeitura || !data) {
+    console.error('[BI] Não foi possível consultar o saldo:', erroLeitura);
+    mostrarMsg('❌ Não foi possível consultar o saldo; a operação não foi realizada.');
+    return false;
+  }
   const atual = Number(data?.saldo) || 0;
+  if (atual + deltaS < 0) {
+    mostrarMsg(`❌ Saldo insuficiente (${fmtSaldo(atual)}).`);
+    return false;
+  }
   const novo  = Math.max(0, atual + deltaS);
-  await db.from(TABELA).update({
+  const { error: erroAtualizacao } = await db.from(TABELA).update({
     saldo: novo, updated_at: new Date().toISOString()
   }).eq('login', loginJ);
+  if (erroAtualizacao) {
+    console.error('[BI] Não foi possível atualizar o saldo:', erroAtualizacao);
+    mostrarMsg('❌ Não foi possível atualizar o saldo; a operação não foi realizada.');
+    return false;
+  }
   const jog = jogadores.find(j => j.login === loginJ);
   if (jog) jog.saldo = novo;
   if (loginJ === login && eu) eu.saldo = novo;
+  return true;
 }
 
 // ============================================================
@@ -906,11 +998,12 @@ async function registrarPropriedadeNoCodex(casa, loginDono) {
   const itens = Array.isArray(atual?.itens) ? atual.itens : [];
   const idItem = `bi_${casa.nome.toLowerCase().replace(/\s+/g, '_')}`;
   if (itens.some(i => i.id_item === idItem)) return;
-  const raridade = casa.preco >= 400 ? 'lendario' : casa.preco >= 200 ? 'epico' : 'raro';
+  const preco = precoCasaAtual(casa);
+  const raridade = preco >= 400 ? 'lendario' : preco >= 200 ? 'epico' : 'raro';
   itens.push({
     id_item: idItem, nome: casa.nome, tipo_peca: 'Propriedade',
-    raridade, tier: Math.min(20, Math.max(1, Math.floor(casa.preco / 20))),
-    bonus: { atk: Math.floor(casa.preco/20), def: Math.floor(casa.preco/30), hp: casa.preco },
+    raridade, tier: Math.min(20, Math.max(1, Math.floor(preco / 20))),
+    bonus: { atk: Math.floor(preco/20), def: Math.floor(preco/30), hp: preco },
     origem: 'banco_imobiliario', registrado_em: new Date().toISOString()
   });
   await db.from(TABELA).update({ itens, updated_at: new Date().toISOString() }).eq('login', loginDono);
@@ -928,8 +1021,7 @@ async function confirmarECobrarTaxa() {
     `Saldo: ${fmtSaldo(saldoAtual)} → ${fmtSaldo(saldoAtual - TAXA_ENTRADA)}\n\nEntrar?`
   );
   if (!ok) return false;
-  await atualizarSaldoReal(login, -TAXA_ENTRADA);
-  return true;
+  return atualizarSaldoReal(login, -TAXA_ENTRADA);
 }
 
 async function entrarAutomaticamente() {
@@ -989,21 +1081,36 @@ async function processarCasa(pos) {
 
   switch (casa.tipo) {
     case 'imposto':
-      await atualizarSaldoReal(jog.login, -casa.preco);
-      mostrarMsg(`💸 ${casa.nome} S$ ${casa.preco} — você pagou!`);
+      {
+        const base = precoCasaAtual(casa);
+        const imposto = arredondarMoeda(base + valorTaxa(base, TAXA_IMPOSTO_CASA));
+        if (await atualizarSaldoReal(jog.login, -imposto)) {
+          mostrarMsg(`💸 Imposto ${casa.nome}: ${fmtSaldo(imposto)} (inclui ${formatarPercentual(TAXA_IMPOSTO_CASA)}).`);
+        }
+      }
       break;
     case 'chance':
       if (Math.random() > 0.5) { await atualizarSaldoReal(jog.login, +100); mostrarMsg('🍀 Sorte! +S$ 100!'); }
       else { await atualizarSaldoReal(jog.login, -50); mostrarMsg('😬 Azar! -S$ 50!'); }
       break;
     case 'propriedade': case 'servico': case 'ferrovia':
-      if (!dono) mostrarMsg(`🏠 ${casa.nome} à venda por ${fmtSaldo(casa.preco)}`);
+      if (!dono) mostrarMsg(`🏠 ${casa.nome} à venda por ${fmtSaldo(precoCasaAtual(casa))}`);
       else if (dono.dono_login !== jog.login) {
-        const taxa = casa.tipo === 'propriedade' ? obterTaxa('bi_aluguel') / 100 : obterTaxa('bi_servico') / 100;
-        const alug = Math.floor(casa.preco * taxa);
-        await atualizarSaldoReal(jog.login, -alug);
-        await atualizarSaldoReal(dono.dono_login, +alug);
-        mostrarMsg(`💵 Aluguel ${fmtSaldo(alug)} → ${dono.dono_nome}`);
+        const percentual = casa.tipo === 'propriedade'
+          ? TAXA_ALUGUEL_PROPRIEDADE
+          : TAXA_ALUGUEL_SERVICO;
+        const preco = precoCasaAtual(casa);
+        const alug = Math.floor(preco * percentual / 100);
+        if (await atualizarSaldoReal(jog.login, -alug)) {
+          if (await atualizarSaldoReal(dono.dono_login, +alug)) {
+            mostrarMsg(
+              `💵 Aluguel ${fmtSaldo(alug)} (${formatarPercentual(percentual)} de ${fmtSaldo(preco)}) ` +
+              `→ ${dono.dono_nome}`
+            );
+          } else {
+            await atualizarSaldoReal(jog.login, +alug);
+          }
+        }
       } else mostrarMsg(`🏠 Você já é dono de ${casa.nome}.`);
       break;
     case 'inicio':   mostrarMsg('💰 Início.'); break;
@@ -1017,6 +1124,9 @@ window.comprar = async function () {
   const pos  = jogadores[jogadorAtual].posicao;
   const jog  = jogadores[jogadorAtual];
   const casa = tabuleiro[pos];
+  const preco = precoCasaAtual(casa);
+  const taxaCompra = valorTaxa(preco, TAXA_COMPRA_PROPRIEDADE);
+  const totalCompra = arredondarMoeda(preco + taxaCompra);
 
   if (!['propriedade', 'servico', 'ferrovia'].includes(casa.tipo)) {
     mostrarMsg('❌ Aqui não dá pra comprar!'); return;
@@ -1024,7 +1134,16 @@ window.comprar = async function () {
   if (comprasGlobais[pos]) {
     mostrarMsg(`❌ Já pertence a ${comprasGlobais[pos].dono_nome}!`); return;
   }
-  if (jog.saldo < casa.preco) { mostrarMsg('❌ Sem saldo!'); return; }
+  if (jog.saldo < totalCompra) {
+    mostrarMsg(`❌ Saldo insuficiente. Total da compra: ${fmtSaldo(totalCompra)}.`);
+    return;
+  }
+  if (!confirm(
+    `Comprar ${casa.nome}?\n\n` +
+    `Preço atualizado pela SELIC: ${fmtSaldo(preco)}\n` +
+    `Taxa de compra (${formatarPercentual(TAXA_COMPRA_PROPRIEDADE)}): ${fmtSaldo(taxaCompra)}\n` +
+    `Total: ${fmtSaldo(totalCompra)}`
+  )) return;
 
   const { data: tabCheck } = await db
     .from(TB_TABULEIRO)
@@ -1032,7 +1151,7 @@ window.comprar = async function () {
     .eq('posicao', pos)
     .maybeSingle();
 
-  if (tabCheck && (tabCheck.nome !== casa.nome || Number(tabCheck.preco) !== casa.preco)) {
+  if (tabCheck && (tabCheck.nome !== casa.nome || Number(tabCheck.preco) !== Number(casa.preco))) {
     mostrarMsg('⚠️ O tabuleiro foi alterado! Recarregando...');
     await carregarTabuleiroGlobal();
     montarTabuleiroDOM();
@@ -1040,14 +1159,14 @@ window.comprar = async function () {
     return;
   }
 
-  await atualizarSaldoReal(jog.login, -casa.preco);
+  if (!await atualizarSaldoReal(jog.login, -totalCompra)) return;
   const { data, error } = await db.from(TB_COMPRAS).insert({
     casa_id: pos, casa_nome: casa.nome,
-    dono_login: login, dono_nome: eu?.nome || login, preco: casa.preco
+    dono_login: login, dono_nome: eu?.nome || login, preco
   }).select().maybeSingle();
 
   if (error) {
-    await atualizarSaldoReal(jog.login, +casa.preco);
+    await atualizarSaldoReal(jog.login, +totalCompra);
     mostrarMsg('⚠️ Alguém comprou primeiro!');
     await carregarCompras();
     atualizarTela();
@@ -1056,7 +1175,7 @@ window.comprar = async function () {
 
   comprasGlobais[pos] = {
     dono_login: login, dono_nome: eu?.nome || login,
-    preco: casa.preco, comprado_em: data.comprado_em
+    preco, comprado_em: data.comprado_em
   };
   historicoCompras.unshift({ ...data, preco: Number(data.preco) });
   casa.dono = login;
@@ -1066,7 +1185,7 @@ window.comprar = async function () {
 
   await salvarJogo();
   atualizarTela(); renderizarHistorico();
-  mostrarMsg(`✅ Comprou ${casa.nome}!`);
+  mostrarMsg(`✅ Comprou ${casa.nome} por ${fmtSaldo(totalCompra)} (inclui taxa de ${fmtSaldo(taxaCompra)}).`);
 };
 
 // ============================================================
@@ -1079,9 +1198,9 @@ window.abrirVender = function (casaId) {
   }
   abrirModal(`
     <h3>💰 Vender "${esc(casa.nome)}"</h3>
-    <p>Defina o preço pedido. Outros jogadores poderão dar lances.</p>
+    <p>Defina o preço pedido. Ao concluir a venda, será descontada taxa de ${formatarPercentual(TAXA_VENDA_PROPRIEDADE)} do vendedor.</p>
     <label>Preço pedido (S$)</label>
-    <input type="number" id="inp-preco" min="1" step="0.01" value="${casa.preco}">
+    <input type="number" id="inp-preco" min="1" step="0.01" value="${precoCasaAtual(casa)}">
     <div class="linha">
       <button class="secundario" onclick="fecharModal()">Cancelar</button>
       <button onclick="confirmarVenda(${casaId})">📢 Anunciar</button>
@@ -1094,6 +1213,10 @@ window.confirmarVenda = async function (casaId) {
   if (isNaN(preco) || preco <= 0) { alert('Preço inválido'); return; }
 
   const casa = tabuleiro[casaId];
+  if (!casa || comprasGlobais[casaId]?.dono_login !== login) {
+    alert('Você não é o dono desta propriedade.');
+    return;
+  }
   const { error } = await db.from(TB_MERCADO).insert({
     tipo: 'venda',
     casa_id: casaId,
@@ -1176,7 +1299,9 @@ window.abrirLance = function (anuncioId) {
       <h3>🎯 Lance em "${esc(an.casa_nome)}"</h3>
       <p>
         Vendedor: <strong>${esc(an.vendedor_nome)}</strong><br>
-        Preço pedido: <strong>${fmtSaldo(an.preco_pedido)}</strong>
+        Preço pedido: <strong>${fmtSaldo(an.preco_pedido)}</strong><br>
+        Taxa de compra (${formatarPercentual(TAXA_COMPRA_PROPRIEDADE)}): <strong>${fmtSaldo(valorTaxa(an.preco_pedido, TAXA_COMPRA_PROPRIEDADE))}</strong><br>
+        Total se aceito: <strong>${fmtSaldo(arredondarMoeda(an.preco_pedido + valorTaxa(an.preco_pedido, TAXA_COMPRA_PROPRIEDADE)))}</strong>
       </p>
       <label>Seu lance (S$)</label>
       <input type="number" id="inp-lance" min="1" step="0.01" value="${sugestao}">
@@ -1197,7 +1322,8 @@ window.abrirLance = function (anuncioId) {
       <h3>🎯 Oferta de Troca</h3>
       <p>
         Eles querem <strong>${esc(an.troca_por_casa_nome)}</strong> em troca de
-        <strong>${esc(an.casa_nome)}</strong>.
+        <strong>${esc(an.casa_nome)}</strong>.<br>
+        Taxa de troca: <strong>${formatarPercentual(TAXA_TROCA_PROPRIEDADE)}</strong> do valor SELIC de cada propriedade; cada participante paga a taxa da casa que entregar.
       </p>
       <label>Ofereça uma das suas:</label>
       <select id="inp-lance-casa">${minhas}</select>
@@ -1212,9 +1338,14 @@ window.abrirLance = function (anuncioId) {
 window.confirmarLanceDinheiro = async function (anuncioId) {
   const valor = parseFloat(document.getElementById('inp-lance').value);
   if (isNaN(valor) || valor <= 0) { alert('Valor inválido'); return; }
+  const taxaCompra = valorTaxa(valor, TAXA_COMPRA_PROPRIEDADE);
+  const total = arredondarMoeda(valor + taxaCompra);
 
   const saldoAtual = Number(eu?.saldo) || 0;
-  if (saldoAtual < valor) { alert(`Saldo insuficiente (${fmtSaldo(saldoAtual)})`); return; }
+  if (saldoAtual < total) {
+    alert(`Saldo insuficiente. Lance + taxa: ${fmtSaldo(total)}; saldo: ${fmtSaldo(saldoAtual)}.`);
+    return;
+  }
 
   const { error } = await db.from(TB_LANCES).insert({
     anuncio_id: anuncioId,
@@ -1225,7 +1356,7 @@ window.confirmarLanceDinheiro = async function (anuncioId) {
 
   if (error) { alert('Erro: ' + error.message); return; }
   fecharModal();
-  mostrarMsg(`🎯 Lance de ${fmtSaldo(valor)} enviado!`);
+  mostrarMsg(`🎯 Lance de ${fmtSaldo(valor)} enviado; se aceito, o total com taxa será ${fmtSaldo(total)}.`);
   await carregarLances();
   renderizarMercado();
   renderizarMeus();
@@ -1260,51 +1391,144 @@ window.aceitarLance = async function (lanceId) {
   const an = mercado.find(m => m.id === lance.anuncio_id);
   if (!an) return;
 
+  if (lance.status !== 'pendente' || an.status !== 'aberto') {
+    alert('Este lance ou anúncio não está mais disponível.');
+    return;
+  }
   if (an.vendedor_login !== login) { alert('Você não é o vendedor.'); return; }
-  if (!confirm(`Aceitar oferta de ${lance.comprador_nome}?`)) return;
-
-  await db.from(TB_LANCES).update({ status: 'aceito' }).eq('id', lanceId);
-  await db.from(TB_MERCADO).update({ status: 'aceito' }).eq('id', an.id);
-
-  const outros = lances.filter(l => l.anuncio_id === an.id && l.id !== lanceId && l.status === 'pendente');
-  for (const o of outros) {
-    await db.from(TB_LANCES).update({ status: 'recusado' }).eq('id', o.id);
+  const casaAnunciada = tabuleiro[an.casa_id];
+  if (!casaAnunciada || comprasGlobais[an.casa_id]?.dono_login !== login) {
+    alert('A propriedade anunciada não está mais em sua posse.');
+    return;
   }
 
   if (an.tipo === 'venda') {
     const valor = Number(lance.valor) || 0;
-    const saldoComprador = (await db.from(TABELA).select('saldo').eq('login', lance.comprador_login).maybeSingle()).data?.saldo;
-    if ((Number(saldoComprador) || 0) < valor) {
-      alert('Comprador sem saldo. Lance cancelado.');
-      await db.from(TB_LANCES).update({ status: 'cancelado' }).eq('id', lanceId);
-      await db.from(TB_MERCADO).update({ status: 'aberto' }).eq('id', an.id);
+    const taxaComprador = valorTaxa(valor, TAXA_COMPRA_PROPRIEDADE);
+    const totalComprador = arredondarMoeda(valor + taxaComprador);
+    const taxaVendedor = valorTaxa(valor, TAXA_VENDA_PROPRIEDADE);
+    const liquidoVendedor = arredondarMoeda(valor - taxaVendedor);
+    if (!confirm(
+      `Aceitar oferta de ${lance.comprador_nome}?\n\n` +
+      `Comprador paga: ${fmtSaldo(totalComprador)} (inclui ${fmtSaldo(taxaComprador)} de taxa).\n` +
+      `Você recebe: ${fmtSaldo(liquidoVendedor)} (já descontada a taxa de ${fmtSaldo(taxaVendedor)}).`
+    )) return;
+
+    const { data: comprador, error: erroSaldo } = await db.from(TABELA)
+      .select('saldo').eq('login', lance.comprador_login).maybeSingle();
+    if (erroSaldo || !comprador) {
+      console.error('[BI] Não foi possível consultar saldo do comprador:', erroSaldo);
+      alert('Não foi possível verificar o saldo do comprador.');
       return;
     }
-    await atualizarSaldoReal(lance.comprador_login, -valor);
-    await atualizarSaldoReal(login, +valor);
+    if ((Number(comprador.saldo) || 0) < totalComprador) {
+      alert('Comprador sem saldo suficiente para o preço e a taxa. Lance não aceito.');
+      return;
+    }
+    if (!await atualizarSaldoReal(lance.comprador_login, -totalComprador)) return;
+    if (!await atualizarSaldoReal(login, +liquidoVendedor)) {
+      await atualizarSaldoReal(lance.comprador_login, +totalComprador);
+      return;
+    }
 
-    await db.from(TB_COMPRAS).update({
+    const { error: erroTransferencia } = await db.from(TB_COMPRAS).update({
       dono_login: lance.comprador_login,
       dono_nome:  lance.comprador_nome,
       preco:      valor,
       comprado_em: new Date().toISOString()
     }).eq('casa_id', an.casa_id);
+    if (erroTransferencia) {
+      console.error('[BI] Falha ao transferir propriedade vendida:', erroTransferencia);
+      await atualizarSaldoReal(login, -liquidoVendedor);
+      await atualizarSaldoReal(lance.comprador_login, +totalComprador);
+      alert('Não foi possível concluir a transferência; os pagamentos foram estornados.');
+      return;
+    }
 
   } else {
-    await db.from(TB_COMPRAS).update({
+    const casaOfertada = tabuleiro[lance.casa_ofertada_id];
+    if (!casaOfertada ||
+        comprasGlobais[an.casa_id]?.dono_login !== login ||
+        comprasGlobais[lance.casa_ofertada_id]?.dono_login !== lance.comprador_login) {
+      alert('A titularidade de uma das propriedades mudou. Atualize o tabuleiro antes de aceitar.');
+      return;
+    }
+
+    const taxaVendedor = valorTaxa(precoCasaAtual(casaAnunciada), TAXA_TROCA_PROPRIEDADE);
+    const taxaComprador = valorTaxa(precoCasaAtual(casaOfertada), TAXA_TROCA_PROPRIEDADE);
+    if (!confirm(
+      `Aceitar a troca?\n\n` +
+      `Você paga ${fmtSaldo(taxaVendedor)} (${formatarPercentual(TAXA_TROCA_PROPRIEDADE)}) pela propriedade entregue.\n` +
+      `${lance.comprador_nome} paga ${fmtSaldo(taxaComprador)} pela propriedade entregue.`
+    )) return;
+
+    const { data: saldos, error: erroSaldos } = await db.from(TABELA)
+      .select('login, saldo')
+      .in('login', [login, lance.comprador_login]);
+    if (erroSaldos || !saldos) {
+      console.error('[BI] Não foi possível consultar saldos da troca:', erroSaldos);
+      alert('Não foi possível verificar os saldos para a troca.');
+      return;
+    }
+    const saldoVendedor = Number(saldos.find(u => u.login === login)?.saldo) || 0;
+    const saldoComprador = Number(saldos.find(u => u.login === lance.comprador_login)?.saldo) || 0;
+    if (saldoVendedor < taxaVendedor || saldoComprador < taxaComprador) {
+      alert('Um dos participantes não tem saldo suficiente para pagar a taxa da troca.');
+      return;
+    }
+    if (!await atualizarSaldoReal(login, -taxaVendedor)) return;
+    if (!await atualizarSaldoReal(lance.comprador_login, -taxaComprador)) {
+      await atualizarSaldoReal(login, +taxaVendedor);
+      return;
+    }
+
+    const { error: erroPrimeiraTransferencia } = await db.from(TB_COMPRAS).update({
       dono_login: lance.comprador_login,
       dono_nome:  lance.comprador_nome,
       comprado_em: new Date().toISOString()
     }).eq('casa_id', an.casa_id);
+    if (erroPrimeiraTransferencia) {
+      console.error('[BI] Falha ao transferir propriedade da troca:', erroPrimeiraTransferencia);
+      await atualizarSaldoReal(login, +taxaVendedor);
+      await atualizarSaldoReal(lance.comprador_login, +taxaComprador);
+      alert('Não foi possível concluir a troca; as taxas foram estornadas.');
+      return;
+    }
 
-    await db.from(TB_COMPRAS).update({
+    const { error: erroSegundaTransferencia } = await db.from(TB_COMPRAS).update({
       dono_login: login,
       dono_nome:  eu?.nome || login,
       comprado_em: new Date().toISOString()
     }).eq('casa_id', lance.casa_ofertada_id);
+    if (erroSegundaTransferencia) {
+      console.error('[BI] Falha ao concluir a segunda transferência da troca:', erroSegundaTransferencia);
+      const { error: erroReversao } = await db.from(TB_COMPRAS).update({
+        dono_login: login,
+        dono_nome: eu?.nome || login,
+        comprado_em: new Date().toISOString()
+      }).eq('casa_id', an.casa_id);
+      if (erroReversao) console.error('[BI] Falha ao reverter a primeira transferência:', erroReversao);
+      await atualizarSaldoReal(login, +taxaVendedor);
+      await atualizarSaldoReal(lance.comprador_login, +taxaComprador);
+      alert('Não foi possível concluir a troca; as taxas foram estornadas.');
+      return;
+    }
   }
 
-  alert('✅ Negócio fechado!');
+  const { error: erroLance } = await db.from(TB_LANCES).update({ status: 'aceito' }).eq('id', lanceId);
+  const { error: erroAnuncio } = await db.from(TB_MERCADO).update({ status: 'aceito' }).eq('id', an.id);
+  if (erroLance || erroAnuncio) {
+    console.error('[BI] Transferência concluída, mas falhou ao atualizar o status do anúncio/lance:', erroLance || erroAnuncio);
+    alert('Transferência concluída, mas não foi possível atualizar o status do anúncio. Avise a administração.');
+  } else {
+    const outros = lances.filter(l => l.anuncio_id === an.id && l.id !== lanceId && l.status === 'pendente');
+    for (const outro of outros) {
+      const { error } = await db.from(TB_LANCES).update({ status: 'recusado' }).eq('id', outro.id);
+      if (error) console.error('[BI] Falha ao recusar lance concorrente:', error);
+    }
+  }
+
+  alert('✅ Negócio fechado com as taxas aplicadas.');
   await Promise.all([carregarCompras(), carregarMercado(), carregarLances()]);
   renderizarMercado(); renderizarMeus(); atualizarTela();
 };
@@ -1372,7 +1596,7 @@ function renderizarMercado() {
     const melhor = lancesDo.sort((a, b) => b.valor - a.valor)[0];
 
     const linhaPreco = m.tipo === 'venda'
-      ? `<strong>${fmtSaldo(m.preco_pedido)}</strong>`
+      ? `<strong>${fmtSaldo(m.preco_pedido)}</strong> + taxa de compra ${formatarPercentual(TAXA_COMPRA_PROPRIEDADE)}`
       : `por <strong>${esc(m.troca_por_casa_nome)}</strong>`;
 
     return `
@@ -1527,7 +1751,7 @@ function atualizarTela() {
       new Date(m.expira_em) > new Date());
 
     let html = `<div style="font-size:13px">${esc(casa.nome)}</div>`;
-    if (casa.preco > 0) html += `<div class="preco">💰 ${fmtSaldo(casa.preco)}</div>`;
+    if (casa.preco > 0) html += `<div class="preco">💰 ${fmtSaldo(precoCasaAtual(casa))}</div>`;
 
     if (aqui.length > 0) {
       html += `<div>${aqui.map(j =>
@@ -1632,6 +1856,7 @@ function ativarRealtime() {
     await carregarEu();
     if (!eu) { window.__biDebug('❌ Login não encontrado.', 'erro'); return; }
     await verificarAcessoAdmin();
+    renderizarTaxasJogo();
 
     await Promise.all([
       carregarJogo(), carregarCompras(),
