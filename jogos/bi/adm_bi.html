@@ -325,6 +325,60 @@ const TIPOS = [
 ];
 
 // ============================================================
+// 🏘️ TABULEIRO PADRÃO (fallback)
+// ============================================================
+const TABULEIRO_PADRAO = [
+  { nome: "Início",               preco: 0,   tipo: "inicio"      },
+  { nome: "Jardim América",       preco: 60,  tipo: "propriedade" },
+  { nome: "Sorte ou Azar",        preco: 0,   tipo: "chance"      },
+  { nome: "Vila A",               preco: 100, tipo: "propriedade" },
+  { nome: "Sanepar",              preco: 150, tipo: "servico"     },
+  { nome: "Itaipu Binacional",    preco: 200, tipo: "ferrovia"    },
+  { nome: "Jardim Central",       preco: 140, tipo: "propriedade" },
+  { nome: "Prisão / Visita",      preco: 0,   tipo: "especial"    },
+  { nome: "Centro",               preco: 220, tipo: "propriedade" },
+  { nome: "Pedágio",              preco: 100, tipo: "imposto"     },
+  { nome: "Parque Nacional",      preco: 400, tipo: "propriedade" },
+  { nome: "Descanso",             preco: 0,   tipo: "descanso"    },
+  // Bairros oficiais de Foz do Iguaçu (Lei Municipal 303/2018); Centro e Parque Nacional já aparecem acima.
+  { nome: "Alvorada",             preco: 80,  tipo: "propriedade" },
+  { nome: "Náutica",              preco: 80,  tipo: "propriedade" },
+  { nome: "Três Lagoas",          preco: 100, tipo: "propriedade" },
+  { nome: "Cidade Nova",          preco: 100, tipo: "propriedade" },
+  { nome: "Bairro Itaipu Binacional", preco: 120, tipo: "propriedade" },
+  { nome: "Itaipu C",             preco: 100, tipo: "propriedade" },
+  { nome: "Polo Universitário",  preco: 120, tipo: "propriedade" },
+  { nome: "Porto Belo",           preco: 100, tipo: "propriedade" },
+  { nome: "Morumbi",              preco: 120, tipo: "propriedade" },
+  { nome: "Portal da Foz",        preco: 100, tipo: "propriedade" },
+  { nome: "Bourbon",              preco: 120, tipo: "propriedade" },
+  { nome: "Porto Meira",          preco: 140, tipo: "propriedade" },
+  { nome: "Três Fronteiras",     preco: 140, tipo: "propriedade" },
+  { nome: "Panorama",             preco: 140, tipo: "propriedade" },
+  { nome: "São Roque",            preco: 120, tipo: "propriedade" },
+  { nome: "América",              preco: 140, tipo: "propriedade" },
+  { nome: "Monjolo",              preco: 140, tipo: "propriedade" },
+  { nome: "Portes",               preco: 160, tipo: "propriedade" },
+  { nome: "Lancaster",            preco: 160, tipo: "propriedade" },
+  { nome: "Três Bandeiras",      preco: 160, tipo: "propriedade" },
+  { nome: "Itaipu A",             preco: 180, tipo: "propriedade" },
+  { nome: "Itaipu B",             preco: 180, tipo: "propriedade" },
+  { nome: "KLP",                  preco: 160, tipo: "propriedade" },
+  { nome: "Ipê",                  preco: 160, tipo: "propriedade" },
+  { nome: "Maracanã",             preco: 180, tipo: "propriedade" },
+  { nome: "Yolanda",              preco: 200, tipo: "propriedade" },
+  { nome: "Polo Centro",          preco: 200, tipo: "propriedade" },
+  { nome: "Centro Cívico",        preco: 200, tipo: "propriedade" },
+  { nome: "Campos do Iguaçu",    preco: 220, tipo: "propriedade" },
+  { nome: "Carimã",               preco: 220, tipo: "propriedade" },
+  { nome: "Mata Verde",           preco: 220, tipo: "propriedade" },
+  { nome: "Cataratas",            preco: 260, tipo: "propriedade" },
+  { nome: "Cognópolis",           preco: 260, tipo: "propriedade" },
+  { nome: "Lote Grande",          preco: 240, tipo: "propriedade" },
+  { nome: "Remanso",              preco: 240, tipo: "propriedade" }
+];
+
+// ============================================================
 // SESSÃO
 // ============================================================
 function detectarLogin() {
@@ -353,6 +407,8 @@ if (!login) {
 // ESTADO
 // ============================================================
 let tabuleiro      = [];
+let tabuleiroUsaPadraoLocal = false;
+let tabuleiroLimpoIntencionalmente = false;
 let usuarios       = [];
 let comprasGlobais = [];
 let mercado        = [];
@@ -389,9 +445,24 @@ function msgAviso(txt, cls) {
 // ============================================================
 async function carregarTabuleiro() {
   const { data, error } = await db.from(TB_TABULEIRO).select('*').order('posicao', { ascending: true });
-  if (error) { console.error(error); msgAviso('❌ Erro: ' + error.message, 'erro'); return; }
-  tabuleiro = data || [];
+  if (error) {
+    console.error(error);
+    tabuleiroUsaPadraoLocal = true;
+    tabuleiro = TABULEIRO_PADRAO.map((casa, posicao) => ({ ...casa, posicao }));
+    renderizarTabuleiro();
+    msgAviso('⚠️ Não foi possível carregar o tabuleiro do banco. Exibindo as 47 casas padrão localmente. ' + esc(error.message), 'erro');
+    return;
+  }
+
+  tabuleiroUsaPadraoLocal = !data?.length && !tabuleiroLimpoIntencionalmente;
+  tabuleiro = tabuleiroUsaPadraoLocal
+    ? TABULEIRO_PADRAO.map((casa, posicao) => ({ ...casa, posicao }))
+    : (data || []);
+  if (data?.length) tabuleiroLimpoIntencionalmente = false;
   renderizarTabuleiro();
+  if (tabuleiroUsaPadraoLocal) {
+    msgAviso('⚠️ As 47 casas padrão estão sendo exibidas localmente. Clique em “Restaurar Padrão” para gravá-las no banco e habilitar as ações.', 'erro');
+  }
 }
 
 async function carregarUsuarios() {
@@ -432,10 +503,12 @@ function renderizarTabuleiro() {
       <td>${c.preco > 0 ? fmtSaldo(c.preco) : '—'}</td>
       <td><span class="tipo-badge ${classeTipo(c.tipo)}">${esc(c.tipo)}</span></td>
       <td>
-        <button class="mini info"   onclick="ADM.editarCasa(${c.id})">✏️</button>
-        <button class="mini"        onclick="ADM.moverCasa(${c.id},-1)" ${i === 0 ? 'disabled' : ''}>⬆️</button>
-        <button class="mini"        onclick="ADM.moverCasa(${c.id},1)" ${i === tabuleiro.length - 1 ? 'disabled' : ''}>⬇️</button>
-        <button class="mini perigo" onclick="ADM.deletarCasa(${c.id})">🗑️</button>
+        ${c.id == null ? '<small>Salve o padrão para habilitar</small>' : `
+          <button class="mini info"   onclick="ADM.editarCasa(${c.id})">✏️</button>
+          <button class="mini"        onclick="ADM.moverCasa(${c.id},-1)" ${i === 0 ? 'disabled' : ''}>⬆️</button>
+          <button class="mini"        onclick="ADM.moverCasa(${c.id},1)" ${i === tabuleiro.length - 1 ? 'disabled' : ''}>⬇️</button>
+          <button class="mini perigo" onclick="ADM.deletarCasa(${c.id})">🗑️</button>
+        `}
       </td>
     </tr>
   `).join('');
@@ -647,24 +720,24 @@ async function recarregarTabuleiro() {
 async function restaurarPadrao() {
   if (!confirm('Restaurar o tabuleiro padrão? Todas as alterações serão perdidas.')) return;
 
-  const PADRAO = [
-    { posicao: 0,  nome: 'Início',            preco: 0,   tipo: 'inicio'      },
-    { posicao: 1,  nome: 'Jardim América',    preco: 60,  tipo: 'propriedade' },
-    { posicao: 2,  nome: 'Sorte ou Azar',     preco: 0,   tipo: 'chance'      },
-    { posicao: 3,  nome: 'Vila A',            preco: 100, tipo: 'propriedade' },
-    { posicao: 4,  nome: 'Sanepar',           preco: 150, tipo: 'servico'     },
-    { posicao: 5,  nome: 'Itaipu Binacional', preco: 200, tipo: 'ferrovia'    },
-    { posicao: 6,  nome: 'Jardim Central',    preco: 140, tipo: 'propriedade' },
-    { posicao: 7,  nome: 'Prisão / Visita',   preco: 0,   tipo: 'especial'    },
-    { posicao: 8,  nome: 'Centro',            preco: 220, tipo: 'propriedade' },
-    { posicao: 9,  nome: 'Pedágio',           preco: 100, tipo: 'imposto'     },
-    { posicao: 10, nome: 'Parque Nacional',   preco: 400, tipo: 'propriedade' },
-    { posicao: 11, nome: 'Descanso',          preco: 0,   tipo: 'descanso'    }
-  ];
+  const PADRAO = TABULEIRO_PADRAO.map((casa, posicao) => ({ posicao, ...casa }));
 
-  await db.from(TB_TABULEIRO).delete().neq('id', 0);
-  await db.from(TB_TABULEIRO).insert(PADRAO);
+  const { error: erroExclusao } = await db.from(TB_TABULEIRO).delete().neq('id', 0);
+  if (erroExclusao) {
+    console.error(erroExclusao);
+    msgAviso('❌ Não foi possível limpar o tabuleiro atual: ' + esc(erroExclusao.message), 'erro');
+    return;
+  }
 
+  const { error: erroInsercao } = await db.from(TB_TABULEIRO).insert(PADRAO);
+  if (erroInsercao) {
+    console.error(erroInsercao);
+    msgAviso('❌ Não foi possível gravar as 47 casas padrão: ' + esc(erroInsercao.message), 'erro');
+    await carregarTabuleiro();
+    return;
+  }
+
+  tabuleiroLimpoIntencionalmente = false;
   msgAviso('↺ Tabuleiro restaurado ao padrão.', 'ok');
   await carregarTabuleiro();
 }
@@ -673,11 +746,20 @@ async function limparTudo() {
   if (!confirm('⚠️ ATENÇÃO: isso vai apagar o tabuleiro, compras, mercado e lances.\n\nContinuar?')) return;
   if (!confirm('Tem certeza MESMO? Isso não pode ser desfeito.')) return;
 
-  await db.from(TB_TABULEIRO).delete().neq('id', 0);
-  await db.from(TB_COMPRAS).delete().neq('id', 0);
-  await db.from(TB_MERCADO).delete().neq('id', 0);
-  await db.from(TB_LANCES).delete().neq('id', 0);
+  const exclusoes = await Promise.all([
+    db.from(TB_TABULEIRO).delete().neq('id', 0),
+    db.from(TB_COMPRAS).delete().neq('id', 0),
+    db.from(TB_MERCADO).delete().neq('id', 0),
+    db.from(TB_LANCES).delete().neq('id', 0)
+  ]);
+  const erroExclusao = exclusoes.find(resultado => resultado.error)?.error;
+  if (erroExclusao) {
+    console.error(erroExclusao);
+    msgAviso('❌ Não foi possível limpar todos os dados: ' + esc(erroExclusao.message), 'erro');
+    return;
+  }
 
+  tabuleiroLimpoIntencionalmente = true;
   msgAviso('🗑️ Tudo limpo.', 'ok');
   await Promise.all([carregarTabuleiro(), carregarCompras(), carregarMercado()]);
   renderizarCompras(); renderizarMercado();
@@ -856,13 +938,21 @@ window.ADM = {
     renderizarCompras();
     renderizarMercado();
 
-    msgAviso(
-      `✅ Painel ADM carregado. Logado como <strong>${esc(login)}</strong> — ` +
-      `${tabuleiro.length} casas, ${usuarios.length} usuários, ` +
-      `${comprasGlobais.length} compras, ` +
-      `${mercado.filter(m => m.status === 'aberto').length} anúncios.`,
-      'ok'
-    );
+    if (tabuleiroUsaPadraoLocal) {
+      msgAviso(
+        `⚠️ Painel ADM carregado, logado como <strong>${esc(login)}</strong>. ` +
+        'As 47 casas padrão aparecem como fallback local; clique em “Restaurar Padrão” para salvá-las no banco.',
+        'erro'
+      );
+    } else {
+      msgAviso(
+        `✅ Painel ADM carregado. Logado como <strong>${esc(login)}</strong> — ` +
+        `${tabuleiro.length} casas, ${usuarios.length} usuários, ` +
+        `${comprasGlobais.length} compras, ` +
+        `${mercado.filter(m => m.status === 'aberto').length} anúncios.`,
+        'ok'
+      );
+    }
 
     db.channel('adm-tab')
       .on('postgres_changes',

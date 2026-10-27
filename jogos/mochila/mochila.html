@@ -791,7 +791,8 @@ function renderItens(filtro = '') {
   const equipamentos = filtrados.filter(it => it.origem === 'shagrila_equipado');
   const outros = filtrados.filter(it => !inventario.includes(it) && !equipamentos.includes(it));
   conteudo.innerHTML = `
-    <section style="margin-bottom:24px" aria-label="Itens do inventário">
+    <section style="margin-bottom:24px" aria-labelledby="titulo-inventario">
+      <h2 id="titulo-inventario" style="margin-bottom:12px">🎒 INVENTÁRIO</h2>
       ${inventario.length ? renderCards(inventario) : '<div class="vazio">Nenhum item no inventário.</div>'}
     </section>
     <section style="margin-bottom:24px" aria-labelledby="titulo-equipamentos-shagrila">

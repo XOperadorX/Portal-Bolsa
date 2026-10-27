@@ -483,6 +483,11 @@
                     <div class="ajuda">Apenas letras, números e _ (sem espaços).</div>
                 </div>
                 <div class="form-group">
+                    <label for="email">E-mail para contato</label>
+                    <input type="email" id="email" placeholder="ex: moitapr20xx@gmail.com" autocomplete="email" maxlength="254" required>
+                    <div class="ajuda">Usaremos este e-mail para responder aos seus chamados de suporte.</div>
+                </div>
+                <div class="form-group">
                     <label for="senha">Senha</label>
                     <input type="password" id="senha" placeholder="Mínimo 6 caracteres" autocomplete="new-password" required>
                     <div class="ajuda">Use pelo menos 6 caracteres. Ex: moitapr123456</div>
@@ -532,6 +537,7 @@
         // ==================== ELEMENTOS ====================
         const formCadastro    = document.getElementById('formCadastro');
         const loginInput      = document.getElementById('login');
+        const emailInput      = document.getElementById('email');
         const senhaInput      = document.getElementById('senha');
         const confirmarInput  = document.getElementById('confirmarSenha');
         const btnCadastrar    = document.getElementById('btnCadastrar');
@@ -732,10 +738,24 @@
                     return false;
                 }
 
+                const { data: usuarioAtualizado, error: erroEmail } = await supabaseClient
+                    .from(TABELA)
+                    .update({ email: dados.email })
+                    .eq('id', data.id)
+                    .select('id')
+                    .maybeSingle();
+
+                if (erroEmail || !usuarioAtualizado) {
+                    console.error('Erro ao salvar e-mail de contato:', erroEmail || 'Usuário não encontrado após o cadastro.');
+                    mostrarErro('⚠️ A conta foi criada, mas não foi possível salvar o e-mail de contato. Entre em contato com o suporte para atualizar seu cadastro.');
+                    return false;
+                }
+
                 // Sucesso — cria sessão local
                 const usuarioSessao = {
                     id:    data.id,
                     login: data.login,
+                    email: dados.email,
                     saldo: 0,
                     saldo_poupanca: 0,
                     carteira: {}
@@ -761,11 +781,13 @@
             ocultarMensagens();
 
             const login    = loginInput.value.trim().toLowerCase();
+            const email   = emailInput.value.trim().toLowerCase();
             const senha    = senhaInput.value.trim();
             const confirma = confirmarInput.value.trim();
 
-            if (!login || !senha || !confirma) { mostrarErro('⚠️ Preencha todos os campos!'); return; }
+            if (!login || !email || !senha || !confirma) { mostrarErro('⚠️ Preencha todos os campos!'); return; }
             if (!validarLogin(login)) { mostrarErro('⚠️ Login inválido. Use 3 a 20 caracteres (letras, números e _).'); return; }
+            if (!emailInput.validity.valid) { mostrarErro('⚠️ Informe um e-mail válido para contato.'); return; }
             if (senha.length < 6) { mostrarErro('⚠️ A senha deve ter pelo menos 6 caracteres.'); return; }
             if (senha !== confirma) { mostrarErro('⚠️ As senhas não coincidem.'); return; }
 
@@ -781,7 +803,7 @@
 
             btnCadastrar.innerHTML = '<span class="loading"></span> Criando conta...';
 
-            await fazerCadastro({ login, senha, fingerprint, mac_address, ip_address });
+            await fazerCadastro({ login, email, senha, fingerprint, mac_address, ip_address });
 
             btnCadastrar.disabled = false;
             btnCadastrar.innerHTML = '📝 Criar conta';

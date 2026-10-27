@@ -54,6 +54,47 @@
   }
   @keyframes shimmer { to { background-position: 200% center; } }
 
+  .page-header {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 18px;
+    max-width: 1500px;
+    margin: 0 auto;
+  }
+  .page-header h1 { margin-bottom: 26px; }
+  .page-actions {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 26px;
+  }
+  .page-actions a {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 9px 14px;
+    border: 1px solid rgba(255,215,0,0.35);
+    border-radius: 10px;
+    background: linear-gradient(135deg, #253858, #17243d);
+    color: #eef5ff;
+    font-size: 13px;
+    font-weight: 700;
+    text-decoration: none;
+    white-space: nowrap;
+    transition: border-color .2s, transform .2s, box-shadow .2s;
+  }
+  .page-actions a:hover {
+    transform: translateY(-2px);
+    border-color: #ffd700;
+    box-shadow: 0 5px 14px rgba(0,0,0,.3);
+  }
+  .page-actions .btn-admin {
+    border-color: rgba(192,132,252,.6);
+    background: linear-gradient(135deg, #6d28d9, #4c1d95);
+  }
+  .page-actions .btn-admin:hover { border-color: #e9d5ff; }
+
   .layout {
     display: grid;
     grid-template-columns: 1fr 400px;
@@ -62,6 +103,15 @@
     margin: 0 auto;
   }
   @media (max-width: 1150px) { .layout { grid-template-columns: 1fr; } }
+  @media (max-width: 760px) {
+    .page-header { flex-direction: column; gap: 0; }
+    .page-header h1 { margin-bottom: 12px; }
+    .page-actions { margin-bottom: 18px; }
+  }
+  @media (max-width: 420px) {
+    .page-actions { flex-wrap: wrap; }
+    .page-actions a { padding: 8px 11px; font-size: 12px; }
+  }
 
   .glass {
     background: rgba(20, 30, 55, 0.55);
@@ -194,12 +244,12 @@
   }
   .casa:hover { transform: translateY(-3px) scale(1.02); box-shadow: 0 12px 24px rgba(0,0,0,0.3); }
   .casa.ocupada {
-    box-shadow: 0 0 0 3px #ffd700, 0 8px 24px rgba(255,215,0,0.4);
+    box-shadow: 0 0 0 3px #c084fc, 0 8px 24px rgba(192,132,252,0.4);
     animation: pulseBorder 1.8s infinite;
   }
   @keyframes pulseBorder {
-    0%, 100% { box-shadow: 0 0 0 3px #ffd700, 0 8px 24px rgba(255,215,0,0.4); }
-    50%      { box-shadow: 0 0 0 3px #ffed4a, 0 8px 32px rgba(255,215,0,0.7); }
+    0%, 100% { box-shadow: 0 0 0 3px #c084fc, 0 8px 24px rgba(192,132,252,0.4); }
+    50%      { box-shadow: 0 0 0 3px #e9d5ff, 0 8px 32px rgba(192,132,252,0.7); }
   }
   .casa .preco { font-size: 11px; opacity: 0.75; margin-top: 3px; color: #16a34a; font-weight: 700; }
   .casa .dono-tag {
@@ -228,7 +278,12 @@
     box-shadow: 0 2px 4px rgba(0,0,0,0.3);
   }
 
-  .controles { padding: 22px; text-align: center; margin-top: 20px; }
+  .controles {
+    max-width: 1500px;
+    margin: 20px auto 18px;
+    padding: 22px;
+    text-align: center;
+  }
   #dados-jogador { font-size: 15px; color: #ffd700; margin-bottom: 8px; }
   #resultado-dados {
     margin-top: 14px; font-size: 22px; color: #fff;
@@ -398,7 +453,22 @@
 </head>
 <body>
 
-<h1>🏦 BANCO IMOBILIÁRIO</h1>
+<header class="page-header">
+  <h1>🏦 BANCO IMOBILIÁRIO</h1>
+  <nav class="page-actions" aria-label="Navegação do Banco Imobiliário">
+    <a href="../../dashboard.html">🏠 Voltar</a>
+    <a href="./adm_bi.html" class="btn-admin" id="btnAdminBi" hidden>🛠️ Painel ADM</a>
+  </nav>
+</header>
+
+<div class="controles glass">
+  <div id="dados-jogador">Carregando...</div>
+  <br>
+  <button id="btn-dados" onclick="jogarDados()">🎲 Jogar Dados (−10 sm)</button>
+  <button id="btn-comprar" onclick="comprar()">🏠 Comprar Propriedade</button>
+  <div id="resultado-dados"></div>
+  <div id="mensagem"></div>
+</div>
 
 <div class="aviso" id="aviso-login">⚠️ Verificando sessão...</div>
 
@@ -426,15 +496,6 @@
     </div>
 
     <div class="tabuleiro" id="tabuleiro"></div>
-
-    <div class="controles glass">
-      <div id="dados-jogador">Carregando...</div>
-      <br>
-      <button id="btn-dados" onclick="jogarDados()">🎲 Jogar Dados (−10 sm)</button>
-      <button id="btn-comprar" onclick="comprar()">🏠 Comprar Propriedade</button>
-      <div id="resultado-dados"></div>
-      <div id="mensagem"></div>
-    </div>
   </div>
 
   <aside class="painel-lateral">
@@ -486,17 +547,17 @@
 </script>
 
 <script type="module">
-import { obterTaxa } from '../../shared/taxas-globais.js';
 // ============================================================
 // IMPORTS
 // ============================================================
 let cfg;
-try { cfg = await import('./config.js'); }
+try { cfg = await import('../../config-module.js'); }
 catch (err) {
-  window.__biDebug('❌ Falha ao importar config.js: ' + (err.message || err), 'erro');
+  window.__biDebug('❌ Falha ao carregar a configuração central: ' + (err.message || err), 'erro');
   throw err;
 }
 const { db, TABELA, SESSION_KEY, fmtSaldo, fmtData, esc } = cfg;
+const { obterTaxa } = await import('../../shared/taxas-globais.js');
 
 // ============================================================
 // CONSTANTES
@@ -531,6 +592,30 @@ function detectarLogin() {
 const login = detectarLogin();
 if (!login) throw new Error('Sem sessão');
 
+async function verificarAcessoAdmin() {
+  const botaoAdmin = document.getElementById('btnAdminBi');
+  if (!botaoAdmin) return;
+
+  const { data, error } = await db
+    .from(TABELA)
+    .select('login, tipo, cargo_codigo, email')
+    .eq('login', login)
+    .maybeSingle();
+
+  if (error) {
+    console.warn('[BI] Não foi possível verificar o acesso administrativo:', error);
+    return;
+  }
+
+  const isAdmin = data && (
+    data.tipo === 'admin' ||
+    data.cargo_codigo === 'admin' ||
+    data.email === 'admin@admin.com' ||
+    (data.login || '').toLowerCase() === 'admin'
+  );
+  botaoAdmin.hidden = !isAdmin;
+}
+
 // ============================================================
 // ESTADO
 // ============================================================
@@ -559,13 +644,74 @@ const TABULEIRO_PADRAO = [
   { nome: "Centro",               preco: 220, tipo: "propriedade" },
   { nome: "Pedágio",              preco: 100, tipo: "imposto"     },
   { nome: "Parque Nacional",      preco: 400, tipo: "propriedade" },
-  { nome: "Descanso",             preco: 0,   tipo: "descanso"    }
+  { nome: "Descanso",             preco: 0,   tipo: "descanso"    },
+  // Bairros oficiais de Foz do Iguaçu (Lei Municipal 303/2018); Centro e Parque Nacional já aparecem acima.
+  { nome: "Alvorada",             preco: 80,  tipo: "propriedade" },
+  { nome: "Náutica",              preco: 80,  tipo: "propriedade" },
+  { nome: "Três Lagoas",          preco: 100, tipo: "propriedade" },
+  { nome: "Cidade Nova",          preco: 100, tipo: "propriedade" },
+  { nome: "Bairro Itaipu Binacional", preco: 120, tipo: "propriedade" },
+  { nome: "Itaipu C",             preco: 100, tipo: "propriedade" },
+  { nome: "Polo Universitário",  preco: 120, tipo: "propriedade" },
+  { nome: "Porto Belo",           preco: 100, tipo: "propriedade" },
+  { nome: "Morumbi",              preco: 120, tipo: "propriedade" },
+  { nome: "Portal da Foz",        preco: 100, tipo: "propriedade" },
+  { nome: "Bourbon",              preco: 120, tipo: "propriedade" },
+  { nome: "Porto Meira",          preco: 140, tipo: "propriedade" },
+  { nome: "Três Fronteiras",     preco: 140, tipo: "propriedade" },
+  { nome: "Panorama",             preco: 140, tipo: "propriedade" },
+  { nome: "São Roque",            preco: 120, tipo: "propriedade" },
+  { nome: "América",              preco: 140, tipo: "propriedade" },
+  { nome: "Monjolo",              preco: 140, tipo: "propriedade" },
+  { nome: "Portes",               preco: 160, tipo: "propriedade" },
+  { nome: "Lancaster",            preco: 160, tipo: "propriedade" },
+  { nome: "Três Bandeiras",      preco: 160, tipo: "propriedade" },
+  { nome: "Itaipu A",             preco: 180, tipo: "propriedade" },
+  { nome: "Itaipu B",             preco: 180, tipo: "propriedade" },
+  { nome: "KLP",                  preco: 160, tipo: "propriedade" },
+  { nome: "Ipê",                  preco: 160, tipo: "propriedade" },
+  { nome: "Maracanã",             preco: 180, tipo: "propriedade" },
+  { nome: "Yolanda",              preco: 200, tipo: "propriedade" },
+  { nome: "Polo Centro",          preco: 200, tipo: "propriedade" },
+  { nome: "Centro Cívico",        preco: 200, tipo: "propriedade" },
+  { nome: "Campos do Iguaçu",    preco: 220, tipo: "propriedade" },
+  { nome: "Carimã",               preco: 220, tipo: "propriedade" },
+  { nome: "Mata Verde",           preco: 220, tipo: "propriedade" },
+  { nome: "Cataratas",            preco: 260, tipo: "propriedade" },
+  { nome: "Cognópolis",           preco: 260, tipo: "propriedade" },
+  { nome: "Lote Grande",          preco: 240, tipo: "propriedade" },
+  { nome: "Remanso",              preco: 240, tipo: "propriedade" }
 ];
 let tabuleiro = JSON.parse(JSON.stringify(TABULEIRO_PADRAO));
 
 // ============================================================
 // HELPERS
 // ============================================================
+const BAIRROS_FOZ_NOMES = new Set([
+  'Alvorada', 'Náutica', 'Três Lagoas', 'Cidade Nova',
+  'Bairro Itaipu Binacional', 'Itaipu C', 'Polo Universitário', 'Porto Belo',
+  'Morumbi', 'Portal da Foz', 'Bourbon', 'Porto Meira', 'Três Fronteiras',
+  'Panorama', 'São Roque', 'América', 'Monjolo', 'Portes', 'Lancaster',
+  'Três Bandeiras', 'Itaipu A', 'Itaipu B', 'KLP', 'Ipê', 'Centro',
+  'Maracanã', 'Yolanda', 'Polo Centro', 'Centro Cívico', 'Campos do Iguaçu',
+  'Carimã', 'Mata Verde', 'Cataratas', 'Cognópolis', 'Lote Grande',
+  'Remanso', 'Parque Nacional'
+]);
+
+function incluirBairrosFoz(tabuleiroBase) {
+  const normalizar = nome => String(nome || '')
+    .normalize('NFD')
+    .replace(/[\u0300-\u036f]/g, '')
+    .trim()
+    .toLocaleLowerCase('pt-BR');
+  const nomesExistentes = new Set(tabuleiroBase.map(casa => normalizar(casa.nome)));
+  const bairrosAusentes = TABULEIRO_PADRAO.filter(casa => {
+    const nomeNormalizado = normalizar(casa.nome);
+    return BAIRROS_FOZ_NOMES.has(casa.nome) && !nomesExistentes.has(nomeNormalizado);
+  });
+  return [...tabuleiroBase, ...bairrosAusentes];
+}
+
 function montarTabuleiroDOM() {
   document.getElementById('tabuleiro').innerHTML = tabuleiro.map((_, i) =>
     `<div id="casa-${i}" class="casa"></div>`).join('');
@@ -679,9 +825,10 @@ async function carregarTabuleiroGlobal() {
   if (error) { console.warn('[BI] erro tabuleiro global:', error); return; }
 
   if (tabData && tabData.length) {
-    tabuleiro = tabData.map(t => ({
+    const tabuleiroGlobal = tabData.map(t => ({
       nome: t.nome, preco: Number(t.preco) || 0, tipo: t.tipo
     }));
+    tabuleiro = incluirBairrosFoz(tabuleiroGlobal);
   } else {
     tabuleiro = JSON.parse(JSON.stringify(TABULEIRO_PADRAO));
   }
@@ -1484,6 +1631,7 @@ function ativarRealtime() {
   try {
     await carregarEu();
     if (!eu) { window.__biDebug('❌ Login não encontrado.', 'erro'); return; }
+    await verificarAcessoAdmin();
 
     await Promise.all([
       carregarJogo(), carregarCompras(),
