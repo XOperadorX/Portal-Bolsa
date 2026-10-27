@@ -123,13 +123,13 @@ A versão **1.3.0** identifica o código-fonte, o manifesto e a configuração C
 - **SELIC dinâmica** — indicador visual com estratégia (Comprar FIIs / Aguardar / Vender FIIs).
 
 ### 🏗️ Refatoração
-- **`config.js` unificado** — agora também exporta funções da bolsa:
+- **`config-module.js` unificado** — exporta funções da bolsa:
   - `carregarBolsa(login)`, `salvarBolsa(login, bolsa)`
   - `registrarAtivoNoCodex(login, categoria, ativoId)`
   - `listarItensCodex(bolsa)`, `calcularResumoBonus(bolsa)`
   - `atualizarPrecoAtivo(login, categoria, ativoId, novoPreco)`
   - Constantes: `BOLSA_PADRAO`, `RARIDADE_MAP`, `BONUS_BASE`
-- **`player.html` importa de `config.js`** — sem credenciais duplicadas.
+- **`player.html` importa de `config-module.js`** — sem credenciais duplicadas.
 - **`codex.html` e `bolsa.html` unificados** — ambos leem `fazendinha_dados.bolsa`.
 
 ### 🐛 Bugfixes
@@ -144,13 +144,13 @@ A versão **1.3.0** identifica o código-fonte, o manifesto e a configuração C
 ### v1.1.0 (12/10/2026)
 
 #### 🔐 Segurança
-- **`config.js` corrigido** — importa `createClient` corretamente.
-- **`config.example.js`** — template público sincronizado.
-- **`.gitignore`** — proteção contra commit de chaves e dependências.
+- **`config.js` centralizado** — carrega a chave pública e cria o cliente compartilhado.
+- **`config-module.js`** — mantém as exportações do aplicativo para módulos ES.
+- **`.gitignore`** — ignora dependências e arquivos locais de build.
 - **Senhas com hash SHA-256 no admin** — `adm_cadastro.html`.
 
 #### 🏗️ Arquitetura
-- **`config.js` centralizado** — `SIMB`, `TAXA_MUMU`, `TAXA_USDT`, `SUPABASE_URL`, `SUPABASE_KEY`.
+- **Configuração centralizada** — `config.js` guarda a URL e a chave pública; `config-module.js` fornece as constantes e funções do aplicativo.
 - **`shared/logger.js`** — logger que só loga em DEV.
 - **`shared/session.js`** — sessão 24h.
 - **`shared/menu.js` + `shared/menu.css`** — menu componentizado.
@@ -178,9 +178,9 @@ A versão **1.3.0** identifica o código-fonte, o manifesto e a configuração C
 | Arquivo | Descrição |
 |---|---|
 | `index.html` | Página inicial com redirecionamento automático (anti-loop). |
-| `config.js` | ⚠️ **NÃO COMMITAR** — credenciais + constantes + funções da bolsa. |
-| `config.example.js` | Template público para novos devs. |
-| `.gitignore` | Ignora `config.js`, `node_modules/`, `platforms/`, etc. |
+| `config.js` | Configuração central do Supabase usada pelas páginas e scripts. |
+| `config-module.js` | Exportações de configuração e funções consumidas pelos módulos ES. |
+| `.gitignore` | Ignora `node_modules/`, `platforms/`, etc. |
 | `manifest.json` | PWA — nome "MM Quase Tudo". |
 | `package.json` | Dependências Cordova. |
 | `config.xml` | Config Cordova (Android/iOS). |
@@ -356,7 +356,7 @@ Entre os jogos e módulos disponíveis: `planta`, `bolsa`, `torre`, `minerar`, `
 
 ## 🗄️ Banco de Dados (Supabase)
 
-**URL do projeto:** `https://xrcxvizzdumcxbylmkvn.supabase.co`
+URL e chave pública do projeto são centralizadas em `config.js`.
 
 ### Tabelas Principais
 
@@ -402,8 +402,8 @@ Entre os jogos e módulos disponíveis: `planta`, `bolsa`, `torre`, `minerar`, `
 
 ## Executar localmente
 
-1. Configure o `config.js` local usando `config.example.js` como ponto de partida e preserve as exportações usadas pelos módulos atuais. O arquivo local é ignorado pelo Git.
-2. Use a URL e a chave pública do projeto Supabase. Nunca coloque uma chave `service_role` no navegador.
+1. Use o `config.js` versionado como configuração compartilhada. A chave anon/publishable é pública por natureza; nunca use uma chave `service_role` no navegador.
+2. Proteja o acesso aos dados com políticas RLS no Supabase.
 3. Sirva a pasta por HTTP, por exemplo com `python -m http.server 8000`, e abra `http://localhost:8000`. Os módulos não devem ser abertos diretamente por `file://`.
 4. Instale no banco os recursos opcionais descritos acima e confira as permissões necessárias.
 

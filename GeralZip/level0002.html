@@ -2,7 +2,9 @@
    SISTEMA DE NÍVEL - BLOCO PARA INSERIR EM QUALQUER PÁGINA
    ============================================================ -->
 
-<!-- ESTILOS (colocar no <head> ou no <style> da página) -->
+<!-- ESTILOS (colocar no <head>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="../config.js"></script> ou no <style> da página) -->
 <style>
     .level-widget {
         background: rgba(18, 21, 32, 0.85);
@@ -182,8 +184,8 @@
         // ============================================================
         // CONFIGURAÇÕES
         // ============================================================
-        const SUPABASE_URL = 'https://xrcxvizzdumcxbylmkvn.supabase.co';
-        const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InhyY3h2aXp6ZHVtY3hieWxta3ZuIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODY2NjA0NzIsImV4cCI6MjEwMjIzNjQ3Mn0.ohB4tW0UQ-k1PcwoZxm4u9XSGNLsFphv1_UwTWoklOM';
+        const SUPABASE_URL = window.PORTAL_CONFIG.SUPABASE_URL;
+        const SUPABASE_KEY = window.PORTAL_CONFIG.SUPABASE_KEY;
         const TABELA = 'Geral';
 
         // ============================================================

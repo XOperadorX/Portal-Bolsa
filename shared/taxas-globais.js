@@ -1,5 +1,5 @@
 import { TAXAS_PADRAO, validarTaxas, DEFINICOES_TAXAS } from './taxas-definicoes.js';
-export const TAXAS_API = {url:'https://xrcxvizzdumcxbylmkvn.supabase.co',chave:'sb_publishable_E-g3G3wW4EySbCsXLXp8KQ_FnmERMcD'};
+export const TAXAS_API = {url:window.PORTAL_CONFIG.SUPABASE_URL,chave:window.PORTAL_CONFIG.SUPABASE_KEY};
 let valores={...TAXAS_PADRAO};
 export let estadoTaxas={origem:'padrao',versao:null,erro:null};
 export async function carregarTaxasGlobais() {

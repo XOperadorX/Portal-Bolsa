@@ -1,4 +1,4 @@
-import { db, CHAT_TROCAS_CONFIG as CONFIG } from '../config.js';
+import { db, CHAT_TROCAS_CONFIG as CONFIG } from '../config-module.js';
 const esc=v=>String(v??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 export class ChatTrocas {
  constructor({usuario=null,admin=false,cliente=db,root=document,onLoginNecessario=null}) {

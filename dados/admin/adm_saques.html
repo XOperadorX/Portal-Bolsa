@@ -1,6 +1,8 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="../../config.js"></script>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <meta name="theme-color" content="#0a0e16" />
@@ -989,7 +991,7 @@ import {
   db as sb,
   TABELA,
   SIMB,
-} from './../../config.js';
+} from './../../config-module.js';
 import { obterTaxa } from '../../shared/taxas-globais.js';
 const TAXA_MUMU = {reais_por_mumu:obterTaxa('mumu_saldo'),saldo_minimo:obterTaxa('mumu_minimo')};
 const TAXA_USDT = {saldo_por_dolar:obterTaxa('usdt_saldo'),minimo_dolares:obterTaxa('usdt_minimo'),saldo_minimo:obterTaxa('usdt_saldo')*obterTaxa('usdt_minimo')};

@@ -7,8 +7,8 @@
 import { obterUsuarioSessao, sessaoValida, limparSessao, agendarExpiracaoSessao } from './session.js';
 
 // ==================== CONFIGURAÇÃO SUPABASE ====================
-const SUPABASE_URL = 'https://xrcxvizzdumcxbylmkvn.supabase.co';
-const SUPABASE_ANON_KEY = 'sb_publishable_E-g3G3wW4EySbCsXLXp8KQ_FnmERMcD';
+const SUPABASE_URL = window.PORTAL_CONFIG.SUPABASE_URL;
+const SUPABASE_ANON_KEY = window.PORTAL_CONFIG.SUPABASE_KEY;
 const TABELA = 'Geral';
 
 // ==================== ESTADO GLOBAL ====================

@@ -7,7 +7,7 @@ const antigo={...TAXAS_PADRAO,mercado_compra:75};for(const id of Object.keys(ant
 const compativel=validarTaxas(antigo,{completarPadroes:true});assert.equal(compativel.mercado_compra,75);assert.equal(compativel.shagrila_venda,50);assert.equal(compativel.bolsa_selic,10.75);assert.equal(Object.keys(antigo).length,31);assert.throws(()=>validarTaxas({...antigo,pix_admin:'10'},{completarPadroes:true}),/inválido/);
 const runtime=fs.readFileSync('shared/taxas-globais.js','utf8').replace(/^import .*;\s*/gm,'').replaceAll('export const','const').replaceAll('export let','let').replaceAll('export async function','async function').replaceAll('export function','function');
 const AsyncFunction=Object.getPrototypeOf(async function(){}).constructor;
-async function loader(fetch){return new AsyncFunction('fetch','TAXAS_PADRAO','validarTaxas','DEFINICOES_TAXAS',runtime+';return {obterTaxa,carregarTaxasGlobais,get estado(){return estadoTaxas}};')(fetch,TAXAS_PADRAO,validarTaxas,DEFINICOES_TAXAS);}
+async function loader(fetch){return new AsyncFunction('fetch','TAXAS_PADRAO','validarTaxas','DEFINICOES_TAXAS','window',runtime+';return {obterTaxa,carregarTaxasGlobais,get estado(){return estadoTaxas}};')(fetch,TAXAS_PADRAO,validarTaxas,DEFINICOES_TAXAS,{PORTAL_CONFIG:{SUPABASE_URL:'https://example.invalid',SUPABASE_KEY:'public'}});}
 const page=fs.readFileSync('dados/admin/script/taxa.js','utf8').replace(/^import .*;\s*/gm,'');
 async function adminPage(role='admin', local=null, initialValues=TAXAS_PADRAO){
  if(local===null)local={'sb-example-auth-token':JSON.stringify({access_token:'test-token',expires_at:Math.floor(Date.now()/1000)+3600}),usuario_logado:JSON.stringify({id:1,nome:'ADM',login:'admin'}),session_timestamp:String(Date.now())};

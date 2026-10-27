@@ -1,5 +1,5 @@
 const fs=require('node:fs'),assert=require('node:assert/strict'),vm=require('node:vm');
-const config=fs.readFileSync('config.js','utf8').match(/export const CHAT_TROCAS_CONFIG = Object.freeze\(([\s\S]*?)\);/)[1];
+const config=fs.readFileSync('config-module.js','utf8').match(/export const CHAT_TROCAS_CONFIG = Object.freeze\(([\s\S]*?)\);/)[1];
 const CONFIG=new Function('return ('+config+');')();
 const source=fs.readFileSync('shared/chat-trocas.js','utf8').replace(/^import .*;\s*/gm,'').replace('export class','class');
 function setup({token='token-valido',admin=false}={}){

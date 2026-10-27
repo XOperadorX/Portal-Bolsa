@@ -127,7 +127,7 @@
       if (!login) return;
 
       // Tenta importar config.js (se existir)
-      const cfg = await import(BASE + 'config.js').catch(() => null);
+      const cfg = await import(BASE + 'config-module.js').catch(() => null);
       if (!cfg || !cfg.db) return;
 
       const { data } = await cfg.db

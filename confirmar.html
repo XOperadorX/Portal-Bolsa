@@ -1,6 +1,8 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
-<head><!-- 3. No <head>, adicione o CSS do menu (ou importe de menu.css) -->
+<head>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="config.js"></script><!-- 3. No <head>, adicione o CSS do menu (ou importe de menu.css) -->
 <link rel="stylesheet" href="./shared/menu.css">
     <!-- ============================================================ -->
 <!-- SEO / Open Graph / Twitter Card                              -->
@@ -74,8 +76,8 @@
         import { createClient } from '@supabase/supabase-js';
 
         const supabase = createClient(
-            'https://xrcxvizzdumcxbylmkvn.supabase.co',
-            'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InhyY3h2aXp6ZHVtY3hieWxta3ZuIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODY2NjA0NzIsImV4cCI6MjEwMjIzNjQ3Mn0.ohB4tW0UQ-k1PcwoZxm4u9XSGNLsFphv1_UwTWoklOM'
+            window.PORTAL_CONFIG.SUPABASE_URL,
+            window.PORTAL_CONFIG.SUPABASE_KEY
         );
 
         const icon  = document.getElementById('confirmIcon');

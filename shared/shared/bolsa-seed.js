@@ -1,7 +1,7 @@
 // ============================================================
 // shared/bolsa-seed.js — Popula a bolsa automaticamente
 // ============================================================
-import { db, TABELA } from '../config.js';
+import { db, TABELA } from '../../config-module.js';
 
 // ============================================================
 // ATIVOS PADRÃO (seed inicial)

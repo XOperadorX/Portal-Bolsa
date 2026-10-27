@@ -11,9 +11,17 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 5
     steps:
-      - name: 🔄 Pingar para manter projeto ativo
+      - uses: actions/checkout@v4
+
+      - name: Pingar para manter projeto ativo
         run: |
-          curl -s "https://xrcxvizzdumcxbylmkvn.supabase.co/rest/v1/?select=*&limit=1" \
-            -H "apikey: sb_publishable_E-g3G3wW4EySbCsXLXp8KQ_FnmERMcD" \
-            -H "Authorization: Bearer sb_publishable_E-g3G3wW4EySbCsXLXp8KQ_FnmERMcD" \
-            -w "\n✅ Status: %{http_code}\n"
+          SUPABASE_URL="$(node -p "require('node:fs').readFileSync('config.js','utf8').match(/const SUPABASE_URL = '([^']+)'/)[1]")"
+          SUPABASE_KEY="$(node -p "require('node:fs').readFileSync('config.js','utf8').match(/const SUPABASE_KEY = '([^']+)'/)[1]")"
+          if [ -z "$SUPABASE_URL" ] || [ -z "$SUPABASE_KEY" ]; then
+            echo "Não foi possível carregar a configuração do Supabase em config.js" >&2
+            exit 1
+          fi
+          curl --fail --silent --show-error "${SUPABASE_URL}/rest/v1/?select=*&limit=1" \
+            -H "apikey: ${SUPABASE_KEY}" \
+            -H "Authorization: Bearer ${SUPABASE_KEY}" \
+            -w "\nStatus: %{http_code}\n"

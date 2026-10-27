@@ -8,9 +8,9 @@ Portal_Bolsa/
 ├── 📄 index.html                    # Redirecionamento inicial (COM ANTI-LOOP)
 ├── 📄 index.js                      # (opcional) Lógica de sessão externa
 ├── 📄 menu.html                     # Componente de menu reutilizável
-├── 📄 config.js                     # ⚠️ NÃO COMMITAR (adicionar ao .gitignore)
-├── 📄 config.example.js             # Template público para novos devs
-├── 📄 .gitignore                    # Config + node_modules + platforms + plugins
+├── 📄 config.js                     # Configuração Supabase centralizada (versionada)
+├── 📄 config-module.js              # Exportações ESM do aplicativo
+├── 📄 .gitignore                    # node_modules + platforms + plugins
 ├── 📄 manifest.json                 # PWA (nome corrigido: "MM Quase Tudo")
 ├── 📄 package.json                  # Dependências Cordova
 ├── 📄 config.xml                    # Config Cordova (Android/iOS)
@@ -151,7 +151,7 @@ Autenticação             |  5  | login, cadastro, confirmar, esqueci-login, es
 Públicas                 |  5  | noticias, eventos, download, suporte, como-jogar
 Logadas                  |  5  | dashboard, codex, diario, trocap, testetet
 Admin                    | 10  | admin, adm_cadastro, adm_suporte, adm_pix, admin-bolsa...
-Sistema                  |  6  | index.html, config.js, config.example.js, .gitignore, manifest.json
+Sistema                  |  6  | index.html, config.js, config-module.js, .gitignore, manifest.json
 Config                   |  3  | package.json, config.xml, jsconfig.json
 Jogos                    | 18  | (listados em jogos/)
 Referenciadas            | ~25 | shared/, styles/, style/, assets/
@@ -187,7 +187,7 @@ Verifique se existem no repositório para evitar quebras:
 
 ┌─────────────────────────────────────────────────┐
 │              Supabase (Backend)                 │
-│  https://xrcxvizzdumcxbylmkvn.supabase.co       │
+│  URL e chave pública em config.js              │
 │                                                  │
 │  Tabelas:  Geral · Atividades · Trocas          │
 │            suporte_tickets · cargos             │
@@ -226,18 +226,14 @@ Verifique se existem no repositório para evitar quebras:
 ================================================================================
 Aplicadas nas versões mais recentes dos arquivos:
 
-[1] config.js
-    - Adicionado: import { createClient } from 'https://esm.sh/@supabase/supabase-js@2'
-    - Corrigido: db agora é criado com createClient (antes usava supabase.createClient sem import)
-    - Impacto: diario.html e outros módulos que importam './config.js' funcionam
+[1] Configuração Supabase centralizada
+    - config.js carrega a chave pública e cria o cliente compartilhado
+    - config-module.js mantém as exportações ESM do aplicativo
+    - As páginas clássicas carregam config.js antes dos scripts locais
 
-[2] config.example.js
-    - Sincronizado com config.js (mesma estrutura, valores placeholder)
-    - Adicionado: export db = createClient(...)
-
-[3] .gitignore (NOVO)
-    - Ignora config.js, node_modules/, platforms/, plugins/, www/, hooks/
-    - Evita commit acidental de chaves e dependências
+[2] .gitignore
+    - Ignora node_modules/, platforms/, plugins/, www/ e hooks/
+    - config.js é versionado para também funcionar no deploy
 
 [4] index.html
     - Adicionado: validação t > 0 em sessaoValida() (evita session_timestamp corrompido)
@@ -296,8 +292,7 @@ Comando:
 ================================================================================
 
 DIA 1 — Segurança:
-  1. Aplicar config.js + config.example.js + .gitignore
-  2. Rodar git rm --cached config.js
+  1. Versionar config.js e carregar a configuração compartilhada nas páginas
   3. Corrigir admin.html (renomear supabase → supabaseDB)
   4. Corrigir adm_cadastro.html (hash SHA-256)
 
@@ -349,7 +344,7 @@ DIA 4 — Troca e PWA:
 📌 CHECKLIST FINAL
 ================================================================================
 [✓] config.js corrigido
-[✓] config.example.js sincronizado
+[✓] config-module.js mantém a compatibilidade das exportações ESM
 [✓] .gitignore criado
 [✓] index.html com anti-loop
 [✓] login.html com regen antes de salvar

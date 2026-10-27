@@ -1,6 +1,8 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
-<head><!-- 3. No <head>, adicione o CSS do menu (ou importe de menu.css) -->
+<head>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="../../config.js"></script><!-- 3. No <head>, adicione o CSS do menu (ou importe de menu.css) -->
 <link rel="stylesheet" href="./shared/menu.css">
   <!-- ============================================================ -->
 <!-- SEO / Open Graph / Twitter Card                              -->
@@ -227,7 +229,7 @@
   <div class="card" id="cardConfig">
     <h2>⚙️ Conexão Supabase</h2>
     <div class="row">
-      <input id="sbUrl" placeholder="https://xxxx.supabase.co" style="min-width:320px; flex:1" />
+      <input id="sbUrl" placeholder=window.PORTAL_CONFIG.SUPABASE_URL style="min-width:320px; flex:1" />
       <input id="sbKey" placeholder="anon / service_role key" style="min-width:320px; flex:1" />
       <button id="btnConnect">🔌 Conectar</button>
       <button id="btnDisconnect" class="ghost">Desconectar</button>
@@ -1119,7 +1121,7 @@ $('btnHistLimpar').onclick = async () => {
 };
 
 // Auto-connect (opcional — descomente e preencha)
-// $('sbUrl').value = 'https://SEU.supabase.co';
+// $('sbUrl').value = window.PORTAL_CONFIG.SUPABASE_URL;
 // $('sbKey').value = 'SUA_KEY';
 // $('btnConnect').click();
 

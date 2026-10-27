@@ -1,6 +1,8 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="../../config.js"></script>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <meta name="theme-color" content="#002bad" />
@@ -380,7 +382,7 @@ import {
   SESSION_DURATION,
   STATUS_TROCA as STATUS,
   TROCAS_CONFIG
-} from '../../config.js';
+} from '../../config-module.js';
 import { ChatTrocas } from '../../shared/chat-trocas.js';
 import { obterTaxa } from '../../shared/taxas-globais.js';
 const TAXA_PERCENTUAL = obterTaxa('trocas_taxa') / 100;

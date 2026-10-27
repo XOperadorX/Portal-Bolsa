@@ -166,7 +166,7 @@
             if (spinner) spinner.style.display = 'block';
 
             try {
-                const { db, TABELA } = await import('./config.js');
+                const { db, TABELA } = await import('./config-module.js');
                 const { data, error } = await db
                     .from(TABELA)
                     .select('id')

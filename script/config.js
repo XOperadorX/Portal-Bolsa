@@ -3,8 +3,8 @@
 // ============================================================
 
 export const CONFIG = {
-    SUPABASE_URL: 'https://xrcxvizzdumcxbylmkvn.supabase.co',
-    SUPABASE_KEY: 'sb_publishable_E-g3G3wW4EySbCsXLXp8KQ_FnmERMcD',
+    SUPABASE_URL: window.PORTAL_CONFIG.SUPABASE_URL,
+    SUPABASE_KEY: window.PORTAL_CONFIG.SUPABASE_KEY,
     TABELA: 'Geral',
     
     // Valores padrão

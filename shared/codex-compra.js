@@ -1,5 +1,5 @@
 import { obterTaxa } from './taxas-globais.js';
-import { db, TABELA, calcularBonusAtivo } from '../config.js';
+import { db, TABELA, calcularBonusAtivo } from '../config-module.js';
 
 export async function registrarAtivoNoCodex(login, categoria, ativoId) {
   const { data: atual, error: erroLeitura } = await db.from(TABELA)

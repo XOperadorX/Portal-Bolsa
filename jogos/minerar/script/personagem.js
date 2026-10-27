@@ -2,8 +2,8 @@ import { anexarFichaCombate } from '../../../shared/ficha-combate.js';
 // ============================================================
 // CONFIGURAÇÕES SUPABASE
 // ============================================================
-const SUPABASE_URL = 'https://xrcxvizzdumcxbylmkvn.supabase.co';
-const SUPABASE_KEY = 'sb_publishable_E-g3G3wW4EySbCsXLXp8KQ_FnmERMcD';
+const SUPABASE_URL = window.PORTAL_CONFIG.SUPABASE_URL;
+const SUPABASE_KEY = window.PORTAL_CONFIG.SUPABASE_KEY;
 const TABELA = 'Geral';
 
 const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);

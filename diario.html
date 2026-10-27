@@ -1,6 +1,8 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="config.js"></script>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta name="theme-color" content="#002bad">
@@ -401,7 +403,7 @@
      SCRIPT PRINCIPAL — importa tudo do config.js
 ============================================================ -->
 <script type="module">
-import { db, TABELA } from './config.js';
+import { db, TABELA } from './config-module.js';
 
 /* ============================================================
    SESSÃO (mesma lógica do resto do projeto)

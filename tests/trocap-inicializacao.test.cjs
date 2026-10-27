@@ -1,8 +1,8 @@
 const fs=require('node:fs'),assert=require('node:assert/strict'),vm=require('node:vm');
 const html=fs.readFileSync('jogos/mochila/trocap.html','utf8');
-assert(!html.includes('menu-slot'));assert(!html.includes('renderMenu'));assert(html.includes("from '../../config.js'"));
+assert(!html.includes('menu-slot'));assert(!html.includes('renderMenu'));assert(html.includes("from '../../config-module.js'"));
 for(const m of html.matchAll(/<script\b([^>]*)>([\s\S]*?)<\/script>/gi)){if(/src\s*=|importmap/.test(m[1]))continue;if(/type="module"/.test(m[1]))new vm.SourceTextModule(m[2]);else new vm.Script(m[2]);}
-new vm.SourceTextModule(fs.readFileSync('config.js','utf8'));
+new vm.SourceTextModule(fs.readFileSync('config-module.js','utf8'));
 const boot=html.slice(html.indexOf('let paginaIniciada = false;'),html.indexOf('function bindEventos()'));
 async function startup(ready,logged=true,fail=false){
  const calls=[],nodes={};let callback;

@@ -1,6 +1,8 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="config.js"></script>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="theme-color" content="#002bad">
@@ -34,7 +36,7 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
 
     <!-- Supabase -->
-    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
 
     <style>
         /* ==================== RESET E BASE ==================== */
@@ -909,6 +911,10 @@
                                 <label for="login">Login no jogo</label>
                                 <input type="text" id="login" name="login" placeholder="Seu login" maxlength="60">
                             </div>
+                            <div class="form-group">
+                                <label for="email">E-mail para contato <span class="obrigatorio">*</span></label>
+                                <input type="email" id="email" name="email" placeholder="seu@email.com" required maxlength="254">
+                            </div>
                         </div>
 
                         <div class="form-row">
@@ -1236,8 +1242,8 @@
     <!-- ==================== JAVASCRIPT ==================== -->
     <script>
         /* ==================== CONFIGURAÇÃO SUPABASE ==================== */
-        const SUPABASE_URL = 'https://xrcxvizzdumcxbylmkvn.supabase.co';
-        const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InhyY3h2aXp6ZHVtY3hieWxta3ZuIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODY2NjA0NzIsImV4cCI6MjEwMjIzNjQ3Mn0.ohB4tW0UQ-k1PcwoZxm4u9XSGNLsFphv1_UwTWoklOM';
+        const SUPABASE_URL = window.PORTAL_CONFIG.SUPABASE_URL;
+        const SUPABASE_ANON_KEY = window.PORTAL_CONFIG.SUPABASE_KEY;
 
         const supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
@@ -1363,7 +1369,7 @@
             const dados = {
                 nome: document.getElementById('login').value.trim() || 'Visitante',
                 login: document.getElementById('login').value.trim() || null,
-                email: null,
+                email: document.getElementById('email').value.trim(),
                 categoria: document.getElementById('categoria').value,
                 prioridade: document.getElementById('prioridade').value,
                 assunto: document.getElementById('assunto').value.trim(),
@@ -1391,7 +1397,7 @@
                         .select('id, nome, email')
                         .eq('login', dados.login)
                         .maybeSingle();
-                    if (usuario) { userId = usuario.id; dados.nome = usuario.nome || dados.login; dados.email = usuario.email || null; }
+                    if (usuario) { userId = usuario.id; dados.nome = usuario.nome || dados.login; dados.email = usuario.email || dados.email; }
                 }
 
                 const { data, error } = await supabaseClient
@@ -1420,6 +1426,7 @@
                 let msg = 'Erro ao enviar o ticket. Tente novamente.';
                 if (err.code === '42P01') msg = 'Tabela "suporte_tickets" não encontrada. Execute o SQL no Supabase.';
                 else if (err.code === '42501') msg = 'Sem permissão para inserir. Verifique as políticas RLS.';
+                else if (err.code === '23502' && err.message?.includes('"email"')) msg = 'O e-mail para contato é obrigatório. Informe um e-mail válido e tente novamente.';
                 else if (err.message) msg = 'Erro: ' + err.message;
 
                 mostrarMensagem('erro', msg);

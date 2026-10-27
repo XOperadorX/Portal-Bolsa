@@ -1,10 +1,12 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="../../config.js"></script>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 <title>ADM - Tabela Geral</title>
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
 <style>
   :root {
     --bg: #0f172a;
@@ -115,7 +117,7 @@
   <div class="card">
     <h2>1. Conexão Supabase</h2>
     <div class="row">
-      <input id="sbUrl" placeholder="https://xxxx.supabase.co" style="min-width:320px" />
+      <input id="sbUrl" placeholder=window.PORTAL_CONFIG.SUPABASE_URL style="min-width:320px" />
       <input id="sbKey" placeholder="anon / service_role key" style="min-width:320px" />
       <button id="btnConnect">Conectar</button>
       <button id="btnDisconnect" class="ghost">Desconectar</button>
